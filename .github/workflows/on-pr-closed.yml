@@ -1,0 +1,24 @@
+name: record-rejections
+on:
+  pull_request:
+    types: [closed]
+permissions:
+  contents: write
+jobs:
+  reject:
+    if: github.event.pull_request.merged == false && contains(github.event.pull_request.labels.*.name, 'new-datasets')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: main, fetch-depth: 0 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r requirements.txt
+      - run: git fetch origin "pull/${{ github.event.pull_request.number }}/head:pr-head"
+      - run: python tools/reject_from_pr.py origin/main pr-head
+      - name: Commit rejected list
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state/rejected.yaml
+          git diff --cached --quiet || { git commit -m "reject records from #${{ github.event.pull_request.number }}"; git push origin main; }

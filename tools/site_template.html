@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Microscopy Dataset Catalog</title>
+<style>
+:root {
+  color-scheme: light;
+  --surface-0: #f5f5f3; --surface-1: #fcfcfb; --border: #e3e2de;
+  --text-primary: #0b0b0b; --text-secondary: #52514e; --text-muted: #7a7974;
+  --series-1: #2a78d6; --grid: #ecebe7;
+  --good: #0ca30c; --warning: #fab219; --critical: #d03b3b;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --surface-0: #121211; --surface-1: #1a1a19; --border: #2e2e2c;
+    --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #8f8e86;
+    --series-1: #3987e5; --grid: #2a2a28;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --surface-0: #121211; --surface-1: #1a1a19; --border: #2e2e2c;
+  --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #8f8e86;
+  --series-1: #3987e5; --grid: #2a2a28;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--surface-0); color: var(--text-primary);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 1200px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 22px; margin: 0 0 4px; }
+h2 { font-size: 15px; margin: 0 0 12px; }
+.sub { color: var(--text-secondary); margin: 0 0 20px; }
+.grid { display: grid; gap: 16px; }
+.tiles { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-bottom: 16px; }
+.charts { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); margin-bottom: 16px; }
+.card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; padding: 16px; min-width: 0; }
+.tile .v { font-size: 28px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tile .l { color: var(--text-secondary); font-size: 13px; }
+.bars { display: grid; grid-template-columns: minmax(90px, max-content) 1fr 36px; gap: 6px 10px; align-items: center; }
+.bars .lab { color: var(--text-secondary); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bars .track { height: 14px; position: relative; }
+.bars .bar { height: 100%; background: var(--series-1); border-radius: 0 4px 4px 0; min-width: 2px; }
+.bars .num { font-variant-numeric: tabular-nums; font-size: 13px; text-align: right; }
+.bars .row { display: contents; }
+.cols { display: flex; align-items: flex-end; gap: 2px; height: 140px; border-bottom: 1px solid var(--grid); }
+.cols .c { flex: 1; background: var(--series-1); border-radius: 4px 4px 0 0; min-height: 0; position: relative; }
+.cols .hit { flex: 1; height: 100%; display: flex; align-items: flex-end; }
+.axis { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 12px; margin-top: 4px; }
+.empty { color: var(--text-muted); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { color: var(--text-secondary); font-weight: 600; }
+td.n { text-align: right; font-variant-numeric: tabular-nums; }
+.scroll { overflow-x: auto; }
+a { color: var(--series-1); }
+.status { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.st-ok .dot { background: var(--good); } .st-partial .dot { background: var(--warning); }
+.st-failed .dot, .st-stale .dot { background: var(--critical); } .st-running .dot { background: var(--text-muted); }
+.chip { display: inline-block; padding: 1px 7px; border: 1px solid var(--border); border-radius: 999px; font-size: 12px; color: var(--text-secondary); margin: 1px 2px 1px 0; }
+input[type=search] { width: 100%; max-width: 360px; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--surface-0); color: var(--text-primary); font: inherit; margin-bottom: 12px; }
+#tip { position: fixed; pointer-events: none; background: var(--surface-1); color: var(--text-primary); border: 1px solid var(--border);
+  border-radius: 6px; padding: 5px 8px; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.15); display: none; z-index: 10; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Microscopy Training Dataset Catalog</h1>
+  <p class="sub" id="gen"></p>
+  <section class="grid tiles" id="tiles"></section>
+  <section class="grid charts">
+    <div class="card"><h2>Agent health: latest run per routine</h2><div class="scroll"><table id="health"></table></div></div>
+    <div class="card"><h2>New records per week (last 12 weeks)</h2><div id="weekly"></div></div>
+  </section>
+  <section class="grid charts">
+    <div class="card"><h2>Records by modality</h2><div id="modality"></div></div>
+    <div class="card"><h2>Records by annotation type</h2><div id="anntype"></div></div>
+  </section>
+  <section class="card" style="margin-bottom:16px">
+    <h2>Recent agent runs</h2>
+    <div class="scroll"><table id="runs"></table></div>
+  </section>
+  <section class="card">
+    <h2>Catalog</h2>
+    <input type="search" id="q" placeholder="Filter by title, modality, organism, license…" aria-label="Filter catalog">
+    <div class="scroll"><table id="catalog"></table></div>
+  </section>
+</main>
+<div id="tip" role="tooltip"></div>
+<script>
+const DATA = /*__DATA__*/null;
+// Expected cadence (hours) per routine; keep in sync with .github/workflows/watchdog.yml.
+const CADENCE_H = {"harvest-repositories": 1, "harvest-literature": 3, "harvest-websearch": 3, "maintainer": 24};
+const recs = DATA.records, runs = DATA.runs;
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmtTime = s => s ? new Date(s).toLocaleString(undefined, {dateStyle: "medium", timeStyle: "short"}) : "—";
+const hoursAgo = s => (Date.now() - new Date(s)) / 36e5;
+const tip = document.getElementById("tip");
+function bindTip(el, html) {
+  el.addEventListener("mousemove", e => { tip.innerHTML = html; tip.style.display = "block";
+    tip.style.left = Math.min(e.clientX + 12, innerWidth - tip.offsetWidth - 8) + "px"; tip.style.top = (e.clientY + 12) + "px"; });
+  el.addEventListener("mouseleave", () => tip.style.display = "none");
+}
+const statusCell = s => {
+  const label = {ok: "✓ ok", partial: "! partial", failed: "✕ failed", running: "… running", stale: "✕ stale"}[s] || esc(s);
+  return `<span class="status st-${esc(s)}"><span class="dot" aria-hidden="true"></span>${label}</span>`;
+};
+
+document.getElementById("gen").textContent =
+  `${recs.length} datasets · ${runs.length} agent runs logged · page built ${fmtTime(new Date().toISOString())}`;
+
+// Tiles
+const day = runs.filter(r => hoursAgo(r.started_at) <= 24);
+const tiles = [
+  [recs.length, "datasets in catalog"],
+  [recs.filter(r => r.annotations?.present).length, "with annotations"],
+  [recs.filter(r => r.license?.spdx && !["unknown", "custom"].includes(r.license.spdx)).length, "with a known open license"],
+  [day.length, "agent runs, last 24 h"],
+  [day.reduce((a, r) => a + (r.counts?.added || 0), 0), "records proposed, last 24 h"],
+  [day.filter(r => r.status === "failed").length, "failed runs, last 24 h"],
+];
+document.getElementById("tiles").innerHTML = tiles.map(([v, l]) =>
+  `<div class="card tile"><div class="v">${v}</div><div class="l">${l}</div></div>`).join("");
+
+// Health table
+const latest = {};
+runs.forEach(r => { if (!latest[r.routine]) latest[r.routine] = r; });
+const routines = [...new Set([...Object.keys(CADENCE_H), ...Object.keys(latest)])];
+document.getElementById("health").innerHTML = `<tr><th>Routine</th><th>Status</th><th>Last run</th></tr>` +
+  routines.map(name => {
+    const r = latest[name];
+    if (!r) return `<tr><td>${esc(name)}</td><td>${statusCell("stale")}</td><td class="empty">never</td></tr>`;
+    const stale = hoursAgo(r.started_at) > 2 * (CADENCE_H[name] || 24);
+    return `<tr><td>${esc(name)}</td><td>${statusCell(stale ? "stale" : r.status)}</td><td>${fmtTime(r.started_at)}</td></tr>`;
+  }).join("");
+
+// Horizontal bars (single series: no legend; the title names it)
+function hbars(id, counts, top = 10) {
+  const el = document.getElementById(id);
+  const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, top);
+  if (!entries.length) { el.innerHTML = `<p class="empty">No data yet.</p>`; return; }
+  const max = entries[0][1];
+  el.innerHTML = `<div class="bars">` + entries.map(([k, v]) =>
+    `<div class="row"><span class="lab" title="${esc(k)}">${esc(k)}</span><div class="track"><div class="bar" style="width:${100 * v / max}%"></div></div><span class="num">${v}</span></div>`).join("") + `</div>`;
+  el.querySelectorAll(".track").forEach((t, i) => bindTip(t, `<b>${esc(entries[i][0])}</b>: ${entries[i][1]} datasets`));
+}
+const tally = f => recs.reduce((acc, r) => { (f(r) || []).forEach(k => acc[k] = (acc[k] || 0) + 1); return acc; }, {});
+hbars("modality", tally(r => r.imaging?.modality));
+hbars("anntype", tally(r => r.annotations?.types?.length ? r.annotations.types : ["(none)"]));
+
+// Weekly column chart
+(function () {
+  const el = document.getElementById("weekly"), weeks = 12, now = new Date(), start = new Date(now);
+  start.setUTCHours(0, 0, 0, 0); start.setUTCDate(start.getUTCDate() - start.getUTCDay() - 7 * (weeks - 1));
+  const buckets = Array.from({length: weeks}, (_, i) => ({from: new Date(+start + i * 6048e5), n: 0}));
+  recs.forEach(r => { const t = new Date(r.provenance?.discovered_at); const i = Math.floor((t - start) / 6048e5); if (i >= 0 && i < weeks) buckets[i].n++; });
+  const max = Math.max(1, ...buckets.map(b => b.n));
+  const fmt = d => d.toLocaleDateString(undefined, {month: "short", day: "numeric"});
+  el.innerHTML = `<div class="cols">` + buckets.map(b => `<div class="hit"><div class="c" style="height:${100 * b.n / max}%"></div></div>`).join("") +
+    `</div><div class="axis"><span>${fmt(buckets[0].from)}</span><span>max ${max}/week</span><span>${fmt(buckets[weeks - 1].from)}</span></div>`;
+  el.querySelectorAll(".hit").forEach((h, i) => bindTip(h, `Week of ${fmt(buckets[i].from)}: <b>${buckets[i].n}</b> new`));
+})();
+
+// Runs table
+document.getElementById("runs").innerHTML = runs.length
+  ? `<tr><th>Started</th><th>Routine</th><th>Status</th><th class="n">Added</th><th class="n">Dupes</th><th class="n">Skipped</th><th class="n">Errors</th><th class="n">Duration</th><th>PR</th></tr>` +
+    runs.slice(0, 50).map(r => { const c = r.counts || {};
+      return `<tr><td>${fmtTime(r.started_at)}</td><td>${esc(r.routine)}</td><td>${statusCell(r.status)}</td>
+        <td class="n">${c.added || 0}</td><td class="n">${c.duplicate || 0}</td><td class="n">${(c.rejected || 0) + (c["low-confidence"] || 0)}</td>
+        <td class="n">${c.error || 0}</td><td class="n">${r.duration_s != null ? Math.round(r.duration_s / 60) + " min" : "—"}</td>
+        <td>${r.pr_url ? `<a href="${esc(r.pr_url)}">PR</a>` : "—"}</td></tr>`; }).join("")
+  : `<tr><td class="empty">No runs logged yet.</td></tr>`;
+
+// Catalog table
+function renderCatalog(q) {
+  q = q.trim().toLowerCase();
+  const rows = recs.filter(r => !q || JSON.stringify([r.title, r.imaging, r.license, r.repository, r.annotations, r.ml]).toLowerCase().includes(q))
+    .sort((a, b) => (b.provenance?.discovered_at || "").localeCompare(a.provenance?.discovered_at || ""));
+  document.getElementById("catalog").innerHTML =
+    `<tr><th>Dataset</th><th>Modality</th><th>Organism</th><th>Annotations</th><th>Tasks</th><th>License</th><th>Repository</th></tr>` +
+    rows.map(r => `<tr><td><a href="${esc(r.landing_url)}">${esc(r.title)}</a></td>
+      <td>${(r.imaging?.modality || []).map(m => `<span class="chip">${esc(m)}</span>`).join("")} ${esc(r.imaging?.dimensionality)}</td>
+      <td>${esc((r.imaging?.organism || []).join(", "))}</td>
+      <td>${r.annotations?.present ? (r.annotations.types || []).map(t => `<span class="chip">${esc(t)}</span>`).join("") : '<span class="empty">none</span>'}</td>
+      <td>${esc((r.ml?.tasks || []).join(", "))}</td><td>${esc(r.license?.spdx)}</td><td>${esc(r.repository)} ${esc(r.accession || "")}</td></tr>`).join("") +
+    (rows.length ? "" : `<tr><td class="empty" colspan="7">No matches.</td></tr>`);
+}
+document.getElementById("q").addEventListener("input", e => renderCatalog(e.target.value));
+renderCatalog("");
+</script>
+</body>
+</html>

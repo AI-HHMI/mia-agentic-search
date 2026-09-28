@@ -1,0 +1,30 @@
+name: validate
+on:
+  pull_request:
+    paths: ["datasets/**", "schema/**", "state/**", "tools/**"]
+  push:
+    branches: [main]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install -r requirements.txt
+      - name: Validate whole catalog (main + this PR)
+        run: python tools/validate.py
+      - name: Harvest PRs require confidence >= 0.5 on new records
+        if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'claude/harvest-')
+        run: |
+          git fetch --no-tags origin "${{ github.base_ref }}"
+          files=$(git diff --name-only --diff-filter=AM "origin/${{ github.base_ref }}"...HEAD -- datasets/ | grep '\.yaml$' || true)
+          [ -z "$files" ] || python tools/validate.py $files --min-confidence 0.5
+      - name: Slack alert on failure
+        if: failure() && env.SLACK_WEBHOOK_URL != ''
+        run: |
+          curl -s -X POST -H 'Content-Type: application/json' \
+            -d "{\"text\":\":x: catalog validation failed on ${{ github.ref_name }}: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" \
+            "$SLACK_WEBHOOK_URL"

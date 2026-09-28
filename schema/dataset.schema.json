@@ -1,0 +1,551 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/jakobtroidl/mia-agentic-search/schema/dataset.schema.json",
+  "title": "MicroscopyTrainingDataset",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "title",
+    "description",
+    "landing_url",
+    "doi",
+    "repository",
+    "accession",
+    "authors",
+    "publications",
+    "date_published",
+    "imaging",
+    "data",
+    "annotations",
+    "ml",
+    "license",
+    "provenance",
+    "verification",
+    "notes"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "maxLength": 80,
+      "description": "slug; must equal file name without .yaml"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 300
+    },
+    "description": {
+      "type": "string",
+      "minLength": 30,
+      "maxLength": 2000
+    },
+    "landing_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "doi": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^10\\.\\d{4,9}/\\S+$"
+    },
+    "repository": {
+      "enum": [
+        "EMPIAR",
+        "IDR",
+        "BioImageArchive",
+        "Zenodo",
+        "Figshare",
+        "OpenOrganelle",
+        "BossDB",
+        "CIL",
+        "DANDI",
+        "HuggingFace",
+        "Kaggle",
+        "GrandChallenge",
+        "CellTrackingChallenge",
+        "Dryad",
+        "OSF",
+        "GitHub",
+        "LabWebsite",
+        "other"
+      ]
+    },
+    "accession": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "repository-native ID, e.g. EMPIAR-10311"
+    },
+    "authors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "publications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "title",
+          "doi",
+          "url"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "doi": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          }
+        }
+      }
+    },
+    "date_published": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "imaging": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "modality",
+        "dimensionality",
+        "voxel_size_nm",
+        "channels",
+        "organism",
+        "sample",
+        "labels_stains"
+      ],
+      "properties": {
+        "modality": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "enum": [
+              "FIB-SEM",
+              "SBF-SEM",
+              "ssTEM",
+              "ssSEM",
+              "TEM",
+              "cryo-EM",
+              "cryo-ET",
+              "X-ray",
+              "confocal",
+              "spinning-disk",
+              "widefield",
+              "light-sheet",
+              "two-photon",
+              "super-resolution",
+              "expansion",
+              "brightfield",
+              "histology-WSI",
+              "phase-contrast",
+              "DIC",
+              "fluorescence-other",
+              "other"
+            ]
+          }
+        },
+        "dimensionality": {
+          "enum": [
+            "2D",
+            "3D",
+            "2D+t",
+            "3D+t"
+          ]
+        },
+        "voxel_size_nm": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "x",
+            "y",
+            "z"
+          ],
+          "properties": {
+            "x": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "y": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "z": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "exclusiveMinimum": 0
+            }
+          }
+        },
+        "channels": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "organism": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "NCBI taxonomy scientific names, e.g. 'Drosophila melanogaster'"
+        },
+        "sample": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "tissue / cell type / region"
+        },
+        "labels_stains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "formats",
+        "size_bytes",
+        "n_items",
+        "access",
+        "download_url",
+        "download_method"
+      ],
+      "properties": {
+        "formats": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "enum": [
+              "tiff",
+              "ome-tiff",
+              "ome-zarr",
+              "zarr",
+              "n5",
+              "hdf5",
+              "mrc",
+              "png",
+              "jpeg",
+              "czi",
+              "nd2",
+              "lif",
+              "svs",
+              "dicom",
+              "precomputed",
+              "other"
+            ]
+          }
+        },
+        "size_bytes": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "n_items": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "description": "images or volumes"
+        },
+        "access": {
+          "enum": [
+            "open",
+            "registration",
+            "on-request",
+            "restricted"
+          ]
+        },
+        "download_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "download_method": {
+          "enum": [
+            "http",
+            "ftp",
+            "aspera",
+            "s3",
+            "globus",
+            "api",
+            "git-lfs",
+            "other"
+          ]
+        }
+      }
+    },
+    "annotations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "present",
+        "types",
+        "coverage",
+        "format",
+        "source"
+      ],
+      "properties": {
+        "present": {
+          "type": "boolean"
+        },
+        "types": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "semantic-segmentation",
+              "instance-segmentation",
+              "bounding-box",
+              "points",
+              "tracking",
+              "classification",
+              "skeleton",
+              "synapse",
+              "organelle",
+              "restoration-pairs",
+              "counts",
+              "other"
+            ]
+          }
+        },
+        "coverage": {
+          "enum": [
+            "dense",
+            "sparse",
+            "partial",
+            "unknown"
+          ]
+        },
+        "format": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source": {
+          "enum": [
+            "manual",
+            "proofread",
+            "automatic",
+            "mixed",
+            "unknown"
+          ]
+        }
+      }
+    },
+    "ml": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tasks",
+        "splits_provided",
+        "benchmark",
+        "baseline_code_url"
+      ],
+      "properties": {
+        "tasks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "enum": [
+              "segmentation",
+              "detection",
+              "tracking",
+              "classification",
+              "denoising",
+              "super-resolution",
+              "registration",
+              "reconstruction",
+              "self-supervised",
+              "other"
+            ]
+          }
+        },
+        "splits_provided": {
+          "type": "boolean"
+        },
+        "benchmark": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "challenge / leaderboard name"
+        },
+        "baseline_code_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        }
+      }
+    },
+    "license": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "spdx",
+        "url"
+      ],
+      "properties": {
+        "spdx": {
+          "type": "string",
+          "description": "SPDX id (CC-BY-4.0, CC0-1.0, ...) or 'unknown' / 'custom'"
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "discovered_by",
+        "discovered_at",
+        "evidence_urls",
+        "confidence"
+      ],
+      "properties": {
+        "discovered_by": {
+          "enum": [
+            "harvest-repositories",
+            "harvest-literature",
+            "harvest-websearch",
+            "maintainer",
+            "human"
+          ]
+        },
+        "discovered_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_urls": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url_ok",
+        "license_found",
+        "annotations_verified",
+        "last_checked"
+      ],
+      "properties": {
+        "url_ok": {
+          "type": "boolean"
+        },
+        "license_found": {
+          "type": "boolean"
+        },
+        "annotations_verified": {
+          "type": "boolean"
+        },
+        "last_checked": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "notes": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 1000
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "annotations": {
+            "properties": {
+              "present": {
+                "const": false
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "ml": {
+            "properties": {
+              "tasks": {
+                "items": {
+                  "enum": [
+                    "denoising",
+                    "super-resolution",
+                    "self-supervised",
+                    "reconstruction",
+                    "registration",
+                    "other"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
