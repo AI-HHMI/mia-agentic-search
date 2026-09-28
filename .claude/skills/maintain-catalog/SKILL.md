@@ -46,7 +46,7 @@ and on each `claude/harvest-*` branch (`git ls-tree` / `git show`), find each ro
 Flag any routine whose last run is older than 2× its cadence (repositories 1h, literature 3h, websearch 3h).
 
 ## 5. Daily digest (Slack connector)
-Post a single message:
+Post a single message to `#mia-harvester`:
 - **Last 24h:** runs per routine (ok / partial / failed), records proposed, duplicates skipped, errors.
 - **Catalog:** total records on `main`, new records merged in the last 24h.
 - **Review queue:** open `new-datasets` PRs, with how many records each and their age. Stale ones get ⚠.

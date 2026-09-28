@@ -18,7 +18,8 @@ humans review them (merge = accept, close = reject).
 5. **Validate before pushing:** `python tools/validate.py <your files> --run-log <run log> --min-confidence 0.5` must pass.
 6. Never edit or delete records on `main` from a harvest run. Corrections belong to the maintainer routine.
 7. Never push to `main`. Work only on your routine's branch `claude/harvest-<routine>`.
-8. Be polite to servers: ≤ 1 request/second per host, no bulk downloads. Metadata only.
+8. Slack notifications go to **`#mia-harvester`** via the Slack connector. Don't post to any other channel.
+9. Be polite to servers: ≤ 1 request/second per host, no bulk downloads. Metadata only.
 
 ## What counts as "usable"
 A dataset qualifies only if **all** of these hold:

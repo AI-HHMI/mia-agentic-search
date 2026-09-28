@@ -108,7 +108,7 @@ Then `git add state/runs && git commit -m "run log" && git push`.
 In dry-run, just run `python tools/run_log.py finish`.
 
 ## 7. Notify
-If a Slack connector is available, post to the catalog channel **only** when one of these is true:
+If a Slack connector is available, post to `#mia-harvester` **only** when one of these is true:
 - the run status is `failed`,
 - `counts.error ≥ 3`,
 - you added a record with `confidence ≥ 0.9` **and** `annotations.types` containing segmentation, tracking or synapse labels (a "notable find"). Include the title, landing URL and PR link.

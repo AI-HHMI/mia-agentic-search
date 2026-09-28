@@ -35,10 +35,17 @@ maintainer (daily) ── link checks, re-verification, Slack digest
   workflow then adds their keys to `state/rejected.yaml` automatically.
 
 ## Setup
-1. **Push this repo to GitHub.** Enable Pages (Settings → Pages → Source: GitHub Actions) and create
-   the labels `new-datasets` and `maintenance`.
-2. **Slack:** create an incoming webhook for your channel and store it as the repo secret
-   `SLACK_WEBHOOK_URL`. It's used by the watchdog and CI alerts.
+1. **GitHub:** enable Pages (Settings → Pages → Source: GitHub Actions) and create the labels
+   `new-datasets` and `maintenance`.
+2. **Slack** needs two separate connections:
+   - **Incoming webhook**, used by the watchdog and CI alerts in GitHub Actions:
+     1. At <https://api.slack.com/apps>, choose **Create New App → Blank app** and pick your workspace.
+     2. Open **Incoming Webhooks**, turn it on, then **Add New Webhook to Workspace** and pick the channel.
+     3. Copy the webhook URL and save it as the repo secret `SLACK_WEBHOOK_URL`
+        (Settings → Secrets and variables → Actions → New repository secret).
+   - **Slack connector**, used by the routines for notable finds and the daily digest: connect Slack
+     at claude.ai → Settings → Connectors, then enable it on each routine.
+     The channel is `#mia-harvester`; invite the Claude app with `/invite @Claude`.
 3. **Routines** (at claude.ai/code/routines, or `/schedule` in Claude Code): create four, all on
    this repo with the GitHub app installed. Give the cloud environment the setup script
    `pip install -r requirements.txt`, and attach the **Slack connector**.
