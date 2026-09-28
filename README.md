@@ -47,8 +47,10 @@ maintainer (daily) ── link checks, re-verification, Slack digest
      at claude.ai → Settings → Connectors, then enable it on each routine.
      The channel is `#mia-harvester`; invite the Claude app with `/invite @Claude`.
 3. **Routines** (at claude.ai/code/routines, or `/schedule` in Claude Code): create four, all on
-   this repo with the GitHub app installed. Give the cloud environment the setup script
-   `pip install -r requirements.txt`, and attach the **Slack connector**.
+   this repo with the GitHub app installed, and attach the **Slack connector**. Optionally, speed up
+   runs with a cached setup script: routine → ⋯ → Edit → cloud icon below Instructions → gear icon →
+   "Setup script": `pip install pyyaml jsonschema requests`. The script runs outside the repo, so
+   `-r requirements.txt` won't work there. The skills install requirements from the repo on each run anyway.
 
    | Routine name | Schedule | Prompt |
    |---|---|---|
