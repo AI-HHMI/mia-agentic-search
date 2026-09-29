@@ -15,7 +15,7 @@ from tools.collect_runs import collect  # noqa: E402
 from tools.common import ROOT, iter_record_paths, load_yaml  # noqa: E402
 
 TEMPLATE = Path(__file__).resolve().parent / "site_template.html"
-RUN_FIELDS = ("routine", "started_at", "finished_at", "status", "counts", "pr_urls", "pr_url", "duration_s", "dry_run")
+RUN_FIELDS = ("routine", "started_at", "finished_at", "status", "counts", "pr_urls", "pr_url", "duration_s", "dry_run", "stop_reason")
 
 
 def main():

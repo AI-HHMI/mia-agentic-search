@@ -20,6 +20,7 @@ from tools.collect_runs import collect  # noqa: E402
 # Expected cadence in hours; keep in sync with the routine schedules and site_template.html.
 CADENCE_H = {"harvest-repositories": 1, "harvest-literature": 3, "harvest-websearch": 3, "maintainer": 24}
 STALE_FACTOR = 2
+RUN_BUDGET_H = 2  # a run may take up to 2 h, and its log is only pushed when it ends
 FAILED_STREAK = 3
 
 
@@ -38,11 +39,15 @@ def main():
             continue
         last = dt.datetime.fromisoformat(mine[0]["started_at"].replace("Z", "+00:00"))
         age_h = (now - last).total_seconds() / 3600
-        if age_h > STALE_FACTOR * cadence:
-            alerts.append(f":rotating_light: *{routine}* is stale: last run {age_h:.1f} h ago (expected every {cadence} h)")
+        if age_h > STALE_FACTOR * cadence + RUN_BUDGET_H:
+            alerts.append(f":rotating_light: *{routine}* is stale: last run started {age_h:.1f} h ago "
+                          f"(expected every {cadence} h, runs take up to {RUN_BUDGET_H} h)")
         streak = mine[:FAILED_STREAK]
         if len(streak) == FAILED_STREAK and all(r.get("status") in ("failed", "running") for r in streak):
             alerts.append(f":x: *{routine}*: last {FAILED_STREAK} runs failed or never finished")
+        elif len(streak) == FAILED_STREAK and all(not r.get("counts", {}).get("added") for r in streak):
+            alerts.append(f":mag: *{routine}*: last {FAILED_STREAK} runs found no new dataset "
+                          f"({', '.join(r.get('stop_reason') or '?' for r in streak)}); the frontier may need new queries")
 
     if not alerts:
         print("all routines healthy")

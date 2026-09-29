@@ -134,7 +134,8 @@ document.getElementById("health").innerHTML = `<tr><th>Routine</th><th>Status</t
   routines.map(name => {
     const r = latest[name];
     if (!r) return `<tr><td>${esc(name)}</td><td>${statusCell("stale")}</td><td class="empty">never</td></tr>`;
-    const stale = hoursAgo(r.started_at) > 2 * (CADENCE_H[name] || 24);
+    // runs take up to 2 h and their log is pushed at the end, hence the + 2
+    const stale = hoursAgo(r.started_at) > 2 * (CADENCE_H[name] || 24) + 2;
     return `<tr><td>${esc(name)}</td><td>${statusCell(stale ? "stale" : r.status)}</td><td>${fmtTime(r.started_at)}</td></tr>`;
   }).join("");
 
@@ -169,11 +170,11 @@ hbars("anntype", tally(r => r.annotations?.types?.length ? r.annotations.types :
 const prLinks = r => { const urls = r.pr_urls?.length ? r.pr_urls : (r.pr_url ? [r.pr_url] : []);
   return urls.length ? urls.map(u => `<a href="${esc(u)}">#${esc(u.split("/").pop())}</a>`).join(" ") : "—"; };
 document.getElementById("runs").innerHTML = runs.length
-  ? `<tr><th>Started</th><th>Routine</th><th>Status</th><th class="n">Added</th><th class="n">Dupes</th><th class="n">Skipped</th><th class="n">Errors</th><th class="n">Duration</th><th>PRs</th></tr>` +
+  ? `<tr><th>Started</th><th>Routine</th><th>Status</th><th class="n">Added</th><th class="n">Dupes</th><th class="n">Skipped</th><th class="n">Errors</th><th class="n">Duration</th><th>Stopped</th><th>PRs</th></tr>` +
     runs.slice(0, 50).map(r => { const c = r.counts || {};
       return `<tr><td>${fmtTime(r.started_at)}</td><td>${esc(r.routine)}</td><td>${statusCell(r.status)}</td>
         <td class="n">${c.added || 0}</td><td class="n">${c.duplicate || 0}</td><td class="n">${(c.rejected || 0) + (c["low-confidence"] || 0)}</td>
-        <td class="n">${c.error || 0}</td><td class="n">${r.duration_s != null ? Math.round(r.duration_s / 60) + " min" : "—"}</td>
+        <td class="n">${c.error || 0}</td><td class="n">${r.duration_s != null ? Math.round(r.duration_s / 60) + " min" : "—"}</td><td>${esc(r.stop_reason || "—")}</td>
         <td>${prLinks(r)}</td></tr>`; }).join("")
   : `<tr><td class="empty">No runs logged yet.</td></tr>`;
 

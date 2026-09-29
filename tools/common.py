@@ -18,6 +18,8 @@ REJECTED_PATH = STATE_DIR / "rejected.yaml"
 # Automatic rejections live on an unprotected branch, since workflows cannot push to protected main.
 REJECTIONS_REF = "origin/rejections"
 FRONTIER_DIR = STATE_DIR / "frontier"  # one file per routine avoids cross-PR conflicts
+RUN_BUDGET_MIN = 120      # hard upper runtime per agent run
+SEARCH_CUTOFF_MIN = 110   # stop searching here, leaving time to publish PRs and save state
 DATASET_BRANCH_PREFIX = "claude/dataset/"  # one branch + PR per proposed dataset
 STATE_BRANCH_PREFIX = "claude/state/"      # per-routine frontier + run logs, never reviewed
 

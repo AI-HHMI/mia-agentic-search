@@ -5,8 +5,12 @@
     python tools/run_log.py event added --id cremi --pr-url <PR url>
     python tools/run_log.py event duplicate|rejected|low-confidence|error --id X --reason "..."
     python tools/run_log.py query "<source>: <query>"
-    python tools/run_log.py finish [--status ok|partial|failed]
+    python tools/run_log.py continue       # exit 0 = keep searching, 1 = stop (prints why)
+    python tools/run_log.py finish [--status ok|partial|failed] [--stop-reason R]
     python tools/run_log.py show
+
+Runs search until at least one new dataset is published or SEARCH_CUTOFF_MIN is reached;
+the whole run must end within RUN_BUDGET_MIN (tools/common.py).
 
 The active run's path is kept in state/.current_run (git-ignored).
 """
@@ -17,7 +21,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import ROOT, RUNS_DIR, STATE_DIR, utcnow  # noqa: E402
+from tools.common import ROOT, RUN_BUDGET_MIN, RUNS_DIR, SEARCH_CUTOFF_MIN, STATE_DIR, utcnow  # noqa: E402
 
 CURRENT = STATE_DIR / ".current_run"
 EVENTS = ["candidate", "added", "duplicate", "rejected", "low-confidence", "error"]
@@ -31,6 +35,11 @@ def _current():
 
 def _load(p):
     return json.loads(p.read_text())
+
+
+def _elapsed_min(d):
+    t0 = dt.datetime.fromisoformat(d["started_at"].replace("Z", "+00:00"))
+    return (dt.datetime.now(dt.timezone.utc) - t0).total_seconds() / 60
 
 
 def _save(p, d):
@@ -54,6 +63,9 @@ def main():
     e.add_argument("--pr-url", help="for `added`: the dataset's PR")
     fin = sub.add_parser("finish")
     fin.add_argument("--status", choices=["ok", "partial", "failed"])
+    fin.add_argument("--stop-reason", choices=["found", "time-limit", "frontier-exhausted", "error"],
+                     help="default: found if a dataset was added, else time-limit if past the cutoff")
+    sub.add_parser("continue")
     sub.add_parser("show")
     a = ap.parse_args()
 
@@ -79,8 +91,23 @@ def main():
         d["counts"][a.type] += 1
         if a.pr_url:
             d["pr_urls"].append(a.pr_url)
+    elif a.cmd == "continue":
+        mins = _elapsed_min(d)
+        found = d["counts"]["added"] > 0
+        info = {"elapsed_min": round(mins, 1), "search_cutoff_min": SEARCH_CUTOFF_MIN,
+                "budget_min": RUN_BUDGET_MIN, "new_datasets": d["counts"]["added"]}
+        if found:
+            print(json.dumps({**info, "decision": "STOP: found a new dataset; finish the current query, then publish and save state"}))
+            sys.exit(1)
+        if mins >= SEARCH_CUTOFF_MIN:
+            print(json.dumps({**info, "decision": "STOP: search time is up; publish anything valid and save state now"}))
+            sys.exit(1)
+        print(json.dumps({**info, "decision": f"CONTINUE: no new dataset yet; {SEARCH_CUTOFF_MIN - mins:.0f} min of search left"}))
+        return
     elif a.cmd == "finish":
         d["finished_at"] = utcnow()
+        d["stop_reason"] = a.stop_reason or ("found" if d["counts"]["added"] else
+                                             "time-limit" if _elapsed_min(d) >= SEARCH_CUTOFF_MIN else "frontier-exhausted")
         d["status"] = a.status or ("failed" if d["counts"]["error"] and not d["counts"]["added"]
                                    else "partial" if d["counts"]["error"] else "ok")
         t0 = dt.datetime.fromisoformat(d["started_at"].replace("Z", "+00:00"))
@@ -88,7 +115,8 @@ def main():
         d["duration_s"] = int((t1 - t0).total_seconds())
         CURRENT.unlink(missing_ok=True)
     elif a.cmd == "show":
-        print(json.dumps({k: d[k] for k in ("routine", "status", "counts", "started_at")}, indent=2))
+        print(json.dumps({**{k: d.get(k) for k in ("routine", "status", "stop_reason", "counts", "started_at")},
+                          "elapsed_min": round(_elapsed_min(d), 1), "queries_run": len(d["queries"])}, indent=2))
         return
     _save(p, d)
     print(json.dumps(d["counts"]))

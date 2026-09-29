@@ -23,6 +23,9 @@ For each broken record, open its landing page with WebFetch:
 - It's still broken: leave `url_ok: false` and log `event error --id <id> --reason "link broken: <url>"`.
 
 ## 2. Re-verify weak records
+**Time limit: 2 hours per run.** Check `python tools/run_log.py show` (`elapsed_min`) between records, and
+move on to steps 3–5 by 100 minutes at the latest.
+
 Pick up to 5 records where `license_found` or `annotations_verified` is false, `confidence < 0.7`,
 or key fields are empty (`voxel_size_nm`, `publications`, `formats: [other]`).
 Take the oldest `verification.last_checked` first. For each one:
@@ -38,7 +41,7 @@ Never delete records. If a dataset has clearly disappeared, set `data.access: re
 ## 3. Validate and publish (skip git in dry-run)
 ```bash
 python tools/validate.py
-git add datasets state/runs && git commit -m "maintenance: link checks + re-verification" && git push -u origin "$BRANCH" --force
+git add datasets && git commit -m "maintenance: link checks + re-verification" && git push -u origin "$BRANCH" --force
 ```
 Open or update a PR from `claude/maintainer` with the label `maintenance`, listing each change and its reason.
 
@@ -57,4 +60,9 @@ Post a single message to `#mia-harvester`:
 - **Link health:** records checked and how many are broken.
 - **Stale routines:** list them, if any.
 
-Finish with `python tools/run_log.py finish` (then commit and push the run log if not a dry run), and a short summary.
+Finish, **always, even if the run failed:**
+```bash
+python tools/run_log.py finish
+python tools/publish.py state-push --routine maintainer    # run log → claude/state/maintainer; skip in dry-run
+```
+Then write a short summary.

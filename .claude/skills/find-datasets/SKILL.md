@@ -1,6 +1,6 @@
 ---
 name: find-datasets
-description: Harvest run. Search one source family for usable microscopy training datasets, write schema-valid YAML records, and open one PR per dataset. Args are source=repositories|literature|websearch, optionally limit=N (max new datasets, default 5) and dry-run.
+description: Harvest run. Search one source family until at least one new usable microscopy training dataset is found (max 2 h), write schema-valid YAML records, and open one PR per dataset. Args are source=repositories|literature|websearch, optionally limit=N (max new datasets, default 5) and dry-run.
 ---
 
 # find-datasets
@@ -26,9 +26,33 @@ python tools/publish.py state-pull --routine $ROUTINE      # skip in dry-run
 python tools/run_log.py start --routine $ROUTINE           # add --dry-run in dry-run; note the printed path
 ```
 
-## 1. Pick work
-`python tools/frontier.py next --routine $ROUTINE --n 3`. These are your queries for this run.
-Log each one with `run_log.py query "<key>"`.
+## 1. The search loop: keep going until you find something new (max 2 h)
+A run succeeds only if it publishes **at least one dataset that isn't on `main`, has no open PR and
+wasn't rejected**. Duplicates don't count. Work through the frontier **one query at a time**:
+
+```
+while python tools/run_log.py continue; do      # exit 1 = stop (new dataset found, or 110 min used)
+    KEY = python tools/frontier.py next --routine $ROUTINE --fresh      # e.g. ["zenodo: FIB-SEM ground truth"]
+    if KEY is empty: add 3–5 new queries (see "Growing the frontier"), then retry;
+                     if you still have none, stop with --stop-reason frontier-exhausted
+    python tools/run_log.py query "<KEY>"
+    steps 2–5 for this query: search, screen, research, write, publish each new dataset as its own PR
+    python tools/frontier.py touch --routine $ROUTINE --key "<KEY>"     # right after each query
+done
+```
+
+- **Check `run_log.py continue` before every new query**, and also between candidates during a long
+  query. It stops the loop once a new dataset has been published, or once 110 minutes have
+  passed since the run started.
+- **After the first new dataset,** finish publishing the other valid candidates from *the same
+  query* (up to `limit`). Then stop searching.
+- **Hard limit: the whole run ends within 2 hours.** The last 10 minutes are for step 6. At the
+  cutoff, publish any record that already validates, drop half-researched ones (log them as
+  `event error --reason "time limit"`), and go straight to step 6.
+- **Growing the frontier.** When a query only turns up duplicates, try new angles: other
+  repositories, modalities, organisms, annotation types, challenge years, or "papers citing X".
+  Add them with `frontier.py add`, which can add up to 5 per run when the frontier is exhausted.
+  Queries that keep producing only duplicates are fine to keep; the frontier rotates them to the back.
 
 ## 2. Search (per source family)
 - **repositories:** the key is `<client>: <query>`. Run `python -m tools.sources <client> "<query>" --limit 15`.
@@ -47,7 +71,7 @@ this run and go on to the next source.
 
 After **every** WebFetch or API call whose content you rely on, run `python tools/run_log.py fetched <url>`.
 When a page points to a promising new query or portal, run
-`python tools/frontier.py add --routine $ROUTINE --key "<new key>"`. Add at most 3 per run.
+`python tools/frontier.py add --routine $ROUTINE --key "<new key>"`.
 
 ## 3. Screen each candidate
 1. Dedup: `python tools/dedup.py --doi D --repository R --accession A --url U --title "T"`.
@@ -121,21 +145,21 @@ Use `gh pr create --base main --head claude/dataset/<id> --title "$(cat /tmp/pr_
 or the GitHub tooling available in this session. A workflow adds the `new-datasets` label automatically.
 Then log `python tools/run_log.py event added --id <slug> --pr-url <PR url>`.
 
-Stop once you've published `limit` datasets. In dry-run, log `event added --id <slug>` without `--pr-url`.
+Never publish more than `limit` datasets in one run. In dry-run, log `event added --id <slug>` without `--pr-url`.
+That counts as found for `run_log.py continue`.
 
 ## 6. Save state (skip git in dry-run)
 **Always do this, even if the run failed or found nothing.** An unfinished run log stays `running`
 forever, and the watchdog treats that as a failure:
 ```bash
-# for each query you finished:
-python tools/frontier.py touch --routine $ROUTINE --key "<key>"
-python tools/run_log.py finish
+python tools/run_log.py finish          # records stop_reason: found | time-limit | frontier-exhausted
 python tools/publish.py state-push --routine $ROUTINE      # skip in dry-run
 ```
 
 ## 7. Notify
 If a Slack connector is available, post to `#mia-harvester` **only** when one of these is true:
 - the run status is `failed`,
+- the run hit the time limit or exhausted the frontier **without** finding a new dataset,
 - `counts.error ≥ 3`,
 - you added a record with `confidence ≥ 0.9` **and** `annotations.types` containing segmentation,
   tracking or synapse labels (a "notable find"). Include the title, dataset page link and PR link.
@@ -143,4 +167,4 @@ If a Slack connector is available, post to `#mia-harvester` **only** when one of
 Otherwise stay quiet. The maintainer sends a daily digest.
 
 ## 8. Final message
-End with a short summary: the queries run, the counts from `run_log.py show`, and one line per PR opened (title + URL).
+End with a short summary: the queries run, the runtime and stop reason, the counts from `run_log.py show`, and one line per PR opened (title + URL).

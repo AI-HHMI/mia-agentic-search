@@ -26,6 +26,13 @@ maintainer (daily) ── link checks, re-verification, Slack digest
 | `state/runs/*.json` | One structured log per agent run, kept on `claude/state/<routine>` (feeds the dashboard and watchdog) |
 | `state/rejected.yaml` | Keys of datasets you rejected by hand. Automatic rejections go to the `rejections` branch. Agents never propose either again |
 
+## How a run works
+Each harvest run works through its search queue one query at a time. It stops once it has published
+**at least one new dataset**, meaning one not on `main`, not in an open PR and not rejected, or when it
+hits the **2-hour limit** (searching stops at 110 min so there's time to publish and save).
+The dashboard shows each run's stop reason (`found`, `time-limit`, `frontier-exhausted`). The watchdog
+alerts in Slack when a routine goes 3 runs without a new dataset.
+
 ## Review workflow
 - **Every proposed dataset is its own PR** from branch `claude/dataset/<id>`, labeled `new-datasets`
   automatically. It's titled `Add dataset: <short name>`, e.g. *Add dataset: CryoVesNet synaptic vesicles (cryo-ET)*.

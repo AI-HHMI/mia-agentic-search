@@ -1,10 +1,11 @@
 """Rotating search frontier so each run covers new ground (state/frontier/<routine>.yaml).
 
-    python tools/frontier.py next --routine harvest-repositories [--n 3]
+    python tools/frontier.py next --routine harvest-repositories [--n 1] [--fresh]
     python tools/frontier.py touch --routine harvest-repositories --key "zenodo: FIB-SEM"
     python tools/frontier.py add --routine harvest-websearch --key "..."   # agent-proposed follow-up
 
-`next` prints the least recently searched items (never-searched first).
+`next` prints the least recently searched items (never-searched first). With --fresh it skips
+queries already run in the active run log; an empty list means the frontier is exhausted.
 """
 import argparse
 import json
@@ -12,7 +13,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import FRONTIER_DIR, dump_yaml, load_yaml, utcnow  # noqa: E402
+from tools.common import FRONTIER_DIR, ROOT, STATE_DIR, dump_yaml, load_yaml, utcnow  # noqa: E402
 
 MAX_ITEMS = 300
 
@@ -22,7 +23,8 @@ def main():
     ap.add_argument("cmd", choices=["next", "touch", "add"])
     ap.add_argument("--routine", required=True)
     ap.add_argument("--key")
-    ap.add_argument("--n", type=int, default=3)
+    ap.add_argument("--n", type=int, default=1)
+    ap.add_argument("--fresh", action="store_true", help="skip queries already run in the active run")
     a = ap.parse_args()
 
     path = FRONTIER_DIR / f"{a.routine}.yaml"
@@ -30,7 +32,11 @@ def main():
 
     if a.cmd == "next":
         items.sort(key=lambda i: i.get("last_searched") or "")
-        print(json.dumps([i["key"] for i in items[: a.n]]))
+        done = set()
+        current = STATE_DIR / ".current_run"
+        if a.fresh and current.exists():
+            done = set(json.loads((ROOT / current.read_text().strip()).read_text()).get("queries", []))
+        print(json.dumps([i["key"] for i in items if i["key"] not in done][: a.n]))
         return
     if not a.key:
         ap.error("--key required")
