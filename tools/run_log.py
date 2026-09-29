@@ -2,10 +2,10 @@
 
     python tools/run_log.py start --routine harvest-repositories
     python tools/run_log.py fetched <url> [<url> ...]
-    python tools/run_log.py event added --id cremi [--reason "..."]
+    python tools/run_log.py event added --id cremi --pr-url <PR url>
     python tools/run_log.py event duplicate|rejected|low-confidence|error --id X --reason "..."
     python tools/run_log.py query "<source>: <query>"
-    python tools/run_log.py finish [--status ok|partial|failed] [--pr-url URL]
+    python tools/run_log.py finish [--status ok|partial|failed]
     python tools/run_log.py show
 
 The active run's path is kept in state/.current_run (git-ignored).
@@ -51,9 +51,9 @@ def main():
     e.add_argument("type", choices=EVENTS)
     e.add_argument("--id")
     e.add_argument("--reason")
+    e.add_argument("--pr-url", help="for `added`: the dataset's PR")
     fin = sub.add_parser("finish")
     fin.add_argument("--status", choices=["ok", "partial", "failed"])
-    fin.add_argument("--pr-url")
     sub.add_parser("show")
     a = ap.parse_args()
 
@@ -63,7 +63,7 @@ def main():
         p = RUNS_DIR / f"{a.routine}-{started.replace(':', '').replace('-', '')}.json"
         _save(p, {"routine": a.routine, "started_at": started, "finished_at": None, "status": "running",
                   "dry_run": a.dry_run, "queries": [], "fetched_urls": [], "events": [],
-                  "counts": {k: 0 for k in EVENTS}, "pr_url": None})
+                  "counts": {k: 0 for k in EVENTS}, "pr_urls": []})
         CURRENT.write_text(str(p.relative_to(ROOT)))
         print(p.relative_to(ROOT))
         return
@@ -75,13 +75,14 @@ def main():
     elif a.cmd == "query":
         d["queries"].append(a.text)
     elif a.cmd == "event":
-        d["events"].append({"type": a.type, "id": a.id, "reason": a.reason, "at": utcnow()})
+        d["events"].append({"type": a.type, "id": a.id, "reason": a.reason, "pr_url": a.pr_url, "at": utcnow()})
         d["counts"][a.type] += 1
+        if a.pr_url:
+            d["pr_urls"].append(a.pr_url)
     elif a.cmd == "finish":
         d["finished_at"] = utcnow()
         d["status"] = a.status or ("failed" if d["counts"]["error"] and not d["counts"]["added"]
                                    else "partial" if d["counts"]["error"] else "ok")
-        d["pr_url"] = a.pr_url
         t0 = dt.datetime.fromisoformat(d["started_at"].replace("Z", "+00:00"))
         t1 = dt.datetime.fromisoformat(d["finished_at"].replace("Z", "+00:00"))
         d["duration_s"] = int((t1 - t0).total_seconds())

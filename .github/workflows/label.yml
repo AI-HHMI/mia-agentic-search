@@ -1,0 +1,16 @@
+name: label-agent-prs
+# Agents can't reliably add labels themselves, so label their PRs by branch name.
+on:
+  pull_request:
+    types: [opened, reopened]
+permissions:
+  pull-requests: write
+jobs:
+  label:
+    if: startsWith(github.head_ref, 'claude/dataset/') || startsWith(github.head_ref, 'claude/maintainer')
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          LABEL: ${{ startsWith(github.head_ref, 'claude/dataset/') && 'new-datasets' || 'maintenance' }}
+        run: gh pr edit ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --add-label "$LABEL"

@@ -4,8 +4,10 @@
     python tools/dedup.py --repository EMPIAR --accession EMPIAR-10311
     python tools/dedup.py --url https://cremi.org/ --title "CREMI challenge"
 
-Prints JSON {"status": "new" | "duplicate" | "rejected" | "possible-duplicate", "matches": [...]}.
-Exit code 0 = new, 1 = duplicate/rejected, 3 = possible duplicate (check manually).
+Checks main, the rejected list, and datasets already proposed on open claude/dataset/* branches
+(run `git fetch origin` first).
+Prints JSON {"status": "new" | "duplicate" | "pending" | "rejected" | "possible-duplicate", "matches": [...]}.
+Exit code 0 = new, 1 = duplicate/pending/rejected, 3 = possible duplicate (check manually).
 """
 import argparse
 import difflib
@@ -14,7 +16,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import (load_rejected, ROOT, identity_keys, iter_record_paths,  # noqa: E402
+from tools.common import (load_rejected, pending_records, ROOT, identity_keys, iter_record_paths,  # noqa: E402
                           load_yaml, normalize_title)
 
 FUZZY = 0.85
@@ -37,6 +39,12 @@ def main():
     rejected = set(load_rejected())
     if keys & rejected:
         print(json.dumps({"status": "rejected", "matches": sorted(keys & rejected)}))
+        sys.exit(1)
+
+    pending = [{"branch": b, "keys": sorted(keys & set(identity_keys(r)))}
+               for b, r in pending_records().items() if keys & set(identity_keys(r))]
+    if pending:
+        print(json.dumps({"status": "pending", "matches": pending}))
         sys.exit(1)
 
     exact, fuzzy = [], []

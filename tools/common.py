@@ -18,6 +18,37 @@ REJECTED_PATH = STATE_DIR / "rejected.yaml"
 # Automatic rejections live on an unprotected branch, since workflows cannot push to protected main.
 REJECTIONS_REF = "origin/rejections"
 FRONTIER_DIR = STATE_DIR / "frontier"  # one file per routine avoids cross-PR conflicts
+DATASET_BRANCH_PREFIX = "claude/dataset/"  # one branch + PR per proposed dataset
+STATE_BRANCH_PREFIX = "claude/state/"      # per-routine frontier + run logs, never reviewed
+
+# Confidence = estimated probability that a reviewer checking the cited sources finds every field
+# correct AND the dataset usable for training as described. Caps tie the number to verification.
+CONFIDENCE_BANDS = [(0.85, "High"), (0.65, "Medium"), (0.5, "Low"), (0.0, "Very low")]
+CONFIDENCE_CAPS = [("url_ok", 0.5, "landing page not reachable"),
+                   ("license_found", 0.7, "no license found"),
+                   ("annotations_verified", 0.85, "annotation files not seen in a file listing")]
+
+
+def confidence_band(value):
+    return next(label for floor, label in CONFIDENCE_BANDS if value >= floor)
+
+
+def git(*args, check=False):
+    out = subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, check=check)
+    return out.stdout if out.returncode == 0 else ""
+
+
+def pending_records():
+    """Records proposed on open claude/dataset/* branches but not yet on main: {branch: record}."""
+    found = {}
+    for ref in git("for-each-ref", "--format=%(refname:short)", f"refs/remotes/origin/{DATASET_BRANCH_PREFIX}").split():
+        for path in git("diff", "--name-only", "--diff-filter=A", f"origin/main...{ref}", "--", "datasets/").split():
+            if path.endswith(".yaml"):
+                try:
+                    found[ref.removeprefix("origin/")] = yaml.load(git("show", f"{ref}:{path}"), Loader=_NoDatesLoader) or {}
+                except yaml.YAMLError:
+                    pass
+    return found
 
 
 class _NoDatesLoader(yaml.SafeLoader):
@@ -40,10 +71,9 @@ def load_rejected():
     keys = []
     if REJECTED_PATH.exists():
         keys += (load_yaml(REJECTED_PATH) or {}).get("rejected") or []
-    out = subprocess.run(["git", "show", f"{REJECTIONS_REF}:state/rejected.yaml"], cwd=ROOT,
-                         capture_output=True, text=True, check=False)
-    if out.returncode == 0:
-        keys += (yaml.load(out.stdout, Loader=_NoDatesLoader) or {}).get("rejected") or []
+    remote = git("show", f"{REJECTIONS_REF}:state/rejected.yaml")
+    if remote:
+        keys += (yaml.load(remote, Loader=_NoDatesLoader) or {}).get("rejected") or []
     return list(dict.fromkeys(keys))
 
 

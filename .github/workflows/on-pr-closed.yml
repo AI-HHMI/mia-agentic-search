@@ -7,7 +7,10 @@ permissions:
 concurrency: { group: rejections, cancel-in-progress: false }
 jobs:
   reject:
-    if: github.event.pull_request.merged == false && contains(github.event.pull_request.labels.*.name, 'new-datasets')
+    if: >-
+      github.event.pull_request.merged == false &&
+      (startsWith(github.event.pull_request.head.ref, 'claude/dataset/') ||
+       contains(github.event.pull_request.labels.*.name, 'new-datasets'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

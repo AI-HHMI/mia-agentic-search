@@ -22,18 +22,23 @@ maintainer (daily) ── link checks, re-verification, Slack digest
 | `.claude/skills/find-datasets/` | Harvest procedure (`/find-datasets source=...`) |
 | `.claude/skills/maintain-catalog/` | Daily upkeep and digest (`/maintain-catalog`) |
 | `tools/` | Validator, dedup, record skeleton, run log, frontier, repository API clients, dashboard, watchdog |
-| `state/frontier/<routine>.yaml` | Rotating search queue for each routine |
-| `state/runs/*.json` | One structured log per agent run (feeds the dashboard and watchdog) |
+| `state/frontier/<routine>.yaml` | Seed search queue for each routine. The live copy is on branch `claude/state/<routine>` |
+| `state/runs/*.json` | One structured log per agent run, kept on `claude/state/<routine>` (feeds the dashboard and watchdog) |
 | `state/rejected.yaml` | Keys of datasets you rejected by hand. Automatic rejections go to the `rejections` branch. Agents never propose either again |
 
 ## Review workflow
-- Each harvest routine keeps **one** open PR, `claude/harvest-<source>` labeled `new-datasets`,
-  and adds to it on every run. The PR body lists every pending record.
-- **Merge** to accept all records in the PR.
-- To **reject a single record**, delete its file in the PR and add its `id` to `state/rejected.yaml`.
-- **Close** the PR without merging to reject every record in it. The `record-rejections`
-  workflow then adds their keys to `state/rejected.yaml` on the unprotected `rejections` branch
-  (`main` is protected, so workflows can't push to it).
+- **Every proposed dataset is its own PR** from branch `claude/dataset/<id>`, labeled `new-datasets`
+  automatically. The title summarizes it:
+  `Add dataset: <title> (<modality> · <annotation types> · <repository> <accession>)`.
+- **The PR body links to the dataset page and download**, and shows key metadata, the agent's
+  **confidence** with a written reason, a checklist of what the agent verified, and the sources it read.
+- **Merge** to accept. **Close** to reject: the `record-rejections` workflow adds the dataset's keys
+  to `state/rejected.yaml` on the unprotected `rejections` branch (`main` is protected), and agents
+  never propose it again.
+- To fix a field before accepting, edit the YAML file in the PR, then merge.
+- **What confidence means:** the probability that you'll find every field correct *and* the dataset
+  usable for training once you check the sources. High ≥ 0.85, Medium 0.65–0.85, Low 0.5–0.65.
+  See `CLAUDE.md`.
 
 ## Setup
 1. **GitHub:** enable Pages (Settings → Pages → Source: GitHub Actions) and create the labels

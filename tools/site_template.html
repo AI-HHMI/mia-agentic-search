@@ -165,14 +165,16 @@ hbars("anntype", tally(r => r.annotations?.types?.length ? r.annotations.types :
   el.querySelectorAll(".hit").forEach((h, i) => bindTip(h, `Week of ${fmt(buckets[i].from)}: <b>${buckets[i].n}</b> new`));
 })();
 
-// Runs table
+// Runs table (older logs have a single pr_url; newer ones one PR per dataset in pr_urls)
+const prLinks = r => { const urls = r.pr_urls?.length ? r.pr_urls : (r.pr_url ? [r.pr_url] : []);
+  return urls.length ? urls.map(u => `<a href="${esc(u)}">#${esc(u.split("/").pop())}</a>`).join(" ") : "—"; };
 document.getElementById("runs").innerHTML = runs.length
-  ? `<tr><th>Started</th><th>Routine</th><th>Status</th><th class="n">Added</th><th class="n">Dupes</th><th class="n">Skipped</th><th class="n">Errors</th><th class="n">Duration</th><th>PR</th></tr>` +
+  ? `<tr><th>Started</th><th>Routine</th><th>Status</th><th class="n">Added</th><th class="n">Dupes</th><th class="n">Skipped</th><th class="n">Errors</th><th class="n">Duration</th><th>PRs</th></tr>` +
     runs.slice(0, 50).map(r => { const c = r.counts || {};
       return `<tr><td>${fmtTime(r.started_at)}</td><td>${esc(r.routine)}</td><td>${statusCell(r.status)}</td>
         <td class="n">${c.added || 0}</td><td class="n">${c.duplicate || 0}</td><td class="n">${(c.rejected || 0) + (c["low-confidence"] || 0)}</td>
         <td class="n">${c.error || 0}</td><td class="n">${r.duration_s != null ? Math.round(r.duration_s / 60) + " min" : "—"}</td>
-        <td>${r.pr_url ? `<a href="${esc(r.pr_url)}">PR</a>` : "—"}</td></tr>`; }).join("")
+        <td>${prLinks(r)}</td></tr>`; }).join("")
   : `<tr><td class="empty">No runs logged yet.</td></tr>`;
 
 // Catalog table

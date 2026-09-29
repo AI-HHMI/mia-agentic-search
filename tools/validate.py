@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import (load_rejected, DATASETS_DIR, identity_keys, iter_record_paths,  # noqa: E402
+from tools.common import (CONFIDENCE_CAPS, load_rejected, DATASETS_DIR, identity_keys, iter_record_paths,  # noqa: E402
                           load_yaml, normalize_title, normalize_url, rel, validator)
 
 FUZZY_TITLE_THRESHOLD = 0.92
@@ -75,6 +75,11 @@ def main():
                 if k in rejected:
                     errs.append(f"{k} was rejected (state/rejected.yaml or rejections branch)")
             conf = (rec.get("provenance") or {}).get("confidence")
+            ver = rec.get("verification") or {}
+            if isinstance(conf, (int, float)):
+                for flag, cap, why in CONFIDENCE_CAPS:
+                    if ver.get(flag) is False and conf > cap:
+                        errs.append(f"confidence {conf} exceeds cap {cap} ({why}: verification.{flag}=false)")
             if a.min_confidence is not None and isinstance(conf, (int, float)) and conf < a.min_confidence:
                 errs.append(f"confidence {conf} < {a.min_confidence}")
             if fetched is not None:

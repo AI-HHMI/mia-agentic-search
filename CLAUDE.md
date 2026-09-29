@@ -14,10 +14,12 @@ humans review them (merge = accept, close = reject).
 3. **Every URL in `provenance.evidence_urls` must be logged** with `tools/run_log.py fetched`.
    CI rejects records citing pages you never logged.
 4. **Dedup before writing:** run `python tools/dedup.py --doi ... --repository ... --accession ... --url ... --title ...`.
-   `duplicate`/`rejected` → skip and log it. `possible-duplicate` → open both pages and decide.
+   `duplicate`/`pending`/`rejected` → skip and log it. `possible-duplicate` → open both pages and decide.
 5. **Validate before pushing:** `python tools/validate.py <your files> --run-log <run log> --min-confidence 0.5` must pass.
 6. Never edit or delete records on `main` from a harvest run. Corrections belong to the maintainer routine.
-7. Never push to `main`. Work only on your routine's branch `claude/harvest-<routine>`.
+7. Never push to `main`. **One dataset per PR:** publish each record with `tools/publish.py dataset`
+   (branch `claude/dataset/<id>`), and use `tools/pr_text.py` for the PR title and body, verbatim.
+   Search state goes to `claude/state/<routine>` via `tools/publish.py state-push`.
 8. Slack notifications go to **`#mia-harvester`** via the Slack connector. Don't post to any other channel.
 9. Be polite to servers: ≤ 1 request/second per host, no bulk downloads. Metadata only.
 
@@ -35,11 +37,23 @@ A dataset qualifies only if **all** of these hold:
 
 Log anything that fails these checks as `run_log.py event rejected --reason "..."`. Don't write a record for it.
 
-## Confidence guide
-- 0.9–1.0: landing page and data listing both checked; annotations confirmed in the file list.
-- 0.7–0.9: landing page checked; annotations described but files not listed.
-- 0.5–0.7: important facts are inferred from the paper only, or the license is unknown.
-- < 0.5: don't propose. Log it as `low-confidence` instead.
+## Confidence: what the number means
+`provenance.confidence` = **the probability that a reviewer who checks the cited sources finds every
+field in the record correct *and* the dataset really usable for training as described.**
+It is not a quality or usefulness score for the dataset.
+
+| Band | Range | Typical evidence |
+|---|---|---|
+| High | ≥ 0.85 | Landing page and file listing checked, annotation files seen, license read |
+| Medium | 0.65–0.85 | Landing page checked; annotations described but files not seen, or some key facts missing |
+| Low | 0.5–0.65 | Important facts come only from the paper, or the license is unknown |
+| (don't propose) | < 0.5 | Log it as `low-confidence` instead |
+
+The validator enforces these caps: `url_ok: false` → max 0.5, `license_found: false` → max 0.7,
+`annotations_verified: false` → max 0.85.
+
+Always write `provenance.confidence_rationale`: 1–3 sentences on what was verified directly, what
+was inferred, and what is still unknown. It is shown to reviewers in the PR.
 
 ## Field conventions
 - `id`: lowercase slug. Put the accession first when there is one, e.g. `empiar-10311-hela-fib-sem`, `s-biad2822-vem-nuclei`.
@@ -58,6 +72,8 @@ Log anything that fails these checks as `run_log.py event rejected --reason "...
 | `python tools/new_record.py --id ID --repository REPO --by ROUTINE` | schema skeleton ("TODO" fields must be replaced) |
 | `python tools/validate.py [paths] [--run-log F] [--min-confidence 0.5]` | schema + catalog rules |
 | `python tools/run_log.py start\|query\|fetched\|event\|finish` | structured run log (monitoring) |
+| `python tools/publish.py state-pull\|state-push --routine R` / `dataset <file>` | restore/save search state; push one record to its own branch |
+| `python tools/pr_text.py <file> --title\|--body [--run-log F]` | PR title and body for a record (use verbatim) |
 | `python tools/check_links.py [--oldest N] [--write]` | link rot check |
 | `python tools/build_site.py` | build dashboard into `site/` |
 

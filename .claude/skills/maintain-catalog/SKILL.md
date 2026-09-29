@@ -26,7 +26,8 @@ For each broken record, open its landing page with WebFetch:
 Pick up to 5 records where `license_found` or `annotations_verified` is false, or `confidence < 0.7`.
 Take the oldest `verification.last_checked` first. For each one:
 1. Re-fetch its sources and fill in facts that are now confirmed.
-2. Raise `confidence` only when the evidence supports it.
+2. Raise `confidence` only when the evidence supports it (caps and meaning in CLAUDE.md), and rewrite
+   `provenance.confidence_rationale` to match what is now verified.
 3. Update `last_checked`.
 
 Never delete records. If a dataset has clearly disappeared, set `data.access: restricted`,
@@ -41,15 +42,16 @@ Open or update a PR from `claude/maintainer` with the label `maintenance`, listi
 
 ## 4. Review queue health
 List the open PRs labeled `new-datasets` (with `gh pr list --label new-datasets --json number,title,createdAt,url` or the GitHub tools available).
-Note any PR open longer than 7 days. Then check freshness: from `state/runs/*.json` on `origin/main`
-and on each `claude/harvest-*` branch (`git ls-tree` / `git show`), find each routine's latest run.
+Note any PR open longer than 7 days. Then check freshness: run `git fetch origin` and
+`python -m tools.collect_runs`, which reads run logs from `main` and every `claude/state/*` branch.
+Find each routine's latest run.
 Flag any routine whose last run is older than 2× its cadence (repositories 1h, literature 3h, websearch 3h).
 
 ## 5. Daily digest (Slack connector)
 Post a single message to `#mia-harvester`:
 - **Last 24h:** runs per routine (ok / partial / failed), records proposed, duplicates skipped, errors.
 - **Catalog:** total records on `main`, new records merged in the last 24h.
-- **Review queue:** open `new-datasets` PRs, with how many records each and their age. Stale ones get ⚠.
+- **Review queue:** number of open `new-datasets` PRs (one dataset each) and the oldest ones' ages. Stale ones get ⚠.
 - **Link health:** records checked and how many are broken.
 - **Stale routines:** list them, if any.
 

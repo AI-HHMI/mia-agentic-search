@@ -18,7 +18,7 @@ TODO = "TODO"
 def skeleton(rec_id, repository, discovered_by):
     now = utcnow()
     return {
-        "schema_version": "1.0",
+        "schema_version": "1.1",
         "id": rec_id,
         "title": TODO,
         "description": TODO,
@@ -38,7 +38,8 @@ def skeleton(rec_id, repository, discovered_by):
         "ml": {"tasks": [TODO], "splits_provided": False, "benchmark": None, "baseline_code_url": None},
         "license": {"spdx": "unknown", "url": None},
         "provenance": {"discovered_by": discovered_by, "discovered_at": now,
-                       "evidence_urls": [TODO], "confidence": TODO},
+                       "evidence_urls": [TODO], "confidence": TODO,
+                       "confidence_rationale": TODO},
         "verification": {"url_ok": False, "license_found": False, "annotations_verified": False,
                          "last_checked": now},
         "notes": None,

@@ -10,18 +10,23 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     steps:
       - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }   # the dataset-PR check diffs against the base branch
       - uses: actions/setup-python@v5
         with: { python-version: "3.12", cache: pip }
       - run: pip install -r requirements.txt
       - run: git fetch --no-tags origin rejections:refs/remotes/origin/rejections || true
       - name: Validate whole catalog (main + this PR)
         run: python tools/validate.py
-      - name: Harvest PRs require confidence >= 0.5 on new records
-        if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'claude/harvest-')
+      - name: Dataset PRs add exactly one record with confidence >= 0.5
+        if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'claude/dataset/')
         run: |
           git fetch --no-tags origin "${{ github.base_ref }}"
-          files=$(git diff --name-only --diff-filter=AM "origin/${{ github.base_ref }}"...HEAD -- datasets/ | grep '\.yaml$' || true)
-          [ -z "$files" ] || python tools/validate.py $files --min-confidence 0.5
+          changed=$(git diff --name-only "origin/${{ github.base_ref }}"...HEAD)
+          echo "changed files:"; echo "$changed"
+          if [ "$(echo "$changed" | grep -c .)" != 1 ] || ! echo "$changed" | grep -q '^datasets/.*\.yaml$'; then
+            echo "::error::a dataset PR must change exactly one file under datasets/"; exit 1
+          fi
+          python tools/validate.py $changed --min-confidence 0.5
       - name: Slack alert on failure
         if: failure() && env.SLACK_WEBHOOK_URL != ''
         run: |
