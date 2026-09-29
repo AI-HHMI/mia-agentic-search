@@ -61,6 +61,10 @@ a { color: var(--series-1); }
 .st-ok .dot { background: var(--good); } .st-partial .dot { background: var(--warning); }
 .st-failed .dot, .st-stale .dot { background: var(--critical); } .st-running .dot { background: var(--text-muted); }
 .chip { display: inline-block; padding: 1px 7px; border: 1px solid var(--border); border-radius: 999px; font-size: 12px; color: var(--text-secondary); margin: 1px 2px 1px 0; }
+button.more { margin-top: 12px; padding: 7px 14px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--surface-0); color: var(--text-primary); font: inherit; cursor: pointer; }
+button.more:hover { border-color: var(--text-muted); }
+button.more:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; }
 input[type=search] { width: 100%; max-width: 360px; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--border);
   background: var(--surface-0); color: var(--text-primary); font: inherit; margin-bottom: 12px; }
 #tip { position: fixed; pointer-events: none; background: var(--surface-1); color: var(--text-primary); border: 1px solid var(--border);
@@ -83,6 +87,7 @@ input[type=search] { width: 100%; max-width: 360px; padding: 7px 10px; border-ra
   <section class="card" style="margin-bottom:16px">
     <h2>Recent agent runs</h2>
     <div class="scroll"><table id="runs"></table></div>
+    <button type="button" id="runs-more" class="more" aria-controls="runs" hidden></button>
   </section>
   <section class="card">
     <h2>Catalog</h2>
@@ -169,14 +174,25 @@ hbars("anntype", tally(r => r.annotations?.types?.length ? r.annotations.types :
 // Runs table (older logs have a single pr_url; newer ones one PR per dataset in pr_urls)
 const prLinks = r => { const urls = r.pr_urls?.length ? r.pr_urls : (r.pr_url ? [r.pr_url] : []);
   return urls.length ? urls.map(u => `<a href="${esc(u)}">#${esc(u.split("/").pop())}</a>`).join(" ") : "—"; };
-document.getElementById("runs").innerHTML = runs.length
-  ? `<tr><th>Started</th><th>Routine</th><th>Status</th><th class="n">Added</th><th class="n">Dupes</th><th class="n">Skipped</th><th class="n">Errors</th><th class="n">Duration</th><th>Stopped</th><th>PRs</th></tr>` +
-    runs.slice(0, 50).map(r => { const c = r.counts || {};
-      return `<tr><td>${fmtTime(r.started_at)}</td><td>${esc(r.routine)}</td><td>${statusCell(r.status)}</td>
-        <td class="n">${c.added || 0}</td><td class="n">${c.duplicate || 0}</td><td class="n">${(c.rejected || 0) + (c["low-confidence"] || 0)}</td>
-        <td class="n">${c.error || 0}</td><td class="n">${r.duration_s != null ? Math.round(r.duration_s / 60) + " min" : "—"}</td><td>${esc(r.stop_reason || "—")}</td>
-        <td>${prLinks(r)}</td></tr>`; }).join("")
-  : `<tr><td class="empty">No runs logged yet.</td></tr>`;
+const RUNS_INITIAL = 10;
+let runsExpanded = false;
+function renderRuns() {
+  const shown = runsExpanded ? runs : runs.slice(0, RUNS_INITIAL);
+  document.getElementById("runs").innerHTML = runs.length
+    ? `<tr><th>Started</th><th>Routine</th><th>Status</th><th class="n">Added</th><th class="n">Dupes</th><th class="n">Skipped</th><th class="n">Errors</th><th class="n">Duration</th><th>Stopped</th><th>PRs</th></tr>` +
+      shown.map(r => { const c = r.counts || {};
+        return `<tr><td>${fmtTime(r.started_at)}</td><td>${esc(r.routine)}</td><td>${statusCell(r.status)}</td>
+          <td class="n">${c.added || 0}</td><td class="n">${c.duplicate || 0}</td><td class="n">${(c.rejected || 0) + (c["low-confidence"] || 0)}</td>
+          <td class="n">${c.error || 0}</td><td class="n">${r.duration_s != null ? Math.round(r.duration_s / 60) + " min" : "—"}</td><td>${esc(r.stop_reason || "—")}</td>
+          <td>${prLinks(r)}</td></tr>`; }).join("")
+    : `<tr><td class="empty">No runs logged yet.</td></tr>`;
+  const btn = document.getElementById("runs-more");
+  btn.hidden = runs.length <= RUNS_INITIAL;
+  btn.textContent = runsExpanded ? "Show less" : `Show more (${runs.length - RUNS_INITIAL} older runs)`;
+  btn.setAttribute("aria-expanded", String(runsExpanded));
+}
+document.getElementById("runs-more").addEventListener("click", () => { runsExpanded = !runsExpanded; renderRuns(); });
+renderRuns();
 
 // Catalog table
 function renderCatalog(q) {
