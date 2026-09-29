@@ -2,6 +2,7 @@
 import datetime as dt
 import json
 import re
+import subprocess
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -14,6 +15,8 @@ DATASETS_DIR = ROOT / "datasets"
 STATE_DIR = ROOT / "state"
 RUNS_DIR = STATE_DIR / "runs"
 REJECTED_PATH = STATE_DIR / "rejected.yaml"
+# Automatic rejections live on an unprotected branch, since workflows cannot push to protected main.
+REJECTIONS_REF = "origin/rejections"
 FRONTIER_DIR = STATE_DIR / "frontier"  # one file per routine avoids cross-PR conflicts
 
 
@@ -30,6 +33,18 @@ _NoDatesLoader.yaml_implicit_resolvers = {
 def load_yaml(path):
     with open(path) as f:
         return yaml.load(f, Loader=_NoDatesLoader)
+
+
+def load_rejected():
+    """Rejected keys: state/rejected.yaml in the working tree (manual) + the rejections branch (automatic)."""
+    keys = []
+    if REJECTED_PATH.exists():
+        keys += (load_yaml(REJECTED_PATH) or {}).get("rejected") or []
+    out = subprocess.run(["git", "show", f"{REJECTIONS_REF}:state/rejected.yaml"], cwd=ROOT,
+                         capture_output=True, text=True, check=False)
+    if out.returncode == 0:
+        keys += (yaml.load(out.stdout, Loader=_NoDatesLoader) or {}).get("rejected") or []
+    return list(dict.fromkeys(keys))
 
 
 def dump_yaml(data, path):

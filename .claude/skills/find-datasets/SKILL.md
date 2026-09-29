@@ -50,6 +50,10 @@ Log each one with `run_log.py query "<key>"`.
 - **websearch:** use WebSearch and WebFetch on portals, challenge sites, lab pages and curated
   lists. From a list page, pull out the individual datasets. One dataset is one record.
 
+If a host is blocked by the sandbox network policy (`403` on `CONNECT`, or a proxy error), log it once:
+`run_log.py event error --reason "network blocked: <host>"`. Then skip that host's other queries in
+this run and go on to the next source.
+
 After **every** WebFetch or API call whose content you rely on, run `python tools/run_log.py fetched <url>`.
 When a page points to a promising new query or portal, run
 `python tools/frontier.py add --routine $ROUTINE --key "<new key>"`. Add at most 3 per run.
@@ -101,9 +105,15 @@ available in this session:
   Also include this reviewer note: *merge = accept all; to reject one record, delete its file in the PR
   and add its id to `state/rejected.yaml`; closing the PR rejects every record in it*.
 
-If a PR already exists, update its body with the refreshed table.
-Record the PR URL: `python tools/run_log.py finish --pr-url <url>`.
-Then `git add state/runs && git commit -m "run log" && git push`.
+If a PR already exists, update its body with the refreshed table. If no records on the branch are
+missing from `main`, skip the PR.
+
+**Always close the run log, even if the run failed or there's no PR.** An unfinished log stays
+`running` forever, and the watchdog treats that as a failure:
+```bash
+python tools/run_log.py finish [--pr-url <url>]    # omit --pr-url when there is no PR
+git add state/runs && git commit -m "run log" && git push
+```
 
 In dry-run, just run `python tools/run_log.py finish`.
 

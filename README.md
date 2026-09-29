@@ -24,7 +24,7 @@ maintainer (daily) ── link checks, re-verification, Slack digest
 | `tools/` | Validator, dedup, record skeleton, run log, frontier, repository API clients, dashboard, watchdog |
 | `state/frontier/<routine>.yaml` | Rotating search queue for each routine |
 | `state/runs/*.json` | One structured log per agent run (feeds the dashboard and watchdog) |
-| `state/rejected.yaml` | Keys of rejected datasets; agents never propose these again |
+| `state/rejected.yaml` | Keys of datasets you rejected by hand. Automatic rejections go to the `rejections` branch. Agents never propose either again |
 
 ## Review workflow
 - Each harvest routine keeps **one** open PR, `claude/harvest-<source>` labeled `new-datasets`,
@@ -32,7 +32,8 @@ maintainer (daily) ── link checks, re-verification, Slack digest
 - **Merge** to accept all records in the PR.
 - To **reject a single record**, delete its file in the PR and add its `id` to `state/rejected.yaml`.
 - **Close** the PR without merging to reject every record in it. The `record-rejections`
-  workflow then adds their keys to `state/rejected.yaml` automatically.
+  workflow then adds their keys to `state/rejected.yaml` on the unprotected `rejections` branch
+  (`main` is protected, so workflows can't push to it).
 
 ## Setup
 1. **GitHub:** enable Pages (Settings → Pages → Source: GitHub Actions) and create the labels

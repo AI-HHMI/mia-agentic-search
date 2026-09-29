@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import (REJECTED_PATH, ROOT, identity_keys, iter_record_paths,  # noqa: E402
+from tools.common import (load_rejected, ROOT, identity_keys, iter_record_paths,  # noqa: E402
                           load_yaml, normalize_title)
 
 FUZZY = 0.85
@@ -34,7 +34,7 @@ def main():
     if not keys and not a.title:
         ap.error("give at least one of --doi, --accession, --url, --title")
 
-    rejected = set((load_yaml(REJECTED_PATH) or {}).get("rejected", [])) if REJECTED_PATH.exists() else set()
+    rejected = set(load_rejected())
     if keys & rejected:
         print(json.dumps({"status": "rejected", "matches": sorted(keys & rejected)}))
         sys.exit(1)

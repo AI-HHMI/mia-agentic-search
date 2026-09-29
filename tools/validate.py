@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import (DATASETS_DIR, REJECTED_PATH, identity_keys, iter_record_paths,  # noqa: E402
+from tools.common import (load_rejected, DATASETS_DIR, identity_keys, iter_record_paths,  # noqa: E402
                           load_yaml, normalize_title, normalize_url, rel, validator)
 
 FUZZY_TITLE_THRESHOLD = 0.92
@@ -43,7 +43,7 @@ def main():
     v = validator()
     targets = list(iter_record_paths(a.paths))
     all_paths = list(iter_record_paths([DATASETS_DIR]))
-    rejected = set((load_yaml(REJECTED_PATH) or {}).get("rejected", [])) if REJECTED_PATH.exists() else set()
+    rejected = set(load_rejected())
     fetched = None
     if a.run_log:
         fetched = {normalize_url(u) for u in json.loads(Path(a.run_log).read_text()).get("fetched_urls", [])}
@@ -70,10 +70,10 @@ def main():
         errs = check_record(p, rec, v)
         if isinstance(rec, dict):
             if rec.get("id") in rejected:
-                errs.append(f"id {rec['id']!r} is in state/rejected.yaml")
+                errs.append(f"id {rec['id']!r} was rejected (state/rejected.yaml or rejections branch)")
             for k in identity_keys(rec):
                 if k in rejected:
-                    errs.append(f"{k} is in state/rejected.yaml")
+                    errs.append(f"{k} was rejected (state/rejected.yaml or rejections branch)")
             conf = (rec.get("provenance") or {}).get("confidence")
             if a.min_confidence is not None and isinstance(conf, (int, float)) and conf < a.min_confidence:
                 errs.append(f"confidence {conf} < {a.min_confidence}")

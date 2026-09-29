@@ -4,6 +4,7 @@ on:
     types: [closed]
 permissions:
   contents: write
+concurrency: { group: rejections, cancel-in-progress: false }
 jobs:
   reject:
     if: github.event.pull_request.merged == false && contains(github.event.pull_request.labels.*.name, 'new-datasets')
@@ -15,10 +16,17 @@ jobs:
         with: { python-version: "3.12" }
       - run: pip install -r requirements.txt
       - run: git fetch origin "pull/${{ github.event.pull_request.number }}/head:pr-head"
-      - run: python tools/reject_from_pr.py origin/main pr-head
-      - name: Commit rejected list
+      # main is protected, so rejections go to the unprotected `rejections` branch,
+      # which tools/common.py:load_rejected() reads alongside state/rejected.yaml.
+      - name: Check out rejections branch
+        run: |
+          if git fetch origin rejections:rejections; then git worktree add ../rej rejections
+          else git worktree add --orphan -b rejections ../rej; fi
+      - run: python tools/reject_from_pr.py origin/main pr-head --out ../rej/state/rejected.yaml
+      - name: Commit and push
+        working-directory: ../rej
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add state/rejected.yaml
-          git diff --cached --quiet || { git commit -m "reject records from #${{ github.event.pull_request.number }}"; git push origin main; }
+          git diff --cached --quiet || { git commit -m "reject records from #${{ github.event.pull_request.number }}"; git push origin rejections; }
