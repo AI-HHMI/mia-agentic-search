@@ -1,6 +1,7 @@
 schema_version: "1.1"
 id: c-elegans-3d-nuclei-instance-segmentation
 title: "3D nuclei instance segmentation dataset of fluorescence microscopy volumes of C. elegans"
+short_name: "C. elegans 3D nuclei segmentation (confocal)"
 description: >-
   28 confocal volumes of L1-stage C. elegans worms (~1050 x 140 x 140 voxels) with densely annotated,
   manually curated nuclei instance segmentation masks, pre-split into train/validation/test as used
@@ -22,12 +23,12 @@ imaging:
   modality: [confocal]
   dimensionality: 3D
   voxel_size_nm: {x: 116, y: 116, z: 122}
-  channels: 1
+  channels: null
   organism: [Caenorhabditis elegans]
   sample: whole L1 larva
-  labels_stains: []
+  labels_stains: [DAPI]
 data:
-  formats: [other]
+  formats: [tiff]
   size_bytes: 84403531
   n_items: 28
   access: open
@@ -37,7 +38,7 @@ annotations:
   present: true
   types: [instance-segmentation]
   coverage: dense
-  format: null
+  format: "TIFF instance label masks in {train,val,test}/masks, one per image"
   source: manual
 ml:
   tasks: [segmentation]
@@ -50,13 +51,17 @@ license:
 provenance:
   discovered_by: human
   discovered_at: "2026-09-28T17:00:00Z"
-  evidence_urls: [https://zenodo.org/api/records/5942575]
-  confidence: 0.85
-  confidence_rationale: >-
-    Zenodo record read: CC-BY-4.0, 28 volumes, voxel size and train/val/test split are stated in the description. The zip archive was not opened, so mask files and their format are unconfirmed (capped at 0.85).
+  evidence_urls:
+    - https://zenodo.org/api/records/5942575
+    - https://zenodo.org/records/5942575/files/c_elegans_nuclei.zip
+    - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC2882208/fullTextXML
+  confidence: 0.95
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
+  annotations_verified: true
   last_checked: "2026-09-28T17:00:00Z"
-notes: "Single zip archive; image/mask file format inside not verified (formats=other)."
+notes: >-
+  Zip index read without downloading: 28 image and 28 mask TIFFs, split 18 train / 3 val / 7 test.
+  Long et al. 2009 (Methods): DAPI-stained nuclei, Leica confocal, 63x oil, 0.116 um xy / 0.122 um z sampling;
+  originals had 3 channels (DAPI, myo-3:GFP, mCherry). Channels in this release not confirmed.

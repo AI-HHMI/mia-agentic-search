@@ -60,27 +60,47 @@ When a page points to a promising new query or portal, run
 ```bash
 python tools/new_record.py --id <slug> --repository <Repo> --by $ROUTINE
 ```
-Replace **every** `TODO`, using only facts from fetched pages. Unknown values become `null`,
-`unknown` or `other` (see CLAUDE.md). Set these fields:
+### 4a. Research every field before writing `null` / `unknown`
+Don't write a field as unknown until you've looked in **all** of these sources, in this order:
+1. **The dataset page, read in full.** Also read its metadata/API record, its README or
+   description files, and any linked documentation or challenge "data" page.
+2. **The file listing.** Look at the repository's file browser or FTP directory. For a single `.zip`, run
+   `python tools/peek_archive.py <zip url>`, which lists what's inside without downloading it.
+   This is where file formats, image/mask pairs, train/val/test folders and counts come from.
+   Never write `formats: [other]` for a zip whose contents you haven't listed.
+3. **The paper.** Find it on the dataset page (citation, "related publications", DOI), in the
+   repository's API record, or with WebSearch. If a paper exists, you **must** read it:
+   ```bash
+   python tools/paper.py --doi <doi>        # or --pmid / --title
+   ```
+   The tool gets the full text from Europe PMC or bioRxiv even when the publisher page returns 403.
+   It prints key sentences and writes the full text to a file. **Read the Methods and the Data
+   availability sections** of that file. They usually state voxel/pixel size, microscope and
+   modality, staining, organism/sample, annotation procedure and the train/test split.
+   - Log every URL the tool prints with `run_log.py fetched`, and cite at least one in `evidence_urls`.
+     The validator rejects records that list a paper but cite no paper source.
+   - Add the paper to `publications` (title + DOI).
+   - If the full text isn't open access, read the abstract, the supplementary material and the
+     preprint version.
+
+Only after these three steps may a value be `null` / `unknown`. When one is, say in `notes`
+which sources you checked, e.g. *"voxel size not stated on dataset page, file headers or paper Methods"*.
+
+### 4b. Fill in the record
+Replace **every** `TODO` with facts from the pages you fetched:
+- `short_name`: at most 50 characters. It becomes the PR title `Add dataset: <short_name>`.
+  Name what's in the dataset and the modality, e.g. `CryoVesNet synaptic vesicles (cryo-ET)` or
+  `C. elegans 3D nuclei segmentation (confocal)`. No accession numbers and no filler words.
+- `data.formats` and `imaging.dimensionality` appear as their own rows in the PR table, so they must
+  come from the file listing or paper, not from guesses.
 - `verification.url_ok: true` only if you fetched the landing page successfully this run.
 - `license_found: true` only if you saw the license.
-- `annotations_verified: true` only if you saw the annotation files in a file listing.
+- `annotations_verified: true` only if you saw the annotation files in a file listing (peek_archive counts).
 - `provenance.evidence_urls`: list the pages you used; each one must already be logged with `run_log.py fetched`.
-
-**Confidence** means: *the probability that a reviewer who checks your sources will find every
-field correct **and** the dataset really usable for training as described.* Score it like this:
-1. Start from what you verified. See the confidence guide in CLAUDE.md.
-2. Apply the caps, which the validator enforces:
-
-   | Verification flag is `false` | Max confidence |
-   |---|---|
-   | `url_ok` | 0.5 |
-   | `license_found` | 0.7 |
-   | `annotations_verified` | 0.85 |
-
-3. Write `provenance.confidence_rationale`: 1–3 plain sentences saying what you **verified directly**,
-   what you **inferred**, and what is **still unknown**. Reviewers see this in the PR, so name
-   concrete things, e.g. *"file listing shows 12 image/mask TIFF pairs; voxel size not stated."*
+- `provenance.confidence`: an internal filter only; it isn't shown in the PR. It's your estimate that
+  every field is correct and the dataset is usable. Below 0.5, don't propose the dataset. The
+  validator caps it: `url_ok: false` → max 0.5, `license_found: false` → max 0.7,
+  `annotations_verified: false` → max 0.85.
 
 Then run:
 ```bash

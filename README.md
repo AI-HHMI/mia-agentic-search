@@ -28,17 +28,16 @@ maintainer (daily) ── link checks, re-verification, Slack digest
 
 ## Review workflow
 - **Every proposed dataset is its own PR** from branch `claude/dataset/<id>`, labeled `new-datasets`
-  automatically. The title summarizes it:
-  `Add dataset: <title> (<modality> · <annotation types> · <repository> <accession>)`.
-- **The PR body links to the dataset page and download**, and shows key metadata, the agent's
-  **confidence** with a written reason, a checklist of what the agent verified, and the sources it read.
+  automatically. It's titled `Add dataset: <short name>`, e.g. *Add dataset: CryoVesNet synaptic vesicles (cryo-ET)*.
+- **The PR body links to the dataset page, the download and the paper**, then gives a table: modality,
+  dimensionality, voxel size, data format, size, sample, annotations, ML tasks, license, and where it's hosted.
+  The sources the agent read are listed under a fold.
+- **Before writing any field as unknown**, agents must read the dataset page, its file listing, and the
+  paper's full text (`tools/paper.py`, `tools/peek_archive.py`).
 - **Merge** to accept. **Close** to reject: the `record-rejections` workflow adds the dataset's keys
   to `state/rejected.yaml` on the unprotected `rejections` branch (`main` is protected), and agents
   never propose it again.
 - To fix a field before accepting, edit the YAML file in the PR, then merge.
-- **What confidence means:** the probability that you'll find every field correct *and* the dataset
-  usable for training once you check the sources. High ≥ 0.85, Medium 0.65–0.85, Low 0.5–0.65.
-  See `CLAUDE.md`.
 
 ## Setup
 1. **GitHub:** enable Pages (Settings → Pages → Source: GitHub Actions) and create the labels

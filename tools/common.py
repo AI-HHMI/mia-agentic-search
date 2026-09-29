@@ -21,16 +21,17 @@ FRONTIER_DIR = STATE_DIR / "frontier"  # one file per routine avoids cross-PR co
 DATASET_BRANCH_PREFIX = "claude/dataset/"  # one branch + PR per proposed dataset
 STATE_BRANCH_PREFIX = "claude/state/"      # per-routine frontier + run logs, never reviewed
 
-# Confidence = estimated probability that a reviewer checking the cited sources finds every field
-# correct AND the dataset usable for training as described. Caps tie the number to verification.
-CONFIDENCE_BANDS = [(0.85, "High"), (0.65, "Medium"), (0.5, "Low"), (0.0, "Very low")]
+# Caps tie provenance.confidence (internal only, not shown in PRs) to what was actually verified.
 CONFIDENCE_CAPS = [("url_ok", 0.5, "landing page not reachable"),
                    ("license_found", 0.7, "no license found"),
                    ("annotations_verified", 0.85, "annotation files not seen in a file listing")]
 
-
-def confidence_band(value):
-    return next(label for floor, label in CONFIDENCE_BANDS if value >= floor)
+# Hosts that count as "the paper was read" (full text or article page).
+PAPER_HOSTS = ("doi.org", "europepmc.org", "ebi.ac.uk/europepmc", "ncbi.nlm.nih.gov", "biorxiv.org",
+               "api.biorxiv.org", "medrxiv.org", "arxiv.org", "nature.com", "cell.com", "sciencedirect.com",
+               "springer.com", "wiley.com", "elifesciences.org", "rupress.org", "plos.org", "frontiersin.org",
+               "biomedcentral.com", "oup.com", "science.org", "pnas.org", "openreview.net", "thecvf.com",
+               "mlr.press", "neurips.cc", "ieee.org", "acm.org", "embopress.org", "journals.biologists.com")
 
 
 def git(*args, check=False):

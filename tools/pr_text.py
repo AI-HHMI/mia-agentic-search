@@ -1,18 +1,18 @@
 """Generate the PR title and body for a single dataset record.
 
-    python tools/pr_text.py <record.yaml> --title      # one line
+    python tools/pr_text.py <record.yaml> --title      # "Add dataset: <short_name>"
     python tools/pr_text.py <record.yaml> --body [--run-log state/runs/<file>.json]
 
-Agents must use this verbatim so every dataset PR has the same informative format.
+Agents must use this verbatim so every dataset PR has the same format.
 """
 import argparse
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import CONFIDENCE_CAPS, confidence_band, load_yaml, rel  # noqa: E402
+from tools.common import load_yaml, rel  # noqa: E402
 
-TITLE_MAX = 150
+DIM_LABELS = {"2D": "2D images", "3D": "3D volumes", "2D+t": "2D time-lapse", "3D+t": "3D time-lapse"}
 
 
 def human_size(n):
@@ -24,33 +24,21 @@ def human_size(n):
         n /= 1000
 
 
-def _join(items, empty="—"):
+def _join(items, empty="unknown"):
     return ", ".join(str(i) for i in items) if items else empty
 
 
 def title(r):
-    ann = _join(r["annotations"]["types"], "no labels") if r["annotations"]["present"] else "no labels"
-    where = " ".join(x for x in [r["repository"], r.get("accession")] if x)
-    suffix = f" ({'/'.join(r['imaging']['modality'])} · {ann} · {where})"
-    head = "Add dataset: "
-    room = TITLE_MAX - len(head) - len(suffix)
-    t = r["title"] if len(r["title"]) <= room else r["title"][: max(room - 1, 20)].rstrip() + "…"
-    return head + t + suffix
-
-
-def _check(ok, text):
-    return f"- [{'x' if ok else ' '}] {text}"
+    return f"Add dataset: {r['short_name']}"
 
 
 def body(r, path, run_log=None):
-    im, da, an, ml, lic, pv, ve = (r[k] for k in ("imaging", "data", "annotations", "ml", "license", "provenance", "verification"))
+    im, da, an, ml, lic, pv = (r[k] for k in ("imaging", "data", "annotations", "ml", "license", "provenance"))
     vox = im["voxel_size_nm"]
-    vox_s = f"{vox['x']} × {vox['y']} × {vox['z'] if vox['z'] is not None else '—'} nm" if vox else "unknown"
-    conf = pv["confidence"]
-    band = confidence_band(conf)
-    caps = [f"{why} (max {cap})" for flag, cap, why in CONFIDENCE_CAPS if ve.get(flag) is False]
-    doi = f"[{r['doi']}](https://doi.org/{r['doi']})" if r.get("doi") else "—"
-    ann_s = f"{_join(an['types'])} · coverage {an['coverage']} · source {an['source']}" if an["present"] else "none (unlabelled)"
+    vox_s = f"{vox['x']} × {vox['y']} × {vox['z'] if vox['z'] is not None else '—'} nm (x × y × z)" if vox else "unknown"
+    doi = f" · DOI [{r['doi']}](https://doi.org/{r['doi']})" if r.get("doi") else ""
+    ann_s = (f"{_join(an['types'])} · {an['coverage']} coverage · {an['source']}"
+             + (f" · format: {an['format']}" if an["format"] else "")) if an["present"] else "none (unlabelled)"
     bench_s = f" · benchmark: {ml['benchmark']}" if ml["benchmark"] else ""
     routine = pv["discovered_by"]
     log_s = f" · run log `{rel(run_log)}` on branch `claude/state/{routine}`" if run_log else ""
@@ -64,45 +52,32 @@ def body(r, path, run_log=None):
         "",
         f"🔗 **Dataset page:** {r['landing_url']}",
         f"⬇️ **Download:** {da['download_url'] or 'not found; see dataset page'}",
-        f"📄 **Paper(s):** {'; '.join(pubs) if pubs else '—'}",
+        f"📄 **Paper:** {'; '.join(pubs) if pubs else 'none found'}",
         "",
         r["description"].strip(),
         "",
         "| | |",
         "|---|---|",
-        f"| **Hosted at** | {r['repository']} {r.get('accession') or ''} · DOI {doi} |",
-        f"| **Modality** | {_join(im['modality'])} · {im['dimensionality']} · voxel {vox_s} · channels {im['channels'] or '?'} |",
-        f"| **Sample** | {_join(im['organism'], 'organism unknown')} · {im['sample'] or '—'} |",
+        f"| **Modality** | {_join(im['modality'])} |",
+        f"| **Dimensionality** | {DIM_LABELS.get(im['dimensionality'], im['dimensionality'])} · channels: {im['channels'] or 'unknown'} |",
+        f"| **Voxel / pixel size** | {vox_s} |",
+        f"| **Data format** | {_join(da['formats'])} |",
+        f"| **Size** | {human_size(da['size_bytes'])} · {da['n_items'] or 'unknown number of'} images/volumes |",
+        f"| **Sample** | {_join(im['organism'], 'organism unknown')} · {im['sample'] or 'sample unknown'} |",
         f"| **Annotations** | {ann_s} |",
         f"| **ML tasks** | {_join(ml['tasks'])} · splits provided: {'yes' if ml['splits_provided'] else 'no'}{bench_s} |",
-        f"| **Data** | {_join(da['formats'])} · {human_size(da['size_bytes'])} · {da['n_items'] or '?'} images/volumes · access: {da['access']} |",
-        f"| **License** | {lic['spdx']}{' — ' + lic['url'] if lic['url'] else ''} |",
-        "",
-        f"### Confidence: {band} ({conf:.2f})",
-        "_How likely it is that, after checking the sources below, you'll find every field in this record "
-        "correct **and** the dataset really usable for training as described. "
-        "High ≥ 0.85 · Medium 0.65–0.85 · Low 0.5–0.65._",
-        "",
-        f"**Why:** {pv['confidence_rationale'].strip()}",
+        f"| **Access / license** | {da['access']} · {lic['spdx']}{' (' + lic['url'] + ')' if lic['url'] else ''} |",
+        f"| **Hosted at** | {r['repository']} {r.get('accession') or ''}{doi} |",
     ]
-    if caps:
-        lines += ["", f"**Limited by:** {'; '.join(caps)}."]
+    if r.get("notes"):
+        lines += ["", f"**Notes:** {r['notes'].strip()}"]
     lines += [
-        "",
-        "**What the agent verified**",
-        _check(ve["url_ok"], "Dataset page reachable"),
-        _check(ve["license_found"], f"License / terms found ({lic['spdx']})"),
-        _check(ve["annotations_verified"], "Annotation files seen in a file listing" if an["present"] else "Annotations: none claimed"),
         "",
         "<details><summary>Sources the agent read</summary>",
         "",
         *[f"- {u}" for u in pv["evidence_urls"]],
         "",
         "</details>",
-    ]
-    if r.get("notes"):
-        lines += ["", f"**Notes:** {r['notes'].strip()}"]
-    lines += [
         "",
         "---",
         f"**Review:** merge to accept · close to reject (it won't be proposed again) · edit `{rel(path)}` in this PR to fix fields first.",

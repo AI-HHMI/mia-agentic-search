@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import (CONFIDENCE_CAPS, load_rejected, DATASETS_DIR, identity_keys, iter_record_paths,  # noqa: E402
+from tools.common import (CONFIDENCE_CAPS, PAPER_HOSTS, load_rejected, DATASETS_DIR, identity_keys, iter_record_paths,  # noqa: E402
                           load_yaml, normalize_title, normalize_url, rel, validator)
 
 FUZZY_TITLE_THRESHOLD = 0.92
@@ -26,6 +26,13 @@ def check_record(path, record, v):
         return errors
     if record.get("id") != path.stem:
         errors.append(f"id {record.get('id')!r} must equal file name {path.stem!r}")
+    pubs = record.get("publications") or []
+    evidence = (record.get("provenance") or {}).get("evidence_urls") or []
+    pub_links = [p.get("doi") or p.get("url") for p in pubs if isinstance(p, dict)]
+    if any(pub_links) and not any(any(h in u.lower() for h in PAPER_HOSTS) or any(l and l.lower() in u.lower() for l in pub_links)
+                                  for u in evidence if isinstance(u, str)):
+        errors.append("a paper is listed but no paper source (full text / article page) is in evidence_urls; "
+                      "read it with tools/paper.py and cite the URLs it used")
     repo = record.get("repository")
     if isinstance(repo, str) and path.parent.name != repo.lower():
         errors.append(f"file must live in datasets/{repo.lower()}/ (repository={repo})")

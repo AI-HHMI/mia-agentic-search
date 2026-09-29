@@ -23,12 +23,14 @@ For each broken record, open its landing page with WebFetch:
 - It's still broken: leave `url_ok: false` and log `event error --id <id> --reason "link broken: <url>"`.
 
 ## 2. Re-verify weak records
-Pick up to 5 records where `license_found` or `annotations_verified` is false, or `confidence < 0.7`.
+Pick up to 5 records where `license_found` or `annotations_verified` is false, `confidence < 0.7`,
+or key fields are empty (`voxel_size_nm`, `publications`, `formats: [other]`).
 Take the oldest `verification.last_checked` first. For each one:
 1. Re-fetch its sources and fill in facts that are now confirmed.
-2. Raise `confidence` only when the evidence supports it (caps and meaning in CLAUDE.md), and rewrite
-   `provenance.confidence_rationale` to match what is now verified.
-3. Update `last_checked`.
+2. Fill `null` / `unknown` fields using the research steps in find-datasets step 4a: the full dataset page,
+   the file listing (`tools/peek_archive.py` for zips) and the paper (`tools/paper.py`), plus any `short_name` over 50 characters.
+3. Raise `confidence` only when the evidence supports it (caps in CLAUDE.md).
+4. Update `last_checked`.
 
 Never delete records. If a dataset has clearly disappeared, set `data.access: restricted`,
 `url_ok: false` and a dated note.

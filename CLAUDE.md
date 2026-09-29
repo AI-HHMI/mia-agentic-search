@@ -37,23 +37,16 @@ A dataset qualifies only if **all** of these hold:
 
 Log anything that fails these checks as `run_log.py event rejected --reason "..."`. Don't write a record for it.
 
-## Confidence: what the number means
-`provenance.confidence` = **the probability that a reviewer who checks the cited sources finds every
-field in the record correct *and* the dataset really usable for training as described.**
-It is not a quality or usefulness score for the dataset.
+## Research before writing "unknown"
+A field may be `null` / `unknown` only after checking the **dataset page (in full), its file listing,
+and the paper**. If a paper exists, read its full text with `tools/paper.py`: Methods and Data
+availability. List what zips contain with `tools/peek_archive.py`. The find-datasets skill, step 4a,
+gives the procedure. The validator rejects records that list a paper without citing a paper source.
 
-| Band | Range | Typical evidence |
-|---|---|---|
-| High | ≥ 0.85 | Landing page and file listing checked, annotation files seen, license read |
-| Medium | 0.65–0.85 | Landing page checked; annotations described but files not seen, or some key facts missing |
-| Low | 0.5–0.65 | Important facts come only from the paper, or the license is unknown |
-| (don't propose) | < 0.5 | Log it as `low-confidence` instead |
-
-The validator enforces these caps: `url_ok: false` → max 0.5, `license_found: false` → max 0.7,
-`annotations_verified: false` → max 0.85.
-
-Always write `provenance.confidence_rationale`: 1–3 sentences on what was verified directly, what
-was inferred, and what is still unknown. It is shown to reviewers in the PR.
+## Confidence (internal filter, not shown in PRs)
+`provenance.confidence` is the estimated probability that every field is correct and the dataset is
+usable for training. Records below 0.5 aren't proposed. The validator caps it by verification:
+`url_ok: false` → max 0.5, `license_found: false` → max 0.7, `annotations_verified: false` → max 0.85.
 
 ## Field conventions
 - `id`: lowercase slug. Put the accession first when there is one, e.g. `empiar-10311-hela-fib-sem`, `s-biad2822-vem-nuclei`.
@@ -61,6 +54,7 @@ was inferred, and what is still unknown. It is shown to reviewers in the PR.
 - `voxel_size_nm`: in **nanometres**, so 0.116 µm → 116. For 2D data, `z: null`.
 - `organism`: NCBI scientific names (`Mus musculus`, not "mouse").
 - `license.spdx`: SPDX IDs (`CC-BY-4.0`, `CC0-1.0`, `CC-BY-NC-4.0`, `MIT`), `custom` or `unknown`.
+- `short_name`: ≤ 50 characters naming the content and modality; it's the PR title (`Add dataset: <short_name>`).
 - Timestamps are UTC ISO-8601 with `Z`.
 
 ## Tools (all in `tools/`, run from repo root)
@@ -74,6 +68,8 @@ was inferred, and what is still unknown. It is shown to reviewers in the PR.
 | `python tools/run_log.py start\|query\|fetched\|event\|finish` | structured run log (monitoring) |
 | `python tools/publish.py state-pull\|state-push --routine R` / `dataset <file>` | restore/save search state; push one record to its own branch |
 | `python tools/pr_text.py <file> --title\|--body [--run-log F]` | PR title and body for a record (use verbatim) |
+| `python tools/paper.py --doi D \| --pmid P \| --title T` | find a paper and read its full text (Europe PMC / bioRxiv) |
+| `python tools/peek_archive.py <zip url>` | list files inside a remote zip without downloading it |
 | `python tools/check_links.py [--oldest N] [--write]` | link rot check |
 | `python tools/build_site.py` | build dashboard into `site/` |
 
