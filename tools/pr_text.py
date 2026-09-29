@@ -1,6 +1,6 @@
 """Generate the PR title and body for a single dataset record.
 
-    python tools/pr_text.py <record.yaml> --title      # "Add dataset: <short_name>"
+    python tools/pr_text.py <record.yaml> --title      # the short_name
     python tools/pr_text.py <record.yaml> --body [--run-log state/runs/<file>.json]
 
 Agents must use this verbatim so every dataset PR has the same format.
@@ -29,7 +29,7 @@ def _join(items, empty="unknown"):
 
 
 def title(r):
-    return f"Add dataset: {r['short_name']}"
+    return r["short_name"]
 
 
 def body(r, path, run_log=None):

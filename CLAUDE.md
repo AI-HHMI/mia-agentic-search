@@ -57,7 +57,7 @@ usable for training. Records below 0.5 aren't proposed. The validator caps it by
 - `voxel_size_nm`: in **nanometres**, so 0.116 µm → 116. For 2D data, `z: null`.
 - `organism`: NCBI scientific names (`Mus musculus`, not "mouse").
 - `license.spdx`: SPDX IDs (`CC-BY-4.0`, `CC0-1.0`, `CC-BY-NC-4.0`, `MIT`), `custom` or `unknown`.
-- `short_name`: ≤ 50 characters naming the content and modality; it's the PR title (`Add dataset: <short_name>`).
+- `short_name`: ≤ 50 characters naming the content and modality; it's used verbatim as the PR title.
 - Timestamps are UTC ISO-8601 with `Z`.
 
 ## Tools (all in `tools/`, run from repo root)

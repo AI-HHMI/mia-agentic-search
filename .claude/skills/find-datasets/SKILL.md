@@ -112,7 +112,7 @@ which sources you checked, e.g. *"voxel size not stated on dataset page, file he
 
 ### 4b. Fill in the record
 Replace **every** `TODO` with facts from the pages you fetched:
-- `short_name`: at most 50 characters. It becomes the PR title `Add dataset: <short_name>`.
+- `short_name`: at most 50 characters. It is used verbatim as the PR title.
   Name what's in the dataset and the modality, e.g. `CryoVesNet synaptic vesicles (cryo-ET)` or
   `C. elegans 3D nuclei segmentation (confocal)`. No accession numbers and no filler words.
 - `data.formats` and `imaging.dimensionality` appear as their own rows in the PR table, so they must
