@@ -11,8 +11,8 @@ Four [Claude scheduled routines](https://claude.ai/code/routines) run in the clo
 | Routine | Schedule | Searches |
 |---|---|---|
 | `harvest-repositories` | hourly | EMPIAR, BioImage Archive, Zenodo, IDR (via their APIs) |
-| `harvest-literature` | every 3 h | Papers that release datasets (bioRxiv, PubMed, journals, challenges) |
-| `harvest-websearch` | every 3 h | Portals, challenge sites, Hugging Face, Kaggle, lab pages |
+| `harvest-literature` | hourly | Papers that release datasets (bioRxiv, PubMed, journals, challenges) |
+| `harvest-websearch` | hourly | Portals, challenge sites, Hugging Face, Kaggle, lab pages |
 | `maintainer` | daily | Checks links, fills gaps in existing records, posts a daily Slack digest |
 
 Each harvest run works through its search queue until it finds **at least one dataset that isn't
