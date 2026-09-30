@@ -1,8 +1,12 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-8032771-sbem-nuclei-mouse-brain
-title: Automated cell nuclei detection for large-volume electron microscopy of neural tissue (SBEM volume with 3309 annotated nuclei)
+title: Automated cell nuclei detection for large-volume electron microscopy of neural tissue (SBEM volume with 3309
+  annotated nuclei)
 short_name: Mouse brain cell nuclei detection (SBEM)
-description: One SBEM volume (1024 x 768 x 7552 voxels, 8-bit HDF5) of adult mouse brain covering cerebral cortex, white matter and striatum, with all 3309 cell nuclei manually annotated as x, y, z centres plus estimated radius (CSV). Two ground-truth versions are provided (all nuclei, and excluding border-touching ones). Supplement to the ISBI 2014 paper.
+description: One SBEM volume (1024 x 768 x 7552 voxels, 8-bit HDF5) of adult mouse brain covering cerebral cortex,
+  white matter and striatum, with all 3309 cell nuclei manually annotated as x, y, z centres plus estimated radius
+  (CSV). Two ground-truth versions are provided (all nuclei, and excluding border-touching ones). Supplement to
+  the ISBI 2014 paper.
 landing_url: https://zenodo.org/records/8032771
 doi: 10.5281/zenodo.8032771
 repository: Zenodo
@@ -33,6 +37,7 @@ imaging:
 data:
   formats:
   - hdf5
+  - other
   size_bytes: 4239240236
   n_items: 1
   access: open
@@ -44,7 +49,8 @@ annotations:
   - points
   - counts
   coverage: dense
-  format: 'Text/CSV files (soma_groundtruth_all_orig.txt, soma_groundtruth_all_clean.txt): nucleus centre x, y, z and radius'
+  format: 'Text/CSV files (soma_groundtruth_all_orig.txt, soma_groundtruth_all_clean.txt): nucleus centre x, y,
+    z and radius'
   source: manual
 ml:
   tasks:
@@ -67,5 +73,73 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-09-30T02:13:21Z'
-notes: 'No license stated in the Zenodo record metadata (checked page and API); the HCI benchmark page returned HTTP 500. The ISBI 2014 paper is not open access (Europe PMC full text unavailable), so staining/microscope details and the annotation procedure were not read; voxel size, dimensions and counts come from the Zenodo page. Annotations are nucleus centre points with radius (listed via peek_archive), not masks.'
+  last_checked: '2026-09-30T21:38:59Z'
+notes: 'No license stated in the Zenodo record metadata (checked page and API); the HCI benchmark page returned
+  HTTP 500. The ISBI 2014 paper is not open access (Europe PMC full text unavailable), so staining/microscope details
+  and the annotation procedure were not read; voxel size, dimensions and counts come from the Zenodo page. Annotations
+  are nucleus centre points with radius (listed via peek_archive), not masks. enricher: GT txt files read: comma-separated
+  x,y,z,r rows, 3086 (orig) / 2935 (clean, edge-intersecting removed). License still not found (Zenodo API has no
+  license field).'
+technical:
+  method: header
+  inspected_at: '2026-09-30T21:38:59Z'
+  inspected_urls:
+  - https://zenodo.org/records/8032771
+  - https://zenodo.org/records/8032771/files/soma_groundtruth.zip
+  - https://zenodo.org/records/8032771/files/20130506-interareal_mag420130722_132814-x0-8_y0-6_z0-59.h5
+  bytes_downloaded: 0
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  2 files  4.2 GB
+        20130506-interareal_mag420130722_132814-x0-8_y0-6_z0-59.h5   (image volume)
+        soma_groundtruth.zip   94.9 KB
+          soma_groundtruth_all_orig.txt    3086 rows x,y,z,r
+          soma_groundtruth_all_clean.txt   2935 rows x,y,z,r (edge-intersecting points removed)
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/8032771/files/soma_groundtruth.zip
+    size_bytes: null
+    description: The ground-truth zip (95 KB); the image is a single 4.2 GB HDF5 file
+  arrays:
+  - role: raw
+    path_pattern: 20130506-interareal_mag4*.h5
+    format: hdf5
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    lossy: null
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Header not read (probe.py failed with repeated SSL EOF errors on this file; curl range reads
+      worked).
+  - role: label
+    path_pattern: soma_groundtruth.zip/soma_groundtruth_all_{orig,clean}.txt
+    format: csv
+    axes: null
+    shape:
+    - 2935
+    - 4
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    normalization: none
+    encoding: points-table
+    classes: null
+    alignment: unknown
+    alignment_notes: 'Rows are x,y,z,r (file header: "marks neuronal and glial nuclei positions and size in SBEM
+      scan (20130506-interareal_mag4)"); units (voxels vs nm) not stated. Shape is for the clean file; orig has
+      3086 rows.'
+  notes: 'Zenodo listing complete and exact (4,239,240,236 B, 2 files). Ground-truth text files read in full with
+    peek_archive --cat: two comment lines, then integer rows x,y,z,r (e.g. 267,305,4203,12). The record page says
+    3309 nuclei were annotated; the files hold 3086 (orig) and 2935 (clean) rows. The HDF5 image header could not
+    be read: tools/probe.py hit SSL EOF errors on both the /records and /api content URLs, while curl range requests
+    returned 206, so this is likely a client/proxy issue. License: none in the Zenodo metadata (license field absent).'
