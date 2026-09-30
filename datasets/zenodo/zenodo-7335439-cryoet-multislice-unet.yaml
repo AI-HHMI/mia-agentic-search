@@ -1,4 +1,4 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-7335439-cryoet-multislice-unet
 title: Deep learning training data (JOVE) - multi-class cryo-ET segmentation of a neuronal tomogram
 short_name: Neuron cryo-ET multi-class segmentation
@@ -37,7 +37,7 @@ data:
   formats:
   - mrc
   - other
-  size_bytes: 1073700000
+  size_bytes: 1073707483
   n_items: 1
   access: open
   download_url: https://zenodo.org/records/7335439/files/Training_Data_JOVE_Deep_Learning.zip
@@ -47,7 +47,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: binary MRC mask per class (Actin, Cofilactin, Microtubule, Membrane, Ribosome, TriC, Carbon, Fiducials, Background) plus Training.ORSObject (Dragonfly multi-ROI)
+  format: binary MRC mask per class (Actin, Cofilactin, Microtubule, Membrane, Ribosome, TriC, Carbon, Fiducials,
+    Background) plus Training.ORSObject (Dragonfly multi-ROI)
   source: manual
 ml:
   tasks:
@@ -71,9 +72,96 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-09-30T03:45:00Z'
-notes: 'Only one tomogram (Titan Krios G3i, TFS Tomography 5.0, IMOD reconstruction, pixel size 13.6 A/pix, hand-segmented in
-  Dragonfly 2022.1 per README), so small in image count but a ~340 MB volume with 9 dense manual class masks. Zip listing
-  via peek_archive: 10 .mrc + 1 .ORSObject. Paper full text is not open access (only abstract read); organism
-  (presumably rat/mouse neurons) not stated in dataset page, README or abstract. Size is the compressed zip size (total record 38.7 GB per
-  Zenodo page). Zenodo record carries a Dryad DOI.'
+  last_checked: '2026-09-30T21:31:48Z'
+notes: 'Only one tomogram (Titan Krios G3i, TFS Tomography 5.0, IMOD reconstruction, pixel size 13.6 A/pix, hand-segmented
+  in Dragonfly 2022.1 per README), so small in image count but a ~340 MB volume with 9 dense manual class masks.
+  Zip listing via peek_archive: 10 .mrc + 1 .ORSObject. Paper full text is not open access (only abstract read);
+  organism (presumably rat/mouse neurons) not stated in dataset page, README or abstract.  Zenodo record carries
+  a Dryad DOI. enricher: size_bytes = exact record total 1,073,707,483 (README + zip; the record has only these
+  2 files, not 38.7 GB); voxel size 1.3603 nm confirmed by the MRC headers.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/7335439
+  - https://zenodo.org/records/7335439/files/Training_Data_JOVE_Deep_Learning.zip
+  bytes_downloaded: 436838
+  size_source: file-listing
+  layout:
+    tree: |
+      ./                                        2 files   1.1 GB  README.md, Training_Data_JOVE_Deep_Learning.zip
+      Training_Data_JOVE_Deep_Learning.zip/Training_Data_JOVE_Deep_Learning/  (4.4 GB uncompressed)
+        JoVE Protocol Training Data (Unprocessed).mrc   680.7 MB   tomogram
+        Actin.mrc, Cofilactin.mrc, Microtubule.mrc, Membrane.mrc, Ribosome.mrc,
+        TriC.mrc, Carbon.mrc, Fiducials.mrc, Background.mrc   340.3 MB each   binary class masks
+        Training.ORSObject                               696.0 MB   Dragonfly object (tomogram + multi-ROI)
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7335439/files/Training_Data_JOVE_Deep_Learning.zip::Training_Data_JOVE_Deep_Learning/Actin.mrc
+    size_bytes: null
+    description: One class mask (Actin.mrc, 436,838 bytes compressed in the zip); the tomogram member is ~680 MB
+      uncompressed
+  arrays:
+  - role: raw
+    path_pattern: Training_Data_JOVE_Deep_Learning/JoVE Protocol Training Data (Unprocessed).mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 239
+    - 1173
+    - 1214
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: Training_Data_JOVE_Deep_Learning/{Actin,Cofilactin,Microtubule,Membrane,Ribosome,TriC,Carbon,Fiducials,Background}.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 239
+    - 1173
+    - 1214
+    shape_varies: false
+    dtype: int8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - -128
+    - 127
+    encoding: binary
+    classes:
+    - id: null
+      name: Actin
+    - id: null
+      name: Cofilactin
+    - id: null
+      name: Microtubule
+    - id: null
+      name: Membrane
+    - id: null
+      name: Ribosome
+    - id: null
+      name: TriC
+    - id: null
+      name: Carbon
+    - id: null
+      name: Fiducials
+    - id: null
+      name: Background
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: One binary MRC per class, same shape and voxel size (1.3603 nm) as the tomogram per header.
+  notes: 'Record: 2 files (README.md 1,640 B + zip 1,073,705,843 B), exact sizes; zip central directory: 11 members.
+    MRC headers (read by partial inflate): tomogram mode uint16, 1214x1173x239 (x,y,z), cell/sampling 1.3603 nm,
+    header min/max/mean 12964/47139/33071; Actin.mrc mode 0 (int8), same shape and voxel size. Sample of Actin.mrc
+    (full member): only the values -128 (18,896,994 voxels, background) and 127 (10,854, foreground), so the masks
+    are int8 with -128/127, not 0/1. The tomogram itself was not downloaded (a deflated member of ~680 MB can''t
+    be range-cropped), so its value range is from the header only. Space group 0 in the headers.'
+  inspected_at: '2026-09-30T21:31:48Z'
