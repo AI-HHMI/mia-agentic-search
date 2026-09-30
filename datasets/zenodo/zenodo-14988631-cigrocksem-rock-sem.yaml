@@ -1,9 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-14988631-cigrocksem-rock-sem
-title: 'cigRockSEM: A benchmark dataset and baseline methods for rock microstructure interpretation in scanning electron microscope (SEM) images'
+title: 'cigRockSEM: A benchmark dataset and baseline methods for rock microstructure interpretation in scanning
+  electron microscope (SEM) images'
 short_name: Rock pore segmentation (SEM)
 description: 512 x 512 px SEM images of mudstone (2,477), sandstone (1,152) and shale (11,325) crops, each paired
-  with a binary pore mask (PNG), combining public labelled data, manually annotated images and laboratory-collected samples.
+  with a binary pore mask (PNG), combining public labelled data, manually annotated images and laboratory-collected
+  samples.
 landing_url: https://zenodo.org/records/14988631
 doi: 10.5281/zenodo.14988631
 repository: Zenodo
@@ -62,11 +64,84 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-09-29T18:20:00Z'
+  last_checked: '2026-09-30T22:40:00Z'
 notes: 'Geological (rock) SEM rather than biological microscopy. Zip index read without downloading: 29,913 files,
-  mostly PNG (consistent with ~14,954 image/mask pairs). Counts (2,477 / 1,152 / 11,325) from paper Table 2.
-  Pixel size varies widely by lithology (0.0008-0.98 um/px; sandstone 0.17 um/px), so voxel_size_nm is null.
-  Masks are binary (pore vs background); mudstone labels come from Digital Rocks Portal, sandstone masks were
-  manually annotated with LabelMe by the authors. No train/test split shipped (paper used random 8:2).
-  Zenodo record states CC-BY-4.0; the paper article itself is CC-BY-NC-ND. Author Jie You taken from the
-  Europe PMC author string (Zhang Y, Wu X, You J); Zenodo lists only two creators.'
+  mostly PNG (consistent with ~14,954 image/mask pairs). Counts (2,477 / 1,152 / 11,325) from paper Table 2. Pixel
+  size varies widely by lithology (0.0008-0.98 um/px; sandstone 0.17 um/px), so voxel_size_nm is null. Masks are
+  binary (pore vs background); mudstone labels come from Digital Rocks Portal, sandstone masks were manually annotated
+  with LabelMe by the authors. No train/test split shipped (paper used random 8:2). Zenodo record states CC-BY-4.0;
+  the paper article itself is CC-BY-NC-ND. Author Jie You taken from the Europe PMC author string (Zhang Y, Wu X,
+  You J); Zenodo lists only two creators. enricher: file listing confirms size (4,647,873,371 B) and 14,954 img/mask
+  pairs; masks sampled.'
+technical:
+  method: sample
+  inspected_at: '2026-09-30T22:40:00Z'
+  inspected_urls:
+  - https://zenodo.org/records/14988631
+  - https://zenodo.org/api/records/14988631/files/data.zip/content
+  - https://zenodo.org/records/14988631/files/data.zip
+  bytes_downloaded: 717074
+  size_source: file-listing
+  layout:
+    tree: "./                                    1 files   4.6 GB  .zip\ndata.zip/data/\n  mudstone/imgs/      \
+      \             2477 files  732.3 MB  .png\n  mudstone/masks/                  2477 files   24.2 MB  .png\n\
+      \  sandstone/imgs/                  1152 files  238.2 MB  .png\n  sandstone/masks/                 1152 files\
+      \    8.8 MB  .png\n  shale/imgs/                     11325 files    4.8 GB  .png\n  shale/masks/         \
+      \           11325 files   58.4 MB  .png\n  (+5 version-control / OS metadata files)\n"
+    n_files: 29913
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/14988631/files/data.zip::data/sandstone/imgs/plug_44_image_13-0_0.17um_top_right_up_left_9.png
+    - https://zenodo.org/records/14988631/files/data.zip::data/sandstone/masks/plug_44_image_13-0_0.17um_top_right_up_left_9.png
+    size_bytes: 145947
+    description: One sandstone 512x512 image and its mask (~146 KB, zip members read by range)
+  arrays:
+  - role: raw
+    path_pattern: data.zip/data/<lithology>/imgs/<name>.png
+    format: png
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 1
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Stored as 8-bit RGB PNG (colour type rgb) although SEM is single-channel; whether the 3 channels
+      are identical was not checked.
+  - role: label
+    path_pattern: data.zip/data/<lithology>/masks/<name>.png
+    format: png
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes: null
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: masks/<name>.png pairs with imgs/<name>.png (identical filenames, 1:1 counts per lithology);
+      all 3 sampled pairs have identical shapes.
+  notes: 'Listing via Zenodo API + zip central directory (29,913 members, exact sizes). Probed 3 mudstone imgs and
+    3 masks: all PNG 512x512x3 uint8 rgb, deflate. Sampled one pair per lithology (mudstone, shale, sandstone):
+    raw ranges 39-190, 1-255, 9-254 (one sample each; value_range is the union); masks 2 unique values {0,255}.
+    Which value marks pores was not determined (masks are mostly 255: mean 201-255). Masks stored as RGB, not single-channel.
+    No README or split files in the zip.'
