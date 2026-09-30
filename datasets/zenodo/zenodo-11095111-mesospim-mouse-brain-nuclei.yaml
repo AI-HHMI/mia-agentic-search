@@ -1,10 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-11095111-mesospim-mouse-brain-nuclei
 title: 3D ground truth annotations of cleared whole mouse brain nuclei imaged with a mesoSPIM system
 short_name: Mouse brain neuronal nuclei 3D (mesoSPIM)
 description: Six cropped 3D volumes (five somatosensory cortex, one visual cortex with imaging artifacts) from a CLARITY-cleared
-  TPH2-tdTomato mouse brain imaged with a mesoSPIM light-sheet microscope, with expert hand-annotated 3D instance labels for 2632
-  neuronal nuclei. Released with the CellSeg3D paper as a benchmark for 3D cell segmentation in cleared tissue.
+  TPH2-tdTomato mouse brain imaged with a mesoSPIM light-sheet microscope, with expert hand-annotated 3D instance labels
+  for 2632 neuronal nuclei. Released with the CellSeg3D paper as a benchmark for 3D cell segmentation in cleared tissue.
 landing_url: https://zenodo.org/records/11095111
 doi: 10.5281/zenodo.11095111
 repository: Zenodo
@@ -64,9 +64,77 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-09-30T17:25:00Z'
-notes: 'Zip listing (peek_archive): 12 TIFFs, 6 image volumes (c1-c5image.tif, visual.tif) and 6 label volumes; 221 MB uncompressed. Paper
-  reports 2632 hand-annotated neurons, annotation checked by an external expert; the source whole-brain volume is from Voigt et al. 2019
-  (IDR), mesoSPIM zoom 0.63x, 561 nm. Voxel size of this dataset is not stated on the Zenodo page or in the paper Methods (the 5.26 x 5.26 x 5 um
-  figure in the paper is for a separate c-FOS sample), so voxel_size_nm is null. Train/test split is not provided in the files; the paper
-  holds out the visual cortex volume for evaluation. Only 6 small volumes (221 MB), at the lower end of the size criterion.'
+  last_checked: '2026-09-30T21:20:41Z'
+notes: 'Zip listing (peek_archive): 12 TIFFs, 6 image volumes (c1-c5image.tif, visual.tif) and 6 label volumes; 221 MB
+  uncompressed. Paper reports 2632 hand-annotated neurons, annotation checked by an external expert; the source whole-brain
+  volume is from Voigt et al. 2019 (IDR), mesoSPIM zoom 0.63x, 561 nm. Voxel size of this dataset is not stated on the
+  Zenodo page or in the paper Methods (the 5.26 x 5.26 x 5 um figure in the paper is for a separate c-FOS sample), so
+  voxel_size_nm is null. Train/test split is not provided in the files; the paper holds out the visual cortex volume
+  for evaluation. Only 6 small volumes (221 MB), at the lower end of the size criterion.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/11095111
+  - https://zenodo.org/records/11095111/files/DATASET_WITH_GT.zip
+  bytes_downloaded: 4040569
+  size_source: file-listing
+  layout:
+    tree: |
+      DATASET_WITH_GT.zip                          30.6 MB (221 MB uncompressed)
+        DATASET_WITH_GT/c{1..5}image.tif, visual.tif      6 files   29.7 MB
+        DATASET_WITH_GT/labels/*_label*.tif               6 files  191.5 MB
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/11095111/files/DATASET_WITH_GT.zip::DATASET_WITH_GT/c1image.tif
+    - https://zenodo.org/records/11095111/files/DATASET_WITH_GT.zip::DATASET_WITH_GT/labels/c1labels_new_label.tif
+    size_bytes: 4040569
+    description: Volume c1 (199x106x147) and its instance labels
+  arrays:
+  - role: raw
+    path_pattern: DATASET_WITH_GT.zip::DATASET_WITH_GT/*.tif
+    format: tiff
+    axes: null
+    shape:
+    - 199
+    - 106
+    - 147
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 210
+    - 3786
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: DATASET_WITH_GT.zip::DATASET_WITH_GT/labels/*.tif
+    format: tiff
+    axes: null
+    shape:
+    - 199
+    - 106
+    - 147
+    shape_varies: true
+    dtype: int64
+    compression: unknown
+    lossy: null
+    chunks: null
+    value_range:
+    - 0
+    - 345
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 344
+    alignment: same-grid
+    alignment_notes: c<N>image.tif pairs with labels/c<N>labels_new_label.tif (visual.tif with the visual-cortex label
+      file); sampled pair has identical shapes.
+  notes: 'Exact Zenodo listing + zip index. c1image.tif probed: 199 pages of 106x147, uint16, deflate (axis order not
+    stated; stack order read as z). Label TIFF header not readable (deflated member), sampled instead: int64 with 343
+    nuclei IDs (0-345, gaps) in c1. Raw 210-3786 (12-bit range, no clipping at either end), so normalization none (inferred).
+    Volume shapes vary (member sizes differ); only c1 read. Voxel size not in the TIFF header read.'
+  inspected_at: '2026-09-30T21:20:41Z'
