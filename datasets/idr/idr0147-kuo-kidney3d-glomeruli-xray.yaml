@@ -1,8 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: idr0147-kuo-kidney3d-glomeruli-xray
 title: HR-Kidney - terabyte-scale supervised 3D training and benchmarking dataset of the mouse kidney (SRuCT)
 short_name: Mouse kidney glomeruli 3D (synchrotron X-ray)
-description: Synchrotron radiation X-ray phase-contrast microtomography (SRuCT, ESRF ID19) of three whole vascular-resin-perfused mouse kidneys at 1.625 um pixel size. Includes raw radiographs, reconstructed 3D volumes, semi-automatic segmentations of vasculature, tubules and glomeruli, and, for Kidney_2, fully manual 3D annotations of glomeruli (3 ROIs of 512x256x256 voxels) and extrarenal fat (3 ROIs).
+description: Synchrotron radiation X-ray phase-contrast microtomography (SRuCT, ESRF ID19) of three whole vascular-resin-perfused
+  mouse kidneys at 1.625 um pixel size. Includes raw radiographs, reconstructed 3D volumes, semi-automatic segmentations
+  of vasculature, tubules and glomeruli, and, for Kidney_2, fully manual 3D annotations of glomeruli (3 ROIs of
+  512x256x256 voxels) and extrarenal fat (3 ROIs).
 landing_url: https://idr.openmicroscopy.org/search/?query=Name:idr0147-kuo-kidney3d
 doi: 10.17867/10000188
 repository: IDR
@@ -70,5 +73,98 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-09-30T11:40:00Z'
-notes: 'Manual annotations (glomeruli D4, extrarenal fat D9) exist only for Kidney_2 as 3 small ROIs each; remaining segmentations (vessels, tubules, whole-kidney glomeruli) are semi-automatic and the paper states they are not validated as ground truth. Total size not stated on IDR API record or paper. Download method (Aspera/FTP/Globus via IDR) not verified on the page; the OME-TIFF files are also viewable/downloadable via the IDR web client. Checked: IDR project API record, map annotation, Kidney_2 file listing, paper full text (Europe PMC).'
+  last_checked: '2026-09-30T21:50:27Z'
+notes: 'Manual annotations (glomeruli D4, extrarenal fat D9) exist only for Kidney_2 as 3 small ROIs each; remaining
+  segmentations (vessels, tubules, whole-kidney glomeruli) are semi-automatic and the paper states they are not
+  validated as ground truth. Total size not stated on IDR API record or paper. Download method (Aspera/FTP/Globus
+  via IDR) not verified on the page; the OME-TIFF files are also viewable/downloadable via the IDR web client. Checked:
+  IDR project API record, map annotation, Kidney_2 file listing, paper full text (Europe PMC). enricher: IDR API
+  lists 3 datasets (Kidney_1 27, Kidney_2 47, Kidney_3 29 images); only Kidney_2 has the manual D4/D9 ROI annotations.'
+technical:
+  method: header
+  inspected_urls:
+  - https://idr.openmicroscopy.org/api/v0/m/projects/2701/datasets/
+  - https://idr.openmicroscopy.org/api/v0/m/datasets/18002/images/?limit=100
+  - https://idr.openmicroscopy.org/api/v0/m/datasets/18001/images/?limit=100
+  - https://idr.openmicroscopy.org/api/v0/m/datasets/18003/images/?limit=100
+  - https://idr.openmicroscopy.org/webclient/imgData/14788828/
+  - https://idr.openmicroscopy.org/webclient/imgData/14788826/
+  - https://idr.openmicroscopy.org/webclient/imgData/14788822/
+  bytes_downloaded: 0
+  size_source: unknown
+  layout:
+    tree: |
+      idr0147-kuo-kidney3d/experimentA (IDR project 2701)
+        Kidney_1 (27 images)  Kidney_2 (47 images)  Kidney_3 (29 images)
+        per kidney:
+          kidney<k>_D1_projections_height{1-6}.ome.tiff    2560x2160x5125 uint16  radiographs
+          kidney<k>_D2_reco_height{1-6}.ome.tiff           ~4910x4910x2160 float  reconstructions
+          kidney<k>_D3_inpainted.ome.tiff                  4608x4608x7168 float   stitched volume
+          kidney<k>_D5_blood_vessels / D6_tubules / D8_glomeruli_segment.ome.tiff   4608x4608x7168 uint8
+          kidney<k>_D7_glomgallery_NN.ome.tiff             1792x17900 RGB uint8   glomerulus gallery
+        Kidney_2 only:
+          kidney2_D4_h{3,4,5}_glomeruli_roi{1-3}_{annotation,raw_abs,raw_pag}.ome.tiff  512x256x256
+          kidney2_D9_h{2,4}_fat_roi{1-3}_{annotation,raw_abs,raw_pag}.ome.tiff          512x256x256
+          kidney2_D5b_blood_vessels_defatted.ome.tiff      4240x3500x5818 uint8
+    n_files: 103
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: kidney2_D4_*_glomeruli_roi*_raw_{abs,pag}.ome.tiff (and D9 fat ROIs)
+    format: ome-tiff
+    axes: zyx
+    shape:
+    - 256
+    - 256
+    - 512
+    shape_varies: true
+    dtype: float32
+    compression: unknown
+    lossy: null
+    chunks: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Two raw variants per ROI (raw_abs, raw_pag; likely absorption and Paganin-filtered, not documented
+      per file). Some ROIs are 256x512x256 (x,y,z).
+  - role: label
+    path_pattern: kidney2_D4_*_glomeruli_roi*_annotation.ome.tiff, kidney2_D9_*_fat_roi*_annotation.ome.tiff
+    format: ome-tiff
+    axes: zyx
+    shape:
+    - 256
+    - 256
+    - 512
+    shape_varies: true
+    dtype: uint8
+    compression: unknown
+    lossy: null
+    chunks: null
+    encoding: unknown
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same ROI name and the same SizeX/Y/Z as the raw_abs/raw_pag files.
+  - role: label
+    path_pattern: kidney<k>_D{5,6,8}_*.ome.tiff
+    format: ome-tiff
+    axes: zyx
+    shape:
+    - 7168
+    - 4608
+    - 4608
+    shape_varies: false
+    dtype: uint8
+    compression: unknown
+    lossy: null
+    chunks: null
+    encoding: unknown
+    classes: null
+    alignment: same-grid
+    alignment_notes: Semi-automatic vessel / tubule / glomerulus segmentations on the grid of D3_inpainted (4608x4608x7168);
+      not validated as ground truth per the paper.
+  notes: 'Metadata from the IDR JSON API (image list per dataset: name, SizeX/Y/Z/C, pixel type). webclient/imgData
+    failed for the 3 images tried ("Error instantiating pixel buffer"), and PhysicalSize is null in the API, so
+    voxel size stays from the paper (1.625 um) and no pixel values could be read (IDR offers no range-readable file
+    URL here). Axes zyx are from IDR Size fields (SizeX/Y/Z). The IDR project description gives 567 GB per stitched
+    kidney and 1158 GB of reconstructions per kidney; no exact total size.'
+  inspected_at: '2026-09-30T21:50:27Z'
