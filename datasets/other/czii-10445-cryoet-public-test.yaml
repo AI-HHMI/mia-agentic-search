@@ -1,8 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: czii-10445-cryoet-public-test
 title: CryoET Object Identification Challenge - Public Test Dataset (DS-10445)
 short_name: CryoET phantom public test set (cryo-ET)
-description: Public test split of the experimental cryo-ET phantom (lysate spiked with six protein species) from the CZII CryoET Object Identification Challenge. 121 runs / 484 tomograms with hand-curated point annotations for apo-ferritin, beta-amylase, beta-galactosidase, cytosolic ribosomes, thyroglobulin and PP7 virus-like particles. Released February 2025 on the CryoET Data Portal.
+description: Public test split of the experimental cryo-ET phantom (lysate spiked with six protein species) from
+  the CZII CryoET Object Identification Challenge. 121 runs / 484 tomograms with hand-curated point annotations
+  for apo-ferritin, beta-amylase, beta-galactosidase, cytosolic ribosomes, thyroglobulin and PP7 virus-like particles.
+  Released February 2025 on the CryoET Data Portal.
 landing_url: https://cryoetdataportal.czscience.com/datasets/10445
 doi: null
 repository: other
@@ -17,7 +20,10 @@ imaging:
   modality:
   - cryo-ET
   dimensionality: 3D
-  voxel_size_nm: null
+  voxel_size_nm:
+    x: 1.0012
+    y: 1.0012
+    z: 1.0012
   channels: 1
   organism: []
   sample: cell lysate spiked with six purified target protein species (phantom)
@@ -34,6 +40,7 @@ annotations:
   present: true
   types:
   - points
+  - semantic-segmentation
   coverage: dense
   format: point coordinates per particle class on the CryoET Data Portal
   source: mixed
@@ -57,6 +64,138 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-09-29T21:12:37Z'
-notes: "Public test split (121 runs, 484 tomograms, 8,335 annotations per portal page) of the phantom deposition CZCDP-10310; training split is DS-10440 (separate PR), private test is DS-10446. Voxel spacing not stated on the DS-10445 page (DS-10440 lists 1.0012 nm; paper gives 1.51 A raw pixel size), so left null. Organism left empty: sample is a mixed lysate plus purified proteins from several species. CC0 stated in paper (Fig. 2 legend) for datasets 10440/10441/10445/10446. Formats from paper Methods (OME-Zarr), not from a file listing. Authors not extracted from fetched pages. Sources checked: portal page, paper full text."
+  annotations_verified: true
+  last_checked: '2026-09-30T21:08:44Z'
+notes: 'Public test split (121 runs, 484 tomograms, 8,335 annotations per portal page) of the phantom deposition
+  CZCDP-10310; training split is DS-10440 (separate PR), private test is DS-10446. Voxel spacing not stated on the
+  DS-10445 page (DS-10440 lists 1.0012 nm; paper gives 1.51 A raw pixel size), so left null. Organism left empty:
+  sample is a mixed lysate plus purified proteins from several species. CC0 stated in paper (Fig. 2 legend) for
+  datasets 10440/10441/10445/10446. Formats from paper Methods (OME-Zarr), not from a file listing. Authors not
+  extracted from fetched pages. Sources checked: portal page, paper full text. enricher: voxel size 1.0012 nm from
+  the tomogram OME-Zarr scale (was null); annotations_verified true (point ndjson and membrane masks seen); added
+  semantic-segmentation (a membrane mask per run).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://cryoetdataportal.czscience.com/datasets/10445
+  - https://cryoet-data-portal-public.s3.amazonaws.com/10445/TS_100_3/Reconstructions/VoxelSpacing10.012/Tomograms/102/TS_100_3.zarr
+  - https://cryoet-data-portal-public.s3.amazonaws.com/10445/TS_100_3/Reconstructions/VoxelSpacing10.012/Tomograms/102/TS_100_3.zarr/0
+  - https://cryoet-data-portal-public.s3.amazonaws.com/10445/TS_100_3/Reconstructions/VoxelSpacing4.990/Annotations/100/membrane-1.0_segmentationmask.zarr
+  - https://cryoet-data-portal-public.s3.amazonaws.com/10445/TS_100_3/Reconstructions/VoxelSpacing4.990/Annotations/100/membrane-1.0_segmentationmask.zarr/0
+  - https://cryoet-data-portal-public.s3.amazonaws.com/10445/TS_100_3/Reconstructions/VoxelSpacing4.990/Annotations/101/ferritin_complex-1.0.json
+  - https://cryoet-data-portal-public.s3.amazonaws.com/10445/TS_100_3/Reconstructions/VoxelSpacing4.990/Annotations/107/ferritin_complex-1.0.json
+  - https://cryoet-data-portal-public.s3.amazonaws.com/10445/TS_100_3/Reconstructions/VoxelSpacing4.990/Annotations/101/ferritin_complex-1.0_point.ndjson
+  bytes_downloaded: 72926950
+  size_source: unknown
+  layout:
+    tree: |
+      (first 3,000 of >50,000 S3 objects; per run TS_<a>_<b>/)
+      Images/                                               2 files  294.4 KB  .png
+      TS_#_#/Alignments/100/                    (x3 runs)   6 files  128.7 KB  .aln, .json
+      TS_#_#/Frames/                            (x3 runs)  99 files    8.9 GB  .eer 93, .mdoc 3, .json 3
+      TS_#_#/Gains/                             (x3 runs)   3 files  117.0 MB  .gain
+      TS_#_#/Reconstructions/VoxelSpacing10.012/
+        Tomograms/102/  TS_#_#.mrc, TS_#_#.zarr/, tomogram_metadata.json
+        Tomograms/103/  TS_#_#.mrc, TS_#_#.zarr/, tomogram_metadata.json
+        Images/102/, Images/103/                            key-photo PNGs
+      TS_#_#/Reconstructions/VoxelSpacing4.990/
+        Annotations/100/  membrane-1.0.json, membrane-1.0_segmentationmask.{mrc,zarr}
+        Annotations/101-106/  <object>-1.0.json + <object>-1.0_point.ndjson (ground truth)
+        Annotations/107-.../  <object>-1.0.json + _point.ndjson (Kaggle solution predictions, ground_truth_status false)
+        NeuroglancerPrecompute/  point / orientedpoint / orientedmesh layers per object
+        Images/100/, Images/101/
+      objects: ferritin_complex, beta_amylase, beta_galactosidase, cytosolic_ribosome, thyroglobulin, pp7_vlp
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://cryoet-data-portal-public.s3.amazonaws.com/10445/TS_100_3/Reconstructions/VoxelSpacing10.012/Tomograms/102/TS_100_3.zarr
+    - https://cryoet-data-portal-public.s3.amazonaws.com/10445/TS_100_3/Reconstructions/VoxelSpacing4.990/Annotations/101/ferritin_complex-1.0_point.ndjson
+    size_bytes: null
+    description: One run's tomogram (OME-Zarr, 184x630x630 float32 at level 0) and one object's point list (ndjson,
+      4.2 KB)
+  arrays:
+  - role: raw
+    path_pattern: TS_*/Reconstructions/VoxelSpacing10.012/Tomograms/{102,103}/TS_*.zarr
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 184
+    - 630
+    - 630
+    shape_varies: null
+    dtype: float32
+    compression: blosc
+    lossy: false
+    chunks:
+    - 256
+    - 256
+    - 256
+    value_range:
+    - -6.93e-05
+    - 2.456e-05
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 3 resolution levels; also shipped as .mrc next to the zarr.
+  - role: label
+    path_pattern: TS_*/Reconstructions/VoxelSpacing4.990/Annotations/*/*_point.ndjson
+    format: json
+    axes: null
+    shape:
+    - 39
+    - 3
+    shape_varies: true
+    dtype: float64
+    compression: none
+    lossy: false
+    chunks: null
+    encoding: points-table
+    classes:
+    - id: null
+      name: ferritin complex
+    - id: null
+      name: beta amylase
+    - id: null
+      name: beta galactosidase
+    - id: null
+      name: cytosolic ribosome
+    - id: null
+      name: thyroglobulin
+    - id: null
+      name: pp7 vlp
+    n_ids_observed: null
+    alignment: scaled
+    alignment_notes: 'One ndjson line per particle, {"type":"point","location":{x,y,z}} in voxels of the VoxelSpacing4.990
+      (0.499 nm) grid, not the 1.0012 nm tomogram grid (factor ~2.006). Sampled file: 39 points in TS_100_3.'
+  - role: label
+    path_pattern: TS_*/Reconstructions/VoxelSpacing4.990/Annotations/100/membrane-1.0_segmentationmask.zarr
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 368
+    - 1260
+    - 1260
+    shape_varies: null
+    dtype: int8
+    compression: blosc
+    lossy: false
+    chunks:
+    - 256
+    - 256
+    - 256
+    value_range:
+    - 0
+    - 0
+    encoding: binary
+    classes: null
+    n_ids_observed: 1
+    alignment: scaled
+    alignment_notes: Mask grid is 2x the tomogram grid per axis (368x1260x1260 vs 184x630x630) at 4.99 A vs 10.012
+      A.
+  notes: 'S3 listing stopped at 50,000 objects (865.6 GB, incomplete, mostly EER frames), so size stays null. Probe:
+    tomogram OME-Zarr v2, zyx, float32, blosc-lz4, scale 10.012 A; membrane mask int8, blosc-lz4, scale 4.99 A.
+    One chunk-aligned central crop each: tomogram [184,157,315] -6.9e-5 to 2.5e-5 (mean ~0); membrane crop all 0
+    (no membrane in that crop). Annotation metadata: 101 ferritin is ground_truth_status true, is_curator_recommended
+    true, method hybrid, object_count 40; 107 ferritin comes from the Kaggle 1st-place solution, ground_truth false.
+    Use only the ground-truth annotation sets for training.'
+  inspected_at: '2026-09-30T21:08:44Z'
