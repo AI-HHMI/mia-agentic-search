@@ -1,8 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: hf-pytc-axonem-axon-segmentation
 title: AxonEM - 3D axon instance segmentation in human and mouse cortex EM
 short_name: AxonEM axon segmentation (serial-section EM)
-description: 'Two 30x30x30 um serial-section EM volumes (human temporal lobe layer 2, mouse primary visual cortex layer 2/3) with proofread dense 3D axon instance segmentation. Training data are nine densely annotated 512x512x50-voxel subvolumes per species; full image volumes are hosted separately for challenge evaluation.'
+description: Two 30x30x30 um serial-section EM volumes (human temporal lobe layer 2, mouse primary visual cortex
+  layer 2/3) with proofread dense 3D axon instance segmentation. Training data are nine densely annotated 512x512x50-voxel
+  subvolumes per species; full image volumes are hosted separately for challenge evaluation.
 landing_url: https://huggingface.co/datasets/pytc/AxonEM
 doi: null
 repository: HuggingFace
@@ -30,9 +32,8 @@ imaging:
 data:
   formats:
   - hdf5
-  - png
-  size_bytes: 3743809013
-  n_items: 18
+  size_bytes: 3743812420
+  n_items: 38
   access: open
   download_url: https://huggingface.co/datasets/pytc/AxonEM/resolve/main/EM30-H-train-9vol-pad-20-512-512.zip
   download_method: http
@@ -68,5 +69,83 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-09-30T06:15:34Z'
-notes: 'Voxel size 8x8x30 nm is the human volume (AxonEM-H); the mouse volume (AxonEM-M) is 7x7x40 nm per the arXiv paper. Modality is serial-section EM (ssEM; TEM vs SEM not stated in the sources checked) so recorded as other. n_items = 18 HDF5 files in the human training zip (9 image + 9 label); the mouse zip was not listed but is described as nine subvolumes as well, and sizes are summed across both zips. Full image volumes (EM30-H/M-im-pad.zip, ~15-24 GB, PNG slices) are on pytc/EM30 without labels. Authors not listed on HF page; paper Methods were read via the arXiv HTML (Springer full text not open access). The MIT license is the HF card tag; the challenge page adds Grand Challenge terms of service. Only the H training zip contents were listed.'
+  last_checked: '2026-09-30T21:28:26Z'
+notes: 'Voxel size 8x8x30 nm is the human volume (AxonEM-H); the mouse volume (AxonEM-M) is 7x7x40 nm per the arXiv
+  paper. Modality is serial-section EM (ssEM; TEM vs SEM not stated in the sources checked) so recorded as other.
+  n_items = 18 HDF5 files in the human training zip (9 image + 9 label); the mouse zip was not listed but is described
+  as nine subvolumes as well, and sizes are summed across both zips. Full image volumes (EM30-H/M-im-pad.zip, ~15-24
+  GB, PNG slices) are on pytc/EM30 without labels. Authors not listed on HF page; paper Methods were read via the
+  arXiv HTML (Springer full text not open access). The MIT license is the HF card tag; the challenge page adds Grand
+  Challenge terms of service. Only the H training zip contents were listed. enricher: exact HF listing (4 files,
+  3,743,812,420 B); zips hold 38 HDF5 files (H: 9 im + 9 seg; M: 10 im + 9 seg + valid_mask.h5); png removed from
+  formats (no PNGs in this repo).'
+technical:
+  method: header
+  inspected_at: '2026-09-30T21:28:26Z'
+  inspected_urls:
+  - https://huggingface.co/datasets/pytc/AxonEM
+  - https://huggingface.co/datasets/pytc/AxonEM/resolve/main/EM30-H-train-9vol-pad-20-512-512.zip
+  - https://huggingface.co/datasets/pytc/AxonEM/resolve/main/EM30-M-train-9vol-pad-20-512-512.zip
+  bytes_downloaded: 0
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  4 files  3.7 GB  (2 zips, README.md, .gitattributes)
+      EM30-H-train-9vol-pad-20-512-512.zip   18 .h5  1.8 GB
+        im_<z>-<y>-<x>_pad.h5  (9)   seg_<z>-<y>-<x>_pad.h5  (9)
+      EM30-M-train-9vol-pad-20-512-512.zip   20 .h5  1.9 GB
+        im_<z>-<y>-<x>_pad.h5  (10, incl. im_675-800-800 without a seg)
+        seg_<z>-<y>-<x>_pad.h5  (9)   valid_mask.h5
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/pytc/AxonEM/resolve/main/EM30-H-train-9vol-pad-20-512-512.zip::im_0-0-0_pad.h5
+    - https://huggingface.co/datasets/pytc/AxonEM/resolve/main/EM30-H-train-9vol-pad-20-512-512.zip::seg_0-0-0_pad.h5
+    size_bytes: 200667881
+    description: One human training subvolume and its axon segmentation (zip members, ~200 MB + 0.9 MB)
+  arrays:
+  - role: raw
+    path_pattern: EM30-{H,M}-train-*.zip/im_*_pad.h5
+    format: hdf5
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    lossy: null
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Header not readable by range requests (member is deflate-compressed inside the zip, ~200 MB).
+  - role: label
+    path_pattern: EM30-{H,M}-train-*.zip/seg_*_pad.h5
+    format: hdf5
+    axes: null
+    shape:
+    - 90
+    - 1536
+    - 1536
+    shape_varies: null
+    dtype: uint8
+    compression: gzip
+    lossy: false
+    chunks:
+    - 6
+    - 96
+    - 192
+    value_range: null
+    normalization: none
+    encoding: unknown
+    classes: null
+    n_ids_observed: null
+    alignment: unknown
+    alignment_notes: seg_<offset>_pad.h5 pairs with im_<offset>_pad.h5 by the offset in the name; dataset 'main'.
+      Mouse zip has one image (im_675-800-800) without a seg and a valid_mask.h5.
+  notes: 'HF listing complete and exact (3,743,812,420 B). Probe of H seg_0-0-0_pad.h5: dataset main, shape 90x1536x1536,
+    uint8, gzip, chunks 6x96x192. The shape suggests a 1024x1024 core padded by 256 px in y/x and 20 slices in z
+    ("pad-20-512-512" in the zip name), but that is not documented here. The label dtype is uint8 although the task
+    is axon instance segmentation, so IDs may be limited per subvolume or the file may hold a binary/semantic mask;
+    encoding left unknown. Image header unread: probe.py hit a truncated read of the 200 MB deflated member, and
+    sample.py does not open HDF5 datasets inside zips. Axes are not stored in the HDF5 attributes (attrs empty).'
