@@ -1,9 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-6651752-zebrafish-segmentation-phenotype
 title: Identifying zebrafish segmentation phenotype features using multiple instance learning
 short_name: Zebrafish segmentation-clock phenotypes (ISH)
-description: 'Images of zebrafish embryos obtained by in situ hybridization, split into four classes (wild type and three segmentation-clock phenotypes: DAPT, her1;her7, tbx6_fss), released with training
-  and validation folders for training image classifiers. Validation images additionally have fish-part annotation images (head, trunk, tail, yolk, yolk extension).'
+description: 'Images of zebrafish embryos obtained by in situ hybridization, split into four classes (wild type
+  and three segmentation-clock phenotypes: DAPT, her1;her7, tbx6_fss), released with training and validation folders
+  for training image classifiers. Validation images additionally have fish-part annotation images (head, trunk,
+  tail, yolk, yolk extension).'
 landing_url: https://zenodo.org/records/6651752
 doi: 10.5281/zenodo.6651752
 repository: Zenodo
@@ -40,7 +42,8 @@ annotations:
   - classification
   - semantic-segmentation
   coverage: partial
-  format: PNG images in folders per class (classification); TIFF label images of fish parts for validation images
+  format: Class folders of RGB PNGs (classification); int32 TIFF fish-part label images (values 0-5) for the 80
+    validation images
   source: unknown
 ml:
   tasks:
@@ -62,7 +65,79 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-09-30T08:37:21Z'
-notes: 'Zip listing (peek_archive): data/training (WT 176, DAPT 127, her1;her7 58, tbx6_fss 37 images), data/validation (20 per class), data/fish_part_labels (20 per class, 80 .png.tiff label files). Imaging
-  modality beyond "in situ hybridization" not stated on the dataset page; the associated paper could not be located (Europe PMC title search and web search failed), so pixel size, microscope and annotation
-  procedure are unknown. Class labels are given by folder names.'
+  last_checked: '2026-09-30T21:23:15Z'
+notes: 'Zip listing (peek_archive): data/training (WT 176, DAPT 127, her1;her7 58, tbx6_fss 37 images), data/validation
+  (20 per class), data/fish_part_labels (20 per class, 80 .png.tiff label files). Imaging modality beyond "in situ
+  hybridization" not stated on the dataset page; the associated paper could not be located (Europe PMC title search
+  and web search failed), so pixel size, microscope and annotation procedure are unknown. Class labels are given
+  by folder names. enricher: sampled one validation image + fish-part label: RGB PNG and int32 TIFF on the same
+  450x900 grid, label values 0-5.'
+technical:
+  method: sample
+  inspected_at: '2026-09-30T21:23:15Z'
+  inspected_urls:
+  - https://zenodo.org/records/6651752
+  - https://zenodo.org/records/6651752/files/data.zip
+  bytes_downloaded: 524991
+  size_source: file-listing
+  layout:
+    tree: |
+      data.zip/data/   (1 zip, 410.5 MB, 558 members)
+        training/{DAPT,WT,her1;her7,tbx6_fss}/     127 / 176 / 58 / 37 .png
+        validation/{DAPT,WT,her1;her7,tbx6_fss}/    20 each .png
+        fish_part_labels/{DAPT,WT,her1;her7,tbx6_fss}/  20 each .png.tiff
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/6651752/files/data.zip::data/validation/DAPT/2_DAPT50M_11.png
+    - https://zenodo.org/records/6651752/files/data.zip::data/fish_part_labels/DAPT/2_DAPT50M_11.png.tiff
+    size_bytes: 524991
+    description: One DAPT validation image and its fish-part label image
+  arrays:
+  - role: raw
+    path_pattern: data/{training,validation}/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 450
+    - 900
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: png
+    lossy: false
+    chunks: null
+    value_range:
+    - 12
+    - 237
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Image class is given by the parent folder name.
+  - role: label
+    path_pattern: data/fish_part_labels/*/*.png.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 450
+    - 900
+    shape_varies: null
+    dtype: int32
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 5
+    normalization: none
+    encoding: semantic-ids
+    classes: null
+    n_ids_observed: 6
+    alignment: same-grid
+    alignment_notes: fish_part_labels/<class>/<name>.png.tiff pairs with validation/<class>/<name>.png (same file
+      stem); sampled pair is on the same 450x900 grid. Training images have no part labels.
+  notes: 'Zenodo listing complete and exact (410,467,555 B, 558 members). Sample: validation PNG is RGB uint8 450x900,
+    values 12..237 (mean 211, bright background); fish-part label TIFF (SCIFIO-written, uncalibrated, scales 1.0)
+    is int32 with values 0..5 (0 = 270,982 px, largest). Record describes 5 parts (head, trunk, tail, yolk, yolk
+    extension), consistent with 5 foreground IDs + background, but the ID-to-part mapping is not documented, so
+    classes is null. Some file names contain "..png" and ";" in folder names.'
