@@ -1,11 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-21978355-hep2-cell-cycle
 title: The human epithelial cell cycle dataset for deep learning and biomedical research (HEp-2 dataset)
 short_name: HEp-2 cell cycle phase classification (DAPI)
-description: DAPI-stained HEp-2 (HeLa-contaminated) fluorescence microscopy images. 10,000 expert-labelled
-  single-cell 256x256 crops (ExpD) and 100,000 CNN-pre-classified, expert-reviewed crops (CNN-D), each assigned
-  to one of seven groups (interphase, prophase, metaphase, anaphase, telophase, artefact, triple), plus 1,000
-  unlabelled full field-of-view images (1936x1216).
+description: DAPI-stained HEp-2 (HeLa-contaminated) fluorescence microscopy images. 10,000 expert-labelled single-cell
+  256x256 crops (ExpD) and 100,000 CNN-pre-classified, expert-reviewed crops (CNN-D), each assigned to one of seven groups
+  (interphase, prophase, metaphase, anaphase, telophase, artefact, triple), plus 1,000 unlabelled full field-of-view
+  images (1936x1216).
 landing_url: https://zenodo.org/records/21978355
 doi: 10.5281/zenodo.21978355
 repository: Zenodo
@@ -49,8 +49,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: class = folder name (Anaphase/, Interphase/, ...) inside HEp-2-ExpD.zip and HEp-2-CNN-D.zip; lossless
-    WebP images
+  format: class = folder name (Anaphase/, Interphase/, ...) inside HEp-2-ExpD.zip and HEp-2-CNN-D.zip; lossless WebP
+    images
   source: mixed
 ml:
   tasks:
@@ -76,12 +76,71 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-09-30T20:13:08Z'
-notes: 'Zenodo version 2 (2026-08-17) of concept DOI 10.5281/zenodo.18337703 (the paper cites the concept record).
-  Zip indexes read without downloading: ExpD 10,000 WebP, CNN-D 100,000 WebP in class folders, DAPI_Full_FOV
-  1,000 WebP; size is the sum of the 3 zips plus a 986-byte metadata txt. Labels are image-level classes,
-  not masks. ExpD is expert labelled; CNN-D labels were pre-classified by a VGG16 and reviewed by two experts
-  (source: mixed). Pixel size 0.4651 um from the paper Methods; device akironNEO, 20x/0.4 objective. No
-  train/test split provided in the Zenodo record; paper mentions a test set without specifying a split file.
-  The zip with full field-of-view images has no labels. Zenodo page says 32-bit WebP while the paper says uint8
-  single-channel; not resolved.'
+  last_checked: '2026-09-30T21:04:36Z'
+notes: 'Zenodo version 2 (2026-08-17) of concept DOI 10.5281/zenodo.18337703 (the paper cites the concept record). Zip
+  indexes read without downloading: ExpD 10,000 WebP, CNN-D 100,000 WebP in class folders, DAPI_Full_FOV 1,000 WebP;
+  size is the sum of the 3 zips plus a 986-byte metadata txt. Labels are image-level classes, not masks. ExpD is expert
+  labelled; CNN-D labels were pre-classified by a VGG16 and reviewed by two experts (source: mixed). Pixel size 0.4651
+  um from the paper Methods; device akironNEO, 20x/0.4 objective. No train/test split provided in the Zenodo record;
+  paper mentions a test set without specifying a split file. The zip with full field-of-view images has no labels. Zenodo
+  page says 32-bit WebP while the paper says uint8 single-channel; not resolved. enricher: WebP headers read: VP8L (lossless),
+  256x256 crops and 1936x1216 FOV images.'
+technical:
+  method: header
+  inspected_urls:
+  - https://zenodo.org/records/21978355
+  - https://zenodo.org/records/21978355/files/HEp-2-ExpD.zip
+  - https://zenodo.org/records/21978355/files/DAPI_Full_FOV.zip
+  bytes_downloaded: 0
+  size_source: file-listing
+  layout:
+    tree: |
+      ./                                     4 files   2.3 GB  .zip 3, .txt 1
+      DAPI_Full_FOV.zip/                  1000 files  772.9 MB  .webp (unlabelled full FOV)
+      HEp-2-CNN-D.zip/<class>/          100000 files  1.38 GB  .webp
+        Anaphase 3245, Artefact 6468, Interphase 28639, Metaphase 31582,
+        Prophase 6604, Telophase 20941, Triple 2521
+      HEp-2-ExpD.zip/<class>/            10000 files  140 MB  .webp
+        Interphase 2500; Anaphase, Artefact, Metaphase, Prophase, Telophase, Triple 1250 each
+    n_files: 4
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: HEp-2-{ExpD,CNN-D}.zip::<class>/<class>_NNNN.webp
+    format: other
+    axes: null
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: webp
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: raw
+    path_pattern: DAPI_Full_FOV.zip::DAPI_NNNN.webp
+    format: other
+    axes: null
+    shape:
+    - 1216
+    - 1936
+    shape_varies: false
+    dtype: uint8
+    compression: webp
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  notes: 'Zenodo listing with zip expansion (exact sizes, 111,000 members, matches the record). Labels are image-level
+    classes given by the folder name (7 classes), no label files. WebP container headers of ExpD Anaphase_0001 and DAPI_0001
+    read by range request (stdlib parser): both VP8L (lossless), no alpha flag; 256x256 and 1936x1216. WebP stores 8
+    bits per channel, so dtype uint8; whether pixels are grey (R=G=B) was not checked because sample.py cannot decode
+    WebP. shape_varies false is from these two headers plus the paper''s stated crop/FOV sizes.'
+  inspected_at: '2026-09-30T21:04:36Z'
