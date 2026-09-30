@@ -1,0 +1,145 @@
+schema_version: '1.2'
+id: zenodo-7142003-snemi3d-neurites-sstem
+title: 'SNEMI3D: 3D Segmentation of neurites in EM images (ISBI 2013 challenge)'
+short_name: SNEMI3D mouse cortex neurites (ssSEM)
+description: 'ISBI 2013 challenge dataset: a training EM stack of mouse neocortex with manually delineated neurites (3D
+  label volume) and a test stack without public labels, for automatic 3D neurite segmentation.'
+landing_url: https://zenodo.org/records/7142003
+doi: 10.5281/zenodo.7142003
+repository: Zenodo
+accession: '7142003'
+authors:
+- Ignacio Arganda-Carreras
+- H. Sebastian Seung
+- Ashwin Vishwanathan
+- Daniel R. Berger
+publications:
+- title: Saturated Reconstruction of a Volume of Neocortex
+  doi: 10.1016/j.cell.2015.06.054
+  url: https://doi.org/10.1016/j.cell.2015.06.054
+date_published: '2013-01-15'
+imaging:
+  modality:
+  - ssSEM
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 6
+    y: 6
+    z: 30
+  channels: 1
+  organism:
+  - Mus musculus
+  sample: somatosensory neocortex
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 194608530
+  n_items: 3
+  access: open
+  download_url: https://zenodo.org/records/7142003/files/snemi.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: seg/train-labels.tif (3D neurite ID labels)
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: SNEMI3D
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-09-30T18:16:25Z'
+  evidence_urls:
+  - https://zenodo.org/records/7142003
+  - https://zenodo.org/api/records/7142003
+  - https://github.com/tbullmann/groundtruth-mouse-cortex
+  - https://snemi3d.grand-challenge.org/
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A26232230+AND+SRC%3AMED&format=json&resultType=core&pageSize=3
+  confidence: 0.85
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-09-30T21:13:33Z'
+notes: 'Voxel size (~6x6x30 nm) is not stated on the Zenodo record or challenge page; taken from the derivative repo
+  tbullmann/groundtruth-mouse-cortex (6 nm/pixel, 30 nm sections), so approximate. Kasthuri 2015 Cell paper is not open
+  access; only the abstract was read. Test labels are not provided. Annotation by D. R. Berger per Zenodo description.
+  Files: image/train-input.tif, image/test-input.tif, seg/train-labels.tif (peek_archive).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/7142003
+  - https://zenodo.org/records/7142003/files/snemi.zip
+  bytes_downloaded: 100105453
+  size_source: file-listing
+  layout:
+    tree: |
+      snemi.zip                     194.6 MB (419.5 MB uncompressed)
+        image/train-input.tif       104.9 MB  100x1024x1024 uint8
+        image/test-input.tif        104.9 MB  (no labels released)
+        seg/train-labels.tif        209.7 MB  100x1024x1024 uint16
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7142003/files/snemi.zip::image/train-input.tif
+    - https://zenodo.org/records/7142003/files/snemi.zip::seg/train-labels.tif
+    size_bytes: 100105453
+    description: The full training volume and its labels (compressed zip members, ~100 MB)
+  arrays:
+  - role: raw
+    path_pattern: snemi.zip::image/{train,test}-input.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 100
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint8
+    compression: unknown
+    lossy: null
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: snemi.zip::seg/train-labels.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 100
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint16
+    compression: unknown
+    lossy: null
+    chunks: null
+    value_range:
+    - 0
+    - 400
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 401
+    alignment: same-grid
+    alignment_notes: seg/train-labels.tif matches image/train-input.tif voxel for voxel (identical shape); the test volume
+      has no labels.
+  notes: 'Exact Zenodo listing and zip index. probe.py could not read the deflated TIFF members, so the whole training
+    pair was sampled (95.3 MB + 4.8 MB compressed). Raw uint8 uses the full 0-255 range (mean 129, std 49; sample.py
+    hint ''possibly contrast-stretched'', not documented, so unknown). Labels: 401 distinct IDs (0-400) in the training
+    volume, i.e. neurite instance IDs. Test-input shape assumed equal to training from its near-identical member size;
+    not read. Voxel size not in a readable header.'
+  inspected_at: '2026-09-30T21:13:33Z'
