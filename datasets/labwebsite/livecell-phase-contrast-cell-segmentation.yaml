@@ -1,44 +1,60 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: livecell-phase-contrast-cell-segmentation
-title: "LIVECell: a large-scale dataset for label-free live cell segmentation"
+title: 'LIVECell: a large-scale dataset for label-free live cell segmentation'
 short_name: LIVECell cell segmentation (phase-contrast)
-description: >-
-  5,239 manually annotated, expert-validated Incucyte HD phase-contrast images of 2D cell culture
-  with 1,686,352 single-cell polygon annotations across eight cell types, released with predefined
-  train/validation/test splits in COCO format.
+description: 5,239 manually annotated, expert-validated Incucyte HD phase-contrast images of 2D cell culture with 1,686,352
+  single-cell polygon annotations across eight cell types, released with predefined train/validation/test splits in COCO
+  format.
 landing_url: https://sartorius-research.github.io/LIVECell/
 doi: 10.6084/m9.figshare.14931555
 repository: LabWebsite
 accession: null
-authors: [Edlund C, Jackson TR, Khalid N, Bevan N, Dale T, Dengel A, Ahmed S, Trygg J, Sjögren R]
+authors:
+- Edlund C
+- Jackson TR
+- Khalid N
+- Bevan N
+- Dale T
+- Dengel A
+- Ahmed S
+- Trygg J
+- Sjögren R
 publications:
 - title: LIVECell-A large-scale dataset for label-free live cell segmentation
   doi: 10.1038/s41592-021-01249-6
   url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8440198/fullTextXML
 date_published: null
 imaging:
-  modality: [phase-contrast]
+  modality:
+  - phase-contrast
   dimensionality: 2D
-  voxel_size_nm: {x: 1243, y: 1243, z: null}
+  voxel_size_nm:
+    x: 1243
+    y: 1243
+    z: null
   channels: 1
   organism: []
   sample: 2D cell cultures of A172, BT-474, BV-2, Huh7, MCF7, SH-SY5Y, SkBr3 and SK-OV-3 cell lines
   labels_stains: []
 data:
-  formats: [tiff]
-  size_bytes: 1300000000
+  formats:
+  - tiff
+  size_bytes: 23498674326
   n_items: 5239
   access: open
   download_url: http://livecell-dataset.s3.eu-central-1.amazonaws.com/LIVECell_dataset_2021/images.zip
   download_method: http
 annotations:
   present: true
-  types: [instance-segmentation]
+  types:
+  - instance-segmentation
   coverage: partial
   format: COCO object detection JSON (polygons), pycocotools-compatible
   source: manual
 ml:
-  tasks: [segmentation, detection]
+  tasks:
+  - segmentation
+  - detection
   splits_provided: true
   benchmark: LIVECell
   baseline_code_url: https://github.com/sartorius-research/LIVECell
@@ -56,12 +72,86 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-09-29T11:18:11Z'
-notes: >-
-  Images are .tif per the GitHub README (images.zip, 1.3 GB uncompressed; zip contents not listed with
-  peek_archive). Pixel size is not stated directly; 1243 nm is derived from the paper Methods
-  (704 px crops = 0.875 mm, 10x objective). Annotations are partial by design: large cell masses without
-  visible boundaries were intentionally left unannotated. Organism not stated as species in the sources
-  checked, so left empty (human and mouse cell lines are implied only). Publication date not stated on the
-  pages checked. Data also on figshare (10.6084/m9.figshare.14931555), not fetched.
+  annotations_verified: true
+  last_checked: '2026-09-30T20:31:57Z'
+notes: 'Images are .tif per the GitHub README (images.zip, 1.3 GB uncompressed; zip contents not listed with peek_archive).
+  Pixel size is not stated directly; 1243 nm is derived from the paper Methods (704 px crops = 0.875 mm, 10x objective).
+  Annotations are partial by design: large cell masses without visible boundaries were intentionally left unannotated.
+  Organism not stated as species in the sources checked, so left empty (human and mouse cell lines are implied only).
+  Publication date not stated on the pages checked. Data also on figshare (10.6084/m9.figshare.14931555), not fetched.
+  enricher: size_bytes from the complete S3 listing of LIVECell_dataset_2021/ (was 1.3 GB for images.zip alone; total
+  includes ~16 GB of model weights, a duplicate images_per_celltype.zip and a nuclear_count_benchmark folder); annotations
+  verified (COCO JSON read).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://livecell-dataset.s3.eu-central-1.amazonaws.com/?list-type=2&prefix=LIVECell_dataset_2021/
+  - https://livecell-dataset.s3.eu-central-1.amazonaws.com/LIVECell_dataset_2021/images.zip
+  - https://livecell-dataset.s3.eu-central-1.amazonaws.com/LIVECell_dataset_2021/annotations/LIVECell_single_cells/huh7/val.json
+  bytes_downloaded: 2711601
+  size_source: file-listing
+  layout:
+    tree: |
+      ./                                                        2 files   27.2 KB  .(none) 1, .md 1
+      LIVECell_dataset_2021/                                    2 files    2.5 GB  .zip (images.zip, images_per_celltype.zip)
+      LIVECell_dataset_2021/annotations/LIVECell/               3 files  909.2 MB  .json (coco train/val/test)
+      LIVECell_dataset_2021/annotations/LIVECell_dataset_size_split/  5 files  487.7 MB  .json
+      LIVECell_dataset_2021/annotations/LIVECell_single_cells/<celltype>/  8 x 3 files  909 MB  .json (train/val/test)
+      LIVECell_dataset_2021/models/Anchor_based/<celltype|ALL>/  9 files   9.0 GB  .pth
+      LIVECell_dataset_2021/models/Anchor_free/<celltype|ALL>/   9 files   7.0 GB  .pth
+      LIVECell_dataset_2021/nuclear_count_benchmark/            6 files    2.7 GB  .zip 4, .json 2
+      images.zip: images/livecell_train_val_images/*.tif, images/livecell_test_images/*.tif
+      images_per_celltype.zip: images/livecell_{train_val,test}_images/<celltype>/*.tif
+    n_files: 60
+    listing_complete: true
+  sample:
+    urls:
+    - https://livecell-dataset.s3.eu-central-1.amazonaws.com/LIVECell_dataset_2021/images.zip::images/livecell_train_val_images/Huh7_Phase_A10_1_00d00h00m_1.tif
+    - https://livecell-dataset.s3.eu-central-1.amazonaws.com/LIVECell_dataset_2021/annotations/LIVECell_single_cells/huh7/val.json
+    size_bytes: 2711601
+    description: One Huh7 phase-contrast image (704x520) and the Huh7 validation COCO annotation file (65 images)
+  arrays:
+  - role: raw
+    path_pattern: images.zip::images/livecell_*_images/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 520
+    - 704
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 3
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: annotations/LIVECell/livecell_coco_{train,val,test}.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: polygons
+    classes:
+    - id: 1
+      name: cell
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: COCO polygons in pixel coordinates; each images[] entry names the .tif file_name with height 520
+      / width 704, matching the probed TIFFs.
+  notes: 'Complete S3 listing (exact sizes); 12,074 zip members. Probed 2 Huh7 TIFFs in images.zip: 520x704 uint8 LZW,
+    single page. Raw value range from one image (mean 128, std 7.6; values centred at 128, normalization not documented,
+    so unknown). Label sample: LIVECell_single_cells/huh7/val.json (COCO: 65 images, 3688 polygon annotations, one category
+    ''cell''; images also carry the original V7 Darwin URL and .png original_filename). Full-size COCO files (97-551
+    MB) were not downloaded; assumed same structure. The bucket also holds model weights (.pth, not opened) and a nuclear_count_benchmark
+    folder (not inspected).'
+  inspected_at: '2026-09-30T20:31:57Z'
