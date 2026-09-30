@@ -1,11 +1,12 @@
 ---
 name: enrich-prs
-description: Enricher run. Goes through open dataset PRs that aren't enriched yet and inspects the actual files (folder structure, confirmed size, shapes, dtypes, compression, value ranges, label encoding, raw/label alignment, license), writes the results into the PR's record and updates the PR. Labels follow automatically. Optional args are limit=N (max PRs, default 20), pr=<number> (just that PR) and dry-run.
+description: Enricher run. Goes through open dataset PRs that aren't enriched yet and inspects the actual files (folder structure, confirmed size, shapes, dtypes, compression, value ranges, label encoding, raw/label alignment, license), writes the results into the PR's record and updates the PR. Labels follow automatically. Optional args are limit=N (max PRs, default 20), pr=<number> (just that PR), shard=K/N (only PRs whose number mod N is K, for parallel runs) and dry-run.
 ---
 
 # enrich-prs
 
-Arguments: `$ARGUMENTS`. Parse `limit` (default 20), `pr` (optional) and `dry-run` (flag). `ROUTINE=enricher`.
+Arguments: `$ARGUMENTS`. Parse `limit` (default 20), `pr` (optional), `shard` (optional, `K/N`) and `dry-run` (flag).
+`ROUTINE=enricher`.
 
 Read `CLAUDE.md` first. Its hard rules apply, in particular: **never invent values**. Everything you
 write must come from a page you fetched or a file you inspected in this run. This routine goes
@@ -32,6 +33,8 @@ python tools/run_log.py recent-errors --routine enricher   # ids that failed in 
 ```
 The queue is the open PRs whose branch starts with `claude/dataset/` and that **don't** have the
 `enriched` label, oldest first. With `pr=<number>`, the queue is just that PR (even if it's enriched).
+With `shard=K/N`, keep only PRs whose number modulo N equals K. Several runs with different K then
+split the backlog without ever touching the same PR.
 
 Work through it one PR at a time:
 ```

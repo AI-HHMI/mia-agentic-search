@@ -73,7 +73,20 @@ def _cleanup(tmp):
     git("worktree", "remove", "--force", str(tmp))
 
 
-def state_push(routine):
+def state_push(routine, attempts=5):
+    """Parallel runs of one routine push to the same state branch; retry on a rejected (raced) push."""
+    import time
+    for i in range(attempts):
+        try:
+            return _state_push(routine)
+        except SystemExit as e:
+            if i == attempts - 1 or "push" not in str(e):
+                raise
+            print(f"state push raced another run; retrying ({i + 1}/{attempts - 1})")
+            time.sleep(5 + 5 * i)
+
+
+def _state_push(routine):
     branch = STATE_BRANCH_PREFIX + routine
     if remote_exists(branch):
         run("fetch", "-q", "origin", f"+{branch}:refs/remotes/origin/{branch}")

@@ -187,7 +187,16 @@ def polite_get(url, min_interval=1.0, **kw):
     _last_request[host] = time.monotonic()
     kw.setdefault("timeout", 60)
     kw["headers"] = {"User-Agent": USER_AGENT, **(kw.get("headers") or {})}
-    return requests.get(url, **kw)
+    for attempt in range(4):  # rate-limited (e.g. parallel enricher runs): wait as told, then retry
+        r = requests.get(url, **kw)
+        if r.status_code not in (429, 503) or attempt == 3:
+            return r
+        try:
+            delay = min(120, float(r.headers.get("Retry-After", 0)) or 15 * (attempt + 1))
+        except ValueError:
+            delay = 15 * (attempt + 1)
+        time.sleep(delay)
+        _last_request[host] = time.monotonic()
 
 
 def utcnow():
