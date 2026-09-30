@@ -1,10 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: ctc-fluo-n2dh-gowt1
 title: Cell Tracking Challenge Fluo-N2DH-GOWT1 (GFP-GOWT1 mouse stem cells)
 short_name: GFP-GOWT1 stem cell tracking (fluorescence)
-description: 2D+t fluorescence time-lapse of GFP-GOWT1 mouse stem cells from the Cell Tracking Challenge,
-  with two training sequences (01, 02) that include tracking (TRA) and segmentation (SEG) ground-truth
-  masks for real data, plus test sequences released separately.
+description: 2D+t fluorescence time-lapse of GFP-GOWT1 mouse stem cells from the Cell Tracking Challenge, with two
+  training sequences (01, 02) that include tracking (TRA) and segmentation (SEG) ground-truth masks for real data,
+  plus test sequences released separately.
 landing_url: http://celltrackingchallenge.net/2d-datasets/
 doi: null
 repository: LabWebsite
@@ -32,7 +32,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 62189568
+  size_bytes: 59331035
   n_items: 2
   access: open
   download_url: https://data.celltrackingchallenge.net/training-datasets/Fluo-N2DH-GOWT1.zip
@@ -68,11 +68,100 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-09-30T14:20:00Z'
-notes: 'Custom terms: attribution required (cite the CTC Nature Methods papers); non-CTC scientific use
-  requires organizer permission, commercial use needs permission, cloning of the datasets prohibited.
-  Training zip contains sequences 01 and 02 (about 92 frames each, 2D tif) with 30 and 20 SEG masks (silver
-  reference, sparse over time) and 93 TRA masks each. Pixel size 0.24 um from the CTC 2D dataset table.
-  The paper full text was not open via Europe PMC, so microscope, staining details and annotation
-  procedure were not verified; annotation source left unknown. Other CTC 2D datasets are not yet in
-  the catalog.'
+  last_checked: '2026-09-30T21:54:30Z'
+notes: 'Custom terms: attribution required (cite the CTC Nature Methods papers); non-CTC scientific use requires
+  organizer permission, commercial use needs permission, cloning of the datasets prohibited. Training zip contains
+  sequences 01 and 02 (about 92 frames each, 2D tif) with 30 and 20 SEG masks (silver reference, sparse over time)
+  and 93 TRA masks each. Pixel size 0.24 um from the CTC 2D dataset table. The paper full text was not open via
+  Europe PMC, so microscope, staining details and annotation procedure were not verified; annotation source left
+  unknown. Other CTC 2D datasets are not yet in the catalog. enricher: size_bytes 59,331,035 exact (was 62,189,568).
+  The zip also holds 01_ST/02_ST silver-truth SEG masks for every frame (92 each), next to the sparse gold GT SEG
+  (30 / 20 frames).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://data.celltrackingchallenge.net/training-datasets/Fluo-N2DH-GOWT1.zip
+  bytes_downloaded: 284198
+  size_source: file-listing
+  layout:
+    tree: |
+      ./                                    1 files   59.3 MB  .zip
+      Fluo-N2DH-GOWT1.zip/Fluo-N2DH-GOWT1/
+        01/                                92 files   25.9 MB  .tif  (t000-t091)
+        01_GT/SEG/                         30 files    1.3 MB  .tif  (man_segNNN, gold)
+        01_GT/TRA/                         93 files    4.6 MB  .tif 92 + man_track.txt
+        01_ST/SEG/                         92 files    5.1 MB  .tif  (silver truth)
+        01_ERR_SEG/                        92 files    5.1 MB  .tif
+        02/                                92 files   23.7 MB  .tif
+        02_GT/SEG/                         20 files  894.8 KB  .tif
+        02_GT/TRA/                         93 files    4.8 MB  .tif 92 + man_track.txt
+        02_ST/SEG/                         92 files    5.4 MB  .tif
+        02_ERR_SEG/                        92 files    5.4 MB  .tif
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.celltrackingchallenge.net/training-datasets/Fluo-N2DH-GOWT1.zip::Fluo-N2DH-GOWT1/01/t002.tif
+    - https://data.celltrackingchallenge.net/training-datasets/Fluo-N2DH-GOWT1.zip::Fluo-N2DH-GOWT1/01_GT/SEG/man_seg002.tif
+    size_bytes: null
+    description: One frame of sequence 01 (1024x1024 uint8) and its gold-truth segmentation (uint16)
+  arrays:
+  - role: raw
+    path_pattern: Fluo-N2DH-GOWT1/0[12]/t*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 223
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One TIFF per time point.
+  - role: label
+    path_pattern: Fluo-N2DH-GOWT1/0[12]_{GT,ST}/SEG/man_seg*.tif, Fluo-N2DH-GOWT1/0[12]_GT/TRA/man_track*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint16
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 2
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 3
+    alignment: same-grid
+    alignment_notes: man_segNNN.tif / man_trackNNN.tif pair with tNNN.tif by frame number; the sampled pair has
+      the same shape.
+  - role: label
+    path_pattern: Fluo-N2DH-GOWT1/0[12]_GT/TRA/man_track.txt
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: int64
+    compression: none
+    lossy: false
+    chunks: null
+    encoding: tracks-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: Space-separated rows of 4 integers (first rows "1 0 91 0"), i.e. label, start frame, end frame,
+      parent in the CTC format.
+  notes: 'Zip central directory: 788 members, exact sizes. Probe: raw t000.tif is a single-page 1024x1024 uint8
+    LZW TIFF; GT SEG man_seg002.tif is 1024x1024 uint16 LZW. Sample: t002 is 0-223 (median 0, p99 64); man_seg002
+    has only IDs {0,1,2}, so this gold mask labels only 2 cells (silver truth ST exists for every frame). Values
+    from one sample only. man_track.txt head read via peek_archive.'
+  inspected_at: '2026-09-30T21:54:30Z'
