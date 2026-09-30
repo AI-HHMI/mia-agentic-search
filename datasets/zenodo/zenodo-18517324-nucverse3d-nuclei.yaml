@@ -1,17 +1,25 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-18517324-nucverse3d-nuclei
 title: 'NucVerse3D: 3D Nuclei Segmentation in Multi-Modal Microscopy Using a Residual Attention U-Net'
 short_name: Mouse liver and Drosophila 3D nuclei (multiphoton)
-description: >-
-  Manually annotated 3D nuclear instance segmentation volumes: 9 adult mouse liver stacks (DAPI, two-photon),
-  12 mouse liver HCC/control stacks (evaluation only) and 5 Drosophila larval brain glia stacks (Repo-stained,
-  confocal), released with the NucVerse3D paper (26 image/mask pairs in raw.zip, ~6,200 nuclei). The record
-  also holds patches, model weights and segmentation outputs.
+description: 'Manually annotated 3D nuclear instance segmentation volumes: 9 adult mouse liver stacks (DAPI, two-photon),
+  12 mouse liver HCC/control stacks (evaluation only) and 5 Drosophila larval brain glia stacks (Repo-stained, confocal),
+  released with the NucVerse3D paper (26 image/mask pairs in raw.zip, ~6,200 nuclei). The record also holds patches,
+  model weights and segmentation outputs.'
 landing_url: https://zenodo.org/records/18517324
 doi: 10.5281/zenodo.18517324
 repository: Zenodo
 accession: '18517324'
-authors: [Jorge Vergara, Cristian Perez-Gallardo, Ricardo Velasco, Dilan Martinez-Torres, Diego Badilla, Esteban G. Contreras, Pamela Guevara, Fabian Segovia-Miranda, Hernan Morales-Navarrete]
+authors:
+- Jorge Vergara
+- Cristian Perez-Gallardo
+- Ricardo Velasco
+- Dilan Martinez-Torres
+- Diego Badilla
+- Esteban G. Contreras
+- Pamela Guevara
+- Fabian Segovia-Miranda
+- Hernan Morales-Navarrete
 publications:
 - title: 'NucVerse3D: generalizable 3D nuclear instance segmentation across heterogeneous microscopy modalities'
   doi: 10.1038/s41598-026-51994-x
@@ -38,7 +46,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 729665483
+  size_bytes: 31742713740
   n_items: 26
   access: open
   download_url: https://zenodo.org/api/records/18517324/files/raw.zip/content
@@ -48,7 +56,8 @@ annotations:
   types:
   - instance-segmentation
   coverage: dense
-  format: TIFF label volumes (*_gt.tif / *-label.tif / *_labels.tif) paired with each image in train/test folders of raw.zip
+  format: TIFF label volumes (*_gt.tif / *-label.tif / *_labels.tif) paired with each image in train/test folders of
+    raw.zip
   source: manual
 ml:
   tasks:
@@ -73,10 +82,85 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-09-29T11:23:11Z'
-notes: >-
-  Voxel size given is the mouse liver value (0.3 um isotropic per readme and paper Methods); Drosophila stacks are
-  0.15 x 0.15 x 0.3 um. Counts: 9 liver + 12 HCC + 5 Drosophila stacks = 26 (readme); raw.zip lists 52 tif files
-  (image + mask). Only raw.zip holds newly released raw data; processed.rar/models.zip/results.zip are derived, and
-  external benchmark datasets are only included as processed patches. Sources checked: Zenodo record, file listing,
-  readme, peek of raw.zip, and paper full text (Europe PMC). Channel count not stated.
+  last_checked: '2026-09-30T20:41:26Z'
+notes: 'Voxel size given is the mouse liver value (0.3 um isotropic per readme and paper Methods); Drosophila stacks
+  are 0.15 x 0.15 x 0.3 um. Counts: 9 liver + 12 HCC + 5 Drosophila stacks = 26 (readme); raw.zip lists 52 tif files
+  (image + mask). Only raw.zip holds newly released raw data; processed.rar/models.zip/results.zip are derived, and external
+  benchmark datasets are only included as processed patches. Sources checked: Zenodo record, file listing, readme, peek
+  of raw.zip, and paper full text (Europe PMC). Channel count not stated. enricher: size_bytes is now the complete Zenodo
+  record (5 files, 31.7 GB; was raw.zip alone, 729,665,483 B).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/18517324
+  - https://zenodo.org/records/18517324/files/raw.zip
+  bytes_downloaded: 21705644
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  5 files  31.7 GB: raw.zip 729.7 MB, processed.rar 23.0 GB, models.zip 7.9 GB, results.zip 49.8 MB, readme.md
+      raw.zip (52 .tif, 1.77 GB uncompressed):
+        raw/2_livernuclei/{train,test}/images/*.tif          9 files  (57.4 MB each)
+        raw/2_livernuclei/{train,test}/masks/*_gt[_uint16].tif  9 files
+        raw/6_Drosophila_denoised/{train,test}/images/*.tif   5 files
+        raw/6_Drosophila_denoised/{train,test}/masks/*-label.tif  5 files
+        raw/7_liver_hcc_dataset/{train,test}/images/*.tif     12 files
+        raw/7_liver_hcc_dataset/{train,test}/masks/*_labels.tif  12 files
+      results.zip: results/<model>/<dataset>/<stack>/<stack>_{binary,labels}.tif (model outputs)
+    n_files: 5
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/18517324/files/raw.zip::raw/6_Drosophila_denoised/test/images/C2_M04.tif
+    - https://zenodo.org/records/18517324/files/raw.zip::raw/6_Drosophila_denoised/test/masks/C2_M04-label.tif
+    size_bytes: 21705644
+    description: One Drosophila glia stack (43x700x700) and its instance label volume
+  arrays:
+  - role: raw
+    path_pattern: raw.zip::raw/*/{train,test}/images/*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 43
+    - 700
+    - 700
+    shape_varies: true
+    dtype: uint16
+    compression: unknown
+    lossy: null
+    chunks: null
+    value_range:
+    - 0
+    - 2320
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: raw.zip::raw/*/{train,test}/masks/*.tif
+    format: tiff
+    axes: null
+    shape:
+    - 43
+    - 700
+    - 700
+    shape_varies: true
+    dtype: int32
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 149
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 150
+    alignment: same-grid
+    alignment_notes: images/<stem>.tif pairs with masks/<stem>_gt.tif (liver), <stem>-label.tif (Drosophila; train images
+      carry a 'Denoised-' prefix) or <stem>_labels.tif (HCC). Sampled pair has identical shapes.
+  notes: 'Zenodo listing (exact sizes) plus raw.zip member listing. Raw liver image members could not be header-probed
+    (deflated zip members), so liver raw shape/compression are not confirmed; liver masks probe as [280,320,320] uint32
+    and HCC masks [270,320,320] int32, both deflate. Mask dtypes vary (int32, uint32, uint16 per the _gt_uint16 names).
+    Sample from one Drosophila pair: raw uint16 0-2320 (12-bit range; mean 168); label int32 with 149 IDs + background,
+    read as instance IDs (record says instance segmentation). processed.rar (patches incl. external datasets), models.zip
+    and results.zip not inspected.'
+  inspected_at: '2026-09-30T20:41:26Z'
