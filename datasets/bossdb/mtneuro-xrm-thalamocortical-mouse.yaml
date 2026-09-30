@@ -1,8 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: mtneuro-xrm-thalamocortical-mouse
 title: MTNeuro multi-task X-ray microtomography benchmark of mouse thalamocortical brain
 short_name: MTNeuro mouse brain microstructure (X-ray)
-description: Micrometer-resolution X-ray microtomography volume of a mouse thalamocortical brain section hosted on BossDB, with region-of-interest labels and four densely annotated 3D cutouts (axons, cells, blood vessels, background) for brain-region classification, semantic segmentation and self-supervised learning benchmarks.
+description: Micrometer-resolution X-ray microtomography volume of a mouse thalamocortical brain section
+  hosted on BossDB, with region-of-interest labels and four densely annotated 3D cutouts (axons, cells,
+  blood vessels, background) for brain-region classification, semantic segmentation and self-supervised
+  learning benchmarks.
 landing_url: https://mtneuro.github.io
 doi: null
 repository: BossDB
@@ -11,7 +14,8 @@ authors:
 - Jorge Quesada
 - Eva L. Dyer
 publications:
-- title: 'MTNeuro: A Benchmark for Evaluating Representations of Brain Structure Across Multiple Levels of Abstraction'
+- title: 'MTNeuro: A Benchmark for Evaluating Representations of Brain Structure Across Multiple Levels
+    of Abstraction'
   doi: 10.48550/arXiv.2301.00345
   url: https://arxiv.org/abs/2301.00345
 date_published: null
@@ -26,10 +30,12 @@ imaging:
   channels: null
   organism:
   - Mus musculus
-  sample: Thalamocortical section of mouse brain (somatosensory cortex, striatum, ventral posterior thalamus, zona incerta)
+  sample: Thalamocortical section of mouse brain (somatosensory cortex, striatum, ventral posterior thalamus,
+    zona incerta)
   labels_stains: []
 data:
   formats:
+  - precomputed
   - other
   size_bytes: null
   n_items: 4
@@ -42,14 +48,15 @@ annotations:
   - semantic-segmentation
   - classification
   coverage: dense
-  format: null
+  format: BossDB uint64 annotation channel prasad/prasad_analysis/pixel_labels (served by the BossDB cutout
+    API)
   source: unknown
 ml:
   tasks:
   - classification
   - segmentation
   - self-supervised
-  splits_provided: false
+  splits_provided: true
   benchmark: MTNeuro (NeurIPS 2022 Datasets and Benchmarks)
   baseline_code_url: https://github.com/MTNeuro/MTNeuro
 license:
@@ -63,10 +70,127 @@ provenance:
   - https://github.com/MTNeuro/MTNeuro
   - https://arxiv.org/abs/2301.00345
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.48550%2FarXiv.2301.00345%22&format=json&resultType=core&pageSize=3
-  confidence: 0.7
+  - https://raw.githubusercontent.com/MTNeuro/MTNeuro/main/MTNeuro/taskconfig/task2_2D_4class.json
+  - https://api.bossdb.io/v1/coord/prasad_prasad2020/
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-09-29T16:13:35Z'
-notes: 'Data is served on demand from BossDB (project page bossdb.org/project/prasad2020, JS-rendered and not readable here) via the intern Python API; on-disk format and total size not stated on the project page, GitHub README or paper abstract. n_items = 4 densely annotated 256x256x360-voxel cutouts, inside a larger unannotated XRM volume. Full paper text not open access via Europe PMC; the arXiv PDF exceeded fetch size, so voxel size (1.17 um isotropic), annotation classes and CC BY 4.0 come from the project page. Annotation procedure and source not checked. Train/test split not verified.'
+  annotations_verified: true
+  last_checked: '2026-09-30T21:02:15Z'
+notes: 'Data is served on demand from BossDB (project page bossdb.org/project/prasad2020, JS-rendered
+  and not readable here) via the intern Python API; on-disk format and total size not stated on the project
+  page, GitHub README or paper abstract. n_items = 4 densely annotated 256x256x360-voxel cutouts, inside
+  a larger unannotated XRM volume. Full paper text not open access via Europe PMC; the arXiv PDF exceeded
+  fetch size, so voxel size (1.17 um isotropic), annotation classes and CC BY 4.0 come from the project
+  page. Annotation procedure and source not checked. Train/test split not verified.
+
+  enricher: formats other -> precomputed (image) + other (labels via BossDB cutout API); splits_provided
+  true (z_train/val/test in taskconfig); annotations verified by sample.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://bossdb-open-data.s3.amazonaws.com/prasad/prasad2020/image/info
+  - https://bossdb-open-data.s3.amazonaws.com/prasad/prasad2020/pixel_annotation/info
+  - https://bossdb-open-data.s3.amazonaws.com/prasad/prasad2020/region_of_interest/info
+  - https://api.bossdb.io/v1/cutout/prasad/prasad2020/image/0/4600:4856/900:1156/110:118/
+  - https://api.bossdb.io/v1/cutout/prasad/prasad_analysis/pixel_labels/0/4600:4856/900:1156/110:118/
+  bytes_downloaded: 448195
+  size_source: unknown
+  layout:
+    tree: "BossDB collection prasad (coord frame prasad_prasad2020, 6144x2048x720 xyz)\n  prasad2020/\n\
+      \    image                 uint8 image, precomputed on s3://bossdb-open-data/prasad/prasad2020/image\
+      \ (5 levels)\n    pixel_annotation      uint64 segmentation (precomputed)\n    region_of_interest\
+      \    uint64 segmentation (precomputed)\n    unet_microseg, unet_microseg_masked, unet_region, unet_region_16res\n\
+      \  prasad_analysis/\n    pixel_labels          uint64 annotation (MTNeuro task 2 labels; BossDB-internal\
+      \ storage, cutout API only)\n    roi_labels, test_channel\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://api.bossdb.io/v1/cutout/prasad/prasad2020/image/0/4600:4856/900:1156/110:118/
+    - https://api.bossdb.io/v1/cutout/prasad/prasad_analysis/pixel_labels/0/4600:4856/900:1156/110:118/
+    size_bytes: 448195
+    description: 8-slice piece of the cortex cutout (x 4600-4856, y 900-1156, z 110-118) from image and
+      pixel_labels, npygz via the BossDB cutout API (public token).
+  arrays:
+  - role: raw
+    path_pattern: prasad/prasad2020/image
+    format: precomputed
+    axes: zyx
+    shape:
+    - 720
+    - 2048
+    - 6144
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks:
+    - 16
+    - 512
+    - 512
+    value_range:
+    - 0
+    - 242
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: prasad/prasad_analysis/pixel_labels
+    format: other
+    axes: zyx
+    shape:
+    - 361
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint64
+    compression: unknown
+    lossy: false
+    chunks: null
+    encoding: semantic-ids
+    classes:
+    - id: null
+      name: Background
+    - id: null
+      name: Cell
+    - id: null
+      name: Blood Vessel
+    - id: null
+      name: Axon
+    n_ids_observed: 3
+    alignment: same-grid
+    alignment_notes: pixel_labels shares coord frame prasad_prasad2020 with image; the same cutout indices
+      return matching 8x256x256 arrays. Four 256x256 xy cutouts (cortex, striatum, VP, ZI) over z 110-471
+      per taskconfig.
+  - role: label
+    path_pattern: prasad/prasad2020/region_of_interest
+    format: precomputed
+    axes: zyx
+    shape:
+    - 752
+    - 3072
+    - 7168
+    shape_varies: false
+    dtype: uint64
+    compression: none
+    lossy: false
+    chunks:
+    - 16
+    - 512
+    - 512
+    encoding: unknown
+    alignment: unknown
+    alignment_notes: Same 1000 nm nominal resolution and zero offset as image, but a larger extent (7168x3072x752
+      vs 6144x2048x720); not sampled.
+  notes: 'No file listing possible: data live in BossDB (image as precomputed chunks on S3, task labels
+    in BossDB internal storage). Headers from precomputed info (encoding raw, 1000 nm nominal resolution).
+    The BossDB coord frame says "Actual voxel size [1.3,1.3,1.3]" um while the project page/README say
+    1.17 um; record kept at 1170 nm. Sample (one 8x256x256 piece of the cortex cutout): image uint8 range
+    [0,242], p1-p99 20-157; pixel_labels values {0,1,2} (485842/13462/24984 voxels). Class names from
+    the task-2 notebook legend (Background, Cell, Blood Vessel, Axon); id-to-name mapping ambiguous in
+    the notebook, so ids null. Label shape given as z 110-471 x 256 x 256 per taskconfig zrange (361 slices).
+    Splits: z_train 110-379, z_val 380-409, z_test 420-470. Total size not stated; image s0 uncompressed
+    would be 6144*2048*720 bytes (~9.1 GB), not claimed.'
+  inspected_at: '2026-09-30T21:02:15Z'
