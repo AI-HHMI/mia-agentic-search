@@ -1,9 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-17569655-mother-machine-cell-masks
 title: Fluorescence Images and Masks for Segmentation using DeLTA
 short_name: E. coli mother machine cell masks (fluorescence)
-description: Fluorescence images of GFP-tagged E. coli in a mother machine microfluidic device with manually annotated segmentation
-  masks, prepared for training the DeLTA cell-segmentation model. The record also contains a trained DeLTA Keras model.
+description: Fluorescence images of GFP-tagged E. coli in a mother machine microfluidic device with manually
+  annotated segmentation masks, prepared for training the DeLTA cell-segmentation model. The record also
+  contains a trained DeLTA Keras model.
 landing_url: https://zenodo.org/records/17569655
 doi: 10.5281/zenodo.17569655
 repository: Zenodo
@@ -72,11 +73,86 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-09-30T13:25:00Z'
-notes: 'Zenodo page, API record and file listing checked. The outer zip (peek_archive) holds a 774 MB .keras model and
-  training_data_seg_mix.zip; the inner zip was listed via HTTP range requests and contains 4,344 PNG images in img/ and 4,344 PNG
-  masks in seg/ plus one txt file. Objective (Nikon 40x/0.95), camera (Teledyne Kinetix sCMOS) and GFP excitation are from the page;
-  widefield vs other fluorescence, pixel size, image dimensions, mask class semantics and train/val/test split are not stated
-  on the page or in the file listing. No associated paper is linked on the record; the DeLTA 2.0 paper (PLOS Comput Biol 2022)
-  describes different phase-contrast agarose-pad data and was not cited. Manual annotation is stated on the page. Sibling record
-  22237153 (ROI detection) is a separate dataset.'
+  last_checked: '2026-09-30T21:23:45Z'
+notes: 'Zenodo page, API record and file listing checked. The outer zip (peek_archive) holds a 774 MB
+  .keras model and training_data_seg_mix.zip; the inner zip was listed via HTTP range requests and contains
+  4,344 PNG images in img/ and 4,344 PNG masks in seg/ plus one txt file. Objective (Nikon 40x/0.95),
+  camera (Teledyne Kinetix sCMOS) and GFP excitation are from the page; widefield vs other fluorescence,
+  pixel size, image dimensions, mask class semantics and train/val/test split are not stated on the page
+  or in the file listing. No associated paper is linked on the record; the DeLTA 2.0 paper (PLOS Comput
+  Biol 2022) describes different phase-contrast agarose-pad data and was not cited. Manual annotation
+  is stated on the page. Sibling record 22237153 (ROI detection) is a separate dataset.
+
+  enricher: inner zip inflated and one img/seg pair decoded (uint16 30x200 PNG, binary 0/255 mask).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/17569655
+  - https://zenodo.org/api/records/17569655/files/Delta_TrainingData_Model.zip/content
+  bytes_downloaded: 48713817
+  size_source: file-listing
+  layout:
+    tree: "Delta_TrainingData_Model.zip   409.1 MB (only file in the record)\n  Delta_TrainingData_Model/\n\
+      \    evo_seg_64x512_kernel5_levels5_2025-05-29_realdata.keras   trained model\n    training_data_seg_mix.zip\
+      \    48.3 MB (inner zip, deflated)\n      training_data_seg_mix/\n        README.txt\n        img/\
+      \   4344 PNG  47.3 MB  LED450NM_P<pos>_..._R<roi>_30x200_<n>.png\n        seg/   4344 PNG   1.0\
+      \ MB  same filenames as img/\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/17569655/files/Delta_TrainingData_Model.zip/content::Delta_TrainingData_Model/training_data_seg_mix.zip::training_data_seg_mix/img/LED450NM_P0_X-29552.0_Y-31936.0_Zauto_F0_2025-02-14_15-04-42-621146_R0_30x200_0.png
+    - https://zenodo.org/api/records/17569655/files/Delta_TrainingData_Model.zip/content::Delta_TrainingData_Model/training_data_seg_mix.zip::training_data_seg_mix/seg/LED450NM_P0_X-29552.0_Y-31936.0_Zauto_F0_2025-02-14_15-04-42-621146_R0_30x200_0.png
+    size_bytes: 48320030
+    description: The inner training_data_seg_mix.zip (48.3 MB, fetched as one range) holds all image/mask
+      pairs; one 30x200 pair was decoded.
+  arrays:
+  - role: raw
+    path_pattern: training_data_seg_mix/img/*.png
+    format: png
+    axes: yx
+    shape:
+    - 30
+    - 200
+    shape_varies: null
+    dtype: uint16
+    compression: png
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 65535
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: training_data_seg_mix/seg/*.png
+    format: png
+    axes: yx
+    shape:
+    - 30
+    - 200
+    shape_varies: null
+    dtype: uint8
+    compression: png
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: seg/<name>.png pairs with img/<name>.png (identical filenames); the sampled pair
+      has identical 30x200 shapes.
+  notes: 'Zenodo listing: one file (409,076,283 bytes), which is the whole record, so size is confirmed.
+    The outer zip also holds a .keras model (not opened). The inner training_data_seg_mix.zip is deflate-compressed
+    inside the outer zip, so it was fetched as one 48.3 MB range request, inflated in memory, listed (8,692
+    members: 4,344 img + 4,344 seg + README.txt) and one pair decoded with Pillow, then discarded. README.txt
+    only lists the source sessions (Mutagenesis_2025-01-28, UV_by_ROI_2025-02-14, manual_data_10092024,
+    2024-09-15-real). Sample image is 16-bit grayscale (PNG mode I;16), 30x200 px, range 0..65535 (fills
+    the dtype, 669 unique values; possibly rescaled, but no docs, so normalization unknown); mask is 8-bit
+    {0,255}. Filenames carry "30x200" (mother-machine chamber crops); other shapes not checked. Axes assumed
+    yx for 2D PNG.'
+  inspected_at: '2026-09-30T21:23:45Z'
