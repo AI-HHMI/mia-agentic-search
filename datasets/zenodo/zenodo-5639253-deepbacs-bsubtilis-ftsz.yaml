@@ -1,10 +1,12 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-5639253-deepbacs-bsubtilis-ftsz
-title: DeepBacs multi-label U-Net training dataset of B. subtilis FtsZ-GFP fluorescence images with manual cell segmentation
+title: DeepBacs multi-label U-Net training dataset of B. subtilis FtsZ-GFP fluorescence images with manual
+  cell segmentation
 short_name: B. subtilis cell segmentation (widefield)
-description: Widefield fluorescence images (1024 x 1024, 8-bit TIFF) of live Bacillus subtilis cells expressing FtsZ-GFP on agarose pads,
-  with manually annotated instance masks plus derived boundary and cytosol target masks, split into training and test folders. Released with
-  the DeepBacs / ZeroCostDL4Mic multi-label U-Net segmentation notebook.
+description: Widefield fluorescence images (1024 x 1024, 8-bit TIFF) of live Bacillus subtilis cells expressing
+  FtsZ-GFP on agarose pads, with manually annotated instance masks plus derived boundary and cytosol target
+  masks, split into training and test folders. Released with the DeepBacs / ZeroCostDL4Mic multi-label
+  U-Net segmentation notebook.
 landing_url: https://zenodo.org/records/5639253
 doi: 10.5281/zenodo.5639253
 repository: Zenodo
@@ -35,7 +37,7 @@ data:
   formats:
   - tiff
   size_bytes: 17654642
-  n_items: null
+  n_items: 90
   access: open
   download_url: https://zenodo.org/records/5639253/files/Multilabel_U-Net_dataset_B.subtilis.zip
   download_method: http
@@ -45,7 +47,8 @@ annotations:
   - instance-segmentation
   - semantic-segmentation
   coverage: dense
-  format: TIFF masks in training|test/{instance_segmentation_GT,target_boundaries,...}, paired with source images
+  format: TIFF masks in training|test/{instance_segmentation_GT,target_boundaries,...}, paired with source
+    images
   source: manual
 ml:
   tasks:
@@ -68,7 +71,102 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-09-30T06:45:00Z'
-notes: 'Zip index (peek_archive) shows 270 TIFFs: test/{source,instance_segmentation_GT,target_boundaries,...} with 10 images each, plus training/ folders;
-  exact training image count not confirmed (dataset page reports 733 paired 256x256 training patches). Pixel size 65 nm and TIRF-objective/sCMOS
-  setup from dataset page and paper Methods. Annotation by manual Fiji Labkit per paper. Paper also describes other DeepBacs datasets (separate Zenodo records).'
+  last_checked: '2026-09-30T21:25:23Z'
+notes: 'Zip index (peek_archive) shows 270 TIFFs: test/{source,instance_segmentation_GT,target_boundaries,...}
+  with 10 images each, plus training/ folders; exact training image count not confirmed (dataset page
+  reports 733 paired 256x256 training patches). Pixel size 65 nm and TIRF-objective/sCMOS setup from dataset
+  page and paper Methods. Annotation by manual Fiji Labkit per paper. Paper also describes other DeepBacs
+  datasets (separate Zenodo records). enricher: n_items 90 = 80 training + 10 test images from the complete
+  zip listing (was null).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/5639253
+  - https://zenodo.org/records/5639253/files/Multilabel_U-Net_dataset_B.subtilis.zip
+  bytes_downloaded: 184974
+  size_source: file-listing
+  layout:
+    tree: "Multilabel_U-Net_dataset_B.subtilis.zip (17.7 MB, 272 members)\n  Notes.txt\n  training/source/\
+      \                    80 files  .tif  train_<n>.tif\n  training/instance_segmentation_GT/  80 files\
+      \  .tif\n  training/target_boundaries/         80 files  .tif\n  test/source/                  \
+      \      10 files  .tif  test_<n>.tif\n  test/instance_segmentation_GT/      10 files  .tif\n  test/target_boundaries/\
+      \             10 files  .tif\n(same record, not counted: DeepBacs_Model_Segmentation_Multilabel_U-Net.zip\
+      \ = trained model + QC, and a .png)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5639253/files/Multilabel_U-Net_dataset_B.subtilis.zip::training/source/train_1.tif
+    - https://zenodo.org/records/5639253/files/Multilabel_U-Net_dataset_B.subtilis.zip::training/instance_segmentation_GT/train_1.tif
+    - https://zenodo.org/records/5639253/files/Multilabel_U-Net_dataset_B.subtilis.zip::training/target_boundaries/train_1.tif
+    size_bytes: 184974
+    description: One 1024x1024 image with its instance mask and 3-class boundary target (~185 KB)
+  arrays:
+  - role: raw
+    path_pattern: '{training,test}/source/<name>.tif'
+    format: tiff
+    axes: null
+    shape:
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: uint8
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '{training,test}/instance_segmentation_GT/<name>.tif'
+    format: tiff
+    axes: null
+    shape:
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: uint8
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 28
+    normalization: none
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 29
+    alignment: same-grid
+    alignment_notes: Same file name across source/, instance_segmentation_GT/ and target_boundaries/;
+      identical shapes in the sample.
+  - role: label
+    path_pattern: '{training,test}/target_boundaries/<name>.tif'
+    format: tiff
+    axes: null
+    shape:
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: uint8
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 2
+    normalization: none
+    encoding: semantic-ids
+    classes: null
+    n_ids_observed: 3
+    alignment: same-grid
+    alignment_notes: Notes.txt says to train the multilabel U-Net on target_boundaries as GT; class names
+      for values 1 and 2 are not stated in the archive.
+  notes: 'The dataset zip alone (the record download_url) was listed: 17,654,642 bytes, 272 members, matching
+    size_bytes; the full Zenodo record (180.8 MB) also holds a model zip and a .png. Sample train_1: source
+    uint8 [1024,1024] 0..255, mean 2.4 (hint: saturated); instance GT uint8, 29 unique (0..28), instance
+    IDs per the folder name; target_boundaries uint8 {0: 1028383, 1: 16477, 2: 3716}. Notes.txt read.
+    The record description says 1024x1024 8-bit, which the sample agrees with.'
+  inspected_at: '2026-09-30T21:25:23Z'
