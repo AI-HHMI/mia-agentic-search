@@ -1,0 +1,187 @@
+schema_version: '1.2'
+id: zenodo-22078388-organoid-lightsheet-nuclei-tracking
+title: Reference OME-Zarr for 3D time-lapse light-sheet microscopy with nuclei tracking
+short_name: Mouse organoid nuclei tracking (light-sheet)
+description: 'Light-sheet time-lapse (667 frames, 2 channels: H2B nuclei and mem9 membrane) of a mouse intestinal
+  organoid in OME-Zarr v0.5, with raw and deconvolved volumes, 4D instance label images for nuclei and cells, lumen/epithelium
+  semantic labels and a nuclear lineage tree (GEFF). Also released as subsampled mini/small variants.'
+landing_url: https://zenodo.org/records/22078388
+doi: 10.5281/zenodo.22078388
+repository: Zenodo
+accession: '22078388'
+authors:
+- Max Hess
+- Mikala Caton
+- Maadhav Kothari
+- Jason Swedlow
+- Prisca Liberali
+- Gustavo Quintas Glasner de Medeiros
+publications:
+- title: Multiscale light-sheet organoid imaging framework
+  doi: 10.1038/s41467-022-32465-z
+  url: null
+date_published: '2026-08-24'
+imaging:
+  modality:
+  - light-sheet
+  dimensionality: 3D+t
+  voxel_size_nm:
+    x: 260
+    y: 260
+    z: 2000
+  channels: 2
+  organism:
+  - Mus musculus
+  sample: intestinal organoid (live imaging)
+  labels_stains:
+  - H2B-iRFP670
+  - mem9
+data:
+  formats:
+  - ome-zarr
+  size_bytes: 48252303714
+  n_items: 1
+  access: open
+  download_url: https://zenodo.org/records/22078388/files/001-mini.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - semantic-segmentation
+  - tracking
+  coverage: partial
+  format: OME-Zarr label images (labels/nucleus, cell, lumen) and GEFF lineage tree (tracks/nucleus.geff)
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  - tracking
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-09-30T15:13:44Z'
+  evidence_urls:
+  - https://zenodo.org/records/22078388
+  - https://zenodo.org/api/records/22078388
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9388485/fullTextXML
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-09-30T21:12:37Z'
+notes: 'Voxel size from record description (z 2.0 um, y/x 0.26 um at full resolution). Single movie (n_items 1);
+  label images are sparse in later timepoints (only tracked objects). Per the source paper Methods, nuclei labels
+  were network-predicted from partial and full manual annotations with tracking seeded in Mastodon, hence source
+  mixed; the Zenodo record does not state the annotation procedure. Zip sizes: full 39.8 GB, small ~2.4 GB, mini
+  0.24 GB; download_url is the mini variant. Label arrays were not individually listed (peek shows OME-Zarr chunk
+  files), so annotations_verified is false. enricher: size_bytes = complete Zenodo listing of all 8 files (7 zip
+  variants, 48.3 GB; was the full zip only). Label arrays (labels/nucleus, cell, lumen) and tracks/nucleus.geff
+  seen in the mini zip.'
+technical:
+  method: header
+  inspected_at: '2026-09-30T21:12:37Z'
+  inspected_urls:
+  - https://zenodo.org/records/22078388
+  - https://zenodo.org/records/22078388/files/001-mini.zip
+  bytes_downloaded: 0
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  8 files  48.3 GB  (7 zips + 1 png)
+      001-full.zip/001-full/        deconv.ome.zarr 21.9 GB, raw.ome.zarr 17.2 GB, *_mip-z.ome.zarr
+      001-small{,-lowT,-varT}.zip/  deconv/raw.ome.zarr ~1.1-1.6 GB each, *_mip-z.ome.zarr
+      001-mini{,-lowT,-varT}.zip/   deconv/raw.ome.zarr ~110-145 MB each, *_mip-z.ome.zarr
+      inside each deconv.ome.zarr (mini shown):
+        0..4/                       multiscale levels (Zarr v3)
+        labels/{nucleus,cell,lumen}/0..4/
+        tracks/nucleus.geff/{nodes,edges}/  lineage graph (GEFF, zarr)
+        tables/timestamps/table.parquet
+    n_files: 8
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/22078388/files/001-mini.zip
+    size_bytes: null
+    description: The 001-mini variant zip (242.4 MB compressed; 5 timepoints, 2 channels, 76x389x610 at level 0,
+      with labels and tracks)
+  arrays:
+  - role: raw
+    path_pattern: 001-*.zip/*/{raw,deconv}.ome.zarr/0
+    format: ome-zarr
+    axes: tczyx
+    shape:
+    - 5
+    - 2
+    - 76
+    - 389
+    - 610
+    shape_varies: true
+    dtype: uint16
+    compression: zstd
+    lossy: false
+    chunks:
+    - 1
+    - 1
+    - 76
+    - 389
+    - 610
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Shape and chunks are for 001-mini level 0; full/small variants are larger. Level-0 scale [1,
+      1, 2.0, 0.26, 0.26] (t, c, z um, y um, x um).
+  - role: label
+    path_pattern: 001-*.zip/*/deconv.ome.zarr/labels/{nucleus,cell,lumen}/0
+    format: ome-zarr
+    axes: tzyx
+    shape:
+    - 5
+    - 76
+    - 389
+    - 610
+    shape_varies: true
+    dtype: uint32
+    compression: zstd
+    lossy: false
+    chunks:
+    - 1
+    - 76
+    - 389
+    - 610
+    value_range: null
+    normalization: none
+    encoding: unknown
+    classes: null
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: OME-Zarr labels group of deconv.ome.zarr; nucleus label level 0 has the raw t,z,y,x shape (mini
+      variant).
+  - role: label
+    path_pattern: 001-*.zip/*/deconv.ome.zarr/tracks/nucleus.geff
+    format: zarr
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    lossy: null
+    chunks: null
+    normalization: none
+    encoding: tracks-table
+    classes: null
+    alignment: unknown
+    alignment_notes: GEFF lineage graph; node props include t, z, y, x, label_id, track_id and split/merge flags,
+      linking tracks to label IDs.
+  notes: 'Zenodo listing complete and exact: 8 files, 48,252,303,714 B (includes full, small and mini variants;
+    the record previously held only the full zip size). Array metadata read from zarr.json files inside 001-mini.zip
+    with peek_archive --cat (probe.py does not parse Zarr v3 JSON): uint16/uint32 with bytes+zstd codecs, one chunk
+    per t/c. Voxel scale in the metadata (z 2.0 um, y/x 0.26 um) agrees with the record. Label encoding left unknown:
+    uint32 label images plus a label_id node property suggest instance IDs for nucleus, not confirmed by a sample.
+    No pixel data sampled.'
