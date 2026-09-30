@@ -1,10 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-6546550-mouse-embryo-nuclei-membranes
 title: Peri-implantation mouse embryos
 short_name: Mouse embryo nuclei and membranes (confocal, LSM)
-description: 3D volumes of developing peri-implantation mouse embryos with annotated labels. Confocal nuclei stacks
-  (22 train, 13 test) and light-sheet plasma-membrane stacks (5 train, 1 val), stored as HDF5 with raw images
-  and ground-truth instance segmentation labels.
+description: 3D volumes of developing peri-implantation mouse embryos with annotated labels. Confocal
+  nuclei stacks (22 train, 13 test) and light-sheet plasma-membrane stacks (5 train, 1 val), stored as
+  HDF5 with raw images and ground-truth instance segmentation labels.
 landing_url: https://zenodo.org/records/6546550
 doi: 10.5281/zenodo.6546550
 repository: Zenodo
@@ -62,9 +62,82 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-09-29T22:40:00Z'
-notes: 'Voxel size given as 0.207x0.207x1 um for some nuclei stacks and 0.23x0.23x1 um for others (record uses the first); membrane light-sheet
-  voxel size is not stated. No publication is linked on the dataset page or API record and a Europe PMC title search found no match,
-  so publications is empty. Annotation procedure not described. Archive listing (peek_archive): 41 .h5 files, 4 png, 1 md;
-  Nuclei/{train,test} (35 files) and Membrane/{train,val} (6 files). Membrane label files include model predictions
-  (gasp) that were corrected, suggesting semi-automatic labels.'
+  last_checked: '2026-09-30T21:10:00Z'
+notes: 'Voxel size given as 0.207x0.207x1 um for some nuclei stacks and 0.23x0.23x1 um for others (record
+  uses the first); membrane light-sheet voxel size is not stated. No publication is linked on the dataset
+  page or API record and a Europe PMC title search found no match, so publications is empty. Annotation
+  procedure not described. Archive listing (peek_archive): 41 .h5 files, 4 png, 1 md; Nuclei/{train,test}
+  (35 files) and Membrane/{train,val} (6 files). Membrane label files include model predictions (gasp)
+  that were corrected, suggesting semi-automatic labels. enricher: two HDF5 files sampled; raw/label pairs
+  confirmed (instance IDs); size matches the listing.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/6546550
+  - https://zenodo.org/records/6546550/files/MouseEmbryos.zip
+  bytes_downloaded: 79460477
+  size_source: file-listing
+  layout:
+    tree: "MouseEmbryos.zip (3.1 GB)\n  README.md\n  Membrane/train/     5 files   105.2 MB  .h5  (light-sheet\
+      \ membrane)\n  Membrane/val/       1 files    89.9 MB  .h5\n  Nuclei/train/      22 files     6.6\
+      \ GB  .h5  (confocal nuclei, E<n>_Ab<k>.h5)\n  Nuclei/test/       13 files     2.7 GB  .h5\n  thumbnails/\
+      \         4 files   760.0 KB  .png\neach .h5: datasets raw, label   (sizes uncompressed)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/6546550/files/MouseEmbryos.zip::Membrane/train/fused_paral_tp00073_raw_nuclei_membrane_crop_label_corrected_postprocessed_crop.h5
+    size_bytes: 30009554
+    description: One membrane HDF5 file (raw + label, 130x424x512), 30 MB compressed in the zip
+  arrays:
+  - role: raw
+    path_pattern: '{Nuclei,Membrane}/<split>/<name>.h5 : /raw'
+    format: hdf5
+    axes: null
+    shape:
+    - 100
+    - 754
+    - 368
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 27
+    - 65535
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Nuclei E7_Ab1 raw is uncompressed uint16 [100,754,368]; membrane crop raw is gzip
+      uint16 [130,424,512], values 34..1904. Compression varies: none in the nuclei file, gzip in the
+      membrane file.'
+  - role: label
+    path_pattern: '{Nuclei,Membrane}/<split>/<name>.h5 : /label'
+    format: hdf5
+    axes: null
+    shape:
+    - 100
+    - 754
+    - 368
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 205
+    normalization: none
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 170
+    alignment: same-grid
+    alignment_notes: raw and label live in the same .h5 with identical shapes in both sampled files. Membrane
+      labels are uint32 gzip (422 unique IDs in the crop file).
+  notes: 'Complete Zenodo listing with zip expanded: 1 zip, 3,077,837,738 bytes, 47 members. Samples read
+    with a scratch h5py script (tools/sample.py cannot open HDF5 inside a zip): Nuclei/test/E7_Ab1.h5
+    raw uint16 [100,754,368] 27..65535 (max hits dtype limit), label uint16 170 unique (0..205); Membrane/train/..._postprocessed_crop.h5
+    raw uint16 gzip [130,424,512] 34..1904, label uint32 gzip 422 unique (0..437). E7_Ab1 attrs element_size_um
+    [1,1,1], which conflicts with the README (0.207 or 0.23 x 1 um), so the record voxel size is kept.
+    README says the labels are ground-truth instance segmentation.'
+  inspected_at: '2026-09-30T21:10:00Z'
