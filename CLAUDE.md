@@ -77,6 +77,8 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
   `dim:`, `org:`, `modality:`, `fmt:`, `dtype:`, `anno:`, `label-enc:`, `license:<spdx as written>`,
   `size:`, `auto-download` (size confirmed by a complete file listing, < 50 GB, open access) and `enriched`.
   License labels are the SPDX id verbatim, with no interpretation.
+- **Auto-merge** (`tools/automerge.py`) merges PRs whose labels meet a fixed policy. Agents never merge,
+  approve or close PRs themselves, and never add or remove the `hold` label.
 
 ## Tools (all in `tools/`, run from repo root)
 | Command | Purpose |

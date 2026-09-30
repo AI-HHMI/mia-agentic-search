@@ -40,6 +40,13 @@ quick-test sample and the folder tree. An inspection-report comment is added wit
 `size:1-10GB` · **`auto-download`** (size confirmed by a complete file listing, under 50 GB, open access) · `enriched`.
 To relabel every open PR, run the `label-agent-prs` workflow manually.
 
+**Auto-merge** (`.github/workflows/auto-merge.yml`, policy in `tools/automerge.py`): a dataset PR is merged
+without review when it is `enriched`, `dim:3D` or `dim:3D+t`, below 500 GB (`size:` label, not `unknown`), has an
+allow-listed license (CC0, CC-BY, PDDL, ODC-By, BSD, MIT, Apache-2.0; not NC / SA / ND / custom / unknown),
+only known formats (no `fmt:other`), and `validate` passed. Add the label `hold` to keep a PR open.
+It runs after every labelling run and hourly, and only reports (see the run summary) until the repo
+variable `AUTO_MERGE` is set to `true`.
+
 ## Repository layout
 | Path | Contents |
 |---|---|
