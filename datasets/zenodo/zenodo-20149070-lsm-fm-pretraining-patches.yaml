@@ -1,11 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-20149070-lsm-fm-pretraining-patches
 title: Light Sheet Microscopy Foundation Model Pretraining Dataset
 short_name: Light-sheet 3D patches with text prompts
-description: 1,023 volumetric 96x96x96-voxel patches of light-sheet fluorescence microscopy brain images (an
-  internal Wu Lab mouse whole-brain set plus SELMA3D and three Allen Institute public datasets), each source
-  paired with expert-written text descriptions. Released as the pretraining data for a multimodal 3D
-  foundation model for light-sheet microscopy (masked reconstruction plus image-text alignment).
+description: 1,023 volumetric 96x96x96-voxel patches of light-sheet fluorescence microscopy brain images (an internal
+  Wu Lab mouse whole-brain set plus SELMA3D and three Allen Institute public datasets), each source paired with expert-written
+  text descriptions. Released as the pretraining data for a multimodal 3D foundation model for light-sheet microscopy
+  (masked reconstruction plus image-text alignment).
 landing_url: https://zenodo.org/records/20149070
 doi: 10.5281/zenodo.20149070
 repository: Zenodo
@@ -18,8 +18,8 @@ authors:
 - Zhuhao Wu
 - Johannes C. Paetzold
 publications:
-- title: A Multimodal 3D Foundation Model for Light Sheet Fluorescence Microscopy Enables Few-Shot Segmentation,
-    Classification, and Deblurring
+- title: A Multimodal 3D Foundation Model for Light Sheet Fluorescence Microscopy Enables Few-Shot Segmentation, Classification,
+    and Deblurring
   doi: null
   url: https://arxiv.org/abs/2605.26026
 date_published: '2026-05-13'
@@ -72,10 +72,77 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-09-30T19:16:00Z'
-notes: Released for self-supervised / foundation-model pretraining, no segmentation labels. Six tar.gz archives
-  (one per source plus text prompts); patches are NIfTI (.nii.gz, 96^3) in per-image, per-channel folders, text
-  prompts are JSON (seen by streaming the archive headers). Voxel size, per-source organism and microscope are not stated
-  on the Zenodo record or in the arXiv paper text checked (Methods, data sections), and the patches are cropped from
-  public datasets (SELMA3D, Allen Institute), each under its own terms. Organisms from the paper (mouse Wu Lab and SELMA3D, human SELMA3D and Allen human brain) and
-  record names; not broken down per patch. Paper text is arXiv-only; no Europe PMC full text.
+  last_checked: '2026-09-30T21:08:10Z'
+notes: Released for self-supervised / foundation-model pretraining, no segmentation labels. Six tar.gz archives (one
+  per source plus text prompts); patches are NIfTI (.nii.gz, 96^3) in per-image, per-channel folders, text prompts are
+  JSON (seen by streaming the archive headers). Voxel size, per-source organism and microscope are not stated on the
+  Zenodo record or in the arXiv paper text checked (Methods, data sections), and the patches are cropped from public
+  datasets (SELMA3D, Allen Institute), each under its own terms. Organisms from the paper (mouse Wu Lab and SELMA3D,
+  human SELMA3D and Allen human brain) and record names; not broken down per patch. Paper text is arXiv-only; no Europe
+  PMC full text.
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/20149070
+  - https://zenodo.org/records/20149070/files/all_allen_connection_projection_patches.tar.gz
+  - https://zenodo.org/records/20149070/files/all_text_prompts.tar.gz
+  bytes_downloaded: 622612
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  6 files  1.21 GB  .tar.gz
+        all_selma_patches_96.tar.gz                    687.1 MB
+        all_wu_brain_patches.tar.gz                    305.5 MB
+        all_allen_human2_patches.tar.gz                102.0 MB
+        all_allen_developing_mouse_patches.tar.gz       78.6 MB
+        all_allen_connection_projection_patches.tar.gz  40.4 MB
+        all_text_prompts.tar.gz                          8.2 KB
+      inside a patches archive: <source>/<image id>/c<N>/<image id>_ps96_p<k>_z<Z>_y<Y>_x<X>_c<N>.nii.gz
+      all_text_prompts/text_prompts_{allen_human2,wu,selma,allen_connection,allen_dev_mouse}.json
+    n_files: 6
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/20149070/files/all_allen_connection_projection_patches.tar.gz
+    size_bytes: 40392362
+    description: Smallest patch archive (Allen connection/projection, 40 MB); the run streamed only its first 614 KB
+  arrays:
+  - role: raw
+    path_pattern: all_*_patches*.tar.gz::<source>/<image id>/c<N>/*_ps96_*.nii.gz
+    format: nifti
+    axes: null
+    shape:
+    - 96
+    - 96
+    - 96
+    shape_varies: false
+    dtype: uint16
+    compression: gzip
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: other
+    path_pattern: all_text_prompts.tar.gz::all_text_prompts/text_prompts_<source>.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: gzip
+    lossy: false
+    chunks: null
+    value_range: null
+    alignment: not-applicable
+    alignment_notes: One JSON of text descriptions per source (0.9-14 KB), matched to patches by source name.
+  notes: 'Zenodo listing (exact sizes). The archives are .tar.gz (no index), so the first members of the smallest archive
+    were streamed with a requests + tarfile script and stopped after the first NIfTI (614 KB read). First patch: NIfTI-1,
+    dim 96x96x96, uint16, pixdim 1,1,1 (uncalibrated), values 0-255 (mean 14) despite the 16-bit dtype, so the patches
+    may be rescaled to 8-bit range; not documented, so normalization unknown. File names carry the patch origin (z/y/x)
+    in the source image and a channel folder (c0..c2). Archives include macOS metadata files (._*, .DS_Store). Text prompt
+    JSONs were listed, not parsed. Other archives not opened.'
+  inspected_at: '2026-09-30T21:08:10Z'
