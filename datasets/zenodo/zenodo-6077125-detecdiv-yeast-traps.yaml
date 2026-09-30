@@ -1,11 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-6077125-detecdiv-yeast-traps
-title: Annotated pixels from brightfield images from yeast cell in microfluidic traps - Training and Test sets - DetecDiv
-  (id02)
+title: Annotated pixels from brightfield images from yeast cell in microfluidic traps - Training and Test sets -
+  DetecDiv (id02)
 short_name: Yeast cell segmentation in traps (brightfield)
-description: 1916 manually segmented 60x60 px brightfield images of budding yeast mother cells in microfluidic traps, each
-  paired with a 3-class pixel mask (background, mother, other). splitSets.mat defines the training/test split. Released with
-  the DetecDiv platform.
+description: 1916 manually segmented 60x60 px brightfield images of budding yeast mother cells in microfluidic traps,
+  each paired with a 3-class pixel mask (background, mother, other). splitSets.mat defines the training/test split.
+  Released with the DetecDiv platform.
 landing_url: https://zenodo.org/records/6077125
 doi: 10.5281/zenodo.6077125
 repository: Zenodo
@@ -68,8 +68,86 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-09-30T07:38:29Z'
-notes: 'Zip listed with peek_archive: 1916 images/*.tif + 1916 labels/*.tif + splitSets.mat. Image size (60x60), pixel size
-  325 nm, strain and license from the Zenodo page. Paper (eLife 2022, PMC9444243) confirms ~1400 training and ~500 test manually
-  segmented brightfield images with three classes. Bit depth/mask encoding not verified beyond the Zenodo description. Companion
-  Zenodo records id01 (6078462) and id03 (6075691) are separate datasets.'
+  last_checked: '2026-09-30T21:42:13Z'
+notes: 'Zip listed with peek_archive: 1916 images/*.tif + 1916 labels/*.tif + splitSets.mat. Image size (60x60),
+  pixel size 325 nm, strain and license from the Zenodo page. Paper (eLife 2022, PMC9444243) confirms ~1400 training
+  and ~500 test manually segmented brightfield images with three classes. Bit depth/mask encoding not verified beyond
+  the Zenodo description. Companion Zenodo records id01 (6078462) and id03 (6075691) are separate datasets. enricher:
+  masks are 3-channel RGB TIFFs (values 0/255 only; the sample is consistent with one-hot), not single-channel class
+  indices.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/6077125
+  - https://zenodo.org/records/6077125/files/Pixel_annotation_yeast.zip
+  bytes_downloaded: 4270
+  size_source: file-listing
+  layout:
+    tree: |
+      ./                                        1 files    8.7 MB  .zip
+      Pixel_annotation_yeast.zip/Pixel_annotation_yeast/
+        splitSets.mat                             1 files    1.5 KB
+        images/                                1916 files   12.9 MB  .tif   (Pos<p>_<r>_<trap>_frame_<NNNN>.tif)
+        labels/                                1916 files   20.9 MB  .tif   (same names as images/)
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/6077125/files/Pixel_annotation_yeast.zip::Pixel_annotation_yeast/images/Pos0_1_146_frame_0271.tif
+    - https://zenodo.org/records/6077125/files/Pixel_annotation_yeast.zip::Pixel_annotation_yeast/labels/Pos0_1_146_frame_0271.tif
+    size_bytes: 17766
+    description: One 60x59 image/label pair (RGB uint8 TIFFs)
+  arrays:
+  - role: raw
+    path_pattern: Pixel_annotation_yeast/images/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 60
+    - 59
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: packbits
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: Pixel_annotation_yeast/labels/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 60
+    - 59
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: packbits
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    encoding: one-hot
+    classes:
+    - id: null
+      name: background
+    - id: null
+      name: mother
+    - id: null
+      name: other
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: labels/<name>.tif pairs with images/<name>.tif; identical 60x59x3 shape in the sample.
+  notes: 'Zip central directory: 3,833 members (1,916 images, 1,916 labels, splitSets.mat). Probe: images and labels
+    are single-page RGB (photometric 2) uint8 TIFFs, packbits, 60x59 in the probed pair (the page says 60x60). Sample:
+    image uses 0-255 (251 values; the tool hint says possibly contrast-stretched, not confirmed). The label holds
+    only 0 and 255, with 3,540 voxels at 255 out of 10,620 (= the pixel count), consistent with one channel per
+    pixel, i.e. one-hot RGB over the 3 documented classes. Which channel is which class is not documented. One sample
+    only. splitSets.mat not read.'
+  inspected_at: '2026-09-30T21:42:13Z'
