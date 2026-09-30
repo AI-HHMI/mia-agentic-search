@@ -1,16 +1,42 @@
 name: label-agent-prs
-# Agents can't reliably add labels themselves, so label their PRs by branch name.
+# Agents can't reliably add labels themselves, so label their PRs here:
+# by branch name (new-datasets / maintenance) and, for dataset PRs, from the record's fields
+# (dim:, org:, fmt:, dtype:, license:, size:, auto-download, ... see tools/labels.py).
 on:
   pull_request:
-    types: [opened, reopened]
+    types: [opened, reopened, synchronize]
+  workflow_dispatch:   # relabel every open dataset PR, e.g. after changing tools/labels.py
 permissions:
+  contents: read
   pull-requests: write
+  issues: write        # creating missing labels
+concurrency:
+  group: labels-${{ github.event.pull_request.number || 'all' }}
+  cancel-in-progress: true
 jobs:
   label:
-    if: startsWith(github.head_ref, 'claude/dataset/') || startsWith(github.head_ref, 'claude/maintainer')
+    if: >-
+      github.event_name == 'pull_request' && github.event.action != 'synchronize' &&
+      (startsWith(github.head_ref, 'claude/dataset/') || startsWith(github.head_ref, 'claude/maintainer'))
     runs-on: ubuntu-latest
     steps:
       - env:
           GH_TOKEN: ${{ github.token }}
           LABEL: ${{ startsWith(github.head_ref, 'claude/dataset/') && 'new-datasets' || 'maintenance' }}
         run: gh pr edit ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --add-label "$LABEL"
+  record-labels:
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.head_ref, 'claude/dataset/')
+    runs-on: ubuntu-latest
+    steps:
+      # Run main's tools/labels.py; the PR's record is only read with `git show`, never executed.
+      - uses: actions/checkout@v4
+        with: { ref: main, fetch-depth: 0 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install -r requirements.txt
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          if [ "${{ github.event_name }}" = workflow_dispatch ]; then python tools/labels.py sync --all-open
+          else python tools/labels.py sync --pr ${{ github.event.pull_request.number }}; fi

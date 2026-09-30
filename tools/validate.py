@@ -1,6 +1,7 @@
 """Validate dataset records against the schema and catalog-wide rules.
 
     python tools/validate.py [paths...] [--run-log state/runs/<file>.json] [--min-confidence 0.5]
+    python tools/validate.py <file> --run-log <enricher log> --baseline <record as pulled>   # enricher
 
 Exit code 0 = all records valid, 1 = errors found.
 """
@@ -11,7 +12,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import (CONFIDENCE_CAPS, PAPER_HOSTS, load_rejected, DATASETS_DIR, identity_keys, iter_record_paths,  # noqa: E402
+from tools.common import (CONFIDENCE_CAPS, CONFIRMED_SIZE_SOURCES, PAPER_HOSTS, load_rejected, DATASETS_DIR, identity_keys, iter_record_paths,  # noqa: E402
                           load_yaml, normalize_title, normalize_url, rel, validator)
 
 FUZZY_TITLE_THRESHOLD = 0.92
@@ -36,6 +37,59 @@ def check_record(path, record, v):
     repo = record.get("repository")
     if isinstance(repo, str) and path.parent.name != repo.lower():
         errors.append(f"file must live in datasets/{repo.lower()}/ (repository={repo})")
+    errors += check_technical(record)
+    return errors
+
+
+def check_technical(record):
+    """Claims in `technical` must match how deep the inspection went."""
+    t = record.get("technical")
+    if not isinstance(t, dict):
+        return []
+    errors = []
+    if record.get("schema_version") != "1.2":
+        errors.append("a record with `technical` must have schema_version '1.2'")
+    arrays = [a for a in t.get("arrays") or [] if isinstance(a, dict)]
+    if t.get("method") in ("header", "sample") and not arrays:
+        errors.append(f"technical.method is {t.get('method')!r} but technical.arrays is empty")
+    if t.get("method") != "sample":
+        for a in arrays:
+            for key in ("value_range", "n_ids_observed"):
+                if a.get(key) is not None:
+                    errors.append(f"technical.arrays[{a.get('path_pattern')}].{key} needs technical.method 'sample' "
+                                  "(observed values come only from tools/sample.py)")
+    if t.get("size_source") in CONFIRMED_SIZE_SOURCES:
+        if (record.get("data") or {}).get("size_bytes") is None:
+            errors.append("technical.size_source is 'file-listing' but data.size_bytes is null")
+        if not (t.get("layout") or {}).get("listing_complete"):
+            errors.append("technical.size_source is 'file-listing' but layout.listing_complete is false")
+    return errors
+
+
+def check_inspection_log(record, run):
+    """With --run-log: the enricher's listing / header / sample claims must be backed by run log entries."""
+    t = record.get("technical")
+    if not isinstance(t, dict):
+        return []
+    errors, rid = [], record.get("id")
+    fetched = {normalize_url(u) for u in run.get("fetched_urls", [])}
+    for u in t.get("inspected_urls") or []:
+        if normalize_url(u) not in fetched:
+            errors.append(f"technical.inspected_urls entry not in run log: {u}")
+    mine = [e for e in run.get("inspected", []) if e.get("id") == rid]
+    kinds = {e.get("kind") for e in mine}
+    if t.get("method") == "sample" and "sample" not in kinds:
+        errors.append("technical.method is 'sample' but the run log has no tools/sample.py entry for this id")
+    if t.get("method") == "header" and not kinds & {"header", "sample"}:
+        errors.append("technical.method is 'header' but the run log has no tools/probe.py entry for this id")
+    if t.get("size_source") in CONFIRMED_SIZE_SOURCES:
+        totals = {e.get("total_bytes") for e in mine if e.get("kind") == "listing" and e.get("size_source") == "file-listing"}
+        size = (record.get("data") or {}).get("size_bytes")
+        if not totals:
+            errors.append("technical.size_source is 'file-listing' but no complete, exact tools/listing.py run is logged for this id")
+        elif size not in totals:
+            errors.append(f"data.size_bytes {size} does not equal the logged file-listing total ({sorted(totals)}); "
+                          "a confirmed size must be the exact listed total")
     return errors
 
 
@@ -43,6 +97,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("paths", nargs="*", help="files/dirs to validate (default: datasets/)")
     ap.add_argument("--run-log", help="require every evidence_url to appear in this run log's fetched URLs")
+    ap.add_argument("--baseline", help="the record before this run's edits (tools/publish.py pr-pull saves it); "
+                    "its evidence_urls were logged by an earlier run and are not re-checked")
     ap.add_argument("--min-confidence", type=float, default=None,
                     help="fail records below this provenance.confidence (harvest PRs use 0.5)")
     a = ap.parse_args()
@@ -51,9 +107,14 @@ def main():
     targets = list(iter_record_paths(a.paths))
     all_paths = list(iter_record_paths([DATASETS_DIR]))
     rejected = set(load_rejected())
-    fetched = None
+    fetched = run = None
+    baseline_urls = set()
+    if a.baseline:
+        base = load_yaml(a.baseline) or {}
+        baseline_urls = {normalize_url(u) for u in (base.get("provenance") or {}).get("evidence_urls", [])}
     if a.run_log:
-        fetched = {normalize_url(u) for u in json.loads(Path(a.run_log).read_text()).get("fetched_urls", [])}
+        run = json.loads(Path(a.run_log).read_text())
+        fetched = {normalize_url(u) for u in run.get("fetched_urls", [])}
 
     problems, warnings = {}, {}
     records = {}
@@ -91,8 +152,9 @@ def main():
                 errs.append(f"confidence {conf} < {a.min_confidence}")
             if fetched is not None:
                 for u in (rec.get("provenance") or {}).get("evidence_urls", []):
-                    if normalize_url(u) not in fetched:
+                    if normalize_url(u) not in fetched and normalize_url(u) not in baseline_urls:
                         errs.append(f"evidence url not in run log fetched_urls: {u}")
+                errs += check_inspection_log(rec, run)
         if errs:
             problems.setdefault(p, []).extend(errs)
 

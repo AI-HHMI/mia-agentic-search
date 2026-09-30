@@ -2,6 +2,7 @@
 
     python tools/pr_text.py <record.yaml> --title      # the short_name
     python tools/pr_text.py <record.yaml> --body [--run-log state/runs/<file>.json]
+    python tools/pr_text.py <record.yaml> --body --run-log <harvest log> --enrich-log <enricher log>
 
 Agents must use this verbatim so every dataset PR has the same format.
 """
@@ -32,7 +33,58 @@ def title(r):
     return r["short_name"]
 
 
-def body(r, path, run_log=None):
+SIZE_SOURCE = {"file-listing": "confirmed from a complete file listing", "page-stated": "as stated on the dataset page",
+               "paper": "as stated in the paper", "estimated": "estimate", "unknown": "source unknown"}
+
+
+def _cell(v):
+    return str(v).replace("|", "\\|").replace("\n", " ") if v not in (None, "", []) else "—"
+
+
+def technical(t):
+    """Markdown for the enricher's `technical` block."""
+    arrays = t.get("arrays") or []
+    lines = ["", "### Technical inspection", "",
+             f"Deepest check: **{t['method']}** · {human_size(t.get('bytes_downloaded') or 0)} downloaded · "
+             f"{t['inspected_at'][:10]}", ""]
+    if arrays:
+        lines += ["| Role | Files | Axes · shape | dtype | Compression | Values | Labels | Alignment |",
+                  "|---|---|---|---|---|---|---|---|"]
+        for a in arrays:
+            shape = "×".join(str(n) for n in a["shape"]) if a.get("shape") else "?"
+            axes = f"{a['axes']} · {shape}" if a.get("axes") else f"{shape} (axes not stated)"
+            if a.get("shape_varies"):
+                axes += " (varies)"
+            comp = a["compression"] + (" (lossy)" if a.get("lossy") else "")
+            vals = [f"{a['value_range'][0]:g}–{a['value_range'][1]:g}" if a.get("value_range") else None,
+                    a.get("normalization") if a.get("normalization") not in (None, "unknown") else None]
+            labels = []
+            if a.get("encoding"):
+                labels.append(a["encoding"])
+            if a.get("classes"):
+                labels.append(", ".join(f"{c['id']}={c['name']}" for c in a["classes"][:8]))
+            if a.get("n_ids_observed") is not None:
+                labels.append(f"{a['n_ids_observed']} IDs in sample")
+            align = a.get("alignment") or "—"
+            if a.get("alignment_notes"):
+                align += f": {a['alignment_notes']}"
+            lines.append(f"| {a['role']} | `{_cell(a['path_pattern'])}` · {a['format']} | {_cell(axes)} | {a['dtype']} | "
+                         f"{_cell(comp)} | {_cell(' · '.join(v for v in vals if v))} | {_cell(' · '.join(labels))} | {_cell(align)} |")
+    smp = t.get("sample")
+    if smp:
+        lines += ["", f"🧪 **Quick-test sample** ({human_size(smp.get('size_bytes'))}): "
+                  + (smp.get("description") or ""), *[f"- `{u}`" for u in smp["urls"]]]
+    lay = t.get("layout") or {}
+    if lay.get("tree"):
+        n = f"{lay['n_files']} files" if lay.get("n_files") is not None else "files"
+        lines += ["", f"<details><summary>Folder structure ({n}{'' if lay.get('listing_complete') else ', listing incomplete'})</summary>",
+                  "", "```", lay["tree"].rstrip(), "```", "", "</details>"]
+    if t.get("notes"):
+        lines += ["", f"**Inspection notes:** {t['notes'].strip()}"]
+    return lines
+
+
+def body(r, path, run_log=None, enrich_log=None):
     im, da, an, ml, lic, pv = (r[k] for k in ("imaging", "data", "annotations", "ml", "license", "provenance"))
     vox = im["voxel_size_nm"]
     vox_s = f"{vox['x']} × {vox['y']} × {vox['z'] if vox['z'] is not None else '—'} nm (x × y × z)" if vox else "unknown"
@@ -41,6 +93,8 @@ def body(r, path, run_log=None):
              + (f" · format: {an['format']}" if an["format"] else "")) if an["present"] else "none (unlabelled)"
     bench_s = f" · benchmark: {ml['benchmark']}" if ml["benchmark"] else ""
     routine = pv["discovered_by"]
+    src = (r.get("technical") or {}).get("size_source")
+    size_src = f" ({SIZE_SOURCE[src]})" if src and da["size_bytes"] is not None else ""
     log_s = f" · run log `{rel(run_log)}` on branch `claude/state/{routine}`" if run_log else ""
     pubs = []
     for p in r["publications"]:
@@ -62,7 +116,7 @@ def body(r, path, run_log=None):
         f"| **Dimensionality** | {DIM_LABELS.get(im['dimensionality'], im['dimensionality'])} · channels: {im['channels'] or 'unknown'} |",
         f"| **Voxel / pixel size** | {vox_s} |",
         f"| **Data format** | {_join(da['formats'])} |",
-        f"| **Size** | {human_size(da['size_bytes'])} · {da['n_items'] or 'unknown number of'} images/volumes |",
+        f"| **Size** | {human_size(da['size_bytes'])}{size_src} · {da['n_items'] or 'unknown number of'} images/volumes |",
         f"| **Sample** | {_join(im['organism'], 'organism unknown')} · {im['sample'] or 'sample unknown'} |",
         f"| **Annotations** | {ann_s} |",
         f"| **ML tasks** | {_join(ml['tasks'])} · splits provided: {'yes' if ml['splits_provided'] else 'no'}{bench_s} |",
@@ -71,6 +125,8 @@ def body(r, path, run_log=None):
     ]
     if r.get("notes"):
         lines += ["", f"**Notes:** {r['notes'].strip()}"]
+    if r.get("technical"):
+        lines += technical(r["technical"])
     lines += [
         "",
         "<details><summary>Sources the agent read</summary>",
@@ -83,6 +139,10 @@ def body(r, path, run_log=None):
         f"**Review:** merge to accept · close to reject (it won't be proposed again) · edit `{rel(path)}` in this PR to fix fields first.",
         f"_Found by `{routine}` on {pv['discovered_at'][:10]}{log_s}._",
     ]
+    if r.get("technical"):
+        elog = f" · run log `{rel(enrich_log)}` on branch `claude/state/enricher`" if enrich_log else ""
+        lines.append(f"_Inspected by `enricher` on {r['technical']['inspected_at'][:10]}{elog}. "
+                     "Labels are set automatically from the record._")
     return "\n".join(lines)
 
 
@@ -92,10 +152,11 @@ def main():
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--title", action="store_true")
     g.add_argument("--body", action="store_true")
-    ap.add_argument("--run-log")
+    ap.add_argument("--run-log", help="the harvest run that found the dataset")
+    ap.add_argument("--enrich-log", help="the enricher run that inspected it")
     a = ap.parse_args()
     r = load_yaml(a.record)
-    print(title(r) if a.title else body(r, Path(a.record).resolve(), a.run_log))
+    print(title(r) if a.title else body(r, Path(a.record).resolve(), a.run_log, a.enrich_log))
 
 
 if __name__ == "__main__":

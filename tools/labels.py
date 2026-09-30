@@ -1,0 +1,156 @@
+"""PR labels derived from a dataset record, so labels always match the YAML.
+
+    python tools/labels.py <record.yaml>          # print the labels, one per line
+    python tools/labels.py sync --pr N            # CI: set PR N's labels from the record on its head
+    python tools/labels.py sync --all-open        # CI: same for every open claude/dataset/* PR
+
+Agents never add labels by hand: they fill in the record and .github/workflows/label.yml runs `sync`
+on every push. Labels outside the managed prefixes (e.g. new-datasets) are left alone.
+
+  dim:3D · org:Mus musculus · modality:FIB-SEM · fmt:tiff · dtype:uint16 · anno:instance-segmentation
+  label-enc:instance-ids · license:CC-BY-4.0 (the SPDX id as written, not interpreted) · size:1-10GB
+  auto-download (size confirmed by a complete file listing, < 50 GB, open access) · enriched
+"""
+import argparse
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+import yaml
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from tools.common import (AUTO_DOWNLOAD_MAX_BYTES, CONFIRMED_SIZE_SOURCES, DATASET_BRANCH_PREFIX,  # noqa: E402
+                          ROOT, _NoDatesLoader, load_yaml)
+
+# prefix -> (colour, description)
+GROUPS = {
+    "dim:": ("0E8A16", "Dimensionality"),
+    "org:": ("5319E7", "Organism"),
+    "modality:": ("1D76DB", "Imaging modality"),
+    "fmt:": ("C5DEF5", "File format"),
+    "dtype:": ("BFD4F2", "Pixel data type of the raw images (inspected)"),
+    "anno:": ("FBCA04", "Annotation type"),
+    "label-enc:": ("FEF2C0", "How labels are stored (inspected)"),
+    "license:": ("D93F0B", "License as stated by the dataset (SPDX id, not interpreted)"),
+    "size:": ("BFDADC", "Total download size"),
+}
+FLAGS = {
+    "auto-download": ("0E8A16", "Size confirmed by a complete file listing, < 50 GB, open access"),
+    "enriched": ("006B75", "Technical metadata filled in by the enricher routine"),
+}
+SIZE_BUCKETS = [(10**9, "<1GB"), (10 * 10**9, "1-10GB"), (50 * 10**9, "10-50GB"), (500 * 10**9, "50-500GB")]
+MAX_LEN = 50  # GitHub's label name limit
+
+
+def _label(prefix, value):
+    return (prefix + str(value))[:MAX_LEN]
+
+
+def labels_for(r):
+    im, da, an = r.get("imaging") or {}, r.get("data") or {}, r.get("annotations") or {}
+    tech = r.get("technical") or {}
+    arrays = [a for a in tech.get("arrays") or [] if isinstance(a, dict)]
+    out = []
+    if im.get("dimensionality"):
+        out.append(_label("dim:", im["dimensionality"]))
+    orgs = im.get("organism") or []
+    out += [_label("org:", o) for o in orgs[:4]] or ["org:unknown"]
+    out += [_label("modality:", m) for m in im.get("modality") or []]
+    out += [_label("fmt:", f) for f in da.get("formats") or []]
+    out += [_label("dtype:", d) for d in dict.fromkeys(a.get("dtype") for a in arrays if a.get("role") in ("raw", "target"))
+            if d and d != "unknown"]
+    out += [_label("anno:", t) for t in an.get("types") or []] if an.get("present") else ["anno:none"]
+    out += [_label("label-enc:", e) for e in dict.fromkeys(a.get("encoding") for a in arrays if a.get("role") == "label")
+            if e and e != "unknown"]
+    out.append(_label("license:", (r.get("license") or {}).get("spdx") or "unknown"))
+    size = da.get("size_bytes")
+    if size is None:
+        out.append("size:unknown")
+    else:
+        out.append("size:" + next((name for limit, name in SIZE_BUCKETS if size < limit), ">500GB"))
+    if (size is not None and size < AUTO_DOWNLOAD_MAX_BYTES and tech.get("size_source") in CONFIRMED_SIZE_SOURCES
+            and da.get("access") == "open"):
+        out.append("auto-download")
+    if tech:
+        out.append("enriched")
+    return list(dict.fromkeys(out))
+
+
+def managed(name):
+    return name in FLAGS or any(name.startswith(p) for p in GROUPS)
+
+
+def style(name):
+    if name in FLAGS:
+        return FLAGS[name]
+    prefix = next(p for p in GROUPS if name.startswith(p))
+    return GROUPS[prefix]
+
+
+def _run(*cmd, check=True):
+    r = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
+    if check and r.returncode != 0:
+        sys.exit(f"{' '.join(cmd)} failed:\n{r.stderr.strip()}")
+    return r.stdout
+
+
+def record_on_pr(number):
+    """The dataset record added or changed by PR `number` (read from git, never executed)."""
+    ref = f"refs/remotes/origin/pr-{number}"
+    _run("git", "fetch", "-q", "origin", f"+pull/{number}/head:{ref}")
+    _run("git", "fetch", "-q", "origin", "main")
+    paths = [p for p in _run("git", "diff", "--name-only", "--diff-filter=AM", f"origin/main...{ref}", "--", "datasets/").split()
+             if p.endswith(".yaml")]
+    if len(paths) != 1:
+        return None, paths
+    return yaml.load(_run("git", "show", f"{ref}:{paths[0]}"), Loader=_NoDatesLoader), paths
+
+
+def sync(number, repo_labels):
+    rec, paths = record_on_pr(number)
+    if rec is None:
+        print(f"#{number}: expected one record, found {paths}; labels unchanged")
+        return
+    want = set(labels_for(rec))
+    have = {lab["name"] for lab in json.loads(_run("gh", "pr", "view", str(number), "--json", "labels"))["labels"]}
+    add = sorted(want - have)
+    remove = sorted(n for n in have - want if managed(n))
+    for name in add:
+        if name not in repo_labels:
+            color, desc = style(name)
+            _run("gh", "label", "create", name, "--color", color, "--description", desc, "--force")
+            repo_labels.add(name)
+    cmd = ["gh", "pr", "edit", str(number)]
+    for name in add:
+        cmd += ["--add-label", name]
+    for name in remove:
+        cmd += ["--remove-label", name]
+    if add or remove:
+        _run(*cmd)
+    print(f"#{number} {rec.get('id')}: +{add} -{remove}")
+
+
+def main():
+    if sys.argv[1:2] != ["sync"]:
+        ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+        ap.add_argument("record")
+        print("\n".join(labels_for(load_yaml(ap.parse_args().record))))
+        return
+    ap = argparse.ArgumentParser(prog="labels.py sync")
+    g = ap.add_mutually_exclusive_group(required=True)
+    g.add_argument("--pr", type=int)
+    g.add_argument("--all-open", action="store_true")
+    a = ap.parse_args(sys.argv[2:])
+    repo_labels = {lab["name"] for lab in json.loads(_run("gh", "label", "list", "--limit", "1000", "--json", "name"))}
+    if a.pr:
+        sync(a.pr, repo_labels)
+        return
+    prs = json.loads(_run("gh", "pr", "list", "--state", "open", "--limit", "500", "--json", "number,headRefName"))
+    for pr in prs:
+        if pr["headRefName"].startswith(DATASET_BRANCH_PREFIX):
+            sync(pr["number"], repo_labels)
+
+
+if __name__ == "__main__":
+    main()

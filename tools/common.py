@@ -23,6 +23,14 @@ SEARCH_CUTOFF_MIN = 110   # stop searching here, leaving time to publish PRs and
 DATASET_BRANCH_PREFIX = "claude/dataset/"  # one branch + PR per proposed dataset
 STATE_BRANCH_PREFIX = "claude/state/"      # per-routine frontier + run logs, never reviewed
 
+# Enricher: technical inspection of proposed datasets (see .claude/skills/enrich-prs).
+AUTO_DOWNLOAD_MAX_BYTES = 50 * 10**9       # `auto-download` label only below this, and only for a confirmed size
+SAMPLE_MAX_BYTES = 500 * 10**6             # per dataset and run, summed over all tools/sample.py downloads
+CONFIRMED_SIZE_SOURCES = ("file-listing",)  # technical.size_source values that count as a confirmed size
+# Version-control / OS files inside archives and folders: not part of the dataset.
+JUNK_PATH = re.compile(r"(^|/)(\.svn|\.git|__MACOSX)/|(^|/)(\.DS_Store|Thumbs\.db|\._[^/]*)$")
+USER_AGENT = "mia-agentic-search/1.0 (metadata inspection; https://github.com/AI-HHMI/mia-agentic-search)"
+
 # Caps tie provenance.confidence (internal only, not shown in PRs) to what was actually verified.
 CONFIDENCE_CAPS = [("url_ok", 0.5, "landing page not reachable"),
                    ("license_found", 0.7, "no license found"),
@@ -162,6 +170,24 @@ def identity_keys(record):
     if record.get("landing_url"):
         keys.append("url:" + normalize_url(record["landing_url"]))
     return keys
+
+
+_last_request = {}
+
+
+def polite_get(url, min_interval=1.0, **kw):
+    """requests.get with ≤ 1 request/second per host (CLAUDE.md rule 10) and our User-Agent."""
+    import time
+
+    import requests
+    host = urlsplit(url).netloc
+    wait = _last_request.get(host, 0) + min_interval - time.monotonic()
+    if wait > 0:
+        time.sleep(wait)
+    _last_request[host] = time.monotonic()
+    kw.setdefault("timeout", 60)
+    kw["headers"] = {"User-Agent": USER_AGENT, **(kw.get("headers") or {})}
+    return requests.get(url, **kw)
 
 
 def utcnow():

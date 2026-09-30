@@ -3,12 +3,19 @@
     python tools/publish.py state-pull --routine R     # restore frontier + run logs from claude/state/R
     python tools/publish.py dataset <record.yaml>       # push record to its own branch claude/dataset/<id>
     python tools/publish.py state-push --routine R     # save frontier + run logs to claude/state/R
+    python tools/publish.py pr-pull <id>               # enricher: put claude/dataset/<id>'s record in the tree
+    python tools/publish.py pr-update <record.yaml>    # enricher: commit it back onto that branch
 
 The working tree stays on origin/main. Records are left uncommitted there and each one is
 committed in a temporary worktree, so every dataset branch contains exactly one new file.
 State branches are orphans holding only state/ files; they are pushed directly and never reviewed.
+
+pr-pull records the branch head it read (state/.enrich/, git-ignored). pr-update commits on top of
+exactly that head and pushes without force, so if anyone pushed in the meantime the push is
+refused instead of overwriting their edit: pull again and redo the change.
 """
 import argparse
+import json
 import shutil
 import subprocess
 import sys
@@ -17,7 +24,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.common import (DATASET_BRANCH_PREFIX, FRONTIER_DIR, ROOT, RUNS_DIR,  # noqa: E402
-                          STATE_BRANCH_PREFIX, git, load_yaml, rel)
+                          STATE_BRANCH_PREFIX, STATE_DIR, git, load_yaml, rel)
 from tools.pr_text import title  # noqa: E402
 
 
@@ -111,17 +118,87 @@ def dataset(record_path):
     print(branch)
 
 
+ENRICH_DIR = STATE_DIR / ".enrich"
+ENRICH_PREFIX = "enrich: "  # commit subject prefix; any other later commit on a dataset branch is a human edit
+
+
+def pr_pull(rec_id):
+    branch = DATASET_BRANCH_PREFIX + rec_id
+    if not remote_exists(branch):
+        sys.exit(f"{branch} does not exist on origin")
+    run("fetch", "-q", "origin", "main", f"+{branch}:refs/remotes/origin/{branch}")
+    ref = f"origin/{branch}"
+    sha = run("rev-parse", ref).strip()
+    paths = [p for p in run("diff", "--name-only", "--diff-filter=AM", f"origin/main...{ref}", "--", "datasets/").split()
+             if p.endswith(".yaml")]
+    if len(paths) != 1:
+        sys.exit(f"{branch} should change exactly one record, found {paths}")
+    path = paths[0]
+    text = run("show", f"{ref}:{path}")
+    (ROOT / path).parent.mkdir(parents=True, exist_ok=True)
+    (ROOT / path).write_text(text)
+    ENRICH_DIR.mkdir(parents=True, exist_ok=True)
+    baseline = ENRICH_DIR / f"{rec_id}.orig.yaml"
+    baseline.write_text(text)
+    (ENRICH_DIR / f"{rec_id}.json").write_text(json.dumps({"branch": branch, "sha": sha, "path": path}))
+    commits = []
+    for line in run("log", "--reverse", "--format=%H%x09%an%x09%cn%x09%s", f"origin/main..{ref}").splitlines():
+        h, author, committer, subject = line.split("\t", 3)
+        commits.append({"sha": h[:10], "author": author, "committer": committer, "subject": subject})
+    human = [c for c in commits[1:] if not c["subject"].startswith(ENRICH_PREFIX)]
+    print(json.dumps({"path": path, "baseline": rel(baseline), "branch": branch, "head": sha[:10],
+                      "enriched_before": any(c["subject"].startswith(ENRICH_PREFIX) for c in commits),
+                      "human_edits": human, "commits": commits}, indent=1))
+
+
+def pr_update(record_path):
+    src = Path(record_path).resolve()
+    rec = load_yaml(src)
+    meta_path = ENRICH_DIR / f"{rec['id']}.json"
+    if not meta_path.exists():
+        sys.exit(f"run `publish.py pr-pull {rec['id']}` first")
+    meta = json.loads(meta_path.read_text())
+    tmp = _worktree(meta["sha"])
+    try:
+        dest = tmp / src.relative_to(ROOT)
+        if dest != tmp / meta["path"]:  # repository changed, so the record moves to another folder
+            run("rm", "-q", meta["path"], cwd=tmp)
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(src, dest)
+        run("add", str(dest.relative_to(tmp)), cwd=tmp)
+        if not git("-C", str(tmp), "status", "--porcelain").strip():
+            print("record unchanged; nothing pushed")
+            return
+        run("commit", "-q", "-m", ENRICH_PREFIX + rec["short_name"], cwd=tmp)
+        r = subprocess.run(["git", "push", "-q", "origin", f"HEAD:refs/heads/{meta['branch']}"], cwd=tmp,
+                           capture_output=True, text=True)
+        if r.returncode != 0:
+            sys.exit(f"push refused: {meta['branch']} changed since pr-pull (someone pushed?). "
+                     f"Run pr-pull again and redo your edits.\n{r.stderr.strip()}")
+    finally:
+        _cleanup(tmp)
+    src.unlink()
+    meta_path.unlink()
+    print(f"pushed {meta['branch']}")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     for name in ("state-pull", "state-push"):
         sub.add_parser(name).add_argument("--routine", required=True)
     sub.add_parser("dataset").add_argument("record")
+    sub.add_parser("pr-pull").add_argument("id")
+    sub.add_parser("pr-update").add_argument("record")
     a = ap.parse_args()
     if a.cmd == "state-pull":
         state_pull(a.routine)
     elif a.cmd == "state-push":
         state_push(a.routine)
+    elif a.cmd == "pr-pull":
+        pr_pull(a.id)
+    elif a.cmd == "pr-update":
+        pr_update(a.record)
     else:
         print(f"{rel(Path(a.record).resolve())} -> ", end="", flush=True)
         dataset(a.record)

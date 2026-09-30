@@ -18,7 +18,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.collect_runs import collect  # noqa: E402
 
 # Expected cadence in hours; keep in sync with the routine schedules and site_template.html.
-CADENCE_H = {"harvest-repositories": 1, "harvest-literature": 3, "harvest-websearch": 3, "maintainer": 24}
+CADENCE_H = {"harvest-repositories": 1, "harvest-literature": 3, "harvest-websearch": 3, "maintainer": 24, "enricher": 2}
+FINDS_DATASETS = ("harvest-repositories", "harvest-literature", "harvest-websearch")
 STALE_FACTOR = 2
 RUN_BUDGET_H = 2  # a run may take up to 2 h, and its log is only pushed when it ends
 FAILED_STREAK = 3
@@ -45,7 +46,8 @@ def main():
         streak = mine[:FAILED_STREAK]
         if len(streak) == FAILED_STREAK and all(r.get("status") in ("failed", "running") for r in streak):
             alerts.append(f":x: *{routine}*: last {FAILED_STREAK} runs failed or never finished")
-        elif len(streak) == FAILED_STREAK and all(not r.get("counts", {}).get("added") for r in streak):
+        elif (routine in FINDS_DATASETS and len(streak) == FAILED_STREAK
+              and all(not r.get("counts", {}).get("added") for r in streak)):
             alerts.append(f":mag: *{routine}*: last {FAILED_STREAK} runs found no new dataset "
                           f"({', '.join(r.get('stop_reason') or '?' for r in streak)}); the frontier may need new queries")
 

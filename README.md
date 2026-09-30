@@ -6,13 +6,14 @@ datasets**. They propose each one as a pull request, and a human decides what go
 **Dashboard:** https://ai-hhmi.github.io/mia-agentic-search/ · **Alerts:** Slack `#mia-harvester`
 
 ## How it works
-Four [Claude scheduled routines](https://claude.ai/code/routines) run in the cloud:
+Five [Claude scheduled routines](https://claude.ai/code/routines) run in the cloud:
 
 | Routine | Schedule | Searches |
 |---|---|---|
 | `harvest-repositories` | hourly | EMPIAR, BioImage Archive, Zenodo, IDR (via their APIs) |
 | `harvest-literature` | hourly | Papers that release datasets (bioRxiv, PubMed, journals, challenges) |
 | `harvest-websearch` | hourly | Portals, challenge sites, Hugging Face, Kaggle, lab pages |
+| `enricher` | every 2 h | Inspects the files of open dataset PRs: folder tree, exact size, shapes, dtypes, compression, value ranges, label encoding, alignment, license |
 | `maintainer` | daily | Checks links, fills gaps in existing records, posts a daily Slack digest |
 
 Each harvest run works through its search queue until it finds **at least one dataset that isn't
@@ -27,7 +28,17 @@ ML tasks and license.
 
 - **Merge:** accept the dataset into the catalog.
 - **Close:** reject it. It will never be proposed again.
-- **Edit the YAML file in the PR:** fix a field before merging.
+- **Edit the YAML file in the PR:** fix a field before merging. The enricher never overwrites a field you changed.
+
+After the enricher has inspected a PR, its body gains a **Technical inspection** table (per raw /
+label array: files, axes and shape, dtype, compression, value range, label encoding, alignment), a
+quick-test sample and the folder tree. An inspection-report comment is added with the raw tool output.
+
+**Labels** are computed from the record on every push (`tools/labels.py`), so they always match the YAML:
+`dim:3D` · `org:Mus musculus` · `modality:FIB-SEM` · `fmt:tiff` · `dtype:uint16` · `anno:instance-segmentation` ·
+`label-enc:instance-ids` · `license:CC-BY-4.0` (the dataset's SPDX id as written, or `license:unknown`) ·
+`size:1-10GB` · **`auto-download`** (size confirmed by a complete file listing, under 50 GB, open access) · `enriched`.
+To relabel every open PR, run the `label-agent-prs` workflow manually.
 
 ## Repository layout
 | Path | Contents |
@@ -35,7 +46,7 @@ ML tasks and license.
 | `datasets/<repository>/<id>.yaml` | The catalog: one record per dataset |
 | `schema/dataset.schema.json` | Record schema. CI rejects records that don't match it |
 | `CLAUDE.md` | Rules for the agents, including what counts as a "usable" dataset |
-| `.claude/skills/` | The agents' procedures: `find-datasets`, `maintain-catalog` |
+| `.claude/skills/` | The agents' procedures: `find-datasets`, `enrich-prs`, `maintain-catalog` |
 | `tools/` | Python helpers: validation, dedup, paper reader, PR text, publishing, dashboard, watchdog |
 
 Branches:
@@ -63,8 +74,10 @@ Branches:
 3. **Slack connector**, for the agents: claude.ai → Settings → Connectors → Slack. Then run
    `/invite @Claude` in the channel.
 4. **Routines:**
-   - Create the four routines in the table above on this repo. The names must match exactly.
-   - Prompts: `/find-datasets source=repositories|literature|websearch` and `/maintain-catalog`.
+   - Create the five routines in the table above on this repo. The names must match exactly.
+   - Prompts: `/find-datasets source=repositories|literature|websearch`, `/enrich-prs` and `/maintain-catalog`.
+   - `enricher`: every 2 hours (so runs never overlap), with a capable model (Opus). It needs
+     `pip install -r requirements-inspect.txt` (numpy, tifffile, h5py, zarr, …), which the skill runs itself.
    - Enable the Slack connector on each.
    - Set the environment's network access to **Full**.
    - Optional setup script: `pip install pyyaml jsonschema requests`.
@@ -75,4 +88,5 @@ pip install -r requirements.txt
 python tools/validate.py                                        # check the catalog
 python tools/build_site.py && open site/index.html              # build the dashboard
 claude -p "/find-datasets source=repositories limit=1 dry-run"  # test an agent run (no PRs)
+claude -p "/enrich-prs pr=126 dry-run"                           # test the enricher on one PR (no pushes)
 ```

@@ -24,7 +24,8 @@ humans review them (merge = accept, close = reject).
 9. **Run until something new turns up, max 2 hours.** Harvest runs keep searching, one frontier query at a
    time, until they publish ≥ 1 dataset that isn't on `main`, has no open PR and wasn't rejected.
    Check `tools/run_log.py continue` before each query. Searching stops at 110 min; every run ends by 120 min.
-10. Be polite to servers: ≤ 1 request/second per host, no bulk downloads. Metadata only.
+10. Be polite to servers: ≤ 1 request/second per host, no bulk downloads. Metadata only. The one exception
+   is the enricher (below), which may read file headers and download small samples within its budget.
 
 ## What counts as "usable"
 A dataset qualifies only if **all** of these hold:
@@ -60,6 +61,23 @@ usable for training. Records below 0.5 aren't proposed. The validator caps it by
 - `short_name`: ≤ 50 characters naming the content and modality; it's used verbatim as the PR title.
 - Timestamps are UTC ISO-8601 with `Z`.
 
+## Enricher (`/enrich-prs`)
+A fifth routine inspects the files of open dataset PRs and fills the record's `technical` block
+(schema v1.2): folder tree, confirmed size, and per array (raw / target / label) the format, axes,
+shape, dtype, compression, value range, normalization, label encoding and raw↔label alignment.
+- **Only on PR branches:** it edits the one record on `claude/dataset/<id>` via `tools/publish.py pr-pull` /
+  `pr-update`, never `main`, and never overwrites a field a human changed on the branch.
+- **Inspection budget:** headers via range requests (`tools/probe.py`), plus at most 500 MB of samples per
+  record per run (`tools/sample.py`, enforced). Never download a whole dataset.
+- **Untrusted data:** never run code that ships with a dataset, never unpickle, never `pip install` packages
+  a dataset names. Samples live in temp dirs and are deleted.
+- **Evidence:** listing / probe / sample record themselves in the run log; `validate.py --run-log` rejects
+  claims (`method`, confirmed size, observed values) that aren't backed by a logged read.
+- **Labels are computed, not added:** `.github/workflows/label.yml` runs `tools/labels.py` on every push:
+  `dim:`, `org:`, `modality:`, `fmt:`, `dtype:`, `anno:`, `label-enc:`, `license:<spdx as written>`,
+  `size:`, `auto-download` (size confirmed by a complete file listing, < 50 GB, open access) and `enriched`.
+  License labels are the SPDX id verbatim, with no interpretation.
+
 ## Tools (all in `tools/`, run from repo root)
 | Command | Purpose |
 |---|---|
@@ -72,8 +90,14 @@ usable for training. Records below 0.5 aren't proposed. The validator caps it by
 | `python tools/publish.py state-pull\|state-push --routine R` / `dataset <file>` | restore/save search state; push one record to its own branch |
 | `python tools/pr_text.py <file> --title\|--body [--run-log F]` | PR title and body for a record (use verbatim) |
 | `python tools/paper.py --doi D \| --pmid P \| --title T` | find a paper and read its full text (Europe PMC / bioRxiv) |
-| `python tools/peek_archive.py <zip url>` | list files inside a remote zip without downloading it |
+| `python tools/peek_archive.py <zip url> [--cat member]` | list files inside a remote zip without downloading it, or print a text member |
+| `python tools/listing.py <url> [<url> ...] --id ID` | full file listing → folder tree, exact total size (enricher) |
+| `python tools/probe.py <url> [--glob G] --id ID` | shape / dtype / compression / voxel size from file headers (enricher) |
+| `python tools/sample.py --id ID --raw S [--label S]` | download a small sample, measure it, delete it (enricher) |
+| `python tools/labels.py <file>` | the PR labels a record gets |
+| `python tools/publish.py pr-pull <id>` / `pr-update <file>` | enricher: edit the record on an open PR's branch |
 | `python tools/check_links.py [--oldest N] [--write]` | link rot check |
 | `python tools/build_site.py` | build dashboard into `site/` |
 
-Skills: `/find-datasets source=<repositories|literature|websearch>` (harvest), `/maintain-catalog` (daily upkeep).
+Skills: `/find-datasets source=<repositories|literature|websearch>` (harvest), `/enrich-prs` (technical
+inspection of open PRs), `/maintain-catalog` (daily upkeep).
