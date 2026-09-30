@@ -1,8 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: idr0100-myelin-annotation-confocal
 title: A Multi-Spectral Myelin Annotation Tool for Machine Learning Based Myelin Quantification (idr0100)
 short_name: Myelin ground truth in neuron cultures (confocal)
-description: Five stitched 3D multi-spectral confocal fluorescence mosaics of mouse embryonic stem cell derived neuron and oligodendrocyte co-cultures (axon TUJ1, oligodendrocyte MBP, nuclei DAPI). Each sample comes with a myelin ground-truth volume identified and curated by three experts using CEM3D software.
+description: Five stitched 3D multi-spectral confocal fluorescence mosaics of mouse embryonic stem cell derived
+  neuron and oligodendrocyte co-cultures (axon TUJ1, oligodendrocyte MBP, nuclei DAPI). Each sample comes with a
+  myelin ground-truth volume identified and curated by three experts using CEM3D software.
 landing_url: https://idr.openmicroscopy.org/webclient/?show=project-1451
 doi: 10.17867/10000152
 repository: IDR
@@ -76,5 +78,84 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-09-30T13:50:00Z'
-notes: 'Voxel size (0.830 x 0.830 x 1.2 um) is from IDR image metadata of Myelin Image 1, taken as representative of the five samples. Image 1 is 8346x2253x47, 3 channels. Also mirrored as BioImage Archive S-BIAD493, which lists per-sample Axon, Nucleus, Oligodendrocyte and Ground_Truth TIFFs (23 files incl. 20 TIFFs, ~15 GB total); the size counts all of them. IDR itself hosts the 5 image sets, and the ground-truth TIFFs are listed as processed data. Paper full text is not open access on Europe PMC, so only the abstract was read; microscope and objective are not stated in the IDR study file. Annotation is dense binary myelin ground truth; no train/test split is provided.'
+  last_checked: '2026-09-30T21:15:20Z'
+notes: 'Voxel size (0.830 x 0.830 x 1.2 um) is from IDR image metadata of Myelin Image 1, taken as representative
+  of the five samples. Image 1 is 8346x2253x47, 3 channels. Also mirrored as BioImage Archive S-BIAD493, which lists
+  per-sample Axon, Nucleus, Oligodendrocyte and Ground_Truth TIFFs (23 files incl. 20 TIFFs, ~15 GB total); the
+  size counts all of them. IDR itself hosts the 5 image sets, and the ground-truth TIFFs are listed as processed
+  data. Paper full text is not open access on Europe PMC, so only the abstract was read; microscope and objective
+  are not stated in the IDR study file. Annotation is dense binary myelin ground truth; no train/test split is provided.
+  enricher: listing and TIFF headers confirm 4 single-channel TIFFs per sample (Axon, Nucleus, Oligodendrocyte,
+  Ground_Truth), uint8, Sample1 47x2253x8346, calibration 0.8303 x 0.8303 x 1.2 um.'
+technical:
+  method: header
+  inspected_at: '2026-09-30T21:15:20Z'
+  inspected_urls:
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/493/S-BIAD493/Files/20201022-ftp/
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/493/S-BIAD493/Files/20201022-ftp/experimentA/Sample_Myelin_Images1/Sample1_Ground_Truth.tif
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/493/S-BIAD493/Files/20201022-ftp/experimentA/Sample_Myelin_Images1/Sample1_Axon.tif
+  bytes_downloaded: 0
+  size_source: page-stated
+  layout:
+    tree: |
+      20201022-ftp/
+        idr0000-Capar-Myelin_Ground_Truths-study_nonHCS.txt
+        experimentA/
+          idr0000-...-experimentA-assays.txt, ...-processed.txt
+          Sample_Myelin_Images{1..5}/   20 files  15.2 GB  .tif
+            SampleN_Axon.tif, SampleN_Nucleus.tif, SampleN_Oligodendrocyte.tif, SampleN_Ground_Truth.tif
+    n_files: 23
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/493/S-BIAD493/Files/20201022-ftp/experimentA/Sample_Myelin_Images1/Sample1_Axon.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/493/S-BIAD493/Files/20201022-ftp/experimentA/Sample_Myelin_Images1/Sample1_Ground_Truth.tif
+    size_bytes: null
+    description: One sample's axon channel and ground truth (each 47x2253x8346 uint8, ~884 MB uncompressed; above
+      the sampling budget)
+  arrays:
+  - role: raw
+    path_pattern: experimentA/Sample_Myelin_Images*/Sample*_{Axon,Nucleus,Oligodendrocyte}.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 47
+    - 2253
+    - 8346
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One single-channel z-stack per stain (TUJ1 axon, DAPI nucleus, MBP oligodendrocyte); the three
+      channels are separate files.
+  - role: label
+    path_pattern: experimentA/Sample_Myelin_Images*/Sample*_Ground_Truth.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 47
+    - 2253
+    - 8346
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: none
+    encoding: unknown
+    classes: null
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: SampleN_Ground_Truth.tif pairs with the SampleN_*.tif channel files in the same folder; for
+      Sample 1 GT and axon stacks have identical shape. The GT file carries no micron calibration (ImageJ unit 'inch'),
+      the channel files do.
+  notes: 'Listing of the BioStudies FTP mirror via its HTTP index (FTP timed out): 23 files, ~15.2 GB with rounded
+    sizes, so size_bytes (15,161,613,678 from the BioStudies file API, per harvester) is kept as page-stated. Headers
+    of Sample 1: uncompressed uint8 TIFF, 47 pages of 2253x8346; axon file calibrated 0.8303 um/px, z spacing 1.2
+    um (matches the record); GT file has no spatial calibration. Not sampled: one GT stack is ~884 MB uncompressed,
+    above the 500 MB budget, so label values (binary 0/255 vs 0/1) are unconfirmed.'
