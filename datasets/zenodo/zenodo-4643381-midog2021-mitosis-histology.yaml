@@ -1,12 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-4643381-midog2021-mitosis-histology
 title: MIDOG 2021 training data (mitotic figure detection across whole slide image scanners)
 short_name: Breast cancer mitotic figures (histology WSI)
-description: >-
-  200 H&E-stained human breast cancer cases from one laboratory (UMC Utrecht), each provided as a 2.0 mm2
-  region of interest scanned on one of four scanners (50 per scanner), with MS COCO bounding-box
-  annotations of mitotic figures and hard-negative non-mitotic look-alikes. Released for the MICCAI
-  MIDOG 2021 scanner-domain-generalization challenge.
+description: 200 H&E-stained human breast cancer cases from one laboratory (UMC Utrecht), each provided as a 2.0
+  mm2 region of interest scanned on one of four scanners (50 per scanner), with MS COCO bounding-box annotations
+  of mitotic figures and hard-negative non-mitotic look-alikes. Released for the MICCAI MIDOG 2021 scanner-domain-generalization
+  challenge.
 landing_url: https://zenodo.org/records/4643381
 doi: 10.5281/zenodo.4643381
 repository: Zenodo
@@ -34,7 +33,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 26000000000
+  size_bytes: 26031472453
   n_items: 200
   access: open
   download_url: https://zenodo.org/records/4643381
@@ -68,14 +67,82 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-09-29T04:12:32Z'
-notes: >-
-  Checked Zenodo record page and API record (200 TIFFs 001-200, 86-156 MB each, plus MIDOG.json 382 KB) and
-  the arXiv preprint of the challenge paper (Methods 2.2-2.3); the journal version is not open access.
-  Images 001-050 Hamamatsu XR, 051-100 Hamamatsu S360, 101-150 Aperio CS2, 151-200 Leica GT450.
-  Per the paper, Leica GT450 images have no labels (provided for unsupervised domain adaptation), so
-  about 150 of 200 images are annotated. Paper optical resolutions are 0.23 (Hamamatsu), 0.25 (Aperio CS2) and
-  0.26 (Leica) um/px at 40x; voxel_size_nm uses 230 nm for the Hamamatsu scanners only and varies per scanner.
-  Labels: one expert screened, RetinaNet found missed candidates, second expert blind-labeled, third expert
-  resolved disagreements. Total annotation counts and the format of the WSI-derived TIFFs (pyramidal or not)
-  were not confirmed. Zenodo author list was not extracted. This is a histology whole slide image dataset.
+  last_checked: '2026-09-30T18:52:18Z'
+notes: 'Checked Zenodo record page and API record (200 TIFFs 001-200, 86-156 MB each, plus MIDOG.json 382 KB) and
+  the arXiv preprint of the challenge paper (Methods 2.2-2.3); the journal version is not open access. Images 001-050
+  Hamamatsu XR, 051-100 Hamamatsu S360, 101-150 Aperio CS2, 151-200 Leica GT450. Per the paper, Leica GT450 images
+  have no labels (provided for unsupervised domain adaptation), so about 150 of 200 images are annotated. Paper
+  optical resolutions are 0.23 (Hamamatsu), 0.25 (Aperio CS2) and 0.26 (Leica) um/px at 40x; voxel_size_nm uses
+  230 nm for the Hamamatsu scanners only and varies per scanner. Labels: one expert screened, RetinaNet found missed
+  candidates, second expert blind-labeled, third expert resolved disagreements. enricher: TIFFs are single-page
+  (not pyramidal); MIDOG.json has 4435 boxes; size from Zenodo listing (see technical.notes). Zenodo author list
+  was not extracted. This is a histology whole slide image dataset.'
+technical:
+  method: header
+  inspected_urls:
+  - https://zenodo.org/records/4643381
+  - https://zenodo.org/records/4643381/files/001.tiff
+  - https://zenodo.org/records/4643381/files/101.tiff
+  - https://zenodo.org/records/4643381/files/MIDOG.json
+  bytes_downloaded: 0
+  size_source: file-listing
+  layout:
+    tree: |
+      ./    201 files   26.0 GB  .tiff 200 (001.tiff-200.tiff), .json 1 (MIDOG.json)
+    n_files: 201
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/4643381/files/001.tiff
+    - https://zenodo.org/records/4643381/files/MIDOG.json
+    size_bytes: null
+    description: One Hamamatsu XR image (001.tiff, 86-156 MB range per the record) plus the single COCO-style annotation
+      file
+  arrays:
+  - role: raw
+    path_pattern: '*.tiff'
+    format: tiff
+    axes: yxs
+    shape:
+    - 5412
+    - 7215
+    - 4
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: MIDOG.json
+    format: json
+    axes: null
+    shape:
+    - 4435
+    - 4
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    encoding: boxes-table
+    classes:
+    - id: 1
+      name: mitotic figure
+    - id: 2
+      name: not mitotic figure
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: 'COCO-style file; images[].file_name/width/height match the TIFFs (001.tiff: 7215x5412). bbox
+      values are [x1, y1, x2, y2] in full-resolution pixels (first box 4336,346,4386,396 = 50 px square), not COCO
+      [x, y, w, h].'
+  notes: 'Probed 001.tiff (Hamamatsu XR) [5412,7215,4] and 101.tiff (Aperio CS2) [4840,6475,4]: single-page, uncompressed,
+    uint8, photometric RGB with a 4th sample (probably alpha). No pixel data sampled (files are 86-156 MB each,
+    uncompressed). MIDOG.json (382 KB) read in full: 200 images, 4435 annotations, 2 categories; shape [4435, 4]
+    counts boxes x coordinates. TIFF calibration not reported by the probe. MIDOG.json counts: 1721 ''mitotic figure'',
+    2714 ''not mitotic figure'' boxes, all on image_id 1-150 (151-200, Leica GT450, unlabelled). Its COCO ''licenses''
+    entry names Attribution-NonCommercial-NoDerivs 2.0, which differs from the Zenodo record''s CC-BY-4.0; license
+    field left as the repository states.'
+  inspected_at: '2026-09-30T18:52:18Z'
