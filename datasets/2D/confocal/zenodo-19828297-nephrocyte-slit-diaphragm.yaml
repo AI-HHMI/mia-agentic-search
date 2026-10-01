@@ -1,8 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-19828297-nephrocyte-slit-diaphragm
 title: Training dataset for analysis of slit diaphragm in Drosophila nephrocytes
 short_name: Drosophila nephrocyte slit diaphragm (confocal)
-description: 21 manually annotated confocal tiles of Drosophila nephrocytes stained with anti-SNS antibody, with three masks per image (slit membrane, protein clusters, ignore regions), plus augmented variants and the train/test split used to train a U-Net.
+description: 21 manually annotated confocal tiles of Drosophila nephrocytes stained with anti-SNS antibody, with
+  three masks per image (slit membrane, protein clusters, ignore regions), plus augmented variants and the train/test
+  split used to train a U-Net.
 landing_url: https://zenodo.org/records/19828297
 doi: 10.5281/zenodo.19828297
 repository: Zenodo
@@ -35,7 +37,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: three TIFF masks per image (_mem 0/1, _clusters 0/1, _ignore 0/255), augmented variants and a pre-assembled 189/16 train/test split
+  format: three TIFF masks per image (_mem 0/1, _clusters 0/1, _ignore 0/255), augmented variants and a pre-assembled
+    189/16 train/test split
   source: manual
 ml:
   tasks:
@@ -58,5 +61,85 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T05:20:00Z'
-notes: 'Zip listing and the bundled README (peek_archive): original_images (21 TIFF tiles), original_masks (63 TIFF masks), augmented variants (8 photometric types, 1,182 .tiff in total with masks), train_test_split with 189 training and 16 test samples (partly redundant with the augmented pool). Only 21 images are original; the rest are augmentations. Pixel size, microscope, objective and the paper are not stated on the Zenodo record, README or training report; the record mentions a published model but gives no DOI, so publications is empty. Mask pixel values are from the README.'
+  last_checked: '2026-10-01T05:38:00Z'
+notes: 'Zip listing and the bundled README (peek_archive): original_images (21 TIFF tiles), original_masks (63 TIFF
+  masks), augmented variants (8 photometric types, 1,182 .tiff in total with masks), train_test_split with 189 training
+  and 16 test samples (partly redundant with the augmented pool). Only 21 images are original; the rest are augmentations.
+  Pixel size, microscope, objective and the paper are not stated on the Zenodo record, README or training report;
+  the record mentions a published model but gives no DOI, so publications is empty. Mask pixel values are from the
+  README.
+
+  enricher: mask encoding checked on one tile: _mem is {0,1} (README values confirmed for _mem).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/19828297
+  - https://zenodo.org/records/19828297/files/training_dataset.zip
+  bytes_downloaded: 90540
+  size_source: file-listing
+  layout:
+    tree: "training_dataset.zip/\n  training_dataset/README.md\n  training_dataset/original_images/<animal>-tileNN.tif\
+      \                21 files\n  training_dataset/original_masks/<stem>_{mem,clusters,ignore}.tiff   63 files\n\
+      \  training_dataset/augmented/images_<aug>/  21 each · masks_<aug>/ 63 each\n    aug: blur, linear_gradient,\
+      \ multiply, plus30, poisson, power, random_field, vn\n  training_dataset/train_test_split/train_set/{train_images\
+      \ 189, train_masks 567}\n  training_dataset/train_test_split/test_set/{test_images 16, test_masks 48}\n  training_metadata/\
+      \ training_report.txt, training_history.json, 2 png\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/19828297/files/training_dataset.zip::training_dataset/original_images/A14-tile02.tif
+    - https://zenodo.org/records/19828297/files/training_dataset.zip::training_dataset/original_masks/A14-tile02_mem.tiff
+    size_bytes: null
+    description: One original 300x300 tile with its membrane mask
+  arrays:
+  - role: raw
+    path_pattern: training_dataset.zip::training_dataset/original_images/<stem>.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 300
+    - 300
+    shape_varies: null
+    dtype: uint8
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 173
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: training_dataset.zip::training_dataset/original_masks/<stem>_{mem,clusters,ignore}.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 300
+    - 300
+    shape_varies: null
+    dtype: uint8
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 1
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: null
+      name: slit membrane (_mem)
+    - id: null
+      name: protein clusters (_clusters)
+    - id: null
+      name: ignore regions (_ignore)
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: Three masks per tile share the image stem plus _mem/_clusters/_ignore; shapes equal the image.
+  notes: 'Exact Zenodo listing, zip expanded (1,581 members). Sampled A14-tile02: image 300x300 uint8, 0-173 (one
+    tile); _mem mask {0: 73357, 1: 16643}; _clusters and _ignore masks are all 0 for this tile, so their non-zero
+    values (README: clusters 0/1, ignore 0/255) were not observed. Header probe failed (Zenodo SSL EOF); compression
+    not recorded.'
+  inspected_at: '2026-10-01T05:38:00Z'
