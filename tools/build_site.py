@@ -29,7 +29,7 @@ def unmerged_prs():
                               "number,title,url,headRefName,labels,isDraft,createdAt,statusCheckRollup"],
                              cwd=ROOT, capture_output=True, text=True, timeout=120, check=True).stdout
     except (OSError, subprocess.SubprocessError) as e:
-        print(f"note: open PRs not included ({e})", file=sys.stderr)
+        print(f"note: open PRs not included ({e}; {getattr(e, 'stderr', '') or ''})".strip(), file=sys.stderr)
         return None
     rows = []
     for pr in json.loads(out):
