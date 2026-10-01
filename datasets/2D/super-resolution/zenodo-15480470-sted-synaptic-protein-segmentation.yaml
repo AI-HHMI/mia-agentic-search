@@ -1,4 +1,4 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-15480470-sted-synaptic-protein-segmentation
 title: Synaptic protein segmentation - Zooniverse - STED-FM
 short_name: Synaptic protein cluster segmentation (STED)
@@ -41,7 +41,7 @@ data:
   formats:
   - hdf5
   size_bytes: 734408753
-  n_items: null
+  n_items: 6267
   access: open
   download_url: https://zenodo.org/records/15480470
   download_method: http
@@ -74,12 +74,120 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T07:53:59Z'
-notes: 'Zenodo record has 3 HDF5 files (train 444 MB, valid 138 MB, test 153 MB) plus a loader script; the
-  record says images were acquired in Wiesner et al. 2020. Annotation structure (masks, per-crop shape classes
-  round/elongated/perforated/multidomains, seg_votes, 224 px crops) is read from the loader script; HDF5
-  headers were not inspected, so counts of images/crops are unknown. Pixel size 15 nm is stated in the 2020
-  paper Methods for its STED imaging; that this record uses the same setting is assumed from the record text
-  and not stated per file. Annotation was community-driven (Zooniverse); coverage and annotator count unknown.
-  The STED-FM paper itself was not found in Europe PMC, so was not read. Record says dataset is for Synapses
-  segmentation in STED-FM.'
+  last_checked: '2026-10-01T09:36:48Z'
+notes: 'Zenodo record has 3 HDF5 files (train 444 MB, valid 138 MB, test 153 MB) plus a loader script;
+  the record says images were acquired in Wiesner et al. 2020. Annotation structure (masks, per-crop shape
+  classes round/elongated/perforated/multidomains, seg_votes, 224 px crops in the loader) is read from
+  the loader script. Pixel size 15 nm is stated in the 2020 paper Methods for its STED imaging; that this
+  record uses the same setting is assumed from the record text and not stated per file. Annotation was
+  community-driven (Zooniverse); coverage and annotator count unknown. The STED-FM paper itself was not
+  found in Europe PMC, so was not read. Record says dataset is for Synapses segmentation in STED-FM. enricher:
+  n_items = crops from HDF5 headers (was null): 6,267 crops (80x80 uint16) with 8-plane uint8 masks and
+  a per-crop class label; 10 two-colour original images.'
+technical:
+  method: header
+  inspected_urls:
+  - https://zenodo.org/records/15480470
+  - https://zenodo.org/records/15480470/files/train_2024-05-16.hdf5
+  - https://zenodo.org/records/15480470/files/valid_2024-05-16.hdf5
+  - https://zenodo.org/records/15480470/files/test_2024-05-16.hdf5
+  bytes_downloaded: 0
+  size_source: file-listing
+  layout:
+    tree: 'train_2024-05-16.hdf5  443,881,493 B   crops 3741 / masks / labels + 6 original_images/*
+
+      valid_2024-05-16.hdf5  137,549,360 B   crops 1140 / masks / labels + 2 original_images/*
+
+      test_2024-05-16.hdf5   152,971,618 B   crops 1386 / masks / labels + 2 original_images/*
+
+      synaptic-protein-segmentation.py  6,282 B (loader script)
+
+      '
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/15480470/files/valid_2024-05-16.hdf5
+    size_bytes: 137549360
+    description: The smallest split file (valid) holds crops, masks, labels and 2 original images.
+  arrays:
+  - role: raw
+    path_pattern: <split>.hdf5::crops
+    format: hdf5
+    axes: null
+    shape:
+    - 3741
+    - 80
+    - 80
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: First axis is the crop index (3741 train, 1140 valid, 1386 test).
+  - role: raw
+    path_pattern: <split>.hdf5::original_images/<name>.tif
+    format: hdf5
+    axes: null
+    shape:
+    - 2
+    - 3300
+    - 2273
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Two-colour STED images (2 x Y x X), names give the stained proteins (e.g. R-Homer_GARSTAR635_M-PSD95_GAMAlexa594).
+  - role: label
+    path_pattern: <split>.hdf5::masks
+    format: hdf5
+    axes: null
+    shape:
+    - 3741
+    - 8
+    - 80
+    - 80
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: unknown
+    classes: null
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: One 8 x 80 x 80 mask stack per crop (same index as crops); what the 8 planes are
+      (annotators / votes) is not stated in the file.
+  - role: label
+    path_pattern: <split>.hdf5::labels
+    format: hdf5
+    axes: null
+    shape:
+    - 3741
+    - 1
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: semantic-ids
+    classes: null
+    n_ids_observed: null
+    alignment: not-applicable
+    alignment_notes: One integer per crop; the loader script maps them to shape classes (round, elongated,
+      perforated, multidomains), per the harvester's reading.
+  notes: 'Listing: Zenodo API (4 files, exact sizes). Probed all three HDF5 files (h5 metadata by range):
+    datasets crops (N, 80, 80) uint16, masks (N, 8, 80, 80) uint8, labels (N, 1) uint8, and original_images/*
+    (2, Y, X) uint16, all uncompressed and unchunked; N = 3741 / 1140 / 1386; 6 / 2 / 2 original images.
+    Crops are 80 x 80, not the 224 px mentioned in the loader. sample.py on valid crops/masks failed with
+    Zenodo SSL EOF errors, so no value ranges.'
+  inspected_at: '2026-10-01T09:36:48Z'
