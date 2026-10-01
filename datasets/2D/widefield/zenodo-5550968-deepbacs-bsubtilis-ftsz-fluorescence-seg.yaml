@@ -1,4 +1,4 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-5550968-deepbacs-bsubtilis-ftsz-fluorescence-seg
 landing_url: https://zenodo.org/records/5550968
 doi: 10.5281/zenodo.5550968
@@ -45,8 +45,9 @@ annotations:
   types:
   - instance-segmentation
   coverage: unknown
-  format: Masks in CARE_U-Net_dataset (binary), StarDist_dataset and SplineDist_dataset (TIFF ROI maps)
-    and pix2pix_dataset (PNG), with train/test folders
+  format: 'StarDist_dataset and SplineDist_dataset masks: uint8 TIFF instance IDs (0 = background); CARE_U-Net_dataset
+    masks: binary TIFF {0,255}; pix2pix_dataset: PNG masks; each with train/test fluorescence + masks
+    folders'
   source: manual
 ml:
   tasks:
@@ -69,10 +70,102 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T06:24:01Z'
+  last_checked: '2026-10-01T07:29:59Z'
 notes: 'Zip listing (peek_archive, 467 files): CARE_U-Net_dataset train 80 + test 10 fluorescence images
   with matching masks; StarDist_dataset test 10 (train folder appears among time-series .ome-NNNN frames);
   SplineDist_dataset train 32 + test 10; pix2pix_dataset train 80 + test 10 as PNG. The same annotated
   frames are repeated per training-method folder; n_items counts the 203 .tif files. Pixel size, microscope
   and Labkit annotation are from the Zenodo description; the paper describes the DeepBacs collection.
-  Mask values were not inspected.'
+  Mask values were not inspected. enricher: size confirmed by listing the data zip (the inset PNG figure
+  on the record is not counted); mask encodings from samples.'
+technical:
+  method: sample
+  inspected_at: '2026-10-01T07:29:59Z'
+  inspected_urls:
+  - https://zenodo.org/records/5550968
+  - https://zenodo.org/records/5550968/files/DeepBacs_Data_Segmentation_B.subtilis_FtsZ_dataset.zip
+  bytes_downloaded: 377214
+  size_source: file-listing
+  layout:
+    tree: "DeepBacs_Data_Segmentation_B.subtilis_FtsZ_dataset.zip   47.6 MB, 467 members (272 MB unzipped)\n\
+      \  CARE_U-Net_dataset/   Notes_CARE_U-Net.txt\n    train/fluorescence 80 · train/masks 80 · test/fluorescence\
+      \ 10 · test/masks 10   .tif\n  SplineDist_dataset/   Notes.txt\n    train/fluorescence 32 · train/masks\
+      \ 32 (512x512 patches) · test 10 + 10      .tif\n  StarDist_dataset/\n    test/fluorescence 10 ·\
+      \ test/masks 10                                          .tif\n  pix2pix_dataset/      Notes_pix2pix.txt\n\
+      \    train/fluorescence 80 · train/masks 80 · test 10 + 10                         .png\n(record\
+      \ also has A_Segmentation_B.subtilis_inset.png, a figure, not counted)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5550968/files/DeepBacs_Data_Segmentation_B.subtilis_FtsZ_dataset.zip::StarDist_dataset/test/fluorescence/test_1.tif
+    - https://zenodo.org/records/5550968/files/DeepBacs_Data_Segmentation_B.subtilis_FtsZ_dataset.zip::StarDist_dataset/test/masks/test_1.tif
+    size_bytes: null
+    description: One full-size test image with its instance mask
+  arrays:
+  - role: raw
+    path_pattern: DeepBacs_Data_Segmentation_B.subtilis_FtsZ_dataset.zip::*_dataset/{train,test}/fluorescence/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: DeepBacs_Data_Segmentation_B.subtilis_FtsZ_dataset.zip::{StarDist,SplineDist}_dataset/{train,test}/masks/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: true
+    dtype: uint8
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 27
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 28
+    alignment: same-grid
+    alignment_notes: Same file name in fluorescence/ and masks/; identical 1024x1024 shape in the sampled
+      pair. SplineDist train images are 512x512 patches per its Notes.txt.
+  - role: label
+    path_pattern: DeepBacs_Data_Segmentation_B.subtilis_FtsZ_dataset.zip::CARE_U-Net_dataset/{train,test}/masks/*.tif
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: uint8
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    n_ids_observed: 2
+    alignment: unknown
+    alignment_notes: Binary version of the masks for CARE/U-Net (Notes_CARE_U-Net.txt); file names (e.g.
+      0.tif) differ from the StarDist folder.
+  notes: 'Listing of the data zip: 47,645,340 B exact, 467 members (the Zenodo record also holds a 0.67
+    MB inset figure, not counted). Sampled StarDist test_1 pair: fluorescence uint8 1024x1024, range 0-255
+    (saturated at one end; mostly dark, mean 1.9), so normalization unknown; mask uint8 with 28 values
+    (0-27), so instance IDs. CARE mask 0.tif: uint8 {0,255}, so binary (its Notes say binary masks for
+    CARE/U-Net). pix2pix test_1.png fluorescence is RGB uint8 1024x1024x3. No pixel calibration in the
+    probed TIFF header; the record keeps the 65 nm from the Zenodo description. The same frames are repeated
+    across the method folders (Notes: SplineDist uses 512x512 training patches; its test images equal
+    the StarDist ones).'
