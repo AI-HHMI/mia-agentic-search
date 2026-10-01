@@ -1,0 +1,161 @@
+schema_version: '1.2'
+id: gigadb-102787-low-snr-fluorescence-denoising
+title: Supporting Data for "Comparison of Deep Learning Approaches for Extreme Low-SNR Image Restoration"
+short_name: Low/high-SNR fluorescence denoising pairs
+description: Paired low- and high-SNR fluorescence microscopy images (324 pairs, 15 sub-datasets, widefield and
+  spinning-disk confocal; actin, tubulin, mitochondria, tissue sections) for benchmarking supervised and self-supervised
+  denoising, with full-size TIFFs and 512x512 crops.
+landing_url: https://doi.org/10.5524/102787
+doi: 10.5524/102787
+repository: other
+accession: null
+authors:
+- Nasreen Elizabeth Buhn
+- Sriya Reddy Adunur
+- Joseph Hamilton
+- Summer Levis
+- Guy M. Hagen
+- Jonathan D. Ventura
+publications:
+- title: Comparison of deep learning approaches for extreme low-SNR image restoration
+  doi: 10.1093/gigascience/giag071
+  url: https://doi.org/10.1093/gigascience/giag071
+date_published: '2026-06-08'
+imaging:
+  modality:
+  - widefield
+  - spinning-disk
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: null
+  organism:
+  - Rattus norvegicus
+  - Oryctolagus cuniculus
+  - Homo sapiens
+  - Mus musculus
+  sample: fixed fluorescently stained specimens (actin, tubulin, mitochondria, breast cancer tissue array, earthworm,
+    fish gill, rat and rabbit testis, human ovary, mouse brain)
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 32099393858
+  n_items: 324
+  access: open
+  download_url: https://s3.ap-northeast-1.wasabisys.com/gigadb-datasets/live/pub/10.5524/102000_103000/102787/images.tgz
+  download_method: http
+annotations:
+  present: true
+  types:
+  - restoration-pairs
+  coverage: dense
+  format: paired high-SNR (gt) and low-SNR (raw) TIFF images
+  source: automatic
+ml:
+  tasks:
+  - denoising
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/nazbuhn/extreme-low-snr-restoration
+license:
+  spdx: CC0-1.0
+  url: https://creativecommons.org/publicdomain/zero/1.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-09-30T10:13:30Z'
+  evidence_urls:
+  - https://doi.org/10.5524/102787
+  - https://gigadb.org/api/dataset?doi=102787
+  - https://s3.ap-northeast-1.wasabisys.com/gigadb-datasets/live/pub/10.5524/102000_103000/102787/readme_102787.txt
+  - https://academic.oup.com/gigascience/article/doi/10.1093/gigascience/giag071/8713295
+  - https://pmc.ncbi.nlm.nih.gov/articles/PMC12871823
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-09-30T21:21:20Z'
+notes: 'Hosted on GigaDB (not in the repository enum, so other). images.tgz (15.7 GB) holds full-size TIFF pairs;
+  crops.tgz (11.3 GB) holds 512x512 crops (17,568 pairs per paper). Paper text says 12 sub-datasets in the abstract
+  but 15 in the GigaDB record and Data availability. Train/test: 90/10 per paper, done by the authors in code (last
+  10% is test set), so no split files are confirmed. Pixel size, exact objectives and species of earthworm and fish
+  not stated on the GigaDB record, README or the paper text I read (abstract/PMC summary); .tgz contents were not
+  listed. Paper full text could not be retrieved via tools/paper.py (Europe PMC 503). enricher: size_bytes = complete
+  S3 listing of all 6 files (images, crops, results, code, checkpoints .tgz + readme; was images.tgz only). README
+  confirms CC0 1.0.'
+technical:
+  method: sample
+  inspected_at: '2026-09-30T21:21:20Z'
+  inspected_urls:
+  - https://s3.ap-northeast-1.wasabisys.com/gigadb-datasets/live/pub/10.5524/102000_103000/102787/
+  - https://s3.ap-northeast-1.wasabisys.com/gigadb-datasets/live/pub/10.5524/102000_103000/102787/crops.tgz
+  - https://s3.ap-northeast-1.wasabisys.com/gigadb-datasets/live/pub/10.5524/102000_103000/102787/images.tgz
+  bytes_downloaded: 25000000
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  6 files  32.1 GB
+        images.tgz       full-size TIFF pairs: images/<NN>/{raw,gt}/<n>.tif
+        crops.tgz        512x512 crops:        crops/<NN>/{raw,gt}/<n>_<i>_<j>.tif
+        results.tgz      denoising results on the test set (last 10%)
+        checkpoints.tgz  trained model checkpoints
+        code.tgz         archived GitHub repo (MIT)
+        readme_102787.txt
+      (only the first members of crops.tgz / images.tgz were read; 'gt' folder name from the README)
+    n_files: 6
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: crops.tgz/crops/*/raw/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 69
+    - 233
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Crop name <image>_<row>_<col>.tif; the TIFF carries no calibration (resolution 1/1).
+  - role: raw
+    path_pattern: images.tgz/images/*/raw/*.tif
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    lossy: null
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: First member images/01/raw/1.tif is 10,617,088 B; image size varies by sub-dataset per README.
+  - role: target
+    path_pattern: '{images,crops}.tgz/*/*/gt/*.tif'
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    lossy: null
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: unknown
+    alignment_notes: README describes paired high (gt) and low (raw) SNR images; gt members were not reached in
+      the partial read.
+  notes: The S3 listing is complete and exact (32,099,393,858 B, 6 files). The .tgz archives cannot be listed without
+    reading them from the start, so a small stdlib script streamed the first 20 MB + 2 MB of crops.tgz and 3 MB
+    of images.tgz (25 MB total, deleted). The first 87 crops.tgz members are all crops/01/raw/*.tif, each 524,544
+    B; the first crop is 512x512 uint16, uncompressed, values 69..233 (mean 126), from one crop only. Low raw values
+    fit extreme low-SNR acquisitions; normalization is not documented. gt TIFFs and the other sub-datasets were
+    not reached.
