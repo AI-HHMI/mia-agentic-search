@@ -1,10 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-7282326-uv-dna-damage-skin-wsi
 title: Segmentations of carcinogenic DNA damages in WSI
 short_name: UV DNA-damage skin histology segmentation
-description: 804 immunostained histology patches (1384 x 1040 px PNG) of UV-irradiated human skin, porcine skin and
-  skin models stained for CPD or 6-4PP DNA damage, with a per-image damage score for all images and manually annotated
-  epidermis and high-damage segmentation masks for a 202-image subset.
+description: 804 immunostained histology patches (1384 x 1040 px PNG) of UV-irradiated human skin, porcine skin and skin models
+  stained for CPD or 6-4PP DNA damage, with a per-image damage score for all images and manually annotated epidermis and high-damage
+  segmentation masks for a 202-image subset.
 landing_url: https://zenodo.org/records/7282326
 doi: 10.5281/zenodo.7282326
 repository: Zenodo
@@ -39,7 +39,7 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: 1573090000
+  size_bytes: 1573089892
   n_items: 804
   access: open
   download_url: https://zenodo.org/records/7282326
@@ -75,11 +75,119 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-01T16:45:36Z'
+  last_checked: '2026-10-01T18:29:02Z'
 notes: 'No license is given on the Zenodo record or in README.txt (license fields are empty); the CC BY 4.0 link in the paper
-  applies to the article. Pixel size and scanner are not stated in the Zenodo record, README or paper (only image size 1384 x 1040
-  px and magnification written as "x100" in file names); the paper reports the images as histological images of scanned sections.
-  Besides masks, every image has a regression score (fraction of damaged nuclei, damaged epidermis area), hence ml task "other".
-  202 of 804 images (25%) have epidermis and high-damage masks (zip holds 1208 PNG: 804 images plus 404 masks). database.csv has a
-  stratified 10-fold column (strat_fold). Zenodo record 7282326 is a version of concept DOI 10.5281/zenodo.7266845, which the
-  README cites as persistent identifier. Size is the sum of the Zenodo file sizes (rounded).'
+  applies to the article. Pixel size and scanner are not stated in the Zenodo record, README or paper (only image size 1384
+  x 1040 px and magnification written as "x100" in file names); the paper reports the images as histological images of scanned
+  sections. Besides masks, every image has a regression score (fraction of damaged nuclei, damaged epidermis area), hence
+  ml task "other". 202 of 804 images (25%) have epidermis and high-damage masks (zip holds 1208 PNG: 804 images plus 404 masks).
+  database.csv has a stratified 10-fold column (strat_fold). Zenodo record 7282326 is a version of concept DOI 10.5281/zenodo.7266845,
+  which the README cites as persistent identifier. enricher: size from the complete Zenodo listing (was 1,573,090,000); README
+  license fields checked again, still empty.'
+technical:
+  method: sample
+  inspected_at: '2026-10-01T18:29:02Z'
+  inspected_urls:
+  - https://zenodo.org/records/7282326
+  - https://zenodo.org/records/7282326/files/database.zip
+  bytes_downloaded: 1677384
+  size_source: file-listing
+  layout:
+    tree: |
+      README.txt
+      database.zip/database/
+        database.csv             one row per image: path_image, path_epidermis, path_high_damage,
+                                 score_nuclei, score_area, source_tissue, patient_id, strat_fold
+        data/images/       804 .png (1.6 GB)
+        data/epidermis/    202 .png epidermis masks
+        data/high_damage/  202 .png high-damage masks (<name>_highdamage.png)
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7282326/files/database.zip::database/data/images/HH_22022022-5 CPD x100.png
+    - https://zenodo.org/records/7282326/files/database.zip::database/data/epidermis/HH_22022022-5 CPD x100.png
+    - https://zenodo.org/records/7282326/files/database.zip::database/data/high_damage/HH_22022022-5 CPD x100_highdamage.png
+    size_bytes: 1677384
+    description: One 1384x1040 RGB image with its epidermis and high-damage masks.
+  arrays:
+  - role: raw
+    path_pattern: database/data/images/*.png
+    format: png
+    axes: null
+    shape:
+    - 1040
+    - 1384
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 248
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: database/data/epidermis/*.png
+    format: png
+    axes: null
+    shape:
+    - 1040
+    - 1384
+    shape_varies: null
+    dtype: uint8
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: 'Pairing via database.csv columns path_image / path_epidermis (file names vary: ''<name>.png'' or ''<name>_mask.png'').'
+  - role: label
+    path_pattern: database/data/high_damage/*_highdamage.png
+    format: png
+    axes: null
+    shape:
+    - 1040
+    - 1384
+    shape_varies: null
+    dtype: uint8
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: Pairing via database.csv path_high_damage.
+  - role: label
+    path_pattern: database/database.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: other
+    classes: null
+    n_ids_observed: null
+    alignment: not-applicable
+    alignment_notes: Per-image regression targets score_nuclei and score_area, plus patient_id and strat_fold.
+  notes: 'Complete Zenodo listing (README.txt + database.zip, 1,573,089,892 B; 1,209 zip members). Sampled one triple (HH_22022022-5
+    CPD x100): image RGB uint8 [0, 248]; epidermis {0: 1268190, 255: 171170}; high_damage {0: 1386230, 255: 53130}; same 1040x1384
+    grid. Values from one image. Read database.csv header and two rows. License: README.txt has empty license Title/Specification;
+    Zenodo API license field is empty; the paper''s Data Availability only points to the Zenodo DOI (its CC BY link is the
+    article''s).'
