@@ -1,10 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-21804785-adaptive-milling-sem-lamellae
 title: 'Adaptive Polishing: SEM training data & machine-learning segmentation models'
 short_name: Cryo-FIB lamella SEM segmentation (SEM)
-description: 3,186 SEM images (3072x2048 px, 8/16-bit TIFF) of cryo-FIB lamellae during polishing, each with a pixel-wise
-  label image (background, GIS layer, lamella, cracks and holes, vacuum), acquired in 20 sessions on Arctis, Aquilos 2 and
-  Helios Hydra FIB/SEM instruments. Released with trained models and train/validation CSVs for Adaptive Polishing.
+description: 3,186 SEM images (3072x2048 px, 8/16-bit TIFF) of cryo-FIB lamellae during polishing, each
+  with a pixel-wise label image (background, GIS layer, lamella, cracks and holes, vacuum), acquired in
+  20 sessions on Arctis, Aquilos 2 and Helios Hydra FIB/SEM instruments. Released with trained models
+  and train/validation CSVs for Adaptive Polishing.
 landing_url: https://zenodo.org/records/21804785
 doi: 10.5281/zenodo.21804785
 repository: Zenodo
@@ -34,8 +35,8 @@ imaging:
   - Mus musculus
   - Homo sapiens
   - Caenorhabditis elegans
-  sample: Cryo-FIB lamellae of vitrified cells (mESC, HeLa, RPE-1 Tet-On PLK4 GFP-centrin), C. elegans lift-out and yeast
-    waffle samples, imaged by SEM during polishing
+  sample: Cryo-FIB lamellae of vitrified cells (mESC, HeLa, RPE-1 Tet-On PLK4 GFP-centrin), C. elegans
+    lift-out and yeast waffle samples, imaged by SEM during polishing
   labels_stains: []
 data:
   formats:
@@ -50,8 +51,9 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: Label TIFFs per SEM image (pixel values 0 background, 1 GIS layer, 2 lamella, 3 cracks and holes, 4 vacuum), SEM/
-    and labels/ folders in per-session zips; image-label pairs listed in metadata.csv and train/val CSVs
+  format: Label TIFFs per SEM image (pixel values 0 background, 1 GIS layer, 2 lamella, 3 cracks and holes,
+    4 vacuum), SEM/ and labels/ folders in per-session zips; image-label pairs listed in metadata.csv
+    and train/val CSVs
   source: unknown
 ml:
   tasks:
@@ -74,10 +76,94 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T12:58:51Z'
-notes: Counts (3,186 images, label values, sessions) are from the Zenodo description; metadata.csv lists SEM/label pairs per
-  session. Peeked 20240806_auNP.zip (TIFF files plus .DS_Store). Pixel size varies by image (e.g. 13.49 and 26.98 nm in metadata.csv),
-  so voxel_size_nm is null. Yeast species is not stated, so only the three species named in the record are listed. Annotation
-  procedure is not described on the record and the accompanying manuscript (Adaptive Milling) is not linked, so no paper was
-  read; source left unknown. size_bytes is the sum of all 37 files in the record (includes model weights ~1.2 GB). The record
-  dated 2026-08-12 mentions SEM only; the images are SEM of lamellae (not cryo-ET data).
+  last_checked: '2026-10-01T13:15:55Z'
+notes: 'Counts (3,186 images, label values, sessions) are from the Zenodo description; metadata.csv lists
+  SEM/label pairs per session. Peeked 20240806_auNP.zip (TIFF files plus .DS_Store). Pixel size varies
+  by image (e.g. 13.49 and 26.98 nm in metadata.csv), so voxel_size_nm is null. Yeast species is not stated,
+  so only the three species named in the record are listed. Annotation procedure is not described on the
+  record and the accompanying manuscript (Adaptive Milling) is not linked, so no paper was read; source
+  left unknown. size_bytes is the sum of all 37 files in the record (includes model weights ~1.2 GB).
+  The record dated 2026-08-12 mentions SEM only; the images are SEM of lamellae (not cryo-ET data). enricher:
+  listed all 20 zips and probed/sampled one SEM/label pair (see technical).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/21804785
+  - https://zenodo.org/records/21804785/files/20231102.zip
+  - https://zenodo.org/records/21804785/files/metadata.csv
+  bytes_downloaded: 12541831
+  size_source: file-listing
+  layout:
+    tree: "./  37 files 24.5 GB: 20 session zips, metadata.csv, 10 train/val CSVs (all, Franklin, hydra,\
+      \ aquilos2, hydra_aquilos2),\n    5 model weights AM_SEM_*_V01.pth, example_image.png\n20230830.zip/20230830/SEM/*.tif\
+      \ (32) + labels/*.tif (32)\n20231102.zip/20231102/SEM/SEM_N.tif (15) + labels/SEM_N.tif (15)\n20240126_Adaptive_milling.zip/.../lam_NNN/SEM_8/img_NNNN.tif\
+      \ + SEM_8_fi_{1,4,16}/ + labels/\n20240223_adaptive_milling_ai.zip/.../{lam,lamella}_N/SEM/ + labels/\n\
+      20240624_Adaptive_milling.zip/.../<NN-name>/SEM/ + labels/\n20240628_adaptive_autolamella.zip/AutoLamella-<date>/<NN-name>/SEM/\
+      \ + labels/\n... (6,320 zip members, 334 more directories)\n"
+    n_files: 37
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/21804785/files/20231102.zip::20231102/SEM/SEM_7.tif
+    - https://zenodo.org/records/21804785/files/20231102.zip::20231102/labels/SEM_7.tif
+    size_bytes: 18887359
+    description: One SEM image of session 20231102 with its label TIFF (zip members); the smallest zip
+      (20240916_adaptive_waffleyeast) is 64 MB.
+  arrays:
+  - role: raw
+    path_pattern: <session>.zip::<session>/[<lamella>/]SEM*/<name>.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 3072
+    shape_varies: null
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 299
+    - 65450
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: <session>.zip::<session>/[<lamella>/]labels/<name>.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 3072
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 4
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: GIS layer
+    - id: 2
+      name: lamella
+    - id: 3
+      name: cracks and holes
+    - id: 4
+      name: vacuum
+    n_ids_observed: 4
+    alignment: same-grid
+    alignment_notes: metadata.csv maps each sem_image to its label_image (same file name under labels/);
+      sampled pair has identical shape.
+  notes: 'Zenodo API listing complete (37 files, 24,452,484,157 B) and all 20 zip central directories
+    read (6,320 members, incl. 484 OS metadata files). Some sessions keep extra SEM_8_fi_{1,4,16} folders
+    next to SEM_8 (not described on the record; labels exist once per image). Probes: 20231102/SEM/SEM_7.tif
+    uint16 2048x3072 uncompressed, no calibration; labels/SEM_7.tif uint8 2048x3072 uncompressed. Sample:
+    SEM 299..65450, mean 30119 (16-bit range; normalization unknown); label values {0, 1, 2, 4} (class
+    3 cracks/holes absent in this image), matching the class list on the record. metadata.csv gives per-image
+    pixel size (13.49 or 26.98 nm in the first rows), image size, dwell time and microscope.'
+  inspected_at: '2026-10-01T13:15:55Z'
