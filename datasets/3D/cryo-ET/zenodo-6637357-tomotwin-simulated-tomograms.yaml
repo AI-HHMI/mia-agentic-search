@@ -1,8 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-6637357-tomotwin-simulated-tomograms
 title: Simulated Tomograms used for TomoTwin
 short_name: TomoTwin simulated protein tomograms (cryo-ET)
-description: Simulated cryo-ET tomograms (TEM-Simulator + IMOD reconstruction) used to train TomoTwin for particle picking. Eleven training sets (tomo_simulation_round_1-11) plus one generalization set; each tomogram folder holds a reconstructed tilt series (tiltseries_rec.mrc) and .coord files with ground-truth coordinates of the individual simulated proteins.
+description: Simulated cryo-ET tomograms (TEM-Simulator + IMOD reconstruction) used to train TomoTwin
+  for particle picking. Eleven training sets (tomo_simulation_round_1-11) plus one generalization set;
+  each tomogram folder holds a reconstructed tilt series (tiltseries_rec.mrc) and .coord files with ground-truth
+  coordinates of the individual simulated proteins.
 landing_url: https://zenodo.org/records/6637357
 doi: 10.5281/zenodo.6637357
 repository: Zenodo
@@ -13,7 +16,8 @@ authors:
 - Markus Stabrin
 - Stefan Raunser
 publications:
-- title: 'TomoTwin: generalized 3D localization of macromolecules in cryo-electron tomograms with structural data mining'
+- title: 'TomoTwin: generalized 3D localization of macromolecules in cryo-electron tomograms with structural
+    data mining'
   doi: 10.1038/s41592-023-01878-z
   url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10250198/fullTextXML
 date_published: '2022-06-13'
@@ -21,10 +25,14 @@ imaging:
   modality:
   - cryo-ET
   dimensionality: 3D
-  voxel_size_nm: {x: 1.02, y: 1.02, z: 1.02}
+  voxel_size_nm:
+    x: 1.02
+    y: 1.02
+    z: 1.02
   channels: 1
   organism: []
-  sample: Simulated tomograms of PDB-derived proteins (108 proteins in 11 sets; membranes/filaments added by simulation scripts)
+  sample: Simulated tomograms of PDB-derived proteins (108 proteins in 11 sets; membranes/filaments added
+    by simulation scripts)
   labels_stains: []
 data:
   formats:
@@ -62,5 +70,53 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-01T16:10:00Z'
-notes: 'Synthetic data: tilt series simulated with TEM-Simulator and reconstructed with IMOD, so it is not experimental microscopy; kept because it is the released training data of a published cryo-ET particle picker. Files are .tar.gz (cannot be indexed remotely), so the folder contents (tiltseries_rec.mrc, coords) come from the Zenodo description, not a listing; annotations_verified is false. The paper Methods state 8 tomograms of 512x512x200 voxels per protein set at 1.02 nm pixel size (11 sets), so about 88 training tomograms plus the generalization tomogram; n_items left null as the Zenodo archives were not unpacked. Size is the sum of the 12 Zenodo files. Related deposit 6637456 holds the extracted training/validation subvolumes.'
+  last_checked: '2026-10-01T16:56:42Z'
+notes: 'Synthetic data: tilt series simulated with TEM-Simulator and reconstructed with IMOD, so it is
+  not experimental microscopy; kept because it is the released training data of a published cryo-ET particle
+  picker. Files are .tar.gz; the enricher streamed the start of one archive (see technical) but did not
+  reach the coordinate files, so annotations_verified stays false. The paper Methods state 8 tomograms
+  of 512x512x200 voxels per protein set at 1.02 nm pixel size (11 sets), so about 88 training tomograms
+  plus the generalization tomogram; n_items left null as the Zenodo archives were not unpacked. Size is
+  the sum of the 12 Zenodo files. Related deposit 6637456 holds the extracted training/validation subvolumes.
+  enricher: listing confirms size; MRC header of one tomogram read (512x512x200 float32, 10.204 A/px).'
+technical:
+  method: header
+  inspected_at: '2026-10-01T16:56:42Z'
+  inspected_urls:
+  - https://zenodo.org/records/6637357
+  - https://zenodo.org/records/6637357/files/tomo_simulation_round_4.tar.gz
+  bytes_downloaded: 0
+  size_source: file-listing
+  layout:
+    tree: "./  12 .tar.gz, 17,429,018,448 B\n  tomo_simulation_round_1..10.tar.gz, tomo_simulation_gen.tar.gz,\
+      \ ... (smallest: _gen 201 MB, _round_4 1.56 GB)\ntomo_simulation_round_4.tar.gz (first 60 MB streamed):\n\
+      \  tomo_simulation_round_4/\n    pdbs/                 *.pdb (6vn1, 6mrc, 6cnj, 5g04, 6z3a, 7kfe,\
+      \ 7shk, 1ul1 ...)\n    files_filament/       2zwh.pdb, 2zwh.json (rise/twist)\n    tomo_01.<timestamp>/\
+      \  tiltseries_rec.mrc (209,716,224 B), further files not reached\n"
+    n_files: 12
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: tomo_simulation_round_<n>.tar.gz::tomo_simulation_round_<n>/tomo_<k>.<timestamp>/tiltseries_rec.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 200
+    - 512
+    - 512
+    shape_varies: null
+    dtype: float32
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  notes: 'Complete Zenodo listing (12 tar.gz, exact sizes). tomo_simulation_round_4.tar.gz was streamed
+    for its first 60 MB with Python tarfile in memory (nothing extracted or executed): pdbs/ and files_filament/
+    inputs, then tomo_01.<timestamp>/tiltseries_rec.mrc. MRC header: nx 512, ny 512, nz 200, mode 2 (float32),
+    cell 5224.49 x 5224.49 x 2040.82 A, i.e. 10.204 A per voxel, matching the record''s 1.02 nm; header
+    dmin/dmax -1051.9/881.6. The stream ended inside the MRC, so the .coord files were not seen. Axes
+    given as zyx by MRC convention (nz = sections).'
