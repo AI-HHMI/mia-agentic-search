@@ -1,10 +1,9 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-1174343-tnbc-breast-cancer-nuclei
 title: A dataset for nuclei segmentation based on Breast Cancer patients (TNBC)
 short_name: Breast cancer H&E nuclei segmentation (TNBC)
-description: 50 H&E-stained histopathology images from 11 triple-negative breast cancer
-  patients with paired nuclei masks (GT_* folders), released with the distance-map
-  regression nuclei segmentation paper.
+description: 50 H&E-stained histopathology images from 11 triple-negative breast cancer patients with
+  paired nuclei masks (GT_* folders), released with the distance-map regression nuclei segmentation paper.
 landing_url: https://zenodo.org/records/1174343
 doi: 10.5281/zenodo.1174343
 repository: Zenodo
@@ -12,11 +11,10 @@ accession: '1174343'
 authors:
 - Naylor, Peter Jack
 - Walter, Thomas
-- "La\xE9, Marick"
+- Laé, Marick
 - Reyal, Fabien
 publications:
-- title: Segmentation of Nuclei in Histopathology Images by Deep Regression of the
-    Distance Map
+- title: Segmentation of Nuclei in Histopathology Images by Deep Regression of the Distance Map
   doi: 10.1109/tmi.2018.2865709
   url: null
 date_published: '2018-02-16'
@@ -44,8 +42,7 @@ annotations:
   types:
   - semantic-segmentation
   coverage: unknown
-  format: Nuclei masks as PNG, in GT_<slide> folders paired with Slide_<slide>
-    images
+  format: Nuclei masks as PNG, in GT_<slide> folders paired with Slide_<slide> images
   source: unknown
 ml:
   tasks:
@@ -68,9 +65,72 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T05:17:11Z'
-notes: 'Zip listing (peek_archive): ToAnnotateBin/Slide_NN/*.png (50 images) and GT_NN/*.png
-  (50 masks), 11 slides. Paper is not open access (Europe PMC abstract only; no full
-  text), so pixel size, magnification, annotation procedure and whether masks are
-  binary vs instance-labelled were not verified; the paper abstract and Zenodo page
-  do not state them. Mask content not inspected.'
+  last_checked: '2026-10-01T06:52:04Z'
+notes: 'Zip listing (peek_archive): ToAnnotateBin/Slide_NN/*.png (50 images) and GT_NN/*.png (50 masks),
+  11 slides. Paper is not open access (Europe PMC abstract only; no full text), so pixel size, magnification,
+  annotation procedure were not verified; the paper abstract and Zenodo page do not state them. enricher:
+  masks sampled, binary {0,255} (semantic-segmentation confirmed).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/1174343
+  - https://zenodo.org/records/1174343/files/TNBC_DataSet.zip
+  bytes_downloaded: 493974
+  size_source: file-listing
+  layout:
+    tree: "TNBC_DataSet.zip/ToAnnotateBin/\n  Slide_01 .. Slide_11/   50 files  24.9 MB  <slide>_<k>.png\
+      \  (H&E patches)\n  GT_01 .. GT_11/         50 files 302.5 KB  <slide>_<k>.png  (nucleus masks)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/1174343/files/TNBC_DataSet.zip::ToAnnotateBin/Slide_01/01_1.png
+    - https://zenodo.org/records/1174343/files/TNBC_DataSet.zip::ToAnnotateBin/GT_01/01_1.png
+    size_bytes: 493852
+    description: One H&E patch and its mask (same name in Slide_01 / GT_01).
+  arrays:
+  - role: raw
+    path_pattern: TNBC_DataSet.zip::ToAnnotateBin/Slide_*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 4
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 70
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGBA PNG (4 samples per pixel).
+  - role: label
+    path_pattern: TNBC_DataSet.zip::ToAnnotateBin/GT_*/*.png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: GT_<NN>/<NN>_<k>.png pairs with Slide_<NN>/<NN>_<k>.png; both 512x512.
+  notes: 'Complete Zenodo listing with zip index (101 members incl. 1 OS metadata file). Probes: Slide_01/01_1.png
+    RGBA uint8 512x512; GT_01/01_1.png grayscale uint8 512x512. Sample of that pair: raw 70..255 (RGBA,
+    alpha likely 255; not separated), mask {0,255} with 90.8% background. Masks are binary, so touching
+    nuclei are not separated in this release. Other patches assumed 512x512 from the listing only (not
+    probed).'
+  inspected_at: '2026-10-01T06:52:04Z'
