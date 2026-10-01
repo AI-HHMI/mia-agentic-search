@@ -39,11 +39,11 @@ h2 { font-size: 15px; margin: 0 0 12px; }
 .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; padding: 16px; min-width: 0; }
 .tile .v { font-size: 28px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .tile .l { color: var(--text-secondary); font-size: 13px; }
-.bars { display: grid; grid-template-columns: minmax(90px, max-content) 1fr 36px; gap: 6px 10px; align-items: center; }
+.bars { display: grid; grid-template-columns: minmax(0, min(180px, 40%)) 1fr; gap: 6px 10px; align-items: center; }
 .bars .lab { color: var(--text-secondary); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.bars .track { height: 14px; position: relative; }
+.bars .track { height: 14px; display: flex; align-items: center; gap: 6px; padding-right: 32px; }
 .bars .bar { height: 100%; background: var(--series-1); border-radius: 0 4px 4px 0; min-width: 2px; }
-.bars .num { font-variant-numeric: tabular-nums; font-size: 13px; text-align: right; }
+.bars .num { font-variant-numeric: tabular-nums; font-size: 13px; color: var(--text-secondary); flex: none; }
 .bars .row { display: contents; }
 .cols { display: flex; align-items: flex-end; gap: 2px; height: 140px; border-bottom: 1px solid var(--grid); }
 .cols .c { flex: 1; background: var(--series-1); border-radius: 4px 4px 0 0; min-height: 0; position: relative; }
@@ -70,9 +70,14 @@ h3:first-of-type { margin-top: 4px; }
 .sec { font-size: 17px; margin: 24px 0 10px; }
 .dimcard h2 .count { color: var(--text-secondary); font-weight: 400; }
 #dims { grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); }
-/* one label column for both charts in a card, so their bars start at the same x */
-.dimcard .bars { grid-template-columns: minmax(0, min(180px, 40%)) 1fr 32px; }
+
 ul.why { margin: 0; padding-left: 16px; }
+.scale-note { color: var(--text-muted); font-size: 12px; margin: -12px 0 12px; }
+details.reason { border-top: 1px solid var(--border); padding: 6px 0; }
+details.reason:first-of-type { margin-top: 12px; }
+details.reason summary { cursor: pointer; color: var(--text-secondary); font-size: 13px; }
+details.reason summary:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; }
+details.reason .prs { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 13px; }
 ul.why li { margin: 0 0 2px; }
 code { font-size: 12px; }
 #tip { position: fixed; pointer-events: none; background: var(--surface-1); color: var(--text-primary); border: 1px solid var(--border);
@@ -84,6 +89,7 @@ code { font-size: 12px; }
   <h1>Agentic Harvesting of Open-Source Microscopy Data</h1>
   <p class="sub" id="gen"></p>
   <section class="grid tiles" id="tiles"></section>
+  <p class="scale-note" id="scale-note"></p>
   <section class="grid charts">
     <div class="card"><h2>Agent health: latest run per routine</h2><div class="scroll"><table id="health"></table></div></div>
     <div class="card"><h2>New records per week (last 12 weeks)</h2><div id="weekly"></div></div>
@@ -156,18 +162,36 @@ document.getElementById("health").innerHTML = `<tr><th>Routine</th><th>Status</t
   }).join("");
 
 // Horizontal bars (single series: no legend; the title names it). Beyond `top` rows, the rest folds into "Other".
+// All bar charts on the page share one scale, so equal lengths mean equal counts in every panel:
+// charts are queued with hbars() and drawn together by drawBars() once the overall maximum is known.
+const barCharts = [];
 function hbars(el, counts, {top = 10, unit = "datasets"} = {}) {
   if (typeof el === "string") el = document.getElementById(el);
   let entries = Object.entries(counts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-  if (!entries.length) { el.innerHTML = `<p class="empty">No data yet.</p>`; return; }
   if (entries.length > top) {
     const rest = entries.slice(top - 1);
     entries = [...entries.slice(0, top - 1), [`Other (${rest.length})`, rest.reduce((a, [, v]) => a + v, 0)]];
   }
-  const max = Math.max(...entries.map(e => e[1]));
-  el.innerHTML = `<div class="bars">` + entries.map(([k, v]) =>
-    `<div class="row"><span class="lab" title="${esc(k)}">${esc(k)}</span><div class="track"><div class="bar" style="width:${100 * v / max}%"></div></div><span class="num">${v}</span></div>`).join("") + `</div>`;
-  el.querySelectorAll(".track").forEach((t, i) => bindTip(t, `<b>${esc(entries[i][0])}</b>: ${entries[i][1]} ${unit}`));
+  barCharts.push({el, entries, unit});
+}
+function drawBars() {
+  const max = Math.max(1, ...barCharts.flatMap(c => c.entries.map(e => e[1])));
+  barCharts.forEach(({el, entries, unit}) => {
+    if (!entries.length) { el.innerHTML = `<p class="empty">No data yet.</p>`; return; }
+    el.innerHTML = `<div class="bars">` + entries.map(([k, v]) =>
+      `<div class="row"><span class="lab" title="${esc(k)}">${esc(k)}</span><div class="track"><div class="bar" data-v="${v}"></div><span class="num">${v}</span></div></div>`).join("") + `</div>`;
+    el.querySelectorAll(".track").forEach((t, i) => bindTip(t, `<b>${esc(entries[i][0])}</b>: ${entries[i][1]} ${unit}`));
+  });
+  // Lengths in pixels against the narrowest track on the page, so one unit is the same length in every panel.
+  const size = () => {
+    const tracks = [...document.querySelectorAll(".bars .track")];
+    const w = Math.min(...tracks.map(t => t.clientWidth)) - 32;  // leave room for the number after the bar
+    document.querySelectorAll(".bars .bar").forEach(b => b.style.width = `${Math.max(2, w * b.dataset.v / max)}px`);
+  };
+  size();
+  addEventListener("resize", size);
+  document.getElementById("scale-note").textContent =
+    `All bar charts use the same scale: a full-width bar is ${max} (datasets, or PRs in the "not merged" chart).`;
 }
 const tally = (rows, f) => rows.reduce((acc, r) => { (f(r) || []).forEach(k => acc[k] = (acc[k] || 0) + 1); return acc; }, {});
 hbars("anntype", tally(recs, r => r.annotations?.types?.length ? r.annotations.types : ["(none)"]));
@@ -236,7 +260,17 @@ if (unmerged === null || unmerged === undefined) {
   document.getElementById("unmerged-sub").textContent =
     `${blocked.length} of ${unmerged.length} open dataset PRs don't meet the auto-merge policy (tools/automerge.py). ` +
     `Reasons come from the PRs' labels and checks when this page was built.`;
-  hbars("reasons", tally(blocked, p => [...new Set(p.reasons.map(shortReason))]), {top: 8, unit: "PRs"});
+  const reasonsOf = p => [...new Set(p.reasons.map(shortReason))];
+  const byReason = tally(blocked, reasonsOf);
+  hbars("reasons", byReason, {top: 50, unit: "PRs"});
+  // the PRs behind each bar, most common reason first
+  const reasonsEl = document.getElementById("reasons");
+  const lists = Object.entries(byReason).sort((a, b) => b[1] - a[1]).map(([reason, n]) => {
+    const prs = blocked.filter(p => reasonsOf(p).includes(reason));
+    return `<details class="reason"><summary>${esc(reason)}: ${n} PR${n === 1 ? "" : "s"}</summary><div class="prs">` +
+      prs.map(p => `<a href="${esc(p.url)}" title="${esc(p.title)}">#${p.number}</a>`).join("") + `</div></details>`;
+  }).join("");
+  reasonsEl.insertAdjacentHTML("afterend", `<div id="reason-prs">${lists}</div>`);
   const md = t => esc(t).replace(/`([^`]+)`/g, "<code>$1</code>");
   const INITIAL = 25;
   let expanded = false;
@@ -256,6 +290,7 @@ if (unmerged === null || unmerged === undefined) {
   document.getElementById("unmerged-more").addEventListener("click", () => { expanded = !expanded; render(); });
   render();
 }
+drawBars();
 </script>
 </body>
 </html>
