@@ -1,10 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-13329153-spheroid-cells-bbox-brightfield
 title: Brightfield images of cells and spheroids in wells annotated with bounding boxes
 short_name: Cell and spheroid bounding boxes (brightfield)
-description: Brightfield image crops of cells, compacted objects, spheroids and dead/disintegrating objects in
-  wells, annotated with labelled bounding boxes for training object detectors (e.g. YOLO); packaged as an OMERO
-  transfer pack.
+description: Brightfield image crops of cells, compacted objects, spheroids and dead/disintegrating objects
+  in wells, annotated with labelled bounding boxes for training object detectors (e.g. YOLO); packaged
+  as an OMERO transfer pack.
 landing_url: https://zenodo.org/records/13329153
 doi: 10.5281/zenodo.13329153
 repository: Zenodo
@@ -19,13 +19,14 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism: []
-  sample: Cells forming spheroids in wells, imaged over several developmental stages (cells, compacted objects, spheroids, dead)
+  sample: Cells forming spheroids in wells, imaged over several developmental stages (cells, compacted
+    objects, spheroids, dead)
   labels_stains: []
 data:
   formats:
-  - tiff
+  - ome-tiff
   size_bytes: 29560893
   n_items: 1615
   access: open
@@ -36,7 +37,8 @@ annotations:
   types:
   - bounding-box
   coverage: unknown
-  format: OMERO/OME-XML transfer pack (transfer.xml) with ROIs attached to images in pixel_images/*.tiff
+  format: 'OME-XML transfer pack (transfer.xml): 1,951 Rectangle ROIs with class text (cell 1,688, spheroid
+    182, compacted 75, dead 6) on 946 of the 1,615 images; image pixels in pixel_images/<OMERO image id>.tiff'
   source: unknown
 ml:
   tasks:
@@ -53,15 +55,89 @@ provenance:
   evidence_urls:
   - https://zenodo.org/records/13329153
   - https://zenodo.org/api/records/13329153
-  confidence: 0.6
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-01T13:45:00Z'
-notes: 'Zenodo page is short and cites no paper; no publication found, so none listed. peek_archive: yolo_omero_dataset.zip
-  (29.6 MB) holds 1,615 TIFF crops (pixel_images/, e.g. 136x146 px, uint8 per transfer.xml) plus transfer.xml (OME-XML).
-  The first 200 KB of transfer.xml show images with ROIRef entries, but the ROI definitions were beyond the part read, so
-  box count, class names and who annotated them were not verified. Pixel size, microscope, cell type and organism are not
-  stated on the page or in the headers read. n_items is the TIFF count. Description says objects carry stage labels and a
-  linked repository has a YOLO tutorial (not opened).'
+  annotations_verified: true
+  last_checked: '2026-10-01T13:43:58Z'
+notes: 'Zenodo page is short and cites no paper; no publication found, so none listed. yolo_omero_dataset.zip
+  (29.6 MB) holds 1,615 TIFF crops (pixel_images/) plus transfer.xml (OME-XML). Pixel size, microscope,
+  cell type and organism are not stated on the page or in the headers read. n_items is the TIFF count.
+  Description says objects carry stage labels and a linked repository has a YOLO tutorial (not opened).
+  enricher: transfer.xml read in full: 1,951 labelled boxes on 946 images (669 images have none); class
+  counts in annotations.format; channels 1 (grayscale uint8, was null); formats ome-tiff (probe, was tiff).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/13329153
+  - https://zenodo.org/records/13329153/files/yolo_omero_dataset.zip
+  bytes_downloaded: 189998
+  size_source: file-listing
+  layout:
+    tree: "yolo_omero_dataset.zip/\n  transfer.xml                  OME-XML: 1,615 Image entries (names\
+      \ like well_000_t0_x411.15_y3403.08), 1,951 ROIs\n  pixel_images/<image id>.tiff  1,615 OME-TIFF\
+      \ crops, 109.8 MB uncompressed\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/13329153/files/yolo_omero_dataset.zip::pixel_images/7912.tiff
+    - https://zenodo.org/records/13329153/files/yolo_omero_dataset.zip::transfer.xml
+    size_bytes: null
+    description: One 136x146 crop (Image:7912, which has a box ROI) plus transfer.xml (3.2 MB uncompressed)
+      that holds all boxes.
+  arrays:
+  - role: raw
+    path_pattern: pixel_images/<image id>.tiff
+    format: ome-tiff
+    axes: yx
+    shape:
+    - 146
+    - 136
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks:
+    - 128
+    - 128
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: transfer.xml (ROI/Rectangle elements)
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: other
+    classes:
+    - id: null
+      name: cell
+    - id: null
+      name: spheroid
+    - id: null
+      name: compacted
+    - id: null
+      name: dead
+    n_ids_observed: 4
+    alignment: same-grid
+    alignment_notes: Each Image element (Image:<id>) references its ROIs by ROIRef and its pixels are
+      pixel_images/<id>.tiff; Rectangle X/Y/Width/Height are float pixel coordinates in the crop.
+  notes: 'Zip central directory: 1,616 members, 29,560,893 B, complete. transfer.xml (170 KB deflated,
+    3.16 MB) parsed with regular expressions: 1,615 Image entries, all uint8 136x146 (SizeX x SizeY),
+    946 of them with at least one ROIRef (1,951 in total); 1,951 Rectangle shapes with Text cell 1,688
+    / spheroid 182 / compacted 75 / dead 6. Boxes are stored as OME ROIs (OMERO transfer format), not
+    YOLO txt files, so a conversion step is needed. Probe of pixel_images/7123.tiff: OME-TIFF uint8 146x136,
+    tiled 128x128, uncompressed. Sample 7912.tiff: 0..255, mean 131. Image names (well_NNN_tK_x..._y...)
+    encode well, time point and stage position.'
+  inspected_at: '2026-10-01T13:43:58Z'
