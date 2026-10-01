@@ -1,4 +1,4 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-18817576-synoviocytes-bf-dapi
 title: Paired bright-field and DAPI time-lapse microscopy dataset of fibroblast-like cells (synoviocytes)
   from osteoarthritic knee tissue
@@ -47,8 +47,8 @@ annotations:
   types:
   - other
   coverage: dense
-  format: DAPI nuclei fluorescence image paired with each bright-field frame (TIFF); no masks or point
-    files
+  format: 'Paired TIFFs: SourceImages/B1_04_1_<k>_Bright_field/..._Bright Field_NNN.tif and B1_04_2_<k>_DAPI/..._DAPI_NNN.tif
+    (4 series x 200 frames each); no masks or point files'
   source: automatic
 ml:
   tasks:
@@ -67,17 +67,83 @@ provenance:
   - https://zenodo.org/records/18817576
   - https://zenodo.org/api/records/18817576
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13402725/fullTextXML
-  confidence: 0.55
+  confidence: 0.65
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T13:24:21Z'
-notes: 'Single SourceImages.zip (2.87 GB, 1,602 members: 1,600 TIFF, README_fibroblasts.md, .DS_Store)
-  listed with peek_archive; the first listed folder is B1_04_2_1_DAPI with frames numbered up to about
-  197 (200 kinetic reads per series); the bright-field folder names were not seen in the truncated listing,
-  so the split between bright-field and DAPI frames (assumed about 800 each) is unconfirmed. No segmentation
-  masks: DAPI images are the only reference (paper uses detected nuclei centroids as validation ground
-  truth), so the training signal is paired bright-field to fluorescence for label-free nuclei prediction/detection.
+  last_checked: '2026-10-01T13:48:42Z'
+notes: 'Single SourceImages.zip (2.87 GB, 1,602 members: 1,600 TIFF, README_fibroblasts.md, .DS_Store).
+  No segmentation masks: DAPI images are the only reference (paper uses detected nuclei centroids as validation
+  ground truth), so the training signal is paired bright-field to fluorescence for label-free nuclei prediction/detection.
   Pixel size not stated beyond 1224x904 px over about 2017x1489 um (about 1.65 um/px, derived, left null).
-  Sample is one patient (paper).'
+  Sample is one patient (paper). enricher: full listing shows 4 bright-field and 4 DAPI series of 200
+  frames (800 + 800, was unconfirmed); README read (acquisition, CC BY 4.0, sensor saturation 65504);
+  one BF/DAPI pair sampled.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/18817576
+  - https://zenodo.org/records/18817576/files/SourceImages.zip
+  bytes_downloaded: 3551515
+  size_source: file-listing
+  layout:
+    tree: "SourceImages.zip/SourceImages/\n  README_fibroblasts.md\n  B1_04_1_{1..4}_Bright_field/B1_04_1_<k>_Bright\
+      \ Field_NNN.tif   4 x 200 tif, 1.8 GB\n  B1_04_2_{1..4}_DAPI/B1_04_2_<k>_DAPI_NNN.tif          \
+      \         4 x 200 tif, 1.8 GB\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/18817576/files/SourceImages.zip::SourceImages/B1_04_1_1_Bright_field/B1_04_1_1_Bright
+      Field_001.tif
+    - https://zenodo.org/records/18817576/files/SourceImages.zip::SourceImages/B1_04_2_1_DAPI/B1_04_2_1_DAPI_001.tif
+    size_bytes: 4436224
+    description: Frame 001 of the first bright-field series and of the first DAPI series (zip members,
+      2.2 MB each).
+  arrays:
+  - role: raw
+    path_pattern: B1_04_1_<k>_Bright_field/B1_04_1_<k>_Bright Field_NNN.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 904
+    - 1224
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 13890
+    - 48399
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: target
+    path_pattern: B1_04_2_<k>_DAPI/B1_04_2_<k>_DAPI_NNN.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 904
+    - 1224
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 22512
+    - 65504
+    normalization: none
+    alignment: same-grid
+    alignment_notes: README says each bright-field image has a DAPI image of the same field of view; the
+      pairing B1_04_1_<k> <-> B1_04_2_<k> with the same frame number NNN is inferred from the folder names
+      (not stated). Shapes match.
+  notes: 'Zenodo listing plus zip central directory: 1,602 members, 2,868,629,704 B, complete. README_fibroblasts.md
+    read (peek_archive --cat): Cytation 5, Blackfly BFLY-U3-23S6M mono camera, 4x/0.13, 1224x904 px over
+    ~2017x1489 um, 200 reads per series at ~20 min, sensor saturation 65504, licence CC BY 4.0. Probes:
+    both frames uint16 904x1224, uncompressed, single page, no calibration. Samples: BF 13890..48399,
+    mean 38741; DAPI 22512..65504, mean 28802, p99.9 52336 (max equals the stated sensor saturation, so
+    a few pixels are saturated). DAPI normalization none = raw detector values per the README (inferred).'
+  inspected_at: '2026-10-01T13:48:42Z'
