@@ -81,7 +81,8 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
   claims (`method`, confirmed size, observed values) that aren't backed by a logged read.
 - **Labels are computed, not added:** `.github/workflows/label.yml` runs `tools/labels.py` on every push:
   `dim:`, `org:`, `modality:`, `fmt:`, `dtype:`, `anno:`, `label-enc:`, `license:<spdx as written>`,
-  `size:`, `auto-download` (size confirmed by a complete file listing, < 50 GB, open access) and `enriched`.
+  `size:`, `auto-download` (size confirmed by a complete file listing, < 50 GB, open access), `enriched` and
+  `license-verification-needed` (`license.spdx: unknown`).
   License labels are the SPDX id verbatim, with no interpretation.
 - **Auto-merge** (`tools/automerge.py`) merges PRs whose labels meet a fixed policy. Agents never merge,
   approve or close PRs themselves, and never add or remove the `hold` label.

@@ -10,6 +10,7 @@ on every push. Labels outside the managed prefixes (e.g. new-datasets) are left 
   dim:3D · org:Mus musculus · modality:FIB-SEM · fmt:tiff · dtype:uint16 · anno:instance-segmentation
   label-enc:instance-ids · license:CC-BY-4.0 (the SPDX id as written, not interpreted) · size:1-10GB
   auto-download (size confirmed by a complete file listing, < 50 GB, open access) · enriched
+  license-verification-needed (license.spdx is unknown)
 """
 import argparse
 import json
@@ -38,6 +39,7 @@ GROUPS = {
 FLAGS = {
     "auto-download": ("0E8A16", "Size confirmed by a complete file listing, < 50 GB, open access"),
     "enriched": ("006B75", "Technical metadata filled in by the enricher routine"),
+    "license-verification-needed": ("B60205", "No license found yet; a human (or agent) needs to find or request it"),
 }
 SIZE_BUCKETS = [(10**9, "<1GB"), (10 * 10**9, "1-10GB"), (50 * 10**9, "10-50GB"), (500 * 10**9, "50-500GB")]
 MAX_LEN = 50  # GitHub's label name limit
@@ -63,7 +65,10 @@ def labels_for(r):
     out += [_label("anno:", t) for t in an.get("types") or []] if an.get("present") else ["anno:none"]
     out += [_label("label-enc:", e) for e in dict.fromkeys(a.get("encoding") for a in arrays if a.get("role") == "label")
             if e and e != "unknown"]
-    out.append(_label("license:", (r.get("license") or {}).get("spdx") or "unknown"))
+    spdx = (r.get("license") or {}).get("spdx") or "unknown"
+    out.append(_label("license:", spdx))
+    if spdx == "unknown":
+        out.append("license-verification-needed")
     size = da.get("size_bytes")
     if size is None:
         out.append("size:unknown")

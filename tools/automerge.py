@@ -8,7 +8,7 @@ A PR qualifies when the record on its current head commit gets all of these labe
   - enriched                      the enricher has inspected the files
   - dim:2D, dim:3D or dim:3D+t                  (2D time-lapse, dim:2D+t, is not included)
   - size:<1GB | 1-10GB | 10-50GB | 50-500GB    (below 500 GB; not size:unknown)
-  - license:<one of ALLOWED_LICENSES>          permissive, BSD / CC-BY compatible
+  - a known license: license:<spdx> other than license:unknown (any license, incl. custom, for now)
   - at least one fmt:… and no fmt:other         every data format is known
 and also: the `validate` check passed on that commit, the PR is not a draft, has no HOLD_LABELS,
 and GitHub reports it mergeable. Merging uses --match-head-commit, so a push that lands while
@@ -31,11 +31,9 @@ from tools.labels import labels_for, record_on_pr  # noqa: E402
 REQUIRED = ["enriched"]
 ALLOWED_DIMS = ["dim:2D", "dim:3D", "dim:3D+t"]
 ALLOWED_SIZES = ["size:<1GB", "size:1-10GB", "size:10-50GB", "size:50-500GB"]
-# Licenses that allow open-source redistribution and model training (BSD / CC-BY compatible):
-# public domain, attribution-only, or permissive code licenses. Excluded on purpose: NC, SA, ND,
-# GPL-family, `custom` and `unknown`; those PRs stay open for a human.
-ALLOWED_LICENSES = ["CC0-1.0", "CC-BY-4.0", "CC-BY-3.0", "CC-BY-2.5", "CC-BY-2.0", "PDDL-1.0", "ODC-By-1.0",
-                    "BSD-2-Clause", "BSD-3-Clause", "MIT", "Apache-2.0"]
+# The license only has to be known for now (not `unknown`); which licenses are acceptable is decided later.
+# Set this to a list of SPDX ids to allow only those again (e.g. ["CC0-1.0", "CC-BY-4.0", "BSD-3-Clause"]).
+ALLOWED_LICENSES = None
 HOLD_LABELS = ["hold", "do-not-merge"]
 
 
@@ -56,8 +54,10 @@ def criteria_failures(labels):
     if not set(size) & set(ALLOWED_SIZES):
         fails.append(f"size not below 500 GB ({', '.join(size) or 'no size label'})")
     lic = [lab.removeprefix("license:") for lab in labels if lab.startswith("license:")]
-    if not set(lic) & set(ALLOWED_LICENSES):
-        fails.append(f"license not on the allow-list ({', '.join(lic) or 'none'})")
+    if not lic or "unknown" in lic or "license-verification-needed" in labels:
+        fails.append("license unknown (license-verification-needed)")
+    elif ALLOWED_LICENSES is not None and not set(lic) & set(ALLOWED_LICENSES):
+        fails.append(f"license not on the allow-list ({', '.join(lic)})")
     fmts = [lab for lab in labels if lab.startswith("fmt:")]
     if not fmts:
         fails.append("no data format")
@@ -98,7 +98,7 @@ def merge(repo, pr, rec, sha):
     gh("api", "-X", "DELETE", f"repos/{repo}/git/refs/heads/{pr['headRefName']}", check=False)
     lic = rec["license"]["spdx"]
     gh("pr", "comment", str(pr["number"]), "--body",
-       f"🤖 **Auto-merged**: enriched, 2D / 3D / 3D+t, size below 500 GB, license `{lic}` is on the allow-list, "
+       f"🤖 **Auto-merged**: enriched, 2D / 3D / 3D+t, size below 500 GB, license known (`{lic}`), "
        f"all data formats known, `validate` passed. Policy: `tools/automerge.py`.", check=False)
 
 

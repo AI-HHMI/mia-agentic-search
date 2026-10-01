@@ -37,12 +37,13 @@ quick-test sample and the folder tree. An inspection-report comment is added wit
 **Labels** are computed from the record on every push (`tools/labels.py`), so they always match the YAML:
 `dim:3D` · `org:Mus musculus` · `modality:FIB-SEM` · `fmt:tiff` · `dtype:uint16` · `anno:instance-segmentation` ·
 `label-enc:instance-ids` · `license:CC-BY-4.0` (the dataset's SPDX id as written, or `license:unknown`) ·
-`size:1-10GB` · **`auto-download`** (size confirmed by a complete file listing, under 50 GB, open access) · `enriched`.
+`size:1-10GB` · **`auto-download`** (size confirmed by a complete file listing, under 50 GB, open access) · `enriched` ·
+**`license-verification-needed`** (no license found yet; `license:unknown`).
 To relabel every open PR, run the `label-agent-prs` workflow manually.
 
 **Auto-merge** (`.github/workflows/auto-merge.yml`, policy in `tools/automerge.py`): a dataset PR is merged
 without review when it is `enriched`, `dim:2D`, `dim:3D` or `dim:3D+t`, below 500 GB (`size:` label, not `unknown`), has an
-allow-listed license (CC0, CC-BY, PDDL, ODC-By, BSD, MIT, Apache-2.0; not NC / SA / ND / custom / unknown),
+a known license (any `license:` other than `unknown`; which licenses are acceptable is decided later),
 only known formats (no `fmt:other`), and `validate` passed. Add the label `hold` to keep a PR open.
 It runs after every labelling run and hourly, and only reports (see the run summary) until the repo
 variable `AUTO_MERGE` is set to `true`.
