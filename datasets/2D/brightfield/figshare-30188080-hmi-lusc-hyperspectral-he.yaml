@@ -1,11 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: figshare-30188080-hmi-lusc-hyperspectral-he
 title: 'HMI-LUSC: A Histological Hyperspectral Imaging Dataset for Lung Squamous Cell Carcinoma'
 short_name: Lung squamous carcinoma hyperspectral H&E
 description: 62 hyperspectral microscopy images (450-750 nm, 61 bands, 10x, 3088 x 2064 px) of H&E-stained
-  lung squamous cell carcinoma sections from 10 patients, with pathologist tumor-region masks and
-  cell-level four-class pixel masks (tumor cells, non-tumor cells, non-cell regions, background). Includes
-  40x whole-slide scans, calibration references and synthesised RGB images.
+  lung squamous cell carcinoma sections from 10 patients, with pathologist tumor-region masks and cell-level
+  four-class pixel masks (tumor cells, non-tumor cells, non-cell regions, background). Includes 40x whole-slide
+  scans, calibration references and synthesised RGB images.
 landing_url: https://figshare.com/articles/dataset/30188080
 doi: 10.6084/m9.figshare.30188080.v1
 repository: Figshare
@@ -25,8 +25,9 @@ imaging:
   channels: 61
   organism:
   - Homo sapiens
-  sample: H&E-stained 5 um paraffin sections of lung squamous cell carcinoma and adjacent normal tissue from
-    10 patients, imaged with a custom liquid-crystal tunable filter hyperspectral microscope (10x objective)
+  sample: H&E-stained 5 um paraffin sections of lung squamous cell carcinoma and adjacent normal tissue
+    from 10 patients, imaged with a custom liquid-crystal tunable filter hyperspectral microscope (10x
+    objective)
   labels_stains:
   - hematoxylin and eosin
 data:
@@ -69,5 +70,129 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T19:25:00Z'
-notes: 'Ten per-patient zips (P1-P10, 16.5 GB total per the figshare file list). Only P10.zip was listed (peek_archive): 3 ROI folders, each with Raw + Raw.hdr (388.8 MB ENVI cube), Label.png, Cell-level Label.png, rgb.png, plus shared white/dark references and a 40x whole-slide TIFF; other patients assumed alike (paper Data Records). formats lists png and tiff because the ENVI cubes are not in the format enum. Paper gives FOV about 741 x 495 um but no HMI pixel size, so voxel_size_nm is null. Cell-level masks are semi-automatic (K-means clusters assigned by two pathologists), hence source mixed; they are pixel-level semantic labels, not instances. No train/test split. Figshare lists two authors; the paper has the full list.'
+  last_checked: '2026-10-01T20:07:04Z'
+notes: 'Ten per-patient zips (P1-P10, 16.5 GB total per the figshare file list). Only P10.zip was listed
+  (peek_archive): 3 ROI folders, each with Raw + Raw.hdr (388.8 MB ENVI cube), Label.png, Cell-level Label.png,
+  rgb.png, plus shared white/dark references and a 40x whole-slide TIFF; other patients assumed alike
+  (paper Data Records). formats lists png and tiff because the ENVI cubes are not in the format enum.
+  Paper gives FOV about 741 x 495 um but no HMI pixel size, so voxel_size_nm is null. Cell-level masks
+  are semi-automatic (K-means clusters assigned by two pathologists), hence source mixed; they are pixel-level
+  semantic labels, not instances. No train/test split. Figshare lists two authors; the paper has the full
+  list. enricher: complete figshare listing confirms 16,526,607,358 B and 62 ROI folders across P1-P10
+  (other patients no longer assumed).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://api.figshare.com/v2/articles/30188080
+  - https://ndownloader.figshare.com/files/58184836
+  bytes_downloaded: 12983307
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  10 files (P1.zip ... P10.zip), 16,526,607,358 B, 361 zip members
+        P#.zip/
+          darkReference, darkReference.hdr, whiteReference, whiteReference.hdr   ENVI references
+          P#_Slide_Scan_40x.tif                                                  whole-slide scan
+          LUSC_ROI_#/   (62 ROI folders in total)
+            Raw, Raw.hdr        ENVI cube, 61 bands 450-750 nm, 3088x2064, uint8, bsq (388.8 MB)
+            rgb.png             RGB rendering
+            Label.png           tumor-region mask
+            Cell-level Label.png  4-colour cell-level mask
+    n_files: 10
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/58184836::LUSC_ROI_2/Raw
+    - https://ndownloader.figshare.com/files/58184836::LUSC_ROI_2/Raw.hdr
+    - https://ndownloader.figshare.com/files/58184836::LUSC_ROI_2/Label.png
+    - https://ndownloader.figshare.com/files/58184836::LUSC_ROI_2/Cell-level Label.png
+    size_bytes: null
+    description: 'One ROI of P10.zip (smallest zip, 862.9 MB): ENVI cube + header and both label PNGs.'
+  arrays:
+  - role: raw
+    path_pattern: P#.zip/LUSC_ROI_#/Raw (+ Raw.hdr)
+    format: other
+    axes: cyx
+    shape:
+    - 61
+    - 2064
+    - 3088
+    shape_varies: false
+    dtype: uint8
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: P#.zip/LUSC_ROI_#/Label.png
+    format: png
+    axes: yx
+    shape:
+    - 2064
+    - 3088
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: Same folder and same 3088x2064 grid as Raw (ENVI header samples/lines).
+  - role: label
+    path_pattern: P#.zip/LUSC_ROI_#/Cell-level Label.png
+    format: png
+    axes: yxs
+    shape:
+    - 2064
+    - 3088
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    encoding: rgb-colors
+    classes: null
+    n_ids_observed: 4
+    alignment: same-grid
+    alignment_notes: Same folder and grid as Raw; 4 colours (black, blue, red, green) for the paper's
+      4 classes, colour-to-class mapping not stated in the files read.
+  - role: other
+    path_pattern: P#.zip/LUSC_ROI_#/rgb.png
+    format: png
+    axes: yxs
+    shape:
+    - 2064
+    - 3088
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: RGB rendering of the cube (ENVI default bands 41, 15, 1).
+  notes: 'listing.py (figshare API + all 10 zip directories): 10 files, 16,526,607,358 B exact, 361 members,
+    62 ROI folders. Raw.hdr of P10 ROI 1 (peek_archive): ENVI Standard, samples 3088, lines 2064, bands
+    61, data type 1 (uint8), interleave bsq, wavelengths 450-750 nm in 5 nm steps. Raw cubes (388.8 MB
+    each) were not downloaded, so their value range is unknown. Sample of P10 ROI 2 (custom range-read
+    zip script, sample.py could not open figshare zip members): Label.png L uint8 {0: 5,096,653, 255:
+    1,276,979}; Cell-level Label.png RGB with exactly 4 colours (0,0,0) 3.68M, (0,0,255) 2.12M, (255,0,0)
+    0.40M, (0,255,0) 0.18M; rgb.png RGB uint8 [0, 255]. probe.py read P10_Slide_Scan_40x.tif as 45888x25872x3
+    uint8, JPEG-compressed. Values are from one ROI.'
+  inspected_at: '2026-10-01T20:07:04Z'
