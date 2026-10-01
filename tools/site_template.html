@@ -67,7 +67,9 @@ button.more:hover { border-color: var(--text-muted); }
 button.more:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; }
 h3 { font-size: 13px; font-weight: 600; color: var(--text-secondary); margin: 14px 0 8px; }
 h3:first-of-type { margin-top: 4px; }
-.sec { font-size: 17px; margin: 24px 0 10px; }
+.sec { font-size: 19px; margin: 24px 0 12px; }
+.subsec { font-size: 15px; color: var(--text-primary); margin: 20px 0 10px; }
+hr.divider { border: 0; border-top: 2px solid var(--border); margin: 40px 0 8px; }
 .dimcard h2 .count { color: var(--text-secondary); font-weight: 400; }
 #dims { grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); }
 
@@ -88,18 +90,21 @@ code { font-size: 12px; }
 <main>
   <h1>Agentic Harvesting of Open-Source Microscopy Data</h1>
   <p class="sub" id="gen"></p>
-  <section class="grid tiles" id="tiles"></section>
-  <section class="grid charts">
-    <div class="card"><h2>Agent health: latest run per routine</h2><div class="scroll"><table id="health"></table></div></div>
-    <div class="card"><h2>New records per week (last 12 weeks)</h2><div id="weekly"></div></div>
-  </section>
-  <h2 class="sec">Catalog by dimensionality</h2>
+  <h2 class="sec">Datasets</h2>
+  <section class="grid tiles" id="tiles-data"></section>
+  <section class="card" style="margin-bottom:16px"><h2>New records per week (last 12 weeks)</h2><div id="weekly"></div></section>
+  <h3 class="subsec">Catalog by dimensionality</h3>
   <p class="scale-note" id="scale-note"></p>
   <section class="grid charts" id="dims"></section>
   <section class="grid charts">
     <div class="card"><h2>Records by annotation type</h2><div id="anntype"></div></div>
     <div class="card"><h2>Why open PRs aren't merged automatically</h2><div id="reasons"></div></div>
   </section>
+
+  <hr class="divider">
+  <h2 class="sec">Agents</h2>
+  <section class="grid tiles" id="tiles-agents"></section>
+  <section class="card" style="margin-bottom:16px"><h2>Agent health: latest run per routine</h2><div class="scroll"><table id="health"></table></div></section>
   <section class="card">
     <h2>Recent agent runs</h2>
     <div class="scroll"><table id="runs"></table></div>
@@ -131,16 +136,17 @@ document.getElementById("gen").textContent =
 
 // Tiles
 const day = runs.filter(r => hoursAgo(r.started_at) <= 24);
-const tiles = [
+const tileHtml = ts => ts.map(([v, l]) => `<div class="card tile"><div class="v">${v}</div><div class="l">${l}</div></div>`).join("");
+document.getElementById("tiles-data").innerHTML = tileHtml([
   [recs.length, "datasets in catalog"],
   [recs.filter(r => r.annotations?.present).length, "with annotations"],
   [recs.filter(r => r.license?.spdx && !["unknown", "custom"].includes(r.license.spdx)).length, "with a known open license"],
+]);
+document.getElementById("tiles-agents").innerHTML = tileHtml([
   [day.length, "agent runs, last 24 h"],
   [day.reduce((a, r) => a + (r.counts?.added || 0), 0), "records proposed, last 24 h"],
   [day.filter(r => r.status === "failed").length, "failed runs, last 24 h"],
-];
-document.getElementById("tiles").innerHTML = tiles.map(([v, l]) =>
-  `<div class="card tile"><div class="v">${v}</div><div class="l">${l}</div></div>`).join("");
+]);
 
 // Health table
 const latest = {};
