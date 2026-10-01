@@ -1,12 +1,12 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-4317170-polymer-film-fib-sem
 title: Convolutional neural networks for segmentation of FIB-SEM nanotomography data from porous polymer
   films for controlled drug release (dataset and code)
 short_name: Porous polymer film pore segmentation (FIB-SEM)
 description: Three FIB-SEM tomography volumes (HPC22, HPC30, HPC45) of porous ethyl cellulose films with
   the HPC phase leached out, supplied as 600 raw TIFF slices, with manual pore/solid segmentations of
-  selected regions, train/validation/test region indices, trained CNN models, final segmentation PNG
-  slices and Python/Matlab code. Released with the Journal of Microscopy paper.
+  selected regions, train/validation/test region indices, trained CNN models, final segmentation PNG slices
+  and Python/Matlab code. Released with the Journal of Microscopy paper.
 landing_url: https://zenodo.org/records/4317170
 doi: 10.5281/zenodo.4317170
 repository: Zenodo
@@ -38,7 +38,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 9216974498
+  size_bytes: 9216981423
   n_items: 3
   access: open
   download_url: https://zenodo.org/api/records/4317170/files/fib_sem_cnn.zip/content
@@ -67,15 +67,106 @@ provenance:
   - https://zenodo.org/api/records/4317170
   - https://zenodo.org/api/records/4317170/files/readme.txt/content
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22Convolutional+neural+networks+for+segmentation+of+FIB-SEM+nanotomography+data+from+porous+polymer+films+for+controlled+drug+release%22&format=json&resultType=core&pageSize=3
-  confidence: 0.7
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-01T07:50:00Z'
+  annotations_verified: true
+  last_checked: '2026-10-01T09:23:38Z'
 notes: 'Zenodo record is a single 9.2 GB zip (peek_archive: 600 raw .tif slices, 600 seg .png, 15 .npy,
   8 .mat, models, code). The readme says manual segmentations come from previous work and the data split
-  is stored as region-index files; the manual-segmentation files themselves were not clearly identified
-  in the zip listing (annotations_verified false). Voxel size, publication date and per-volume dimensions
-  not stated on the Zenodo record or readme; paper full text is not open access (abstract only read),
-  so voxel_size_nm is null. n_items = 3 volumes.'
+  is stored as region-index files. Voxel size, publication date and per-volume dimensions not stated on
+  the Zenodo record or readme; paper full text is not open access (abstract only read), so voxel_size_nm
+  is null. n_items = 3 volumes. enricher: manual segmentations found in data/manual_segmentation (100
+  binary 256x256 patches per volume), annotations_verified now true.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/4317170
+  - https://zenodo.org/records/4317170/files/fib_sem_cnn.zip
+  bytes_downloaded: 15244400
+  size_source: file-listing
+  layout:
+    tree: "readme .txt\nfib_sem_cnn.zip  (1,381 members)\n  *.py, *.m, *.mat           15 code / helper\
+      \ files\n  data/raw/HPC{22,30,45}/HPC<nn>_<nnnn>.tif   3 x 200 slices (9.2 GB)\n  data/manual_segmentation/manual_segmentation_HPC<nn>.{npy,mat},\
+      \ segmentation_regions_HPC<nn>.npy\n  data/regions/ind_squares_{train,val,test}_HPC<nn>.npy, data_split.mat\n\
+      \  data/seg/seg_HPC<nn>.mat + data/seg/HPC<nn>/seg_HPC<nn>_<nnnn>.png   3 x 200 CNN segmentations\n\
+      \  model/model_<a>_<b>/   36 trained models (.h5, .dat, .csv)\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/4317170/files/fib_sem_cnn.zip::data/raw/HPC22/HPC22_0001.tif
+    - https://zenodo.org/records/4317170/files/fib_sem_cnn.zip::data/manual_segmentation/manual_segmentation_HPC22.npy
+    - https://zenodo.org/records/4317170/files/fib_sem_cnn.zip::data/manual_segmentation/segmentation_regions_HPC22.npy
+    size_bytes: null
+    description: One raw slice (15.2 MB) plus the HPC22 manual-segmentation patches and their region index.
+  arrays:
+  - role: raw
+    path_pattern: data/raw/HPC<nn>/HPC<nn>_<nnnn>.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2247
+    - 3372
+    shape_varies: null
+    dtype: uint16
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 65535
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: One 2D TIFF per slice, 200 slices per volume.
+  - role: label
+    path_pattern: data/manual_segmentation/manual_segmentation_HPC<nn>.npy
+    format: other
+    axes: null
+    shape:
+    - 100
+    - 256
+    - 256
+    shape_varies: null
+    dtype: float32
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0.0
+    - 1.0
+    encoding: binary
+    classes: null
+    n_ids_observed: 2
+    alignment: cropped
+    alignment_notes: 100 manually segmented 256 x 256 patches per volume (selected regions per readme);
+      segmentation_regions_HPC<nn>.npy (3 x 100 uint16, values 3-2820) presumably gives their positions
+      in the raw volume, not documented in the files.
+  - role: label
+    path_pattern: data/seg/HPC<nn>/seg_HPC<nn>_<nnnn>.png
+    format: png
+    axes: yx
+    shape:
+    - 2247
+    - 3372
+    shape_varies: null
+    dtype: bool
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: binary
+    classes: null
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: Final CNN segmentation per raw slice (model output, not manual); same 2247 x 3372
+      grid.
+  notes: 'Listing: Zenodo API (zip + readme, exact sizes) and the zip central directory (1,381 members).
+    Sampled raw HPC22_0001.tif: 2247x3372 uint16, values 0-65535 with p1 = 0 and p99 = 65535 (saturated
+    at both ends, hence contrast-stretched); one slice only. probe.py could not parse the header of this
+    zip-deflated member, so the TIFF''s internal compression is unknown. size_bytes now includes the readme.
+    Read three .npy files with numpy (allow_pickle=False, scratch script): manual_segmentation_HPC22 100x256x256
+    float32 {0: 1,423,601, 1: 5,129,999}; segmentation_regions_HPC22 3x100 uint16; ind_squares_train_HPC22
+    1x60 uint8 (0-98). seg PNG probed: 2247x3372 1-bit.'
+  inspected_at: '2026-10-01T09:23:38Z'
