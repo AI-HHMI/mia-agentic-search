@@ -1,12 +1,12 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-15608207-ctc-fluo-n2dh-sim-plus
 title: 'Cell Tracking Challenge Fluo-N2DH-SIM+: simulated HL60 cell nuclei, fluorescence time-lapse with
   perfect segmentation and tracking ground truth (Zenodo)'
 short_name: Simulated HL60 nuclei tracking (fluorescence)
 description: Two computer-simulated 2D fluorescence time-lapse sequences (01 with 65 frames, 02 with 150
   frames) mimicking Hoechst-stained HL60 cell nuclei, from the Cell Tracking Challenge training set. Every
-  frame has simulated ground-truth segmentation masks (man_seg) and tracking marker images with a
-  man_track.txt lineage table. Deposited on Zenodo by the Cell Tracking Challenge.
+  frame has simulated ground-truth segmentation masks (man_seg) and tracking marker images with a man_track.txt
+  lineage table. Deposited on Zenodo by the Cell Tracking Challenge.
 landing_url: https://zenodo.org/records/15608207
 doi: 10.5281/zenodo.15608207
 repository: Zenodo
@@ -73,12 +73,80 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T13:45:00Z'
+  last_checked: '2026-10-01T13:59:09Z'
 notes: 'Zenodo record has no description; license CC-BY-4.0 is the one shown in the Zenodo API record.
   Zip index read with peek_archive (862 files): sequence 01 has 65 raw frames and 65 GT/SEG + 65 GT/TRA
   files, sequence 02 has 150 of each, plus ERR_SEG mask folders and man_track.txt. Cell type, microscope
-  being simulated (Zeiss Axiovert 100S, 40x/1.3), pixel size (0.125 um) and 29 min interval are from the CTC
-  2D dataset table, not the Zenodo page. Images are computer-generated; the paper states synthetic
-  datasets have exact simulated phantoms as reference annotations, so ground truth is dense and
-  automatic (simulation) rather than manual. Test-set annotations are secret. The CTC-hosted copy of
-  this dataset is not in the catalog.'
+  being simulated (Zeiss Axiovert 100S, 40x/1.3), pixel size (0.125 um) and 29 min interval are from the
+  CTC 2D dataset table, not the Zenodo page. Images are computer-generated; the paper states synthetic
+  datasets have exact simulated phantoms as reference annotations, so ground truth is dense and automatic
+  (simulation) rather than manual. Test-set annotations are secret. The CTC-hosted copy of this dataset
+  is not in the catalog. enricher: zip listed, frame + GT mask probed and sampled (see technical).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/15608207
+  - https://zenodo.org/records/15608207/files/Fluo-N2DH-SIM%2B.zip
+  bytes_downloaded: 408745
+  size_source: file-listing
+  layout:
+    tree: "Fluo-N2DH-SIM+.zip/Fluo-N2DH-SIM+/\n  01/tNNN.tif               65 frames, 25.4 MB\n  01_GT/SEG/man_segNNN.tif\
+      \  65\n  01_GT/TRA/man_trackNNN.tif + man_track.txt   65 + 1\n  01_ERR_SEG/               65\n \
+      \ 02/tNNN.tif               150 frames, 64.3 MB\n  02_GT/SEG/ 150, 02_GT/TRA/ 150 + man_track.txt,\
+      \ 02_ERR_SEG/ 150\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/15608207/files/Fluo-N2DH-SIM%2B.zip::Fluo-N2DH-SIM+/01/t030.tif
+    - https://zenodo.org/records/15608207/files/Fluo-N2DH-SIM%2B.zip::Fluo-N2DH-SIM+/01_GT/SEG/man_seg030.tif
+    size_bytes: null
+    description: Frame 30 of sequence 01 and its ground-truth segmentation (zip members); the whole zip
+      is 99 MB.
+  arrays:
+  - role: raw
+    path_pattern: <seq>/tNNN.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 690
+    - 628
+    shape_varies: null
+    dtype: uint16
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 72
+    - 328
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: <seq>_GT/SEG/man_segNNN.tif (segmentation), <seq>_GT/TRA/man_trackNNN.tif + man_track.txt
+      (tracking)
+    format: tiff
+    axes: yx
+    shape:
+    - 690
+    - 628
+    shape_varies: null
+    dtype: uint16
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 64
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 46
+    alignment: same-grid
+    alignment_notes: man_segNNN.tif belongs to frame tNNN.tif of the same sequence (CTC layout); identical
+      shape.
+  notes: 'Zenodo listing plus zip central directory: 862 members, 99,034,393 B, complete; every frame
+    has a GT/SEG mask (65 + 150), unlike real CTC datasets. Probes: 01/t030.tif and 01_GT/SEG/man_seg030.tif
+    uint16 690x628 LZW, no calibration. Sample: frame 72..328, mean 97 (hint: 12-bit range; simulated
+    data); mask 0..64 with 46 distinct values (instance IDs, not consecutive). Sequence 02 frames were
+    not probed.'
+  inspected_at: '2026-10-01T13:59:09Z'
