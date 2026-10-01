@@ -1,4 +1,4 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-18868353-dnai-dna-fiber-tiles
 title: 'DNAi: an open-source AI tool for unbiased DNA fiber analysis'
 short_name: DNA fiber assay tiles with fiber masks (widefield)
@@ -33,8 +33,8 @@ imaging:
   channels: 2
   organism:
   - Homo sapiens
-  sample: DNA fiber spreads on glass slides from U2OS and HeLa cells labelled with CldU and IdU, stained by
-    immunofluorescence, imaged on a Zeiss Axio Observer Z2 with 63x/1.4 oil objective and Axiocam 820
+  sample: DNA fiber spreads on glass slides from U2OS and HeLa cells labelled with CldU and IdU, stained
+    by immunofluorescence, imaged on a Zeiss Axio Observer Z2 with 63x/1.4 oil objective and Axiocam 820
   labels_stains:
   - CldU
   - IdU
@@ -51,9 +51,9 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: 'PNG masks in annotations/ folders mirroring images/ (zenodo/{train,test}/{images,annotations}/{V0,S1,Origins}/<n>.png;
+  format: PNG masks in annotations/ folders mirroring images/ (zenodo/{train,test}/{images,annotations}/{V0,S1,Origins}/<n>.png;
     zenodo/intergrader/ holds 20 images with four annotators H1-H4). Fibers traced with a fixed 3 px pencil;
-    ambiguous yellow transitions assigned to the second (green) label.'
+    ambiguous yellow transitions assigned to the second (green) label.
   source: manual
 ml:
   tasks:
@@ -76,12 +76,87 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T20:25:00Z'
-notes: 'DNAI_Data_V2.zip lists 3,690 files (3,670 PNG + 20 JPEG): train has 125 Origins, 580 S1 and 831 V0 image/mask
-  pairs (1,536), test has 58 Origins and 201 V0 (259), intergrader has 14 image folders with annotations
-  by H1-H4. Paper: 1,795 non-overlapping 2048 x 2048 tiles from Zeiss Z2 whole-slide scans, 14,728 fibers
-  labelled, 20% of train reserved as validation (no validation folder in the zip). Pixel size 0.26 um
-  from the Zenodo description. Label pixel values and what the Origins/S1/V0 folders denote (assay
-  conditions, replication origins, S1 nuclease treatment) were not opened or confirmed beyond the folder
-  names and paper. The paper also mentions DeltaVision and Leica confocal images used in other
-  experiments, not in this data.'
+  last_checked: '2026-10-01T20:19:32Z'
+notes: 'DNAI_Data_V2.zip lists 3,690 files (3,670 PNG + 20 JPEG): train has 125 Origins, 580 S1 and 831
+  V0 image/mask pairs (1,536), test has 58 Origins and 201 V0 (259), intergrader has 14 image folders
+  with annotations by H1-H4. Paper: 1,795 non-overlapping 2048 x 2048 tiles from Zeiss Z2 whole-slide
+  scans, 14,728 fibers labelled, 20% of train reserved as validation (no validation folder in the zip).
+  Pixel size 0.26 um from the Zenodo description. Label pixel values and what the Origins/S1/V0 folders
+  denote (assay conditions, replication origins, S1 nuclease treatment) were not opened or confirmed beyond
+  the folder names and paper. The paper also mentions DeltaVision and Leica confocal images used in other
+  experiments, not in this data. enricher: all tiles probed/sampled are 1024x1024 RGB PNG (paper says
+  2048x2048), so the 260 nm pixel size may refer to the original scans; masks are RGB colour-coded.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/18868353
+  - https://zenodo.org/records/18868353/files/DNAI_Data_V2.zip
+  bytes_downloaded: 3121125
+  size_source: file-listing
+  layout:
+    tree: |
+      DNAI_Data_V2.zip  (2,105,347,503 B, 3,690 members)
+        zenodo/train/images/{Origins 125, S1 580, V0 831}/<n>.png
+        zenodo/train/annotations/{Origins, S1, V0}/<n>.png      same names
+        zenodo/test/images/{Origins 58, V0 201}/<n>.png
+        zenodo/test/annotations/{Origins, V0}/<n>.png
+        zenodo/intergrader/  20 .jpeg images + annotations/H1-H4/common/<k>/tile_<n>.png
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/18868353/files/DNAI_Data_V2.zip::zenodo/test/images/Origins/1606.png
+    - https://zenodo.org/records/18868353/files/DNAI_Data_V2.zip::zenodo/test/annotations/Origins/1606.png
+    size_bytes: 1018937
+    description: One test tile and its colour-coded fiber mask.
+  arrays:
+  - role: raw
+    path_pattern: zenodo/{train,test}/images/<set>/<n>.png
+    format: png
+    axes: yxs
+    shape:
+    - 1024
+    - 1024
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB; in the sample R and G carry signal (means 227.8, 221.6) and B is ~0.
+  - role: label
+    path_pattern: zenodo/{train,test}/annotations/<set>/<n>.png
+    format: png
+    axes: yxs
+    shape:
+    - 1024
+    - 1024
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    encoding: rgb-colors
+    classes: null
+    n_ids_observed: 3
+    alignment: same-grid
+    alignment_notes: annotations/<set>/<n>.png pairs with images/<set>/<n>.png (same name); identical
+      1024x1024 shape in the sample (sample.py same_shape true).
+  notes: 'listing.py (Zenodo + zip directory): 1 file, 2,105,347,503 B exact, 3,690 members (3,670 PNG
+    + 20 JPEG); per folder: train images Origins 125 / S1 580 / V0 831, test Origins 58 / V0 201, with
+    matching annotation PNGs. probe.py on 8 members (train V0, S1, annotations, intergrader): all 1024x1024x3
+    uint8 PNG. sample.py on test Origins 1606: image RGB uint8 [0, 255], mean 150, saturated (hint only);
+    mask RGB with 2 colours (0,0,0) and (29,168,12) (170 px). A second mask (train V0 1330, custom zip
+    read) has 3 colours: (0,0,0), (255,0,0) 1,869 px, (0,255,9) 1,714 px, i.e. red and green fiber segments.
+    Colour-to-label meaning is not documented in the files. Tile size conflicts with the paper''s 2048x2048;
+    voxel_size_nm kept. Values are from 2 tiles.'
+  inspected_at: '2026-10-01T20:19:32Z'
