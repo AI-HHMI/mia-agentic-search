@@ -1,10 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: s-biad300-celegans-lifespan-movement-segmentation
 title: Caenorhabditis elegans microscopy dataset with lifespan, movement and segmentation annotations
 short_name: C. elegans lifespan and body masks (bright-field)
-description: Daily bright-field time-lapse micrographs (days 1-3 of adulthood) of C. elegans as 900x900 PNG crops, sorted
-  into train/validation/test folders by lifespan class (long/short) and movement class (high/low), plus 140 images with manual
-  head, mid and tail body-part masks.
+description: Daily bright-field time-lapse micrographs (days 1-3 of adulthood) of C. elegans as 900x900
+  PNG crops, sorted into train/validation/test folders by lifespan class (long/short) and movement class
+  (high/low), plus 140 images with manual head, mid and tail body-part masks.
 landing_url: https://www.ebi.ac.uk/biostudies/bioimages/studies/S-BIAD300
 doi: null
 repository: BioImageArchive
@@ -14,8 +14,8 @@ authors:
 - Zachary Pincus
 - Artur Yakimovich
 publications:
-- title: A tandem segmentation-classification approach for the localization of morphological predictors of C. elegans lifespan
-    and motility
+- title: A tandem segmentation-classification approach for the localization of morphological predictors
+    of C. elegans lifespan and motility
   doi: 10.18632/aging.203916
   url: https://doi.org/10.18632/aging.203916
 date_published: '2022-02-03'
@@ -32,7 +32,7 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: null
+  size_bytes: 29952692860
   n_items: 36247
   access: open
   download_url: https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/300/S-BIAD300/Files/
@@ -41,10 +41,10 @@ annotations:
   present: true
   types:
   - classification
-  - instance-segmentation
+  - semantic-segmentation
   coverage: partial
-  format: Folder-structure class labels (lifespan long/short, movement high/low); PNG masks per body part (headMask, midMask,
-    tailMask) under segmentation/*/img/masks/
+  format: Folder-structure class labels (lifespan long/short, movement high/low); PNG masks per body part
+    (headMask, midMask, tailMask) under segmentation/*/img/masks/
   source: manual
 ml:
   tasks:
@@ -66,14 +66,121 @@ provenance:
   - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/300/S-BIAD300/Files/segmentation/
   - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/300/S-BIAD300/Files/segmentation/train/img/
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8908923/fullTextXML
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/300/S-BIAD300/Files/file_list.json
   confidence: 0.65
 verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-01T03:52:57Z'
-notes: '36,247 files in file_list.tsv: lifespan (13,235 long / 4,711 short) and movement (9,473 high / 8,268 low) images split
-  into train / validate / test per day, plus segmentation: 140 images (100 train, 40 test) with 420 masks (headMask, midMask,
-  tailMask), plus 240 images in segmentation/train/img2 with no masks listed. Lifespan/movement labels are folder names. No
-  license or terms on the BioStudies record or in the paper text (paper article itself is CC-BY 3.0). Pixel size/objective
-  not stated on BioStudies page or in the paper text checked; one probed image: 900x900 RGB uint8 PNG.'
+  last_checked: '2026-10-01T06:33:02Z'
+notes: '36,247 files in file_list.tsv: lifespan (13,235 long / 4,711 short) and movement (9,473 high /
+  8,268 low) images split into train / validate / test per day, plus segmentation: 140 images (100 train,
+  40 test) with 420 masks (headMask, midMask, tailMask). Lifespan/movement labels are folder names. No
+  license or terms on the BioStudies record or in the paper text (paper article itself is CC-BY 3.0).
+  Pixel size/objective not stated on BioStudies page or in the paper text checked; one probed image: 900x900
+  RGB uint8 PNG. enricher: size_bytes = sum of file_list.json (was null). Masks are binary per body part,
+  so instance-segmentation -> semantic-segmentation. segmentation/train/img2 holds 60 images with masks
+  (not 240 without).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/300/S-BIAD300/Files/file_list.json
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/300/S-BIAD300/Files/segmentation/test/img/0_2016-02-22t0831_bf_crop_y991-x1652_.png
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/300/S-BIAD300/Files/segmentation/test/img/masks/headMask/0_2016-02-22t0831_bf_crop_y991-x1652_.png
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/300/S-BIAD300/Files/segmentation/test/img/masks/midMask/0_2016-02-22t0831_bf_crop_y991-x1652_.png
+  bytes_downloaded: 865554
+  size_source: page-stated
+  layout:
+    tree: "Files/  file_list.{json,tsv,xml}\n  lifespan/day{1,2,3}/{train,validate,test}/{long,short}/*.png\
+      \    17,946 files  ~15.0 GB\n    e.g. day1: train 3805 long / 951 short, validate 476/476, test\
+      \ 158/158\n  movement/day{1,2,3}/{train,validate,test}/{high,low}/*.png      17,741 files  ~14.8\
+      \ GB\n    e.g. day1: train 2623 high / 2224 low, validate 279/279, test 277/277\n  segmentation/train/img/\
+      \                40 png + masks/{headMask,midMask,tailMask}/ 40 each\n  segmentation/train/img2/\
+      \               60 png + masks/{headMask,midMask,tailMask}/ 60 each\n  segmentation/test/img/  \
+      \               40 png + masks/{headMask,midMask,tailMask}/ 40 each\n36,247 files, 29,952,692,860\
+      \ B (file_list.json)\n"
+    n_files: 36247
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/300/S-BIAD300/Files/segmentation/test/img/0_2016-02-22t0831_bf_crop_y991-x1652_.png
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/300/S-BIAD300/Files/segmentation/test/img/masks/headMask/0_2016-02-22t0831_bf_crop_y991-x1652_.png
+    size_bytes: 863409
+    description: One segmentation test image with its head mask (mid and tail masks share the stem).
+  arrays:
+  - role: raw
+    path_pattern: '{lifespan,movement}/day*/*/*/*.png, segmentation/*/img*/*.png'
+    format: png
+    axes: yxs
+    shape:
+    - 900
+    - 900
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 4
+    - 76
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: segmentation/*/img*/masks/{headMask,midMask,tailMask}/*.png
+    format: png
+    axes: yx
+    shape:
+    - 900
+    - 900
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: null
+      name: head
+    - id: null
+      name: mid
+    - id: null
+      name: tail
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: masks/<part>Mask/<name>.png pairs with img*/<name>.png; same 900x900 grid (raw RGB).
+      One binary mask file per body part.
+  - role: label
+    path_pattern: '{lifespan,movement}/day*/<split>/<class>/'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    encoding: other
+    classes:
+    - id: null
+      name: long
+    - id: null
+      name: short
+    - id: null
+      name: high
+    - id: null
+      name: low
+    n_ids_observed: null
+    alignment: not-applicable
+    alignment_notes: Image-level class = folder name (Cls_names attribute in file_list.json); lifespan
+      long/short, movement high/low.
+  notes: 'file_list.json (9.3 MB) read in full: 36,247 files with exact sizes and Experiments/Days/Holdouts/Cls_names
+    attributes; folder counts above are from it. Probe: head mask is a palette PNG 900x900. Sample: raw
+    RGB uint8 900x900, range 4..76 (p50 58; one image, dim brightfield); headMask and midMask {0,255}.
+    Classes named from folder names (head/mid/tail masks; long/short; high/low). Pixel size still not
+    found. License still not found.'
+  inspected_at: '2026-10-01T06:33:02Z'
