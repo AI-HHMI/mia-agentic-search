@@ -45,6 +45,9 @@ h2 { font-size: 15px; margin: 0 0 12px; }
 .bars .bar { height: 100%; background: var(--series-1); border-radius: 0 4px 4px 0; min-width: 2px; }
 .bars .num { font-variant-numeric: tabular-nums; font-size: 13px; color: var(--text-secondary); flex: none; }
 .bars .row { display: contents; }
+/* the row that groups the smallest categories: gray bar, italic label, its members in the tooltip */
+.bars .row.fold .lab { font-style: italic; color: var(--text-muted); }
+.bars .row.fold .bar { background: var(--text-muted); opacity: .55; }
 .cols { display: flex; align-items: flex-end; gap: 2px; height: 140px; border-bottom: 1px solid var(--grid); }
 .cols .c { flex: 1; background: var(--series-1); border-radius: 4px 4px 0 0; min-height: 0; position: relative; }
 .cols .hit { flex: 1; height: 100%; display: flex; align-items: flex-end; }
@@ -164,12 +167,14 @@ document.getElementById("health").innerHTML = `<tr><th>Routine</th><th>Status</t
 // Charts in the same `group` share one scale (equal lengths = equal counts across those panels); a chart
 // without a group has its own. Charts are queued with hbars() and drawn by drawBars() once maxima are known.
 const barCharts = [];
-function hbars(el, counts, {top = 10, unit = "datasets", group = null} = {}) {
+// `noun` names the categories ("modalities"); `display` relabels raw values (e.g. the schema value "other").
+function hbars(el, counts, {top = 10, unit = "datasets", group = null, noun = "categories", display = {}} = {}) {
   if (typeof el === "string") el = document.getElementById(el);
-  let entries = Object.entries(counts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  let entries = Object.entries(counts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([k, v]) => ({label: display[k] || k, v}));
   if (entries.length > top) {
     const rest = entries.slice(top - 1);
-    entries = [...entries.slice(0, top - 1), [`Other (${rest.length})`, rest.reduce((a, [, v]) => a + v, 0)]];
+    entries = [...entries.slice(0, top - 1), {label: `+ ${rest.length} more ${noun}`, v: rest.reduce((a, e) => a + e.v, 0), members: rest}];
   }
   barCharts.push({el, entries, unit, group: group || `solo-${barCharts.length}`});
 }
@@ -177,13 +182,18 @@ function drawBars() {
   const groups = {};
   barCharts.forEach(c => (groups[c.group] = groups[c.group] || []).push(c));
   Object.values(groups).forEach(charts => {
-    const max = Math.max(1, ...charts.flatMap(c => c.entries.map(e => e[1])));
+    const max = Math.max(1, ...charts.flatMap(c => c.entries.map(e => e.v)));
     charts.forEach(c => {
       c.max = max;
       if (!c.entries.length) { c.el.innerHTML = `<p class="empty">No data yet.</p>`; return; }
-      c.el.innerHTML = `<div class="bars">` + c.entries.map(([k, v]) =>
-        `<div class="row"><span class="lab" title="${esc(k)}">${esc(k)}</span><div class="track"><div class="bar" data-v="${v}"></div><span class="num">${v}</span></div></div>`).join("") + `</div>`;
-      c.el.querySelectorAll(".track").forEach((t, i) => bindTip(t, `<b>${esc(c.entries[i][0])}</b>: ${c.entries[i][1]} ${c.unit}`));
+      c.el.innerHTML = `<div class="bars">` + c.entries.map(e =>
+        `<div class="row${e.members ? " fold" : ""}"><span class="lab" title="${esc(e.label)}">${esc(e.label)}</span><div class="track"><div class="bar" data-v="${e.v}"></div><span class="num">${e.v}</span></div></div>`).join("") + `</div>`;
+      c.el.querySelectorAll(".track").forEach((t, i) => {
+        const e = c.entries[i];
+        bindTip(t, e.members
+          ? `<b>${esc(e.label)}</b> (${e.v} ${c.unit} in total):<br>` + e.members.map(m => `${esc(m.label)}: ${m.v}`).join("<br>")
+          : `<b>${esc(e.label)}</b>: ${e.v} ${c.unit}`);
+      });
     });
   });
   // Lengths in pixels against the group's largest count and its narrowest track, so within a group
@@ -198,7 +208,8 @@ function drawBars() {
   addEventListener("resize", size);
 }
 const tally = (rows, f) => rows.reduce((acc, r) => { (f(r) || []).forEach(k => acc[k] = (acc[k] || 0) + 1); return acc; }, {});
-hbars("anntype", tally(recs, r => r.annotations?.types?.length ? r.annotations.types : ["(none)"]));
+hbars("anntype", tally(recs, r => r.annotations?.types?.length ? r.annotations.types : ["(none)"]),
+      {noun: "types", display: {other: "other (unlisted type)"}});
 
 // Small multiples: one card per dimensionality, each with modality and organism distributions.
 // A dataset with several modalities / organisms counts once under each.
@@ -212,8 +223,10 @@ hbars("anntype", tally(recs, r => r.annotations?.types?.length ? r.annotations.t
   }).join("");
   DIMS.forEach(([d], i) => {
     const rows = recs.filter(r => r.imaging?.dimensionality === d);
-    hbars(`dim-mod-${i}`, tally(rows, r => r.imaging?.modality?.length ? r.imaging.modality : ["(not stated)"]), {top: 8, group: "dims"});
-    hbars(`dim-org-${i}`, tally(rows, r => r.imaging?.organism?.length ? r.imaging.organism : ["(not stated)"]), {top: 8, group: "dims"});
+    hbars(`dim-mod-${i}`, tally(rows, r => r.imaging?.modality?.length ? r.imaging.modality : ["(not stated)"]),
+          {top: 8, group: "dims", noun: "modalities", display: {other: "other (unlisted modality)"}});
+    hbars(`dim-org-${i}`, tally(rows, r => r.imaging?.organism?.length ? r.imaging.organism : ["(not stated)"]),
+          {top: 8, group: "dims", noun: "organisms"});
   });
 })();
 
@@ -262,7 +275,7 @@ if (unmerged === null || unmerged === undefined) {
   const blocked = unmerged.filter(p => !p.reasons[0].startsWith("meets all criteria"));
   const reasonsOf = p => [...new Set(p.reasons.map(shortReason))];
   const byReason = tally(blocked, reasonsOf);
-  hbars("reasons", byReason, {top: 50, unit: "PRs"});
+  hbars("reasons", byReason, {top: 50, unit: "PRs", noun: "reasons"});
   const lists = Object.entries(byReason).sort((a, b) => b[1] - a[1]).map(([reason, n]) => {
     const prs = blocked.filter(p => reasonsOf(p).includes(reason));
     return `<details class="reason"><summary>${esc(reason)}: ${n} PR${n === 1 ? "" : "s"}</summary><div class="prs">` +
