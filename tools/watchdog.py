@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.collect_runs import collect  # noqa: E402
 
 # Expected cadence in hours; keep in sync with the routine schedules and site_template.html.
-CADENCE_H = {"harvest-repositories": 1, "harvest-literature": 3, "harvest-websearch": 3, "maintainer": 24, "enricher": 2}
+CADENCE_H = {"harvest-repositories": 1, "harvest-literature": 1, "harvest-websearch": 1, "maintainer": 24, "enricher": 1}
 FINDS_DATASETS = ("harvest-repositories", "harvest-literature", "harvest-websearch")
 STALE_FACTOR = 2
 RUN_BUDGET_H = 2  # a run may take up to 2 h, and its log is only pushed when it ends

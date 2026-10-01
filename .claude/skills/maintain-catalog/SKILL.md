@@ -51,7 +51,7 @@ List the open PRs labeled `new-datasets` (with `gh pr list --label new-datasets 
 Note any PR open longer than 7 days. Then check freshness: run `git fetch origin` and
 `python -m tools.collect_runs`, which reads run logs from `main` and every `claude/state/*` branch.
 Find each routine's latest run.
-Flag any routine whose last run is older than 2× its cadence (repositories 1h, literature 3h, websearch 3h, enricher 2h).
+Flag any routine whose last run is older than 2× its cadence (repositories 1h, literature 1h, websearch 1h, enricher 1h).
 
 ## 5. Daily digest (Slack connector)
 Post a single message to `#mia-harvester`:
