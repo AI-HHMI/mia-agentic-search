@@ -1,10 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: codalab-9169-waspsyn-microwasp-synapses
 title: An Out-of-Domain Synapse Detection Challenge for Microwasp Brain Connectomes (WASPSYN, ISBI 2023)
 short_name: Microwasp brain synapse detection (FIB-SEM)
-description: 14 densely annotated 400x400x400-voxel isotropic (8 nm) FIB-SEM volumes of Megaphragma viggianii (microwasp) brains
-  from three specimens with presynapse and postsynapse point annotations and their one-to-many connectivity; 5 labeled
-  volumes for training and 9 test volumes for out-of-domain evaluation (WASPSYN challenge).
+description: 14 densely annotated 400x400x400-voxel isotropic (8 nm) FIB-SEM volumes of Megaphragma viggianii
+  (microwasp) brains from three specimens with presynapse and postsynapse point annotations and their
+  one-to-many connectivity; 5 labeled volumes for training and 9 test volumes for out-of-domain evaluation
+  (WASPSYN challenge).
 landing_url: https://codalab.lisn.upsaclay.fr/competitions/9169
 doi: null
 repository: other
@@ -38,7 +39,8 @@ imaging:
   channels: null
   organism:
   - Megaphragma viggianii
-  sample: whole heads of the miniature wasp Megaphragma, heavy-metal stained and resin embedded, from three brain specimens
+  sample: whole heads of the miniature wasp Megaphragma, heavy-metal stained and resin embedded, from
+    three brain specimens
   labels_stains: []
 data:
   formats:
@@ -54,7 +56,8 @@ annotations:
   - synapse
   - points
   coverage: dense
-  format: pre- and post-synaptic point coordinates with one-to-many connectivity (annotated in CATMAID and NeuTu with DVID)
+  format: pre- and post-synaptic point coordinates with one-to-many connectivity (annotated in CATMAID
+    and NeuTu with DVID)
   source: manual
 ml:
   tasks:
@@ -72,16 +75,95 @@ provenance:
   - https://arxiv.org/pdf/2302.00545
   - https://pmc.ncbi.nlm.nih.gov/articles/PMC11585350/
   - https://codalab.lisn.upsaclay.fr/competitions/9169
+  - https://raw.githubusercontent.com/Yicong-Li/WASPSYN23/main/starter_code.ipynb
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-01T06:20:00Z'
-notes: 'Data are served from the Codalab competition page, which requires logging in; the page content that lists the files
-  and terms was not visible without login, so annotations_verified is false and no file listing or size was read. Voxel size, 14
-  volumes (3 + 3 + 8 chunks of 400^3 voxels), 5 train / 9 test split, point annotations and CATMAID / NeuTu annotation tools come
-  from the arXiv preprint; the CC-BY release after the challenge and the Codalab hosting come from the arXiv and PMC pages
-  (license is stated only as "CC-BY license" with no version, so spdx is "custom"). The arXiv
-  changelog says training and test data were released in H5 format (2023-01-31). The 9 test volumes are unlabeled on the
-  platform (evaluation by submission), so only 5 labeled volumes are directly usable for training.'
+  last_checked: '2026-10-01T06:06:11Z'
+notes: 'Data are served from the Codalab competition page, which requires logging in; the page content
+  that lists the files and terms was not visible without login, so annotations_verified is false and no
+  file listing or size was read. Voxel size, 14 volumes (3 + 3 + 8 chunks of 400^3 voxels), 5 train /
+  9 test split, point annotations and CATMAID / NeuTu annotation tools come from the arXiv preprint; the
+  CC-BY release after the challenge and the Codalab hosting come from the arXiv and PMC pages (license
+  is stated only as "CC-BY license" with no version, so spdx is "custom"). The arXiv changelog says training
+  and test data were released in H5 format (2023-01-31). The 9 test volumes are unlabeled on the platform
+  (evaluation by submission), so only 5 labeled volumes are directly usable for training. enricher: the
+  Codalab page now renders without login; its Terms say academic use only, commercial use prohibited (alongside
+  "CC-BY"). Downloads still need login.'
+technical:
+  method: metadata-only
+  inspected_urls:
+  - https://codalab.lisn.upsaclay.fr/competitions/9169
+  - https://raw.githubusercontent.com/Yicong-Li/WASPSYN23/main/starter_code.ipynb
+  bytes_downloaded: 0
+  size_source: unknown
+  layout:
+    tree: "(from the starter notebook's paths, not a listing)\ndatasets/training_set/train_sample3_vol<k>/\n\
+      \  img_zyx_<z0-z1>_<y0-y1>_<x0-x1>.h5    keys: main, voxel_offset, voxel_size\n  syns_zyx_<z0-z1>_<y0-y1>_<x0-x1>.h5\
+      \   keys: pre, post, pre_confidence, pre_users, post_users, resolution\n"
+    n_files: null
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: training_set/train_sample3_vol*/img_zyx_*.h5 (dataset main)
+    format: hdf5
+    axes: zyx
+    shape:
+    - 400
+    - 410
+    - 400
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    lossy: null
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Shape printed by the starter notebook for train_sample3_vol0; axis order from the
+      zyx file name.
+  - role: label
+    path_pattern: training_set/train_sample3_vol*/syns_zyx_*.h5 (dataset pre)
+    format: hdf5
+    axes: null
+    shape:
+    - 295
+    - 3
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    lossy: null
+    chunks: null
+    encoding: points-table
+    classes: null
+    n_ids_observed: null
+    alignment: offset
+    alignment_notes: Rows are z,y,x pre-synapse coordinates in global volume space; subtract the z0/y0/x0
+      offsets in the file name to index the img volume (starter notebook).
+  - role: label
+    path_pattern: training_set/train_sample3_vol*/syns_zyx_*.h5 (dataset post)
+    format: hdf5
+    axes: null
+    shape:
+    - 880
+    - 4
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    lossy: null
+    chunks: null
+    encoding: points-table
+    classes: null
+    n_ids_observed: null
+    alignment: offset
+    alignment_notes: Column 1 is the row index of the connected pre-synapse, columns 2-4 the z,y,x post-synapse
+      coordinate, same global offset as pre.
+  notes: 'Files are behind the Codalab login ("Participate" tab), so nothing was listed, probed or sampled.
+    Layout, HDF5 keys and shapes are copied from the printed outputs of the organisers'' starter_code.ipynb
+    (GitHub) for train_sample3_vol0: image main (400, 410, 400); pre (295, 3); post (880, 4). dtypes,
+    compression, value ranges and total size are unknown. The competition page lists 5 labelled training
+    volumes from sample 3 and unlabelled test volumes from samples 1-3.'
+  inspected_at: '2026-10-01T06:06:11Z'
