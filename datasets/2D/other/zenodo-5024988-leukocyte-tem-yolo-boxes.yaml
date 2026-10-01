@@ -1,12 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-5024988-leukocyte-tem-yolo-boxes
 title: An endothelial monolayer with leukocytes annotated for classification with bounding boxes for YOLO
 short_name: Leukocyte transmigration bounding boxes (YOLO)
-description: >-
-  Frames from movies of leukocyte transendothelial migration (TEM) across an endothelial monolayer, annotated
-  with bounding boxes (Pascal-VOC-style XML, made with Makesense.ai) for training a YOLO detector on
-  ZeroCostDL4Mic. Four zips (Dataset_1 to Dataset_4) each hold about 40 annotated training images and 3 test
-  images, differing in how the leukocyte classes are defined.
+description: Frames from movies of leukocyte transendothelial migration (TEM) across an endothelial monolayer,
+  annotated with bounding boxes (Pascal-VOC-style XML, made with Makesense.ai) for training a YOLO detector
+  on ZeroCostDL4Mic. Four zips (Dataset_1 to Dataset_4) each hold about 40 annotated training images and
+  3 test images, differing in how the leukocyte classes are defined.
 landing_url: https://zenodo.org/records/5024988
 doi: 10.5281/zenodo.5024988
 repository: Zenodo
@@ -30,7 +29,7 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: null
+  size_bytes: 248122666
   n_items: 43
   access: open
   download_url: https://zenodo.org/records/5024988/files/Dataset_1_Leukocytes.zip
@@ -41,7 +40,7 @@ annotations:
   - bounding-box
   - classification
   coverage: dense
-  format: XML bounding-box files in Training_Annotations folders next to PNG images
+  format: Pascal VOC XML (one <name>.xml per <name>.png in Training_/Test_Annotations, made with Makesense.ai)
   source: manual
 ml:
   tasks:
@@ -67,13 +66,84 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T17:20:00Z'
-notes: >-
-  No paper is cited on the record page, so none is listed. The page does not state the imaging modality,
+  last_checked: '2026-10-01T17:17:30Z'
+notes: 'No paper is cited on the record page, so none is listed. The page does not state the imaging modality,
   pixel size, organism or cell types; modality is therefore recorded as other. Zip listings (peek_archive):
-  Dataset_1 has 43 PNG and 43 XML, Dataset_2 43 PNG and 43 XML, Dataset_3 45 PNG and 43 XML, Dataset_4 44 PNG
-  and 42 XML, each with Test_Images/ (3 images listed first) and Training_Annotations/. The four zips appear
-  to contain the same Image*.png files with different annotation class definitions (not confirmed by opening
-  the XML), so n_items counts one set of about 43 images. size_bytes is null because the four zips would
-  double count the images. The page notes the trained YOLO model had many false negatives and suggests more
-  training data. Also in the record: Predictions_YOLO_adhv_Dataset3.zip and a prediction GIF (not training data).
+  Dataset_1 has 43 PNG and 43 XML, Dataset_2 43 PNG and 43 XML, Dataset_3 45 PNG and 43 XML, Dataset_4
+  44 PNG and 42 XML, each with Test_Images/ (3 images listed first) and Training_Annotations/. The four
+  zips appear to contain the same Image*.png files with different annotation class definitions (not confirmed
+  by opening the XML), so n_items counts one set of about 43 images. size_bytes is null because the four
+  zips would double count the images. The page notes the trained YOLO model had many false negatives and
+  suggests more training data. Also in the record: Predictions_YOLO_adhv_Dataset3.zip and a prediction
+  GIF (not training data). enricher: size_bytes = complete Zenodo listing (all 6 files, incl. predictions
+  zip and GIF).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/5024988
+  - https://zenodo.org/records/5024988/files/Dataset_1_Leukocytes.zip
+  - https://zenodo.org/records/5024988/files/Dataset_3_Combi_in_een_image.zip
+  bytes_downloaded: 1042327
+  size_source: file-listing
+  layout:
+    tree: "Dataset_1_Leukocytes.zip/Dataset_1_Leukocytes/\n  Training_Images/ 40 .png   Training_Annotations/\
+      \ 40 .xml\n  Test_Images/      3 .png   Test_Annotations/      3 .xml\nDataset_2_TEM.zip/Dataset_2_TEM/\
+      \                 Training 38+38, Test 3+3, Predict_Images 2 + Predict_Annotations_byhand 2\nDataset_3_Combi_in_een_image.zip/...\
+      \             Training 40+40, Test 3+3, Predict_Images 2\nDataset_4_Combi_verschillende_images.zip/...\
+      \     Training 39+39, Test 3+3, Predict_Images 2\nPredictions_YOLO_adhv_Dataset3.zip           \
+      \    13 png, 1 csv, 1 tif (model outputs)\nprediction GIF\n6 files, 248,122,666 B\n"
+    n_files: 6
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5024988/files/Dataset_1_Leukocytes.zip::Dataset_1_Leukocytes/Training_Images/Image8.png
+    - https://zenodo.org/records/5024988/files/Dataset_1_Leukocytes.zip::Dataset_1_Leukocytes/Training_Annotations/Image8.xml
+    size_bytes: 1040327
+    description: One training image (Image8.png) and its VOC XML box file.
+  arrays:
+  - role: raw
+    path_pattern: Dataset_*.zip::Dataset_*/{Training,Test}_Images/Image<N>.png
+    format: png
+    axes: yxs
+    shape:
+    - 1024
+    - 1344
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: Dataset_*.zip::Dataset_*/{Training,Test}_Annotations/Image<N>.xml
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: boxes-table
+    classes:
+    - id: null
+      name: Leukocyte
+    - id: null
+      name: TEM
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: Image<N>.xml names Image<N>.png in <filename> and gives <size> 1344x1024x3, matching
+      the PNG; boxes are xmin/ymin/xmax/ymax in pixels.
+  notes: 'Listing complete (Zenodo API, 6 files; 5 zips expanded, 362 members). PNG headers: Image8.png
+    1024x1344 RGB uint8 (second probe failed on a Zenodo TLS error). Sample Image8.png: [0, 255], mean
+    66, p50 40, p99 222 (one sample). VOC XML read for Image8 in Dataset_1 (class Leukocyte only) and
+    Dataset_3 (6 Leukocyte + 41 TEM boxes), confirming that the zips share images but differ in class
+    definitions. Label format is Pascal VOC XML, which has no schema value, so format is other.'
+  inspected_at: '2026-10-01T17:17:30Z'
