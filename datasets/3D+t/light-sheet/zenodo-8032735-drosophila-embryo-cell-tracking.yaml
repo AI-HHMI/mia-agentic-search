@@ -1,4 +1,4 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-8032735-drosophila-embryo-cell-tracking
 title: Drosophila Cell Tracking
 short_name: Drosophila embryo cell tracking (light-sheet)
@@ -36,7 +36,7 @@ data:
   formats:
   - hdf5
   - tiff
-  size_bytes: 1597026727
+  size_bytes: 1597397952
   n_items: 100
   access: open
   download_url: https://zenodo.org/api/records/8032735/files/drosophila-cell-tracking.zip/content
@@ -72,7 +72,7 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T06:47:28Z'
+  last_checked: '2026-10-01T08:23:29Z'
 notes: 'Zenodo record (Zenodo API lists the license as other-nc) and its LICENSE.txt: "This data must
   be used for research purposes only", citation required, hence spdx custom. Zip listing (peek_archive,
   510 files, 1.6 GB): raw_data/drosophila_raw_000-099.h5 (670 MB), segmentation h5 plus about 100 per-time-step
@@ -81,4 +81,120 @@ notes: 'Zenodo record (Zenodo API lists the license as other-nc) and its LICENSE
   so source is mixed. The paper (Bioinformatics 2015) is not open access, so only its abstract was read
   via Europe PMC; voxel size, time interval and image dimensions are not stated on the dataset page and
   were not read from the HDF5 headers, so voxel_size_nm is null. Older record (2014), moved from the Heidelberg
-  benchmarks page.'
+  benchmarks page. enricher: size_bytes now covers all 3 record files from a complete listing (was 1,597,026,727).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/8032735
+  - https://zenodo.org/records/8032735/files/drosophila-cell-tracking.zip
+  bytes_downloaded: 7700622
+  size_source: file-listing
+  layout:
+    tree: "3 record files (zip, .txt, .png), 1.6 GB\ndrosophila-cell-tracking.zip (510 members)\n  drosophila_manualTracking-ilastik.ilp\
+      \   72.9 MB\n  raw_data/drosophila_raw_000-099.h5      669.9 MB\n  raw_data/TIF/Time###.tif    \
+      \            100 files, 1.4 GB\n  segmentation/segmentation.h5 + TIF/segmentation_t=###.tiff (100)\n\
+      \  object_identities/*.h5 + TIF/oids_t=###.tiff (100)\n  manual_annotations/manual_annotations.h5\
+      \   533.4 MB\n    convenience_files/CSV/manual_annotations_{tracks,divisions}.csv\n    convenience_files/H5-Events-Sequence/\
+      \ (100 .h5)\n    convenience_files/track_identities/*.h5 + TIF/tids_t=###.tiff (100)\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/8032735/files/drosophila-cell-tracking.zip::drosophila-cell-tracking/raw_data/TIF/Time014.tif
+    - https://zenodo.org/records/8032735/files/drosophila-cell-tracking.zip::drosophila-cell-tracking/segmentation/TIF/segmentation_t=014.tiff
+    size_bytes: 7030356
+    description: Time point 14 as a TIFF stack (30x320x730) and its binary segmentation (zip members,
+      compressed sizes).
+  arrays:
+  - role: raw
+    path_pattern: drosophila-cell-tracking/raw_data/TIF/Time###.tif
+    format: tiff
+    axes: null
+    shape:
+    - 30
+    - 320
+    - 730
+    shape_varies: false
+    dtype: uint16
+    compression: unknown
+    lossy: null
+    chunks: null
+    value_range:
+    - 0
+    - 1260
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: drosophila-cell-tracking/segmentation/TIF/segmentation_t=###.tiff
+    format: tiff
+    axes: null
+    shape:
+    - 30
+    - 320
+    - 730
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 1
+    encoding: binary
+    classes: null
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: segmentation_t=NNN.tiff pairs with Time0NN.tif by time index; identical 30x320x730
+      shape.
+  - role: label
+    path_pattern: drosophila-cell-tracking/object_identities/TIF/oids_t=###.tiff
+    format: tiff
+    axes: null
+    shape:
+    - 30
+    - 320
+    - 730
+    shape_varies: false
+    dtype: uint32
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 878
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 729
+    alignment: same-grid
+    alignment_notes: Per-time-point object IDs on the raw grid; the divisions CSV refers to them as parent_oid
+      / child_oid.
+  - role: label
+    path_pattern: drosophila-cell-tracking/manual_annotations/convenience_files/track_identities/TIF/tids_t=###.tiff
+    format: tiff
+    axes: null
+    shape:
+    - 30
+    - 320
+    - 730
+    shape_varies: false
+    dtype: uint32
+    compression: unknown
+    lossy: null
+    chunks: null
+    value_range:
+    - 0
+    - 65535
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 657
+    alignment: same-grid
+    alignment_notes: Track IDs per voxel; manual_annotations_divisions.csv columns are timestep, parent_oid,
+      track_id, child1_oid, child_track1_id, child2_oid, child_track2_id.
+  notes: Listing via the Zenodo API (3 files, exact) with the zip expanded. Probes - segmentation_t=014.tiff
+    uint8 320x730 pages LZW, oids_t=014.tiff uint32 LZW; the raw Time014.tif header probe failed inside
+    the deflated zip member (compression unknown). Samples at t=014 - raw uint16 30x320x730, 0..1260 (12-bit-like
+    range); segmentation {0,1}; oids 0..878 (729 values); tids 0..65535 (657 values; 65535 may be a special
+    value, undocumented). Page axis taken as z by the stack shape, but the TIFFs do not state axes, so
+    null. The HDF5 files were not probed. Value ranges from one time point.
+  inspected_at: '2026-10-01T08:23:29Z'
