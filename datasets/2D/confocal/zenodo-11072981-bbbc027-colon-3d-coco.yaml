@@ -1,10 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-11072981-bbbc027-colon-3d-coco
 title: 3D cell instance segmentation dataset (BBBC027 synthetic colon tissue slices, MS-COCO format)
 short_name: Synthetic colon tissue cell instances (confocal)
-description: Per-slice 2D PNG images and per-instance mask PNGs, with MS-COCO annotation JSON, derived from
-  the 30 simulated 3D colon-tissue image sets of BBBC027 (high-SNR variant). Provided with a train (24
-  volumes) and test (6 volumes) split.
+description: Per-slice 2D PNG images and per-instance mask PNGs, with MS-COCO annotation JSON, derived
+  from the 30 simulated 3D colon-tissue image sets of BBBC027 (high-SNR variant). Provided with a train
+  (24 volumes) and test (6 volumes) split.
 landing_url: https://zenodo.org/records/11072981
 doi: 10.5281/zenodo.11072981
 repository: Zenodo
@@ -23,14 +23,14 @@ imaging:
   voxel_size_nm: null
   channels: 1
   organism: []
-  sample: Simulated (digital phantom) colon tissue rendered with a virtual microscope imitating a Zeiss S100
-    confocal; no real specimen
+  sample: Simulated (digital phantom) colon tissue rendered with a virtual microscope imitating a Zeiss
+    S100 confocal; no real specimen
   labels_stains: []
 data:
   formats:
   - png
-  size_bytes: null
-  n_items: null
+  size_bytes: 4671781266
+  n_items: 2910
   access: open
   download_url: https://zenodo.org/api/records/11072981/files/train.zip/content
   download_method: http
@@ -66,13 +66,95 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T08:41:35Z'
+  last_checked: '2026-10-01T10:49:27Z'
 notes: 'Derived from BBBC027, which is synthetic (simulated) data, so there is no real specimen or organism.
-  Zip listings: train.zip holds 539,388 PNGs and test.zip 126,693 PNGs (images under <slice>/images/, one
-  mask PNG per cell instance under <slice>/masks/); the number of image slices alone was not counted, so
-  n_items is null. A sampled test image is 1030x1300 8-bit grayscale PNG. info_split.json lists 24 train
-  and 6 test source volumes. Voxel size not stated on the Zenodo page or BBBC027 page; the ICIAR paper
-  full text is not open access and only the abstract/metadata was reachable. Total size is not set because
-  the sum of the four data files was not confirmed by a complete listing. Masks are derived automatically
+  Zip listings: train.zip holds 539,388 PNGs and test.zip 126,693 PNGs (images under <slice>/images/,
+  one mask PNG per cell instance under <slice>/masks/); the number of image slices alone was not counted,
+  so n_items is null. A sampled test image is 1030x1300 8-bit grayscale PNG. info_split.json lists 24
+  train and 6 test source volumes. Voxel size not stated on the Zenodo page or BBBC027 page; the ICIAR
+  paper full text is not open access and only the abstract/metadata was reachable. Total size is not set
+  because the sum of the four data files was not confirmed by a complete listing. Masks are derived automatically
   from the simulation ground truth (BBBC027 binary masks), converted by the depositor; unannotated slices
-  were removed.'
+  were removed. enricher: size_bytes and n_items (2,910 slices) from the complete listing; were null.'
+technical:
+  method: sample
+  inspected_at: '2026-10-01T10:49:27Z'
+  inspected_urls:
+  - https://zenodo.org/records/11072981
+  - https://zenodo.org/records/11072981/files/test.zip
+  bytes_downloaded: 914692
+  size_source: file-listing
+  layout:
+    tree: "train.zip (2,303,442,567 B)/train/<vol>_<slice>/\n  images/<vol>_<slice>.png        2,328 slices\n\
+      \  masks/<vol>_<slice>_<NNN>.png   537,060 per-instance masks\ntest.zip (581,826,148 B)/test/<vol>_<slice>/\n\
+      \  images/  582 slices;  masks/  126,111\ntrain.json (1.44 GB), test.json (346 MB)   MS-COCO\ninfo_split.json,\
+      \ citation.bib\n6 files, 4,671,781,266 B; 666,081 zip members\n"
+    n_files: 6
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/11072981/files/test.zip::test/0008_004/images/0008_004.png
+    - https://zenodo.org/records/11072981/files/test.zip::test/0008_004/masks/0008_004_000.png
+    size_bytes: 915945
+    description: One test slice and one of its instance masks.
+  arrays:
+  - role: raw
+    path_pattern: '{train,test}/<vol>_<slice>/images/<vol>_<slice>.png'
+    format: png
+    axes: yx
+    shape:
+    - 1030
+    - 1300
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '{train,test}/<vol>_<slice>/masks/<vol>_<slice>_<NNN>.png'
+    format: png
+    axes: yx
+    shape:
+    - 1030
+    - 1300
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: One binary PNG per cell instance in masks/ next to the slice image in images/; same
+      shape in the sample.
+  - role: label
+    path_pattern: '{train,test}.json'
+    format: json
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: unknown
+    classes: null
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: COCO images entries reference <vol>_<slice>/images/<vol>_<slice>.png with height
+      1030, width 1300 (first 1.5 KB of test.json read; segmentation encoding not reached).
+  notes: Zenodo listing complete with exact sizes. Sampled test slice 0008_004 (1030x1300 uint8 gray,
+    0..255, 143 values) and mask 0008_004_000.png ({0,255}, 27 foreground px). test.json info block gives
+    dataset mean 0.2704 and std 0.2376 (on 0..1 scale) but no normalization of the files is stated. Values
+    from one sample.
