@@ -1,8 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: ctc-fluo-c2dl-msc
 title: Cell Tracking Challenge Fluo-C2DL-MSC (rat mesenchymal stem cells)
 short_name: Rat mesenchymal stem cell tracking (fluorescence)
-description: 2D+t fluorescence time-lapse of rat mesenchymal stem cells on a polyacrylamide substrate from the Cell Tracking Challenge, with two training sequences (01, 02) that include tracking (TRA) gold masks, sparse gold and dense silver segmentation (SEG) masks; test sequences are released separately.
+description: 2D+t fluorescence time-lapse of rat mesenchymal stem cells on a polyacrylamide substrate
+  from the Cell Tracking Challenge, with two training sequences (01, 02) that include tracking (TRA) gold
+  masks, sparse gold and dense silver segmentation (SEG) masks; test sequences are released separately.
 landing_url: http://celltrackingchallenge.net/2d-datasets/
 doi: null
 repository: LabWebsite
@@ -19,13 +21,14 @@ imaging:
   dimensionality: 2D+t
   voxel_size_nm: null
   channels: 1
-  organism: [Rattus norvegicus]
+  organism:
+  - Rattus norvegicus
   sample: rat mesenchymal stem cells on a flat polyacrylamide substrate
   labels_stains: []
 data:
   formats:
   - tiff
-  size_bytes: 76700000
+  size_bytes: 76729448
   n_items: 2
   access: open
   download_url: https://data.celltrackingchallenge.net/training-datasets/Fluo-C2DL-MSC.zip
@@ -36,7 +39,8 @@ annotations:
   - tracking
   - instance-segmentation
   coverage: partial
-  format: 'TIFF label masks: NN_GT/TRA (every frame), NN_GT/SEG (sparse gold frames), NN_ST/SEG (silver segmentation for every frame), NN_ERR_SEG'
+  format: 'TIFF label masks: NN_GT/TRA (every frame), NN_GT/SEG (sparse gold frames), NN_ST/SEG (silver
+    segmentation for every frame), NN_ERR_SEG'
   source: unknown
 ml:
   tasks:
@@ -61,5 +65,97 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T11:33:46Z'
-notes: 'Training zip: sequences 01, 02 (about 49 frames each), GT/TRA 49 masks each, gold GT/SEG 18 (01) and 33 (02) frames, silver ST/SEG 48 per sequence. CTC page lists a 10x/0.3 objective, 0.3 um pixels, 20 min steps and, in parentheses, 20x/0.75, 0.3977 um, 30 min (likely the other sequence; mapping unverified, so voxel size is null). Custom terms: cite the Nature Methods papers; non-CTC scientific or commercial use needs organizer permission; cloning datasets or annotations is prohibited. Size is the compressed training zip. The Nature Methods paper is not open access (abstract record only), so annotation procedure is unknown. Checked: CTC 2D page, terms page, zip listing.'
+  last_checked: '2026-10-01T12:44:23Z'
+notes: 'Training zip: sequences 01, 02 (48 frames each), GT/TRA 48 masks + man_track.txt each, gold GT/SEG
+  18 (01) and 33 (02) frames, silver ST/SEG 48 per sequence. CTC page lists a 10x/0.3 objective, 0.3 um
+  pixels, 20 min steps and, in parentheses, 20x/0.75, 0.3977 um, 30 min (likely the other sequence; mapping
+  unverified, so voxel size is null). Custom terms: cite the Nature Methods papers; non-CTC scientific
+  or commercial use needs organizer permission; cloning datasets or annotations is prohibited. The Nature
+  Methods paper is not open access, so annotation procedure is unknown. enricher: size_bytes = 76,729,448
+  B from the complete zip listing (was 76.7e6); frames are 832x992 (01) and 782x1200 (02) uint16.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://data.celltrackingchallenge.net/training-datasets/Fluo-C2DL-MSC.zip
+  bytes_downloaded: 677425
+  size_source: file-listing
+  layout:
+    tree: "Fluo-C2DL-MSC.zip/Fluo-C2DL-MSC/\n  01/t000.tif ... t047.tif           48 frames, 31.6 MB\n\
+      \  01_GT/SEG/man_segNNN.tif           18 gold segmentation frames\n  01_GT/TRA/man_trackNNN.tif\
+      \ + man_track.txt   48 + 1\n  01_ST/SEG/man_segNNN.tif           48 silver segmentations\n  01_ERR_SEG/*.tif\
+      \                   48\n  02/... same layout (48 frames, 41.8 MB; GT/SEG 33)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.celltrackingchallenge.net/training-datasets/Fluo-C2DL-MSC.zip::Fluo-C2DL-MSC/01/t005.tif
+    - https://data.celltrackingchallenge.net/training-datasets/Fluo-C2DL-MSC.zip::Fluo-C2DL-MSC/01_GT/SEG/man_seg005.tif
+    size_bytes: null
+    description: One frame of sequence 01 with its gold segmentation mask (zip members); the whole zip
+      is 76.7 MB.
+  arrays:
+  - role: raw
+    path_pattern: <seq>/tNNN.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 832
+    - 992
+    shape_varies: true
+    dtype: uint16
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 3584
+    - 41216
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: <seq>_GT/SEG/man_segNNN.tif (gold), <seq>_ST/SEG/man_segNNN.tif (silver)
+    format: tiff
+    axes: yx
+    shape:
+    - 832
+    - 992
+    shape_varies: true
+    dtype: uint16
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 8
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 9
+    alignment: same-grid
+    alignment_notes: man_segNNN.tif belongs to frame tNNN.tif of the same sequence; identical shape.
+  - role: label
+    path_pattern: <seq>_GT/TRA/man_trackNNN.tif + man_track.txt
+    format: tiff
+    axes: yx
+    shape:
+    - 832
+    - 992
+    shape_varies: true
+    dtype: uint16
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 12
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 9
+    alignment: same-grid
+    alignment_notes: Track marker masks carry track IDs; man_track.txt rows are "label start_frame end_frame
+      parent" (e.g. "2 28 47 0").
+  notes: 'Zip central directory listed (437 members, exact sizes). Probes: 01/t005.tif and 01_GT/SEG/man_seg005.tif
+    uint16 832x992 LZW; 02/t000.tif uint16 782x1200 LZW. Samples: raw 01/t005 3584..41216 in 132 distinct
+    values, all multiples of 256 (8-bit data stored in uint16); gold SEG man_seg005 values 0..8, 9 distinct
+    (instance IDs, 95% background); TRA man_track005 values {0,1,3,4,6,7,9,11,12} (track IDs). man_track.txt
+    read with peek_archive --cat. Silver ST/SEG and ERR_SEG not sampled.'
+  inspected_at: '2026-10-01T12:44:23Z'
