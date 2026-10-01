@@ -1,0 +1,99 @@
+schema_version: '1.2'
+id: kaggle-christinabukas-multiorg-lung-organoids
+title: 'MultiOrg: multi-rater lung organoid detection dataset (bright-field, whole-well images)'
+short_name: MultiOrg lung organoid boxes (brightfield)
+description: 411 stitched, maximum-projected bright-field TIFF images of whole wells of murine lung organoids from 26 studies
+  (1.29 um pixels), with about 60,000 organoids boxed by two expert annotators. The test set has three label sets (annotator
+  A and B at time t0 and again at t1) so label noise can be measured; train and test folders are provided.
+landing_url: https://www.kaggle.com/datasets/christinabukas/mutliorg
+doi: null
+repository: Kaggle
+accession: christinabukas/mutliorg
+authors:
+- Bukas, Christina
+publications:
+- title: 'MultiOrg: A Multi-rater Organoid-detection Dataset'
+  doi: 10.48550/arXiv.2410.14612
+  url: https://arxiv.org/abs/2410.14612
+date_published: '2025-12-10'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 1290
+    y: 1290
+    z: null
+  channels: 1
+  organism:
+  - Mus musculus
+  sample: murine lung organoids in 3D matrigel plate wells, imaged as 2D layers per tile, stitched and max-projected (Zeiss
+    Zen 2 Blue)
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 35373578391
+  n_items: 411
+  access: registration
+  download_url: https://www.kaggle.com/datasets/christinabukas/mutliorg
+  download_method: api
+annotations:
+  present: true
+  types:
+  - bounding-box
+  coverage: dense
+  format: per-image JSON dictionary of box corner points (image_N_Annotator_A.json for train; image_N_t0_A/B.json, t1_A, t1_B
+    for test); train/Normal, train/Macros, test/Normal, test/Macros folders by plate
+  source: manual
+ml:
+  tasks:
+  - detection
+  splits_provided: true
+  benchmark: MultiOrg Kaggle benchmark
+  baseline_code_url: https://www.kaggle.com/code/christinabukas/multiorg-detection-benchmark
+license:
+  spdx: CC-BY-NC-SA-4.0
+  url: https://creativecommons.org/licenses/by-nc-sa/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-01T15:16:53Z'
+  evidence_urls:
+  - https://www.kaggle.com/api/v1/datasets/view/christinabukas/mutliorg
+  - https://www.kaggle.com/api/v1/datasets/list/christinabukas/mutliorg
+  - https://arxiv.org/html/2410.14612v1
+  confidence: 0.85
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-01T18:06:29Z'
+notes: 'Read the Kaggle API record and full file listing (v2 folder: train Normal 316 + Macros 40 images, test Normal 28 +
+  Macros 27, each with JSON box files; an older copy of the same layout sits next to it) and the NeurIPS Datasets and Benchmarks
+  paper via its arXiv HTML. Train set has 55,423 boxes (annotators A and B, time t0). Organoid types Normal and Macros are
+  not separate classes. The 35.4 GB Kaggle total includes both layouts, so the single-copy size is smaller; I did not work
+  out by how much. Pixel size 1.29 um comes from the Kaggle description. Kaggle downloads normally need a free account (not
+  tested here). The paper states CC BY-NC-SA 4.0. Date is the Kaggle last-updated date (v2 adds the t1 label sets).'
+technical:
+  method: metadata-only
+  inspected_at: '2026-10-01T18:06:29Z'
+  inspected_urls:
+  - https://www.kaggle.com/api/v1/datasets/list/christinabukas/mutliorg
+  bytes_downloaded: 0
+  size_source: page-stated
+  layout:
+    tree: |
+      MultiOrg_v2/
+        croissant_mutliorg_metadata.json, dataset-metadata.json
+        {train,test}/{Normal,Macros}/Plate_<n>/image_<k>/
+          image_<k>.tiff                (≈44 MB each)
+          image_<k>_t<0|1>_<A|B>.json   box annotations per annotator (A/B) and time (t0/t1)
+      (older copy of the same layout next to MultiOrg_v2, per the harvester's full listing)
+    n_files: null
+    listing_complete: false
+  sample: null
+  arrays: []
+  notes: 'Not inspected: Kaggle data require a (free) Kaggle account (access: registration) and tools/listing.py has no Kaggle
+    backend. Read the first 200 entries of the Kaggle file-list API: e.g. MultiOrg_v2/test/Macros/Plate_15/image_0/image_0.tiff
+    (44,406,991 B) with image_0_t0_B.json, image_0_t1_A.json, image_0_t1_B.json. TIFF shape/dtype and the JSON box schema
+    remain unchecked.'
