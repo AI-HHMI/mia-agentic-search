@@ -1,8 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: bbbc002-kc167-cell-counts
 title: BBBC002 - Drosophila Kc167 Hoechst nuclei images with human cell counts
 short_name: Drosophila Kc167 nuclei cell counts (fluorescence)
-description: 50 fields of view (512x512, 8-bit TIFF, DNA channel only) of Drosophila melanogaster Kc167 cells stained with Hoechst 33342, imaged on a Zeiss Axiovert 200M. There are 5 samples with 10 fields each, one wild-type (nodsRNA) and four RNAi knockdowns (48, 340, Anillin, mad2). Ground truth is a tab-delimited file with per-image cell counts from two human counters.
+description: 50 fields of view (512x512, 8-bit TIFF, DNA channel only) of Drosophila melanogaster Kc167
+  cells stained with Hoechst 33342, imaged on a Zeiss Axiovert 200M. There are 5 samples with 10 fields
+  each, one wild-type (nodsRNA) and four RNAi knockdowns (48, 340, Anillin, mad2). Ground truth is a tab-delimited
+  file with per-image cell counts from two human counters.
 landing_url: https://bbbc.broadinstitute.org/BBBC002
 doi: null
 repository: other
@@ -30,7 +33,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: null
+  size_bytes: 3555586
   n_items: 50
   access: open
   download_url: https://data.broadinstitute.org/bbbc/BBBC002/BBBC002_v1_images.zip
@@ -40,7 +43,8 @@ annotations:
   types:
   - counts
   coverage: dense
-  format: BBBC002_v1_counts.txt (tab-delimited, one row per image with counts from human counter 1 and 2)
+  format: BBBC002_v1_counts.txt (tab-delimited, one row per image with counts from human counter 1 and
+    2)
   source: manual
 ml:
   tasks:
@@ -63,5 +67,74 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-01T16:13:56Z'
-notes: 'Annotations are only per-image cell counts (two human counters, who differ by about 16%), not masks, so the training signal is weak; the ml task is other (cell counting). No license or terms of use appear on the BBBC002 page; the paper (CC-BY article) does not cover the images. Pixel size is not on the page or in the paper. The zip (3.6 MB, listed with peek_archive) holds 50 DAPI-named TIFFs plus a stray .DS_Store. Checked the page, zip listing, counts file and the CellProfiler paper full text; the paper describes the Kc167 cell-count validation but no acquisition details beyond the page. The paper does not state which counts file entries it used.'
+  last_checked: '2026-10-01T17:37:53Z'
+notes: 'Annotations are only per-image cell counts (two human counters, who differ by about 16%), not
+  masks, so the training signal is weak; the ml task is other (cell counting). No license or terms of
+  use appear on the BBBC002 page; the paper (CC-BY article) does not cover the images. Pixel size is not
+  on the page or in the paper. The zip (3.6 MB, listed with peek_archive) holds 50 DAPI-named TIFFs plus
+  a stray .DS_Store. Checked the page, zip listing, counts file and the CellProfiler paper full text;
+  the paper describes the Kc167 cell-count validation but no acquisition details beyond the page. The
+  paper does not state which counts file entries it used. enricher: size from complete listing (zip +
+  counts file); license still not found (BBBC002 page, BBBC home and contribute pages show only a site
+  copyright).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://data.broadinstitute.org/bbbc/BBBC002/BBBC002_v1_images.zip
+  - https://data.broadinstitute.org/bbbc/BBBC002/BBBC002_v1_counts.txt
+  bytes_downloaded: 53175
+  size_source: file-listing
+  layout:
+    tree: "BBBC002_v1_images.zip   (51 members)\n  drosophila_kc167_1_images/   50 .TIF  13.2 MB uncompressed\
+      \   CPvalid1_<RNAi>_40x_Tiles_p<NNNN>DAPI.TIF\n  .DS_Store\nBBBC002_v1_counts.txt   tab-separated:\
+      \ file name, human counter 1, human counter 2\n2 files, 3,555,586 B\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.broadinstitute.org/bbbc/BBBC002/BBBC002_v1_images.zip::drosophila_kc167_1_images/CPvalid1_340_40x_Tiles_p0002DAPI.TIF
+    - https://data.broadinstitute.org/bbbc/BBBC002/BBBC002_v1_counts.txt
+    size_bytes: 53175
+    description: One 512x512 DAPI image and the counts table.
+  arrays:
+  - role: raw
+    path_pattern: BBBC002_v1_images.zip::drosophila_kc167_1_images/<name>DAPI.TIF
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 139
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Stored as a palette (colour-mapped) TIFF, photometric 3; values are palette indices.
+  - role: label
+    path_pattern: BBBC002_v1_counts.txt
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: other
+    classes: null
+    n_ids_observed: null
+    alignment: not-applicable
+    alignment_notes: One row per image keyed by file name without the .TIF extension; two per-image counts
+      (two human counters). Tab-separated, not comma.
+  notes: 'Listing complete (zip central directory + counts file). Header of CPvalid1_340_40x_Tiles_p0002DAPI.TIF:
+    512x512 uint8, uncompressed, palette-colour TIFF. Sample of that image: [0, 139], mean 5.0, p99 59
+    (one sample). Counts table header: "file name, human counter 1 (Robert Lindquist), human counter #2
+    (Joohan Chang)"; first rows e.g. CPvalid1_48_40x_Tiles_p0003DAPI 23 24. Label encoding other = per-image
+    counts table.'
+  inspected_at: '2026-10-01T17:37:53Z'
