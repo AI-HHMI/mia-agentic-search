@@ -1,4 +1,4 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-5550933-deepbacs-saureus-widefield-seg
 title: DeepBacs Staphylococcus aureus widefield segmentation dataset
 short_name: S. aureus cell segmentation (widefield)
@@ -68,8 +68,94 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T05:21:53Z'
+  last_checked: '2026-10-01T05:40:42Z'
 notes: 'Zip listing (peek_archive): train 7 full images + 28 patches, test 5 images, per channel (brightfield_dataset,
   fluorescence_dataset), plus Fiji_Rois. n_items counts the 12 full fields of view (7 train + 5 test)
   per channel. Pixel size, microscope and manual ellipse annotation from the Zenodo description; paper
   (open access, Europe PMC) describes the DeepBacs collection. Mask value encoding not inspected.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/5550933
+  - https://zenodo.org/records/5550933/files/DeepBacs_Data_Segmentation_Staph_Aureus_dataset.zip
+  bytes_downloaded: 461734
+  size_source: file-listing
+  layout:
+    tree: "DeepBacs_Data_Segmentation_Staph_Aureus_dataset.zip  17.4 MB, 173 members\n  <readme>.txt\n\
+      \  brightfield_dataset/  and  fluorescence_dataset/  (same regions, same masks)\n    train/full_images/{brightfield|fluorescence}/<name>.tif\
+      \   7  (512x512)\n    train/full_images/masks/<name>.tif                        7\n    train/patches/{brightfield|fluorescence}/\
+      \                28  (256x256 quarters)\n    train/patches/masks/                              \
+      \       28\n    test/{brightfield|fluorescence}/                          5\n    test/masks/   \
+      \                                            5\n  Fiji_Rois/train/ 7 .zip, Fiji_Rois/test/ 5 .zip\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5550933/files/DeepBacs_Data_Segmentation_Staph_Aureus_dataset.zip::brightfield_dataset/train/full_images/brightfield/JE2NileRed_oilp22_PMP_101220_001.tif
+    - https://zenodo.org/records/5550933/files/DeepBacs_Data_Segmentation_Staph_Aureus_dataset.zip::brightfield_dataset/train/full_images/masks/JE2NileRed_oilp22_PMP_101220_001.tif
+    size_bytes: null
+    description: One full 512x512 training image (DIC/brightfield) and its mask
+  arrays:
+  - role: raw
+    path_pattern: DeepBacs_Data_Segmentation_Staph_Aureus_dataset.zip::brightfield_dataset/{train/full_images,train/patches,test}/brightfield/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 3329
+    - 17304
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: raw
+    path_pattern: DeepBacs_Data_Segmentation_Staph_Aureus_dataset.zip::fluorescence_dataset/{train/full_images,train/patches,test}/fluorescence/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Same regions of interest as the brightfield images (readme); header only.
+  - role: label
+    path_pattern: DeepBacs_Data_Segmentation_Staph_Aureus_dataset.zip::{brightfield,fluorescence}_dataset/.../masks/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 335
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 336
+    alignment: same-grid
+    alignment_notes: masks/<name>.tif has the image's name in the parallel folder; identical 512x512 shape
+      in the sampled pair. Readme says the masks are the same for both channels and are copied into each
+      folder.
+  notes: 'Listing: Zenodo record API + data zip index (173 members, 17,448,442 B = size_bytes, unchanged,
+    now confirmed). Readme in the zip: full images 512x512 plus quartered 256x256 patches; brightfield
+    and fluorescence from the same ROIs, masks duplicated per folder. Probed full train image _001 (brightfield,
+    fluorescence, mask): all uint16 512x512 uncompressed; images store 79.9 nm/px, matching the record''s
+    80 nm. Sampled brightfield + mask (one sample): image 3329-17304 (p50 8751), normalization unknown;
+    mask 336 values 0-335 (81.2% background): instance IDs.'
+  inspected_at: '2026-10-01T05:40:42Z'
