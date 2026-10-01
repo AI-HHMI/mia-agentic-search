@@ -1,11 +1,12 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: s-biad2118-selma3d-2026-isolated-lsm-unannotated
-title: 3D light-sheet microscopy data for SELMA3D 2026 challenge - isolated structures - training subset with no annotations
-  - large 3D LSM images
+title: 3D light-sheet microscopy data for SELMA3D 2026 challenge - isolated structures - training subset
+  with no annotations - large 3D LSM images
 short_name: SELMA3D unannotated large volumes (light-sheet)
-description: Large unannotated 3D light-sheet images of isolated structures (c-Fos cells, cell nuclei, amyloid plaques, chondrocytes,
-  dopaminergic neurons, astrocytes, chondrogenic cells), released as the self-supervised training set of the SELMA3D 2026
-  challenge on 3D light-sheet image segmentation. 30 images stored as TIFF z-slice stacks.
+description: Large unannotated 3D light-sheet images of isolated structures (c-Fos cells, cell nuclei,
+  amyloid plaques, chondrocytes, dopaminergic neurons, astrocytes, chondrogenic cells), released as the
+  self-supervised training set of the SELMA3D 2026 challenge on 3D light-sheet image segmentation. 30
+  images stored as TIFF z-slice stacks.
 landing_url: https://www.ebi.ac.uk/biostudies/BioImages/studies/S-BIAD2118
 doi: 10.6019/S-BIAD2118
 repository: BioImageArchive
@@ -23,8 +24,8 @@ imaging:
   organism:
   - Mus musculus
   - Homo sapiens
-  sample: Cleared mouse brains (c-Fos cells, amyloid plaques, dopaminergic neurons, astrocytes) and human brain tissue / PCW7
-    human embryo (cell nuclei, chondrocytes, chondrogenic cells)
+  sample: Cleared mouse brains (c-Fos cells, amyloid plaques, dopaminergic neurons, astrocytes) and human
+    brain tissue / PCW7 human embryo (cell nuclei, chondrocytes, chondrogenic cells)
   labels_stains: []
 data:
   formats:
@@ -61,9 +62,59 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-01T12:41:28Z'
-notes: 'Released explicitly as the unannotated self-supervised training set of SELMA3D 2026, so usable without labels. size_bytes
-  and n_items (35,967 TIFF slices) are the sums over the 7 per-structure JSON file lists in Files/ (7 images categories; 30
-  images per the API record). Voxel size varies per image (xy 0.54-1.87 um, z 2-6 um per record) and is not given per file,
-  so left null. No linked paper on the record. Differs from companion sets: S-BIAD3281 (patches cropped from these images),
-  S-BIAD2119 (contiguous structures, unannotated), S-BIAD2110/2106 (annotated).'
+  last_checked: '2026-10-01T13:37:22Z'
+notes: 'Released explicitly as the unannotated self-supervised training set of SELMA3D 2026, so usable
+  without labels. size_bytes and n_items (35,967 TIFF slices) are the sums over the 7 per-structure JSON
+  file lists in Files/ (7 images categories; 30 images per the API record). Voxel size varies per image
+  (xy 0.54-1.87 um, z 2-6 um per record) and is not given per file, so left null. No linked paper on the
+  record. Differs from companion sets: S-BIAD3281 (patches cropped from these images), S-BIAD2119 (contiguous
+  structures, unannotated), S-BIAD2110/2106 (annotated). enricher: two slices probed (uint16 LZW TIFF,
+  7322x8584 and 13307x17238) and one sampled (see technical).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/118/S-BIAD2118/Files/
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/118/S-BIAD2118/Files/microscopy_image/microscopy_image/TH_neurons/sample1/slice_0000.tif
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/118/S-BIAD2118/Files/microscopy_image/microscopy_image/cell_nucleus/sample3/C01/C01_0000.tif
+  bytes_downloaded: 33604737
+  size_source: page-stated
+  layout:
+    tree: "Files/\n  <structure>.json, <structure>.tsv            7 + 7 file lists (Ab_plaques, Collagen2_collagenous_structure,\n\
+      \                                                GFAP_astrocytes, SOX9_chondrogenic_cell, TH_neurons,\
+      \ c-Fos_brain_cells, cell_nucleus)\n  microscopy_image/microscopy_image/<structure>/sample<k>/slice_NNNN.tif\n\
+      \  microscopy_image/microscopy_image/cell_nucleus/sample<k>/C01/C01_NNNN.tif\n  brain_microscopy_image/brain_microscopy_image/c-Fos_brain_cells/...\n\
+      \  35,967 TIFF slices in total per the json lists\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/118/S-BIAD2118/Files/microscopy_image/microscopy_image/TH_neurons/sample1/slice_0000.tif
+    size_bytes: 33604737
+    description: One z-slice of TH_neurons sample1 (33.6 MB LZW TIFF); each image is a folder of such
+      slices.
+  arrays:
+  - role: raw
+    path_pattern: '{microscopy_image,brain_microscopy_image}/.../<structure>/sample<k>/[C01/]<prefix>_NNNN.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 7322
+    - 8584
+    shape_varies: true
+    dtype: uint16
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 449
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  notes: 'Each 3D image is stored as a folder of single-page 2D TIFF slices (z stack), so arrays describe
+    one slice. Directory index and the per-structure tsv lists read; the 35,967 files were not listed
+    recursively, so size stays page-stated (sum of the json file lists). Probes: TH_neurons/sample1/slice_0000.tif
+    uint16 7322x8584 LZW; cell_nucleus/sample3/C01/C01_0000.tif uint16 13307x17238 LZW; slice size differs
+    between images; no calibration found in the headers. Sample (first slice of TH_neurons sample1, likely
+    the volume edge): 0..449, mean 4.9, p99 24 (hint: 12-bit range); not representative of the stack interior.'
+  inspected_at: '2026-10-01T13:37:22Z'
