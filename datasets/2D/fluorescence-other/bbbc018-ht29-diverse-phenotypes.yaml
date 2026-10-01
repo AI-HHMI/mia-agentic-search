@@ -1,8 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: bbbc018-ht29-diverse-phenotypes
 title: Human HT29 colon-cancer cells (diverse phenotypes)
 short_name: HT29 cell and nucleus outlines, 14 phenotypes
-description: 56 fluorescence fields of view of human HT29 colon cancer cells showing 14 morphological phenotypes (Hoechst DNA, phospho-histone H3, phalloidin actin; 512 x 512 pixels), with cell and nucleus outlines, for testing segmentation robustness.
+description: 56 fluorescence fields of view of human HT29 colon cancer cells showing 14 morphological
+  phenotypes (Hoechst DNA, phospho-histone H3, phalloidin actin; 512 x 512 pixels), with cell and nucleus
+  outlines, for testing segmentation robustness.
 landing_url: https://bbbc.broadinstitute.org/BBBC018
 doi: null
 repository: LabWebsite
@@ -26,7 +28,7 @@ imaging:
 data:
   formats:
   - other
-  size_bytes: null
+  size_bytes: 50917924
   n_items: 56
   access: open
   download_url: https://data.broadinstitute.org/bbbc/BBBC018/
@@ -36,7 +38,8 @@ annotations:
   types:
   - instance-segmentation
   coverage: dense
-  format: PNG outline images (BBBC018_v1_outlines.zip)
+  format: 'PNG ground truth in BBBC018_v1_outlines.zip, two per field: <wellidx>-nuclei.png (8-bit greyscale)
+    and <wellidx>-cells.png (1-bit), 512x512 like the images; 55 fields (well 10779 excluded)'
   source: unknown
 ml:
   tasks:
@@ -59,5 +62,94 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T07:00:00Z'
-notes: 'Images are DIB files (168 files = 56 fields x 3 channels), a format not in the schema list, hence other. The outlines zip holds 110 PNGs (nuclei outlines at least; the page also describes cell outlines). One well (10779) was excluded for blur per the page. The annotation source is not stated on the page. Pixel size is not stated. Collection paper Ljosa et al. 2012 was not read. Checked: dataset page, both zip listings.'
+  last_checked: '2026-10-01T07:33:02Z'
+notes: 'Images are DIB files (168 files = 56 fields x 3 channels), a format not in the schema list, hence
+  other. The outlines zip holds 110 PNGs (nuclei outlines at least; the page also describes cell outlines).
+  One well (10779) was excluded for blur per the page. The annotation source is not stated on the page.
+  Pixel size is not stated. Collection paper Ljosa et al. 2012 was not read. Checked: dataset page, both
+  zip listings. enricher: size_bytes from the listing of both zips (was null); outline PNG and DIB layouts
+  from headers/samples.'
+technical:
+  method: sample
+  inspected_at: '2026-10-01T07:33:02Z'
+  inspected_urls:
+  - https://data.broadinstitute.org/bbbc/BBBC018/BBBC018_v1_images.zip
+  - https://data.broadinstitute.org/bbbc/BBBC018/BBBC018_v1_outlines.zip
+  bytes_downloaded: 372394
+  size_source: file-listing
+  layout:
+    tree: "./  2 files  50.9 MB\n  BBBC018_v1_images.zip/BBBC018_v1_images/      168 files  88.1 MB unzipped\
+      \  .DIB\n      <wellidx>-{DNA,actin,pH3}.DIB   (56 fields x 3 channels)\n  BBBC018_v1_outlines.zip/BBBC018_v1_outlines/\
+      \  110 files   3.0 MB unzipped  .png\n      <wellidx>-nuclei.png, <wellidx>-cells.png   (55 fields\
+      \ x 2)\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.broadinstitute.org/bbbc/BBBC018/BBBC018_v1_images.zip::BBBC018_v1_images/17675-DNA.DIB
+    - https://data.broadinstitute.org/bbbc/BBBC018/BBBC018_v1_outlines.zip::BBBC018_v1_outlines/17675-nuclei.png
+    - https://data.broadinstitute.org/bbbc/BBBC018/BBBC018_v1_outlines.zip::BBBC018_v1_outlines/17675-cells.png
+    size_bytes: 642236
+    description: One field (well 17675) DNA channel with its nuclei and cell ground-truth PNGs
+  arrays:
+  - role: raw
+    path_pattern: BBBC018_v1_images.zip::BBBC018_v1_images/<wellidx>-{DNA,actin,pH3}.DIB
+    format: other
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: null
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 64512
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One channel per file; channels of a field share the well index.
+  - role: label
+    path_pattern: BBBC018_v1_outlines.zip::BBBC018_v1_outlines/<wellidx>-nuclei.png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    encoding: unknown
+    classes: null
+    n_ids_observed: 228
+    alignment: same-grid
+    alignment_notes: Same well index as the image files; 512x512 like the 512x512 DIB images.
+  - role: label
+    path_pattern: BBBC018_v1_outlines.zip::BBBC018_v1_outlines/<wellidx>-cells.png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: null
+    dtype: bool
+    compression: deflate
+    lossy: false
+    chunks: null
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same well index as the image files; 1-bit PNG per the header.
+  notes: 'Listing of both zips: 50,917,924 B exact (images 168 DIB, outlines 110 PNG). DIB files are a
+    bare BITMAPINFOHEADER (40 B) + 16-bit pixels, read with a scratch script (repo read_member + numpy):
+    17675-DNA 512x512 uint16, range 0-64512, 2,465 distinct values; normalization unknown. sample.py cannot
+    read DIB, and it crashed on the 1-bit cells PNG, so that file is header-only (bool 512x512 -> binary).
+    17675-nuclei.png is 8-bit greyscale with 228 distinct values (mean 7.2), not a clean binary or ID
+    mask, so encoding unknown; it may be anti-aliased outlines. The page calls the ground truth outlines
+    of nuclei and cells and recommends Bio-Formats for DIB. One field only.'
