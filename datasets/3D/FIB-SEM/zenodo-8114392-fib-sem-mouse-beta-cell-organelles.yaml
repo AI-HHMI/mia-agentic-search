@@ -1,11 +1,12 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-8114392-fib-sem-mouse-beta-cell-organelles
-title: Example FIB-SEM datasets for segmentation, spatial analysis, and visualization of volume electron microscopy datasets
+title: Example FIB-SEM datasets for segmentation, spatial analysis, and visualization of volume electron microscopy
+  datasets
 short_name: Beta cell organelle segmentation (FIB-SEM)
-description: Demo FIB-SEM data from the Nature Protocols pipeline for organelle segmentation in pancreatic beta cells - a raw
-  16 nm isotropic FIB-SEM stack of a mouse pancreatic cell (high_c1) with segmentation masks (nucleus, mitochondria,
-  membrane, insulin granules, Golgi, centrioles, microtubules) and small volumetric training sets for Golgi and
-  secretory granule segmentation.
+description: Demo FIB-SEM data from the Nature Protocols pipeline for organelle segmentation in pancreatic beta
+  cells - a raw 16 nm isotropic FIB-SEM stack of a mouse pancreatic cell (high_c1) with segmentation masks (nucleus,
+  mitochondria, membrane, insulin granules, Golgi, centrioles, microtubules) and small volumetric training sets
+  for Golgi and secretory granule segmentation.
 landing_url: https://zenodo.org/records/8114392
 doi: 10.5281/zenodo.8114392
 repository: Zenodo
@@ -23,7 +24,8 @@ publications:
 - title: Modular segmentation, spatial analysis and visualization of volume electron microscopy datasets
   doi: 10.1038/s41596-024-00957-5
   url: https://doi.org/10.1038/s41596-024-00957-5
-- title: Organelle-specific segmentation, spatial analysis, and visualization of volume electron microscopy datasets (preprint)
+- title: Organelle-specific segmentation, spatial analysis, and visualization of volume electron microscopy datasets
+    (preprint)
   doi: 10.48550/arXiv.2303.03876
   url: https://arxiv.org/abs/2303.03876
 date_published: '2023-07-04'
@@ -55,7 +57,8 @@ annotations:
   - semantic-segmentation
   - organelle
   coverage: dense
-  format: TIFF label volumes (high_c1_*mask/golgi/granules/centrioles), microtubule annotation XML, train/val image+mask TIFF pairs for Golgi and granules
+  format: TIFF label volumes (high_c1_*mask/golgi/granules/centrioles), microtubule annotation XML, train/val image+mask
+    TIFF pairs for Golgi and granules
   source: mixed
 ml:
   tasks:
@@ -81,12 +84,130 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T05:10:00Z'
-notes: 'Demo data of the Nature Protocols paper (full text not open access; the arXiv preprint was read). n_items = 1 raw volume
-  (high_c1_source.tif, 16 nm isotropic after binning from 4 nm, per the preprint and Zenodo page); additional training crops:
-  data_golgi (8 train + 1 val image/mask pairs) and data_granules (4 train + 1 val pairs). size_bytes is the sum of all five Zenodo
-  files, of which mycell.n5.zip (8.2 GB) is the input for the spatial-analysis demo. Raw full-resolution (4 nm) volumes are hosted
-  on OpenOrganelle, not on this record. Organism taken from the Zenodo description ("mouse pancreatic cell"); the sample preparation
-  details are in the cited original beta cell studies and were not read. Masks were produced with ilastik autocontext and deep
-  learning plus manual correction per the preprint, so annotation source is "mixed". I did not verify per-class label values.
-  Probing high_c1_source.tif by range request returned a zip header, so the stack header was not read.'
+  last_checked: '2026-10-01T05:33:00Z'
+notes: 'Demo data of the Nature Protocols paper (full text not open access; the arXiv preprint was read). n_items
+  = 1 raw volume (high_c1_source.tif, 16 nm isotropic after binning from 4 nm, per the preprint and Zenodo page);
+  additional training crops: data_golgi (8 train + 1 val image/mask pairs) and data_granules (4 train + 1 val pairs).
+  size_bytes is the sum of all five Zenodo files, of which mycell.n5.zip (8.2 GB) is the input for the spatial-analysis
+  demo. Raw full-resolution (4 nm) volumes are hosted on OpenOrganelle, not on this record. Organism taken from
+  the Zenodo description ("mouse pancreatic cell"); the sample preparation details are in the cited original beta
+  cell studies and were not read. Masks were produced with ilastik autocontext and deep learning plus manual correction
+  per the preprint, so annotation source is "mixed".
+
+  enricher: the top-level high_c1_source.tif file is a zip archive holding one member high_c1_source.tif (359 MB).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/8114392
+  - https://zenodo.org/records/8114392/files/high_c1_source.tif
+  - https://zenodo.org/records/8114392/files/data_golgi.zip
+  - https://zenodo.org/records/8114392/files/high_c1.zip
+  bytes_downloaded: 13877560
+  size_source: file-listing
+  layout:
+    tree: "high_c1_source.tif   (actually a zip: high_c1_source.tif, 359 MB)\nhigh_c1.zip/high_c1/  high_c1_source.tif,\
+      \ high_c1_{nucleus_mask,mitochondria_mask,membrane_full_mask,\n                      granules,golgi_corrected,centrioles}.tif,\
+      \ *_All_MTs_annotation.xml   8 files 390.8 MB\ndata_golgi.zip/data_golgi/{train,val}/{images,masks}/*.tif\
+      \      8+8 train, 1+1 val\ndata_granules.zip/data_granules/{train,val}/{images,masks}/*.tif 4+4 train, 1+1\
+      \ val\nmycell.n5.zip/mycell.n5/  N5 container (analysis/... distance maps etc.), 38,038 files 23.9 GB uncompressed\n"
+    n_files: 5
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/8114392/files/data_golgi.zip::data_golgi/val/images/HG_C1_Vol_1_small_raw.tif
+    - https://zenodo.org/records/8114392/files/data_golgi.zip::data_golgi/val/masks/HG_C1_Vol_1_small_label.tif
+    size_bytes: 1969163
+    description: Golgi validation crop (58x128x128) and its mask
+  arrays:
+  - role: raw
+    path_pattern: data_{golgi,granules}.zip::data_*/{train,val}/images/*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 58
+    - 128
+    - 128
+    shape_varies: true
+    dtype: uint8
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 212
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: data_golgi.zip::data_golgi/{train,val}/masks/*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 58
+    - 128
+    - 128
+    shape_varies: true
+    dtype: uint8
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes: null
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: Pairs by name (…_raw.tif / …_label.tif); the val pair has identical 58x128x128 shapes.
+  - role: label
+    path_pattern: high_c1.zip::high_c1/high_c1_granules.tif
+    format: tiff
+    axes: null
+    shape:
+    - 1097
+    - 699
+    - 760
+    shape_varies: false
+    dtype: uint16
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 9714
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 9714
+    alignment: unknown
+    alignment_notes: Full-cell label volume for high_c1_source.tif; the source header could not be read, so the
+      grid match is not confirmed.
+  - role: label
+    path_pattern: high_c1.zip::high_c1/high_c1_{nucleus,mitochondria,membrane_full}_mask.tif
+    format: tiff
+    axes: null
+    shape:
+    - 1097
+    - 699
+    - 760
+    shape_varies: false
+    dtype: uint8
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes: null
+    n_ids_observed: 2
+    alignment: unknown
+    alignment_notes: Same shape as high_c1_granules.tif (nucleus mask sampled).
+  notes: 'Exact Zenodo listing, zips expanded (38,081 members). probe.py failed on the deflated high_c1.zip members,
+    so shapes come from sample.py. Sampled: golgi val raw 58x128x128 uint8, 0-212, only 39 unique values; its mask
+    {0, 255}. high_c1_granules.tif 1097x699x760 uint16, 0-9714 with 9,714 distinct values (instance ids, inferred
+    from the count); high_c1_nucleus_mask.tif same shape uint8 {0, 255} (partial page read). high_c1_source.tif
+    (359 MB) not sampled. N5 container not opened.'
+  inspected_at: '2026-10-01T05:33:00Z'
