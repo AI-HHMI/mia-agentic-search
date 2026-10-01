@@ -1,4 +1,4 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: empiar-11399-dinoflagellate-fib-sem
 title: Targeted volume Correlative Light and Electron Microscopy of environmental marine microorganisms
 short_name: Dinoflagellate cell organelles (FIB-SEM)
@@ -45,6 +45,7 @@ imaging:
 data:
   formats:
   - tiff
+  - hdf5
   size_bytes: null
   n_items: 1
   access: open
@@ -56,8 +57,9 @@ annotations:
   - semantic-segmentation
   - organelle
   coverage: unknown
-  format: 'segmentation/combined-segmentation-annotated.hff (Amira/Avizo HyperFile, 710 MB) and segmentation/individual_segments.tar.gz
-    (527 MB)'
+  format: segmentation/combined-segmentation-annotated.hff (EMDB-SFF segmentation file, HDF5 container,
+    710 MB) and segmentation/individual_segments.tar.gz (527 MB, per-segment STL surface meshes, e.g.
+    01-Chloroplast.stl)
   source: manual
 ml:
   tasks:
@@ -82,10 +84,97 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T18:55:00Z'
+  last_checked: '2026-10-01T20:08:37Z'
 notes: 'Single-volume dataset (n_items 1). Size stated as 14.5 GB on EMPIAR; not summed from the listing.
   Voxel size 8 nm isotropic is from the paper Methods; the TIFF header has no calibration (2718x2718 uint8
   per slice, uncompressed). The dinoflagellate is not identified to species in the pages checked, so organism
   is left empty. Segmentation is manual (MIB / Amira with interpolation) per the paper, but the annotation
   files are in Amira .hff format and a .tar.gz, neither of which was opened (tar.gz contents unlisted);
-  the set of segmented classes is only partly known from the paper text. Licence CC0 from the EMPIAR page.'
+  the set of segmented classes is only partly known from the paper text. Licence CC0 from the EMPIAR page.
+  enricher: .hff is HDF5 (EMDB-SFF, was described as Amira HyperFile; hdf5 added to formats); tar.gz holds
+  STL meshes.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://ftp.ebi.ac.uk/empiar/world_availability/11399/data/
+  - https://ftp.ebi.ac.uk/empiar/world_availability/11399/data/FIBSEM/amst_crop_0101.tif
+  - https://ftp.ebi.ac.uk/empiar/world_availability/11399/data/FIBSEM/amst_crop_1000.tif
+  - https://ftp.ebi.ac.uk/empiar/world_availability/11399/data/segmentation/combined-segmentation-annotated.hff
+  - https://ftp.ebi.ac.uk/empiar/world_availability/11399/data/segmentation/individual_segments.tar.gz
+  bytes_downloaded: 23387827
+  size_source: estimated
+  layout:
+    tree: |
+      data/  1,939 files, ~15.5 GB (HTTP index, rounded sizes)
+        FIBSEM/        1,937 .tif  amst_crop_0101.tif ... amst_crop_2037.tif  (one z-slice each, ~7.4 MB)
+        segmentation/  combined-segmentation-annotated.hff  (EMDB-SFF, HDF5)
+                       individual_segments.tar.gz           (STL meshes, NN-<Organelle>.stl)
+    n_files: 1939
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/empiar/world_availability/11399/data/FIBSEM/amst_crop_1000.tif
+    size_bytes: 7387827
+    description: One FIB-SEM z-slice; the labels exist only as one 710 MB SFF file and a 527 MB mesh archive.
+  arrays:
+  - role: raw
+    path_pattern: FIBSEM/amst_crop_####.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2718
+    - 2718
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 1,937 slices form the z-stack (z = file index).
+  - role: label
+    path_pattern: segmentation/combined-segmentation-annotated.hff
+    format: hdf5
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: other
+    classes: null
+    n_ids_observed: null
+    alignment: unknown
+    alignment_notes: EMDB-SFF segmentation (global_external_references groups seen in the header); lattice
+      shape and transform not read.
+  - role: label
+    path_pattern: segmentation/individual_segments.tar.gz
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: gzip
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: other
+    classes: null
+    n_ids_observed: null
+    alignment: unknown
+    alignment_notes: STL surface meshes, one per segment (first member 01-Chloroplast.stl, 227.9 MB);
+      mesh coordinate frame not checked.
+  notes: 'HTTP index (FTP timed out): FIBSEM/ 1,937 TIFF slices amst_crop_0101-2037 (~14.2 GB) and segmentation/
+    2 files (~1.3 GB); ~15.5 GB rounded vs 14.5 GB stated on EMPIAR, so size_bytes stays null. probe.py:
+    amst_crop_0101.tif 2718x2718 uint8, uncompressed, no calibration. sample.py on amst_crop_1000.tif:
+    uint8 [0, 255], mean 54.5, std 63.1, p50 49, p99 251, saturated at 0 (hint: possibly contrast-stretched,
+    not confirmed). The .hff header (probe.py, 7 MB) is HDF5 with EMDB-SFF global_external_references;
+    a deeper walk of its groups timed out. First 16 MB of individual_segments.tar.gz decompressed to one
+    member header, 01-Chloroplast.stl (227.9 MB), so per-segment labels are surface meshes. Voxel masks
+    were not observed, so label encoding, classes and alignment stay unknown. Values are from one slice.'
+  inspected_at: '2026-10-01T20:08:37Z'
