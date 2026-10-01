@@ -122,7 +122,8 @@ Replace **every** `TODO` with facts from the pages you fetched:
   Name what's in the dataset and the modality, e.g. `CryoVesNet synaptic vesicles (cryo-ET)` or
   `C. elegans 3D nuclei segmentation (confocal)`. No accession numbers and no filler words.
 - `data.formats` and `imaging.dimensionality` appear as their own rows in the PR table, so they must
-  come from the file listing or paper, not from guesses.
+  come from the file listing or paper, not from guesses. Use `other` only when none of the listed formats
+  applies, never alongside a known one; describe extra file types (GeoJSON, CSV, …) in `annotations.format`.
 - `verification.url_ok: true` only if you fetched the landing page successfully this run.
 - `license_found: true` only if you saw the license.
 - `annotations_verified: true` only if you saw the annotation files in a file listing (peek_archive counts).

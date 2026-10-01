@@ -138,6 +138,7 @@ def dataset(record_path):
 ENRICH_DIR = STATE_DIR / ".enrich"
 ENRICH_PREFIX = "enrich: "  # commit subject prefixes of tools; any other later commit on a dataset branch
 LAYOUT_PREFIX = "layout: "  # (after the harvester's first one) is a human edit
+FORMAT_PREFIX = "format: "
 
 
 def pr_pull(rec_id):
@@ -163,7 +164,7 @@ def pr_pull(rec_id):
     for line in run("log", "--reverse", "--format=%H%x09%an%x09%cn%x09%s", f"origin/main..{ref}").splitlines():
         h, author, committer, subject = line.split("\t", 3)
         commits.append({"sha": h[:10], "author": author, "committer": committer, "subject": subject})
-    human = [c for c in commits[1:] if not c["subject"].startswith((ENRICH_PREFIX, LAYOUT_PREFIX))]
+    human = [c for c in commits[1:] if not c["subject"].startswith((ENRICH_PREFIX, LAYOUT_PREFIX, FORMAT_PREFIX))]
     print(json.dumps({"path": path, "baseline": rel(baseline), "branch": branch, "head": sha[:10],
                       "enriched_before": any(c["subject"].startswith(ENRICH_PREFIX) for c in commits),
                       "human_edits": human, "commits": commits}, indent=1))

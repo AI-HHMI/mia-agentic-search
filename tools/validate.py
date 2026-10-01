@@ -35,6 +35,10 @@ def check_record(path, record, v):
                                   for u in evidence if isinstance(u, str)):
         errors.append("a paper is listed but no paper source (full text / article page) is in evidence_urls; "
                       "read it with tools/paper.py and cite the URLs it used")
+    formats = (record.get("data") or {}).get("formats") or []
+    if "other" in formats and len(formats) > 1:
+        errors.append(f"data.formats {formats}: use `other` only when no listed format applies; "
+                      "drop it (say in annotations.format / notes what the remaining files are)")
     errors += check_technical(record)
     return errors
 

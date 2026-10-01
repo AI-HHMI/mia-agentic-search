@@ -158,7 +158,8 @@ Only find and record it.
 ## 5. Other fields
 Inspection often answers fields the harvester left empty or got wrong:
 - `imaging.voxel_size_nm`, `imaging.channels` and `imaging.dimensionality`
-- `data.formats` (never leave `other` for a format you probed) and `data.n_items`
+- `data.formats` (never leave `other` for a format you probed, and never keep `other` next to a known
+  format; it is only for records where no listed format applies) and `data.n_items`
 - `annotations.format`, `annotations.types`
 - `verification.annotations_verified: true` once you have seen label files in a listing or sample.
 
