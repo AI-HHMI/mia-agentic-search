@@ -1,8 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: bbbc054-lps-microglia-phenotypes
 title: LPS activated immortalized mouse microglia (IMG)
 short_name: Mouse microglia LPS phenotype points (20x)
-description: 20x Leica DMI 6000 TIFF images of LPS-stimulated immortalized mouse microglia in three replicates (60, 60 and 66 fields of view, 30 min intervals over 30 h). Replicate 1 has a CSV of manually annotated cell locations labelled round, amoeboid or stratified.
+description: 20x Leica DMI 6000 TIFF images of LPS-stimulated immortalized mouse microglia in three replicates
+  (60, 60 and 66 fields of view, 30 min intervals over 30 h). Replicate 1 has a CSV of manually annotated
+  cell locations labelled round, amoeboid or stratified.
 landing_url: https://bbbc.broadinstitute.org/BBBC054
 doi: null
 repository: LabWebsite
@@ -23,7 +25,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 489600000
+  size_bytes: 492381229
   n_items: 186
   access: open
   download_url: https://data.broadinstitute.org/bbbc/BBBC054/
@@ -34,7 +36,10 @@ annotations:
   - points
   - classification
   coverage: dense
-  format: 'Replicate1annotation.csv: columns index, axis-0 (FOV/image index), axis-1 (x), axis-2 (y) in pixels, label (round | amoeboid | stratified); 58,186 rows'
+  format: 'Replicate1annotation.csv: columns index, axis-0 (FOV/image index 0-59), axis-1, axis-2 (pixel
+    coordinates), label; 58,186 data rows. Page says axis-1 = x, axis-2 = y and labels round/amoeboid/stratified;
+    the file has labels round (43,813), ramified (11,143), amoeboid (3,230), and axis-1 spans about 0-1080
+    (the 1080-px image height), axis-2 about 0-1284 (the 1280-px width).'
   source: manual
 ml:
   tasks:
@@ -60,5 +65,88 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T20:16:32Z'
-notes: 'Zip listings: Replicate_1 60 TIFFs, Replicate_2 60, Replicate_3 66 (about 2.8 MB each); size_bytes is the sum of the three compressed zips (157.7+158.0+173.4 MB), excluding the CSV. The page links an annotation CSV only for Replicate 1, so replicates 2 and 3 are unlabelled. Imaging modality (brightfield / phase) is not stated on the page; the page lists no publication, so no paper was available to read. Pixel size not stated. Coordinates are cell locations, not necessarily centroids. The CSV has 58,186 lines including header.'
+  last_checked: '2026-10-01T21:15:15Z'
+notes: 'Zip listings: Replicate_1 60 TIFFs, Replicate_2 60, Replicate_3 66 (about 2.8 MB each); size_bytes
+  is the sum of the three compressed zips (157.7+158.0+173.4 MB), excluding the CSV. The page links an
+  annotation CSV only for Replicate 1, so replicates 2 and 3 are unlabelled. Imaging modality (brightfield
+  / phase) is not stated on the page; the page lists no publication, so no paper was available to read.
+  Pixel size not stated. Coordinates are cell locations, not necessarily centroids. The CSV has 58,186
+  lines including header. enricher: size_bytes exact from complete listing incl. the CSV (was 489.6 MB,
+  zips only). CSV read in full: label values are round/ramified/amoeboid (page says stratified) and axis-1/axis-2
+  ranges match image rows/columns; annotations.format updated.'
+technical:
+  method: sample
+  inspected_at: '2026-10-01T21:15:15Z'
+  inspected_urls:
+  - https://data.broadinstitute.org/bbbc/BBBC054/Replicate_1.zip
+  - https://data.broadinstitute.org/bbbc/BBBC054/Replicate_2.zip
+  - https://data.broadinstitute.org/bbbc/BBBC054/Replicate_3.zip
+  - https://data.broadinstitute.org/bbbc/BBBC054/Replicate1annotation.csv
+  bytes_downloaded: 5774862
+  size_source: file-listing
+  layout:
+    tree: "./  4 files, 492,381,229 B\n  Replicate1annotation.csv            (3.2 MB, 58,186 rows)\n \
+      \ Replicate_1.zip\n    Replicate 1/   60 .tif  IMG_20x_<n>.tif\n  Replicate_2.zip\n    Replicate\
+      \ 2/   60 .tif  IMG_20x_<n>.tif\n  Replicate_3.zip\n    Replicate 3/   66 .tif  IMG_20x_<n>.tif\n\
+      \  (186 .tif, 515.1 MB uncompressed)\n"
+    n_files: 190
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.broadinstitute.org/bbbc/BBBC054/Replicate_1.zip::Replicate 1/IMG_20x_1.tif
+    - https://data.broadinstitute.org/bbbc/BBBC054/Replicate1annotation.csv
+    size_bytes: 5964832
+    description: One replicate-1 field of view (1080x1280 uint16) and the replicate-1 point annotation
+      CSV.
+  arrays:
+  - role: raw
+    path_pattern: Replicate <r>/IMG_20x_<n>.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1080
+    - 1280
+    shape_varies: null
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 3617
+    - 65535
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: Replicate1annotation.csv
+    format: csv
+    axes: null
+    shape:
+    - 58186
+    - 5
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: points-table
+    classes:
+    - id: round
+      name: round
+    - id: ramified
+      name: ramified
+    - id: amoeboid
+      name: amoeboid
+    n_ids_observed: 3
+    alignment: same-grid
+    alignment_notes: Replicate 1 only. axis-0 takes 60 values (0-59), one per replicate-1 image; the mapping
+      of axis-0 to IMG_20x_<n> file numbers is not documented. Coordinates are float pixels, slightly
+      outside the image at the edges (min -5.6, max 1284).
+  notes: 'listing.py --expand-zips: 4 files, 492,381,229 B exact, 186 TIFF members (60/60/66). probe.py
+    on IMG_20x_1.tif: single page 1080x1280 uint16 uncompressed; ImageDescription is Andor camera metadata
+    (exposure 50 ms, binning 2x2, region 2560x2160, frames to average 2), no pixel size. sample.py on
+    the same image: [3617, 65535], mean 14,564, 36,380 unique values, so some pixels are saturated at
+    65535. Values are from one image. CSV downloaded in full (3,195,702 B): 58,186 rows x 5 columns, labels
+    round 43,813 / ramified 11,143 / amoeboid 3,230. The page''s class list ("stratified") and axis description
+    (axis-1 = x) disagree with the file; the file values are recorded in annotations.format.'
