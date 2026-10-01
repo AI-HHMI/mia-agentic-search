@@ -1,8 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-11235393-breast-cancer-nuclei-stardist
 title: Breast cancer nuclei images for deep-learning training and a ZeroCostDL4Mic StarDist model
 short_name: Breast cancer nuclei segmentation (fluorescence)
-description: 80 small fluorescence image crops of FFPE breast cancer tissue sections with paired nucleus instance masks (manually corrected StarDist output) as training data, plus 4 held-out test image/mask pairs and trained StarDist models.
+description: 80 small fluorescence image crops of FFPE breast cancer tissue sections with paired nucleus
+  instance masks (manually corrected StarDist output) as training data, plus 4 held-out test image/mask
+  pairs and trained StarDist models.
 landing_url: https://zenodo.org/records/11235393
 doi: 10.5281/zenodo.11235393
 repository: Zenodo
@@ -21,7 +23,8 @@ imaging:
   channels: 1
   organism:
   - Homo sapiens
-  sample: FFPE tissue sections of breast cancer, imaged on a Pannoramic SCAN 150 slide scanner with a 20x objective
+  sample: FFPE tissue sections of breast cancer, imaged on a Pannoramic SCAN 150 slide scanner with a
+    20x objective
   labels_stains: []
 data:
   formats:
@@ -36,7 +39,8 @@ annotations:
   types:
   - instance-segmentation
   coverage: dense
-  format: 'TIFF label masks, one per image: train_v2/masks/<name>.tif and test_regions/masks/<name>.tif (16-bit per the record)'
+  format: 'TIFF label masks, one per image: train_v2/masks/<name>.tif and test_regions/masks/<name>.tif
+    (16-bit per the record)'
   source: mixed
 ml:
   tasks:
@@ -59,5 +63,81 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T04:50:40Z'
-notes: 'Zip listings: train_v2 has 80 image/mask TIFF pairs (images folder also holds one .db file), test_regions has 4 pairs; n_items = 84 pairs. size_bytes is train_v2.zip + test_regions.zip only (3,505,690 + 662,058 bytes); the record also holds two model zips (21.4 MB). Masks come from manual correction of automatic pre-trained StarDist segmentation (record text), hence source mixed. Record says 8-bit fluorescence images and 16-bit masks, image size 257x257 for the model training; stain (likely DNA) and pixel size not stated. No linked paper on the record, none read. Dimensionality/channels from the description (single fluorescence channel per crop).'
+  last_checked: '2026-10-01T04:57:47Z'
+notes: 'Zip listings: train_v2 has 80 image/mask TIFF pairs (images folder also holds one .db file), test_regions
+  has 4 pairs; n_items = 84 pairs. size_bytes is train_v2.zip + test_regions.zip only (3,505,690 + 662,058
+  bytes); the record also holds two model zips (21.4 MB). Masks come from manual correction of automatic
+  pre-trained StarDist segmentation (record text), hence source mixed. Record says 8-bit fluorescence
+  images and 16-bit masks, image size 257x257 for the model training; stain (likely DNA) and pixel size
+  not stated. No linked paper on the record, none read. Dimensionality/channels from the description (single
+  fluorescence channel per crop).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/11235393
+  - https://zenodo.org/records/11235393/files/train_v2.zip
+  - https://zenodo.org/records/11235393/files/test_regions.zip
+  bytes_downloaded: 50725
+  size_source: file-listing
+  layout:
+    tree: "train_v2.zip  3.5 MB\n  train_v2/images/<slide uuid>_r<N>.tif   80 files   5.3 MB\n  train_v2/masks/<slide\
+      \ uuid>_r<N>.tif    80 files  10.6 MB  (+1 .db OS file in images/)\ntest_regions.zip  0.7 MB\n \
+      \ test_regions/images/<slide uuid>_r<N>-<k>.tif   4 files  961.4 KB\n  test_regions/masks/<slide\
+      \ uuid>_r<N>-<k>.tif    4 files    1.4 MB\nModel-FromZeroCostDL4Mic.zip, Model-QuPathFormat.zip\
+      \  21.4 MB (trained models, not data)\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/11235393/files/train_v2.zip::train_v2/images/037346fc-a668-4b27-874c-09131315ec6d_r1.tif
+    - https://zenodo.org/records/11235393/files/train_v2.zip::train_v2/masks/037346fc-a668-4b27-874c-09131315ec6d_r1.tif
+    size_bytes: 198580
+    description: One 257x257 training crop and its same-named mask (uncompressed sizes)
+  arrays:
+  - role: raw
+    path_pattern: train_v2.zip::train_v2/images/*.tif (also test_regions.zip::test_regions/images/*.tif)
+    format: tiff
+    axes: yx
+    shape:
+    - 257
+    - 257
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 10
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: train_v2.zip::train_v2/masks/*.tif (also test_regions.zip::test_regions/masks/*.tif)
+    format: tiff
+    axes: yx
+    shape:
+    - 257
+    - 257
+    shape_varies: null
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 76
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 77
+    alignment: same-grid
+    alignment_notes: Mask in masks/ has the same file name as its image in images/; identical 257x257
+      shape in the probed pair.
+  notes: 'Listing: Zenodo record API + zip indexes of train_v2.zip and test_regions.zip (169 members,
+    4,167,748 B = size_bytes, unchanged, now confirmed); the 2 model zips (21.4 MB) are not data and are
+    not counted. Probed and sampled train_v2 037346fc..._r1 (one sample): image uint8 257x257 yx uncompressed,
+    values 10-255 (p50 32), normalization unknown (8-bit export per the record; source bit depth not stated);
+    mask uint16, 77 values 0-76, consecutive IDs, 66% background: instance IDs. The image''s ImageJ calibration
+    is 0.3257 um/px; not stated in the record text, so voxel_size_nm stays null. Test-region images were
+    listed, not probed.'
+  inspected_at: '2026-10-01T04:57:47Z'
