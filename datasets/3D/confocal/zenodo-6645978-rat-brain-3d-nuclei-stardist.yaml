@@ -1,8 +1,9 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-6645978-rat-brain-3d-nuclei-stardist
 title: 3D nuclei annotations and StarDist 3D models (rat brain, confocal)
 short_name: Rat brain 3D nuclei masks (confocal)
-description: Four manually annotated confocal volumes of rat brain (DAPI nuclei, annotated in ITK-SNAP) with instance masks, cropped into 16 sub-volumes, plus training notebooks and StarDist 3D models.
+description: Four manually annotated confocal volumes of rat brain (DAPI nuclei, annotated in ITK-SNAP)
+  with instance masks, cropped into 16 sub-volumes, plus training notebooks and StarDist 3D models.
 landing_url: https://zenodo.org/records/6645978
 doi: 10.5281/zenodo.6645978
 repository: Zenodo
@@ -18,13 +19,14 @@ imaging:
   channels: null
   organism:
   - Rattus norvegicus
-  sample: Rat brain tile acquisition (Zeiss LSM700, DAPI and cck staining); crops are downsampled from 1024x1024x62 tiles to 128x128x62
+  sample: Rat brain tile acquisition (Zeiss LSM700, DAPI and cck staining); crops are downsampled from
+    1024x1024x62 tiles to 128x128x62
   labels_stains:
   - DAPI
 data:
   formats:
   - tiff
-  size_bytes: null
+  size_bytes: 2988716638
   n_items: 4
   access: open
   download_url: https://zenodo.org/records/6645978
@@ -57,5 +59,80 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T07:13:37Z'
-notes: 'Small dataset: 4 annotated volumes (annotations_BIOP.zip has images/ and masks/ with 4 tiffs each), cropped into 16 images of 64x64x62 (crops_BIOP_v1.zip, not listed: peek failed with an SSL error). The source acquisition (zenodo 6646128) has pixel size 0.152 x 0.152 x 1 um at 1024x1024x62, but the annotated crops were downsampled by an unstated factor, so voxel size is left null. Authors not read from the API record. No linked paper found on the Zenodo record. Also contains 3 trained StarDist3D models and a 2.3 GB whole-tile TIFF.'
+  last_checked: '2026-10-01T08:39:22Z'
+notes: 'Small dataset: 4 annotated volumes (annotations_BIOP.zip has images/ and masks/ with 4 tiffs each),
+  cropped into 16 images of 64x64x62 (crops_BIOP_v1.zip, not listed: peek failed with an SSL error). The
+  source acquisition (zenodo 6646128) has pixel size 0.152 x 0.152 x 1 um at 1024x1024x62, but the annotated
+  crops were downsampled by an unstated factor, so voxel size is left null. Authors not read from the
+  API record. No linked paper found on the Zenodo record. Also contains 3 trained StarDist3D models and
+  a 2.3 GB whole-tile TIFF. enricher: size_bytes set from a complete file listing (was null); includes
+  two large unannotated stacks Whole_ds441.tif (2.3 GB) and Crop_ds441.tif (0.57 GB).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/6645978
+  - https://zenodo.org/records/6645978/files/crops_BIOP_v1.zip
+  - https://zenodo.org/records/6645978/files/Whole_ds441.tif
+  bytes_downloaded: 548182
+  size_source: file-listing
+  layout:
+    tree: "10 record files, 3.0 GB\n  Whole_ds441.tif     2.33 GB  (unannotated stack, zcyx 99x2x4174x1409)\n\
+      \  Crop_ds441.tif      0.57 GB\n  annotations_BIOP.zip  images/ 4 .tif, masks/ 4 .tif\n  crops_BIOP_v1.zip\
+      \     images/ 16 .tif, masks/ 16 .tif\n  val_rdm42.zip         images/ 4 .tif, masks/ 4 .tif\n \
+      \ models.zip            3 StarDist models (+ QC)\n  0/1/2 notebooks, stardist0.8_TF1.15.yml, 0-StarDist3D.png\n"
+    n_files: 10
+    listing_complete: true
+  sample:
+    urls:
+    - 'https://zenodo.org/records/6645978/files/crops_BIOP_v1.zip::images/_CCK_6_ACQ_8 #1_001_1_2.tif_0_0.tif'
+    - 'https://zenodo.org/records/6645978/files/crops_BIOP_v1.zip::masks/_CCK_6_ACQ_8 #1_001_1_2.tif_0_0.tif'
+    size_bytes: 548182
+    description: One training crop (62x64x64) and its instance mask from crops_BIOP_v1.zip.
+  arrays:
+  - role: raw
+    path_pattern: '{crops_BIOP_v1,annotations_BIOP,val_rdm42}.zip/images/*.tif'
+    format: tiff
+    axes: null
+    shape:
+    - 62
+    - 64
+    - 64
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 25
+    - 62325
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '{crops_BIOP_v1,annotations_BIOP,val_rdm42}.zip/masks/*.tif'
+    format: tiff
+    axes: null
+    shape:
+    - 62
+    - 64
+    - 64
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 92
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 39
+    alignment: same-grid
+    alignment_notes: masks/<name> pairs with images/<name> (same file name); identical shape in the sample.
+  notes: Listing via the Zenodo API (10 files, exact) with zips expanded (71 members). Probe of a crop
+    - uint16, 62 pages of 64x64, uncompressed. Sample crop pair - raw 25..62325; mask 0..92 with 39 values
+    (IDs not consecutive, instance labels as described for StarDist training). annotations_BIOP.zip (4
+    full annotated volumes) and val_rdm42.zip not sampled. Whole_ds441.tif header - ImageJ zcyx 99x2x4174x1409
+    uint16 (an unannotated large stack). Page axis of the crops not stated in the files; z by the docs.
+    Value ranges from one crop.
+  inspected_at: '2026-10-01T08:39:22Z'
