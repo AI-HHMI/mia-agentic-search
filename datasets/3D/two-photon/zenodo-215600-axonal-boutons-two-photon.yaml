@@ -1,10 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-215600-axonal-boutons-two-photon
 title: Dataset of Axonal Synapses, Acquired using a Two-photon Microscope in the Live Mouse Cortex
 short_name: Axonal bouton detection (two-photon, mouse cortex)
-description: 100 two-photon image stacks (TIFF; 80 training and 20 test) of Thy1-GFP axons in the live mouse
-  cortex, each with a ground-truth binary image in which synaptic boutons are labelled as boxes (PNG).
-  Released with the PLoS ONE paper on automated bouton detection.
+description: 100 two-photon image stacks (TIFF; 80 training and 20 test) of Thy1-GFP axons in the live
+  mouse cortex, each with a ground-truth binary image in which synaptic boutons are labelled as boxes
+  (PNG). Released with the PLoS ONE paper on automated bouton detection.
 landing_url: https://zenodo.org/records/215600
 doi: 10.5281/zenodo.215600
 repository: Zenodo
@@ -27,8 +27,8 @@ imaging:
   channels: null
   organism:
   - Mus musculus
-  sample: Live mouse cortex (Thy1-GFP-M transgenic mice), axons with boutons; 40x objective, zoom 4, 512 x 512
-    pixels
+  sample: Live mouse cortex (Thy1-GFP-M transgenic mice), axons with boutons; 40x objective, zoom 4, 512
+    x 512 pixels
   labels_stains:
   - GFP
 data:
@@ -66,9 +66,78 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T07:55:52Z'
-notes: 'Zip listing (peek_archive): 100 TIFFs (1.3 GB uncompressed) and 100 PNGs, with a "Test data" folder; record
-  states 80 training / 20 test images. Pixel size 0.147 um from the record (z step not stated, z FWHM 2.5 um
-  given as PSF; paper describes the images as stacks, with the algorithm applied to mean intensity projections).
-  Paper compares the algorithm to manual labelling by 3 expert neurobiologists; whether the released
-  boxes come from all three or a consensus was not found in the sections read, so source manual.'
+  last_checked: '2026-10-01T09:36:12Z'
+notes: 'Zip listing (peek_archive): 100 TIFFs (1.3 GB uncompressed) and 100 PNGs, with a "Test data" folder;
+  record states 80 training / 20 test images. Pixel size 0.147 um from the record (z step not stated,
+  z FWHM 2.5 um given as PSF; paper describes the images as stacks, with the algorithm applied to mean
+  intensity projections). Paper compares the algorithm to manual labelling by 3 expert neurobiologists;
+  whether the released boxes come from all three or a consensus was not found in the sections read, so
+  source manual. enricher: stacks are 3D (25 z-slices in the sample) while each label is one 2D 512x512
+  binary image.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/215600
+  - https://zenodo.org/records/215600/files/Data.zip
+  bytes_downloaded: 1262920
+  size_source: file-listing
+  layout:
+    tree: "Data.zip  (584,872,065 B; 200 members)\n  Data/Training data/ImageN.tif          80 stacks\
+      \ (1.0 GB uncompressed)\n  Data/Training data labels/ImageN-labels.png  80 PNG\n  Data/Test data/ImageN.tif\
+      \              20 stacks (278.9 MB)\n  Data/Test data labels/ImageN-labels.png      20 PNG\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/215600/files/Data.zip::Data/Test data/Image1.tif
+    - https://zenodo.org/records/215600/files/Data.zip::Data/Test data labels/Image1-labels.png
+    size_bytes: null
+    description: Test stack Image1 (13.2 MB uncompressed) and its label PNG (810 B).
+  arrays:
+  - role: raw
+    path_pattern: Data/{Training,Test} data/ImageN.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 25
+    - 512
+    - 512
+    shape_varies: true
+    dtype: uint16
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 2295
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: Data/{Training,Test} data labels/ImageN-labels.png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    n_ids_observed: 2
+    alignment: unknown
+    alignment_notes: ImageN-labels.png pairs with ImageN.tif; the label is a single 2D 512 x 512 image
+      for a 3D stack (same x/y size). The paper applies its method to mean intensity projections, so labels
+      presumably refer to the projection; not stated per file.
+  notes: 'Listing: Zenodo API + zip central directory (200 members). Probe could not read the TIFF header
+    from the zip-deflated member, so TIFF-internal compression is unknown. Sampled test Image1: 25x512x512
+    uint16 (ZYX per tifffile), values 0-2295, 91.6% zeros, p99 204 (sample hint: 12-bit range); label
+    PNG 512x512 uint8 {0: 257,136, 255: 5,008}, i.e. filled boxes as a binary mask. One stack only; z
+    depth may vary.'
+  inspected_at: '2026-10-01T09:36:12Z'
