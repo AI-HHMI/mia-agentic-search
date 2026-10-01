@@ -1,8 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-3632035-bach-breast-histology
 title: 'BACH Dataset: Grand Challenge on Breast Cancer Histology images'
 short_name: BACH breast cancer histology (H&E)
-description: ICIAR 2018 BACH challenge data. 400 H&E microscopy images (100 each of normal, benign, in situ and invasive carcinoma) with image-level labels, plus whole-slide images with region annotations (XML) and a held-out test set.
+description: ICIAR 2018 BACH challenge data. 400 H&E microscopy images (100 each of normal, benign, in situ and
+  invasive carcinoma) with image-level labels, plus whole-slide images with region annotations (XML) and a held-out
+  test set.
 landing_url: https://zenodo.org/records/3632035
 doi: 10.5281/zenodo.3632035
 repository: Zenodo
@@ -28,14 +30,15 @@ imaging:
   channels: 3
   organism:
   - Homo sapiens
-  sample: H&E-stained breast biopsy tissue; microscopy fields (2048x1536 px, 0.42 um/px) and whole-slide images scanned on a Leica SCN400 (0.467 um/px)
+  sample: H&E-stained breast biopsy tissue; microscopy fields (2048x1536 px, 0.42 um/px) and whole-slide images
+    scanned on a Leica SCN400 (0.467 um/px)
   labels_stains:
   - hematoxylin and eosin
 data:
   formats:
   - tiff
   - svs
-  size_bytes: 13383784174
+  size_bytes: 13383786691
   n_items: 430
   access: open
   download_url: https://zenodo.org/records/3632035/files/ICIAR2018_BACH_Challenge.zip
@@ -46,7 +49,8 @@ annotations:
   - classification
   - semantic-segmentation
   coverage: dense
-  format: image-level class labels (CSV) for microscopy images; XML polygon coordinates enclosing benign, in situ and invasive regions in whole-slide images
+  format: Photos/microscopy_ground_truth.csv (filename,class) for microscopy images; Aperio ImageScope XML polygons
+    (Region Text = class, MicronsPerPixel 0.466667) for 10 training WSIs
   source: manual
 ml:
   tasks:
@@ -72,5 +76,117 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T03:55:00Z'
-notes: 'License is CC BY-NC-ND 4.0 (non-commercial, no derivatives), stated on the Zenodo record and README. Training zip listing (peek_archive): 400 TIFF, 30 SVS whole-slide images, 10 XML annotation files, 40 PNG, 1 CSV. n_items = 400 microscopy images + 30 WSIs from the training zip; the test set is a separate 3 GB zip, not listed. size_bytes is the sum of both zips from the Zenodo file list. Pixel size 0.42 um (microscopy) / 0.467 um (WSI) from the challenge Dataset page; 420 nm is given for the microscopy images only. The paper (Medical Image Analysis 2019) is not open access; only the abstract was read. Part A labels are image-level, Part B region polygons cover only 10 slides per the XML count.'
+  last_checked: '2026-10-01T04:31:00Z'
+notes: 'License is CC BY-NC-ND 4.0 (non-commercial, no derivatives), stated on the Zenodo record and README. Training
+  zip listing (peek_archive): 400 TIFF, 30 SVS whole-slide images, 10 XML annotation files, 40 PNG, 1 CSV. n_items
+  = 400 microscopy images + 30 WSIs from the training zip; the test set is a separate 3 GB zip, not listed. Pixel
+  size 0.42 um (microscopy) / 0.467 um (WSI) from the challenge Dataset page; 420 nm is given for the microscopy
+  images only. The paper (Medical Image Analysis 2019) is not open access; only the abstract was read. Part A labels
+  are image-level, Part B region polygons cover only 10 slides per the XML count.
+
+  enricher: size_bytes = exact Zenodo listing incl. 2 txt files (was 13383784174).
+
+  enricher: annotations.format detailed from the CSV and A04.xml.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/3632035
+  - https://zenodo.org/records/3632035/files/ICIAR2018_BACH_Challenge.zip
+  bytes_downloaded: 9761981
+  size_source: file-listing
+  layout:
+    tree: "2 txt files (record root)\nICIAR2018_BACH_Challenge.zip/ICIAR2018_BACH_Challenge/\n  Photos/microscopy_ground_truth.csv\n\
+      \  Photos/{Benign,InSitu,Invasive,Normal}/<x>NNN.tif   4 x 100 files  7.3 GB\n  WSI/NN.svs, ANN.svs      \
+      \                           30 files\n  WSI/ANN.xml                                         10 files (region\
+      \ polygons)\n  WSI/gt_thumbnails/ANN.png 10 · WSI/thumbnails/*.png 30\nICIAR2018_BACH_Challenge_TestDataset.zip/ICIAR2018_BACH_Challenge_TestDataset/\n\
+      \  Photos/*.tif 100 · WSI/*.svs 10 · WSI/thumbnails/*.png 10   (no labels)\n"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/3632035/files/ICIAR2018_BACH_Challenge.zip::ICIAR2018_BACH_Challenge/Photos/Benign/b003.tif
+    size_bytes: 18874748
+    description: One labelled microscopy image (Benign class, uncompressed TIFF)
+  arrays:
+  - role: raw
+    path_pattern: ICIAR2018_BACH_Challenge.zip::ICIAR2018_BACH_Challenge/Photos/<class>/<x>NNN.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 1536
+    - 2048
+    - 3
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 6425
+    - 65535
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: raw
+    path_pattern: ICIAR2018_BACH_Challenge.zip::ICIAR2018_BACH_Challenge/WSI/*.svs
+    format: svs
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    lossy: null
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: ICIAR2018_BACH_Challenge.zip::ICIAR2018_BACH_Challenge/Photos/microscopy_ground_truth.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes:
+    - id: null
+      name: Normal
+    - id: null
+      name: Benign
+    - id: null
+      name: InSitu
+    - id: null
+      name: Invasive
+    n_ids_observed: null
+    alignment: not-applicable
+    alignment_notes: 'Image-level labels: one row per image filename (e.g. n001.tif,Normal).'
+  - role: label
+    path_pattern: ICIAR2018_BACH_Challenge.zip::ICIAR2018_BACH_Challenge/WSI/ANN.xml
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes: null
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: Aperio ImageScope XML; Vertex X/Y in WSI pixel coordinates of the matching ANN.svs; MicronsPerPixel=0.466667
+      in A04.xml.
+  notes: 'Exact Zenodo listing with both zips expanded (608 members). Probed Photos/Benign/b003.tif: single-page
+    RGB 1536x2048 uint16, uncompressed. Sampled it: min 6425, max 65535, only 231 unique values, and min/max are
+    multiples of 257, so it looks like 8-bit data stored as uint16 (inferred, not documented). value_range is from
+    this one image. The SVS header probe failed (deflated zip member), so WSI shape/compression are unknown. Read
+    A04.xml: one region with Text ''Invasive carcinoma''; csv rows are filename,class. Test zip has no labels.'
+  inspected_at: '2026-10-01T04:31:00Z'
