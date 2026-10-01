@@ -1,15 +1,18 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: bbbc029-synthetic-dic-shapes
 title: Synthetic DIC Images
 short_name: Simulated DIC images of shapes (noisy, clean)
-description: 109 ground-truth shape images (20 binary and grayscale objects with rotations) and their simulated DIC images in noise-free and 20 dB Gaussian-noise versions (218 DIC images), plus the DIC point spread function, released to benchmark DIC reconstruction algorithms.
+description: 109 ground-truth shape images (20 binary and grayscale objects with rotations) and their
+  simulated DIC images in noise-free and 20 dB Gaussian-noise versions (218 DIC images), plus the DIC
+  point spread function, released to benchmark DIC reconstruction algorithms.
 landing_url: https://bbbc.broadinstitute.org/BBBC029
 doi: null
 repository: LabWebsite
 accession: BBBC029
 authors: []
 publications:
-- title: DIC image reconstruction using an energy minimization framework to visualize optical path length distribution
+- title: DIC image reconstruction using an energy minimization framework to visualize optical path length
+    distribution
   doi: 10.1038/srep30420
   url: https://doi.org/10.1038/srep30420
 date_published: null
@@ -21,7 +24,8 @@ imaging:
   channels: 1
   organism:
   - other
-  sample: simulated images (computer-generated shapes convolved with a DIC point spread function); not biological
+  sample: simulated images (computer-generated shapes convolved with a DIC point spread function); not
+    biological
   labels_stains: []
 data:
   formats:
@@ -36,7 +40,8 @@ annotations:
   types:
   - restoration-pairs
   coverage: dense
-  format: 'ground_truth.zip: 109 PNG source shape images; images.zip: images/noisefree (109 PNG), images/noise-20dB (109 PNG) and a small .txt file'
+  format: 'ground_truth.zip: 109 PNG source shape images; images.zip: images/noisefree (109 PNG), images/noise-20dB
+    (109 PNG) and a small .txt file'
   source: automatic
 ml:
   tasks:
@@ -60,5 +65,78 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T22:00:00Z'
-notes: 'Fully simulated (the paper says 20 shape images and rotated versions were convolved with a generated DIC PSF), so organism is other and the images are not real microscopy; included as a paired restoration/reconstruction benchmark and a lower-confidence entry. Zip listings (complete): ground_truth.zip 109 PNG (127.6 KB), images.zip 109 noise-free (182 KB) + 109 noisy (879 KB) PNG. Companion of BBBC028 (real DIC micro-structures). The page says the PSF is included; it was not found as a separate file in the listing beyond a 26-byte .txt. Pixel size not applicable/not stated.'
+  last_checked: '2026-10-01T20:56:30Z'
+notes: 'Fully simulated (the paper says 20 shape images and rotated versions were convolved with a generated
+  DIC PSF), so organism is other and the images are not real microscopy; included as a paired restoration/reconstruction
+  benchmark and a lower-confidence entry. Zip listings (complete): ground_truth.zip 109 PNG (127.6 KB),
+  images.zip 109 noise-free (182 KB) + 109 noisy (879 KB) PNG. Companion of BBBC028 (real DIC micro-structures).
+  The page says the PSF is included; it was not found as a separate file in the listing beyond a 26-byte
+  .txt. Pixel size not applicable/not stated. enricher: images/point_spread_function.txt read; it holds
+  a 3x3 comma-separated kernel (the DIC PSF), so the PSF is included.'
+technical:
+  method: sample
+  inspected_at: '2026-10-01T20:56:30Z'
+  inspected_urls:
+  - https://data.broadinstitute.org/bbbc/BBBC029/images.zip
+  - https://data.broadinstitute.org/bbbc/BBBC029/ground_truth.zip
+  bytes_downloaded: 10798
+  size_source: file-listing
+  layout:
+    tree: "./  2 files, 1,366,503 B\n  ground_truth.zip\n    ground_truth/        109 .png (127.6 KB)\
+      \  <shape>_rotation<angle>.png\n  images.zip\n    images/point_spread_function.txt   (26 B, 3x3\
+      \ kernel)\n    images/noise-20dB/   109 .png (879.3 KB)  <shape>_rotation<angle>_noise20.png\n \
+      \   images/noisefree/    109 .png (182.3 KB)  <shape>_rotation<angle>_noiseInf.png\n"
+    n_files: 330
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.broadinstitute.org/bbbc/BBBC029/images.zip::images/noise-20dB/moon_rotation-30_noise20.png
+    - https://data.broadinstitute.org/bbbc/BBBC029/ground_truth.zip::ground_truth/moon_rotation-30.png
+    size_bytes: 9163
+    description: One noisy simulated DIC image and its ground-truth shape image (zip members, read by
+      range).
+  arrays:
+  - role: raw
+    path_pattern: images/{noise-20dB,noisefree}/<shape>_rotation<angle>_noise{20,Inf}.png
+    format: png
+    axes: yx
+    shape:
+    - 100
+    - 100
+    shape_varies: null
+    dtype: uint8
+    compression: png
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: target
+    path_pattern: ground_truth/<shape>_rotation<angle>.png
+    format: png
+    axes: yx
+    shape:
+    - 100
+    - 100
+    shape_varies: null
+    dtype: uint8
+    compression: png
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: Ground truth <shape>_rotation<angle>.png pairs with images/noisefree/<stem>_noiseInf.png
+      and images/noise-20dB/<stem>_noise20.png; the sampled pair has identical 100x100 shapes.
+  notes: 'listing.py --expand-zips: 2 zips, 1,366,503 B exact, 328 members (109 ground-truth PNG, 109
+    noise-free + 109 noise-20dB DIC PNG, 1 PSF txt). PSF txt (peek_archive --cat) is a 3x3 kernel "0,0,0
+    / 0,-0.5,0 / 0,0,0.5". sample.py on moon_rotation-30: noisy DIC PNG 100x100 uint8 grayscale (mode
+    L), [0, 255], mean 139, 206 unique values; noise-free DIC 100x100 uint8 [0, 255], mean 123; ground
+    truth 100x100 uint8 [0, 255], 213 unique values, 81% zeros (grayscale shape image, not an instance
+    map despite the sampler hint). Values are from one image; other images were not checked, so shape_varies
+    is left null. Simulated data, no detector range.'
