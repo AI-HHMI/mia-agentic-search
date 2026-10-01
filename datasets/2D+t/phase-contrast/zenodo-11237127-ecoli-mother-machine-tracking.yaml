@@ -1,12 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-11237127-ecoli-mother-machine-tracking
 title: Cell Tracking Dataset (E. coli growing in the Mother Machine)
 short_name: E. coli mother machine tracking (phase contrast)
-description: 102 time-lapse movies (58 train, 15 val, 29 test), each of a single mother-machine
-  chamber with E. coli imaged every 5 minutes, in Cell Tracking Challenge format with
-  segmentation (SEG) and tracking (TRA) ground truth masks and man_track.txt lineage
-  files. Collected by the Dunlop lab (Boston University); used to train and benchmark
-  Cell-TRACTR.
+description: 102 time-lapse movies (58 train, 15 val, 29 test), each of a single mother-machine chamber
+  with E. coli imaged every 5 minutes, in Cell Tracking Challenge format with segmentation (SEG) and tracking
+  (TRA) ground truth masks and man_track.txt lineage files. Collected by the Dunlop lab (Boston University);
+  used to train and benchmark Cell-TRACTR.
 landing_url: https://zenodo.org/records/11237127
 doi: 10.5281/zenodo.11237127
 repository: Zenodo
@@ -16,8 +15,7 @@ authors:
 - Jean-Baptitse Lugagne
 - Mary Dunlop
 publications:
-- title: 'Cell-TRACTR: A transformer-based model for end-to-end segmentation and tracking
-    of cells'
+- title: 'Cell-TRACTR: A transformer-based model for end-to-end segmentation and tracking of cells'
   doi: 10.1371/journal.pcbi.1013071
   url: https://doi.org/10.1371/journal.pcbi.1013071
 date_published: '2024-05-21'
@@ -29,8 +27,7 @@ imaging:
   channels: null
   organism:
   - Escherichia coli
-  sample: E. coli growing in single-file in mother machine microfluidic chambers,
-    one frame per 5 min
+  sample: E. coli growing in single-file in mother machine microfluidic chambers, one frame per 5 min
   labels_stains: []
 data:
   formats:
@@ -46,8 +43,8 @@ annotations:
   - instance-segmentation
   - tracking
   coverage: dense
-  format: 'Cell Tracking Challenge format: *_GT/SEG masks (TIFF), *_GT/TRA masks (TIFF)
-    and man_track.txt lineage files'
+  format: 'Cell Tracking Challenge format: *_GT/SEG masks (TIFF), *_GT/TRA masks (TIFF) and man_track.txt
+    lineage files'
   source: unknown
 ml:
   tasks:
@@ -71,12 +68,100 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T17:21:18Z'
-notes: Zenodo record and CTC.zip listing (peek_archive) show train/val/test folders
-  with N, N_GT/SEG and N_GT/TRA per movie (SEG slightly fewer than frames). n_items
-  = 58+15+29 movies; the test set has _GT but also N_RES folders. Phase-contrast is
-  inferred from the Cell-TRACTR paper (supplement figure overlays on phase contrast
-  images); pixel size, microscope and annotation procedure are not stated on the Zenodo
-  page, README or in the paper text available (Methods describe only training). Annotation
-  source therefore unknown. Dataset is described in the Zenodo paper links of Cell-TRACTR
-  (O'Connor & Dunlop 2025).
+  last_checked: '2026-10-01T19:45:52Z'
+notes: 'Zenodo record and CTC.zip listing (peek_archive) show train/val/test folders with N, N_GT/SEG
+  and N_GT/TRA per movie (SEG slightly fewer than frames). n_items = 58+15+29 movies; the test set has
+  _GT but also N_RES folders. Phase-contrast is inferred from the Cell-TRACTR paper (supplement figure
+  overlays on phase contrast images); pixel size, microscope and annotation procedure are not stated on
+  the Zenodo page, README or in the paper text available (Methods describe only training). Annotation
+  source therefore unknown. Dataset is described in the Zenodo paper links of Cell-TRACTR (O''Connor &
+  Dunlop 2025). enricher: frames are 317x39 RGB uint8 TIFFs (one chamber); SEG/TRA masks are uint16 instance
+  IDs; README.txt read.'
+technical:
+  method: sample
+  inspected_at: '2026-10-01T19:45:52Z'
+  inspected_urls:
+  - https://zenodo.org/records/11237127
+  - https://zenodo.org/records/11237127/files/CTC.zip
+  bytes_downloaded: 18124
+  size_source: file-listing
+  layout:
+    tree: "./  1 file, 315.4 MB\n  CTC.zip  (54,042 members)\n    CTC/README.txt\n    CTC/{train,val,test}/<NN>/\
+      \          t<ttt>.tif frames (+ one .mp4 per movie in train/val)\n    CTC/{train,val,test}/<NN>_GT/SEG/\
+      \   man_seg<ttt>.tif\n    CTC/{train,val,test}/<NN>_GT/TRA/   man_track<ttt>.tif + man_track.txt\n\
+      \      train 58 movies (10,117 frames) · val 15 (2,431) · test 29 (5,340)\n    CTC/test/13_RES/\
+      \                    199 .tif result masks + .txt/.mp4/.png\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/11237127/files/CTC.zip::CTC/test/07/t098.tif
+    - https://zenodo.org/records/11237127/files/CTC.zip::CTC/test/07_GT/SEG/man_seg098.tif
+    size_bytes: null
+    description: One frame of test movie 07 and its SEG mask.
+  arrays:
+  - role: raw
+    path_pattern: CTC/*/<NN>/t*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 317
+    - 39
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One mother-machine chamber per movie; frames every 5 min (README).
+  - role: label
+    path_pattern: CTC/*/<NN>_GT/{SEG,TRA}/man_*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 317
+    - 39
+    shape_varies: null
+    dtype: uint16
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 120
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 8
+    alignment: same-grid
+    alignment_notes: 'CTC convention: man_seg<t>.tif / man_track<t>.tif pair with t<t>.tif; same 317x39
+      grid (raw has an extra RGB axis). Label values are track IDs (113-120 in the sample).'
+  - role: label
+    path_pattern: CTC/*/<NN>_GT/TRA/man_track.txt
+    format: other
+    axes: null
+    shape:
+    - 218
+    - 4
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: tracks-table
+    classes: null
+    n_ids_observed: null
+    alignment: not-applicable
+    alignment_notes: 'CTC lineage table: label, begin frame, end frame, parent label (space separated,
+      CRLF line endings).'
+  notes: 'Complete Zenodo listing (CTC.zip, 315,362,069 B = size_bytes), members expanded (54,042). Read
+    the zip directory, README.txt and test/07_GT/TRA/man_track.txt by range (5,428,105 B): 218 tracks,
+    4 columns. Probed test/07/t064.tif: 317x39x3 uint8 RGB, LZW. Sampled the t098 frame + man_seg098:
+    raw [0, 255]; mask uint16 with 0 and 7 IDs (113-120, one ID absent), so the SEG labels carry track
+    IDs. The frames are RGB TIFFs even though the record says phase contrast; whether the 3 channels are
+    equal was not checked. Values are from one frame.'
