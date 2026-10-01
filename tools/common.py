@@ -21,6 +21,7 @@ REJECTED_PATH = STATE_DIR / "rejected.yaml"
 REJECTIONS_REF = "origin/rejections"
 FRONTIER_DIR = STATE_DIR / "frontier"  # one file per routine avoids cross-PR conflicts
 RUN_BUDGET_MIN = 120      # hard upper runtime per agent run
+HARVEST_TARGET = 10       # a harvest run stops after publishing this many new datasets (one PR each)
 SEARCH_CUTOFF_MIN = 110   # stop searching here, leaving time to publish PRs and save state
 DATASET_BRANCH_PREFIX = "claude/dataset/"  # one branch + PR per proposed dataset
 STATE_BRANCH_PREFIX = "claude/state/"      # per-routine frontier + run logs, never reviewed

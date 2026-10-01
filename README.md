@@ -16,7 +16,7 @@ Five [Claude scheduled routines](https://claude.ai/code/routines) run in the clo
 | `enricher` | every 2 h | Inspects the files of open dataset PRs: folder tree, exact size, shapes, dtypes, compression, value ranges, label encoding, alignment, license |
 | `maintainer` | daily | Checks links, fills gaps in existing records, posts a daily Slack digest |
 
-Each harvest run works through its search queue until it finds **at least one dataset that isn't
+Each harvest run works through its search queue until it has published **10 datasets that aren't
 already in the catalog, in an open PR, or rejected**. Runs last at most 2 hours. Before writing
 any field as unknown, the agent reads the dataset page, the file listing and the paper's full text.
 
@@ -95,6 +95,6 @@ Branches:
 pip install -r requirements.txt
 python tools/validate.py                                        # check the catalog
 python tools/build_site.py && open site/index.html              # build the dashboard
-claude -p "/find-datasets source=repositories limit=1 dry-run"  # test an agent run (no PRs)
+claude -p "/find-datasets source=repositories target=1 dry-run" # test an agent run (no PRs)
 claude -p "/enrich-prs pr=126 dry-run"                           # test the enricher on one PR (no pushes)
 ```

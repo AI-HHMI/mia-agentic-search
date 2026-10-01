@@ -22,8 +22,9 @@ humans review them (merge = accept, close = reject).
    (branch `claude/dataset/<id>`), and use `tools/pr_text.py` for the PR title and body, verbatim.
    Search state goes to `claude/state/<routine>` via `tools/publish.py state-push`.
 8. Slack notifications go to **`#mia-harvester`** via the Slack connector. Don't post to any other channel.
-9. **Run until something new turns up, max 2 hours.** Harvest runs keep searching, one frontier query at a
-   time, until they publish ≥ 1 dataset that isn't on `main`, has no open PR and wasn't rejected.
+9. **Run until 10 new datasets are published, max 2 hours.** Harvest runs keep searching, one frontier query
+   at a time, until they publish 10 datasets (`target`, default 10) that aren't on `main`, have no open PR and
+   weren't rejected, **each as its own PR**.
    Check `tools/run_log.py continue` before each query. Searching stops at 110 min; every run ends by 120 min.
 10. Be polite to servers: ≤ 1 request/second per host, no bulk downloads. Metadata only. The one exception
    is the enricher (below), which may read file headers and download small samples within its budget.

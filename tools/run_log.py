@@ -1,6 +1,6 @@
 """Structured run log for each agent run (the source of truth for monitoring).
 
-    python tools/run_log.py start --routine harvest-repositories
+    python tools/run_log.py start --routine harvest-repositories [--target 10]
     python tools/run_log.py fetched <url> [<url> ...]
     python tools/run_log.py event added --id cremi --pr-url <PR url>
     python tools/run_log.py event duplicate|rejected|low-confidence|error --id X --reason "..."
@@ -13,8 +13,8 @@
     python tools/run_log.py inspected --kind sample --url U --id X --bytes N [--note "..."]   # ad hoc scripts
     python tools/run_log.py recent-errors --routine enricher [--runs 5] [--min 2]            # ids to skip
 
-Runs search until at least one new dataset is published or SEARCH_CUTOFF_MIN is reached;
-the whole run must end within RUN_BUDGET_MIN (tools/common.py).
+Harvest runs search until `target` new datasets (default HARVEST_TARGET, 10) are published or
+SEARCH_CUTOFF_MIN is reached; the whole run must end within RUN_BUDGET_MIN (tools/common.py).
 
 The active run's path is kept in state/.current_run (git-ignored).
 tools/listing.py, probe.py and sample.py append what they read to the run's `inspected` list
@@ -27,7 +27,8 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import ROOT, RUN_BUDGET_MIN, RUNS_DIR, SEARCH_CUTOFF_MIN, STATE_DIR, utcnow  # noqa: E402
+from tools.common import (HARVEST_TARGET, ROOT, RUN_BUDGET_MIN, RUNS_DIR, SEARCH_CUTOFF_MIN, STATE_DIR,  # noqa: E402
+                          utcnow)
 
 CURRENT = STATE_DIR / ".current_run"
 EVENTS = ["candidate", "added", "duplicate", "rejected", "low-confidence", "error", "enriched", "skipped"]
@@ -85,6 +86,7 @@ def main():
     s = sub.add_parser("start")
     s.add_argument("--routine", required=True)
     s.add_argument("--dry-run", action="store_true")
+    s.add_argument("--target", type=int, default=HARVEST_TARGET, help="new datasets to publish before stopping")
     f = sub.add_parser("fetched")
     f.add_argument("urls", nargs="+")
     q = sub.add_parser("query")
@@ -130,7 +132,7 @@ def main():
         started = utcnow()
         p = RUNS_DIR / f"{a.routine}-{started.replace(':', '').replace('-', '')}.json"
         _save(p, {"routine": a.routine, "started_at": started, "finished_at": None, "status": "running",
-                  "dry_run": a.dry_run, "queries": [], "fetched_urls": [], "events": [],
+                  "dry_run": a.dry_run, "target": a.target, "queries": [], "fetched_urls": [], "events": [],
                   "counts": {k: 0 for k in EVENTS}, "pr_urls": [], "inspected": []})
         CURRENT.write_text(str(p.relative_to(ROOT)))
         print(p.relative_to(ROOT))
@@ -149,21 +151,22 @@ def main():
             d["pr_urls"].append(a.pr_url)
     elif a.cmd == "continue":
         mins = _elapsed_min(d)
-        found = d["counts"]["added"] > 0 and not a.time_only
+        target = d.get("target") or 1  # run logs from before targets existed stopped after one
+        found = d["counts"]["added"] >= target and not a.time_only
         info = {"elapsed_min": round(mins, 1), "search_cutoff_min": SEARCH_CUTOFF_MIN,
-                "budget_min": RUN_BUDGET_MIN, "new_datasets": d["counts"]["added"]}
+                "budget_min": RUN_BUDGET_MIN, "new_datasets": d["counts"]["added"], "target": target}
         if found:
-            print(json.dumps({**info, "decision": "STOP: found a new dataset; finish the current query, then publish and save state"}))
+            print(json.dumps({**info, "decision": f"STOP: published {d['counts']['added']} new datasets (target {target}); save state"}))
             sys.exit(1)
         if mins >= SEARCH_CUTOFF_MIN:
             print(json.dumps({**info, "decision": "STOP: search time is up; publish anything valid and save state now"}))
             sys.exit(1)
-        why = "keep working" if a.time_only else "no new dataset yet"
+        why = "keep working" if a.time_only else f"{d['counts']['added']} of {target} new datasets so far"
         print(json.dumps({**info, "decision": f"CONTINUE: {why}; {SEARCH_CUTOFF_MIN - mins:.0f} min of search left"}))
         return
     elif a.cmd == "finish":
         d["finished_at"] = utcnow()
-        d["stop_reason"] = a.stop_reason or ("found" if d["counts"]["added"] else
+        d["stop_reason"] = a.stop_reason or ("found" if d["counts"]["added"] >= (d.get("target") or 1) else
                                              "time-limit" if _elapsed_min(d) >= SEARCH_CUTOFF_MIN else "frontier-exhausted")
         done = d["counts"].get("added", 0) + d["counts"].get("enriched", 0)
         d["status"] = a.status or ("failed" if d["counts"]["error"] and not done
