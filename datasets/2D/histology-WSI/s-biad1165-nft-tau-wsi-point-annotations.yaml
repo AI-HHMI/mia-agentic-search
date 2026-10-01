@@ -1,10 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: s-biad1165-nft-tau-wsi-point-annotations
 title: Learning precise segmentation of neurofibrillary tangles from rapid manual point annotations
 short_name: Tau tangle point labels (brain histology WSI)
-description: Whole-slide images of AT8 (tau) immunostained post-mortem human temporal cortex from Alzheimer disease cases,
-  stored as Zarr, with expert point annotations of neurofibrillary tangles inside regions of interest (Zeiss Zen Blue annotation
-  files).
+description: Whole-slide images of AT8 (tau) immunostained post-mortem human temporal cortex from Alzheimer
+  disease cases, stored as Zarr, with expert point annotations of neurofibrillary tangles inside regions
+  of interest (Zeiss Zen Blue annotation files).
 landing_url: https://www.ebi.ac.uk/biostudies/bioimages/studies/S-BIAD1165
 doi: null
 repository: BioImageArchive
@@ -39,15 +39,15 @@ imaging:
   channels: null
   organism:
   - Homo sapiens
-  sample: Post-mortem human temporal cortex sections from Alzheimer disease cases (UC Davis, UC San Diego, Columbia), AT8
-    immunohistochemistry (DAB); Zeiss Axio Scan Z.1, 40x
+  sample: Post-mortem human temporal cortex sections from Alzheimer disease cases (UC Davis, UC San Diego,
+    Columbia), AT8 immunohistochemistry (DAB); Zeiss Axio Scan Z.1, 40x
   labels_stains:
   - AT8 (phospho-tau), DAB
 data:
   formats:
   - zarr
-  size_bytes: null
-  n_items: null
+  size_bytes: 133999474323
+  n_items: 46
   access: open
   download_url: https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/165/S-BIAD1165/Files/
   download_method: http
@@ -77,14 +77,79 @@ provenance:
   - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/165/S-BIAD1165/Files/zipped_wsis/
   - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/165/S-BIAD1165/Files/file_list.tsv
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13524952/fullTextXML
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/165/S-BIAD1165/Files/file_list.json
   confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T03:47:55Z'
-notes: 'WSIs as Zarr in two zips (batch1 ~53 GB, batch2 ~71 GB per HTTP index) plus annotations.zip with 23 .cz point-annotation
-  XML files (e.g. 1-102-Temporal_AT8.cz). Zarr converted from CZI by the authors; pixel size 0.11 um from the paper. Points
-  mark NFTs inside ROIs (paper: three per WSI); pixel masks are not in the listing and come from the authors'' point-to-mask
-  code (github keiserlab/tangle-tracer). Paper: 15 train WSIs, 7 test, plus a 24-WSI hold-out batch; no split files listed.
-  Not verified: WSI count, total size, channels.'
+  last_checked: '2026-10-01T06:30:59Z'
+notes: 'WSIs as Zarr in two zips (batch1 ~53 GB, batch2 ~71 GB per HTTP index) plus annotations.zip with
+  23 .cz point-annotation XML files (e.g. 1-102-Temporal_AT8.cz). Zarr converted from CZI by the authors;
+  pixel size 0.11 um from the paper. Points mark NFTs inside ROIs (paper: three per WSI); pixel masks
+  are not in the listing and come from the authors'' point-to-mask code (github keiserlab/tangle-tracer).
+  Paper: 15 train WSIs, 7 test, plus a 24-WSI hold-out batch; no split files listed. Not verified: WSI
+  count, total size, channels. enricher: size_bytes from the complete file listing; n_items 46 = zarr
+  folders in batch1 (22) + batch2 (24) (both were null).'
+technical:
+  method: header
+  inspected_urls:
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/165/S-BIAD1165/Files/zipped_wsis/batch1.zip
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/165/S-BIAD1165/Files/zipped_wsis/batch2.zip
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/165/S-BIAD1165/Files/annotations/annotations.zip
+  bytes_downloaded: 0
+  size_source: file-listing
+  layout:
+    tree: "Files/\n  file_list.json, file_list.tsv\n  zipped_wsis/batch1.zip   57,393,225,184 B   batch1/<case>-Temporal_AT8.zarr/\
+      \  22 zarr arrays, 18,669 members\n  zipped_wsis/batch2.zip   76,606,123,919 B   batch2/<case>-Temporal_AT8.zarr/\
+      \  24 zarr arrays, 26,762 members\n  annotations/annotations.zip   125,220 B     23 .cz files (<case>-Temporal_AT8.cz),\
+      \ 1.9 MB unpacked\neach .zarr: .zarray + chunk files <i>.<j>.0\n"
+    n_files: 3
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: zipped_wsis/batch{1,2}.zip::batch*/<case>-Temporal_AT8.zarr
+    format: zarr
+    axes: yxs
+    shape:
+    - 116676
+    - 115406
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: other
+    lossy: true
+    chunks:
+    - 5000
+    - 5000
+    - 3
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: annotations/annotations.zip::<case>-Temporal_AT8.cz
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    encoding: points-table
+    classes: null
+    n_ids_observed: null
+    alignment: unknown
+    alignment_notes: Zeiss GraphicsDocument XML with Marker (points) and Rectangle (ROI) elements; positions
+      are in image pixel units with scaling 1.111e-07 m/px. Whether they map 1:1 onto the zarr grid (converted
+      from CZI) was not checked.
+  notes: 'Complete listing of the 3 zip files with zip indexes (45,454 members; 46 zarr folders). .zarray
+    of batch1/1-102-Temporal_AT8.zarr (peek_archive --cat): zarr v2, shape 116676x115406x3, uint8, chunks
+    5000x5000x3, compressor imagecodecs_jpegxr level 0.6 (lossy; not an enum value, so compression other).
+    No zarr attrs/axes file found, axes yxs inferred from the trailing 3-channel RGB dimension. 1-209-Temporal_AT8.cz
+    read: 44 Marker and 3 Rectangle elements (3 ROIs with NFT points), objective Plan-Apochromat 40x/0.95,
+    scaling 1.1112e-07 m. No chunk sampled (JPEG-XR codec not in the allowed tools). Only 23 annotation
+    files for 46 WSIs.'
+  inspected_at: '2026-10-01T06:30:59Z'
