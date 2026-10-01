@@ -1,10 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-17088532-cellfmcount-neural-progenitor-nuclei
 title: CellFMCount Dataset
 short_name: Neural progenitor cell counting (fluorescence)
-description: '3,023 fluorescence microscopy images of immunocytochemistry-stained adult rat hippocampal progenitor cells and
-  murine retinal progenitor cells (DAPI, Cy3, AF488 channels; 20x or 40x), with over 430,000 manually placed dot annotations
-  at cell centres, for cell counting / density-map training.'
+description: 3,023 fluorescence microscopy images of immunocytochemistry-stained adult rat hippocampal
+  progenitor cells and murine retinal progenitor cells (DAPI, Cy3, AF488 channels; 20x or 40x), with over
+  430,000 manually placed dot annotations at cell centres, for cell counting / density-map training.
 landing_url: https://zenodo.org/records/17088532
 doi: 10.5281/zenodo.17088532
 repository: Zenodo
@@ -66,11 +66,75 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T05:25:00Z'
-notes: 'Checked Zenodo record and API record, cellfmcount.zip listing (3,023 .tiff images in dataset/img plus 3,024 .csv),
-  and the arXiv paper (no peer-reviewed full text found via tools/paper.py). License: Zenodo record says CC-BY-SA-4.0
-  while the paper text states CC BY 4.0; the Zenodo record was used. Pixel size, bit depth and exact image dimensions
-  per file not stated in the Zenodo record or paper Methods (sizes range 600x447 to 1600x1200 px); files were not opened.
-  Channel count recorded as 1 (paper: grayscale images). Modality widefield inferred from Leica DMI4000B / DM5000B
-  fluorescence microscopes. Author list not copied from Zenodo; see the paper. Train/test split (stratified 80/20) is
-  described in the paper; the location of the split in the archive was not checked. Split flag is from the paper.'
+  last_checked: '2026-10-01T06:49:55Z'
+notes: 'Checked Zenodo record and API record, cellfmcount.zip listing (3,023 .tiff images in dataset/img
+  plus 3,024 .csv), and the arXiv paper (no peer-reviewed full text found via tools/paper.py). License:
+  Zenodo record says CC-BY-SA-4.0 while the paper text states CC BY 4.0; the Zenodo record was used. Pixel
+  size, bit depth and exact image dimensions per file not stated in the Zenodo record or paper Methods
+  (sizes range 600x447 to 1600x1200 px); files were not opened. Channel count recorded as 1 (paper: grayscale
+  images). Modality widefield inferred from Leica DMI4000B / DM5000B fluorescence microscopes. Author
+  list not copied from Zenodo; see the paper. Train/test split (stratified 80/20) is described in the
+  paper; see enricher line. enricher: split location found: dataset/metadata.csv column "set" (trainval
+  2,418 / test 605).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/17088532
+  - https://zenodo.org/records/17088532/files/cellfmcount.zip
+  bytes_downloaded: 363128
+  size_source: file-listing
+  layout:
+    tree: "cellfmcount.zip/dataset/\n  metadata.csv          id, cell_count, cell_type, staining, objective,\
+      \ markers, set\n  ground_truth/  3023 files    3.5 MB  <id>.csv  (X,Y per cell)\n  img/        \
+      \   3023 files    5.2 GB  <id>.tiff\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/17088532/files/cellfmcount.zip::dataset/img/305.tiff
+    - https://zenodo.org/records/17088532/files/cellfmcount.zip::dataset/ground_truth/305.csv
+    size_bytes: 363200
+    description: One image and its point CSV (image 305 has cell_count 0, header-only CSV).
+  arrays:
+  - role: raw
+    path_pattern: cellfmcount.zip::dataset/img/<id>.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 1036
+    - 1391
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 5
+    - 200
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Palette (colour-mapped, photometric 3) single-page TIFF; values are colormap indices.
+  - role: label
+    path_pattern: cellfmcount.zip::dataset/ground_truth/<id>.csv
+    format: csv
+    axes: null
+    shape:
+    - 69
+    - 2
+    shape_varies: true
+    dtype: unknown
+    compression: deflate
+    lossy: false
+    chunks: null
+    encoding: points-table
+    classes: null
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: ground_truth/<id>.csv pairs with img/<id>.tiff; columns X,Y in pixels (2330.csv has
+      69 rows, matching cell_count 69 in metadata.csv).
+  notes: 'Complete Zenodo listing with zip index (6,047 members). Probe of img/305.tiff: uint8 1036x1391,
+    palette TIFF, uncompressed. sample.py on img/305.tiff: 5..200, median 6, p99 11 (one dim image; palette
+    indices). sample.py cannot read CSV; ground_truth/2330.csv and 305.csv were read with peek_archive
+    --cat (header X,Y; 69 rows and 0 rows). metadata.csv (3,023 rows): 20x 2,671 AHPC / 40x 352 RPC, set
+    trainval 2,418 / test 605. Image sizes vary per the record.'
+  inspected_at: '2026-10-01T06:49:55Z'
