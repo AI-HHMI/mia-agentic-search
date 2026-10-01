@@ -1,4 +1,4 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: s-biad3187-h01-microvasculature-ultrastructure
 title: Microvasculature Ultrastructure Annotation of the H01 release
 short_name: Human capillary ultrastructure labels (ssSEM)
@@ -13,7 +13,8 @@ accession: S-BIAD3187
 authors:
 - Vanderleest, Timothy
 publications:
-- title: 3D Ultrastructural segmentation of human microvasculature reveals new insights in pericyte-endothelial cell interactions
+- title: 3D Ultrastructural segmentation of human microvasculature reveals new insights in pericyte-endothelial
+    cell interactions
   doi: 10.3389/fcell.2026.1788958
   url: https://doi.org/10.3389/fcell.2026.1788958
 date_published: '2026-03-31'
@@ -28,7 +29,8 @@ imaging:
   channels: 1
   organism:
   - Homo sapiens
-  sample: human temporal cortex capillaries (three vessels, 200+ z-slices each) from the H01 serial section EM volume
+  sample: human temporal cortex capillaries (three vessels, 200+ z-slices each) from the H01 serial section
+    EM volume
   labels_stains: []
 data:
   formats:
@@ -44,7 +46,10 @@ annotations:
   - semantic-segmentation
   - organelle
   coverage: dense
-  format: 'One label TIFF per z-slice (Vessel{1,2,3} Label Matrices/imageNNNNNz_<x>x_<y>y.tiff; 2,950 files). Labels: 0 background, 1 basement membrane, 2 EC cytosol, 3 PC cytosol, 4 lumen, 5 EC nucleus, 6 PC nucleus, 7 EC ER, 8 PC ER, 11 EC mitochondria, 12 PC mitochondria, 17 electron-lucent membrane deposits, 18 EC-EC junctions, 19 EC pegs, 20 PC pegs.'
+  format: 'One label TIFF per z-slice (Vessel{1,2,3} Label Matrices/imageNNNNNz_<x>x_<y>y.tiff; 2,950
+    files). Labels: 0 background, 1 basement membrane, 2 EC cytosol, 3 PC cytosol, 4 lumen, 5 EC nucleus,
+    6 PC nucleus, 7 EC ER, 8 PC ER, 11 EC mitochondria, 12 PC mitochondria, 17 electron-lucent membrane
+    deposits, 18 EC-EC junctions, 19 EC pegs, 20 PC pegs.'
   source: mixed
 ml:
   tasks:
@@ -67,12 +72,68 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-01T21:30:00Z'
-notes: 'Study lists 2,950 label TIFF files (920 + 1,000 + 1,030) in three folders; individual files about 330 KB.
-  Total size not computed. The matching raw EM slices are not in the archive: per the paper they come from
-  the public H01 release (Google Cloud Storage) via a Python script in the GitHub repository, so the
-  record is label-only; image bounding-box coordinates are in the file names. Labels were produced with
-  custom Matlab functions (2D active contours) and a manually corrected 3D U-Net (paper, BioStudies),
+  last_checked: '2026-10-01T20:32:05Z'
+notes: 'Study lists 2,950 label TIFF files (920 + 1,000 + 1,030) in three folders; individual files about
+  330 KB. Total size not computed. The matching raw EM slices are not in the archive: per the paper they
+  come from the public H01 release (Google Cloud Storage) via a Python script in the GitHub repository,
+  so the record is label-only; image bounding-box coordinates are in the file names. Labels were produced
+  with custom Matlab functions (2D active contours) and a manually corrected 3D U-Net (paper, BioStudies),
   hence source mixed. BioStudies shows no licence and the paper text is CC BY 4.0 (article only), so the
   data licence is unknown. The study page says the manuscript was in review at release; the paper is now
-  published. H01 itself has other catalog records (synapse ground truth).'
+  published. H01 itself has other catalog records (synapse ground truth). enricher: label values 15 and
+  16 occur in the files but are not in the class list above; BioStudies API shows no licence.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/187/S-BIAD3187/Files/
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/187/S-BIAD3187/Files/Vessel1%20Label%20Matrices/image00600z_249800x_175000y.tiff
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/187/S-BIAD3187/Files/Vessel3%20Label%20Matrices/image00501z_329300x_187700y.tiff
+  bytes_downloaded: 526264
+  size_source: estimated
+  layout:
+    tree: |
+      Files/  2,956 files, ~766.9 MB (HTTP index, rounded sizes)
+        Vessel1 Label Matrices.{json,tsv}   file lists (likewise Vessel2, Vessel3)
+        Vessel1 Label Matrices/  image<zzzzz>z_<x>x_<y>y.tiff   (z 00600 ...)
+        Vessel2 Label Matrices/  image<zzzzz>z_207300x_161130y.tiff   (z 00000 ...)
+        Vessel3 Label Matrices/  image<zzzzz>z_329300x_187700y.tiff   (z 00500 ...)
+        2,950 label TIFFs in total
+    n_files: 2956
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/187/S-BIAD3187/Files/Vessel3%20Label%20Matrices/image00501z_329300x_187700y.tiff
+    size_bytes: 186572
+    description: One label slice; the matching EM must be fetched from the H01 release.
+  arrays:
+  - role: label
+    path_pattern: Vessel{1,2,3} Label Matrices/image<z>z_<x>x_<y>y.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 4400
+    - 4400
+    shape_varies: true
+    dtype: uint8
+    compression: packbits
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 20
+    encoding: semantic-ids
+    classes: null
+    n_ids_observed: 13
+    alignment: offset
+    alignment_notes: Label-only deposit; the file name gives the slice z index and the x/y origin of the
+      crop in H01 coordinates, so labels map onto an offset region of the H01 EM volume (not verified
+      against H01).
+  notes: 'HTTP index (rounded sizes): 2,956 files, ~766.9 MB, so size stays null; 3 folders of slice TIFFs
+    plus a .json and .tsv file list per vessel. probe.py on a Vessel1 slice: 4400x4400 uint8, PackBits,
+    single page. sample.py: Vessel1 z600 max 20, 13 distinct values; Vessel3 z501 3300x2800, values {0:
+    7,768,380, 1: 279,335, 2: 304,423, 3: 222,127, 4: 535,482, 7: 38,609, 8: 23,429, 11: 31,833, 12: 18,256,
+    15: 7,111, 16: 1,508, 17: 5,809, 20: 3,698}. Slice size differs per vessel. Values 15 and 16 are absent
+    from the class list in annotations.format. Semantic class IDs are per the deposit description. The
+    BioStudies JSON API (attributes: Template, Title, ReleaseDate, AttachTo) has no licence attribute.
+    No raw EM is included.'
+  inspected_at: '2026-10-01T20:32:05Z'
