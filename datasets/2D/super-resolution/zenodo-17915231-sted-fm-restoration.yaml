@@ -1,8 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-17915231-sted-fm-restoration
 title: Image Restoration - STED-FM
 short_name: Paired noisy/clean STED synapse patches (STED)
-description: Paired noisy (1 accumulation) and clean (10 accumulations) STED images of VGAT (ATTO 490LS) and gephyrin (STAR RED) in fixed mouse acute brain slices, acquired on an Abberior Infinity microscope and registered with translation. Cropped to 224x224 px patches and distributed as train/valid/test tar archives for training denoising models.
+description: Paired noisy (1 accumulation) and clean (10 accumulations) STED images of VGAT (ATTO 490LS)
+  and gephyrin (STAR RED) in fixed mouse acute brain slices, acquired on an Abberior Infinity microscope
+  and registered with translation. Cropped to 224x224 px patches and distributed as train/valid/test tar
+  archives for training denoising models.
 landing_url: https://zenodo.org/records/17915231
 doi: 10.5281/zenodo.17915231
 repository: Zenodo
@@ -26,7 +29,7 @@ imaging:
   - Gephyrin (abberior STAR RED)
 data:
   formats:
-  - tiff
+  - other
   size_bytes: 1011394560
   n_items: null
   access: open
@@ -59,5 +62,59 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-01T11:39:02Z'
-notes: 'Sizes from Zenodo file listing (train 710.0 MB, valid 150.7 MB, test 150.7 MB). Tar member headers read via range requests: 224x224 patches of ~402 KB each, i.e. roughly 2,500 patches in total (estimate; not counted). The record does not state how noisy and clean images are stored inside each TIFF (two-channel layout inferred from member size only, unverified), nor pixel size; no linked paper could be read (bioRxiv full text returned 429; related STED-FM preprint 10.1101/2025.06.06.656993 not confirmed as the source of this dataset). Mouse species inferred as Mus musculus from C57BL/6 mice named in the description.'
+  last_checked: '2026-10-01T12:49:27Z'
+notes: 'Sizes from Zenodo file listing (train 710.0 MB, valid 150.7 MB, test 150.7 MB). Each tar member
+  (e.g. Gephyrin_STARRED-C81.tif-0-0, 402,112 B) is an uncompressed NumPy .npz holding image.npy (2x224x224
+  float32, the two images of a pair) and metadata.npy (a pickled object array, not loaded). From tar sizes,
+  about 1,762 / 374 / 374 patches (train/valid/test), assuming equal member sizes. Which channel is noisy
+  and which is clean is not stated in the record; pixel size not stated; no linked paper could be read.
+  Mouse species inferred as Mus musculus from C57BL/6 mice named in the description. enricher: data format
+  is npz inside tar, not TIFF (the .tif in member names is the source file), so formats is other.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/17915231
+  - https://zenodo.org/records/17915231/files/valid-dataset.tar
+  bytes_downloaded: 405000
+  size_source: file-listing
+  layout:
+    tree: "train-dataset.tar   709,990,400 B\nvalid-dataset.tar   150,702,080 B\ntest-dataset.tar    150,702,080\
+      \ B\n  <protein>_STARRED-C<n>.tif-<x>-<y>   one npz per 224x224 patch (402,112 B)\n    image.npy\
+      \     (2, 224, 224) float32\n    metadata.npy  object array (pickle)\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/17915231/files/valid-dataset.tar
+    size_bytes: 150702080
+    description: The validation tar (about 374 patches) is the smallest file; members can also be read
+      individually by range.
+  arrays:
+  - role: raw
+    path_pattern: <split>-dataset.tar::<protein>_STARRED-C<n>.tif-<x>-<y> (npz) -> image.npy[c]
+    format: other
+    axes: cyx
+    shape:
+    - 2
+    - 224
+    - 224
+    shape_varies: false
+    dtype: float32
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0.0
+    - 0.6176
+    normalization: rescaled
+    alignment: same-grid
+    alignment_notes: Both images of a pair are stacked in one array (axis 0), so they share the grid;
+      which index is the noisy input and which the target is not documented. Channel 0 had 220 distinct
+      values (0..0.587), channel 1 only 21 (0..0.618, quantised like low photon counts).
+  notes: 'Zenodo listing complete (3 tars, exact sizes; listing.py does not expand tar). A scratch script
+    read the tar headers of the first members of valid-dataset.tar by HTTP range and opened member Gephyrin_STARRED-C81.tif-0-0
+    as a zip (npz, stored): image.npy (2,224,224) float32, ch0 0..0.5874 mean 0.038, ch1 0..0.6176 mean
+    0.0805; metadata.npy is an object array and was NOT loaded (would require unpickling). Values in [0,1]
+    suggest rescaling (normalization rescaled from the observed range only). One sample; a second read
+    failed (Zenodo SSL reset). bytes_downloaded is approximate (~405 KB).'
+  inspected_at: '2026-10-01T12:49:27Z'
