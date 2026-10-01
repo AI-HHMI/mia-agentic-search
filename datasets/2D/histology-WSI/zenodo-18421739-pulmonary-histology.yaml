@@ -1,10 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-18421739-pulmonary-histology
 title: Pulmonary Histology dataset
 short_name: Porcine lung histology structures (H&E)
-description: Image segmentation dataset of 512x512 px crops from pulmonary histology whole-slide images of healthy pigs,
-  with manually annotated structures (alveolar septa, cartilage, red blood cells, respiratory epithelium, smooth
-  muscle) as per-class binary masks. Train and validation splits provided.
+description: Image segmentation dataset of 512x512 px crops from pulmonary histology whole-slide images
+  of healthy pigs, with manually annotated structures (alveolar septa, cartilage, red blood cells, respiratory
+  epithelium, smooth muscle) as per-class binary masks. Train and validation splits provided.
 landing_url: https://zenodo.org/records/18421739
 doi: 10.5281/zenodo.18421739
 repository: Zenodo
@@ -25,14 +25,14 @@ imaging:
   channels: 3
   organism:
   - Sus scrofa
-  sample: Histologically normal lung tissue from healthy control pigs, scanned at 40x equivalent on a Leica Aperio AT2;
-    512x512 px crops from four WSIs
+  sample: Histologically normal lung tissue from healthy control pigs, scanned at 40x equivalent on a
+    Leica Aperio AT2; 512x512 px crops from four WSIs
   labels_stains: []
 data:
   formats:
   - png
-  size_bytes: 185507846
-  n_items: 2178
+  size_bytes: 185512885
+  n_items: 363
   access: open
   download_url: https://zenodo.org/records/18421739/files/Pulmonary-dataset.zip
   download_method: http
@@ -41,8 +41,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: 'Per-class binary PNG masks in train|val/GT/<class>/<image>.png (classes AS, Cartilage, RBC, RS, SM); images
-    in train|val/images'
+  format: Per-class binary PNG masks in train|val/GT/<class>/<image>.png (classes AS, Cartilage, RBC,
+    RS, SM); images in train|val/images
   source: manual
 ml:
   tasks:
@@ -64,9 +64,88 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T17:45:00Z'
-notes: 'Checked the Zenodo record, API record, README and zip listing (peek_archive: 2178 PNG + README). README states
-  235 training and 129 test images of 512x512 px, labelled with LabelMe; the PNG count (2178, mostly per-class masks)
-  was not reconciled with it, so n_items is the PNG file count. Pixel/voxel size is not stated on the record or README
-  (scan is described as 40x equivalent only). No paper is cited on the record or README, so none was read. README
-  also describes nuclei sub-image annotations (epithelial and stromal), which were not seen in the zip listing.'
+  last_checked: '2026-10-01T19:32:42Z'
+notes: 'Checked the Zenodo record, API record, README and zip listing (peek_archive: 2178 PNG + README).
+  README states 235 training and 129 test images of 512x512 px, labelled with LabelMe; the PNG count (2178,
+  mostly per-class masks) was not reconciled with it, so n_items is the PNG file count. Pixel/voxel size
+  is not stated on the record or README (scan is described as 40x equivalent only). No paper is cited
+  on the record or README, so none was read. README also describes nuclei sub-image annotations (epithelial
+  and stromal), which were not seen in the zip listing. enricher: n_items 363 = 234 train + 129 val images
+  (was 2178 PNGs incl. masks); size_bytes now includes README.md.'
+technical:
+  method: sample
+  inspected_at: '2026-10-01T19:32:42Z'
+  inspected_urls:
+  - https://zenodo.org/records/18421739
+  - https://zenodo.org/records/18421739/files/Pulmonary-dataset.zip
+  bytes_downloaded: 509946
+  size_source: file-listing
+  layout:
+    tree: "./  2 files, 185.5 MB\n  README.md\n  Pulmonary-dataset.zip  (2,179 members)\n    README.md\n\
+      \    train/images/   234 .png (120.2 MB)   <n>.png\n    train/GT/{AS,Cartilage,RBC,RS,SM}/   234\
+      \ .png each\n    val/images/     129 .png (65.3 MB)\n    val/GT/{AS,Cartilage,RBC,RS,SM}/     129\
+      \ .png each\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/18421739/files/Pulmonary-dataset.zip::train/images/1.png
+    - https://zenodo.org/records/18421739/files/Pulmonary-dataset.zip::train/GT/RS/1.png
+    size_bytes: null
+    description: One 512x512 training image and its respiratory-epithelium (RS) mask.
+  arrays:
+  - role: raw
+    path_pattern: '{train,val}/images/*.png'
+    format: png
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 1
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '{train,val}/GT/<class>/*.png'
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: AS
+      name: alveolar septa
+    - id: Cartilage
+      name: cartilage
+    - id: RBC
+      name: red blood cells
+    - id: RS
+      name: respiratory epithelium
+    - id: SM
+      name: smooth muscle
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: GT/<class>/<n>.png pairs with images/<n>.png; one binary mask per class per image
+      (0 / 255); same 512x512 grid.
+  notes: 'Complete Zenodo listing (README.md + zip, 185,512,885 B), members expanded: 363 images (234
+    train, 129 val), each with 5 per-class masks. README says 235 training images, the zip holds 234.
+    Probed train/images/1.png (512x512x3 uint8 RGB) and train/GT/AS/1.png (512x512 gray uint8). Sampled
+    image 1 [1, 255]; its AS mask is all 0 (class absent); RS mask {0: 240,257, 255: 21,887}. Class ids
+    are folder names; names follow the record description. Values are from one image.'
