@@ -1,8 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: ctc-phc-c2dl-psc
 title: Cell Tracking Challenge PhC-C2DL-PSC (pancreatic stem cells)
 short_name: Pancreatic stem cell tracking (phase contrast)
-description: 2D+t phase-contrast time-lapse of pancreatic stem cells on a polystyrene substrate from the Cell Tracking Challenge, with two training sequences (01, 02) of about 300 frames that include tracking (TRA) gold masks and silver segmentation (SEG) masks; test sequences are released separately.
+description: 2D+t phase-contrast time-lapse of pancreatic stem cells on a polystyrene substrate from the
+  Cell Tracking Challenge, with two training sequences (01, 02) of about 300 frames that include tracking
+  (TRA) gold masks and silver segmentation (SEG) masks; test sequences are released separately.
 landing_url: http://celltrackingchallenge.net/2d-datasets/
 doi: null
 repository: LabWebsite
@@ -17,7 +19,7 @@ imaging:
   modality:
   - phase-contrast
   dimensionality: 2D+t
-  voxel_size_nm: 
+  voxel_size_nm:
     x: 1600
     y: 1600
     z: null
@@ -28,7 +30,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 145200000
+  size_bytes: 145227316
   n_items: 2
   access: open
   download_url: https://data.celltrackingchallenge.net/training-datasets/PhC-C2DL-PSC.zip
@@ -39,7 +41,8 @@ annotations:
   - tracking
   - instance-segmentation
   coverage: partial
-  format: 'TIFF label masks: NN_GT/TRA (every frame), NN_GT/SEG (sparse gold frames), NN_ST/SEG (silver segmentation for every frame), NN_ERR_SEG'
+  format: 'TIFF label masks: NN_GT/TRA (every frame), NN_GT/SEG (sparse gold frames), NN_ST/SEG (silver
+    segmentation for every frame), NN_ERR_SEG'
   source: unknown
 ml:
   tasks:
@@ -64,5 +67,99 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T11:33:46Z'
-notes: 'Training zip: 01 and 02 with about 300 frames each (0.1 MB tif per frame), GT/TRA 301 masks per sequence, only 2 gold SEG frames per sequence, plus ST/SEG silver masks for 300 frames each. Olympus IX-81 with UPLFLN 4XPH objective, 1.6 um pixels and 10 min time step per the CTC page. Species of the pancreatic stem cells was not stated on the pages read, so organism is left empty. Custom terms from the CTC datasets page: attribution required (cite the Nature Methods papers); non-CTC scientific use needs organizer permission, commercial use needs permission, cloning of the datasets and their annotations is prohibited. Size is the compressed training zip from the listing; n_items counts the two training sequences (01, 02). The Nature Methods paper (10.1038/nmeth.4473) is not open access (only its Europe PMC abstract record was read), so annotation procedure is left unknown. Checked: CTC 2D dataset page, CTC terms page, training zip listing.'
+  last_checked: '2026-10-01T12:46:43Z'
+notes: 'Training zip: 01 and 02 with 300 frames each, GT/TRA 300 masks + man_track.txt per sequence, only
+  2 gold SEG frames per sequence, plus ST/SEG silver masks for 300 frames each. Olympus IX-81 with UPLFLN
+  4XPH objective, 1.6 um pixels and 10 min time step per the CTC page. Species of the pancreatic stem
+  cells was not stated on the pages read, so organism is left empty. Custom terms from the CTC datasets
+  page: attribution required (cite the Nature Methods papers); non-CTC scientific or commercial use needs
+  organizer permission; cloning of the datasets and annotations is prohibited. n_items counts the two
+  training sequences. The Nature Methods paper is not open access, so annotation procedure is left unknown.
+  enricher: size_bytes = 145,227,316 B from the complete zip listing (was 145.2e6); frames are 576x720
+  uint8.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://data.celltrackingchallenge.net/training-datasets/PhC-C2DL-PSC.zip
+  bytes_downloaded: 182211
+  size_source: file-listing
+  layout:
+    tree: "PhC-C2DL-PSC.zip/PhC-C2DL-PSC/\n  01/t000.tif ... t299.tif            300 frames, 55.7 MB\n\
+      \  01_GT/SEG/man_seg098.tif, ...       2 gold segmentation frames\n  01_GT/TRA/man_trackNNN.tif\
+      \ + man_track.txt   300 + 1\n  01_ST/SEG/man_segNNN.tif            300 silver segmentations\n  01_ERR_SEG/*.tif\
+      \                    300\n  02/... same layout (300 frames, 53.7 MB; GT/SEG 2)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.celltrackingchallenge.net/training-datasets/PhC-C2DL-PSC.zip::PhC-C2DL-PSC/01/t098.tif
+    - https://data.celltrackingchallenge.net/training-datasets/PhC-C2DL-PSC.zip::PhC-C2DL-PSC/01_GT/SEG/man_seg098.tif
+    size_bytes: null
+    description: Frame 98 of sequence 01 with its gold segmentation (zip members); the whole zip is 145
+      MB.
+  arrays:
+  - role: raw
+    path_pattern: <seq>/tNNN.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 576
+    - 720
+    shape_varies: null
+    dtype: uint8
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: <seq>_GT/SEG/man_segNNN.tif (gold), <seq>_ST/SEG/man_segNNN.tif (silver)
+    format: tiff
+    axes: yx
+    shape:
+    - 576
+    - 720
+    shape_varies: null
+    dtype: uint16
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 111
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 101
+    alignment: same-grid
+    alignment_notes: man_segNNN.tif belongs to frame tNNN.tif of the same sequence; identical shape.
+  - role: label
+    path_pattern: <seq>_GT/TRA/man_trackNNN.tif + man_track.txt
+    format: tiff
+    axes: yx
+    shape:
+    - 576
+    - 720
+    shape_varies: null
+    dtype: uint16
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 1292
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 109
+    alignment: same-grid
+    alignment_notes: Track marker masks carry track IDs listed in man_track.txt (label start end parent;
+      1,371 tracks in sequence 01).
+  notes: 'Zip central directory listed (2,406 members, exact sizes). Probes: 01/t098.tif uint8 576x720
+    LZW; 01_GT/SEG/man_seg098.tif uint16 576x720 LZW; no calibration in the headers. Samples: raw t098
+    0..255, mean 138 (hint: full range, possibly contrast-stretched; normalization unknown); gold SEG
+    man_seg098 0..111, 101 distinct (instance IDs, 96% background); TRA man_track098 0..1292, 109 distinct
+    (track IDs, small markers, 99.8% background). man_track.txt of 01 has 1,371 lines (peek_archive --cat).'
+  inspected_at: '2026-10-01T12:46:43Z'
