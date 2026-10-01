@@ -1,11 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-16812932-beetle-breast-he-segmentation
 title: A multicentric dataset for training and benchmarking breast cancer segmentation in H&E slides (BEETLE)
 short_name: BEETLE breast cancer H&E segmentation (WSI)
-description: Multicentric H&E whole-slide images of breast biopsies and resections (587 slides in the development set from
-  three clinical centers plus two public sources, seven scanners; external evaluation set of 54 slides with 170 densely
-  annotated ROIs) with four-class semantic segmentation annotations (invasive epithelium, non-invasive epithelium, necrosis,
-  other).
+description: Multicentric H&E whole-slide images of breast biopsies and resections (587 slides in the development
+  set from three clinical centers plus two public sources, seven scanners; external evaluation set of 54 slides
+  with 170 densely annotated ROIs) with four-class semantic segmentation annotations (invasive epithelium, non-invasive
+  epithelium, necrosis, other).
 landing_url: https://zenodo.org/records/16812932
 doi: 10.5281/zenodo.16812932
 repository: Zenodo
@@ -33,7 +33,8 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: null
+  - png
+  size_bytes: 150886841578
   n_items: 641
   access: open
   download_url: https://zenodo.org/records/16812932
@@ -60,14 +61,106 @@ provenance:
   evidence_urls:
   - https://zenodo.org/records/16812932
   - https://arxiv.org/abs/2510.02037
-  confidence: 0.7
+  - https://zenodo.org/records/16812932/files/data_overview.csv
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-01T03:20:00Z'
-notes: 'Total volume reported on the Zenodo page as 150.9 GB across three archives (annotations, images, model weights); not
-  confirmed by file listing, so size_bytes is null. n_items = 587 development + 54 external slides. Pixel spacing about
-  0.5 um/px per Zenodo page. Image formats beyond TIFF masks not listed; only 3 of 21 authors recorded (arXiv abstract
-  names three). TIGER images need a separate AWS Open Data download. Annotation procedure not stated in the sources read
-  (abstract and Zenodo page; full text not retrievable via paper.py).'
+  annotations_verified: true
+  last_checked: '2026-10-01T04:02:00Z'
+notes: 'n_items = 587 development + 54 external slides (data_overview.csv). Pixel spacing about 0.5 um/px per Zenodo
+  page. Only 3 of 21 authors recorded (arXiv abstract names three). TIGER images need a separate AWS Open Data download.
+  Annotation procedure not stated in the sources read (abstract and Zenodo page; full text not retrievable via paper.py).
+
+  enricher: size_bytes from exact Zenodo file listing (was null).
+
+  enricher: added png (evaluation ROIs are 2048x2048 RGB PNGs).
+
+  enricher: annotations verified (587 masks, jsons, xmls and label_map.json in annotations.zip).'
+technical:
+  method: header
+  inspected_urls:
+  - https://zenodo.org/records/16812932
+  - https://zenodo.org/records/16812932/files/images.zip
+  - https://zenodo.org/records/16812932/files/annotations.zip
+  - https://zenodo.org/records/16812932/files/data_overview.csv
+  bytes_downloaded: 0
+  size_source: file-listing
+  layout:
+    tree: "data_overview.csv  (641 rows: name, source, scanner, paths, split, validation_fold)\nannotations.zip/annotations/\n\
+      \  label_map.json\n  masks/<name>.tif     587 files  473.6 MB\n  jsons/<name>.json    587 files   86.9 MB\n\
+      \  xmls/<name>.xml      587 files    1.3 GB\nimages.zip/images/\n  development/wsis/patientN_wsiM.tif   396\
+      \ files  129.5 GB\n  evaluation/wsis/patientN_wsiM.tif     54 files   16.6 GB\n  evaluation/rois/patientN_wsiM_roiK.png\
+      \ 170 files  1.1 GB\nmodel.zip/model/nnUNetTrainer_.../  plans.json, dataset.json, fold_{0..4}/checkpoint_best.pth\
+      \  1.9 GB\n"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/16812932/files/images.zip::images/development/wsis/patient1_wsi1.tif
+    - https://zenodo.org/records/16812932/files/annotations.zip::annotations/masks/patient1_wsi1.tif
+    size_bytes: 724686330
+    description: One development WSI (724 MB, JPEG pyramid) and its LZW label mask (423 KB); not downloaded this
+      run
+  arrays:
+  - role: raw
+    path_pattern: images.zip::images/{development,evaluation}/wsis/patientN_wsiM.tif
+    format: tiff
+    axes: null
+    shape:
+    - 12
+    - 147019
+    - 135975
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    lossy: true
+    chunks:
+    - 128
+    - 128
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: annotations.zip::annotations/masks/<name>.tif
+    format: tiff
+    axes: null
+    shape:
+    - 9
+    - 147019
+    - 135975
+    shape_varies: true
+    dtype: uint8
+    compression: lzw
+    lossy: false
+    chunks:
+    - 1024
+    - 1024
+    value_range: null
+    normalization: unknown
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: unannotated
+    - id: 1
+      name: other
+    - id: 2
+      name: non-invasive epithelium
+    - id: 3
+      name: invasive epithelium
+    - id: 4
+      name: necrosis
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: Mask paired with WSI via data_overview.csv (annotation_mask_path per row); patient1_wsi1 mask
+      base level 147019x135975 equals the WSI base level. Mask pyramid has 9 levels vs 12 for the WSI.
+  notes: 'Exact Zenodo listing with zip members expanded (2391 members). Probed patient1_wsi1 WSI (BigTIFF, 12 pyramid
+    pages, JPEG RGB, 128px tiles) and its mask (BigTIFF, 9 pages, LZW uint8, 1024px tiles) plus one evaluation ROI
+    PNG (2048x2048x3 uint8). Shapes vary per slide. No pixel sampling: a full-resolution mask page decodes to ~20
+    GB, so values were not measured; class IDs come from label_map.json. data_overview.csv: 587 development rows
+    (rumc 237, tcga 164, nki 113, sch 55, jb 18) with 5 validation folds, 54 evaluation rows (biopticka, scdc, uwmedicine
+    18 each) without mask paths. images.zip holds 396 of the 587 development WSIs; the rest are not in this record.
+    model.zip holds nnU-Net weights (.pth, not opened). TIFF resolution tags not read, so voxel size left null.'
+  inspected_at: '2026-10-01T04:02:00Z'
