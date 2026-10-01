@@ -1,11 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: s-bsst604-hylfm-medaka-heart-lightfield-lightsheet
 title: 'HyLFM-Net dataset: hatchling medaka heart'
 short_name: Medaka heart light-field/light-sheet pairs
-description: Paired light-field and light-sheet images of beating and arrested hatchling (8 dpf) medaka hearts from a hybrid
-  light-field light-sheet microscope, used to train and evaluate HyLFM-Net, a network reconstructing volumes from raw light-field
-  images. Five specimens plus a bead reference stack for registration, as zip archives of TIFF frames (lf_raw, lf_rectified,
-  spim_slice).
+description: Paired light-field and light-sheet images of beating and arrested hatchling (8 dpf) medaka
+  hearts from a hybrid light-field light-sheet microscope, used to train and evaluate HyLFM-Net, a network
+  reconstructing volumes from raw light-field images. Five specimens plus a bead reference stack for registration,
+  as zip archives of TIFF frames (lf_raw, lf_rectified, spim_slice).
 landing_url: https://www.ebi.ac.uk/biostudies/BioImages/studies/S-BSST604
 doi: null
 repository: BioImageArchive
@@ -32,6 +32,7 @@ imaging:
 data:
   formats:
   - tiff
+  - hdf5
   size_bytes: 875869768519
   n_items: null
   access: open
@@ -42,8 +43,9 @@ annotations:
   types:
   - restoration-pairs
   coverage: dense
-  format: 'Paired TIFF frames: raw/rectified light-field (lf_raw, lf_rectified) with registered light-sheet slices (spim_slice)
-    per acquisition'
+  format: 'Per acquisition folder: lf_raw/NNNNN.tif and lf_rectified/NNNNN.tif light-field frames plus
+    a spim_slice/00000.tif light-sheet stack that is an HDF5 file despite the .tif name; origin.txt in
+    each folder names the source files'
   source: unknown
 ml:
   tasks:
@@ -67,10 +69,95 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-01T12:44:12Z'
-notes: 'No license stated on the BioStudies record or the GitHub README (code is MIT; data license not given); paper is not
-  open access (abstract only read via Europe PMC), so Methods/data availability were not read. size_bytes is the sum of the
-  6 zip sizes on the record (heart1-5 + heart_beads_reference). n_items not stated: listed heart4.zip only (22,088 files:
-  lf_raw and lf_rectified TIFF frames, and one ~1 GB spim_slice TIFF stack per acquisition folder). Pairs are acquisition-level
-  light-field input vs. concurrently acquired light-sheet slice, per the abstract. Voxel size not given on the record. Sister
-  datasets from the same paper: S-BSST622 (beads), S-BSST633 (zebrafish larvae).'
+  last_checked: '2026-10-01T13:05:42Z'
+notes: 'No license stated on the BioStudies record or the GitHub README (code is MIT; data license not
+  given); paper is not open access (abstract only read via Europe PMC). size_bytes is the sum of the 6
+  zip sizes on the record (heart1-5 + heart_beads_reference). n_items not stated. Pairs are acquisition-level
+  light-field input vs. concurrently acquired light-sheet slice, per the abstract. Voxel size not given
+  on the record. Sister datasets from the same paper: S-BSST622 (beads), S-BSST633 (zebrafish larvae).
+  enricher: hdf5 added to formats (spim_slice/*.tif members start with the HDF5 signature); heart4.zip
+  listed and frames probed/sampled (see technical).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BSST/604/S-BSST604/Files/
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BSST/604/S-BSST604/Files/heart4.zip
+  bytes_downloaded: 2580430
+  size_source: page-stated
+  layout:
+    tree: "Files/ heart1.zip ... heart5.zip, heart_beads_reference.zip   6 zips, ~876 GB (HTTP index,\
+      \ rounded)\nheart4.zip (36.0 GB, 22,088 members)/dynamic/\n  <date>_<time>_<rate>Hz_plane_<NNN>/\
+      \  (x18, plus 4 *_refocused / *_pos2 folders)\n    lf_raw/00000.tif ... 00499.tif + origin.txt \
+      \        1024x1024 uint16\n    lf_rectified/00000.tif ... 00499.tif + origin.txt   931x931 uint16\n\
+      \    spim_slice/00000.tif + origin.txt                   ~1.06 GB, HDF5 content\n"
+    n_files: 6
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BSST/604/S-BSST604/Files/heart4.zip::dynamic/2019-12-03_02.16.43_100Hz_plane_040/lf_raw/00000.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BSST/604/S-BSST604/Files/heart4.zip::dynamic/2019-12-03_02.16.43_100Hz_plane_040/lf_rectified/00000.tif
+    size_bytes: null
+    description: One raw and one rectified light-field frame of heart4 plane 040 (zip members, ~2 MB each).
+      The matching light-sheet target is a ~1 GB HDF5 member (404 MB compressed), so no small raw+target
+      pair exists.
+  arrays:
+  - role: raw
+    path_pattern: heart<N>.zip::<mode>/<acquisition>/lf_raw/NNNNN.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: uint16
+    compression: packbits
+    lossy: false
+    chunks: null
+    value_range:
+    - 53
+    - 2241
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: other
+    path_pattern: heart<N>.zip::<mode>/<acquisition>/lf_rectified/NNNNN.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 931
+    - 931
+    shape_varies: null
+    dtype: uint16
+    compression: packbits
+    lossy: false
+    chunks: null
+    value_range:
+    - 2330
+    - 65535
+    normalization: unknown
+    alignment: transform-provided
+    alignment_notes: Rectified version of the lf_raw frame with the same index (origin.txt points to RC_rectified/*_rectified.tif
+      of the same acquisition); the rectification parameters themselves were not found in the archive.
+  - role: target
+    path_pattern: heart<N>.zip::<mode>/<acquisition>/spim_slice/00000.tif
+    format: hdf5
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    lossy: null
+    chunks: null
+    alignment: unknown
+    alignment_notes: One light-sheet stack per acquisition folder, paired with that folder's light-field
+      frames; origin.txt names Cam_Left_*.h5 source files. Registration to the light-field uses the heart_beads_reference
+      data per the record; not checked.
+  notes: 'Directory read over the HTTP index (FTP timed out; sizes rounded, 876.2 GB for 6 zips), so size
+    stays page-stated. heart4.zip central directory read in full: 22,088 members, 35,979,782,815 B. Probes
+    (plane_040, 100 Hz): lf_raw/00000.tif uint16 1024x1024 packbits; lf_rectified/00000.tif uint16 931x931
+    packbits; no calibration in the headers. spim_slice/00000.tif is 1,064,997,888 B (deflated 404,680,464
+    B) and its first inflated bytes are the HDF5 signature, so the .tif name is misleading; probe could
+    not read it without the whole member. Samples: lf_raw 53..2241, mean 155 (hint: 12-bit camera range);
+    lf_rectified 2330..65535, mean 5024 (rescaled during rectification? not documented). Other heart zips
+    not listed.'
+  inspected_at: '2026-10-01T13:05:42Z'
