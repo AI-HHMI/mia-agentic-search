@@ -1,11 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-21224234-vitaminp-histology-cell-masks
 title: 'VitaminP: Processed Zarr Datasets for Cross-Modal Whole-Cell Segmentation in Histopathology'
 short_name: Whole-cell masks, 14 histology sets (H&E/mIF)
-description: Processed Zarr tiles and instance masks from 14 public histopathology datasets (ORION-CRC, Xenium,
-  TissueNet, PanNuke, Lizard, MoNuSeg, TNBC, NuInsSeg, CryoNuSeg, BCData, CoNSeP, MoNuSAC, Kumar, CPM17), H&E
-  and/or multiplex immunofluorescence, with fixed train/validation/test patch splits (10,986 / 1,740 / 2,415
-  patches) used to train the VitaminP whole-cell segmentation model.
+description: Processed Zarr tiles and instance masks from 14 public histopathology datasets (ORION-CRC,
+  Xenium, TissueNet, PanNuke, Lizard, MoNuSeg, TNBC, NuInsSeg, CryoNuSeg, BCData, CoNSeP, MoNuSAC, Kumar,
+  CPM17), H&E and/or multiplex immunofluorescence, with fixed train/validation/test patch splits (10,986
+  / 1,740 / 2,415 patches) used to train the VitaminP whole-cell segmentation model.
 landing_url: https://zenodo.org/records/21224234
 doi: 10.5281/zenodo.21224234
 repository: Zenodo
@@ -25,14 +25,15 @@ imaging:
   voxel_size_nm: null
   channels: null
   organism: []
-  sample: Human tumour histology (H&E and multiplex immunofluorescence tiles) from public datasets covering many cancer types
+  sample: Human tumour histology (H&E and multiplex immunofluorescence tiles) from public datasets covering
+    many cancer types
   labels_stains:
   - H&E
   - multiplex immunofluorescence
 data:
   formats:
   - zarr
-  size_bytes: 13900000000
+  size_bytes: 13925461436
   n_items: 15141
   access: open
   download_url: https://zenodo.org/records/21224234
@@ -65,14 +66,94 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-01T12:40:00Z'
-notes: 'Derived compilation of 14 existing public datasets (several, e.g. CryoNuSeg, NuInsSeg, MoNuSeg, are
-  catalogued separately); the original datasets may carry their own licences, while this Zenodo deposit states
-  CC-BY-4.0. Files are .tar.zst archives (listed via the Zenodo API: 14 per-dataset Zarr archives plus a
-  metadata/splits manifest), so contents could not be peeked; masks are asserted by the record description,
-  not seen in a listing. Patch size, resolution (pixel size) and per-dataset annotation provenance are not
-  stated on the Zenodo record; the paper full text could not be read (only the arXiv abstract page; the PDF
-  exceeded the fetch limit), and the GitHub README gives inference settings only (512 px patches, 0.425 um/px
-  target, which are model settings, not data properties). n_items is the sum of train/val/test patches from
-  the record (10,986 + 1,740 + 2,415). Size 13.9 GB per record page; the API file sizes sum to about 13.9 GB.'
+  annotations_verified: true
+  last_checked: '2026-10-01T14:30:55Z'
+notes: 'Derived compilation of 14 existing public datasets (several, e.g. CryoNuSeg, NuInsSeg, MoNuSeg,
+  are catalogued separately); the original datasets may carry their own licences, while this Zenodo deposit
+  states CC-BY-4.0. Files are .tar.zst archives (listed via the Zenodo API: 14 per-dataset Zarr archives
+  plus a metadata/splits manifest). Patch size, resolution (pixel size) and per-dataset annotation provenance
+  are not stated on the Zenodo record; the paper full text could not be read (only the arXiv abstract
+  page; the PDF exceeded the fetch limit), and the GitHub README gives inference settings only (512 px
+  patches, 0.425 um/px target, which are model settings, not data properties). n_items is the sum of train/val/test
+  patches from the record (10,986 + 1,740 + 2,415). enricher: size from the complete listing; patch masks
+  seen in the CryoNuSeg archive (nuclei only, see technical).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/21224234
+  - https://zenodo.org/records/21224234/files/VitaminP_metadata_splits_manifest_v1.tar.zst
+  - https://zenodo.org/records/21224234/files/VitaminP_cryonuseg_zarr_v1.tar.zst
+  bytes_downloaded: 44810261
+  size_source: file-listing
+  layout:
+    tree: "Zenodo 21224234: 16 files, 13,925,461,436 B\n  VitaminP_<set>_zarr_v1.tar.zst  x14: crc 4.41\
+      \ GB, tissuenet 2.80 GB, xenium 2.61 GB,\n    pannuke 1.36 GB, lizard 937 MB, monusac 539 MB, nuinsseg\
+      \ 420 MB, bc 271 MB,\n    kumar 188 MB, monuseg 147 MB, consep 107 MB, cpm17 86 MB, tnbc 30 MB,\
+      \ cryonuseg 22 MB\n  VitaminP_metadata_splits_manifest_v1.tar.zst (metadata/: dataset_manifest.csv,\n\
+      \    patch_level_final_split_manifest.csv, final_patch_counts.json, splits/*.txt|json|yaml)\n  sha256sums.txt\n\
+      inside (cryonuseg): zarr_data/<set>_<split>/{images.zarr, nuclei_masks.zarr, metadata.csv}, split_info.txt\n"
+    n_files: 16
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/21224234/files/VitaminP_cryonuseg_zarr_v1.tar.zst
+    size_bytes: 22383207
+    description: Smallest per-dataset archive (CryoNuSeg; test, train and val zarr arrays, images + nuclei masks).
+  arrays:
+  - role: raw
+    path_pattern: zarr_data/<set>_<split>/images.zarr (zarr v2 inside .tar.zst)
+    format: zarr
+    axes: null
+    shape:
+    - 5
+    - 512
+    - 512
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: blosc
+    lossy: false
+    chunks:
+    - 1
+    - 512
+    - 512
+    - 3
+    value_range:
+    - 32
+    - 252
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: zarr_data/<set>_<split>/nuclei_masks.zarr
+    format: zarr
+    axes: null
+    shape:
+    - 5
+    - 512
+    - 512
+    shape_varies: true
+    dtype: int32
+    compression: blosc
+    lossy: false
+    chunks:
+    - 1
+    - 512
+    - 512
+    value_range:
+    - 0
+    - 225
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 126
+    alignment: same-grid
+    alignment_notes: Same leading patch index and 512x512 grid as images.zarr in the same <set>_<split>
+      folder; metadata.csv gives organ and original file per patch.
+  notes: 'Zenodo listing complete (16 files). tar.zst archives decoded in memory with imagecodecs (zstd)
+    + tarfile; nothing executed. Manifest: patch counts train 10,986 / val 1,740 / test 2,415, split lists
+    per sample (incl. Xenium and CRC samples). CryoNuSeg archive: 84 members, zarr v2 per split (test
+    5, train 20 patches): images u1 Nx512x512x3 blosc-zstd, nuclei_masks <i4. First test patch: image
+    32..252, mask 0..225 with 126 values (instance IDs). Only nuclei masks were seen in this set; whole-cell
+    masks for mIF/Xenium sets were not checked (larger archives). Shape [5,...] is the cryonuseg test
+    array.'
+  inspected_at: '2026-10-01T14:30:55Z'
