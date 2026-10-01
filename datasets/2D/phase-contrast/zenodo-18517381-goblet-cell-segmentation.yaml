@@ -1,11 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-18517381-goblet-cell-segmentation
 title: Goblet Cell Segmentation Dataset
 short_name: Conjunctival goblet cells (phase contrast)
-description: 24 unstained phase-contrast images (2048 x 1536 px, EVOS XL Core, 200x) of cultured human conjunctival
-  goblet cells with 65,108 manually curated single-cell instance masks, plus a patched version (1,152 images of
-  256 x 256 px). Provided as JPEG images with PNG masks, YOLO text and SAM2/COCO RLE annotations, with 80/20
-  train/test splits (unpatched, patch-level and image-level).
+description: 24 unstained phase-contrast images (2048 x 1536 px, EVOS XL Core, 200x) of cultured human
+  conjunctival goblet cells with 65,108 manually curated single-cell instance masks, plus a patched version
+  (1,152 images of 256 x 256 px). Provided as JPEG images with PNG masks, YOLO text and SAM2/COCO RLE
+  annotations, with 80/20 train/test splits (unpatched, patch-level and image-level).
 landing_url: https://zenodo.org/records/18517381
 doi: 10.5281/zenodo.18517381
 repository: Zenodo
@@ -66,16 +66,109 @@ provenance:
   evidence_urls:
   - https://zenodo.org/api/records/18517381
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13376158/fullTextXML
-  confidence: 0.75
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-01T08:30:00Z'
-notes: 'Paper (Sci Data 2026, Europe PMC full text) read incl. data records and folder tree: original_data, SAM2_data,
-  yolo_data, each with unpatched / patched_img_level / patched_random and train/test. 24 original images (65,108
-  cells), 1,152 patches. Zenodo zip is 514 MB (paper says about 744 MB total) and does not support range requests,
-  so its contents were not listed; annotations_verified is false. Pixel size is given only as roughly 0.5 um/pixel
-  in the paper, so 500 nm is approximate. Annotation by Cellpose 2.0 human-in-the-loop, reviewed by a second
-  author (about 17% revised), hence proofread. A copy is also on Hugging Face (freafin/GCS_dataset). Few unique
-  fields of view and one imaging setup, per the authors.'
+  annotations_verified: true
+  last_checked: '2026-10-01T09:10:06Z'
+notes: 'Paper (Sci Data 2026, Europe PMC full text) read incl. data records and folder tree: original_data,
+  SAM2_data, yolo_data, each with unpatched / patched_img_level / patched_random and train/test. 24 original
+  images (65,108 cells), 1,152 patches. Zenodo zip is 514 MB (paper says about 744 MB total) and does
+  not support range requests, so its contents were not listed by the harvester. Pixel size is given only
+  as roughly 0.5 um/pixel in the paper, so 500 nm is approximate. Annotation by Cellpose 2.0 human-in-the-loop,
+  reviewed by a second author (about 17% revised), hence proofread. A copy is also on Hugging Face (freafin/GCS_dataset).
+  Few unique fields of view and one imaging setup, per the authors. enricher: masks seen in the HF mirror
+  zip (annotations_verified now true); images stored as 3-channel RGB JPEG.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://huggingface.co/datasets/freafin/GCS_dataset
+  - https://huggingface.co/datasets/freafin/GCS_dataset/resolve/main/GCSdataV1.1.zip
+  bytes_downloaded: 919320
+  size_source: page-stated
+  layout:
+    tree: "GCSdataV1.1.zip  (Hugging Face mirror; 14,025 members, 780.9 MB uncompressed)\n  GCSdataV1.1/original_data/\n\
+      \    complete/unpatched/{images 24 .jpg, masks 24 .png}\n    complete/patched/{images 1152 .jpg,\
+      \ masks 1152 .png}\n    train_test_split/unpatched/{train 19, test 5}/{images,masks}\n    train_test_split/patched_img_level/{train\
+      \ 912, test 240}/{images,masks}\n    train_test_split/patched_random/{train 922, test 230}/{images,masks}\n\
+      \  GCSdataV1.1/SAM2_data/{unpatched 24, patched 1152}/{images .jpg, masks .json} + split .txt lists\n\
+      \  GCSdataV1.1/yolo_data/{unpatched,patched_img_level,patched_random}/data.yaml + {train,val}/{images\
+      \ .png, labels .txt}\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/freafin/GCS_dataset/resolve/main/GCSdataV1.1.zip::GCSdataV1.1/original_data/complete/unpatched/images/fbs08.jpg
+    - https://huggingface.co/datasets/freafin/GCS_dataset/resolve/main/GCSdataV1.1.zip::GCSdataV1.1/original_data/complete/unpatched/masks/fbs08.png
+    size_bytes: 920012
+    description: One full image (fbs08) and its instance mask, same name in images/ and masks/.
+  arrays:
+  - role: raw
+    path_pattern: original_data/*/images/<name>.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1536
+    - 2048
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    lossy: true
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Patched images are 256 x 256 (patched masks probed at 256 x 256).
+  - role: label
+    path_pattern: original_data/*/masks/<name>.png
+    format: png
+    axes: yx
+    shape:
+    - 1536
+    - 2048
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 1681
+    encoding: instance-ids
+    classes:
+    - id: null
+      name: GobletCell
+    n_ids_observed: 1682
+    alignment: same-grid
+    alignment_notes: masks/<name>.png pairs with images/<name>.jpg; same spatial shape (image stored as
+      RGB).
+  - role: label
+    path_pattern: yolo_data/*/{train,val}/labels/<name>.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: polygons
+    classes:
+    - id: 0
+      name: GobletCell
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: YOLO polygon txt per PNG image (paper); data.yaml lists nc 1, names [GobletCell].
+      Not opened.
+  notes: 'Zenodo zip has no range support and its files API returned 404/non-JSON in this run, so the
+    identical-name zip on the Hugging Face mirror (freafin/GCS_dataset, 513,676,833 B incl. README) was
+    listed and sampled; size_bytes stays the Zenodo-stated 513,672,519 B. Sampled fbs08: image RGB JPEG
+    1536x2048x3 uint8, range 0-255 (p50 84, p99 233); mask uint16 with 1,682 values 0-1681 (instance IDs,
+    matches the paper''s instance masks). Probed a patched mask: 256x256 uint16. yolo data.yaml: nc 1,
+    names [GobletCell]. One sample only. Images are stored as RGB although phase contrast.'
+  inspected_at: '2026-10-01T09:10:06Z'
