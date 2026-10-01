@@ -1,10 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-17315241-sem-ni-wc-composite-segmentation
-title: Scanning Electron Microscopy (SEM) Dataset of Additively Manufactured Ni-WC Metal Matrix Composites for Semantic Segmentation
+title: Scanning Electron Microscopy (SEM) Dataset of Additively Manufactured Ni-WC Metal Matrix Composites for Semantic
+  Segmentation
 short_name: Ni-WC composite microstructure segmentation (SEM)
-description: 405 augmented 512x512 px SEM crops (four magnifications, 600x to 1000x) of metallographic cross-sections of
-  directed-energy-deposited Ni-WC metal matrix composites, with manually labelled pixel-level masks of matrix, carbide
-  particles, dilution bands and reprecipitated carbides.
+description: 405 augmented 512x512 px SEM crops (four magnifications, 600x to 1000x) of metallographic cross-sections
+  of directed-energy-deposited Ni-WC metal matrix composites, with manually labelled pixel-level masks of matrix,
+  carbide particles, dilution bands and reprecipitated carbides.
 landing_url: https://zenodo.org/records/17315241
 doi: 10.5281/zenodo.17315241
 repository: Zenodo
@@ -12,7 +13,8 @@ accession: '17315241'
 authors:
 - Mutahar Safdar
 publications:
-- title: Accelerated quantification of reinforcement degradation in additively manufactured Ni-WC metal matrix composites via SEM and vision transformers
+- title: Accelerated quantification of reinforcement degradation in additively manufactured Ni-WC metal matrix composites
+    via SEM and vision transformers
   doi: 10.1016/j.matchar.2025.115645
   url: https://doi.org/10.1016/j.matchar.2025.115645
 date_published: '2025-10-10'
@@ -23,7 +25,8 @@ imaging:
   voxel_size_nm: null
   channels: null
   organism: []
-  sample: metallographic cross-sections (sectioned, polished, etched) of directed-energy-deposited nickel-tungsten carbide metal matrix composites
+  sample: metallographic cross-sections (sectioned, polished, etched) of directed-energy-deposited nickel-tungsten
+    carbide metal matrix composites
   labels_stains: []
 data:
   formats:
@@ -63,10 +66,82 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T04:50:00Z'
-notes: 'Materials-science SEM (not biological); modality is "other" because the schema has no plain SEM value, and formats is
-  "other" because the files are BMP (no BMP value). peek_archive: AugmentedImages.zip has 405 BMPs (130.0 MB), AugmentedMasks.zip has
-  405 BMPs (4.0 MB); size_bytes is the sum of the two files. The 405 crops are augmented (flips, rotations, elastic and grid
-  distortions, brightness/contrast changes) from a smaller set of source crops, so images are not independent and no train/val/test
-  split is provided. The paper is not open access (Europe PMC/Crossref abstract only); pixel size, microscope and the class-to-pixel-value
-  mapping are not stated on the Zenodo page and could not be checked.'
+  last_checked: '2026-10-01T05:17:00Z'
+notes: 'Materials-science SEM (not biological); modality is "other" because the schema has no plain SEM value, and
+  formats is "other" because the files are BMP (no BMP value). The 405 crops are augmented (flips, rotations, elastic
+  and grid distortions, brightness/contrast changes) from a smaller set of source crops, so images are not independent
+  and no train/val/test split is provided. The paper is not open access (Europe PMC/Crossref abstract only); pixel
+  size, microscope and the class names for mask values are not stated on the Zenodo page and could not be checked.
+
+  enricher: mask BMPs hold small integer class values (1, 3, 4, 5 in the sample); class names not documented.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/17315241
+  - https://zenodo.org/records/17315241/files/AugmentedImages.zip
+  - https://zenodo.org/records/17315241/files/AugmentedMasks.zip
+  bytes_downloaded: 272998
+  size_source: file-listing
+  layout:
+    tree: 'AugmentedImages.zip/AugmentedImages/sem<mag>_x<i>_y<j>_<augmentation>[_<k>].bmp   405 files  318.5 MB
+      (uncompressed)
+
+      AugmentedMasks.zip/AugmentedMasks/<same name>.bmp                                  405 files  106.6 MB
+
+      '
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/17315241/files/AugmentedImages.zip::AugmentedImages/sem1000_x0_y0_brightness_2.bmp
+    - https://zenodo.org/records/17315241/files/AugmentedMasks.zip::AugmentedMasks/sem1000_x0_y0_brightness_2.bmp
+    size_bytes: 1049708
+    description: One 512x512 image/mask pair (BMP)
+  arrays:
+  - role: raw
+    path_pattern: AugmentedImages.zip::AugmentedImages/<name>.bmp
+    format: other
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 51
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 24-bit BMP whose three channels are identical (grayscale SEM stored as RGB).
+  - role: label
+    path_pattern: AugmentedMasks.zip::AugmentedMasks/<name>.bmp
+    format: other
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 1
+    - 5
+    normalization: unknown
+    encoding: semantic-ids
+    classes: null
+    n_ids_observed: 4
+    alignment: same-grid
+    alignment_notes: Same file name in both zips; both 512x512.
+  notes: 'Exact Zenodo listing, both zips expanded (810 members). tools/sample.py does not read BMP, so a short
+    script (stdlib struct + numpy, members read by range with tools/peek_archive.read_member) parsed one pair: image
+    512x512 24-bit uncompressed BMP, R=G=B, min 51 max 255 mean 202, 205 unique values (this is a ''brightness''
+    augmentation, so the range is not typical). Mask 512x512 8-bit uncompressed BMP with grey palette, values {1:
+    63937, 3: 140567, 4: 45624, 5: 12016}; small integer IDs read as semantic classes (inferred from the Zenodo
+    ''semantic segmentation'' title), names unknown.'
+  inspected_at: '2026-10-01T05:17:00Z'
