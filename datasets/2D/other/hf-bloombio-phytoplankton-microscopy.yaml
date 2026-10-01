@@ -1,8 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: hf-bloombio-phytoplankton-microscopy
 title: Bloombio Phytoplankton Microscopy Dataset
 short_name: Phytoplankton bounding boxes, 43 taxa (light)
-description: 10,433 high-resolution (about 3584 x 2748 px) light-microscopy images of 43 phytoplankton taxa with bounding-box annotations, provided as a full-image detection configuration (YOLO boxes) and a 512 x 512 organism-crop classification configuration, with stratified train/validation/test splits.
+description: 10,433 high-resolution (about 3584 x 2748 px) light-microscopy images of 43 phytoplankton
+  taxa with bounding-box annotations, provided as a full-image detection configuration (YOLO boxes) and
+  a 512 x 512 organism-crop classification configuration, with stratified train/validation/test splits.
 landing_url: https://huggingface.co/datasets/bloombio/phytoplankton-microscopy
 doi: 10.57967/hf/9967
 repository: other
@@ -17,12 +19,13 @@ imaging:
   voxel_size_nm: null
   channels: 3
   organism: []
-  sample: marine and freshwater phytoplankton (43 taxa, e.g. Pediastrum, Rhizosolenia, Scenedesmus, Aulacoseira, Chaetoceros)
+  sample: marine and freshwater phytoplankton (43 taxa, e.g. Pediastrum, Rhizosolenia, Scenedesmus, Aulacoseira,
+    Chaetoceros)
   labels_stains: []
 data:
   formats:
   - other
-  size_bytes: 42152298895
+  size_bytes: 42152306406
   n_items: 10433
   access: open
   download_url: https://huggingface.co/datasets/bloombio/phytoplankton-microscopy
@@ -33,7 +36,8 @@ annotations:
   - bounding-box
   - classification
   coverage: dense
-  format: 'normalized YOLO boxes [x_center, y_center, width, height] with class id in the detection config parquet (converted from Pascal VOC XML)'
+  format: normalized YOLO boxes [x_center, y_center, width, height] with class id in the detection config
+    parquet (converted from Pascal VOC XML)
   source: unknown
 ml:
   tasks:
@@ -57,5 +61,39 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T11:21:02Z'
-notes: 'Hosted on Hugging Face as parquet (data.formats other: images are embedded PNG in parquet, 395 detection files 39.2 GB and 11 classification files 2.9 GB per the Hub file listing; size_bytes is their sum). The card says image counts of 10,433 with splits 7,282 / 1,566 / 1,584 (these are the classification crops; the detection split sizes were not separately stated). Imaging modality, magnification, microscope, pixel size and channels are not stated on the card (called only high-resolution light microscopy), so modality is other and channels 3 is assumed from PNG colour images, not verified. Who annotated the boxes and how is not stated (annotation source unknown); no paper is cited, only the dataset DOI. Organism list left empty: taxa are genera/species names on the card, not checked against NCBI. Checked: dataset card, README, Hub file listing.'
+  last_checked: '2026-10-01T12:27:03Z'
+notes: 'Hosted on Hugging Face as parquet (data.formats other: images are embedded in parquet, 395 detection
+  files 39.2 GB and 11 classification files 2.9 GB per the Hub file listing). The card gives 10,433 images
+  with splits 7,282 / 1,566 / 1,584 (these are the classification config; detection split sizes not stated).
+  Imaging modality, microscope, pixel size and channels are not stated on the card (only high-resolution
+  light microscopy), so modality is other and channels 3 is assumed from colour images, not verified.
+  Annotation source unknown; no paper is cited, only the dataset DOI. Organism list left empty: taxa on
+  the card not checked against NCBI. enricher: size_bytes = 42,152,306,406 B from the complete Hub listing
+  incl. README and .gitattributes (was the parquet sum); dataset viewer info lists 43 classification classes.'
+technical:
+  method: metadata-only
+  inspected_urls:
+  - https://huggingface.co/datasets/bloombio/phytoplankton-microscopy
+  bytes_downloaded: 0
+  size_source: file-listing
+  layout:
+    tree: "README.md, .gitattributes\nclassification/{train-0000N-of-00007,validation-0000N-of-00002,test-0000N-of-00002}.parquet\
+      \   11 files, 2.9 GB\ndetection/{train_part0..4,validation,test}-NNNNN-of-NNNNN.parquet   395 files,\
+      \ 39.2 GB\n  (train_part0 56, part1 56, part2 53, part3 54, part4 57, validation 59, test 60)\n"
+    n_files: 408
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/bloombio/phytoplankton-microscopy/resolve/main/detection/test-00000-of-00060.parquet
+    size_bytes: 115641912
+    description: One detection parquet shard (test split); smaller classification shards are ~206-349
+      MB.
+  arrays: []
+  notes: Hub listing complete (408 files, exact sizes). Parquet cannot be read with the tools allowed
+    in this routine (probe.py/sample.py have no parquet reader and pyarrow is not on the allowed list),
+    so no file was opened; arrays left empty. The dataset viewer (/info) describes the classification
+    config as columns image (Image), label (ClassLabel, 43 taxa from Actinastrum to Xanthadium faciculatum)
+    and source_file (string), with 7,282 / 1,566 / 1,584 examples; the viewer could not parse the detection
+    config (SplitsNotFoundError), so its schema is unverified. Image dtype, size and channel count remain
+    unknown.
+  inspected_at: '2026-10-01T12:27:03Z'
