@@ -1,8 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: nusec-breast-cancer-he-nuclei
 title: 'NuSeC: A Dataset for Nuclei Segmentation in Breast Cancer Histopathology Images'
 short_name: Breast cancer nuclei segmentation (H&E)
-description: 100 H&E-stained breast cancer histopathology images (1024x1024 px, 40x) from 25 invasive breast carcinoma NST patients (4 images per patient), with manually annotated nuclei masks (about 36,000 nuclei) and a predefined 75/25 train/test split.
+description: 100 H&E-stained breast cancer histopathology images (1024x1024 px, 40x) from 25 invasive breast carcinoma NST
+  patients (4 images per patient), with manually annotated nuclei masks (about 36,000 nuclei) and a predefined 75/25 train/test
+  split.
 landing_url: https://drive.google.com/drive/folders/17ZcuASiUFSz-xaSUkTy5fLI8b-XDkacA
 doi: null
 repository: other
@@ -25,7 +27,7 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Homo sapiens
   sample: breast tissue, invasive breast carcinoma NST (H&E)
@@ -33,7 +35,7 @@ imaging:
   - hematoxylin and eosin
 data:
   formats:
-  - other
+  - tiff
   size_bytes: null
   n_items: 100
   access: open
@@ -67,5 +69,76 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-01T17:45:00Z'
-notes: 'Data are in a public Google Drive folder (train nuclei/, test nuclei/ image folders plus "mask of train nuclei.rar" and "mask of test nuclei.rar"). Image file format inside the folders was not visible in the folder listing or the paper, hence formats: other. No license or terms found in the arXiv paper or the Drive folder; the paper only says the dataset is "publicly available". Instance vs. semantic nature of the masks is inferred from the paper''s AJI metric and nucleus counts. Voxel/pixel size not stated (scanner: 3D Histech Panoramic p250 Flash-3, 40x). Annotation done manually in QuPath. Sources checked: arXiv abstract and PDF, Drive folder listing. Google Drive hosting is less durable than a DOI repository.'
+  last_checked: '2026-10-01T18:53:10Z'
+notes: 'Data are in a public Google Drive folder (train nuclei/, test nuclei/ image folders plus "mask of train nuclei.rar"
+  and "mask of test nuclei.rar"). Image file format inside the folders was not visible in the folder listing or the paper,
+  hence formats: other. No license or terms found in the arXiv paper or the Drive folder; the paper only says the dataset
+  is "publicly available". Instance vs. semantic nature of the masks is inferred from the paper''s AJI metric and nucleus
+  counts. Voxel/pixel size not stated (scanner: 3D Histech Panoramic p250 Flash-3, 40x). Annotation done manually in QuPath.
+  Sources checked: arXiv abstract and PDF, Drive folder listing. Google Drive hosting is less durable than a DOI repository.
+  enricher: formats other -> tiff and channels 3 from a probed image (RGB TIFF).'
+technical:
+  method: sample
+  inspected_at: '2026-10-01T18:53:10Z'
+  inspected_urls:
+  - https://drive.google.com/embeddedfolderview?id=17ZcuASiUFSz-xaSUkTy5fLI8b-XDkacA
+  - https://drive.google.com/embeddedfolderview?id=19XGNP9FnNqqR0jONpnqnyXLGbozNEaah
+  - https://drive.google.com/embeddedfolderview?id=1Z_FuyFlv-LcUCT14ohXLi716LaTkjoOg
+  - https://drive.usercontent.google.com/download?id=1KRuNwGxqiTlw6WhPaoIX55FO7myRNku3&export=download
+  bytes_downloaded: 2197044
+  size_source: unknown
+  layout:
+    tree: |
+      Google Drive folder
+        test nuclei/    25 files  image_00.tif.tif … image_24.tif.tif
+        train nuclei/   75 files  00.tif.tif … 74.tif.tif
+        mask of test nuclei.rar
+        mask of train nuclei.rar
+    n_files: 102
+    listing_complete: true
+  sample:
+    urls:
+    - https://drive.usercontent.google.com/download?id=1KRuNwGxqiTlw6WhPaoIX55FO7myRNku3&export=download
+    size_bytes: 2197044
+    description: One test image (image_00.tif.tif), 1024x1024 RGB.
+  arrays:
+  - role: raw
+    path_pattern: '{train nuclei,test nuclei}/*.tif.tif'
+    format: tiff
+    axes: yxs
+    shape:
+    - 1024
+    - 1024
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 5
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: mask of {train,test} nuclei.rar
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    lossy: null
+    chunks: null
+    value_range: null
+    encoding: unknown
+    classes: null
+    n_ids_observed: null
+    alignment: unknown
+    alignment_notes: Masks are inside RAR archives, which the tools cannot list or read.
+  notes: 'Google Drive is not supported by listing.py; the public embedded folder views list 4 top-level entries, 25 images
+    in one image folder and 75 in the other (which is train/test is inferred from the counts and file names), with no file
+    sizes, so size stays unknown. Probed and sampled one image via the Drive download URL: 1024x1024x3 uint8 RGB TIFF, LZW,
+    values [5, 255] (one image). Mask RARs were not opened (no RAR reader in the allowed tools). No license file or terms
+    in the Drive folder.'
