@@ -1,4 +1,4 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: ctc-fluo-n3dh-cho
 title: 'Cell Tracking Challenge Fluo-N3DH-CHO: Chinese hamster ovarian (CHO) cell nuclei, 3D+t with segmentation
   and tracking annotations'
@@ -72,7 +72,7 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T10:55:00Z'
+  last_checked: '2026-10-01T11:32:23Z'
 notes: 'Training zip listed with tools/listing.py (exact zip size): 01/ 92 tif; 01_GT/SEG 19 tif; 01_GT/TRA
   92 tif + man_track.txt; 01_ST/SEG 92 tif; 02/ 92 tif; 02_GT/SEG 24 tif; 02_GT/TRA; 02_ST/SEG. Pixel/voxel
   size, microscope, time step and cell type come from the CTC dataset table; organism and sample from
@@ -81,4 +81,113 @@ notes: 'Training zip listed with tools/listing.py (exact zip size): 01/ 92 tif; 
   cloning is prohibited, and the Nature Methods paper must be cited. Test set annotations are secret.
   Gold-truth segmentation covers only a subset of frames (annotations.coverage partial). Well-known benchmark;
   confidence kept moderate given the permission-based terms. Differs from other CTC records (e.g. ctc-fluo-c3dh-a549,
-  ctc-fluo-n3dh-ce): a separate CTC dataset with its own cells/organism, microscope and zip.'
+  ctc-fluo-n3dh-ce): a separate CTC dataset with its own cells/organism, microscope and zip. enricher:
+  GT SEG are 2D slices of 5-slice volumes.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://data.celltrackingchallenge.net/training-datasets/Fluo-N3DH-CHO.zip
+  - https://public.celltrackingchallenge.net/documents/Naming%20and%20file%20content%20conventions.pdf
+  bytes_downloaded: 500853
+  size_source: file-listing
+  layout:
+    tree: "Fluo-N3DH-CHO.zip   108,592,002 B, 781 members\n  Fluo-N3DH-CHO/\n    01/          92 t<TTT>.tif\
+      \ (3D, 5 slices)   51.2 MB\n    01_ERR_SEG/  92 .tif\n    01_GT/SEG/   19 man_seg_<TTT>_<ZZZ>.tif\
+      \ (single slices)\n    01_GT/TRA/   92 man_track<TTT>.tif + man_track.txt\n    01_ST/SEG/   92 man_seg<TTT>.tif\
+      \ (3D)\n    02/          92 t<TTT>.tif   47.3 MB\n    02_ERR_SEG/  92 .tif\n    02_GT/SEG/   24\
+      \ man_seg_<TTT>_<ZZZ>.tif\n    02_GT/TRA/   92 + man_track.txt\n    02_ST/SEG/   92 man_seg<TTT>.tif\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.celltrackingchallenge.net/training-datasets/Fluo-N3DH-CHO.zip::Fluo-N3DH-CHO/01/t004.tif
+    - https://data.celltrackingchallenge.net/training-datasets/Fluo-N3DH-CHO.zip::Fluo-N3DH-CHO/01_GT/SEG/man_seg_004_000.tif
+    size_bytes: 463248
+    description: Volume 004 of sequence 01 and its gold-truth segmentation of slice 0 (zip members, compressed).
+  arrays:
+  - role: raw
+    path_pattern: 0N/t<T>.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 5
+    - 443
+    - 512
+    shape_varies: null
+    dtype: uint8
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 4
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: 0N_GT/SEG/man_seg_<T>_<Z>.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 443
+    - 512
+    shape_varies: null
+    dtype: uint16
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 2
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 3
+    alignment: same-grid
+    alignment_notes: man_seg_<T>_<Z>.tif is slice Z of 0N/t<T>.tif (CTC convention); 443x512 matches the
+      raw slice size.
+  - role: label
+    path_pattern: 0N_GT/TRA/man_track<T>.tif
+    format: tiff
+    axes: zyx
+    shape: &id001
+    - 5
+    - 443
+    - 512
+    shape_varies: null
+    dtype: uint16
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 20
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 10
+    alignment: same-grid
+    alignment_notes: Tracking markers per frame (labels propagated over time); lineage in 0N_GT/TRA/man_track.txt
+      (L B E P rows).
+  - role: label
+    path_pattern: 0N_ST/SEG/man_seg<T>.tif
+    format: tiff
+    axes: zyx
+    shape: *id001
+    shape_varies: null
+    dtype: uint16
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 20
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 10
+    alignment: same-grid
+    alignment_notes: Silver-truth (computer-generated) segmentation, same naming as GT/SEG.
+  notes: 'Listing: one zip, 781 members incl. 0N_ERR_SEG. CTC conventions PDF: tT.tif is a Z stack, man_seg_T_Z.tif
+    a 2D gold segmentation of slice Z, labels 16-bit unique positive IDs, background 0. Probes: t004 5
+    pages of 443x512 uint8 LZW (axes not stored; zyx from the conventions); man_seg_004_000 443x512 uint16
+    LZW. Samples (t004 of 01): raw 4..255 (p50 5, p99 107); GT slice 0..2 (3 values); man_track004 and
+    ST man_seg004 5x443x512, 0..20 (10 values each). 01 man_track.txt has 28 tracks. Normalization unknown.'
+  inspected_at: '2026-10-01T11:32:23Z'
