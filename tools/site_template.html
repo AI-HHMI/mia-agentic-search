@@ -72,7 +72,7 @@ h3:first-of-type { margin-top: 4px; }
 #dims { grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); }
 
 ul.why { margin: 0; padding-left: 16px; }
-.scale-note { color: var(--text-muted); font-size: 12px; margin: -12px 0 12px; }
+.scale-note { color: var(--text-muted); font-size: 12px; margin: -6px 0 10px; }
 details.reason { border-top: 1px solid var(--border); padding: 6px 0; }
 details.reason:first-of-type { margin-top: 12px; }
 details.reason summary { cursor: pointer; color: var(--text-secondary); font-size: 13px; }
@@ -89,27 +89,21 @@ code { font-size: 12px; }
   <h1>Agentic Harvesting of Open-Source Microscopy Data</h1>
   <p class="sub" id="gen"></p>
   <section class="grid tiles" id="tiles"></section>
-  <p class="scale-note" id="scale-note"></p>
   <section class="grid charts">
     <div class="card"><h2>Agent health: latest run per routine</h2><div class="scroll"><table id="health"></table></div></div>
     <div class="card"><h2>New records per week (last 12 weeks)</h2><div id="weekly"></div></div>
   </section>
   <h2 class="sec">Catalog by dimensionality</h2>
+  <p class="scale-note" id="scale-note"></p>
   <section class="grid charts" id="dims"></section>
   <section class="grid charts">
     <div class="card"><h2>Records by annotation type</h2><div id="anntype"></div></div>
     <div class="card"><h2>Why open PRs aren't merged automatically</h2><div id="reasons"></div></div>
   </section>
-  <section class="card" style="margin-bottom:16px">
+  <section class="card">
     <h2>Recent agent runs</h2>
     <div class="scroll"><table id="runs"></table></div>
     <button type="button" id="runs-more" class="more" aria-controls="runs" hidden></button>
-  </section>
-  <section class="card">
-    <h2>Open dataset PRs that can't be merged automatically</h2>
-    <p class="sub" id="unmerged-sub"></p>
-    <div class="scroll"><table id="unmerged"></table></div>
-    <button type="button" id="unmerged-more" class="more" aria-controls="unmerged" hidden></button>
   </section>
 </main>
 <div id="tip" role="tooltip"></div>
@@ -162,36 +156,45 @@ document.getElementById("health").innerHTML = `<tr><th>Routine</th><th>Status</t
   }).join("");
 
 // Horizontal bars (single series: no legend; the title names it). Beyond `top` rows, the rest folds into "Other".
-// All bar charts on the page share one scale, so equal lengths mean equal counts in every panel:
-// charts are queued with hbars() and drawn together by drawBars() once the overall maximum is known.
+// Charts in the same `group` share one scale (equal lengths = equal counts across those panels); a chart
+// without a group has its own. Charts are queued with hbars() and drawn by drawBars() once maxima are known.
 const barCharts = [];
-function hbars(el, counts, {top = 10, unit = "datasets"} = {}) {
+function hbars(el, counts, {top = 10, unit = "datasets", group = null} = {}) {
   if (typeof el === "string") el = document.getElementById(el);
   let entries = Object.entries(counts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
   if (entries.length > top) {
     const rest = entries.slice(top - 1);
     entries = [...entries.slice(0, top - 1), [`Other (${rest.length})`, rest.reduce((a, [, v]) => a + v, 0)]];
   }
-  barCharts.push({el, entries, unit});
+  barCharts.push({el, entries, unit, group: group || `solo-${barCharts.length}`});
 }
 function drawBars() {
-  const max = Math.max(1, ...barCharts.flatMap(c => c.entries.map(e => e[1])));
-  barCharts.forEach(({el, entries, unit}) => {
-    if (!entries.length) { el.innerHTML = `<p class="empty">No data yet.</p>`; return; }
-    el.innerHTML = `<div class="bars">` + entries.map(([k, v]) =>
-      `<div class="row"><span class="lab" title="${esc(k)}">${esc(k)}</span><div class="track"><div class="bar" data-v="${v}"></div><span class="num">${v}</span></div></div>`).join("") + `</div>`;
-    el.querySelectorAll(".track").forEach((t, i) => bindTip(t, `<b>${esc(entries[i][0])}</b>: ${entries[i][1]} ${unit}`));
+  const groups = {};
+  barCharts.forEach(c => (groups[c.group] = groups[c.group] || []).push(c));
+  Object.values(groups).forEach(charts => {
+    const max = Math.max(1, ...charts.flatMap(c => c.entries.map(e => e[1])));
+    charts.forEach(c => {
+      c.max = max;
+      if (!c.entries.length) { c.el.innerHTML = `<p class="empty">No data yet.</p>`; return; }
+      c.el.innerHTML = `<div class="bars">` + c.entries.map(([k, v]) =>
+        `<div class="row"><span class="lab" title="${esc(k)}">${esc(k)}</span><div class="track"><div class="bar" data-v="${v}"></div><span class="num">${v}</span></div></div>`).join("") + `</div>`;
+      c.el.querySelectorAll(".track").forEach((t, i) => bindTip(t, `<b>${esc(c.entries[i][0])}</b>: ${c.entries[i][1]} ${c.unit}`));
+    });
   });
-  // Lengths in pixels against the narrowest track on the page, so one unit is the same length in every panel.
-  const size = () => {
-    const tracks = [...document.querySelectorAll(".bars .track")];
+  // Lengths in pixels against the group's largest count and its narrowest track, so within a group
+  // one unit is the same length in every panel. Re-run on resize.
+  const size = () => Object.values(groups).forEach(charts => {
+    const tracks = charts.flatMap(c => [...c.el.querySelectorAll(".track")]);
+    if (!tracks.length) return;
     const w = Math.min(...tracks.map(t => t.clientWidth)) - 32;  // leave room for the number after the bar
-    document.querySelectorAll(".bars .bar").forEach(b => b.style.width = `${Math.max(2, w * b.dataset.v / max)}px`);
-  };
+    charts.forEach(c => c.el.querySelectorAll(".bar").forEach(b => b.style.width = `${Math.max(2, w * b.dataset.v / c.max)}px`));
+  });
   size();
   addEventListener("resize", size);
-  document.getElementById("scale-note").textContent =
-    `All bar charts use the same scale: a full-width bar is ${max} (datasets, or PRs in the "not merged" chart).`;
+  const dimMax = groups.dims?.[0]?.max;
+  document.getElementById("scale-note").textContent = dimMax
+    ? `The four panels share one scale: a full-width bar is ${dimMax} datasets. A dataset with several modalities or organisms counts once under each.`
+    : "";
 }
 const tally = (rows, f) => rows.reduce((acc, r) => { (f(r) || []).forEach(k => acc[k] = (acc[k] || 0) + 1); return acc; }, {});
 hbars("anntype", tally(recs, r => r.annotations?.types?.length ? r.annotations.types : ["(none)"]));
@@ -199,7 +202,7 @@ hbars("anntype", tally(recs, r => r.annotations?.types?.length ? r.annotations.t
 // Small multiples: one card per dimensionality, each with modality and organism distributions.
 // A dataset with several modalities / organisms counts once under each.
 (function () {
-  const DIMS = [["2D", "2D images"], ["2D+t", "2D time-lapse"], ["3D", "3D volumes"], ["3D+t", "3D time-lapse"]];
+  const DIMS = [["2D", "2D images"], ["3D", "3D volumes"], ["2D+t", "2D time-lapse"], ["3D+t", "3D time-lapse"]];
   const host = document.getElementById("dims");
   host.innerHTML = DIMS.map(([d, name], i) => {
     const n = recs.filter(r => r.imaging?.dimensionality === d).length;
@@ -208,8 +211,8 @@ hbars("anntype", tally(recs, r => r.annotations?.types?.length ? r.annotations.t
   }).join("");
   DIMS.forEach(([d], i) => {
     const rows = recs.filter(r => r.imaging?.dimensionality === d);
-    hbars(`dim-mod-${i}`, tally(rows, r => r.imaging?.modality?.length ? r.imaging.modality : ["(not stated)"]), {top: 8});
-    hbars(`dim-org-${i}`, tally(rows, r => r.imaging?.organism?.length ? r.imaging.organism : ["(not stated)"]), {top: 8});
+    hbars(`dim-mod-${i}`, tally(rows, r => r.imaging?.modality?.length ? r.imaging.modality : ["(not stated)"]), {top: 8, group: "dims"});
+    hbars(`dim-org-${i}`, tally(rows, r => r.imaging?.organism?.length ? r.imaging.organism : ["(not stated)"]), {top: 8, group: "dims"});
   });
 })();
 
@@ -249,46 +252,23 @@ function renderRuns() {
 document.getElementById("runs-more").addEventListener("click", () => { runsExpanded = !runsExpanded; renderRuns(); });
 renderRuns();
 
-// Open dataset PRs that auto-merge leaves open, with its reasons (tools/automerge.py)
+// Why open dataset PRs aren't auto-merged (tools/automerge.py), with links to the PRs behind each reason
 const unmerged = DATA.unmerged;
 const shortReason = r => r.replace(/ \(.*\)$/, "").replace(/`/g, "");
 if (unmerged === null || unmerged === undefined) {
-  document.getElementById("unmerged-sub").textContent = "Not available: this page was built without GitHub access.";
-  document.getElementById("reasons").innerHTML = `<p class="empty">Not available.</p>`;
+  document.getElementById("reasons").innerHTML = `<p class="empty">Not available: this page was built without GitHub access.</p>`;
 } else {
   const blocked = unmerged.filter(p => !p.reasons[0].startsWith("meets all criteria"));
-  document.getElementById("unmerged-sub").textContent =
-    `${blocked.length} of ${unmerged.length} open dataset PRs don't meet the auto-merge policy (tools/automerge.py). ` +
-    `Reasons come from the PRs' labels and checks when this page was built.`;
   const reasonsOf = p => [...new Set(p.reasons.map(shortReason))];
   const byReason = tally(blocked, reasonsOf);
   hbars("reasons", byReason, {top: 50, unit: "PRs"});
-  // the PRs behind each bar, most common reason first
-  const reasonsEl = document.getElementById("reasons");
   const lists = Object.entries(byReason).sort((a, b) => b[1] - a[1]).map(([reason, n]) => {
     const prs = blocked.filter(p => reasonsOf(p).includes(reason));
     return `<details class="reason"><summary>${esc(reason)}: ${n} PR${n === 1 ? "" : "s"}</summary><div class="prs">` +
       prs.map(p => `<a href="${esc(p.url)}" title="${esc(p.title)}">#${p.number}</a>`).join("") + `</div></details>`;
   }).join("");
-  reasonsEl.insertAdjacentHTML("afterend", `<div id="reason-prs">${lists}</div>`);
-  const md = t => esc(t).replace(/`([^`]+)`/g, "<code>$1</code>");
-  const INITIAL = 25;
-  let expanded = false;
-  const render = () => {
-    const shown = expanded ? blocked : blocked.slice(0, INITIAL);
-    document.getElementById("unmerged").innerHTML = blocked.length
-      ? `<tr><th>PR</th><th>Dataset</th><th>Dim</th><th>Opened</th><th>Why it isn't merged</th></tr>` +
-        shown.map(p => `<tr><td><a href="${esc(p.url)}">#${p.number}</a></td><td>${esc(p.title)}</td><td>${esc(p.dim || "—")}</td>
-          <td>${new Date(p.created_at).toLocaleDateString(undefined, {dateStyle: "medium"})}</td>
-          <td><ul class="why">${p.reasons.map(r => `<li>${md(r)}</li>`).join("")}</ul></td></tr>`).join("")
-      : `<tr><td class="empty">Every open dataset PR meets the policy.</td></tr>`;
-    const btn = document.getElementById("unmerged-more");
-    btn.hidden = blocked.length <= INITIAL;
-    btn.textContent = expanded ? "Show less" : `Show all ${blocked.length}`;
-    btn.setAttribute("aria-expanded", String(expanded));
-  };
-  document.getElementById("unmerged-more").addEventListener("click", () => { expanded = !expanded; render(); });
-  render();
+  document.getElementById("reasons").insertAdjacentHTML("afterend",
+    `<p class="scale-note" style="margin:8px 0 0">${blocked.length} of ${unmerged.length} open dataset PRs, when this page was built.</p><div id="reason-prs">${lists}</div>`);
 }
 drawBars();
 </script>
