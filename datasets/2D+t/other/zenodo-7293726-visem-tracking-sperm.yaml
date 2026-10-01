@@ -1,10 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-7293726-visem-tracking-sperm
 title: VISEM-Tracking - human spermatozoa videos with bounding boxes and tracking IDs
 short_name: Human sperm tracking videos with boxes (light)
-description: 20 annotated 30-second videos of fresh human semen (about 29,000 frames, 640 x 480, 45-50 FPS) with YOLO-format bounding
-  boxes per spermatozoon, tracking IDs and three classes (normal sperm, cluster, small or pinhead), plus about 500 further
-  unlabeled 30-second clips and participant clinical CSVs.
+description: 20 annotated 30-second videos of fresh human semen (about 29,000 frames, 640 x 480, 45-50 FPS) with YOLO-format
+  bounding boxes per spermatozoon, tracking IDs and three classes (normal sperm, cluster, small or pinhead), plus about 500
+  further unlabeled 30-second clips and participant clinical CSVs.
 landing_url: https://zenodo.org/records/7293726
 doi: 10.5281/zenodo.7293726
 repository: Zenodo
@@ -45,7 +45,8 @@ annotations:
   - tracking
   - classification
   coverage: dense
-  format: per-frame YOLO .txt boxes (class 0 normal sperm, 1 cluster, 2 small or pinhead) and boxes with tracking IDs, extracted JPG frames and MP4 per video, sperm_counts_per_frame.csv
+  format: per-frame YOLO .txt boxes (class 0 normal sperm, 1 cluster, 2 small or pinhead) and boxes with tracking IDs, extracted
+    JPG frames and MP4 per video, sperm_counts_per_frame.csv
   source: manual
 ml:
   tasks:
@@ -70,12 +71,103 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T18:15:00Z'
-notes: 'Checked the Zenodo record and API, the zip index (88,310 files: 29,370 JPG frames, 58,412 TXT label files, 522 MP4 videos,
-  6 CSV) and the Scientific Data paper (Methods, Data Records). Of the 522 MP4s, 20 are the annotated clips; the paper describes
-  166 further clips from those 20 videos and 336 clips from unlabeled VISEM videos for self-supervised use. Boxes
-  were drawn in Labelbox by data scientists and verified by three biologists. The paper trains YOLOv5 on 16 videos and
-  validates on 4 (IDs given on GitHub), but the zip itself has no split file, so splits_provided is false. Contrast
-  mode is not stated in the paper (it notes WHO recommends phase-contrast optics), so modality is other. Pixel size
-  not given (video frames are 640 x 480 per the paper table for the original VISEM videos). n_items counts annotated
-  videos.'
+  last_checked: '2026-10-01T18:00:20Z'
+notes: 'Checked the Zenodo record and API, the zip index (88,310 files: 29,370 JPG frames, 58,412 TXT label files, 522 MP4
+  videos, 6 CSV) and the Scientific Data paper (Methods, Data Records). Of the 522 MP4s, 20 are the annotated clips; the paper
+  describes 166 further clips from those 20 videos and 336 clips from unlabeled VISEM videos for self-supervised use. Boxes
+  were drawn in Labelbox by data scientists and verified by three biologists. The paper trains YOLOv5 on 16 videos and validates
+  on 4 (IDs given on GitHub), but the zip itself has no split file, so splits_provided is false. Contrast mode is not stated
+  in the paper (it notes WHO recommends phase-contrast optics), so modality is other. Pixel size not given (video frames are
+  640 x 480 per the paper table for the original VISEM videos). n_items counts annotated videos.'
+technical:
+  method: sample
+  inspected_at: '2026-10-01T18:00:20Z'
+  inspected_urls:
+  - https://zenodo.org/records/7293726
+  - https://zenodo.org/records/7293726/files/VISEM-Tracking.zip
+  bytes_downloaded: 78267
+  size_source: file-listing
+  layout:
+    tree: |
+      VISEM-Tracking.zip  (6.3 GB, the only file; 88,310 members)
+        6 .csv at the top (e.g. fatty_acids_serum_Train.csv, sperm counts per frame)
+        VISEM_Tracking_Train_v4/Train/<video id>/   ×20 videos
+          <id>.mp4, <id>.txt (list of label paths)
+          images/<id>_frame_<n>.jpg                 29,370 frames (1.8 GB)
+          labels/<id>_frame_<n>.txt                 29,196 YOLO box files
+          labels_ftid/<id>_frame_<n>_with_ftid.txt  29,196 box files with track IDs
+        visem-extracted-30s-excluding-selected-20/...         336 .mp4 (3.7 GB, unlabeled)
+        visem-extracted-30s-selected-20-videos-excluding-first-30s/...  166 .mp4 (710 MB)
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7293726/files/VISEM-Tracking.zip::VISEM_Tracking_Train_v4/Train/11/images/11_frame_0.jpg
+    - https://zenodo.org/records/7293726/files/VISEM-Tracking.zip::VISEM_Tracking_Train_v4/Train/11/labels_ftid/11_frame_0_with_ftid.txt
+    size_bytes: null
+    description: One 640x480 frame of video 11 and its box file with track IDs.
+  arrays:
+  - role: raw
+    path_pattern: VISEM_Tracking_Train_v4/Train/*/images/*_frame_*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 480
+    - 640
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    lossy: true
+    chunks: null
+    value_range:
+    - 8
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: VISEM_Tracking_Train_v4/Train/*/labels/*_frame_*.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: normal sperm
+    - id: 1
+      name: cluster
+    - id: 2
+      name: small or pinhead
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: 'YOLO text, one row per box: class x_center y_center width height, normalised to the frame size; labels/<id>_frame_<n>.txt
+      pairs with images/<id>_frame_<n>.jpg.'
+  - role: label
+    path_pattern: VISEM_Tracking_Train_v4/Train/*/labels_ftid/*_frame_*_with_ftid.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: tracks-table
+    classes: null
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: Same rows as labels/ prefixed by a track ID string (e.g. ckz3v9nzv00033867jsekqdcl) that links boxes
+      across frames.
+  notes: 'Complete Zenodo listing (1 zip, 6,316,224,959 B, 88,310 members). Probed and sampled 11/images/11_frame_0.jpg: 480x640x3
+    uint8 JPEG (lossy), values [8, 255] in this one frame. Read 11/labels/11_frame_0.txt and the matching labels_ftid file
+    with peek_archive: 5 and 6 space-separated columns as described. Class names are from the record (paper/Zenodo), not from
+    a file in the zip. 11/11.txt lists the label paths with an absolute path from the authors'' machine. Box files are not
+    in a format the schema lists, hence format other.'
