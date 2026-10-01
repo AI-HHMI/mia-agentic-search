@@ -1,0 +1,148 @@
+schema_version: '1.2'
+id: zenodo-13843670-biotisr-2d-sim
+title: 2D Data of BioTISR dataset
+short_name: BioTISR 2D time-lapse SIM super-resolution
+description: 2D part of BioTISR, time-lapse low/high-resolution image pairs for super-resolution microscopy. Five
+  specimens (clathrin-coated pits, lysosomes, outer mitochondrial membrane, microtubules, F-actin, plus nonlinear-SIM
+  F-actin) imaged on a Multi-SIM system in TIRF-SIM, GI-SIM and nonlinear SIM modes. Each cell has raw SIM data
+  at three excitation levels (inputs of differing SNR) and a reconstructed SIM ground-truth stack.
+landing_url: https://zenodo.org/records/13843670
+doi: 10.5281/zenodo.13843670
+repository: Zenodo
+accession: '13843670'
+authors:
+- Qiao, Chang
+- Xu, Wencong
+publications:
+- title: A neural network for long-term super-resolution imaging of live cells with reliable confidence quantification
+  doi: 10.1038/s41587-025-02553-8
+  url: https://doi.org/10.1038/s41587-025-02553-8
+date_published: '2024-10-13'
+imaging:
+  modality:
+  - super-resolution
+  dimensionality: 2D+t
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: Live cells with fluorescently labelled clathrin-coated pits, lysosomes, outer mitochondrial membrane,
+    microtubules or F-actin
+  labels_stains: []
+data:
+  formats:
+  - mrc
+  size_bytes: 89531684525
+  n_items: null
+  access: open
+  download_url: https://zenodo.org/records/13843670
+  download_method: http
+annotations:
+  present: true
+  types:
+  - restoration-pairs
+  coverage: dense
+  format: SIM_gt.mrc reconstructed SIM ground truth per cell, paired with RawSIMData_level_01..03.mrc
+  source: automatic
+ml:
+  tasks:
+  - super-resolution
+  - denoising
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/liushuran2/Bayesian_DPA_TISR
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-09-30T16:37:48Z'
+  evidence_urls:
+  - https://zenodo.org/records/13843670
+  - https://zenodo.org/api/records/13843670
+  - https://zenodo.org/records/13843670/files/BioTISR_CCPs.zip
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12807867/fullTextXML
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-09-30T22:00:39Z'
+notes: 'Six zips (CCPs, Microtubules, F-actin, F-actin_nonlinear, Lysosomes, Mitochondria), ~13-20 GB each; only
+  the CCPs zip was listed (240 .mrc files: per-cell RawSIMData_level_01-03 + SIM_gt). Pixel size not stated on the
+  dataset page, paper Methods or file listing (MRC headers not read). Paper describes at least 50 ROIs per specimen;
+  split guidance (about 40 groups train/val, about 10 test) is in the paper Methods but no split files are provided.
+  Ground truth is SIM reconstruction of highest-excitation raw data (algorithmic, not manual). Split into several
+  Zenodo records with a parent concept DOI 10.5281/zenodo.13924483; 3D parts are separate records not covered here.
+  enricher: CCPs zip inspected. Raw 180x512x512 uint16 per level = 20 time points x 9 SIM raw frames; SIM_gt is
+  20x1024x1024 float32 (2x upsampled).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/13843670
+  - https://zenodo.org/records/13843670/files/BioTISR_CCPs.zip
+  bytes_downloaded: 237203032
+  size_source: file-listing
+  layout:
+    tree: |
+      ./                                     6 files   89.5 GB  .zip
+        BioTISR_CCPs.zip 13.2 GB · BioTISR_Microtubules.zip 13.9 GB · BioTISR_F-actin.zip 15.5 GB
+        BioTISR_F-actin_nonlinear.zip 13.4 GB · BioTISR_Lysosomes.zip 13.8 GB · BioTISR_Mitochondria.zip 19.7 GB
+      BioTISR_CCPs.zip/BioTISR_CCPs/  (240 members; other zips not listed)
+        Cell_NNN/RawSIMData_level_01.mrc, _02.mrc, _03.mrc   raw SIM stacks, 3 SNR levels (~94 MB each)
+        Cell_NNN/SIM_gt.mrc                                   SIM reconstruction ground truth (~84 MB)
+    n_files: 6
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/13843670/files/BioTISR_CCPs.zip::BioTISR_CCPs/Cell_001/RawSIMData_level_01.mrc
+    - https://zenodo.org/records/13843670/files/BioTISR_CCPs.zip::BioTISR_CCPs/Cell_001/SIM_gt.mrc
+    size_bytes: 178259968
+    description: One cell's lowest-level raw SIM stack and its SIM ground truth (MRC, ~178 MB together)
+  arrays:
+  - role: raw
+    path_pattern: BioTISR_*/Cell_*/RawSIMData_level_0[1-3].mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 180
+    - 512
+    - 512
+    shape_varies: null
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 61
+    - 245
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: The first axis (180) holds 20 time points x 9 raw SIM frames (inferred from the 9:1 ratio to
+      the ground truth); MRC header space group 0 (image stack).
+  - role: target
+    path_pattern: BioTISR_*/Cell_*/SIM_gt.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 20
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: float32
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - -1597.92
+    - 8511.22
+    normalization: unknown
+    alignment: scaled
+    alignment_notes: 2x finer grid than the raw (1024 vs 512 px); one GT frame per 9 raw frames. MRC voxel fields
+      0.0306 vs 0.0612 (x) also differ by 2.
+  notes: 'Zenodo record: 6 zips with exact sizes; only BioTISR_CCPs.zip central directory listed (240 .mrc = 60
+    cells x 4). Probe of Cell_001 MRCs (partial inflate): raw uint16 180x512x512, GT float32 20x1024x1024. Sample
+    (full members, Cell_001; run twice because the first run printed no output): raw 61-245 (median 96, max < 4096,
+    low-SNR level 1); GT -1598 to 8511 (median 12; negative values from SIM reconstruction). MRC headers store voxel
+    size 0.0612 / 0.0306 labelled as Angstrom, not plausible for SIM (maybe um, i.e. 61.2 / 30.6 nm); voxel_size_nm
+    left null. Other zips assumed to share the layout, not verified.'
+  inspected_at: '2026-09-30T22:00:39Z'
