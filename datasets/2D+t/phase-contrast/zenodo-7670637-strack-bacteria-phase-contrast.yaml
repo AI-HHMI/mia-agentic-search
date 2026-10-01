@@ -1,10 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-7670637-strack-bacteria-phase-contrast
 title: 'STrack: A tool to Simply Track bacterial cells in microscopy time-lapse images'
 short_name: Bacterial microcolony time-lapses with cell masks
-description: 20 phase-contrast time-lapse series of four soil bacteria (Pseudomonas putida, Pseudomonas veronii, Rahnella sp.,
-  Lysobacter sp.) growing as monolayer microcolonies, with manually drawn single-cell segmentation masks (QuPath) for 320 frames,
-  one TIFF mask per raw frame.
+description: 20 phase-contrast time-lapse series of four soil bacteria (Pseudomonas putida, Pseudomonas veronii, Rahnella
+  sp., Lysobacter sp.) growing as monolayer microcolonies, with manually drawn single-cell segmentation masks (QuPath) for
+  320 frames, one TIFF mask per raw frame.
 landing_url: https://zenodo.org/records/7670637
 doi: 10.5281/zenodo.7670637
 repository: Zenodo
@@ -44,7 +44,8 @@ annotations:
   types:
   - instance-segmentation
   coverage: dense
-  format: One TIFF mask per raw frame (manual_segmentation_masks/mask_position*_time*.tif) next to raw_images in each time-lapse folder
+  format: One TIFF mask per raw frame (manual_segmentation_masks/mask_position*_time*.tif) next to raw_images in each time-lapse
+    folder
   source: manual
 ml:
   tasks:
@@ -68,10 +69,79 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T16:45:36Z'
-notes: 'Zip listings: Pveronii 95, Rahnella 67, Pputida 75 and Lysobacter 83 raw frames, each with a matching manual mask (5 time-lapse
-  folders per species, 320 frames in total). The paper says experts also tracked the segmented cells manually with MaMut to build
-  reference tracks, but the Zenodo zips list only raw images and masks, so tracking annotations are not included here. Paper Methods:
-  Nikon Ti with Hamamatsu C11440 camera and 100x Plan Apo objective, one frame every 10 to 20 min for 12 to 20 h; pixel size is not
-  stated in the Methods or on the Zenodo record, TIFF headers were not read. The paper also analysed 2 literature datasets that are
-  not part of this deposit. Species of Rahnella and Lysobacter are given only to genus level.'
+  last_checked: '2026-10-01T18:58:05Z'
+notes: 'Zip listings: Pveronii 95, Rahnella 67, Pputida 75 and Lysobacter 83 raw frames, each with a matching manual mask
+  (5 time-lapse folders per species, 320 frames in total). The paper says experts also tracked the segmented cells manually
+  with MaMut to build reference tracks, but the Zenodo zips list only raw images and masks, so tracking annotations are not
+  included here. Paper Methods: Nikon Ti with Hamamatsu C11440 camera and 100x Plan Apo objective, one frame every 10 to 20
+  min for 12 to 20 h; pixel size is not stated in the Methods or on the Zenodo record, TIFF headers were not read. The paper
+  also analysed 2 literature datasets that are not part of this deposit. Species of Rahnella and Lysobacter are given only
+  to genus level.'
+technical:
+  method: sample
+  inspected_at: '2026-10-01T18:58:05Z'
+  inspected_urls:
+  - https://zenodo.org/records/7670637
+  - https://zenodo.org/records/7670637/files/Pveronii.zip
+  bytes_downloaded: 365110
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  4 zips, 113.4 MB: Pveronii.zip, Rahnella.zip, Pputida.zip, Lysobacter.zip
+      <species>.zip/<species>/Time-lapse_dataset<1-5>/
+        raw_images/BF_position<p>_time<tttt>.tif
+        manual_segmentation_masks/mask_position<p>_time<tttt>.tif
+      (Pveronii.zip: 196 members, 95 raw + 95 masks in 5 time-lapse folders, + OS metadata files)
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7670637/files/Pveronii.zip::Pveronii/Time-lapse_dataset1/raw_images/BF_position1_time0019.tif
+    - https://zenodo.org/records/7670637/files/Pveronii.zip::Pveronii/Time-lapse_dataset1/manual_segmentation_masks/mask_position1_time0019.tif
+    size_bytes: 365110
+    description: One 512x512 frame (P. veronii, dataset 1, t=19) and its mask.
+  arrays:
+  - role: raw
+    path_pattern: '*/Time-lapse_dataset*/raw_images/BF_position*_time*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: null
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 723
+    - 2739
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '*/Time-lapse_dataset*/manual_segmentation_masks/mask_position*_time*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: null
+    dtype: uint8
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 18
+    encoding: unknown
+    classes: null
+    n_ids_observed: 19
+    alignment: same-grid
+    alignment_notes: mask_position<p>_time<t>.tif pairs with BF_position<p>_time<t>.tif in the same time-lapse folder; identical
+      shape.
+  notes: 'Complete Zenodo listing of the record (4 zips, 113,382,207 B); members listed for Pveronii.zip only (expanding all
+    zips hit Zenodo TLS errors). Probed and sampled Pveronii dataset1 t=19: raw uint16 512x512, uncompressed, values [723,
+    2739] (12-bit camera range, no clipping: normalization ''none'' is inferred); mask uint8 with 19 values 0-18, consistent
+    with one ID per cell in a microcolony, but whether IDs are per-cell instances or persist as track IDs is not documented
+    (encoding unknown). Raw files are prefixed BF_. Values from one frame; no pixel calibration in the header.'
