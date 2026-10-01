@@ -1,9 +1,9 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: figshare-30120811-sperm-scd-halo-brightfield
 title: Expert-annotated optical microscopy images of human sperm for detection and DNA fragmentation assessment
 short_name: Human sperm SCD halo classes (brightfield)
-description: Bright-field 1000x images of human sperm prepared with the sperm chromatin dispersion (SCD) test.
-  Includes full-field raw images, a sperm vs non-sperm patch set, and a halo-size patch set (large,
+description: Bright-field 1000x images of human sperm prepared with the sperm chromatin dispersion (SCD)
+  test. Includes full-field raw images, a sperm vs non-sperm patch set, and a halo-size patch set (large,
   medium, small, no halo, non-sperm) labelled by five embryologists with majority voting.
 landing_url: https://figshare.com/articles/dataset/30120811
 doi: 10.6084/m9.figshare.30120811.v1
@@ -13,7 +13,8 @@ authors:
 - Borna, MahdiReza
 - Saadat, Hanan
 publications:
-- title: Expert-Annotated Optical Microscopy Images of Human Sperm for Detection and DNA Fragmentation Assessment
+- title: Expert-Annotated Optical Microscopy Images of Human Sperm for Detection and DNA Fragmentation
+    Assessment
   doi: 10.1038/s41597-025-06486-4
   url: https://doi.org/10.1038/s41597-025-06486-4
 date_published: '2025-12-01'
@@ -25,7 +26,8 @@ imaging:
   channels: null
   organism:
   - Homo sapiens
-  sample: stained human semen smears (SCD halo test) from ICSI patients, bright-field microscopy at 1000x magnification
+  sample: stained human semen smears (SCD halo test) from ICSI patients, bright-field microscopy at 1000x
+    magnification
   labels_stains: []
 data:
   formats:
@@ -40,9 +42,9 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: 'Class labels by folder (Binary_Classification: Sperm / NonSperm; Halo_Classification: LargeHalo, MediumHalo,
-    SmallHalo, NoHalo, NonSperm) and per-file rows in Metadata.csv (filename, subset, class, halo_category).
-    Raw full-field images are not labelled.'
+  format: 'Class labels by folder (Binary_Classification: Sperm / NonSperm; Halo_Classification: LargeHalo,
+    MediumHalo, SmallHalo, NoHalo, NonSperm) and per-file rows in Metadata.csv (filename, subset, class,
+    halo_category). Raw full-field images are not labelled.'
   source: manual
 ml:
   tasks:
@@ -66,11 +68,82 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T21:50:00Z'
-notes: 'Files: Dataset.rar (1.18 GB, a RAR that cannot be listed remotely), Metadata.csv (1,776 rows read: 400 raw, 650 binary,
-  726 halo patches), README.txt. n_items follows Metadata.csv; the paper says 435 raw images, 650 binary
-  patches (320 sperm / 330 non-sperm) and 403 halo-classified sperm cells (103 / 107 / 92 / 101) plus
-  non-sperm patches, so the raw count differs (400 vs 435). Image format png from the paper and README (file names in
-  the CSV are upper-case .PNG); archive contents were not opened. Pixel size and microscope model not stated
-  in the paper text read or README. Labels are class folders, not masks or boxes (the paper figures mark
-  cells with circles). Five embryologists labelled independently; majority vote.'
+  last_checked: '2026-10-01T20:37:47Z'
+notes: 'Files: Dataset.rar (1.18 GB, a RAR that cannot be listed remotely), Metadata.csv (1,776 rows read:
+  400 raw, 650 binary, 726 halo patches), README.txt. n_items follows Metadata.csv; the paper says 435
+  raw images, 650 binary patches (320 sperm / 330 non-sperm) and 403 halo-classified sperm cells (103
+  / 107 / 92 / 101) plus non-sperm patches, so the raw count differs (400 vs 435). Image format png from
+  the paper and README (file names in the CSV are upper-case .PNG); archive contents were not opened.
+  Pixel size and microscope model not stated in the paper text read or README. Labels are class folders,
+  not masks or boxes (the paper figures mark cells with circles). Five embryologists labelled independently;
+  majority vote. enricher: Dataset.rar is RAR5 with stored (uncompressed) PNG members; first member read
+  in place (88x71 RGBA patch).'
+technical:
+  method: header
+  inspected_urls:
+  - https://api.figshare.com/v2/articles/30120811
+  - https://ndownloader.figshare.com/files/57936946
+  bytes_downloaded: 0
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  3 files, 1,182,648,481 B
+        Dataset.rar   1,182,576,183 B  (RAR5)
+          Dataset/Binary Classification/{Sperm,Non-sperm}/NNN.PNG
+          Dataset/Halo Classification/<halo class>/NNN.PNG
+          Dataset/Raw Images/NNN.PNG
+        Metadata.csv  69,905 B  (filename, subset, class, halo_category)
+        README.txt     2,393 B
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/57936994
+    - https://ndownloader.figshare.com/files/57945358
+    size_bytes: 72298
+    description: Metadata.csv and README.txt; the images exist only inside the 1.18 GB RAR.
+  arrays:
+  - role: raw
+    path_pattern: Dataset/<subset>/<class>/NNN.PNG
+    format: png
+    axes: yxs
+    shape:
+    - 71
+    - 88
+    - 4
+    shape_varies: true
+    dtype: uint8
+    compression: png
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Shape is from the first member (a Non-sperm patch); raw full-field images are larger
+      and were not read.
+  - role: label
+    path_pattern: Metadata.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: other
+    classes: null
+    n_ids_observed: null
+    alignment: not-applicable
+    alignment_notes: Image-level classes via columns filename / subset / class / halo_category; the class
+      is also given by the folder. Filenames restart per subfolder, so rows are matched by subset + class
+      + filename.
+  notes: 'listing.py (figshare API): 3 files, 1,182,648,481 B exact (= size_bytes). The archive is RAR5
+    (signature Rar!\x1a\x07\x01\x00); no RAR reader is available, so the member list was not read. The
+    first 64 KB (range request) show the first member Dataset/Binary Classification/Non-sperm/001.PNG
+    stored uncompressed, PNG IHDR 88x71, 8-bit RGBA (colour type 6). README.txt states CC BY 4.0, the
+    three subsets, 5-annotator majority voting, and that files are numbered per subfolder. Metadata.csv
+    header: filename,subset,class,halo_category. Value ranges, raw image size and per-class counts inside
+    the RAR were not checked.'
+  inspected_at: '2026-10-01T20:37:47Z'
