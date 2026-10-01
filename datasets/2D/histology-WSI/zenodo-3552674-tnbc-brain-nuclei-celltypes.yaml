@@ -1,8 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-3552674-tnbc-brain-nuclei-celltypes
 title: Extention to the TNBC dataset, brain section and cell type
 short_name: TNBC and brain nuclei cell types (H&E histology)
-description: Extension of the TNBC nuclei segmentation dataset with per-nucleus cell-type annotations, plus 18 additional annotated H&E images of brain sections downloaded from TCGA. Provided as image/ground-truth PNG folders (Slide_XX / GT_XX) in three zips, including integer-coded and colour-coded cell-type masks (12 classes plus background, e.g. cancerous, lymphocyte/plasmocyte, fibroblast, endothelial, epithelial, glial, neuron, mitosis).
+description: Extension of the TNBC nuclei segmentation dataset with per-nucleus cell-type annotations, plus 18 additional
+  annotated H&E images of brain sections downloaded from TCGA. Provided as image/ground-truth PNG folders (Slide_XX / GT_XX)
+  in three zips, including integer-coded and colour-coded cell-type masks (12 classes plus background, e.g. cancerous, lymphocyte/plasmocyte,
+  fibroblast, endothelial, epithelial, glial, neuron, mitosis).
 landing_url: https://zenodo.org/records/3552674
 doi: 10.5281/zenodo.3552674
 repository: Zenodo
@@ -36,10 +39,10 @@ data:
 annotations:
   present: true
   types:
-  - instance-segmentation
-  - classification
+  - semantic-segmentation
   coverage: dense
-  format: PNG masks in GT_XX folders; celltype_integer zip stores class ids 0-12 (class_definition.txt), celltype_color zip the same classes as RGB colours
+  format: PNG masks in GT_XX folders; celltype_integer zip stores class ids 0-12 (class_definition.txt), celltype_color zip
+    the same classes as RGB colours
   source: manual
 ml:
   tasks:
@@ -64,5 +67,148 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T16:40:00Z'
-notes: 'Zip indexes read with peek_archive: TNBC_and_Brain_dataset.zip has about 68 PNG images in Slide_XX folders and a matching GT_XX mask folder per slide (136 PNGs in total); the celltype_integer zip adds class_definition.txt with the 12 classes. The Zenodo page says the accompanying paper (Scale dependant layer for self-supervised nuclei encoding) is unpublished/submitted, so there is no paper to read; magnification, pixel size and annotation procedure are not stated. Size is the sum of the three zips (the same images in three label encodings), so the true unique data is about a third of this. Extends the TNBC nuclei segmentation dataset (Zenodo 2579118, separate PR) with cell types and 18 brain images; the image count 68 = 50 TNBC + 18 brain is inferred from the description and listing, not stated explicitly.'
+  last_checked: '2026-10-01T17:57:08Z'
+notes: 'Zip indexes read with peek_archive: TNBC_and_Brain_dataset.zip has about 68 PNG images in Slide_XX folders and a matching
+  GT_XX mask folder per slide (136 PNGs in total); the celltype_integer zip adds class_definition.txt with the 12 classes.
+  The Zenodo page says the accompanying paper (Scale dependant layer for self-supervised nuclei encoding) is unpublished/submitted,
+  so there is no paper to read; magnification, pixel size and annotation procedure are not stated. Size is the sum of the
+  three zips (the same images in three label encodings), so the true unique data is about a third of this. Extends the TNBC
+  nuclei segmentation dataset (Zenodo 2579118, separate PR) with cell types and 18 brain images; the image count 68 = 50 TNBC
+  + 18 brain is inferred from the description and listing, not stated explicitly. enricher: types instance- -> semantic-segmentation
+  (sampled masks: binary and class ids, no instance IDs).'
+technical:
+  method: sample
+  inspected_at: '2026-10-01T17:57:08Z'
+  inspected_urls:
+  - https://zenodo.org/records/3552674
+  - https://zenodo.org/records/3552674/files/TNBC_and_Brain_dataset.zip
+  - https://zenodo.org/records/3552674/files/TNBC_and_Brain_dataset_celltype_integer.zip
+  bytes_downloaded: 499563
+  size_source: file-listing
+  layout:
+    tree: |
+      TNBC_and_Brain_dataset.zip (same image set in all three zips)
+        TNBC_and_Brain_dataset/Slide_##/  ×14 dirs, 68 .png images (34.1 MB)
+        TNBC_and_Brain_dataset/GT_##/     ×14 dirs, 68 .png binary nucleus masks
+      TNBC_and_Brain_dataset_celltype_integer.zip
+        class_definition.txt (13 ids incl. background, with RGB colours)
+        Slide_##/ 68 .png · GT_##/ 68 .png class-id masks
+      TNBC_and_Brain_dataset_celltype_color.zip
+        one .txt + one .png at the top · Slide_##/ 68 .png · GT_##/ 68 .png colour-coded masks
+      (+10 version-control / OS metadata files)
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/3552674/files/TNBC_and_Brain_dataset.zip::TNBC_and_Brain_dataset/Slide_01/01_1.png
+    - https://zenodo.org/records/3552674/files/TNBC_and_Brain_dataset.zip::TNBC_and_Brain_dataset/GT_01/01_1.png
+    - https://zenodo.org/records/3552674/files/TNBC_and_Brain_dataset_celltype_integer.zip::TNBC_and_Brain_dataset_celltype_integer/GT_01/01_1.png
+    size_bytes: 499563
+    description: One 512x512 H&E tile with its binary nucleus mask and its cell-type id mask.
+  arrays:
+  - role: raw
+    path_pattern: '*/Slide_*/*.png'
+    format: png
+    axes: null
+    shape:
+    - 512
+    - 512
+    - 4
+    shape_varies: null
+    dtype: uint8
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 70
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: TNBC_and_Brain_dataset.zip/*/GT_*/*.png
+    format: png
+    axes: null
+    shape:
+    - 512
+    - 512
+    shape_varies: null
+    dtype: uint8
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: GT_XX/<name>.png pairs with Slide_XX/<name>.png; same 512x512 grid.
+  - role: label
+    path_pattern: TNBC_and_Brain_dataset_celltype_integer.zip/*/GT_*/*.png
+    format: png
+    axes: null
+    shape:
+    - 512
+    - 512
+    shape_varies: null
+    dtype: uint8
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 3
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: Background
+    - id: 1
+      name: Cancerous
+    - id: 2
+      name: Lymphocyte/Plasmocyte
+    - id: 3
+      name: Fibroblast
+    - id: 4
+      name: Endothelial
+    - id: 5
+      name: Epithelial
+    - id: 6
+      name: Adipocyte
+    - id: 7
+      name: Mitosis
+    - id: 8
+      name: Myo-epithelial
+    - id: 9
+      name: Glial
+    - id: 10
+      name: Neuron
+    - id: 11
+      name: Necrosis
+    - id: 12
+      name: Unknown
+    n_ids_observed: 4
+    alignment: same-grid
+    alignment_notes: Same file names and grid as Slide_XX; ids per class_definition.txt.
+  - role: label
+    path_pattern: TNBC_and_Brain_dataset_celltype_color.zip/*/GT_*/*.png
+    format: png
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    lossy: null
+    chunks: null
+    value_range: null
+    encoding: rgb-colors
+    classes: null
+    n_ids_observed: null
+    alignment: unknown
+    alignment_notes: Not sampled; class_definition.txt gives an RGB colour per class.
+  notes: 'Complete Zenodo listing (3 zips, 103,924,844 B, 421 zip members). Sampled Slide_01/01_1.png (RGBA, [70,255]), its
+    GT in the base zip ({0: 238128, 255: 24016}, binary) and in the celltype_integer zip ({0,1,2,3}: background, cancerous,
+    lymphocyte/plasmocyte, fibroblast). Value ranges are from one tile. The base-zip mask is identical in counts to Zenodo
+    2579118''s GT_01/01_1.png, so the 50 TNBC tiles are shared with that dataset. Brain tile shapes were not checked. Classes
+    from class_definition.txt (read with peek_archive).'
