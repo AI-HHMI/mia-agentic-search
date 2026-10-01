@@ -1,11 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-21295927-diatoms-gomphonema-pinnularia-coco
 title: Images of diatoms for CNN model training
 short_name: Diatom Gomphonema and Pinnularia polygons
-description: Train/validation/test image sets (433 JPEG images) of two Antarctic-associated
-  diatom species, Gomphonema maritimoantarticum and Pinnularia australomicrostauron,
-  with polygon segmentation masks of individual diatoms exported to COCO JSON from
-  the VGG Image Annotator.
+description: Train/validation/test image sets (433 JPEG images) of two Antarctic-associated diatom species,
+  Gomphonema maritimoantarticum and Pinnularia australomicrostauron, with polygon segmentation masks of
+  individual diatoms exported to COCO JSON from the VGG Image Annotator.
 landing_url: https://zenodo.org/records/21295927
 doi: 10.5281/zenodo.21295927
 repository: Zenodo
@@ -38,8 +37,7 @@ annotations:
   types:
   - instance-segmentation
   coverage: partial
-  format: COCO JSON (polygon segmentation, exported from VGG Image Annotator), 21
-    files
+  format: COCO JSON (polygon segmentation, exported from VGG Image Annotator), 21 files
   source: manual
 ml:
   tasks:
@@ -61,15 +59,82 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T17:29:55Z'
-notes: Zenodo description is two sentences; no paper or README found (checked the
-  Zenodo record and zip listing; no related identifiers). Zip has 433 JPEG images
-  in Gomphonema_test_train_val and Pinnularia_test_train_val with train/val/test folders
-  (Gomphonema 164/57/56, Pinnularia 105/36/36) and 21 COCO JSON files; the one JSON
-  read (Gomphonema_test_4_coco.json) covers 4 images with 14 polygons, so each JSON
-  appears to cover a subset of images and the share of images with annotations is
-  not confirmed (coverage partial). Microscope, modality (light microscopy assumed
-  but not stated), magnification and pixel size are not given anywhere, so modality
-  is other. The image size in the sampled JSON is 1600x1200. Annotation tool VGG Image
-  Annotator is stated in the JSON header; annotator and procedure are not documented.
-  The label category name in the sampled JSON is empty.
+  last_checked: '2026-10-01T19:41:36Z'
+notes: 'Zenodo description is two sentences; no paper or README found (checked the Zenodo record and zip
+  listing; no related identifiers). Zip has 433 JPEG images in Gomphonema_test_train_val and Pinnularia_test_train_val
+  with train/val/test folders (Gomphonema 164/57/56, Pinnularia 105/36/36) and 21 COCO JSON files; the
+  one JSON read (Gomphonema_test_4_coco.json) covers 4 images with 14 polygons, so each JSON appears to
+  cover a subset of images and the share of images with annotations is not confirmed (coverage partial).
+  Microscope, modality (light microscopy assumed but not stated), magnification and pixel size are not
+  given anywhere, so modality is other. The image size in the sampled JSON is 1600x1200. Annotation tool
+  VGG Image Annotator is stated in the JSON header; annotator and procedure are not documented. The label
+  category name in the sampled JSON is empty. enricher: all 21 COCO files read: nested subsets per split;
+  419 of 433 images annotated.'
+technical:
+  method: sample
+  inspected_at: '2026-10-01T19:41:36Z'
+  inspected_urls:
+  - https://zenodo.org/records/21295927
+  - https://zenodo.org/records/21295927/files/Model%20Images.zip
+  bytes_downloaded: 778918
+  size_source: file-listing
+  layout:
+    tree: "./  1 file, 423.2 MB\n  Model Images.zip  (454 members)\n    Model Images/Gomphonema_test_train_val/{train,val,test}/\n\
+      \      *.jpg  + Gomphonema_<split>_<N>_coco.json  (N = 4, 12/14, 33, 42/53, 100, 160)\n    Model\
+      \ Images/Pinnularia_test_train_val/{train,val,test}/   (102 / 33 / 33 .jpg)\n      *.jpg  + Pinnularia_<split>_<N>_coco.json\
+      \  (3 per split)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/21295927/files/Model%20Images.zip::Model Images/Gomphonema_test_train_val/val/Amos
+      Lake 3_2.jpg
+    - https://zenodo.org/records/21295927/files/Model%20Images.zip::Model Images/Gomphonema_test_train_val/val/Gomphonema_val_4_coco.json
+    size_bytes: null
+    description: One Gomphonema validation image plus the smallest COCO file of that split.
+  arrays:
+  - role: raw
+    path_pattern: Model Images/*_test_train_val/*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1200
+    - 1600
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    lossy: true
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'COCO image sizes: 1600x1200 (720 entries) and 2592x1944 (57 entries).'
+  - role: label
+    path_pattern: Model Images/*_test_train_val/*/*_coco.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: polygons
+    classes:
+    - id: 1
+      name: diatom (category name is empty in the files)
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: COCO images[].file_name = JPEG name in the same folder; polygon segmentation in image
+      pixels. The files of a split are nested subsets (e.g. val 4, 14, 33, 53 images), so use the largest
+      file per split.
+  notes: 'Complete Zenodo listing (one zip, 423,185,634 B = size_bytes), members expanded. Read the zip
+    directory and all 21 COCO JSONs by range (173,764 B): 419 distinct annotated images, all present in
+    the zip, out of 433 JPEGs. There is 1 category (id 1, empty name), and 1,079 annotations counted over
+    all files, including images repeated across the nested files. Probed and sampled one image: 1200x1600x3
+    uint8 JPEG, values [0, 255], 0.6% zero pixels. The species is given by the folder, not the COCO category.
+    Values are from one image.'
