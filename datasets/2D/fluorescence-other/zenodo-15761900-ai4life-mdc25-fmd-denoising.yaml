@@ -1,0 +1,142 @@
+schema_version: '1.2'
+id: zenodo-15761900-ai4life-mdc25-fmd-denoising
+title: AI4Life-MDC25-FMD
+short_name: FMD paired fluorescence denoising (MDC25 subset)
+description: Subset of the Fluorescence Microscopy Denoising (FMD) dataset used as training data in the
+  AI4Life Supervised Denoising Challenge 2025. 63,669 paired 2D TIFFs, each a noisy image and its averaged
+  low-noise ground truth (gt/ and noisy/ folders), from confocal, two-photon and widefield fluorescence
+  microscopes.
+landing_url: https://zenodo.org/records/15761900
+doi: 10.5281/zenodo.15761900
+repository: Zenodo
+accession: null
+authors: []
+publications:
+- title: A Poisson-Gaussian Denoising Dataset with Real Fluorescence Microscopy Images
+  doi: 10.48550/arXiv.1812.10366
+  url: https://arxiv.org/abs/1812.10366
+date_published: '2025-06-28'
+imaging:
+  modality:
+  - fluorescence-other
+  - confocal
+  - two-photon
+  - widefield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Danio rerio
+  - Mus musculus
+  sample: cells, zebrafish and mouse brain tissue (per the FMD paper abstract); file names encode microscope
+    (CF, WF, TP), colour channel (R, G, B) and noise level (L1-L4)
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 19593493645
+  n_items: 63669
+  access: open
+  download_url: https://zenodo.org/records/15761900
+  download_method: http
+annotations:
+  present: true
+  types:
+  - restoration-pairs
+  coverage: dense
+  format: gt/<name>.tif paired with noisy/<name>.tif of the same file name; ground truth is obtained by
+    averaging repeated acquisitions (FMD paper)
+  source: automatic
+ml:
+  tasks:
+  - denoising
+  splits_provided: false
+  benchmark: AI4Life Microscopy Supervised Denoising Challenge 2025
+  baseline_code_url: https://github.com/yinhaoz/denoising-fluorescence
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-01T08:16:55Z'
+  evidence_urls:
+  - https://zenodo.org/records/15761900
+  - https://zenodo.org/api/records/15761900
+  - https://arxiv.org/abs/1812.10366
+  - https://github.com/yinhaoz/denoising-fluorescence
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-01T11:05:33Z'
+notes: 'Archive.zip (19.6 GB, 127,338 TIFF = 63,669 gt + 63,669 noisy) listed with peek_archive. Zenodo
+  authors are not named on the record, so authors is empty; the data are from Zhang et al. CVPR 2019 (FMD),
+  whose original release is on Google Drive with an MIT-licensed code repo. Zenodo record states CC-BY-4.0.
+  Full text of the paper was not available through Europe PMC; only the arXiv abstract and GitHub README
+  were read, so pixel size, image size and exact sample list are not confirmed. The pair count here (63,669)
+  differs from the original FMD (12,000 ground-truth images), probably because the challenge subset is
+  cropped or reorganised; not verified. enricher: channels 1 (each TIFF is a single 512x512 uint8 plane;
+  colour channel is encoded in the file name; was null).'
+technical:
+  method: sample
+  inspected_at: '2026-10-01T11:05:33Z'
+  inspected_urls:
+  - https://zenodo.org/records/15761900
+  - https://zenodo.org/records/15761900/files/Archive.zip
+  bytes_downloaded: 199833
+  size_source: file-listing
+  layout:
+    tree: "Archive.zip (19,593,493,645 B)/\n  gt/<MIC>_<COL>_L<n>_<i>_<j>.tif      63,669 files (all 262,480\
+      \ B)\n  noisy/<MIC>_<COL>_L<n>_<i>_<j>.tif   63,669 files\n    MIC in {CF, TP, WF}, COL in {R, G,\
+      \ B}, about 7,100 files per MIC_COL\n1 file, 127,338 zip members\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/15761900/files/Archive.zip::noisy/CF_B_L1_100_31.tif
+    - https://zenodo.org/records/15761900/files/Archive.zip::gt/CF_B_L1_100_31.tif
+    size_bytes: 199833
+    description: One noisy / ground-truth pair (compressed sizes in the zip).
+  arrays:
+  - role: raw
+    path_pattern: noisy/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 2
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: target
+    path_pattern: gt/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 3
+    - 250
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: gt/<name>.tif pairs with noisy/<name>.tif (same file name); identical shape in the
+      sample.
+  notes: 'Zenodo listing complete with exact sizes. All 63,669 gt members are exactly 262,480 B, consistent
+    with 512x512 uint8 plus header for every file. Probed gt/CF_B_L1_100_31.tif: 512x512 uint8, uncompressed;
+    ImageJ calibration 1 px = 1 um, which is the uncalibrated default, so not used as pixel size. Sampled
+    the pair: noisy 2..255 (mean 10.06), gt 3..250 (mean 10.06). Values from one pair.'
