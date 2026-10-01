@@ -14,7 +14,7 @@ humans review them (merge = accept, close = reject).
    and say what it is in `notes`.
 3. **Every URL in `provenance.evidence_urls` must be logged** with `tools/run_log.py fetched`.
    CI rejects records citing pages you never logged.
-4. **Dedup before writing:** run `python tools/dedup.py --doi ... --repository ... --accession ... --url ... --title ...`.
+4. **Dedup before writing:** run `python tools/dedup.py --doi ... --repository ... --accession ... --url ... --title ... --paper-doi ... --download-url ...`.
    `duplicate`/`pending`/`rejected` → skip and log it. `possible-duplicate` → open both pages and decide.
 5. **Validate before pushing:** `python tools/validate.py <your files> --run-log <run log> --min-confidence 0.5` must pass.
 6. Never edit or delete records on `main` from a harvest run. Corrections belong to the maintainer routine.
@@ -88,7 +88,8 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
   `size:`, `auto-download` (size confirmed by a complete file listing, < 50 GB, open access), `enriched` and
   `license-verification-needed` (`license.spdx: unknown`).
   License labels are the SPDX id verbatim, with no interpretation.
-- **Auto-merge** (`tools/automerge.py`) merges PRs whose labels meet a fixed policy. Agents never merge,
+- **Auto-merge** (`tools/automerge.py`) merges PRs whose labels meet a fixed policy, but never a possible
+  duplicate (`tools/common.py:similarity_reasons`) of a record on main or another open PR. Agents never merge,
   approve or close PRs themselves, and never add or remove the `hold` label.
 
 ## Tools (all in `tools/`, run from repo root)

@@ -14,9 +14,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.common import (CONFIDENCE_CAPS, CONFIRMED_SIZE_SOURCES, DATASETS_DIR, DRAFTS_DIR, PAPER_HOSTS,  # noqa: E402
                           canonical_path, identity_keys, iter_record_paths, legacy_path, load_rejected, load_yaml,
+                          similarity_reasons,
                           normalize_title, normalize_url, rel, validator)
 
-FUZZY_TITLE_THRESHOLD = 0.92
 
 
 def check_record(path, record, v):
@@ -196,13 +196,13 @@ def main():
                         problems.setdefault(q, []).append(f"duplicate {k} (also in {rel(other)})")
             seen.setdefault(k, p)
         titles[p] = normalize_title(rec.get("title"))
-    tlist = list(titles.items())
-    for i, (p, t) in enumerate(tlist):
-        for q, u in tlist[i + 1:]:
-            if t and u and (p in target_set or q in target_set):
-                if difflib.SequenceMatcher(None, t, u).ratio() >= FUZZY_TITLE_THRESHOLD:
+    plist = [(p, r) for p, r in records.items() if isinstance(r, dict)]
+    for i, (p, rp) in enumerate(plist):
+        for q, rq in plist[i + 1:]:
+            if p in target_set or q in target_set:
+                if why := similarity_reasons(rp, rq):
                     warnings.setdefault(p if p in target_set else q, []).append(
-                        f"title very similar to {rel(q if p in target_set else p)}; possible duplicate")
+                        f"possible duplicate of {rel(q if p in target_set else p)} ({', '.join(why)})")
 
     for p, ws in warnings.items():
         for w in ws:

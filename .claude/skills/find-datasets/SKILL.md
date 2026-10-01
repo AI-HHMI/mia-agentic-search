@@ -78,9 +78,14 @@ When a page points to a promising new query or portal, run
 `python tools/frontier.py add --routine $ROUTINE --key "<new key>"`.
 
 ## 3. Screen each candidate
-1. Dedup: `python tools/dedup.py --doi D --repository R --accession A --url U --title "T"`.
+1. Dedup: `python tools/dedup.py --doi D --repository R --accession A --url U --title "T" --paper-doi P --download-url DL`
+   (pass every paper DOI you know with its own `--paper-doi`; re-deposits of the same data in another
+   repository usually share the paper or the download, not the dataset DOI).
    - `duplicate`, `pending` (already has an open PR) or `rejected`: run `run_log.py event duplicate --id <slug> --reason "<status>: <match>"` and skip.
-   - `possible-duplicate`: compare against the matched file. Skip it if it's the same dataset.
+   - `possible-duplicate`: open the matched record or PR and compare: same images (count, sizes, file
+     names)? A re-deposit, a new version or a mirror of the same data is a duplicate: skip it and log
+     `event duplicate`. Only a genuinely different dataset (e.g. another dataset of the same challenge)
+     may go ahead, and its `notes` must say how it differs from the matched one.
 2. Check the "usable" criteria in CLAUDE.md. If it fails, run `run_log.py event rejected --id <slug> --reason "<which criterion>"`.
 3. Estimate confidence (next section). If it's below 0.5, run `run_log.py event low-confidence --id <slug> --reason "..."` and skip.
 

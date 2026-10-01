@@ -44,7 +44,8 @@ To relabel every open PR, run the `label-agent-prs` workflow manually.
 **Auto-merge** (`.github/workflows/auto-merge.yml`, policy in `tools/automerge.py`): a dataset PR is merged
 without review when it is `enriched`, has a `dim:` label (2D, 2D+t, 3D or 3D+t), is below 500 GB (`size:` label, not `unknown`), has an
 a known license (any `license:` other than `unknown`; which licenses are acceptable is decided later),
-only known formats (no `fmt:other`), and `validate` passed. Add the label `hold` to keep a PR open.
+only known formats (no `fmt:other`), `validate` passed, and it isn't a possible duplicate of a record on `main`
+or another open PR (same download URL, a near-identical title, or the same paper with a similar title). Add the label `hold` to keep a PR open.
 It runs after every labelling run and hourly, and only reports (see the run summary) until the repo
 variable `AUTO_MERGE` is set to `true`.
 

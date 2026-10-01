@@ -15,8 +15,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.collect_runs import collect  # noqa: E402
-from tools.automerge import HOLD_LABELS, criteria_failures  # noqa: E402
-from tools.common import DATASET_BRANCH_PREFIX, ROOT, iter_record_paths, load_yaml  # noqa: E402
+from tools.automerge import HOLD_LABELS, criteria_failures, duplicate_reasons  # noqa: E402
+from tools.common import DATASET_BRANCH_PREFIX, ROOT, iter_record_paths, load_yaml, pending_records  # noqa: E402
 
 TEMPLATE = Path(__file__).resolve().parent / "site_template.html"
 RUN_FIELDS = ("routine", "started_at", "finished_at", "status", "counts", "pr_urls", "pr_url", "duration_s", "dry_run", "stop_reason")
@@ -31,6 +31,8 @@ def unmerged_prs():
     except (OSError, subprocess.SubprocessError) as e:
         print(f"note: open PRs not included ({(getattr(e, 'stderr', '') or str(e))[:300]})", file=sys.stderr)
         return None
+    open_recs = pending_records()  # branch -> record, from the fetched claude/dataset/* refs
+    catalog = [load_yaml(p) for p in iter_record_paths()]
     rows = []
     for pr in json.loads(out):
         if not pr["headRefName"].startswith(DATASET_BRANCH_PREFIX):
@@ -45,6 +47,9 @@ def unmerged_prs():
         held = [lab for lab in labels if lab in HOLD_LABELS]
         if held:
             reasons.append(f"on hold ({', '.join(held)})")
+        rec = open_recs.get(pr["headRefName"])
+        if rec:
+            reasons += duplicate_reasons(rec, catalog + list(open_recs.values()))
         rows.append({"number": pr["number"], "title": pr["title"], "url": pr["url"], "created_at": pr["createdAt"],
                      "dim": next((lab[4:] for lab in labels if lab.startswith("dim:")), None),
                      "reasons": reasons or ["meets all criteria; merges on the next auto-merge run"]})

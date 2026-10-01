@@ -95,7 +95,7 @@ code { font-size: 12px; }
   <p class="sub" id="gen"></p>
   <h2 class="sec">Datasets</h2>
   <section class="grid tiles" id="tiles-data"></section>
-  <section class="card" style="margin-bottom:16px"><h2>New records per week (last 12 weeks)</h2><div id="weekly"></div></section>
+  <section class="card" style="margin-bottom:16px"><h2>New records per day (last 30 days)</h2><div id="daily"></div></section>
   <h3 class="subsec">Catalog by dimensionality</h3>
   <section class="grid charts" id="dims"></section>
   <section class="grid charts">
@@ -230,17 +230,17 @@ hbars("anntype", tally(recs, r => r.annotations?.types?.length ? r.annotations.t
   });
 })();
 
-// Weekly column chart
+// Daily column chart (UTC days, by provenance.discovered_at)
 (function () {
-  const el = document.getElementById("weekly"), weeks = 12, now = new Date(), start = new Date(now);
-  start.setUTCHours(0, 0, 0, 0); start.setUTCDate(start.getUTCDate() - start.getUTCDay() - 7 * (weeks - 1));
-  const buckets = Array.from({length: weeks}, (_, i) => ({from: new Date(+start + i * 6048e5), n: 0}));
-  recs.forEach(r => { const t = new Date(r.provenance?.discovered_at); const i = Math.floor((t - start) / 6048e5); if (i >= 0 && i < weeks) buckets[i].n++; });
+  const el = document.getElementById("daily"), days = 30, start = new Date();
+  start.setUTCHours(0, 0, 0, 0); start.setUTCDate(start.getUTCDate() - (days - 1));
+  const buckets = Array.from({length: days}, (_, i) => ({from: new Date(+start + i * 864e5), n: 0}));
+  recs.forEach(r => { const t = new Date(r.provenance?.discovered_at); const i = Math.floor((t - start) / 864e5); if (i >= 0 && i < days) buckets[i].n++; });
   const max = Math.max(1, ...buckets.map(b => b.n));
-  const fmt = d => d.toLocaleDateString(undefined, {month: "short", day: "numeric"});
+  const fmt = d => d.toLocaleDateString(undefined, {month: "short", day: "numeric", timeZone: "UTC"});
   el.innerHTML = `<div class="cols">` + buckets.map(b => `<div class="hit"><div class="c" style="height:${100 * b.n / max}%"></div></div>`).join("") +
-    `</div><div class="axis"><span>${fmt(buckets[0].from)}</span><span>max ${max}/week</span><span>${fmt(buckets[weeks - 1].from)}</span></div>`;
-  el.querySelectorAll(".hit").forEach((h, i) => bindTip(h, `Week of ${fmt(buckets[i].from)}: <b>${buckets[i].n}</b> new`));
+    `</div><div class="axis"><span>${fmt(buckets[0].from)}</span><span>max ${max}/day</span><span>${fmt(buckets[days - 1].from)}</span></div>`;
+  el.querySelectorAll(".hit").forEach((h, i) => bindTip(h, `${fmt(buckets[i].from)}: <b>${buckets[i].n}</b> new`));
 })();
 
 // Runs table (older logs have a single pr_url; newer ones one PR per dataset in pr_urls)
@@ -268,7 +268,7 @@ renderRuns();
 
 // Why open dataset PRs aren't auto-merged (tools/automerge.py), with links to the PRs behind each reason
 const unmerged = DATA.unmerged;
-const shortReason = r => r.replace(/ \(.*\)$/, "").replace(/`/g, "");
+const shortReason = r => r.startsWith("possible duplicate") ? "possible duplicate" : r.replace(/ \(.*\)$/, "").replace(/`/g, "");
 if (unmerged === null || unmerged === undefined) {
   document.getElementById("reasons").innerHTML = `<p class="empty">Not available: this page was built without GitHub access.</p>`;
 } else {

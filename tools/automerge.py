@@ -11,7 +11,9 @@ A PR qualifies when the record on its current head commit gets all of these labe
   - a known license: license:<spdx> other than license:unknown (any license, incl. custom, for now)
   - at least one fmt:… and no fmt:other         every data format is known
 and also: the `validate` check passed on that commit, the PR is not a draft, has no HOLD_LABELS,
-and GitHub reports it mergeable. Merging uses --match-head-commit, so a push that lands while
+GitHub reports it mergeable, and it isn't a possible duplicate (tools/common.py:similarity_reasons:
+same paper DOI, same download URL or landing page, or a ≥ 85% similar title) of a record on main,
+of a PR merged earlier in the same run, or of another open PR. Possible duplicates wait for a human. Merging uses --match-head-commit, so a push that lands while
 this runs stops the merge. Merged branches are deleted (the on-pr-closed workflow doesn't run for
 merges made by the workflow token, and a leftover branch makes dedup report the dataset as pending).
 
@@ -25,7 +27,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import DATASET_BRANCH_PREFIX, ROOT  # noqa: E402
+from tools.common import DATASET_BRANCH_PREFIX, ROOT, iter_record_paths, load_yaml, similarity_reasons  # noqa: E402
 from tools.labels import labels_for, record_on_pr  # noqa: E402
 
 REQUIRED = ["enriched"]
@@ -92,6 +94,13 @@ def evaluate(repo, pr):
     return rec, fails, sha
 
 
+def duplicate_reasons(rec, others):
+    """'possible duplicate of <id> (...)' for each record in `others` that looks like the same dataset."""
+    return [f"possible duplicate of {o.get('id')} ({', '.join(why)})"
+            for o in others if o is not rec and o.get("id") != rec.get("id") and (why := similarity_reasons(rec, o))]
+
+
+
 def merge(repo, pr, rec, sha):
     gh("pr", "merge", str(pr["number"]), "--merge", "--match-head-commit", sha,
        "--subject", f"Auto-merge #{pr['number']}: {rec['short_name']}")
@@ -110,6 +119,8 @@ def main():
     prs = json.loads(gh("pr", "list", "--state", "open", "--limit", "500", "--json",
                         "number,title,headRefName,headRefOid,isDraft,labels,mergeable"))
     rows, merged = [], 0
+    catalog = [load_yaml(p) for p in iter_record_paths()]  # main; merged records are appended below
+    checked = []
     for pr in sorted(prs, key=lambda p: p["number"]):
         if not pr["headRefName"].startswith(DATASET_BRANCH_PREFIX):
             continue
@@ -117,11 +128,17 @@ def main():
             rec, fails, sha = evaluate(repo, pr)
         except Exception as e:  # noqa: BLE001
             rec, fails, sha = None, [f"error: {e}"], None
+        checked.append((pr, rec, fails, sha))
+    open_recs = [rec for _, rec, _, _ in checked if rec]
+    for pr, rec, fails, sha in checked:
+        if rec:
+            fails = fails + duplicate_reasons(rec, catalog + open_recs)
         verdict = "qualifies" if not fails else "stays open"
         if not fails and a.merge:
             try:
                 merge(repo, pr, rec, sha)
                 verdict, merged = "**merged**", merged + 1
+                catalog.append(rec)
             except RuntimeError as e:
                 verdict, fails = "merge failed", [str(e)[:300]]
         rows.append(f"| #{pr['number']} | {pr['title']} | {verdict} | {'; '.join(fails) or '—'} |")

@@ -224,5 +224,45 @@ def polite_get(url, min_interval=1.0, **kw):
         _last_request[host] = time.monotonic()
 
 
+SIMILAR_TITLE = 0.92            # titles this similar are likely the same dataset
+SIMILAR_REST_SAME_PAPER = 0.5   # same paper, and this much overlap in the title words after a shared prefix
+
+
+def _title_rest_overlap(ta, tb):
+    """Word overlap (Jaccard) of two titles after dropping their common leading words, so a shared
+    series prefix ("Cell Tracking Challenge ...") doesn't count as similarity."""
+    wa, wb = ta.split(), tb.split()
+    n = 0
+    while n < min(len(wa), len(wb)) and wa[n] == wb[n]:
+        n += 1
+    ra, rb = set(wa[n:]), set(wb[n:])
+    return len(ra & rb) / len(ra | rb) if ra | rb else 1.0
+
+
+def similarity_reasons(a, b):
+    """Why records a and b are likely the same dataset (re-deposit, version, mirror); [] if not.
+
+    Exact identity (same DOI / accession) is identity_keys(); this catches what those miss. Only strong
+    signals count, because one paper or challenge page often releases several different datasets
+    (Cell Tracking Challenge, EmbedSeg) and series reuse title templates: the same download URL, a
+    >= 92% similar title, or the same paper with titles that still overlap after their shared prefix."""
+    import difflib
+    reasons = []
+    da, db = ((r.get("data") or {}).get("download_url") for r in (a, b))
+    if da and db and normalize_url(da) == normalize_url(db):
+        reasons.append("same download URL")
+    ta, tb = normalize_title(a.get("title")), normalize_title(b.get("title"))
+    if not (ta and tb):
+        return reasons
+    ratio = difflib.SequenceMatcher(None, ta, tb).ratio()
+    pa = {(p.get("doi") or "").lower() for p in a.get("publications") or [] if isinstance(p, dict) and p.get("doi")}
+    pb = {(p.get("doi") or "").lower() for p in b.get("publications") or [] if isinstance(p, dict) and p.get("doi")}
+    if ratio >= SIMILAR_TITLE:
+        reasons.append(f"title {ratio:.0%} similar")
+    elif pa & pb and _title_rest_overlap(ta, tb) >= SIMILAR_REST_SAME_PAPER:
+        reasons.append(f"same paper ({', '.join(sorted(pa & pb))}) and similar title")
+    return reasons
+
+
 def utcnow():
     return dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
