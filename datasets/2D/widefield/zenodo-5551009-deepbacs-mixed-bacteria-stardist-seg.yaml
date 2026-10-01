@@ -1,4 +1,4 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-5551009-deepbacs-mixed-bacteria-stardist-seg
 landing_url: https://zenodo.org/records/5551009
 doi: 10.5281/zenodo.5551009
@@ -49,7 +49,8 @@ annotations:
   types:
   - instance-segmentation
   coverage: unknown
-  format: TIFF masks in training/target and test/target folders, paired with images in source folders
+  format: Instance label TIFFs (uint16, 0 = background) in training/target and test/target, same file
+    name as the image in training/source and test/source
   source: manual
 ml:
   tasks:
@@ -72,9 +73,77 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T06:24:01Z'
+  last_checked: '2026-10-01T07:26:35Z'
 notes: 'Zip listing (peek_archive, 381 members): training/source 155 + training/target 155, test/source
   35 + test/target 35 TIFFs (380 total, counted as n_items). Mixed pixel sizes per species, so voxel_size_nm
   is null; per-species values are in sample. Microscopes, pixel sizes and manual annotation are from the
   Zenodo description and paper. The single StarDist model zip is not part of the data. Related to the
-  single-species DeepBacs records but a different, combined dataset. Mask values were not inspected.'
+  single-species DeepBacs records but a different, combined dataset. Mask values were not inspected. enricher:
+  size confirmed by listing the data zip (model zip excluded); masks are instance IDs per sample.'
+technical:
+  method: sample
+  inspected_at: '2026-10-01T07:26:35Z'
+  inspected_urls:
+  - https://zenodo.org/records/5551009/files/DeepBacs_Data_Segmentation_StarDist_MIXED_dataset.zip
+  bytes_downloaded: 116997
+  size_source: file-listing
+  layout:
+    tree: "DeepBacs_Data_Segmentation_StarDist_MIXED_dataset.zip  41.3 MB, 381 members\n  Notes.txt\n\
+      \  training/source/   155 files  111.4 MB  .tif\n  training/target/   155 files  109.3 MB  .tif\n\
+      \  test/source/        35 files   31.6 MB  .tif\n  test/target/        35 files   28.9 MB  .tif\n\
+      (not counted: DeepBacs_Model_Segmentation_StarDist_MIXED_dataset.zip, 107.8 MB, trained StarDist\
+      \ model + QC)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5551009/files/DeepBacs_Data_Segmentation_StarDist_MIXED_dataset.zip::training/source/JE2NileRed_oilp22_PMP_101220_001_1.tif
+    - https://zenodo.org/records/5551009/files/DeepBacs_Data_Segmentation_StarDist_MIXED_dataset.zip::training/target/JE2NileRed_oilp22_PMP_101220_001_1.tif
+    size_bytes: 270841
+    description: One S. aureus training image and its instance mask
+  arrays:
+  - role: raw
+    path_pattern: DeepBacs_Data_Segmentation_StarDist_MIXED_dataset.zip::{training,test}/source/<name>.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: null
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 3800
+    - 15520
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: DeepBacs_Data_Segmentation_StarDist_MIXED_dataset.zip::{training,test}/target/<name>.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: null
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 141
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 91
+    alignment: same-grid
+    alignment_notes: Same file name in source/ and target/; identical 256x256 shape in the sampled pair.
+  notes: 'Listing of the data zip alone: 41,275,333 B exact, 381 members (the record size covers the data
+    zip only; the separate model zip is not training data). Probed and sampled one S. aureus pair (JE2NileRed_..._001_1):
+    raw uint16 256x256, range 3800-15520, ImageJ calibration 79.9 nm/px (matches the 80 nm stated for
+    S. aureus); mask uint16 with 91 distinct values (max 141), so instance IDs. normalization none is
+    inferred from raw 16-bit values without clipping. Only S. aureus files were inspected; E. coli and
+    B. subtilis image sizes and pixel sizes (79/65 nm per the docs) were not checked. Notes.txt says the
+    data are pooled train/test images of the three species, prepared for StarDist/SplineDist.'
