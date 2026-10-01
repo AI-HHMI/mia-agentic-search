@@ -1,11 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: edmond-3-ajbv1s-evican-cell-nucleus-coco
 title: 'EVICAN: Expert Visual Cell Annotation dataset'
 short_name: EVICAN cell and nucleus masks, 30 lines (BF/PhC)
-description: 4,640 partially annotated grayscale brightfield and phase-contrast images of 30 adherent cell lines
-  from four microscopes, with about 53,000 manually segmented cell and nucleus polygons in COCO format (EVICAN2
-  has cell and nucleus classes, EVICAN60 has per-cell-line classes) plus 98 fully annotated evaluation images split into
-  easy, medium and difficult sets.
+description: 4,640 partially annotated grayscale brightfield and phase-contrast images of 30 adherent
+  cell lines from four microscopes, with about 53,000 manually segmented cell and nucleus polygons in
+  COCO format (EVICAN2 has cell and nucleus classes, EVICAN60 has per-cell-line classes) plus 98 fully
+  annotated evaluation images split into easy, medium and difficult sets.
 landing_url: https://doi.org/10.17617/3.AJBV1S
 doi: 10.17617/3.AJBV1S
 repository: other
@@ -28,7 +28,8 @@ imaging:
   organism:
   - Homo sapiens
   - Mus musculus
-  sample: Adherent cultured cells from 30 cell lines (26 human, 3 mouse, 1 hamster per the paper's cell line table; hamster species not named)
+  sample: Adherent cultured cells from 30 cell lines (26 human, 3 mouse, 1 hamster per the paper's cell
+    line table; hamster species not named)
   labels_stains: []
 data:
   formats:
@@ -43,7 +44,8 @@ annotations:
   types:
   - instance-segmentation
   coverage: partial
-  format: COCO JSON polygons (instances_*_EVICAN2.json and *_EVICAN60.json) plus mask zips for train and validation
+  format: COCO JSON polygons (instances_*_EVICAN2.json / *_EVICAN60.json) plus binary JPEG masks (Cells/,
+    Nuclei/) for train and validation
   source: manual
 ml:
   tasks:
@@ -67,12 +69,120 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T13:50:00Z'
-notes: 'Hosted in the Max Planck Edmond Dataverse (the old imeji collection link in the paper now redirects to the
-  Edmond home page; record found through the Edmond search API). File list, CC BY 4.0 licence and sizes come from the
-  Dataverse API: 7 zips (train 2.16 GB, val 0.54 GB, background-blurred train/val, eval, train/val masks) and 10
-  COCO JSON files; size_bytes is the sum of all files. Zips could not be listed (the download redirects to a signed
-  S3 URL that range requests could not read), so the JPEG format and image counts come from the paper (4,640
-  partially annotated train+val images, 98 fully annotated evaluation images; n_items = 4,738 is their sum) and were not checked in the archives. Annotation is partial: 3-10 cells and nuclei per image,
-  picked at random, drawn on fluorescence overlays and by seven annotators. Pixel size not stated in the paper text
-  read; objectives 10x-40x on Opera Phenix (BF), IX81, AF7000 and Biorevo BZ-9000 (PhC).'
+  last_checked: '2026-10-01T12:58:02Z'
+notes: 'Hosted in the Max Planck Edmond Dataverse (the old imeji link in the paper redirects to the Edmond
+  home page; found via the Edmond search API). File list, CC BY 4.0 licence and sizes from the Dataverse
+  API: 7 zips (train 2.16 GB, val 0.54 GB, background-blurred train/val, eval, train/val masks) and 10
+  COCO JSON files; size_bytes is the sum of all 17 files. Image counts from the paper (4,640 partially
+  annotated train+val images, 98 fully annotated evaluation images; n_items = 4,738). Annotation is partial:
+  3-10 cells and nuclei per image. Pixel size not stated in the paper text read; objectives 10x-40x. enricher:
+  eval, val and val-mask zips listed by range and one image + masks sampled; masks are lossy JPEG (see
+  technical).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://edmond.mpg.de/api/datasets/:persistentId/?persistentId=doi:10.17617/3.AJBV1S
+  - https://edmond.mpg.de/api/access/datafile/102912
+  - https://edmond.mpg.de/api/access/datafile/102911
+  - https://edmond.mpg.de/api/access/datafile/102908
+  bytes_downloaded: 835297
+  size_source: page-stated
+  layout:
+    tree: 'Images/EVICAN_train2019.zip              2.16 GB  (not listed)
+
+      Images/EVICAN_val2019.zip                540 MB   1,176 jpg (flat, <n>_<CellLine>.jpg and <n>_Background.jpg)
+
+      Images/EVICAN_eval2019.zip               7.7 MB   98 jpg (flat, <n>_<CellLine>.jpg)
+
+      Images_Background_blurred/EVICAN_train2019_BGblurred.zip  206 MB
+
+      Images_Background_blurred/EVICAN_val2019_BGblurred.zip     54 MB
+
+      Masks/EVICAN_train_masks.zip             76 MB   (not listed)
+
+      Masks/EVICAN_val_masks.zip               19 MB   Cells/ 926 jpg, Nuclei/ 926 jpg
+
+      annotations_EVICAN2/instances_{train,val,eval_easy,eval_medium,eval_difficult}2019_EVICAN2.json
+
+      annotations_EVICAN60/instances_{train,val,eval_easy,eval_medium,eval_difficult}2019_EVICAN60.json
+
+      '
+    n_files: 17
+    listing_complete: true
+  sample:
+    urls:
+    - https://edmond.mpg.de/api/access/datafile/102911::100_ACHN.jpg
+    - https://edmond.mpg.de/api/access/datafile/102908::Cells/100_ACHN.jpg
+    - https://edmond.mpg.de/api/access/datafile/102908::Nuclei/100_ACHN.jpg
+    size_bytes: 831140
+    description: Validation image 100_ACHN.jpg with its cell and nucleus masks (zip members); the val-mask
+      zip alone is 19 MB.
+  arrays:
+  - role: raw
+    path_pattern: EVICAN_{train,val,eval}2019.zip::<n>_<CellLine>.jpg
+    format: jpeg
+    axes: null
+    shape:
+    - 2160
+    - 2160
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    lossy: true
+    chunks: null
+    value_range:
+    - 0
+    - 253
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: EVICAN_{train,val}_masks.zip::{Cells,Nuclei}/<n>_<CellLine>.jpg
+    format: jpeg
+    axes: null
+    shape:
+    - 2160
+    - 2160
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    lossy: true
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    n_ids_observed: 46
+    alignment: same-grid
+    alignment_notes: Cells/<name>.jpg and Nuclei/<name>.jpg share the file name of the image in the val/train
+      zip; sampled pair has identical 2160x2160 size.
+  - role: label
+    path_pattern: annotations_EVICAN{2,60}/instances_<split>2019[_<difficulty>]_EVICAN{2,60}.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: polygons
+    classes: null
+    n_ids_observed: null
+    alignment: unknown
+    alignment_notes: COCO instance files per split, not opened in this run.
+  notes: 'Exact file sizes from the Dataverse API (17 files, 3,331,799,774 B); listing.py cannot follow
+    the Edmond download redirect (signed S3 URL rejects HEAD), so the size is page-stated, not file-listing.
+    Zip central directories read by range through tools/peek_archive.zip_entries with a range-GET size
+    check: val 1,176 jpg (incl. *_Background.jpg images), eval 98 jpg (small crops, e.g. 100_SKBR.jpg
+    85x164x3), val masks Cells/926 + Nuclei/926 jpg. Train image and mask zips not listed. Sample (one
+    file each): 100_ACHN.jpg RGB uint8 2160x2160x3, 0..253, mean 176; Cells/100_ACHN.jpg grayscale uint8
+    0..255, 46 distinct values, 97.5% zero; Nuclei/100_ACHN.jpg 0..255, 44 distinct, 99.5% zero. Masks
+    are binary foreground masks stored as lossy JPEG, so edges carry compression artefacts (threshold
+    before use); instance identity is only in the COCO polygons. Images are stored as 3-channel JPEG although
+    the paper describes grayscale data; channels left at 1. Image sizes vary between microscopes (shape
+    from one sample).'
+  inspected_at: '2026-10-01T12:58:02Z'
