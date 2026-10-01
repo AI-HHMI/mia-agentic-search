@@ -1,11 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-4665863-hpa-cell-segmentation
 title: HPA cell image segmentation dataset with four-channel fluorescence images and polygon cell annotations
 short_name: HPA fluorescence cell polygons (4-channel)
-description: >-
-  Annotated Human Protein Atlas cell images, each with four channels (microtubules, ER, nuclei, protein of interest)
-  and cell outlines drawn as polygons in GeoJSON with the Kaibu tool, plus a cell border mask per image. Full set of
-  266 images (train and valid), a 512 x 512 version with 4 train and 159 test images, and pretrained segmentation models.
+description: Annotated Human Protein Atlas cell images, each with four channels (microtubules, ER, nuclei,
+  protein of interest) and cell outlines drawn as polygons in GeoJSON with the Kaibu tool, plus a cell
+  border mask per image. Full set of 266 images (train and valid), a 512 x 512 version with 4 train and
+  159 test images, and pretrained segmentation models.
 landing_url: https://zenodo.org/records/4665863
 doi: 10.5281/zenodo.4665863
 repository: Zenodo
@@ -67,14 +67,122 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T07:30:14Z'
-notes: >-
-  hpa_dataset_v2.zip (5.2 GB) holds 257 train and 9 valid image folders, each with protein.png, er.png, microtubules.png,
-  nuclei.png (a probed nuclei.png is 2048 x 2048 uint16), cell_border_mask.png and annotation.json (polygons).
-  hpa_cell_segmentation_dataset_v2_512x512_4train_159test.zip (75 MB) is a 512 x 512 version with 4 train and 159 test
-  folders; the 425 items count is 266 + 159 and may overlap for the train images. The record also ships four pretrained
-  PyTorch models (about 2.2 GB). No peer-reviewed paper is linked from the Zenodo record, so none is listed; the
-  F1000Research/ImJoy interactive segmentation preprint uses an HPA example dataset of this kind, but only its abstract
-  was read and the link to this record is not confirmed. Organism, cell lines, microscope and pixel size are not stated
-  on the record or in the archive listing, so they are left empty and the modality is the generic fluorescence-other.
-  Annotators and annotation protocol are not described.
+  last_checked: '2026-10-01T09:07:44Z'
+notes: hpa_dataset_v2.zip (5.2 GB) holds 257 train and 9 valid image folders, each with protein.png, er.png,
+  microtubules.png, nuclei.png (a probed nuclei.png is 2048 x 2048 uint16), cell_border_mask.png and annotation.json
+  (polygons). hpa_cell_segmentation_dataset_v2_512x512_4train_159test.zip (75 MB) is a 512 x 512 version
+  with 4 train and 159 test folders; the 425 items count is 266 + 159 and may overlap for the train images.
+  The record also ships four pretrained PyTorch models (about 2.2 GB). No peer-reviewed paper is linked
+  from the Zenodo record, so none is listed; the F1000Research/ImJoy interactive segmentation preprint
+  uses an HPA example dataset of this kind, but only its abstract was read and the link to this record
+  is not confirmed. Organism, cell lines, microscope and pixel size are not stated on the record or in
+  the archive listing, so they are left empty and the modality is the generic fluorescence-other. Annotators
+  and annotation protocol are not described.
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/4665863
+  - https://zenodo.org/records/4665863/files/hpa_dataset_v2.zip
+  - https://zenodo.org/records/4665863/files/hpa_cell_segmentation_dataset_v2_512x512_4train_159test.zip
+  bytes_downloaded: 927573
+  size_source: file-listing
+  layout:
+    tree: "hpa_dataset_v2.zip  (5,213,614,349 B)\n  hpa_dataset_v2/train/<plate>_<id>_<well>_<field>/\
+      \  257 dirs: protein, er, microtubules, nuclei, cell_border_mask .png + annotation.json\n  hpa_dataset_v2/valid/<...>/\
+      \  9 dirs, same layout\n  hpa_dataset_v2/test/sample<n>/  10 dirs: 4 channel .png only (no labels)\n\
+      hpa_cell_segmentation_dataset_v2_512x512_4train_159test.zip  (75,309,946 B)\n  hpa_dataset_v2/train/\
+      \  4 dirs, test/  159 dirs: 4 .png + annotation.json each\ndpn_unet_cell_3ch_v1.pth, cell_model_nuclei_er.pth,\
+      \ dpn_unet_cell_v2.pth, dpn_unet_nuclei_v1.pth  (4 x ~557 MB models)\n(+26 macOS ._ metadata files\
+      \ in the zips)\n"
+    n_files: 6
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/4665863/files/hpa_dataset_v2.zip::hpa_dataset_v2/valid/2990_1586_E11_1/nuclei.png
+    - https://zenodo.org/records/4665863/files/hpa_dataset_v2.zip::hpa_dataset_v2/valid/2990_1586_E11_1/cell_border_mask.png
+    - https://zenodo.org/records/4665863/files/hpa_dataset_v2.zip::hpa_dataset_v2/valid/2990_1586_E11_1/annotation.json
+    size_bytes: null
+    description: One valid field (nuclei channel, border mask, polygon JSON); the full field folder is
+      about 16 MB.
+  arrays:
+  - role: raw
+    path_pattern: hpa_dataset_v2/{train,valid,test}/<field>/{protein,er,microtubules,nuclei}.png
+    format: png
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: null
+    dtype: uint16
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 65535
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One grey PNG per channel.
+  - role: raw
+    path_pattern: hpa_cell_segmentation_dataset_v2_512x512_4train_159test.zip/hpa_dataset_v2/{train,test}/<field>/*.png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: hpa_dataset_v2/{train,valid}/<field>/cell_border_mask.png
+    format: png
+    axes: yxs
+    shape:
+    - 2048
+    - 2048
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: Same folder and spatial shape as the channel PNGs; stored as RGB with values {0,
+      255}.
+  - role: label
+    path_pattern: hpa_dataset_v2/{train,valid}/<field>/annotation.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: polygons
+    classes: null
+    n_ids_observed: 14
+    alignment: same-grid
+    alignment_notes: GeoJSON FeatureCollection in the same folder; 14 Polygon features with properties
+      label 'cell' in the read file.
+  notes: 'Listing: Zenodo API (6 files, exact sizes; 4 are ~557 MB .pth models, included in size_bytes)
+    and both zips'' central directories (2,479 members). hpa_dataset_v2.zip test/ has 10 folders with
+    channel images only, no labels. Probed protein/er/cell_border_mask of valid/2990_1586_E11_1 (2048x2048
+    uint16 grey; mask 2048x2048x3 uint8 RGB) and 4 channels of a 512x512 train folder (uint8). Sampled
+    nuclei.png: full uint16 range 0-65535, 90% zeros, p99 39,351 (sample hint: possibly contrast-stretched,
+    not documented, so unknown). Border mask values {0: 10,316,280, 255: 2,266,632}. annotation.json:
+    14 polygons labelled ''cell''. One field only.'
+  inspected_at: '2026-10-01T09:07:44Z'
