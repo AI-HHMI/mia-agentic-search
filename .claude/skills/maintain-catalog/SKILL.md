@@ -32,7 +32,8 @@ Take the oldest `verification.last_checked` first. For each one:
 1. Re-fetch its sources and fill in facts that are now confirmed.
 2. Fill `null` / `unknown` fields using the research steps in find-datasets step 4a: the full dataset page,
    the file listing (`tools/peek_archive.py` for zips) and the paper (`tools/paper.py`), plus any `short_name` over 50 characters.
-3. Raise `confidence` only when the evidence supports it (caps in CLAUDE.md).
+3. Raise `confidence` only when the evidence supports it (caps in CLAUDE.md). If you change the
+   dimensionality or first modality, move the file with `python tools/place.py <file>`.
 4. Update `last_checked`.
 
 Never delete records. If a dataset has clearly disappeared, set `data.access: restricted`,

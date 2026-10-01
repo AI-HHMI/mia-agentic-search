@@ -12,8 +12,9 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import (CONFIDENCE_CAPS, CONFIRMED_SIZE_SOURCES, PAPER_HOSTS, load_rejected, DATASETS_DIR, identity_keys, iter_record_paths,  # noqa: E402
-                          load_yaml, normalize_title, normalize_url, rel, validator)
+from tools.common import (CONFIDENCE_CAPS, CONFIRMED_SIZE_SOURCES, DATASETS_DIR, DRAFTS_DIR, PAPER_HOSTS,  # noqa: E402
+                          canonical_path, identity_keys, iter_record_paths, legacy_path, load_rejected, load_yaml,
+                          normalize_title, normalize_url, rel, validator)
 
 FUZZY_TITLE_THRESHOLD = 0.92
 
@@ -34,11 +35,23 @@ def check_record(path, record, v):
                                   for u in evidence if isinstance(u, str)):
         errors.append("a paper is listed but no paper source (full text / article page) is in evidence_urls; "
                       "read it with tools/paper.py and cite the URLs it used")
-    repo = record.get("repository")
-    if isinstance(repo, str) and path.parent.name != repo.lower():
-        errors.append(f"file must live in datasets/{repo.lower()}/ (repository={repo})")
     errors += check_technical(record)
     return errors
+
+
+def check_location(path, record):
+    """(errors, warnings) for where the file lives. Drafts outside datasets/ are not checked."""
+    try:
+        path.relative_to(DATASETS_DIR)
+    except ValueError:
+        return [], []
+    want = canonical_path(record)
+    if want is None or path == want:
+        return [], []
+    if path == legacy_path(record):
+        return [], [f"old layout; the record belongs in {rel(want)} (python tools/place.py {rel(path)})"]
+    return [f"file must live in {rel(want)} (datasets/<dimensionality>/<first modality>/); "
+            f"move it with `python tools/place.py {rel(path)}`"], []
 
 
 def check_technical(record):
@@ -105,7 +118,8 @@ def main():
 
     v = validator()
     targets = list(iter_record_paths(a.paths))
-    all_paths = list(iter_record_paths([DATASETS_DIR]))
+    # drafts count for uniqueness too, so two drafts of one run can't be the same dataset
+    all_paths = list(iter_record_paths([DATASETS_DIR] + ([DRAFTS_DIR] if DRAFTS_DIR.exists() else [])))
     rejected = set(load_rejected())
     fetched = run = None
     baseline_urls = set()
@@ -137,6 +151,10 @@ def main():
             continue
         errs = check_record(p, rec, v)
         if isinstance(rec, dict):
+            loc_errs, loc_warns = check_location(p, rec)
+            errs += loc_errs
+            if loc_warns:
+                warnings.setdefault(p, []).extend(loc_warns)
             if rec.get("id") in rejected:
                 errs.append(f"id {rec['id']!r} was rejected (state/rejected.yaml or rejections branch)")
             for k in identity_keys(rec):

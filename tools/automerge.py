@@ -6,7 +6,7 @@
 A PR qualifies when the record on its current head commit gets all of these labels
 (computed with tools/labels.py, i.e. exactly the labels the PR shows once labelling has run):
   - enriched                      the enricher has inspected the files
-  - dim:3D or dim:3D+t                          volumes, including time-lapse volumes
+  - dim:2D, dim:3D or dim:3D+t                  (2D time-lapse, dim:2D+t, is not included)
   - size:<1GB | 1-10GB | 10-50GB | 50-500GB    (below 500 GB; not size:unknown)
   - license:<one of ALLOWED_LICENSES>          permissive, BSD / CC-BY compatible
   - at least one fmt:… and no fmt:other         every data format is known
@@ -29,7 +29,7 @@ from tools.common import DATASET_BRANCH_PREFIX, ROOT  # noqa: E402
 from tools.labels import labels_for, record_on_pr  # noqa: E402
 
 REQUIRED = ["enriched"]
-ALLOWED_DIMS = ["dim:3D", "dim:3D+t"]
+ALLOWED_DIMS = ["dim:2D", "dim:3D", "dim:3D+t"]
 ALLOWED_SIZES = ["size:<1GB", "size:1-10GB", "size:10-50GB", "size:50-500GB"]
 # Licenses that allow open-source redistribution and model training (BSD / CC-BY compatible):
 # public domain, attribution-only, or permissive code licenses. Excluded on purpose: NC, SA, ND,
@@ -51,7 +51,7 @@ def criteria_failures(labels):
     fails = [f"missing `{lab}`" for lab in REQUIRED if lab not in labels]
     if not set(labels) & set(ALLOWED_DIMS):
         dims = [lab for lab in labels if lab.startswith("dim:")]
-        fails.append(f"not 3D / 3D+t ({', '.join(dims) or 'no dim label'})")
+        fails.append(f"not 2D / 3D / 3D+t ({', '.join(dims) or 'no dim label'})")
     size = [lab for lab in labels if lab.startswith("size:")]
     if not set(size) & set(ALLOWED_SIZES):
         fails.append(f"size not below 500 GB ({', '.join(size) or 'no size label'})")
@@ -98,7 +98,7 @@ def merge(repo, pr, rec, sha):
     gh("api", "-X", "DELETE", f"repos/{repo}/git/refs/heads/{pr['headRefName']}", check=False)
     lic = rec["license"]["spdx"]
     gh("pr", "comment", str(pr["number"]), "--body",
-       f"🤖 **Auto-merged**: enriched, 3D or 3D+t, size below 500 GB, license `{lic}` is on the allow-list, "
+       f"🤖 **Auto-merged**: enriched, 2D / 3D / 3D+t, size below 500 GB, license `{lic}` is on the allow-list, "
        f"all data formats known, `validate` passed. Policy: `tools/automerge.py`.", check=False)
 
 

@@ -1,7 +1,8 @@
 """Git plumbing for harvest runs, so agents never juggle branches by hand.
 
     python tools/publish.py state-pull --routine R     # restore frontier + run logs from claude/state/R
-    python tools/publish.py dataset <record.yaml>       # push record to its own branch claude/dataset/<id>
+    python tools/publish.py dataset <record.yaml>       # push record to its own branch claude/dataset/<id>,
+                                                        # filed at datasets/<dimensionality>/<modality>/<id>.yaml
     python tools/publish.py state-push --routine R     # save frontier + run logs to claude/state/R
     python tools/publish.py pr-pull <id>               # enricher: put claude/dataset/<id>'s record in the tree
     python tools/publish.py pr-update <record.yaml>    # enricher: commit it back onto that branch
@@ -24,7 +25,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.common import (DATASET_BRANCH_PREFIX, FRONTIER_DIR, ROOT, RUNS_DIR,  # noqa: E402
-                          STATE_BRANCH_PREFIX, STATE_DIR, git, load_yaml, rel)
+                          STATE_BRANCH_PREFIX, STATE_DIR, canonical_path, git, load_yaml, rel)
 from tools.pr_text import title  # noqa: E402
 
 
@@ -117,10 +118,13 @@ def dataset(record_path):
     branch = DATASET_BRANCH_PREFIX + rec["id"]
     if remote_exists(branch):
         sys.exit(f"{branch} already exists on origin; this dataset is already proposed")
+    target = canonical_path(rec)
+    if target is None:
+        sys.exit("imaging.dimensionality / imaging.modality are not filled in; can't file the record")
     run("fetch", "-q", "origin", "main")
     tmp = _worktree("origin/main")
     try:
-        dest = tmp / src.relative_to(ROOT)
+        dest = tmp / target.relative_to(ROOT)
         dest.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, dest)
         run("add", str(dest.relative_to(tmp)), cwd=tmp)
@@ -132,7 +136,8 @@ def dataset(record_path):
 
 
 ENRICH_DIR = STATE_DIR / ".enrich"
-ENRICH_PREFIX = "enrich: "  # commit subject prefix; any other later commit on a dataset branch is a human edit
+ENRICH_PREFIX = "enrich: "  # commit subject prefixes of tools; any other later commit on a dataset branch
+LAYOUT_PREFIX = "layout: "  # (after the harvester's first one) is a human edit
 
 
 def pr_pull(rec_id):
@@ -158,7 +163,7 @@ def pr_pull(rec_id):
     for line in run("log", "--reverse", "--format=%H%x09%an%x09%cn%x09%s", f"origin/main..{ref}").splitlines():
         h, author, committer, subject = line.split("\t", 3)
         commits.append({"sha": h[:10], "author": author, "committer": committer, "subject": subject})
-    human = [c for c in commits[1:] if not c["subject"].startswith(ENRICH_PREFIX)]
+    human = [c for c in commits[1:] if not c["subject"].startswith((ENRICH_PREFIX, LAYOUT_PREFIX))]
     print(json.dumps({"path": path, "baseline": rel(baseline), "branch": branch, "head": sha[:10],
                       "enriched_before": any(c["subject"].startswith(ENRICH_PREFIX) for c in commits),
                       "human_edits": human, "commits": commits}, indent=1))
@@ -171,10 +176,13 @@ def pr_update(record_path):
     if not meta_path.exists():
         sys.exit(f"run `publish.py pr-pull {rec['id']}` first")
     meta = json.loads(meta_path.read_text())
+    target = canonical_path(rec)
+    if target is None:
+        sys.exit("imaging.dimensionality / imaging.modality are not valid; can't file the record")
     tmp = _worktree(meta["sha"])
     try:
-        dest = tmp / src.relative_to(ROOT)
-        if dest != tmp / meta["path"]:  # repository changed, so the record moves to another folder
+        dest = tmp / target.relative_to(ROOT)
+        if dest != tmp / meta["path"]:  # new layout, or dimensionality / modality changed: move the file
             run("rm", "-q", meta["path"], cwd=tmp)
         dest.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, dest)

@@ -82,8 +82,10 @@ When a page points to a promising new query or portal, run
 
 ## 4. Write the record
 ```bash
-python tools/new_record.py --id <slug> --repository <Repo> --by $ROUTINE
+python tools/new_record.py --id <slug> --repository <Repo> --by $ROUTINE    # drafts/<slug>.yaml
 ```
+The draft stays in `drafts/`. `publish.py dataset` files it at `datasets/<dimensionality>/<first modality>/`,
+so list the modality that best describes the images first.
 ### 4a. Research every field before writing `null` / `unknown`
 Don't write a field as unknown until you've looked in **all** of these sources, in this order:
 1. **The dataset page, read in full.** Also read its metadata/API record, its README or

@@ -193,6 +193,10 @@ gh pr edit <number> --body-file /tmp/pr_body.md
 gh pr comment <number> --body-file /tmp/pr_comment.md
 python tools/run_log.py event enriched --id <id> --pr-url <PR url>
 ```
+`pr-update` files the record at `datasets/<dimensionality>/<first modality>/<id>.yaml`. If you corrected
+the dimensionality or first modality, it moves the file on the branch for you (the validator may first
+say the file is in the wrong folder; run `python tools/place.py <file>` and validate again).
+
 If `pr-update` says the branch moved, someone edited the PR meanwhile. Run `pr-pull` again, redo
 your changes on top, respecting their edit, and publish again.
 

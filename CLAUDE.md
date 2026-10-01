@@ -1,7 +1,8 @@
 # mia-agentic-search
 
 An agent-maintained catalog of **usable microscopy training datasets**. The git repo *is* the
-database: one YAML record per dataset in `datasets/<repository-lowercase>/<id>.yaml`, validated
+database: one YAML record per dataset in `datasets/<dimensionality>/<first modality>/<id>.yaml`
+(e.g. `datasets/3D/FIB-SEM/cremi.yaml`), validated
 against `schema/dataset.schema.json`. Agents (Claude scheduled routines) propose records via PRs;
 humans review them (merge = accept, close = reject).
 
@@ -54,6 +55,11 @@ usable for training. Records below 0.5 aren't proposed. The validator caps it by
 
 ## Field conventions
 - `id`: lowercase slug. Put the accession first when there is one, e.g. `empiar-10311-hela-fib-sem`, `s-biad2822-vem-nuclei`.
+- **File location** follows from the record: `datasets/<imaging.dimensionality>/<imaging.modality[0]>/<id>.yaml`.
+  `tools/new_record.py` drafts into `drafts/` and `tools/publish.py` files the record; after changing the
+  dimensionality or first modality of an existing record, move it with `python tools/place.py <file>`.
+  Put the modality that best describes the images first. Files still in the old `datasets/<repository>/`
+  layout pass validation with a warning.
 - `repository`: where the data is *hosted*. A dataset on its own website → `LabWebsite` or `other`.
 - `voxel_size_nm`: in **nanometres**, so 0.116 µm → 116. For 2D data, `z: null`.
 - `organism`: NCBI scientific names (`Mus musculus`, not "mouse").
@@ -97,6 +103,7 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
 | `python tools/probe.py <url> [--glob G] --id ID` | shape / dtype / compression / voxel size from file headers (enricher) |
 | `python tools/sample.py --id ID --raw S [--label S]` | download a small sample, measure it, delete it (enricher) |
 | `python tools/labels.py <file>` | the PR labels a record gets |
+| `python tools/place.py <file>\|--all\|--pr-branches` | move records to `datasets/<dimensionality>/<modality>/` |
 | `python tools/publish.py pr-pull <id>` / `pr-update <file>` | enricher: edit the record on an open PR's branch |
 | `python tools/check_links.py [--oldest N] [--write]` | link rot check |
 | `python tools/build_site.py` | build dashboard into `site/` |

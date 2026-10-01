@@ -2,7 +2,8 @@
 
     python tools/new_record.py --id empiar-10311-hela-fib-sem --repository EMPIAR --by harvest-repositories
 
-Every field is present. Unknown optional values are null; fields the agent MUST
+The draft goes to drafts/<id>.yaml (git-ignored); `tools/publish.py dataset` files it at
+datasets/<dimensionality>/<first modality>/<id>.yaml. Every field is present. Unknown optional values are null; fields the agent MUST
 fill are set to the string "TODO", which fails validation until replaced.
 """
 import argparse
@@ -10,7 +11,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import DATASETS_DIR, ROOT, dump_yaml, load_schema, utcnow  # noqa: E402
+from tools.common import DRAFTS_DIR, ROOT, dump_yaml, load_schema, utcnow  # noqa: E402
 
 TODO = "TODO"
 
@@ -56,7 +57,7 @@ def main():
     ap.add_argument("--by", required=True, choices=routines, help="discovering routine")
     a = ap.parse_args()
 
-    path = DATASETS_DIR / a.repository.lower() / f"{a.id}.yaml"
+    path = DRAFTS_DIR / f"{a.id}.yaml"  # publish.py files it under datasets/<dimensionality>/<modality>/
     if path.exists():
         sys.exit(f"exists: {path.relative_to(ROOT)}")
     path.parent.mkdir(parents=True, exist_ok=True)

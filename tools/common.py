@@ -1,5 +1,6 @@
 """Shared helpers: paths, YAML loading, schema validator, identity keys."""
 import datetime as dt
+import functools
 import json
 import re
 import subprocess
@@ -12,6 +13,7 @@ from jsonschema import Draft202012Validator, FormatChecker
 ROOT = Path(__file__).resolve().parent.parent
 SCHEMA_PATH = ROOT / "schema" / "dataset.schema.json"
 DATASETS_DIR = ROOT / "datasets"
+DRAFTS_DIR = ROOT / "drafts"  # harvesters draft records here (git-ignored); publish.py files them in datasets/
 STATE_DIR = ROOT / "state"
 RUNS_DIR = STATE_DIR / "runs"
 REJECTED_PATH = STATE_DIR / "rejected.yaml"
@@ -139,6 +141,28 @@ def iter_record_paths(paths=None):
             yield from sorted(t.rglob("*.yaml"))
         elif t.suffix == ".yaml":
             yield t
+
+
+@functools.lru_cache(maxsize=1)
+def _schema():
+    return load_schema()
+
+
+def canonical_path(record):
+    """Where a record lives: datasets/<dimensionality>/<first modality>/<id>.yaml (None while fields are TODO)."""
+    im = (record or {}).get("imaging") or {}
+    dim, mods = im.get("dimensionality"), im.get("modality") or []
+    imaging = _schema()["properties"]["imaging"]["properties"]
+    dims, mod_enum = imaging["dimensionality"]["enum"], imaging["modality"]["items"]["enum"]
+    if dim not in dims or not mods or mods[0] not in mod_enum or not record.get("id"):
+        return None
+    return DATASETS_DIR / dim / mods[0] / f"{record['id']}.yaml"
+
+
+def legacy_path(record):
+    """The old layout, datasets/<repository-lowercase>/<id>.yaml; still accepted until every PR is moved."""
+    repo, rid = (record or {}).get("repository"), (record or {}).get("id")
+    return DATASETS_DIR / repo.lower() / f"{rid}.yaml" if isinstance(repo, str) and rid else None
 
 
 def rel(path):

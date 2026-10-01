@@ -41,7 +41,7 @@ quick-test sample and the folder tree. An inspection-report comment is added wit
 To relabel every open PR, run the `label-agent-prs` workflow manually.
 
 **Auto-merge** (`.github/workflows/auto-merge.yml`, policy in `tools/automerge.py`): a dataset PR is merged
-without review when it is `enriched`, `dim:3D` or `dim:3D+t`, below 500 GB (`size:` label, not `unknown`), has an
+without review when it is `enriched`, `dim:2D`, `dim:3D` or `dim:3D+t`, below 500 GB (`size:` label, not `unknown`), has an
 allow-listed license (CC0, CC-BY, PDDL, ODC-By, BSD, MIT, Apache-2.0; not NC / SA / ND / custom / unknown),
 only known formats (no `fmt:other`), and `validate` passed. Add the label `hold` to keep a PR open.
 It runs after every labelling run and hourly, and only reports (see the run summary) until the repo
@@ -50,7 +50,7 @@ variable `AUTO_MERGE` is set to `true`.
 ## Repository layout
 | Path | Contents |
 |---|---|
-| `datasets/<repository>/<id>.yaml` | The catalog: one record per dataset |
+| `datasets/<dimensionality>/<modality>/<id>.yaml` | The catalog: one record per dataset, e.g. `datasets/3D/FIB-SEM/cremi.yaml` (first listed modality) |
 | `schema/dataset.schema.json` | Record schema. CI rejects records that don't match it |
 | `CLAUDE.md` | Rules for the agents, including what counts as a "usable" dataset |
 | `.claude/skills/` | The agents' procedures: `find-datasets`, `enrich-prs`, `maintain-catalog` |
