@@ -1,10 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: s-biad2534-synapsenet-em-tomograms
 title: 'SynapseNet: Deep learning for automatic synapse reconstruction (annotated electron tomograms)'
 short_name: Synaptic vesicle segmentation (TEM tomography)
-description: 152 mouse hippocampal single-axis TEM electron tomograms (1.55 nm voxels) with paired
-  synaptic vesicle segmentation masks, the training subset of the SynapseNet annotated synapse dataset.
-  Masks were created manually in IMOD for a subset of vesicles, extended with a trained network and proofread.
+description: 152 mouse hippocampal single-axis TEM electron tomograms (1.55 nm voxels) with paired synaptic
+  vesicle segmentation masks, the training subset of the SynapseNet annotated synapse dataset. Masks were
+  created manually in IMOD for a subset of vesicles, extended with a trained network and proofread.
 landing_url: https://www.ebi.ac.uk/biostudies/BioImages/studies/S-BIAD2534
 doi: null
 repository: BioImageArchive
@@ -34,7 +34,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: null
+  size_bytes: 2029084161
   n_items: 152
   access: open
   download_url: https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/534/S-BIAD2534/Files/synapse-net/
@@ -43,6 +43,7 @@ annotations:
   present: true
   types:
   - semantic-segmentation
+  - instance-segmentation
   - organelle
   coverage: dense
   format: One mask TIFF per tomogram under synapse-net/annotations/ matching synapse-net/source_images/
@@ -70,12 +71,85 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-01T07:48:44Z'
+  last_checked: '2026-10-01T09:27:10Z'
 notes: 'File lists show 152 source tomograms and 152 annotation masks, all named tomogram-NNN_train.tif;
   voxel size 1.55 nm from the file list; first rows are single-axis TEM tomography of mouse organotypic
   hippocampal slices (other rows not all inspected, so imaging conditions may vary). Study page and API
   record state no license or terms (the CC-BY in the paper text applies to the article), so license is
-  unknown. Total size not stated. The paper says data from unpublished micrographs is available on Zenodo
-  later / on request; this BioImage Archive study is the open training subset. Annotation is manual
-  IMOD for a subset of vesicles, network-extended and proofread; coverage described only for vesicles
-  fully inside the tomogram.'
+  unknown. The paper says data from unpublished micrographs is available on Zenodo
+  later / on request; this BioImage Archive study is the open training subset. Annotation is manual IMOD
+  for a subset of vesicles, network-extended and proofread; coverage described only for vesicles fully
+  inside the tomogram. enricher: masks hold one integer ID per vesicle (instance-segmentation added);
+  size_bytes from the files API. License still not stated on the study, API record or paper.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/534/S-BIAD2534/
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/534/S-BIAD2534/Files/synapse-net/source_images/tomogram-099_train.tif
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/534/S-BIAD2534/Files/synapse-net/annotations/tomogram-099_train.tif
+  bytes_downloaded: 8542796
+  size_source: page-stated
+  layout:
+    tree: "S-BIAD2534.json, S-BIAD2534.tsv\nFiles/  file-list .json/.tsv (4 files)\n  synapse-net/source_images/tomogram-NNN_train.tif\
+      \   152 tomograms (2.0 GB)\n  synapse-net/annotations/tomogram-NNN_train.tif     152 masks (61.2\
+      \ MB)\n"
+    n_files: 310
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/534/S-BIAD2534/Files/synapse-net/source_images/tomogram-099_train.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/534/S-BIAD2534/Files/synapse-net/annotations/tomogram-099_train.tif
+    size_bytes: null
+    description: Tomogram 099 and its vesicle mask (the smallest mask file, 113,712 B; matching tomogram
+      about 8.4 MB).
+  arrays:
+  - role: raw
+    path_pattern: synapse-net/source_images/tomogram-NNN_train.tif
+    format: tiff
+    axes: null
+    shape:
+    - 91
+    - 262
+    - 263
+    shape_varies: true
+    dtype: int16
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - -825
+    - 1691
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: synapse-net/annotations/tomogram-NNN_train.tif
+    format: tiff
+    axes: null
+    shape:
+    - 91
+    - 262
+    - 263
+    shape_varies: true
+    dtype: uint32
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 34
+    encoding: instance-ids
+    classes:
+    - id: null
+      name: synaptic vesicles
+    n_ids_observed: 34
+    alignment: same-grid
+    alignment_notes: annotations/<name>.tif pairs with source_images/<name>.tif (source_image column in
+      the file list); identical shape.
+  notes: 'Sizes from the BioStudies files API (304 data files, exact bytes, sum 2,029,084,161 B; file-list
+    files not included); FTP listing timed out and the HTTP index gives rounded sizes only. Probed and
+    sampled tomogram-099 pair: raw 91x262x263 int16 deflate, values -825..1691 (p1 561, p99 905, mean
+    747); mask uint32 with 34 unique values 0-34 (5.2% foreground). The file list names one annotated
+    entity (synaptic vesicles), so several IDs per mask mean one ID per vesicle (instance-ids, inferred).
+    One sample only; shapes vary between tomograms.'
+  inspected_at: '2026-10-01T09:27:10Z'
