@@ -1,9 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-5217394-arabidopsis-membrane-confocal-labels
 title: Arabidopsis dataset for testing membrane segmentation models (images and labels)
 short_name: Arabidopsis 3D membrane labels (confocal)
-description: Four 3D confocal stacks of Arabidopsis with matching labelled volumes, deposited by Kapoorlabs as test
-  data for membrane segmentation models. Images are in Zenodo 5217394 and the labels in the companion record 5217341.
+description: Four 3D confocal stacks of Arabidopsis with matching labelled volumes, deposited by Kapoorlabs
+  as test data for membrane segmentation models. Images are in Zenodo 5217394 and the labels in the companion
+  record 5217341.
 landing_url: https://zenodo.org/records/5217394
 doi: 10.5281/zenodo.5217394
 repository: Zenodo
@@ -25,7 +26,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 241321830
+  size_bytes: 723848158
   n_items: 4
   access: open
   download_url: https://zenodo.org/records/5217394
@@ -35,7 +36,8 @@ annotations:
   types:
   - instance-segmentation
   coverage: unknown
-  format: 'Companion Zenodo record 5217341: 4 label TIFF stacks (01-04.tif, uint16) with the same names and z/y/x shapes as the images'
+  format: 'Companion Zenodo record 5217341: 4 label TIFF stacks (01-04.tif, uint16) with the same names
+    and z/y/x shapes as the images'
   source: unknown
 ml:
   tasks:
@@ -54,14 +56,86 @@ provenance:
   - https://zenodo.org/api/records/5217394
   - https://zenodo.org/records/5217341
   - https://zenodo.org/api/records/5217341
-  confidence: 0.5
+  confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T14:00:00Z'
-notes: 'Both Zenodo pages are one-line descriptions with no paper, keywords or voxel size, and the record cites no publication (nothing found
-  linked from either page), so tissue, stain, voxel size and annotation method are unknown. TIFF headers (probe): images are uint8 stacks of
-  161x428x428 (01), 241x524x524 (02), 181x608x608 (03), 150x724x724 (04) (z,y,x); label 01.tif is uint16, 161x428x428, ImageJ min 2 max 89,
-  so labels look like per-cell ids, but the encoding was not documented. size_bytes is images (241.3 MB) only; label files add 482.5 MB.
-  Only 4 volumes, so it suits testing or small-scale training.'
+  last_checked: '2026-10-01T13:40:50Z'
+notes: 'Both Zenodo pages are one-line descriptions with no paper, keywords or voxel size, and the record
+  cites no publication, so tissue, stain, voxel size and annotation method are unknown. TIFF headers (probe):
+  images are uint8 stacks of 161x428x428 (01), 241x524x524 (02), 181x608x608 (03), 150x724x724 (04) (z,y,x);
+  labels uint16 with the same names and shapes. Only 4 volumes, so it suits testing or small-scale training.
+  enricher: size_bytes now covers both records (images 241.3 MB + labels 482.5 MB, was images only); label
+  01 sampled: 640 distinct IDs, so instance labels (the ImageJ max 89 in its header is stale).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/5217394
+  - https://zenodo.org/records/5217341
+  - https://zenodo.org/records/5217394/files/01.tif
+  - https://zenodo.org/records/5217341/files/01.tif
+  bytes_downloaded: 88534534
+  size_source: file-listing
+  layout:
+    tree: '5217394/ (images)  01.tif 02.tif 03.tif 04.tif   241.3 MB
+
+      5217341/ (labels)  01.tif 02.tif 03.tif 04.tif   482.5 MB
+
+      '
+    n_files: 8
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5217394/files/01.tif
+    - https://zenodo.org/records/5217341/files/01.tif
+    size_bytes: 88534534
+    description: Volume 01 (smallest) with its label stack.
+  arrays:
+  - role: raw
+    path_pattern: 5217394/NN.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 161
+    - 428
+    - 428
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 245
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: 5217341/NN.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 161
+    - 428
+    - 428
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 974
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 640
+    alignment: same-grid
+    alignment_notes: Label NN.tif in record 5217341 matches image NN.tif in record 5217394 by name and
+      z/y/x shape.
+  notes: 'Both Zenodo records listed (8 files, 723,848,158 B, complete). Shapes per the harvest probes:
+    01 161x428x428, 02 241x524x524, 03 181x608x608, 04 150x724x724; probe of 01 (image and label): uncompressed,
+    ImageJ unit "pixel" (no physical calibration). Sample 01: image 0..245, mean 33, p99 143; label 0..974
+    with 640 distinct values (hint: instance labels), 50% background voxels or more (p50 0). Background
+    value 0; IDs are not consecutive (max 974 > 639).'
+  inspected_at: '2026-10-01T13:40:50Z'
