@@ -1,4 +1,4 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: figshare-27073186-txl-pbc-blood-cell-detection
 title: 'TXL-PBC: a curated and re-annotated peripheral blood cell dataset'
 short_name: Blood cell detection boxes (brightfield smears)
@@ -31,8 +31,8 @@ imaging:
   labels_stains: []
 data:
   formats:
-  - png
-  size_bytes: 44118557
+  - jpeg
+  size_bytes: 44120629
   n_items: 1260
   access: open
   download_url: https://ndownloader.figshare.com/files/55458752
@@ -61,12 +61,12 @@ provenance:
   - https://api.figshare.com/v2/articles/27073186
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1038%2Fs41597-025-05980-z%22&format=json&resultType=core&pageSize=3
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12559723/fullTextXML
-  confidence: 0.8
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T06:36:11Z'
+  last_checked: '2026-10-01T07:09:02Z'
 notes: 'Zip listing (peek_archive, 2524 files): TXL-PBC/images/{train 882, val 252, test 126} PNGs, matching
   labels/ txt files, data.yaml, two BCCD/selection xlsx files and a PDF protocol. License CC BY 4.0 and
   version 8 from the Figshare API; the paper (open access, Europe PMC) describes the curation: rejected
@@ -74,4 +74,81 @@ notes: 'Zip listing (peek_archive, 2524 files): TXL-PBC/images/{train 882, val 2
   manual review (hence source mixed). Images are re-selected from four public datasets (BCCD, BCDD, PBC,
   Raabin-WBC) whose own licenses were not checked. The magnification/pixel size of the source images is
   not stated, so voxel_size_nm is null. Channel count 3 assumes RGB from the paper description; PNG headers
-  were not read.'
+  were not read. enricher: formats png -> jpeg (the .png files are JPEG-encoded per headers); size now
+  the full Figshare listing (zip + README + classes.txt). README says "academic and non-commercial use"
+  while Figshare metadata says CC BY 4.0; spdx kept as recorded.'
+technical:
+  method: sample
+  inspected_at: '2026-10-01T07:09:02Z'
+  inspected_urls:
+  - https://figshare.com/articles/dataset/TXL-PBC_Dataset/27073186
+  - https://ndownloader.figshare.com/files/55458752
+  bytes_downloaded: 25732
+  size_source: file-listing
+  layout:
+    tree: "./                                3 files   44.1 MB  TXL-PBC.zip, README.md, classes.txt\n\
+      TXL-PBC.zip/TXL-PBC/              2,524 members\n  BCCD_selection.xlsx, metadata_file.xlsx, data.yaml,\
+      \ annotation_protocol.pdf\n  images/train/   882 files  30.7 MB  .png (JPEG-encoded)\n  images/val/\
+      \     252 files   8.4 MB  .png\n  images/test/    126 files   4.6 MB  .png\n  labels/train/   882\
+      \ files 487.9 KB  .txt (YOLO)\n  labels/val/     252 files 146.3 KB  .txt\n  labels/test/    126\
+      \ files  73.4 KB  .txt\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/55458752::TXL-PBC/images/train/002c1600f18359869647c3f9ec77f637.png
+    - https://ndownloader.figshare.com/files/55458752::TXL-PBC/labels/train/002c1600f18359869647c3f9ec77f637.txt
+    size_bytes: null
+    description: One training image and its YOLO label file (same stem)
+  arrays:
+  - role: raw
+    path_pattern: TXL-PBC.zip::TXL-PBC/images/{train,val,test}/<hash>.png
+    format: jpeg
+    axes: yxs
+    shape:
+    - 575
+    - 575
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    lossy: true
+    chunks: null
+    value_range:
+    - 14
+    - 231
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: TXL-PBC.zip::TXL-PBC/labels/{train,val,test}/<hash>.txt
+    format: other
+    axes: null
+    shape:
+    - 14
+    - 5
+    shape_varies: true
+    dtype: float32
+    compression: none
+    lossy: false
+    chunks: null
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: White Blood Cell (WBC)
+    - id: 1
+      name: Red Blood Cell (RBC)
+    - id: 2
+      name: Platelet
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: Same file stem in images/<split> and labels/<split>; YOLO rows "class x_center y_center
+      w h" normalized to [0,1] of the image size.
+  notes: 'Figshare listing incl. zip members: 3 files, 44,120,629 B exact (record had the zip alone, 44,118,557).
+    Probed 3 train images: all are JPEG streams despite the .png name (575x575x3 twice, 363x360x3 once,
+    so sizes vary). Sampled one image (RGB uint8, range 14-231) and its label file (14 YOLO rows; classes
+    0 and 1 present, so n_ids_observed counts classes). Class names from classes.txt / data.yaml (nc 3:
+    WBC, RBC, Platelets). Label dtype float32 is the text values, not a binary dtype. README.md ends "This
+    dataset is released for academic and non-commercial use", which differs from the CC BY 4.0 in the
+    Figshare metadata; a human should check which applies. README also mentions metadata.csv, but the
+    zip has metadata_file.xlsx instead.'
