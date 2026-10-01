@@ -1,9 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-7412500-segpath-mist1-he
-title: 'Large-scale annotation dataset for cell/tissue segmentation in H&E-stained images : anti-MIST1 (plasma cells)'
+title: 'Large-scale annotation dataset for cell/tissue segmentation in H&E-stained images : anti-MIST1
+  (plasma cells)'
 short_name: SegPath plasma cell segmentation (H&E)
-description: 26,462 H&E image patches (984 x 984 px, 40x, 0.22 um/px) of human tumour tissue-microarray sections
-  paired with binary masks of plasma cell nuclei. Masks come from destaining the H&E slide, restaining
+description: 26,462 H&E image patches (984 x 984 px, 40x, 0.22 um/px) of human tumour tissue-microarray
+  sections paired with binary masks of plasma cell nuclei. Masks come from destaining the H&E slide, restaining
   with anti-MIST1 immunofluorescence and thresholding, not from manual drawing. One of the SegPath records
   (one per antigen); a CSV assigns each patch to train, validation or test.
 landing_url: https://zenodo.org/records/7412500
@@ -24,7 +25,8 @@ authors:
 - Tetsuo Ushiku
 - Shumpei Ishikawa
 publications:
-- title: Restaining-based annotation for cancer histology segmentation to overcome annotation-related limitations among pathologists
+- title: Restaining-based annotation for cancer histology segmentation to overcome annotation-related
+    limitations among pathologists
   doi: 10.1016/j.patter.2023.100688
   url: https://doi.org/10.1016/j.patter.2023.100688
 date_published: '2023-03-10'
@@ -46,7 +48,7 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: 24891504922
+  size_bytes: 24893404817
   n_items: 26462
   access: open
   download_url: https://zenodo.org/records/7412500
@@ -80,12 +82,80 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-01T17:10:00Z'
-notes: 'Different from the catalogued SegPath panCK record (zenodo-7412731): other antigen (MIST1, plasma cell
-  nuclei), other images. Zenodo files: MIST1_PlasmaCell.tar.gz (24,891,504,922 B), MIST1_fileinfo.csv and
-  LICENSE. The tar.gz was not opened (peek_archive supports zip only), so the masks are not seen in a
-  listing; patch count and split (train 22,640, val 1,894, test 1,928; 26,462 rows) come from MIST1_fileinfo.csv.
+  annotations_verified: true
+  last_checked: '2026-10-01T16:42:13Z'
+notes: 'Different from the catalogued SegPath panCK record (zenodo-7412731): other antigen (MIST1, plasma
+  cell nuclei), other images. Zenodo files: MIST1_PlasmaCell.tar.gz (24,891,504,922 B), MIST1_fileinfo.csv
+  and LICENSE. Patch count and split (train 22,640, val 1,894, test 1,928; 26,462 rows) come from MIST1_fileinfo.csv.
   License is CC-BY-NC-SA 4.0 per the Zenodo record text (Zenodo field: Other (Non-Commercial)); commercial
   use needs contacting the authors. Pixel size 0.220818 um/px from the paper Methods (Hamamatsu Nanozoomer
-  S60, 40x). Masks are IF-derived, validated against pathologists in the paper. download_url is the record.'
+  S60, 40x). Masks are IF-derived, validated against pathologists in the paper. download_url is the record.
+  enricher: first tar.gz members streamed and one HE/mask pair measured; size_bytes = full listing total
+  24,893,404,817 B (tar.gz + CSV + LICENSE); annotations_verified true.'
+technical:
+  method: sample
+  inspected_at: '2026-10-01T16:42:13Z'
+  inspected_urls:
+  - https://zenodo.org/records/7412500
+  - https://zenodo.org/records/7412500/files/MIST1_PlasmaCell.tar.gz
+  bytes_downloaded: 12779520
+  size_source: file-listing
+  layout:
+    tree: "./\n  MIST1_PlasmaCell.tar.gz\n    MIST1_PlasmaCell/MIST1_PlasmaCell_<n1>_<n2>_<n3>_HE.png\
+      \   H&E tiles\n    MIST1_PlasmaCell/MIST1_PlasmaCell_<n1>_<n2>_<n3>_mask.png binary masks (same\
+      \ stem)\n  <antigen>_fileinfo.csv   filename, antibody, train_val_test\n  LICENSE\n3 files, 24,893,404,817\
+      \ B (tar members not listed beyond the first 12)\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7412500/files/MIST1_PlasmaCell.tar.gz
+    size_bytes: 12779520
+    description: 'First ~10 MB of the tar.gz stream: MIST1_PlasmaCell_388_102400_036864_HE.png and MIST1_PlasmaCell_272_059392_059392_mask.png.'
+  arrays:
+  - role: raw
+    path_pattern: MIST1_PlasmaCell.tar.gz::MIST1_PlasmaCell/*_HE.png
+    format: png
+    axes: yxs
+    shape:
+    - 984
+    - 984
+    - 4
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 13
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: PNG has 4 channels (RGBA).
+  - role: label
+    path_pattern: MIST1_PlasmaCell.tar.gz::MIST1_PlasmaCell/*_mask.png
+    format: png
+    axes: yx
+    shape:
+    - 984
+    - 984
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 0
+    encoding: binary
+    classes: null
+    n_ids_observed: 1
+    alignment: same-grid
+    alignment_notes: Mask shares the tile stem (_HE.png <-> _mask.png); sampled HE and mask (different
+      tiles) both 984x984 px.
+  notes: 'Zenodo listing: 3 files, exact sizes. The tar.gz was read as a stream (Python tarfile on the
+    first ~9 MB, in memory; nothing extracted to disk or executed) to see the first 12 members: tiles
+    named <prefix>_<n1>_<n2>_<n3>_HE.png / _mask.png. Measured MIST1_PlasmaCell_388_102400_036864_HE.png:
+    uint8 [984, 984, 4], 13..255, mean 191.4; MIST1_PlasmaCell_272_059392_059392_mask.png: uint8 [984,
+    984], values [0]. One sample each, not a matching pair (first members of each kind). Full member list
+    not read, so n_files counts top-level files.'
