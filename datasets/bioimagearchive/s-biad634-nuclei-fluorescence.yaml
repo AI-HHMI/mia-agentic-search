@@ -1,11 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: s-biad634-nuclei-fluorescence
 title: An annotated fluorescence image dataset for training nuclear segmentation methods
 short_name: Nuclear segmentation in tissue and cells (IF)
-description: 79 expert-annotated DAPI/immunofluorescence images (7813 nuclei) of tumor
-  tissue sections, touch imprints, bone marrow cytospins and cell lines (neuroblastoma,
-  ganglioneuroblastoma, Wilms tumor, HaCaT), with labeled instance masks (TIFF) and
-  polygon SVGs, plus a suggested train/test split and single-nuclei expert annotations.
+description: 79 expert-annotated DAPI/immunofluorescence images (7813 nuclei) of tumor tissue sections,
+  touch imprints, bone marrow cytospins and cell lines (neuroblastoma, ganglioneuroblastoma, Wilms tumor,
+  HaCaT), with labeled instance masks (TIFF) and polygon SVGs, plus a suggested train/test split and single-nuclei
+  expert annotations.
 landing_url: https://www.ebi.ac.uk/biostudies/bioimages/studies/S-BIAD634
 doi: null
 repository: BioImageArchive
@@ -26,8 +26,7 @@ authors:
 - Inge M. Ambros
 - Sabine Taschner-Mandl
 publications:
-- title: An annotated fluorescence image dataset for training nuclear segmentation
-    methods
+- title: An annotated fluorescence image dataset for training nuclear segmentation methods
   doi: 10.1038/s41597-020-00608-w
   url: https://doi.org/10.1038/s41597-020-00608-w
 date_published: '2023-03-07'
@@ -40,8 +39,8 @@ imaging:
   channels: null
   organism:
   - Homo sapiens
-  sample: Human tumor tissue cryosections, touch imprints, bone marrow cytospins,
-    neuroblastoma cell lines and HaCaT keratinocytes
+  sample: Human tumor tissue cryosections, touch imprints, bone marrow cytospins, neuroblastoma cell lines
+    and HaCaT keratinocytes
   labels_stains:
   - DAPI
 data:
@@ -58,7 +57,7 @@ annotations:
   types:
   - instance-segmentation
   coverage: dense
-  format: labeled mask TIFF + SVG polygons
+  format: labeled mask TIFF (uint16 instance IDs) + SVG polygons; single-nucleus test masks (int32 TIFF)
   source: proofread
 ml:
   tasks:
@@ -81,9 +80,113 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-09-30T23:38:43Z'
-notes: Pixel/voxel size not stated in the BioStudies record or paper Methods summary
-  read (objectives 10x-63x vary by image; per-image details in the provided file list
-  TSV). License 'CC0' from BioStudies record. Size (~498 MB) from the HTTP directory
-  index (rounded). Paper cites original accession S-BSST265; the same data is now
-  S-BIAD634. Mixed widefield (Axioplan-II) and confocal (LSM 780, SP8X) acquisition.
+  last_checked: '2026-10-01T00:55:40Z'
+notes: 'Pixel/voxel size not stated in the BioStudies record or paper Methods summary read (objectives
+  10x-63x vary by image; per-image details in the provided file list TSV). License ''CC0'' from BioStudies
+  record. Size (~498 MB) from the HTTP directory index (rounded). Paper cites original accession S-BSST265;
+  the same data is now S-BIAD634. Mixed widefield (Axioplan-II) and confocal (LSM 780, SP8X) acquisition.
+  enricher: annotations.format detailed from headers and one sampled mask.'
+technical:
+  method: sample
+  inspected_at: '2026-10-01T00:55:40Z'
+  inspected_urls:
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/634/S-BIAD634/Files/
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/634/S-BIAD634/Files/dataset/rawimages/Ganglioneuroblastoma_0.tif
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/634/S-BIAD634/Files/dataset/groundtruth/Ganglioneuroblastoma_0.tif
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/634/S-BIAD634/Files/dataset/singlecell_groundtruth/Ganglioneuroblastoma_4singlemask.tif
+  bytes_downloaded: 2706466
+  size_source: estimated
+  layout:
+    tree: "./  472 files ~498 MB\n  file_list_annotations.{json,tsv}, file_list_raw_images.{json,tsv}\
+      \   per-image metadata (split, magnification, modality, S/N)\n  dataset/readme.txt\n  dataset/rawimages/\
+      \                          79 .tif   98.5 MB\n  dataset/groundtruth/                        79 .tif\
+      \  199.7 MB\n  dataset/groundtruth_svgs/                   79 .svg + 79 .jpg  21.7 MB\n  dataset/singlecell_groundtruth/\
+      \             36 *singlemask.tif  176.4 MB\n  dataset/visualized_groundtruth/             79 .png\n\
+      \  dataset/visualized_singlecell_groundtruth/  36 .png\n  file names: <Diagnosis>_<n>.tif, same\
+      \ name in rawimages/ and groundtruth/\n"
+    n_files: 472
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/634/S-BIAD634/Files/dataset/rawimages/Ganglioneuroblastoma_0.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/634/S-BIAD634/Files/dataset/groundtruth/Ganglioneuroblastoma_0.tif
+    size_bytes: null
+    description: One raw image and its labeled mask (about 0.5 MB + 2.2 MB).
+  arrays:
+  - role: raw
+    path_pattern: dataset/rawimages/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 914
+    - 1225
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: dataset/groundtruth/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 914
+    - 1225
+    shape_varies: null
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 301
+    alignment: same-grid
+    alignment_notes: Same file name in rawimages/ and groundtruth/; same 914x1225 grid in the sample.
+  - role: label
+    path_pattern: dataset/singlecell_groundtruth/*singlemask.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 914
+    - 1225
+    shape_varies: null
+    dtype: int32
+    compression: none
+    lossy: false
+    chunks: null
+    encoding: unknown
+    classes: null
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: Test-set subset (25 nuclei per test class, per readme); <name>singlemask.tif matches
+      <name>.tif; same shape in the header.
+  - role: label
+    path_pattern: dataset/groundtruth_svgs/*.svg
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    lossy: null
+    chunks: null
+    encoding: polygons
+    classes: null
+    n_ids_observed: null
+    alignment: unknown
+    alignment_notes: SVG annotations with the raw image as JPEG (readme); not opened.
+  notes: 'Listing: HTTP index (FTP timed out), complete, rounded sizes, so size is estimated. readme.txt
+    states CC0 and describes the folders; file_list_raw_images.tsv gives split, magnification (10x/20x/40x/63x),
+    modality (FM/LSM) and device per image, but no pixel size. Headers: rawimages/Ganglioneuroblastoma_0.tif
+    is an RGB TIFF (yxs 914x1225x3, uint8, LZW); groundtruth uint16 uncompressed 914x1225; singlemask
+    int32 914x1225. Sample: raw min 0 max 255 mean 12.3 (sample.py hint: possibly contrast-stretched;
+    the docs do not say, so unknown); mask 301 distinct values 0-300, 90.6% background, so instance IDs.
+    One image only; image sizes vary with magnification but were not checked for other files (shape_varies
+    null).'
