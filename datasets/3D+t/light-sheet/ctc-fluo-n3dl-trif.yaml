@@ -1,4 +1,4 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: ctc-fluo-n3dl-trif
 title: 'Cell Tracking Challenge Fluo-N3DL-TRIF: Tribolium castaneum embryo (nuclei, full dataset), 3D+t
   with segmentation and tracking annotations'
@@ -47,8 +47,8 @@ annotations:
   - instance-segmentation
   - tracking
   coverage: partial
-  format: TIFF label masks in NN_GT/SEG (sparse frames) and NN_ST/SEG (silver); NN_GT/TRA tracking markers
-    plus man_track.txt lineage table
+  format: TIFF label masks in NN_GT/SEG (sparse 2D slices); NN_GT/TRA tracking markers plus man_track.txt
+    lineage table; no silver truth (NN_ST) in this dataset
   source: manual
 ml:
   tasks:
@@ -73,7 +73,7 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T10:55:00Z'
+  last_checked: '2026-10-01T11:37:50Z'
 notes: 'Training zip listed with tools/listing.py (exact zip size): 01/ 60 tif; 01_GT/SEG 100 tif; 01_GT/TRA
   60 tif + man_track.txt; 02/ 80 tif; 02_GT/SEG 100 tif; 02_GT/TRA 80 tif (no silver truth). Pixel/voxel
   size, microscope, time step and cell type come from the CTC dataset table; organism and sample from
@@ -82,4 +82,93 @@ notes: 'Training zip listed with tools/listing.py (exact zip size): 01/ 60 tif; 
   cloning is prohibited, and the Nature Methods paper must be cited. Test set annotations are secret.
   Gold-truth segmentation covers only a subset of frames (annotations.coverage partial). Well-known benchmark;
   confidence kept moderate given the permission-based terms. Differs from other CTC records (e.g. ctc-fluo-c3dh-a549,
-  ctc-fluo-n3dh-ce): a separate CTC dataset with its own cells/organism, microscope and zip.'
+  ctc-fluo-n3dh-ce): a separate CTC dataset with its own cells/organism, microscope and zip. enricher:
+  annotations.format fixed (no NN_ST).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://data.celltrackingchallenge.net/training-datasets/Fluo-N3DL-TRIF.zip
+  - https://public.celltrackingchallenge.net/documents/Naming%20and%20file%20content%20conventions.pdf
+  bytes_downloaded: 1639171
+  size_source: file-listing
+  layout:
+    tree: "Fluo-N3DL-TRIF.zip   343,249,421,063 B, 482 members\n  Fluo-N3DL-TRIF/\n    01/         60\
+      \ t<TTT>.tif (3D, ~2.6 GB each)   155.1 GB\n    01_GT/SEG/  100 man_seg_<TTT>_<ZZZ>.tif (single\
+      \ slices)\n    01_GT/TRA/  60 man_track<TTT>.tif + man_track.txt   4.2 GB\n    02/         80 t<TTT>.tif\
+      \   205.9 GB\n    02_GT/SEG/  100 man_seg_<TTT>_<ZZZ>.tif\n    02_GT/TRA/  80 + man_track.txt  \
+      \ 5.4 GB\n  (no silver truth / ERR_SEG folders)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.celltrackingchallenge.net/training-datasets/Fluo-N3DL-TRIF.zip::Fluo-N3DL-TRIF/01_GT/TRA/man_track000.tif
+    - https://data.celltrackingchallenge.net/training-datasets/Fluo-N3DL-TRIF.zip::Fluo-N3DL-TRIF/01_GT/SEG/man_seg_000_713.tif
+    size_bytes: 1639171
+    description: Tracking markers of time point 000 and one gold-truth slice (the raw volumes are ~2.6
+      GB each).
+  arrays:
+  - role: raw
+    path_pattern: 0N/t<T>.tif
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    lossy: null
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: 0N_GT/SEG/man_seg_<T>_<Z>.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1871
+    - 965
+    shape_varies: null
+    dtype: uint16
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 3
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 4
+    alignment: same-grid
+    alignment_notes: man_seg_<T>_<Z>.tif is slice Z of 0N/t<T>.tif (CTC convention); 1871x965 matches
+      the y,x size of the TRA volume. Not all objects are segmented.
+  - role: label
+    path_pattern: 0N_GT/TRA/man_track<T>.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 991
+    - 1871
+    - 965
+    shape_varies: null
+    dtype: uint16
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 180
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 91
+    alignment: same-grid
+    alignment_notes: Tracking markers per frame (labels propagated over time); lineage in 0N_GT/TRA/man_track.txt
+      (L B E P rows).
+  notes: 'Listing: one zip, 482 members, no 0N_ST or 0N_ERR_SEG folders. Raw volumes are 2.5-2.6 GB deflated
+    zip members; their TIFF header cannot be read by range and they exceed the sample budget, so raw shape,
+    dtype and compression are not measured (01/t000.tif unpacks to 2,645,731,738 B, less than 991x1871x965
+    uint16, so the TIFF is either compressed or not uint16). Samples: man_track000 991x1871x965 uint16
+    0..180 (91 values, 99.999% zero, i.e. small markers); GT slice man_seg_000_713 1871x965 uint16 0..3
+    (4 values). CTC conventions PDF: 16-bit unique positive labels, background 0. 01 man_track.txt has
+    218 tracks.'
+  inspected_at: '2026-10-01T11:37:50Z'
