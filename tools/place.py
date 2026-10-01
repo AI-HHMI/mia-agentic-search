@@ -45,7 +45,10 @@ def move_file(path):
 
 def move_on_branch(branch, dry_run, attempts=3):
     for attempt in range(attempts):
-        run("fetch", "-q", "origin", "main", f"+{branch}:refs/remotes/origin/{branch}")
+        try:
+            run("fetch", "-q", "origin", "main", f"+{branch}:refs/remotes/origin/{branch}")
+        except SystemExit:  # merged (and deleted) or closed since the PR list was read
+            return "skipped: branch no longer exists"
         ref = f"origin/{branch}"
         paths = [p for p in run("diff", "--name-only", "--diff-filter=AM", f"origin/main...{ref}", "--", "datasets/").split()
                  if p.endswith(".yaml")]
