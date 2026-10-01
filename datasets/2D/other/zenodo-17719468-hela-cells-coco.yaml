@@ -1,9 +1,9 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-17719468-hela-cells-coco
 title: Annotated HeLa Cell Dataset in COCO format
 short_name: HeLa cell instance masks (COCO format)
-description: 104 PNG microscopy images of HeLa cells (Olympus IX70 inverted microscope, ORCA camera) with polygon instance
-  masks of live cells in COCO JSON format (train and val splits) drawn with makesense.ai.
+description: 104 PNG microscopy images of HeLa cells (Olympus IX70 inverted microscope, ORCA camera) with
+  polygon instance masks of live cells in COCO JSON format (train and val splits) drawn with makesense.ai.
 landing_url: https://zenodo.org/records/17719468
 doi: 10.5281/zenodo.17719468
 repository: Zenodo
@@ -37,7 +37,8 @@ annotations:
   types:
   - instance-segmentation
   coverage: dense
-  format: COCO JSON polygons (labels/train.json, labels/val.json); only live cells annotated, dead cells not marked
+  format: COCO JSON polygons (labels/train.json, labels/val.json); only live cells annotated, dead cells
+    not marked
   source: manual
 ml:
   tasks:
@@ -60,9 +61,72 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T09:15:00Z'
-notes: 'Zip contents via peek_archive: 104 PNG (train/ and others, 92.9 MB) and labels/train.json + labels/val.json (5.3
-  MB); per-split image counts not confirmed because only the first 40 paths are listed. No associated paper found on the
-  Zenodo record or GitHub README (checked both). The imaging modality (fluorescence vs brightfield), pixel size and channel
-  count are not stated on the Zenodo page or README, so modality is "other" and pixel size null; the code repository mentions
-  cell brightness and transfection analysis. Only live cells are annotated (dead cells unmarked per GitHub README).'
+  last_checked: '2026-10-01T11:06:55Z'
+notes: 'Zip contents via peek_archive: 104 PNG (train/ and others, 92.9 MB) and labels/train.json + labels/val.json
+  (5.3 MB); per-split image counts not confirmed because only the first 40 paths are listed. No associated
+  paper found on the Zenodo record or GitHub README (checked both). The imaging modality (fluorescence
+  vs brightfield), pixel size and channel count are not stated on the Zenodo page or README, so modality
+  is "other" and pixel size null; the code repository mentions cell brightness and transfection analysis.
+  Only live cells are annotated (dead cells unmarked per GitHub README). enricher: split counts confirmed
+  (train 72, val 32) from the zip listing and COCO files.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/17719468
+  - https://zenodo.org/records/17719468/files/hela_cells_coco.zip
+  bytes_downloaded: 2106615
+  size_source: file-listing
+  layout:
+    tree: "hela_cells_coco.zip   94,109,350 B, 106 members\n  labels/train.json, labels/val.json    COCO,\
+      \ 5.3 MB\n  train/   72 .png  65.0 MB\n  val/     32 .png  27.9 MB\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/17719468/files/hela_cells_coco.zip::val/HeLa_2024_11_06_12.png
+    - https://zenodo.org/records/17719468/files/hela_cells_coco.zip::labels/val.json
+    size_bytes: null
+    description: One validation image plus the validation COCO file (zip members).
+  arrays:
+  - role: raw
+    path_pattern: '{train,val}/<name>.png'
+    format: png
+    axes: yx
+    shape:
+    - 1024
+    - 1344
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 6
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: labels/{train,val}.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: polygons
+    classes:
+    - id: 1
+      name: Alive cells
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: COCO images[].file_name matches the PNG in the split folder; width 1344, height 1024
+      as in the PNG.
+  notes: 'Listing: one zip, 106 members: 72 train PNGs, 32 val PNGs, two COCO JSONs. COCO files parsed:
+    train 72 images / 1618 annotations, val 32 images / 139 annotations, one category "Alive cells", polygon
+    segmentation with bbox, iscrowd 0; no license field. Probe/sample val/HeLa_2024_11_06_12.png: 1024x1344
+    greyscale uint8, 6..255 (one sample). Modality still not stated; normalization unknown.'
+  inspected_at: '2026-10-01T11:06:55Z'
