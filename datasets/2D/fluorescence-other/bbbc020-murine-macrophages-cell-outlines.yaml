@@ -1,8 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: bbbc020-murine-macrophages-cell-outlines
 title: Murine bone-marrow derived macrophages (BBBC020)
 short_name: Murine macrophage cell and nuclei outlines
-description: 25 fluorescence images of C57BL/6 bone-marrow derived macrophages stained for nuclei (DAPI) and cell surface (CD11b/APC), with an individual outline mask per cell and per nucleus to test segmentation of touching and overlapping cells.
+description: 25 fluorescence images of C57BL/6 bone-marrow derived macrophages stained for nuclei (DAPI) and cell
+  surface (CD11b/APC), with an individual outline mask per cell and per nucleus to test segmentation of touching
+  and overlapping cells.
 landing_url: https://bbbc.broadinstitute.org/BBBC020
 doi: null
 repository: other
@@ -26,7 +28,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 95600000
+  size_bytes: 99388225
   n_items: 25
   access: open
   download_url: https://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip
@@ -61,5 +63,84 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T04:20:00Z'
-notes: 'Image zip holds 75 TIFFs (25 fields x c1, c5 and a merged c1+c5 image; about 96 MB compressed, 92 MB on the page). The outline zips hold 701 nuclei and 517 cell mask TIFFs. The BBBC page warns the nuclei outlines are incomplete (missing files could not be obtained from the contributor), and cells that touch the border or cannot be separated have no outline, hence coverage partial. The overview table on the image-sets page says 75 images, the dataset page says 25 images with three channel files each; n_items uses 25. The experiment is from Wenzel et al. 2012, cited by name on the page; the paper was not located, so publications is empty. Pixel size, microscope and objective are not stated on the BBBC page. size_bytes is the compressed image zip only.'
+  last_checked: '2026-10-01T04:52:00Z'
+notes: 'Image zip holds 75 TIFFs (25 fields x c1, c5 and a merged c1+c5 image). The outline zips hold 701 nuclei
+  and 517 cell mask TIFFs. The BBBC page warns the nuclei outlines are incomplete (missing files could not be obtained
+  from the contributor), and cells that touch the border or cannot be separated have no outline, hence coverage
+  partial. The overview table on the image-sets page says 75 images, the dataset page says 25 images with three
+  channel files each; n_items uses 25. The experiment is from Wenzel et al. 2012, cited by name on the page; the
+  paper was not located, so publications is empty. Pixel size, microscope and objective are not stated on the BBBC
+  page.
+
+  enricher: size_bytes = exact sum of the three zips (was 95600000, images zip only).
+
+  enricher: cell masks are named <image>_c1_<n>, nuclei masks <image>_c5_<n>.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip
+  - https://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_outlines_nuclei.zip
+  - https://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_outlines_cells.zip
+  bytes_downloaded: 1747475
+  size_source: file-listing
+  layout:
+    tree: "BBBC020_v1_images.zip/BBBC020_v1_images/<field>/<field>_{c1,c5,(c1+c5)}.TIF   25 dirs x 3 files\n  fields:\
+      \ jw-<n>h <k> (12), jw-<n>min <k> (10), jw-Kontrolle<k> (3)\nBBBC020_v1_outlines_cells.zip/BBC020_v1_outlines_cells/<field>_c1_<n>.TIF\
+      \       517 files\nBBBC020_v1_outlines_nuclei.zip/BBC020_v1_outlines_nuclei/<field>_c5_<n>.TIF     701 files\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip::BBBC020_v1_images/jw-15min 1/jw-15min
+      1_c1.TIF
+    - https://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_outlines_cells.zip::BBC020_v1_outlines_cells/jw-15min
+      1_c1_0.TIF
+    size_bytes: 4334328
+    description: One cell-channel image and one per-cell mask
+  arrays:
+  - role: raw
+    path_pattern: BBBC020_v1_images.zip::BBBC020_v1_images/<field>/<field>_{c1,c5,(c1+c5)}.TIF
+    format: tiff
+    axes: yxs
+    shape:
+    - 1040
+    - 1388
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Single-channel images are stored as 3-sample RGB TIFFs.
+  - role: label
+    path_pattern: BBBC020_v1_outlines_{cells,nuclei}.zip::BBC020_v1_outlines_{cells,nuclei}/<field>_{c1,c5}_<n>.TIF
+    format: tiff
+    axes: yx
+    shape:
+    - 1040
+    - 1388
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes: null
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: One binary mask per object; <field>_c1_<n> masks pair with <field>/<field>_c1.TIF (cells),
+      <field>_c5_<n> with _c5.TIF (nuclei). Same 1040x1388 grid.
+  notes: 'Exact listing of the three zips linked from the BBBC020 page (1,301 members). Probed and sampled jw-15min
+    1: c1 and c5 images are uncompressed RGB TIFFs 1040x1388x3 uint8 (c1 mean 28, c5 mean 4.7, both 0-255). Masks
+    jw-15min 1_c1_0 (cell) and _c5_0 (nucleus) are uint8 {0,255} with 11,770 and 1,997 foreground pixels, which
+    suggests filled objects despite the ''outlines'' name (inferred). Values come from one field only.'
+  inspected_at: '2026-10-01T04:52:00Z'
