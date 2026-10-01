@@ -1,10 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-15615592-ai4life-mdc25-planaria-denoising
 title: AI4Life-MDC25-Planaria
 short_name: Planaria 3D denoising pairs (fluorescence)
-description: Paired noisy / ground-truth 3D fluorescence stacks of planaria (17,900 pairs of 16x64x64 float32 crops and 45 pairs
-  of larger volumes), a subset of the Denoising Planaria collection from the CARE work, used as training data for the AI4Life
-  Microscopy Supervised Denoising Challenge 2025.
+description: Paired noisy / ground-truth 3D fluorescence stacks of planaria (17,900 pairs of 16x64x64 float32 crops
+  and 45 pairs of larger volumes), a subset of the Denoising Planaria collection from the CARE work, used as training
+  data for the AI4Life Microscopy Supervised Denoising Challenge 2025.
 landing_url: https://zenodo.org/records/15615592
 doi: 10.5281/zenodo.15615592
 repository: Zenodo
@@ -31,7 +31,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: null
+  size_bytes: 16313314280
   n_items: 17945
   access: open
   download_url: https://zenodo.org/api/records/15615592/files/Archive.zip/content
@@ -64,10 +64,76 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T04:10:00Z'
-notes: 'Archive.zip is 16.3 GB (Zenodo page). peek_archive lists 35,890 TIFFs: small_crops 17,900 noisy + 17,900 gt, large_crops
-  45 noisy + 45 gt. A probed small crop is a float32 TIFF of shape 16x64x64 (ImageJ stack, uncompressed); large crops could
-  not be probed. The CARE paper is not open access, so only its abstract was read; the specific microscope, voxel size,
-  species and labelling are therefore not confirmed and modality is set to fluorescence-other. The Zenodo page says it is a
-  subset of the Denoising Planaria collection (original at Max Planck Edmond). No train/val split given; the challenge uses
-  withheld test data.'
+  last_checked: '2026-10-01T04:42:00Z'
+notes: 'Archive.zip (16.3 GB) holds 35,890 TIFFs: small_crops 17,900 noisy + 17,900 gt, large_crops 45 noisy + 45
+  gt. The CARE paper is not open access, so only its abstract was read; the specific microscope, voxel size, species
+  and labelling are therefore not confirmed and modality is set to fluorescence-other. The Zenodo page says it is
+  a subset of the Denoising Planaria collection (original at Max Planck Edmond). No train/val split given; the challenge
+  uses withheld test data.
+
+  enricher: size_bytes from exact Zenodo listing (was null).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/15615592
+  - https://zenodo.org/records/15615592/files/Archive.zip
+  bytes_downloaded: 234801
+  size_source: file-listing
+  layout:
+    tree: "Archive.zip/\n  small_crops/noisy/NNNNN.tif   17900 files  4.7 GB (uncompressed)\n  small_crops/gt/NNNNN.tif\
+      \      17900 files  4.7 GB\n  large_crops/noisy/NNNN.tif       45 files  8.4 GB\n  large_crops/gt/NNNN.tif\
+      \          45 files  8.4 GB\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/15615592/files/Archive.zip::small_crops/noisy/10806.tif
+    - https://zenodo.org/records/15615592/files/Archive.zip::small_crops/gt/10806.tif
+    size_bytes: 530332
+    description: One 16x64x64 noisy/GT crop pair (265 KB each, uncompressed)
+  arrays:
+  - role: raw
+    path_pattern: Archive.zip::{small,large}_crops/noisy/<n>.tif
+    format: tiff
+    axes: null
+    shape:
+    - 16
+    - 64
+    - 64
+    shape_varies: true
+    dtype: float32
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - -0.2876
+    - 2.0944
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: target
+    path_pattern: Archive.zip::{small,large}_crops/gt/<n>.tif
+    format: tiff
+    axes: null
+    shape:
+    - 16
+    - 64
+    - 64
+    shape_varies: true
+    dtype: float32
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0.0541
+    - 0.39
+    normalization: rescaled
+    alignment: same-grid
+    alignment_notes: noisy/ and gt/ pair by identical file name; the sampled pair has identical shapes.
+  notes: 'Exact Zenodo listing, zip expanded (35,890 members). Probed small_crops/gt/10806.tif: 16 pages of 64x64
+    float32, uncompressed; the ImageJ header says channels=16 (probe axes cyx), but the record describes 3D stacks,
+    so axes are left null. The large_crops/gt/1041.tif probe failed (deflated member, 199 MB); large crop shapes
+    are unknown. Sampled the 10806 pair: noisy min -0.288 max 2.094 mean 0.322; gt min 0.054 max 0.390 mean 0.181.
+    Float values (negative in noisy) suggest the data were already processed; ''rescaled'' for GT is from this one
+    sample in [0, 1], not documented.'
+  inspected_at: '2026-10-01T04:42:00Z'
