@@ -1,19 +1,18 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: bossdb-mtneuro-xray-mouse-brain
-title: 'MTNeuro: multi-task X-ray microtomography benchmark of mouse thalamocortical
-  brain'
+title: 'MTNeuro: multi-task X-ray microtomography benchmark of mouse thalamocortical brain'
 short_name: MTNeuro mouse brain structure (X-ray)
-description: Multi-task benchmark built on micrometer-resolution X-ray microtomography
-  of a mouse thalamocortical brain section, with brain-region labels and pixel-level
-  semantic labels (axons, cell bodies, blood vessels, background) for four regions.
+description: Multi-task benchmark built on micrometer-resolution X-ray microtomography of a mouse thalamocortical
+  brain section, with brain-region labels and pixel-level semantic labels (axons, cell bodies, blood vessels,
+  background) for four regions.
 landing_url: https://mtneuro.github.io/
 doi: null
 repository: BossDB
 accession: null
 authors: []
 publications:
-- title: 'MTNeuro: A Benchmark for Evaluating Representations of Brain Structure Across
-    Multiple Levels of Abstraction'
+- title: 'MTNeuro: A Benchmark for Evaluating Representations of Brain Structure Across Multiple Levels
+    of Abstraction'
   doi: 10.48550/arXiv.2301.00345
   url: https://arxiv.org/abs/2301.00345
 date_published: null
@@ -32,7 +31,7 @@ imaging:
   labels_stains: []
 data:
   formats:
-  - other
+  - precomputed
   size_bytes: null
   n_items: 4
   access: open
@@ -44,7 +43,9 @@ annotations:
   - semantic-segmentation
   - classification
   coverage: unknown
-  format: Labels served via BossDB (intern API); file format not confirmed
+  format: Neuroglancer precomputed segmentation layers on the BossDB open-data S3 bucket (s3://bossdb-open-data/prasad/prasad2020/pixel_annotation
+    and region_of_interest, uint64, raw chunks); the MTNeuro task configs read labels from bossdb://prasad/prasad_analysis/roi_labels
+    through the intern API.
   source: unknown
 ml:
   tasks:
@@ -68,10 +69,97 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-01T19:14:07Z'
-notes: Four 256x256x360-voxel cutouts (somatosensory cortex, striatum, VPM thalamus,
-  zona incerta) at 1.17 um isotropic, per project page. Paper full text not open access
-  (Europe PMC); only abstract and project page read. Storage format on BossDB, annotation
-  procedure, and exact BossDB collection URL not confirmed; formats set to other for
-  that reason. License CC BY 4.0 stated on project page for imaging data.
+  annotations_verified: true
+  last_checked: '2026-10-01T20:41:28Z'
+notes: 'Four 256x256x360-voxel cutouts (somatosensory cortex, striatum, VPM thalamus, zona incerta) at
+  1.17 um isotropic, per project page. Paper full text not open access (Europe PMC); only abstract and
+  project page read. Storage format on BossDB, annotation procedure, and exact BossDB collection URL not
+  confirmed; formats set to other for that reason. License CC BY 4.0 stated on project page for imaging
+  data. enricher: data found as precomputed layers on s3://bossdb-open-data/prasad/prasad2020 (formats
+  other -> precomputed); stored resolution is 1000 nm, not 1170 nm.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://bossdb-open-data.s3.amazonaws.com/prasad/prasad2020/image/info
+  - https://bossdb-open-data.s3.amazonaws.com/prasad/prasad2020/pixel_annotation/info
+  - https://bossdb-open-data.s3.amazonaws.com/prasad/prasad2020/region_of_interest/info
+  - https://bossdb-open-data.s3.amazonaws.com/prasad/prasad2020/image/1000.0_1000.0_1000.0/4608-5120_512-1024_112-128
+  - https://bossdb-open-data.s3.amazonaws.com/prasad/prasad2020/image/1000.0_1000.0_1000.0/1536-2048_512-1024_128-144
+  - https://bossdb-open-data.s3.amazonaws.com/prasad/prasad2020/pixel_annotation/1000.0_1000.0_1000.0/1536-2048_512-1024_128-144
+  bytes_downloaded: 7959084
+  size_source: unknown
+  layout:
+    tree: |
+      s3://bossdb-open-data/prasad/
+        prasad2020/
+          image/               precomputed image, uint8, 6144x2048x720 (x,y,z) at 1000 nm, 5 scales
+          pixel_annotation/    precomputed segmentation, uint64, 7168x3072x752, 3 scales (119 chunks at full res)
+          region_of_interest/  precomputed segmentation, uint64, 7168x3072x752, 3 scales (280 chunks at full res)
+          unet_microseg/, unet_microseg_masked/, unet_region/, unet_region_16res/   model outputs
+        prasad_analysis/jjackson224/1000_1000_1000/
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://bossdb-open-data.s3.amazonaws.com/prasad/prasad2020/image/1000.0_1000.0_1000.0/1536-2048_512-1024_128-144
+    - https://bossdb-open-data.s3.amazonaws.com/prasad/prasad2020/pixel_annotation/1000.0_1000.0_1000.0/1536-2048_512-1024_128-144
+    size_bytes: 3764780
+    description: One 512x512x16 chunk of the image and the matching pixel_annotation chunk.
+  arrays:
+  - role: raw
+    path_pattern: prasad2020/image/<scale>/<x0-x1>_<y0-y1>_<z0-z1>
+    format: precomputed
+    axes: zyx
+    shape:
+    - 720
+    - 2048
+    - 6144
+    shape_varies: false
+    dtype: uint8
+    compression: gzip
+    lossy: false
+    chunks:
+    - 16
+    - 512
+    - 512
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: prasad2020/pixel_annotation/<scale>/<chunk>
+    format: precomputed
+    axes: zyx
+    shape:
+    - 752
+    - 3072
+    - 7168
+    shape_varies: false
+    dtype: uint64
+    compression: gzip
+    lossy: false
+    chunks:
+    - 16
+    - 512
+    - 512
+    value_range:
+    - 0
+    - 2
+    encoding: semantic-ids
+    classes: null
+    n_ids_observed: 3
+    alignment: same-grid
+    alignment_notes: Same 1000 nm resolution, voxel offset 0 and chunk grid as image, but a larger extent
+      (7168x3072x752 vs 6144x2048x720); labels exist only in annotated chunks (119 at full resolution).
+  notes: 'Data located through the MTNeuro task config (github MTNeuro/MTNeuro taskconfig/task1_c1.json:
+    image bossdb://prasad/prasad2020/image, labels bossdb://prasad/prasad_analysis/roi_labels) and the
+    public S3 listing of bossdb-open-data. probe.py on 3 precomputed info files: image uint8 [720, 2048,
+    6144] zyx, raw encoding, 512x512x16 chunks, 1000 nm isotropic (the project page says 1.17 um; record
+    keeps 1170 nm); pixel_annotation and region_of_interest uint64 [752, 3072, 7168]. Chunks are served
+    gzip-encoded. Sampled 2 image chunks (uint8 0-255, means 102.7 and 127.8) and one pixel_annotation
+    chunk: {0: 4,177,576, 1: 10,678, 2: 6,050}, so 3 semantic IDs, class names not documented in the files
+    read. The roi_labels channel is not in the open-data bucket (only a user folder under prasad_analysis).
+    No total size: listing not summed.'
+  inspected_at: '2026-10-01T20:41:28Z'
