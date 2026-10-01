@@ -1,8 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: bbbc042-rat-astrocytes-brightfield
 title: Rat astrocyte cells
 short_name: Rat brain astrocyte detection (brightfield)
-description: Bright-field immunohistochemistry images of rat brain tissue (3DHISTECH scanner, 990 x 708 px TIFF tiles) with manually drawn bounding boxes around astrocytes (about 15,000 labelled cells), released to train astrocyte detection and counting networks.
+description: Bright-field immunohistochemistry images of rat brain tissue (3DHISTECH scanner, 990 x 708
+  px TIFF tiles) with manually drawn bounding boxes around astrocytes (about 15,000 labelled cells), released
+  to train astrocyte detection and counting networks.
 landing_url: https://bbbc.broadinstitute.org/BBBC042
 doi: null
 repository: LabWebsite
@@ -21,12 +23,13 @@ imaging:
   channels: 1
   organism:
   - Rattus norvegicus
-  sample: rat brain sections (several regions, e.g. midbrain, striatum), control and morphine-treated animals
+  sample: rat brain sections (several regions, e.g. midbrain, striatum), control and morphine-treated
+    animals
   labels_stains: []
 data:
   formats:
   - tiff
-  size_bytes: null
+  size_bytes: 1950875459
   n_items: 1117
   access: open
   download_url: https://data.broadinstitute.org/bbbc/BBBC042/
@@ -36,7 +39,8 @@ annotations:
   types:
   - bounding-box
   coverage: dense
-  format: 'positions.zip: one .txt per image (positions/<n>.txt), one row per cell: label then box coordinates (e.g. ''Cell 0 0 0 54 545 133 619 0 0 0 0 0 0 0'')'
+  format: 'positions.zip: one .txt per image (positions/<n>.txt), one row per cell: label then box coordinates
+    (e.g. ''Cell 0 0 0 54 545 133 619 0 0 0 0 0 0 0'')'
   source: manual
 ml:
   tasks:
@@ -60,5 +64,80 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T11:16:17Z'
-notes: 'Dataset page says 1,200 images (listed as 1,120 in the index); images.zip actually holds 1,117 TIFFs (2.35 GB uncompressed, 1.95 GB compressed) and positions.zip 1,117 matching .txt files, so n_items is the listed count. The page calls the ground truth biological labels with coordinates; the files hold per-cell rows of 4 coordinates consistent with the paper bounding rectangles drawn by an expert in Matlab (Training Image Labeler); exact column meaning is not documented on the page, so the interpretation is inferred. Pixel size, stain and magnification not stated on the page or in the paper text read. Paper also mentions a separate ~130-image test set annotated by a second expert; no split is provided in the zips. Checked: dataset page, both zip listings, one positions file, paper Methods.'
+  last_checked: '2026-10-01T12:15:31Z'
+notes: 'Dataset page says 1,200 images (listed as 1,120 in the index); images.zip actually holds 1,117
+  TIFFs (2.35 GB uncompressed, 1.95 GB compressed) and positions.zip 1,117 matching .txt files, so n_items
+  is the listed count. The page calls the ground truth biological labels with coordinates; the files hold
+  per-cell rows of 4 coordinates consistent with the paper bounding rectangles drawn by an expert in Matlab
+  (Training Image Labeler); exact column meaning is not documented on the page, so the interpretation
+  is inferred. Pixel size, stain and magnification not stated on the page or in the paper text read. Paper
+  also mentions a separate ~130-image test set; no split is provided in the zips. enricher: size_bytes
+  = 1,950,875,459 B from the complete zip listing (was null); sampled image is 8-bit RGB (3 samples),
+  channels left at 1.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://data.broadinstitute.org/bbbc/BBBC042/images.zip
+  - https://data.broadinstitute.org/bbbc/BBBC042/positions.zip
+  bytes_downloaded: 1792387
+  size_source: file-listing
+  layout:
+    tree: 'images.zip     images/<n>.tif      1,117 files (2.3 GB uncompressed)
+
+      positions.zip  positions/<n>.txt   1,117 files (607.5 KB)
+
+      '
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.broadinstitute.org/bbbc/BBBC042/images.zip::images/462.tif
+    - https://data.broadinstitute.org/bbbc/BBBC042/positions.zip::positions/462.txt
+    size_bytes: 2104292
+    description: One image (462.tif, 708x990 RGB) and its box file (20 rows).
+  arrays:
+  - role: raw
+    path_pattern: images.zip::images/<n>.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 708
+    - 990
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 5
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: positions.zip::positions/<n>.txt
+    format: other
+    axes: null
+    shape:
+    - 20
+    - 15
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: boxes-table
+    classes: null
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: positions/<n>.txt belongs to images/<n>.tif (same number). In 462.txt columns 5-8
+      (e.g. 900 293 975 361) fall inside the 990x708 image, consistent with pixel box corners; column
+      meaning not documented.
+  notes: 'Zip central directories read by listing.py (2,234 members, exact sizes). Probe/sample of images/462.tif:
+    RGB (photometric 2) uint8 708x990x3, uncompressed, values 5..255 (one sample). positions/462.txt read
+    with peek_archive --cat (812 B): 20 space-separated rows of 15 fields, first field "Cell", then 14
+    integers (KITTI-like layout; 4 non-zero coordinates per row, the second field is 0 or 1). Text tables
+    are not a listed format, so label format is other. Normalization unknown.'
+  inspected_at: '2026-10-01T12:15:31Z'
