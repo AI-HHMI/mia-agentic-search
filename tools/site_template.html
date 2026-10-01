@@ -65,8 +65,16 @@ button.more { margin-top: 12px; padding: 7px 14px; border-radius: 8px; border: 1
   background: var(--surface-0); color: var(--text-primary); font: inherit; cursor: pointer; }
 button.more:hover { border-color: var(--text-muted); }
 button.more:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; }
-input[type=search] { width: 100%; max-width: 360px; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--border);
-  background: var(--surface-0); color: var(--text-primary); font: inherit; margin-bottom: 12px; }
+h3 { font-size: 13px; font-weight: 600; color: var(--text-secondary); margin: 14px 0 8px; }
+h3:first-of-type { margin-top: 4px; }
+.sec { font-size: 17px; margin: 24px 0 10px; }
+.dimcard h2 .count { color: var(--text-secondary); font-weight: 400; }
+#dims { grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); }
+/* one label column for both charts in a card, so their bars start at the same x */
+.dimcard .bars { grid-template-columns: minmax(0, min(180px, 40%)) 1fr 32px; }
+ul.why { margin: 0; padding-left: 16px; }
+ul.why li { margin: 0 0 2px; }
+code { font-size: 12px; }
 #tip { position: fixed; pointer-events: none; background: var(--surface-1); color: var(--text-primary); border: 1px solid var(--border);
   border-radius: 6px; padding: 5px 8px; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.15); display: none; z-index: 10; }
 </style>
@@ -80,9 +88,11 @@ input[type=search] { width: 100%; max-width: 360px; padding: 7px 10px; border-ra
     <div class="card"><h2>Agent health: latest run per routine</h2><div class="scroll"><table id="health"></table></div></div>
     <div class="card"><h2>New records per week (last 12 weeks)</h2><div id="weekly"></div></div>
   </section>
+  <h2 class="sec">Catalog by dimensionality</h2>
+  <section class="grid charts" id="dims"></section>
   <section class="grid charts">
-    <div class="card"><h2>Records by modality</h2><div id="modality"></div></div>
     <div class="card"><h2>Records by annotation type</h2><div id="anntype"></div></div>
+    <div class="card"><h2>Why open PRs aren't merged automatically</h2><div id="reasons"></div></div>
   </section>
   <section class="card" style="margin-bottom:16px">
     <h2>Recent agent runs</h2>
@@ -90,9 +100,10 @@ input[type=search] { width: 100%; max-width: 360px; padding: 7px 10px; border-ra
     <button type="button" id="runs-more" class="more" aria-controls="runs" hidden></button>
   </section>
   <section class="card">
-    <h2>Catalog</h2>
-    <input type="search" id="q" placeholder="Filter by title, modality, organism, license…" aria-label="Filter catalog">
-    <div class="scroll"><table id="catalog"></table></div>
+    <h2>Open dataset PRs that can't be merged automatically</h2>
+    <p class="sub" id="unmerged-sub"></p>
+    <div class="scroll"><table id="unmerged"></table></div>
+    <button type="button" id="unmerged-more" class="more" aria-controls="unmerged" hidden></button>
   </section>
 </main>
 <div id="tip" role="tooltip"></div>
@@ -144,19 +155,39 @@ document.getElementById("health").innerHTML = `<tr><th>Routine</th><th>Status</t
     return `<tr><td>${esc(name)}</td><td>${statusCell(stale ? "stale" : r.status)}</td><td>${fmtTime(r.started_at)}</td></tr>`;
   }).join("");
 
-// Horizontal bars (single series: no legend; the title names it)
-function hbars(id, counts, top = 10) {
-  const el = document.getElementById(id);
-  const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, top);
+// Horizontal bars (single series: no legend; the title names it). Beyond `top` rows, the rest folds into "Other".
+function hbars(el, counts, {top = 10, unit = "datasets"} = {}) {
+  if (typeof el === "string") el = document.getElementById(el);
+  let entries = Object.entries(counts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
   if (!entries.length) { el.innerHTML = `<p class="empty">No data yet.</p>`; return; }
-  const max = entries[0][1];
+  if (entries.length > top) {
+    const rest = entries.slice(top - 1);
+    entries = [...entries.slice(0, top - 1), [`Other (${rest.length})`, rest.reduce((a, [, v]) => a + v, 0)]];
+  }
+  const max = Math.max(...entries.map(e => e[1]));
   el.innerHTML = `<div class="bars">` + entries.map(([k, v]) =>
     `<div class="row"><span class="lab" title="${esc(k)}">${esc(k)}</span><div class="track"><div class="bar" style="width:${100 * v / max}%"></div></div><span class="num">${v}</span></div>`).join("") + `</div>`;
-  el.querySelectorAll(".track").forEach((t, i) => bindTip(t, `<b>${esc(entries[i][0])}</b>: ${entries[i][1]} datasets`));
+  el.querySelectorAll(".track").forEach((t, i) => bindTip(t, `<b>${esc(entries[i][0])}</b>: ${entries[i][1]} ${unit}`));
 }
-const tally = f => recs.reduce((acc, r) => { (f(r) || []).forEach(k => acc[k] = (acc[k] || 0) + 1); return acc; }, {});
-hbars("modality", tally(r => r.imaging?.modality));
-hbars("anntype", tally(r => r.annotations?.types?.length ? r.annotations.types : ["(none)"]));
+const tally = (rows, f) => rows.reduce((acc, r) => { (f(r) || []).forEach(k => acc[k] = (acc[k] || 0) + 1); return acc; }, {});
+hbars("anntype", tally(recs, r => r.annotations?.types?.length ? r.annotations.types : ["(none)"]));
+
+// Small multiples: one card per dimensionality, each with modality and organism distributions.
+// A dataset with several modalities / organisms counts once under each.
+(function () {
+  const DIMS = [["2D", "2D images"], ["2D+t", "2D time-lapse"], ["3D", "3D volumes"], ["3D+t", "3D time-lapse"]];
+  const host = document.getElementById("dims");
+  host.innerHTML = DIMS.map(([d, name], i) => {
+    const n = recs.filter(r => r.imaging?.dimensionality === d).length;
+    return `<div class="card dimcard"><h2>${esc(d)} <span class="count">· ${esc(name)} · ${n} dataset${n === 1 ? "" : "s"}</span></h2>
+      <h3>Imaging modality</h3><div id="dim-mod-${i}"></div><h3>Organism</h3><div id="dim-org-${i}"></div></div>`;
+  }).join("");
+  DIMS.forEach(([d], i) => {
+    const rows = recs.filter(r => r.imaging?.dimensionality === d);
+    hbars(`dim-mod-${i}`, tally(rows, r => r.imaging?.modality?.length ? r.imaging.modality : ["(not stated)"]), {top: 8});
+    hbars(`dim-org-${i}`, tally(rows, r => r.imaging?.organism?.length ? r.imaging.organism : ["(not stated)"]), {top: 8});
+  });
+})();
 
 // Weekly column chart
 (function () {
@@ -194,22 +225,37 @@ function renderRuns() {
 document.getElementById("runs-more").addEventListener("click", () => { runsExpanded = !runsExpanded; renderRuns(); });
 renderRuns();
 
-// Catalog table
-function renderCatalog(q) {
-  q = q.trim().toLowerCase();
-  const rows = recs.filter(r => !q || JSON.stringify([r.title, r.imaging, r.license, r.repository, r.annotations, r.ml]).toLowerCase().includes(q))
-    .sort((a, b) => (b.provenance?.discovered_at || "").localeCompare(a.provenance?.discovered_at || ""));
-  document.getElementById("catalog").innerHTML =
-    `<tr><th>Dataset</th><th>Modality</th><th>Organism</th><th>Annotations</th><th>Tasks</th><th>License</th><th>Repository</th></tr>` +
-    rows.map(r => `<tr><td><a href="${esc(r.landing_url)}">${esc(r.title)}</a></td>
-      <td>${(r.imaging?.modality || []).map(m => `<span class="chip">${esc(m)}</span>`).join("")} ${esc(r.imaging?.dimensionality)}</td>
-      <td>${esc((r.imaging?.organism || []).join(", "))}</td>
-      <td>${r.annotations?.present ? (r.annotations.types || []).map(t => `<span class="chip">${esc(t)}</span>`).join("") : '<span class="empty">none</span>'}</td>
-      <td>${esc((r.ml?.tasks || []).join(", "))}</td><td>${esc(r.license?.spdx)}</td><td>${esc(r.repository)} ${esc(r.accession || "")}</td></tr>`).join("") +
-    (rows.length ? "" : `<tr><td class="empty" colspan="7">No matches.</td></tr>`);
+// Open dataset PRs that auto-merge leaves open, with its reasons (tools/automerge.py)
+const unmerged = DATA.unmerged;
+const shortReason = r => r.replace(/ \(.*\)$/, "").replace(/`/g, "");
+if (unmerged === null || unmerged === undefined) {
+  document.getElementById("unmerged-sub").textContent = "Not available: this page was built without GitHub access.";
+  document.getElementById("reasons").innerHTML = `<p class="empty">Not available.</p>`;
+} else {
+  const blocked = unmerged.filter(p => !p.reasons[0].startsWith("meets all criteria"));
+  document.getElementById("unmerged-sub").textContent =
+    `${blocked.length} of ${unmerged.length} open dataset PRs don't meet the auto-merge policy (tools/automerge.py). ` +
+    `Reasons come from the PRs' labels and checks when this page was built.`;
+  hbars("reasons", tally(blocked, p => [...new Set(p.reasons.map(shortReason))]), {top: 8, unit: "PRs"});
+  const md = t => esc(t).replace(/`([^`]+)`/g, "<code>$1</code>");
+  const INITIAL = 25;
+  let expanded = false;
+  const render = () => {
+    const shown = expanded ? blocked : blocked.slice(0, INITIAL);
+    document.getElementById("unmerged").innerHTML = blocked.length
+      ? `<tr><th>PR</th><th>Dataset</th><th>Dim</th><th>Opened</th><th>Why it isn't merged</th></tr>` +
+        shown.map(p => `<tr><td><a href="${esc(p.url)}">#${p.number}</a></td><td>${esc(p.title)}</td><td>${esc(p.dim || "—")}</td>
+          <td>${new Date(p.created_at).toLocaleDateString(undefined, {dateStyle: "medium"})}</td>
+          <td><ul class="why">${p.reasons.map(r => `<li>${md(r)}</li>`).join("")}</ul></td></tr>`).join("")
+      : `<tr><td class="empty">Every open dataset PR meets the policy.</td></tr>`;
+    const btn = document.getElementById("unmerged-more");
+    btn.hidden = blocked.length <= INITIAL;
+    btn.textContent = expanded ? "Show less" : `Show all ${blocked.length}`;
+    btn.setAttribute("aria-expanded", String(expanded));
+  };
+  document.getElementById("unmerged-more").addEventListener("click", () => { expanded = !expanded; render(); });
+  render();
 }
-document.getElementById("q").addEventListener("input", e => renderCatalog(e.target.value));
-renderCatalog("");
 </script>
 </body>
 </html>
