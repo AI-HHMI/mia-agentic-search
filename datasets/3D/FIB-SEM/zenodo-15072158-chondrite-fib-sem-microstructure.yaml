@@ -1,10 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-15072158-chondrite-fib-sem-microstructure
-title: 'Carbonaceous Chondrite WIS91600: Pre-processed 3D FIB-SEM Images and Annotations for Microstructure Segmentation'
+title: 'Carbonaceous Chondrite WIS91600: Pre-processed 3D FIB-SEM Images and Annotations for Microstructure
+  Segmentation'
 short_name: Chondrite microstructure labels (FIB-SEM)
-description: Pre-processed FIB-SEM volume (1,000 slices, 10 x 10 x 20 nm voxels) of the CM-like carbonaceous chondrite meteorite
-  WIS91600 with pixel-wise labels for three microstructural features (framboids, plaquettes, cauliflowers), used to benchmark
-  a few-shot learning workflow for 3D semantic segmentation.
+description: Pre-processed FIB-SEM volume (1,000 slices, 10 x 10 x 20 nm voxels) of the CM-like carbonaceous
+  chondrite meteorite WIS91600 with pixel-wise labels for three microstructural features (framboids, plaquettes,
+  cauliflowers), used to benchmark a few-shot learning workflow for 3D semantic segmentation.
 landing_url: https://zenodo.org/records/15072158
 doi: 10.5281/zenodo.15072158
 repository: Zenodo
@@ -39,8 +40,7 @@ annotations:
   types:
   - semantic-segmentation
   coverage: unknown
-  format: Pixel-wise labels in NLM9_labels.tar.gz, one folder per class (e.g. NLM9_labels/plaquette/); label file format not
-    inspected
+  format: 'Binary 0/255 TIFF masks, one 2D slice per file, in one folder per class: NLM9_labels/{framboid,plaquette,cauliflower}/<Class>NNNN.tiff'
   source: unknown
 ml:
   tasks:
@@ -57,13 +57,87 @@ provenance:
   evidence_urls:
   - https://zenodo.org/api/records/15072158
   - https://zenodo.org/api/records/15072158/files/NLM9.tar.gz/content
-  confidence: 0.7
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-01T12:55:51Z'
-notes: Peeked the start of NLM9.tar.gz (TIFF slices, ~7 MB each, e.g. NLM9/A3D_cauliflower_0001-NLM0391.tiff) and NLM9_labels.tar.gz
-  (per-class folders such as plaquette/); label file format and exact slice counts were not verified. n_items=1 volume of
-  1,000 slices per the record description. size_bytes is the sum of the two archives. No paper is linked on the Zenodo record
-  and a Europe PMC/Crossref title search found none, so the benchmark paper was not read.
+  annotations_verified: true
+  last_checked: '2026-10-01T13:19:17Z'
+notes: 'Archives are tar.gz (NLM9.tar.gz with TIFF slices named A3D_cauliflower_0001-NLM<NNNN>.tiff, NLM9_labels.tar.gz
+  with per-class folders); exact slice counts were not verified because tar.gz has no index. n_items=1
+  volume of 1,000 slices per the record description. size_bytes is the sum of the two archives. No paper
+  is linked on the Zenodo record and a Europe PMC/Crossref title search found none, so the benchmark paper
+  was not read. enricher: start of both archives streamed and 2 raw + 2 label slices measured; annotations.format
+  updated (labels are per-class binary masks).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/records/15072158
+  - https://zenodo.org/records/15072158/files/NLM9.tar.gz
+  - https://zenodo.org/records/15072158/files/NLM9_labels.tar.gz
+  bytes_downloaded: 14680064
+  size_source: file-listing
+  layout:
+    tree: "NLM9.tar.gz (record listing)\n  NLM9/A3D_cauliflower_0001-NLM<NNNN>.tiff   2D slices, 7,207,410\
+      \ B each (+ macOS ._ / PaxHeader entries)\nNLM9_labels.tar.gz\n  NLM9_labels/framboid/Framboid<NNNN>.tiff\n\
+      \  NLM9_labels/plaquette/...\n  NLM9_labels/cauliflower/...\n  (+ .DS_Store, ._ AppleDouble files)\n"
+    n_files: 2
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: NLM9.tar.gz::NLM9/A3D_cauliflower_0001-NLM<NNNN>.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 1800
+    - 4000
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 252
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: NLM9_labels.tar.gz::NLM9_labels/<class>/<Class><NNNN>.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 1800
+    - 4000
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: null
+      name: framboid
+    - id: null
+      name: plaquette
+    - id: null
+      name: cauliflower
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: One binary mask per class and slice; the 4-digit number in <Class>NNNN.tiff presumably
+      matches NLM<NNNN> of the raw slice (naming only, not confirmed). Raw and mask slices have the same
+      1800x4000 shape.
+  notes: 'Both files are tar.gz, which has no index, so members were read by streaming the start of each
+    archive (12.6 MB and 2.1 MB compressed) and decompressing in memory; no member list or slice count
+    is available without reading the whole archive. Raw slices NLM0391 and NLM0684: uint8 1800x4000 uncompressed
+    single-page TIFF, 0..252, mean 103 / 98, no physical calibration (resolution tag 1000000/1, no unit).
+    Mask slices framboid/Framboid0753 and Framboid0303: uint8 1800x4000, values {0, 255}, mean 23 / 33.
+    Members appear in arbitrary order inside the archives. Every raw slice is 7,207,410 B, so the 1,000-slice
+    volume is ~7.2 GB uncompressed (if all slices share that size); the labels archive is highly compressible
+    (2.1 MB of it inflated to over 300 MB). No small sample unit exists without streaming the archives.
+    Plaquette and cauliflower masks were not reached.'
+  inspected_at: '2026-10-01T13:19:17Z'
