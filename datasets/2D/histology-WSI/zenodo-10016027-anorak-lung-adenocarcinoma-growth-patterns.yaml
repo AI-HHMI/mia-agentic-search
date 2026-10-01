@@ -1,4 +1,4 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-10016027-anorak-lung-adenocarcinoma-growth-patterns
 title: Lung adenocarcinoma growth pattern annotations for H&E images
 short_name: Lung adenocarcinoma growth patterns (H&E)
@@ -45,7 +45,7 @@ data:
   formats:
   - png
   - jpeg
-  size_bytes: 1800700000
+  size_bytes: 1892050610
   n_items: 731
   access: open
   download_url: https://zenodo.org/records/10016027/files/trainset.zip?download=1
@@ -55,7 +55,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: sparse
-  format: MATLAB .mat mask per image (trainset/mask/), class ids 0-6 with a colour legend on the Zenodo page
+  format: MATLAB .mat mask per image (trainset/mask/), class ids 0-6 with a colour legend on the Zenodo
+    page
   source: manual
 ml:
   tasks:
@@ -77,13 +78,75 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T15:25:00Z'
+  last_checked: '2026-10-01T16:09:21Z'
 notes: 'License is Zenodo''s "Academic-Use Only Data License": the page says the data is for academic
-  non-commercial use only; commercial users must email the TRACERx CTC. Files: trainset.zip (1.8 GB,
-  1,462 members: trainset/image 731 PNG/JPG tiles, trainset/mask 731 .mat masks, listed with peek_archive),
-  plus two TXT files for figure 5b (not training data). size_bytes is the trainset.zip uncompressed size
-  (1,800.7 MB); the Zenodo page lists 1.9 GB for all three files. Annotation per paper: three pathologists
-  sparsely annotated 49 WSIs, 3,662 patches of 768x768 px at 20x (~0.45 um/px) for six growth patterns;
-  the 731 released tiles are the training set, tile size and exact pixel size of the released tiles not
-  stated on the Zenodo page and not checked. Voxel size left null for that reason. Split not provided
-  (paper used fivefold cross-validation). Paper Methods and Data availability read via Europe PMC.'
+  non-commercial use only; commercial users must email the TRACERx CTC. Files: trainset.zip (1.8 GB, 1,462
+  members: trainset/image 731 PNG/JPG tiles, trainset/mask 731 .mat masks, listed with peek_archive),
+  plus two TXT files for figure 5b (not training data). Annotation per paper: three pathologists sparsely
+  annotated 49 WSIs, 3,662 patches of 768x768 px at 20x (~0.45 um/px) for six growth patterns; the 731
+  released tiles are the training set, tile size and exact pixel size of the released tiles not stated
+  on the Zenodo page and not checked. Voxel size left null for that reason. Split not provided (paper
+  used fivefold cross-validation). Paper Methods and Data availability read via Europe PMC. enricher:
+  size_bytes set to the complete Zenodo listing total 1,892,050,610 B (was the rounded uncompressed zip
+  size); mask files seen in the listing.'
+technical:
+  method: sample
+  inspected_at: '2026-10-01T16:09:21Z'
+  inspected_urls:
+  - https://zenodo.org/records/10016027
+  - https://zenodo.org/records/10016027/files/trainset.zip
+  bytes_downloaded: 8555700
+  size_source: file-listing
+  layout:
+    tree: "./\n  trainset.zip\n    trainset/image/   731 files  1.8 GB   .png 589, .jpg 142   trainNNN_<slide>.{png,jpg}\n\
+      \    trainset/mask/    731 files  14.2 MB  .mat                 trainNNN_<slide>.mat\n  fig5b_lattice_individual_pix.txt\n\
+      \  fig5b_tx_individual_pix.txt\n3 files (1462 zip members), 1,892,050,610 B\n"
+    n_files: 1464
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/10016027/files/trainset.zip
+    size_bytes: 8555700
+    description: Tile trainset/image/train001_Da382.png read from the zip by range; its mask trainset/mask/train001_Da382.mat
+      could not be parsed by the tools.
+  arrays:
+  - role: raw
+    path_pattern: trainset.zip::trainset/image/trainNNN_<slide>.{png,jpg}
+    format: png
+    axes: yxs
+    shape:
+    - 2000
+    - 2000
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 142 of the 731 tiles are .jpg (lossy JPEG); the sampled tile is PNG.
+  - role: label
+    path_pattern: trainset.zip::trainset/mask/trainNNN_<slide>.mat
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: unknown
+    classes: null
+    n_ids_observed: null
+    alignment: unknown
+    alignment_notes: Mask shares the tile's file stem (train001_Da382.png <-> train001_Da382.mat).
+  notes: 'Complete Zenodo listing with zip members expanded. Sample of train001_Da382.png: RGB uint8 2000x2000,
+    min 0, max 255, mean 168.9 (one sample; hint "possibly contrast-stretched" not adopted). Mask .mat
+    header reads "MATLAB 5.0 MAT-file, Platform: MACI64" (MAT v5, not HDF5), which sample.py cannot read,
+    so mask shape, dtype and class encoding were not observed; the record says class ids 0-6. Tile size
+    may vary (only one tile seen).'
