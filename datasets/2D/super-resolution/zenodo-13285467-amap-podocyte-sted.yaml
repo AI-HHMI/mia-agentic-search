@@ -1,10 +1,10 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-13285467-amap-podocyte-sted
 title: AMAP Dataset (Automatic Morphological Analysis of Podocytes)
 short_name: Podocyte slit diaphragm segmentation (STED)
-description: 209 super-resolution STED microscopy images of mouse kidney tissue (podocyte foot processes) with manual
-  annotations of slit diaphragms and foot processes, split into 190 training and 19 validation images. Built
-  for training and validating the AMAP deep learning model for podocyte morphology analysis.
+description: 209 super-resolution STED microscopy images of mouse kidney tissue (podocyte foot processes)
+  with manual annotations of slit diaphragms and foot processes, split into 190 training and 19 validation
+  images. Built for training and validating the AMAP deep learning model for podocyte morphology analysis.
 landing_url: https://zenodo.org/records/13285467
 doi: 10.5281/zenodo.13285467
 repository: Zenodo
@@ -23,7 +23,7 @@ imaging:
   - super-resolution
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 2
   organism:
   - Mus musculus
   sample: Mouse kidney tissue, podocyte foot processes and slit diaphragm
@@ -66,12 +66,82 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T22:10:00Z'
+  last_checked: '2026-10-06T21:52:06Z'
 notes: 'Zenodo record states 209 TIF images (190 train / 19 validation) with labels for all 209; zip listings
-  confirm training.zip 190 TIFs, validation.zip 19 TIFs, labels.zip 209 TIFs (named <image>_bin.tif). Label
-  dtype/encoding not inspected. Pixel size, microscope and annotation procedure are not on the Zenodo page
-  and could not be read from the paper (publisher full text not open access in Europe PMC; bioRxiv returned only
-  the abstract/429), so voxel_size_nm and channels are null. Zenodo says "manual annotations of slit diaphragms
-  and foot processes"; the preprint abstract mentions 3 classes (background, foot process, slit diaphragm). Image
-  names indicate Nephrin and Podocin stains but stains were not confirmed. Zenodo license is CDLA-Permissive-1.0
- .'
+  confirm training.zip 190 TIFs, validation.zip 19 TIFs, labels.zip 209 TIFs (named <image>_bin.tif).
+  Pixel size, microscope and annotation procedure are not on the Zenodo page and could not be read from
+  the paper (publisher full text not open access in Europe PMC; bioRxiv returned only the abstract/429),
+  so voxel_size_nm is null. Zenodo says "manual annotations of slit diaphragms and foot processes"; the
+  preprint abstract mentions 3 classes (background, foot process, slit diaphragm). Image names indicate
+  Nephrin and Podocin stains but stains were not confirmed. Zenodo license is CDLA-Permissive-1.0 . enricher:
+  channels 2 (ImageJ header); labels 3-valued, half resolution.'
+technical:
+  method: sample
+  inspected_at: '2026-10-06T21:52:06Z'
+  inspected_urls:
+  - https://zenodo.org/records/13285467
+  - https://zenodo.org/api/records/13285467/files/training.zip/content
+  - https://zenodo.org/api/records/13285467/files/labels.zip/content
+  bytes_downloaded: 8015182
+  size_source: file-listing
+  layout:
+    tree: "zenodo 13285467 (3 files, 382,296,640 B)\n  training.zip    training/<name>.tif     190 files\
+      \ (1.2 GB unzipped)\n  validation.zip  validation/<name>.tif    19 files\n  labels.zip      labels/<name>_bin.tif\
+      \   209 files"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/13285467/files/training.zip/content::training/41_P0_BBC_Nephrin635_Podocin594_Series041_MIP(1-23).tif
+    - https://zenodo.org/api/records/13285467/files/labels.zip/content::labels/41_P0_BBC_Nephrin635_Podocin594_Series041_MIP(1-23)_bin.tif
+    size_bytes: 9532392
+    description: Training image 41_P0_BBC_Nephrin635_Podocin594_Series041_MIP(1-23).tif and its label
+      _bin.tif.
+  arrays:
+  - role: raw
+    path_pattern: '{training,validation}/*.tif'
+    format: tiff
+    axes: cyx
+    shape:
+    - 2
+    - 2048
+    - 2048
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ composite, 2 channels (names suggest Nephrin and Podocin).
+  - role: label
+    path_pattern: labels/*_bin.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    encoding: semantic-ids
+    classes: null
+    n_ids_observed: 3
+    alignment: scaled
+    alignment_notes: labels/<name>_bin.tif pairs with training/ or validation/<name>.tif; in the sample
+      the label is 1024x1024 vs the 2048x2048 image (factor 2). Values {0,127,255}; the preprint names
+      3 classes (background, foot process, slit diaphragm) but not the value mapping.
+  notes: 'Complete listing (Zenodo API + zip directories). Sample pair read by range with a short script
+    (zipfile + tifffile; sample.py takes extension-less ::member for HDF5, and probe.py could not read
+    the deflated member). Image: ImageJ 2-channel uint8 2048x2048, uncompressed; only 11 distinct values
+    in this file (0..255). Label: uint8 1024x1024, {0: 1,041,695, 127: 688, 255: 6,193}. Image header:
+    XResolution 88.04 px/micron (unit micron), i.e. 11.36 nm/px, in this one file only; not used as voxel_size_nm
+    (not stated in docs, one file, label grid is 2x coarser). Pixel size still not found in docs.'
