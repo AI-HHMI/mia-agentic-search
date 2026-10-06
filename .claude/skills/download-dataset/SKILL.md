@@ -1,12 +1,13 @@
 ---
 name: download-dataset
-description: Download a ready catalog record (its sample unit, or with whole the full dataset, crop by crop) and convert it to OME-Zarr in the miao layout (AI-HHMI/miao#13) with the TensorSwitch MCP, verified against the source. Args are the record (path or id), optionally root=<folder> (default demo), name=<short dataset name>, label_class=<class>[,<class>...] (one per label array), organism=<NCBI name>, whole, labelled-only, keep-source and dry-run.
+description: Download a ready catalog record (its sample unit, or with whole the full dataset, crop by crop) and convert it to OME-Zarr in the miao layout (AI-HHMI/miao#13) with the TensorSwitch MCP, verified against the source. Args are the record (path or id), optionally root=<folder> (default demo), name=<short dataset name>, label_class=<class>[,<class>...] (one per label array), organism=<NCBI name>, whole, labelled-only, keep-source and dry-run. With `next` instead of a record, it runs unattended: it takes the next download-ready dataset that isn't on the downloads list, downloads it, and records the outcome (the hourly cron job).
 ---
 
 # download-dataset
 
 Arguments: `$ARGUMENTS`. Parse the record (a path under `datasets/` or a record id), `root` (default
 `demo`), `name`, `label_class`, `organism`, `whole`, `labelled-only`, `keep-source` and `dry-run`.
+If the argument is `next`, follow **Unattended mode** at the end instead.
 
 **Where the data goes is `root`, and only `root`:** converted crops go to `<root>/data/`, downloads in
 progress to `<root>/staging/<record id>/`. `tools/miao_layout.py --root` builds every path from it.
@@ -164,3 +165,35 @@ it's skipped) and `crop-002` (the unlabeled test volume, raw only). Whole-datase
 `embedseg-mouse-skull-nuclei-cbg` (`--label-class nucleus --name embedseg-mouse-skull --whole`):
 `demo/data/lm-mouse-embedseg-mouse-skull/` with 3 crops (train X1, train X2_left, test X2_right), each
 raw + `labels/manual_gt-nucleus-instance/`, all `pass`, about 26 s.
+
+## Unattended mode (`next`)
+The hourly cron job (`tools/cron/download_next.sh`) runs `claude -p "/download-dataset next"`. Nobody is
+there to answer, so this mode **never asks**. It converts **one dataset** per run, then stops.
+The cron job sets `$TENSORSWITCH_SRC` and `$TENSORSWITCH_REPO`; use them instead of `$TS` / `$TS_REPO`
+(no `export` or variable assignments: the allowed tools are `python tools/…`, `pixi run --manifest-path …`,
+`mkdir -p`, `ls`, `du`, `find`, `cat`, and Read / Glob / Grep).
+```bash
+python tools/publish.py state-pull --routine downloader          # restores state/downloads.json
+python tools/download_queue.py next --root <root> --max-gb 10     # the next download-ready dataset, smallest first
+```
+- `"next": null` means nothing is left. Report that and stop.
+- Otherwise work on that record, steps 2–5 above, with these changes:
+  - **Names.** Settle `label_class`, `organism` and `name` from the record alone. If the label class
+    isn't stated clearly (title, `annotations.format`, `classes`), or a label holds several classes,
+    don't guess: record `skipped` with the reason, then go on to the next record from `next` (one
+    record a run still holds; skipping doesn't count as the run's record).
+  - **Scope.** Plan with `--whole` when `mode` is `whole`, else the sample unit.
+  - **Planning.** Write the plan with `--out <root>/staging/<id>-plan.json` (no shell redirects in this mode).
+  - **Running.** Use the runner (4b) with `--summary-out <root>/staging/<id>-summary.json`:
+    `pixi run --manifest-path "$TENSORSWITCH_REPO/pyproject.toml" python "$PWD/tools/miao_run.py" <plan> --summary-out <summary>`
+- **Record the outcome**, always, then save the list:
+  ```bash
+  python tools/download_queue.py record <id> downloaded --plan <plan> --summary <summary>   # runner exit 0
+  python tools/download_queue.py record <id> failed --reason "<failed crops, first check>" --plan <plan> --summary <summary>
+  python tools/download_queue.py record <id> skipped --reason "<why>"                      # e.g. plan stop reasons
+  python tools/publish.py state-push --routine downloader
+  ```
+  A record that failed twice isn't offered again; `skipped` is permanent until someone removes the entry.
+- Never edit a record, never push to `main`. The only thing pushed is the downloads list, to
+  `claude/state/downloader`.
+- End with one short line: what was downloaded (crops, size on disk) or why nothing was.

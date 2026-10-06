@@ -4,6 +4,7 @@
     python tools/publish.py dataset <record.yaml>       # push record to its own branch claude/dataset/<id>,
                                                         # filed at datasets/<dimensionality>/<modality>/<id>.yaml
     python tools/publish.py state-push --routine R     # save frontier + run logs to claude/state/R
+                                                        # (downloader: also state/downloads.json)
     python tools/publish.py pr-pull <id>               # enricher: put claude/dataset/<id>'s record in the tree
     python tools/publish.py pr-update <record.yaml>    # enricher: commit it back onto that branch
 
@@ -41,7 +42,8 @@ def remote_exists(branch):
 
 
 def state_paths(routine):
-    return [FRONTIER_DIR / f"{routine}.yaml", *sorted(RUNS_DIR.glob(f"{routine}-*.json"))]
+    extra = [STATE_DIR / "downloads.json"] if routine == "downloader" else []   # tools/download_queue.py
+    return [FRONTIER_DIR / f"{routine}.yaml", *sorted(RUNS_DIR.glob(f"{routine}-*.json")), *extra]
 
 
 def state_pull(routine):
