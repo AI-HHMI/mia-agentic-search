@@ -26,10 +26,7 @@ imaging:
   - SBF-SEM
   - ssSEM
   dimensionality: 3D
-  voxel_size_nm:
-    x: 15
-    y: 15
-    z: 40
+  voxel_size_nm: null
   channels: null
   organism:
   - Mus musculus
@@ -73,15 +70,16 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-09-30T18:59:35Z'
+  last_checked: '2026-10-06T22:45:00Z'
 notes: 'Segmentations are the h5 mitochondria masks of the three raw volumes (brainstem 3983 images at 15 nm/40
   nm; intestine 1000 images at 8 nm/50 nm; testis 2605 images at 15 nm/50 nm per paper). Masks come from a pre-trained
   3D U-Net (model-predicted, then assigned/proofread via webKnossos), not fully manual labels; the paper''s human
-  ground-truth training sub-volumes were not seen in the EMPIAR listing. Voxel size given is the brainstem/testis
-  lateral value; intestine is 8 nm lateral, 50 nm z. Size is the total entry size (996.4 GB) from the search API.
-  Download method (Aspera/FTP/HTTP) not checked in detail. Checked dataset page, API record and paper Methods. enricher:
-  FTP listing has 3893 brainstem slices (paper: 3983) and a stray raw_image/ folder of .partial/.aspx upload leftovers;
-  masks are per-slice uint32 instance IDs in h5 (sampled).'
+  ground-truth training sub-volumes were not seen in the EMPIAR listing. enricher: voxel size set to null (was 15x15x40
+  nm): subsets differ per EMPIAR API image sets - intestine 8x8x50 nm, testis 15x15x50 nm, brainstem (Hualab-DCN)
+  15x15x50 nm (paper: 40 nm z for brainstem; conflict noted). Size is the total entry size (996.4 GB) from the search
+  API. Download method (Aspera/FTP/HTTP) not checked in detail. Checked dataset page, API record and paper Methods.
+  enricher: FTP listing has 3893 brainstem slices (paper: 3983) and a stray raw_image/ folder of .partial/.aspx
+  upload leftovers; masks are per-slice uint32 instance IDs in h5 (sampled).'
 technical:
   method: sample
   inspected_urls:
@@ -92,15 +90,24 @@ technical:
   bytes_downloaded: 34604767
   size_source: page-stated
   layout:
-    tree: |
-      ./12535.xml
+    tree: './12535.xml
+
       data/HuaLab-mouse-intestinal-tissue/intestinal_mito_segmentation_h5/   1000 files  471.5 MB  .h5
+
       data/HuaLab-mouse-intestinal-tissue/raw/                               1000 files   34.6 GB  .tiff
+
       data/HuaLab_mouse_testis_tissue/raw/                                   2605 files  133.8 GB  .tiff
+
       data/HuaLab_mouse_testis_tissue/testis_mito_segmentation_h5/           2605 files    1.6 GB  .h5
+
       data/Hualab-DCN-A23-CBA-2M/brainstem_mito_segmentation_h5/             3893 files   16.6 GB  .h5
+
       data/Hualab-DCN-A23-CBA-2M/raw/                                        3893 files  885.8 GB  .tif
-      data/Hualab-DCN-A23-CBA-2M/raw_image/                                   319 files    2.5 KB  .partial 160, .aspx 159
+
+      data/Hualab-DCN-A23-CBA-2M/raw_image/                                   319 files    2.5 KB  .partial 160,
+      .aspx 159
+
+      '
     n_files: 15316
     listing_complete: true
   sample:
@@ -129,7 +136,7 @@ technical:
     alignment: not-applicable
     alignment_notes: null
   - role: label
-    path_pattern: data/*/*_mito_segmentation_h5/*.h5
+    path_pattern: data/*/*_mito_segmentation_h5/*.h5 (data)
     format: hdf5
     axes: yx
     shape:
@@ -156,5 +163,7 @@ technical:
     uint8 packbits; intestine h5 ''data'' [5024,6808] uint32 gzip. Sample: intestine slice 1 raw 2-248 (mean 130);
     mask central crop [2512,3404] with 84 distinct values, max 251 (instance-like IDs, not docs-confirmed beyond
     the record''s ''instance-segmentation''). Size kept as the EMPIAR API total (996.4 GB); the HTTP index sums
-    to ~1.07 TB with rounded sizes. Testis files and raw/h5 slice-by-slice pairing not checked.'
+    to ~1.07 TB with rounded sizes. Testis files and raw/h5 slice-by-slice pairing not checked. Second pass 2026-10-06:
+    h5 dataset name data (probe), written as path_pattern (data); reprobed/resampled intestine slice 1 (same values).
+    Voxel sizes per subset in record notes.'
   inspected_at: '2026-09-30T18:59:35Z'
