@@ -50,7 +50,7 @@ MAX_LEN = 50  # GitHub's label name limit
 
 
 def _label(prefix, value):
-    return (prefix + str(value))[:MAX_LEN]
+    return (prefix + str(value))[:MAX_LEN].rstrip()   # GitHub strips a trailing space, so a cut there would 404
 
 
 def voxel_size_found(im):
@@ -156,6 +156,19 @@ def sync(number, repo_labels, rec=None, paths=None, have=None):
     print(f"#{number} {rec.get('id')}: +{add} -{remove}")
 
 
+def sync_all(items, repo_labels):
+    """sync() each (number, kwargs); one failing PR is reported and doesn't stop the others."""
+    failed = []
+    for number, kw in items:
+        try:
+            sync(number, repo_labels, **kw)
+        except SystemExit as e:
+            print(f"#{number}: FAILED {e}")
+            failed.append(number)
+    if failed:
+        sys.exit(f"{len(failed)} PR(s) failed: {failed}")
+
+
 def main():
     if sys.argv[1:2] != ["sync"]:
         ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -177,16 +190,15 @@ def main():
         paths_by_id = {Path(p).stem: p for p in _run("git", "ls-tree", "-r", "--name-only", "origin/main", "--", "datasets/").split()
                        if p.endswith(".yaml")}
         prs = json.loads(_run("gh", "pr", "list", "--state", "merged", "--limit", "2000", "--json", "number,headRefName,labels"))
+        items = []
         for pr in prs:
             if pr["headRefName"].startswith(DATASET_BRANCH_PREFIX):
-                rec_id = pr["headRefName"].removeprefix(DATASET_BRANCH_PREFIX)
-                rec, paths = record_on_main(rec_id, paths_by_id)
-                sync(pr["number"], repo_labels, rec, paths, {lab["name"] for lab in pr["labels"]})
+                rec, paths = record_on_main(pr["headRefName"].removeprefix(DATASET_BRANCH_PREFIX), paths_by_id)
+                items.append((pr["number"], {"rec": rec, "paths": paths, "have": {lab["name"] for lab in pr["labels"]}}))
+        sync_all(items, repo_labels)
         return
     prs = json.loads(_run("gh", "pr", "list", "--state", "open", "--limit", "500", "--json", "number,headRefName"))
-    for pr in prs:
-        if pr["headRefName"].startswith(DATASET_BRANCH_PREFIX):
-            sync(pr["number"], repo_labels)
+    sync_all([(pr["number"], {}) for pr in prs if pr["headRefName"].startswith(DATASET_BRANCH_PREFIX)], repo_labels)
 
 
 if __name__ == "__main__":
