@@ -1,0 +1,178 @@
+schema_version: '1.2'
+id: zenodo-14330011-synapsenet-training-tem-tomograms
+title: SynapseNet Training Data
+short_name: Synaptic vesicle and active zone tomograms (TEM)
+description: Room-temperature single-axis TEM tomograms of Schaffer collateral and mossy fiber synapses in mouse organotypic
+  hippocampal slices (high-pressure frozen) plus chemically fixed mouse tissue, stored as HDF5 with raw volumes and IMOD-derived
+  labels for synaptic vesicles (instance masks) and active zones (binary masks), in train and test folders. Used to train
+  SynapseNet.
+landing_url: https://zenodo.org/records/14330011
+doi: 10.5281/zenodo.14330011
+repository: Zenodo
+accession: '14330011'
+authors:
+- Constantin Pape
+publications:
+- title: 'SynapseNet: Deep learning for automatic synapse reconstruction'
+  doi: 10.1091/mbc.e24-11-0519
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC12483319/
+date_published: '2024-12-01'
+imaging:
+  modality:
+  - TEM
+  dimensionality: 3D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Mus musculus
+  sample: Mouse hippocampal organotypic slices (Schaffer collateral and mossy fiber synapses), high-pressure frozen, plus
+    chemically fixed CA3 tissue
+  labels_stains: []
+data:
+  formats:
+  - hdf5
+  size_bytes: 5506362171
+  n_items: 351
+  access: open
+  download_url: https://zenodo.org/records/14330011
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - semantic-segmentation
+  - synapse
+  - organelle
+  coverage: dense
+  format: HDF5 datasets labels/vesicles (instance masks) and labels/AZ (binary active zone masks) alongside raw, from IMOD
+    annotations
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: null
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-01T16:45:36Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/14330011
+  - https://zenodo.org/api/records/14330011/files/synapse-net.zip/content
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12483319/fullTextXML
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-01T18:37:12Z'
+notes: 'Zip listing: vesicles/ (train 20 chemical_fixation + 137 single_axis_tem, test 3 + 15) and active_zones/ (train 18
+  + 114, test 6 + 38) HDF5 files, 351 files in total; the same tomogram can appear in both folders with different labels,
+  so the number of distinct tomograms is lower than 351. Voxel size is not stated on the Zenodo record or in the paper text
+  that was read (the paper says average pixel sizes are stored in the SynapseNet python library); acquisition was a 200 kV
+  JEM-2100 at 30,000x magnification, tilt range +/-60 degrees. The record description cites the SynapseNet paper as "preprint
+  to be published"; the published version is listed under publications. Related records from the same group (inner ear ribbon
+  synapses, zenodo 14232607) are separate datasets. Annotations were exported from IMOD and post-processed; the original studies
+  are Imig et al. 2014 and Maus et al. 2020.'
+technical:
+  method: sample
+  inspected_at: '2026-10-01T18:37:12Z'
+  inspected_urls:
+  - https://zenodo.org/records/14330011
+  - https://zenodo.org/records/14330011/files/synapse-net.zip::vesicles/test/chemical_fixation/tomogram-004.h5
+  - https://zenodo.org/records/14330011/files/synapse-net.zip::active_zones/test/chemical_fixation/20171006_05_MS.h5
+  bytes_downloaded: 23531339
+  size_source: file-listing
+  layout:
+    tree: |
+      synapse-net.zip  (5.5 GB, the only file; 351 .h5)
+        vesicles/{train,test}/{chemical_fixation,single_axis_tem}/tomogram-NNN.h5
+            train 20 + 137, test 3 + 15   (raw, labels/vesicles)
+        active_zones/{train,test}/{chemical_fixation,single_axis_tem}/<name>.h5
+            train 18 + 114, test 6 + 38   (raw, labels/AZ)
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/14330011/files/synapse-net.zip::vesicles/test/chemical_fixation/tomogram-004.h5
+    size_bytes: 9664684
+    description: 'Smallest vesicle file: one 84x446x290 tomogram with its vesicle instance labels.'
+  arrays:
+  - role: raw
+    path_pattern: '*/*/*/*.h5 :: raw'
+    format: hdf5
+    axes: null
+    shape:
+    - 84
+    - 446
+    - 290
+    shape_varies: true
+    dtype: int8
+    compression: gzip
+    lossy: false
+    chunks:
+    - 11
+    - 56
+    - 73
+    value_range:
+    - -128
+    - 127
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: 'vesicles/*/*/*.h5 :: labels/vesicles'
+    format: hdf5
+    axes: null
+    shape:
+    - 84
+    - 446
+    - 290
+    shape_varies: true
+    dtype: uint32
+    compression: gzip
+    lossy: false
+    chunks:
+    - 6
+    - 56
+    - 37
+    value_range:
+    - 0
+    - 239
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 239
+    alignment: same-grid
+    alignment_notes: Stored next to raw in the same HDF5 file with identical shape.
+  - role: label
+    path_pattern: 'active_zones/*/*/*.h5 :: labels/AZ'
+    format: hdf5
+    axes: null
+    shape:
+    - 84
+    - 446
+    - 446
+    shape_varies: true
+    dtype: int8
+    compression: gzip
+    lossy: false
+    chunks:
+    - 11
+    - 56
+    - 56
+    value_range:
+    - 0
+    - 2
+    encoding: binary
+    classes: null
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: Same file and shape as raw; the two values observed are 0 and 2 (not 0/1).
+  notes: 'Complete Zenodo listing (1 zip, 5,506,362,171 B, 351 members). probe.py stops at 8 MB for zip members, so a short
+    script read two whole members (peek_archive.read_member + h5py, after Zenodo TLS retries): vesicles/test/chemical_fixation/tomogram-004.h5
+    and active_zones/test/chemical_fixation/20171006_05_MS.h5. raw is int8 over the full range [-128, 127] in both (likely
+    rescaled, not documented); vesicle labels 239 values (238 vesicles + background); AZ labels two values {0, 2}. No voxel-size
+    attributes in either file.'
