@@ -37,17 +37,18 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: null
+  size_bytes: 17246950461
   n_items: 22
   access: open
-  download_url: https://idr.openmicroscopy.org/webclient/?show=project-801
-  download_method: other
+  download_url: https://ftp.ebi.ac.uk/pub/databases/IDR/idr0062-blin-nuclearsegmentation/
+  download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
   coverage: dense
-  format: per-nucleus mask ROIs attached to images in IDR (one mask per Z plane per nucleus)
+  format: one labelled mask TIFF per image (<name>_Manual.tif, float32 nucleus IDs) on the IDR FTP mirror; also
+    OMERO Mask ROIs in IDR
   source: manual
 ml:
   tasks:
@@ -72,72 +73,90 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-09-30T21:52:12Z'
+  last_checked: '2026-10-06T23:59:00Z'
 notes: 'Voxel size varies by subset (checked via IDR API): blastocysts 0.360x0.360x0.500 um, acini 0.238x0.238x0.500
   um, E7.5 0.284x0.284x0.500 um, neural rosettes 0.230x0.230x0.500 um; so voxel_size_nm is null. 22 images in 5
   datasets (Acini 3, Blastocysts 11, E75 3, E875 4, Neural 1); the whole-embryo 161202_E75.tif and Fused_E875.ics
-  have no manual segmentation, so about 20 images carry masks. Compressed size not stated on the IDR pages checked.
-  Only some IDR image files were inspected for ROIs (6001240 has Mask ROIs). Paper also provides classifier training
-  sets as supplementary data; some images are derived crops of larger ones. enricher: IDR API confirms 22 images
-  in 5 datasets (uint16 except the uint8 neural-rosette image, 2-4 channels). B1_C1 carries 61 ROIs, each a stack
-  of per-z-plane Mask shapes.'
+  have no manual segmentation, so about 20 images carry masks. Only some IDR image files were inspected for ROIs
+  (6001240 has Mask ROIs). Paper also provides classifier training sets as supplementary data; some images are derived
+  crops of larger ones. enricher: IDR API confirms 22 images in 5 datasets (uint16 except the uint8 neural-rosette
+  image, 2-4 channels). B1_C1 carries 61 ROIs, each a stack of per-z-plane Mask shapes. enricher: IDR FTP mirror
+  has <name>_Manual.tif label stacks next to each image (20 masks); size ~17.2 GB estimated from its HTTP index.'
 technical:
-  method: header
+  method: sample
   inspected_urls:
   - https://idr.openmicroscopy.org/api/v0/m/projects/801/datasets/
   - https://idr.openmicroscopy.org/api/v0/m/datasets/7754/images/?limit=100
-  - https://idr.openmicroscopy.org/webclient/imgData/6001240/
   - https://idr.openmicroscopy.org/api/v0/m/rois/?image=6001240&limit=2
-  bytes_downloaded: 0
-  size_source: unknown
+  - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0062-blin-nuclearsegmentation/20190429-ftp/
+  - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0062-blin-nuclearsegmentation/20190429-ftp/Blastocysts/B1_C1.tif
+  - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0062-blin-nuclearsegmentation/20190429-ftp/Blastocysts/B1_C1_Manual.tif
+  bytes_downloaded: 141230614
+  size_source: estimated
   layout:
-    tree: |
-      idr0062-blin-nuclearsegmentation/experimentA (IDR project 801), 22 images
-        dataset 7753 (acini)         3 images  E14tg2a_d2, Tcf15_KO_d2, Tcf_Het_d2.tif   1024x1024 x 27-39 z, 4 ch
-        dataset 7754 (blastocysts)  11 images  B1_C1 ... B5_C3.tif                       ~210-480 px x 195-257 z, 2 ch
-        dataset 7755 (E7.5)          3 images  161202_E75.tif (803x1024x297), E75_Zone_1/2.tif, 2 ch
-        dataset 7756 (E8.75)         4 images  E875_Zone_1-3.tif (32-61 z), Fused_E875.ics (3763x2860x145), 4 ch
-        dataset 7757 (rosettes)      1 image   130520_Neural_Rosettes.tif  1282x838x36, 3 ch, uint8
-      annotations: OMERO ROIs on the images (one ROI per nucleus = Mask shapes per z plane), not separate files
-    n_files: 22
+    tree: "20190429-ftp/\n  Acini/        3 images + 3 *_Manual.tif\n  Blastocysts/ 11 images + 11 *_Manual.tif\n\
+      \  E75/          3 images (161202_E75.tif unlabelled) + 2 *_Manual.tif\n  E875/         3 zones + 3 *_Manual.tif,\
+      \ Fused_E875.ics/.ids (unlabelled)\n  Neural/       1 image + 1 *_Manual.tif\n  SHASUMS, metadata/\n20190605-ftp/E875_Zone_3.tif\
+      \     (replacement, 61 z to match its mask)\n20190605-original/E875_Zone_3.tif + readme.txt (superseded 62-z\
+      \ upload)"
+    n_files: 60
     listing_complete: true
-  sample: null
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0062-blin-nuclearsegmentation/20190429-ftp/Blastocysts/B1_C1.tif
+    - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0062-blin-nuclearsegmentation/20190429-ftp/Blastocysts/B1_C1_Manual.tif
+    size_bytes: 141230614
+    description: Blastocyst B1_C1 (2-channel z-stack) and its labelled nucleus mask
   arrays:
   - role: raw
-    path_pattern: IDR project 801 images (*.tif, one .ics)
+    path_pattern: 20190429-ftp/*/*[!l].tif
     format: tiff
-    axes: czyx
+    axes: zcyx
     shape:
-    - 2
     - 236
+    - 2
     - 275
     - 271
     shape_varies: true
     dtype: uint16
-    compression: unknown
+    compression: none
     lossy: null
     chunks: null
     normalization: unknown
     alignment: not-applicable
-    alignment_notes: Shape from IDR SizeC/Z/Y/X of B1_C1.tif; channel count 2-4 depending on subset.
+    alignment_notes: Raw stacks; E875_Zone_3.tif is replaced by 20190605-ftp/E875_Zone_3.tif. 161202_E75.tif and
+      Fused_E875.ics have no mask.
+    value_range:
+    - 4
+    - 4095
   - role: label
-    path_pattern: OMERO ROIs attached to each image (Mask shapes)
-    format: other
-    axes: null
-    shape: null
+    path_pattern: 20190429-ftp/*/*_Manual.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 236
+    - 275
+    - 271
     shape_varies: true
-    dtype: unknown
-    compression: unknown
-    lossy: null
+    dtype: float32
+    compression: none
+    lossy: false
     chunks: null
-    encoding: other
+    encoding: instance-ids
     classes: null
     alignment: same-grid
-    alignment_notes: 'Mask shapes carry X/Y/Width/Height and TheZ in image pixel coordinates (e.g. B1_C1 ROI 1:
-      45 Mask shapes on z 86..., 11x13 px at x=49, y=85). One ROI per nucleus.'
+    alignment_notes: <name>_Manual.tif pairs with <name>.tif in the same folder; same z/y/x as the raw (raw has
+      an extra channel axis). Float values are integer nucleus IDs (one ROI per nucleus per the IDR study).
+    value_range:
+    - 0
+    - 128
+    n_ids_observed: null
   notes: 'Header-level only: the IDR JSON API gives sizes, pixel types and physical sizes per image (x/y 0.230-0.360
     um, z 0.500 um; Fused_E875.ics has z 1.0; E875 zones have no z size). webclient/imgData failed for B1_C1 ("Error
     instantiating pixel buffer"), and IDR offers no range-readable file URL, so no pixel values were read. ROI count
     checked for B1_C1 only (61 ROIs). To train on it, the masks must be exported from OMERO (e.g. omero-py or the
-    IDR Aspera/FTP bundle); they are not TIFF label files.'
+    IDR Aspera/FTP bundle); they are not TIFF label files. Second pass 2026-10-06: direct files on the EBI IDR FTP
+    mirror, including *_Manual.tif label stacks (readme: "labelled mask TIFF file"). Probed and sampled B1_C1: raw
+    uint16 236x2x275x271 (zcyx, 4..4095, 12-bit range; OME calibration 360.4x360.4x500.2 nm, matching the IDR API),
+    mask float32 0..128 (integer-valued). Listing: HTTP index, 60 files, ~17.2 GB rounded.'
   inspected_at: '2026-09-30T21:52:12Z'
