@@ -91,7 +91,10 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
   `main` whenever records change there, so a voxel size filled in later shows up on them too.
 - **Voxel size:** conversion can't proceed without it, so the enricher searches hard for it (skill step 4a:
   headers, repository APIs, archive READMEs, the full paper, code repos, upstream datasets), and makes a
-  second pass over enriched PRs still labelled `voxel-size-missing`.
+  second pass over PRs enriched before that.
+- **Conversion readiness:** the enricher also runs `tools/convertibility.py` (issues #518 / #519) with TensorSwitch's
+  record planner, and fixes what blocks automatic conversion from evidence: concrete sample files, HDF5 dataset
+  names, real globs in `path_pattern`, one organism per file set, a clear modality, `annotations.source`.
   License labels are the SPDX id verbatim, with no interpretation.
 - **Auto-merge** (`tools/automerge.py`) merges PRs whose labels meet a fixed policy, but never a possible
   duplicate (`tools/common.py:similarity_reasons`) of a record on main or another open PR. Agents never merge,
@@ -114,6 +117,7 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
 | `python tools/probe.py <url> [--glob G] --id ID` | shape / dtype / compression / voxel size from file headers (enricher) |
 | `python tools/sample.py --id ID --raw S [--label S]` | download a small sample, measure it, delete it (enricher) |
 | `python tools/labels.py <file>` | the PR labels a record gets |
+| `python tools/convertibility.py [files] [--summary\|--json] [--tensorswitch SRC]` | what blocks automatic conversion (read-only report) |
 | `python tools/place.py <file>\|--all\|--pr-branches` | move records to `datasets/<dimensionality>/<modality>/` |
 | `python tools/publish.py pr-pull <id>` / `pr-update <file>` | enricher: edit the record on an open PR's branch |
 | `python tools/check_links.py [--oldest N] [--write]` | link rot check |

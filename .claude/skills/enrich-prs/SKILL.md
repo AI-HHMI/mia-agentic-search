@@ -1,6 +1,6 @@
 ---
 name: enrich-prs
-description: Enricher run. Goes through open dataset PRs that aren't enriched yet and inspects the actual files (folder structure, confirmed size, shapes, dtypes, compression, value ranges, label encoding, raw/label alignment, license), searches hard for the voxel size, writes the results into the PR's record and updates the PR. Labels follow automatically. Optional args are limit=N (max PRs, default 20), pr=<number> (just that PR), shard=K/N (only PRs whose number mod N is K, for parallel runs) and dry-run.
+description: Enricher run. Goes through open dataset PRs that aren't enriched yet and inspects the actual files (folder structure, confirmed size, shapes, dtypes, compression, value ranges, label encoding, raw/label alignment, license), searches hard for the voxel size, fixes what blocks automatic conversion (tools/convertibility.py, TensorSwitch planner), writes the results into the PR's record and updates the PR. Labels follow automatically. Optional args are limit=N (max PRs, default 20), pr=<number> (just that PR), shard=K/N (only PRs whose number mod N is K, for parallel runs) and dry-run.
 ---
 
 # enrich-prs
@@ -24,7 +24,11 @@ git fetch origin
 git checkout -q --detach origin/main
 python tools/publish.py state-pull --routine enricher      # skip in dry-run
 python tools/run_log.py start --routine enricher           # add --dry-run in dry-run; note the printed path
+# TensorSwitch's record planner, for step 5a (it only reads records; nothing is downloaded or converted)
+git clone -q --depth 1 -b unified https://github.com/JaneliaSciComp/tensorswitch "${TMPDIR:-/tmp}/tensorswitch" \
+  && TS="${TMPDIR:-/tmp}/tensorswitch/src"
 ```
+If the clone fails, run step 5a without `--tensorswitch` and say so in the PR comment.
 
 ## 1. The queue
 ```bash
@@ -36,10 +40,11 @@ The queue is the open PRs whose branch starts with `claude/dataset/` and that **
 With `shard=K/N`, keep only PRs whose number modulo N equals K. Several runs with different K then
 split the backlog without ever touching the same PR.
 
-**Second pass, voxel size.** When that queue is empty, continue with the open dataset PRs that *are*
-`enriched` but still labelled `voxel-size-missing`, and whose comments have no `Voxel size search`
-heading yet (`gh pr view <n> --json comments`), oldest first. For these, run only steps 2, 4a and 6:
-keep `technical` as it is (only add to `technical.notes`), and post the step 4a result as the comment.
+**Second pass: voxel size and conversion readiness.** When that queue is empty, continue with the open
+dataset PRs that *are* `enriched` but whose comments have no `Conversion readiness` heading yet
+(`gh pr view <n> --json comments`), i.e. PRs enriched before steps 4a and 5a existed, oldest first.
+For these, run only steps 2, 4a, 5a and 6. Keep the inspected values in `technical`; change only what
+4a and 5a fix, and post their results as the comment.
 
 Work through it one PR at a time:
 ```
@@ -48,7 +53,7 @@ while python tools/run_log.py continue --time-only; do      # exit 1 = the 110-m
     steps 2–7 for it
 done
 ```
-Spend about **10 minutes per PR**, plus up to 10 more for step 4a when the voxel size is missing, and check `python tools/run_log.py show` (`elapsed_min`) as you go.
+Spend about **10 minutes per PR**, plus up to 10 more for steps 4a and 5a, and check `python tools/run_log.py show` (`elapsed_min`) as you go.
 If a PR needs much longer, write down what you have (method `metadata-only` or `header` is fine),
 and say in `technical.notes` what is still open.
 
@@ -209,6 +214,36 @@ Fill or correct them only from what you inspected, and add one short `notes` lin
 inspection details go in `technical.notes`. You may adjust `provenance.confidence` up or down to
 match the evidence (the caps in CLAUDE.md still apply). Set `verification.last_checked` to now.
 
+## 5a. Conversion readiness (issues #518, #519)
+Records are converted to OME-Zarr automatically by TensorSwitch, which reads the record and stops on
+anything it doesn't settle. After steps 3–5, check what still blocks it:
+```bash
+python tools/convertibility.py <file> --tensorswitch "$TS"     # needs / helpful, plus the planner's verdict
+```
+Fix every **need**, and every **helpful** item you can, from what you inspected or read in this run.
+Rerun until nothing fixable is left.
+
+| Gap | Fix |
+|---|---|
+| no `technical` / no `arrays` | steps 3a–d |
+| no `sample.urls`, or a landing page / folder | a concrete file from the listing (`<zip url>::<member>` inside a zip): the smallest raw and its label(s) |
+| sample file matches no array | correct the `path_pattern` (or the sample) so each sample file matches its array |
+| no voxel size | step 4a |
+| `organism` empty | NCBI name(s) from the page or paper |
+| several organisms | keep them all; one `notes` line saying which files or folders belong to each (`organisms: Homo sapiens = hela_cell/, Rattus norvegicus = lucchi_pp/`). Each organism becomes its own converted dataset. |
+| `modality` only `other`, `other` next to a clear value, or mixed families | the listed value that applies; if EM and light/X-ray data are mixed, a `notes` line saying which files are which |
+| HDF5 array without a dataset name | append ` (<dataset path>)` from the probe's dataset list, always in this spelling; rewrite ` :: name` to it. One array entry per dataset. |
+| `path_pattern` with placeholders (`<name>`, `NNN`, `###`) or a comma list | one real glob (`*`, `?`, `[0-9]`, `{a,b}`) that matches exactly this array's files in the listing; check it against the listing |
+| HDF5 array without `axes` | only when the docs, paper or file attributes state the axis order; otherwise leave `null` and say why in `technical.notes` (the step 3c rule stands) |
+| `annotations.source` unknown / mixed | `manual`, `proofread` or `automatic` from the paper's Methods; `mixed` only if it really is, with a `notes` line saying which arrays are which |
+| `annotations.coverage` partial / unknown | a `notes` line on what is annotated: sparse crops, N of M slices, a sub-volume and where |
+
+- **Never invent a value to clear a need.** A need that no source settles stays, with what you checked.
+- What #518 lists as *new fields* (`label_class`, file arrangement, raw↔label pairing rule,
+  `expansion_factor`, annotation tool) is not in the schema yet. Don't add keys: put the structure
+  annotated in `classes` / `alignment_notes`, the pairing rule in `alignment_notes`, the rest in `notes`.
+- `notes` is limited to 1000 characters, so keep these lines short.
+
 ## 6. Write, validate, publish
 Set `schema_version: '1.2'` and write the `technical` block:
 - `method`: the deepest check done: `metadata-only`, `header` or `sample`
@@ -246,8 +281,11 @@ your changes on top, respecting their edit, and publish again.
 - a heading `Enricher inspection`
 - which files were listed, probed and sampled, with byte counts
 - the key raw tool outputs: the listing's JSON line, and each probe/sample shape, dtype, value range and hints
+- a `Conversion readiness` heading: the `convertibility.py` report before and after your fixes, the
+  TensorSwitch status (`ready` / `partial` / `blocked`) and planner warnings, and each remaining need
+  with why it couldn't be settled (always include this section; the second pass in step 1 looks for it)
 - a `Voxel size search` heading: the value and the quote that states it, or every source checked
-  without finding it (always include this section; the second pass in step 1 looks for it)
+  without finding it
 - what's still unknown and why
 - the draft license request, if any
 
