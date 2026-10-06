@@ -10,6 +10,7 @@ A PR qualifies when the record on its current head commit gets all of these labe
   - size:<1GB | 1-10GB | 10-50GB | 50-500GB    (below 500 GB; not size:unknown)
   - a known license: license:<spdx> other than license:unknown (any license, incl. custom, for now)
   - at least one fmt:… and no fmt:other         every data format is known
+  - 3D / 3D+t only: download-ready              /download-dataset can convert it (tools/readiness.py)
 and also: the `validate` check passed on that commit, the PR is not a draft, has no HOLD_LABELS,
 GitHub reports it mergeable, and it isn't a possible duplicate (tools/common.py:similarity_reasons:
 same paper DOI, same download URL or landing page, or a ≥ 85% similar title) of a record on main,
@@ -60,6 +61,8 @@ def criteria_failures(labels):
         fails.append("license unknown (license-verification-needed)")
     elif ALLOWED_LICENSES is not None and not set(lic) & set(ALLOWED_LICENSES):
         fails.append(f"license not on the allow-list ({', '.join(lic)})")
+    if set(labels) & {"dim:3D", "dim:3D+t"} and "download-ready" not in labels:
+        fails.append("3D record not download-ready (tools/readiness.py)")
     fmts = [lab for lab in labels if lab.startswith("fmt:")]
     if not fmts:
         fails.append("no data format")

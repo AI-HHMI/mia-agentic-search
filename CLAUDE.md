@@ -87,7 +87,8 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
   `dim:`, `org:`, `modality:`, `fmt:`, `dtype:`, `anno:`, `label-enc:`, `license:<spdx as written>`,
   `size:`, `auto-download` (size confirmed by a complete file listing, < 50 GB, open access), `enriched`,
   `license-verification-needed` (`license.spdx: unknown`) and `voxel-size-found` / `voxel-size-missing`
-  (`imaging.voxel_size_nm` has x, y and, for 3D data, z). Merged PRs are relabelled from the record on
+  (`imaging.voxel_size_nm` has x, y and, for 3D data, z), and for 3D / 3D+t `download-ready` /
+  `download-not-ready` (`tools/readiness.py`; CI clones TensorSwitch for its planner). Merged PRs are relabelled from the record on
   `main` whenever records change there, so a voxel size filled in later shows up on them too.
   License labels are the SPDX id verbatim, with no interpretation.
 - **Voxel size:** conversion can't proceed without it, so the enricher searches hard for it (skill step 4a:
@@ -99,7 +100,8 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
 - **Conversion readiness:** the enricher also runs `tools/convertibility.py` (issues #518 / #519) with TensorSwitch's
   record planner, and fixes what blocks automatic conversion from evidence: concrete sample files, HDF5 dataset
   names, real globs in `path_pattern`, one organism per file set, a clear modality, `annotations.source`.
-- **Auto-merge** (`tools/automerge.py`) merges PRs whose labels meet a fixed policy, but never a possible
+- **Auto-merge** (`tools/automerge.py`) merges PRs whose labels meet a fixed policy (3D / 3D+t PRs only when
+  `download-ready`), but never a possible
   duplicate (`tools/common.py:similarity_reasons`) of a record on main or another open PR. Agents never merge,
   approve or close PRs themselves, and never add or remove the `hold` label.
 
@@ -122,6 +124,8 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
 | `python tools/labels.py <file>` | the PR labels a record gets |
 | `python tools/download_check.py <url\|zip::member> --id ID [--tensorswitch SRC]` | is this a direct link TensorSwitch can fetch (one range request) |
 | `python tools/convertibility.py [files] [--summary\|--json] [--tensorswitch SRC]` | what blocks automatic conversion (read-only report) |
+| `python tools/readiness.py <file> [--tensorswitch SRC]` | download readiness: ready / not-ready / unknown, with reasons (the auto-merge gate and the download queue) |
+| `python tools/download_queue.py next\|record\|list` | the download queue and the downloads list (`state/downloads.json` on `claude/state/downloader`) |
 | `python tools/miao_layout.py <file> --root R --tensorswitch SRC --label-class C [--name N] [--whole]` | plan a record (sample unit, or every file with `--whole`) into the miao layout (miao#13), one crop per raw/label pair: MCP steps + label metadata, read-only |
 | `python tools/miao_run.py <plan.json> [--finalize]` | run that plan crop by crop with TensorSwitch (resumable; downloads deleted per crop), or record crops the MCP already verified |
 | `python tools/place.py <file>\|--all\|--pr-branches` | move records to `datasets/<dimensionality>/<modality>/` |
@@ -131,4 +135,6 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
 
 Skills: `/find-datasets source=<repositories|literature|websearch>` (harvest), `/enrich-prs` (technical
 inspection of open PRs), `/maintain-catalog` (daily upkeep), `/download-dataset <record>` (download a ready record's
-sample unit into the miao layout with the TensorSwitch MCP; output to `demo/` for now, git-ignored).
+sample unit, or the whole dataset, into the miao layout with the TensorSwitch MCP; output to `demo/` for now,
+git-ignored). `/download-dataset next` is the unattended download agent, run hourly by cron on the workstation
+(`tools/cron/download_next.sh`): one download-ready dataset per run, recorded in the downloads list.

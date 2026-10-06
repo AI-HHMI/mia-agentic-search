@@ -167,6 +167,16 @@ def crop_steps(r, sample, plan, crop, cls_by_index, voxel, today, raw_attrs):
                                "labels": list(keys.values()), "converted": today}}
 
 
+def emit(out, path):
+    text = json.dumps(out, indent=2)
+    if path:
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        Path(path).write_text(text + "\n")
+        print(json.dumps({"plan": str(path), "crops": len(out["crops"]), "stop": out["stop"]}))
+    else:
+        print(text)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("record")
@@ -180,6 +190,7 @@ def main():
                     help="every file of the dataset (one crop per raw/label pair; needs a zip download, max 50 GB) "
                          "instead of the sample unit")
     ap.add_argument("--labelled-only", action="store_true", help="--whole: skip samples that have no label")
+    ap.add_argument("--out", help="write the plan to this file instead of stdout (its folder is created)")
     a = ap.parse_args()
     r = load_yaml(a.record)
     im = r.get("imaging") or {}
@@ -254,7 +265,7 @@ def main():
            "staging": str(staging), "crops": [], "unpaired": unpaired, "skipped": skipped, "notes": notes,
            "review": review, "stop": stop}
     if stop:
-        print(json.dumps(out, indent=2))
+        emit(out, a.out)
         return
 
     today = datetime.date.today().isoformat()
@@ -267,7 +278,7 @@ def main():
         out["crops"].append(c)
     for key, attrs in (out["crops"][0]["labels"] if out["crops"] else {}).items():
         review += [f"{key}: {x}" for x in attrs["review_needed"]]
-    print(json.dumps(out, indent=2))
+    emit(out, a.out)
 
 
 if __name__ == "__main__":

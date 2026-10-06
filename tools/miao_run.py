@@ -87,6 +87,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("plan")
     ap.add_argument("--keep-source", action="store_true", help="keep each crop's downloads after it passes")
+    ap.add_argument("--summary-out", help="also write the summary line to this file")
     ap.add_argument("--finalize", action="store_true",
                     help="don't run steps; record every crop whose verification.json says pass, and clean up")
     a = ap.parse_args()
@@ -122,8 +123,11 @@ def main():
             else:
                 finish(plan, c, a.keep_source)
                 done.append(name)
-    print(json.dumps({"dataset_dir": plan["dataset_dir"], "crops": len(plan["crops"]), "done": done,
-                      "already_done": skipped, "failed": failed}))
+    summary = json.dumps({"dataset_dir": plan["dataset_dir"], "crops": len(plan["crops"]), "done": done,
+                          "already_done": skipped, "failed": failed})
+    print(summary)
+    if a.summary_out:
+        Path(a.summary_out).write_text(summary + "\n")
     if failed:
         sys.exit(1)
 

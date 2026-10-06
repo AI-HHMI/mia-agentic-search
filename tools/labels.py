@@ -13,6 +13,8 @@ on every push. Labels outside the managed prefixes (e.g. new-datasets) are left 
   auto-download (size confirmed by a complete file listing, < 50 GB, open access) · enriched
   license-verification-needed (license.spdx is unknown)
   voxel-size-found / voxel-size-missing (imaging.voxel_size_nm has x, y and, for 3D data, z)
+  download-ready / download-not-ready (3D and 3D+t only: tools/readiness.py; needs $TENSORSWITCH_SRC,
+  without it neither label is set, so the auto-merge gate fails closed)
 """
 import argparse
 import json
@@ -44,6 +46,8 @@ FLAGS = {
     "license-verification-needed": ("B60205", "No license found yet; a human (or agent) needs to find or request it"),
     "voxel-size-found": ("0E8A16", "imaging.voxel_size_nm is filled (x, y and, for 3D data, z)"),
     "voxel-size-missing": ("E99695", "No voxel / pixel size in the record yet; conversion needs it"),
+    "download-ready": ("0E8A16", "3D: /download-dataset can convert it unattended (tools/readiness.py)"),
+    "download-not-ready": ("B60205", "3D: something blocks the download; see tools/readiness.py"),
 }
 SIZE_BUCKETS = [(10**9, "<1GB"), (10 * 10**9, "1-10GB"), (50 * 10**9, "10-50GB"), (500 * 10**9, "50-500GB")]
 MAX_LEN = 50  # GitHub's label name limit
@@ -89,6 +93,11 @@ def labels_for(r):
     if tech:
         out.append("enriched")
     out.append("voxel-size-found" if voxel_size_found(im) else "voxel-size-missing")
+    if str(im.get("dimensionality")) in ("3D", "3D+t"):
+        from tools.readiness import readiness
+        status = readiness(r)[0]
+        if status != "unknown":
+            out.append("download-ready" if status == "ready" else "download-not-ready")
     return list(dict.fromkeys(out))
 
 
