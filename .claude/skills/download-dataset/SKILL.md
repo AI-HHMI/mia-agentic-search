@@ -1,18 +1,26 @@
 ---
 name: download-dataset
-description: Download a ready catalog record's sample unit and convert it to OME-Zarr in the miao layout (AI-HHMI/miao#13) with the TensorSwitch MCP, verified against the source. Args are the record (path or id), optionally root=<folder> (default demo), name=<short dataset name>, label_class=<class>[,<class>...] (one per label array), organism=<NCBI name>, keep-source and dry-run.
+description: Download a ready catalog record (its sample unit, or with whole the full dataset, crop by crop) and convert it to OME-Zarr in the miao layout (AI-HHMI/miao#13) with the TensorSwitch MCP, verified against the source. Args are the record (path or id), optionally root=<folder> (default demo), name=<short dataset name>, label_class=<class>[,<class>...] (one per label array), organism=<NCBI name>, whole, labelled-only, keep-source and dry-run.
 ---
 
 # download-dataset
 
 Arguments: `$ARGUMENTS`. Parse the record (a path under `datasets/` or a record id), `root` (default
-`demo`), `name`, `label_class`, `organism`, `keep-source` and `dry-run`.
+`demo`), `name`, `label_class`, `organism`, `whole`, `labelled-only`, `keep-source` and `dry-run`.
+
+**Where the data goes is `root`, and only `root`:** converted crops go to `<root>/data/`, downloads in
+progress to `<root>/staging/<record id>/`. `tools/miao_layout.py --root` builds every path from it.
 
 Read `CLAUDE.md` first. Its rules still hold: **never invent values** (a label class, organism or
 voxel size the record doesn't settle is asked for, not guessed), metadata comes from the record, and
 nothing here edits a record or touches `main`. This skill downloads data, so in addition:
-- Only the record's **sample unit** (`technical.sample.urls`: one raw plus its labels) is downloaded.
-  Whole datasets are out of scope for now.
+- **Scope.** By default only the record's sample unit (`technical.sample.urls`: one raw plus its labels).
+  With `whole`: every file of the dataset, one crop per raw/label pair. Raw files with no label become
+  raw-only crops unless `labelled-only`; labels with no raw are skipped and reported. `whole` needs the
+  record's data in one zip, and at most 50 GB (TensorSwitch's whole-dataset planner); folder and FTP
+  datasets are not supported yet.
+- **One crop at a time:** a crop's files are fetched, converted, verified, recorded and deleted before
+  the next crop starts, so staging never holds more than one crop.
 - Never run code that ships with a dataset, never unpickle. Downloads stay in `<root>/staging/`.
 - `demo/` is git-ignored as a whole: it stays local and never goes to GitHub. Never commit converted data,
   and if you choose another `root`, keep it out of git too.
@@ -36,8 +44,9 @@ nothing here edits a record or touches `main`. This skill downloads data, so in 
   full pyramid (s0, s1, …), with factors from the voxel size. Raw is downsampled with `mean` and labels with
   `mode`. Set it explicitly, because `auto` guesses from the file name, and averaging instance IDs would
   invent IDs that don't exist.
-- `crop-NNN`: the record's existing crop if it was converted before (from `manifest.json`), else the
-  next free number.
+- `crop-NNN`: one per raw/label pair. The same files always get the same crop (looked up in
+  `manifest.json`). New pairs get the next free numbers, in the order of the sorted sample names.
+  `manifest.json` maps each crop to its record, sample name, source files and label layers.
 - Label folder `{provenance}-{label_class}-{info}`:
   - `provenance` from `annotations.source`: `manual` → `manual_gt`, `proofread` → `proofread`, `automatic` → `auto_pred`
   - `info` from the encoding: `instance`, `semantic` or `points`
@@ -45,6 +54,7 @@ nothing here edits a record or touches `main`. This skill downloads data, so in 
     `proofreading_status`, `coverage`, `bbox` (offset, size, unit, `resolution_nm`), `source` (tool,
     annotator, model, model_version), `created`, `notes`, plus `source_record`, `dataset_doi`,
     `publication`, `license`. A field the record doesn't settle is `null` and listed in `review_needed`.
+    `bbox.size` is measured from each crop's converted array when the crop is recorded.
 
 ## 0. Setup
 ```bash
@@ -74,7 +84,7 @@ Read the record in full (title, description, `annotations`, `technical.arrays`, 
   annotation format, `classes`). If the record doesn't say, or a label holds several classes, **ask
   the user** (AskUserQuestion) rather than pick one.
 - **`organism`** when the record lists several: which one this sample unit is, per the record's notes.
-  If the notes don't say, ask.
+  If the notes don't say, ask. `whole` doesn't support several organisms yet: the plan stops.
 - **`name`**, as above.
 
 ## 3. Plan
@@ -82,42 +92,56 @@ Read the record in full (title, description, `annotations`, `technical.arrays`, 
 mkdir -p <root>/staging
 python tools/miao_layout.py <record.yaml> --root <root> --tensorswitch "$TS" \
     --label-class <class> [--label-class <class2> ...] --name <name> [--organism "<NCBI name>"] \
-    > <root>/staging/<id>-plan.json
+    [--whole [--labelled-only]] > <root>/staging/<id>-plan.json
 ```
-The plan holds `dataset_dir`, `crop`, the ordered `steps` (tool + args), the label metadata in
-`labels`, `review` (fields left null) and `stop`.
+The plan holds `dataset_dir`, `staging`, and `crops`. Each crop has its own `crop` path, `sample` name,
+`files`, `labels` metadata and ordered `steps` (tool + args). The plan also holds `unpaired` / `skipped`
+/ `notes` (files left out, with the reason), `review` (fields left null) and `stop`. Listing the zip
+needs the network; nothing is downloaded.
 - `stop` not empty: report the reasons and end. Never work around one by hand.
-- Show the user the target folder, the label folder names, the files to download with their sizes
-  (`technical.sample.size_bytes`), and the `review` list.
+- Show the user the target folder, the number of crops, the label folder names, the total download
+  size (`data.size_bytes` with `whole`, else `technical.sample.size_bytes`), what was left out and why,
+  and the `review` list. With `whole` and more than about 10 GB, confirm with the user before you start.
 - `dry-run`: stop here.
 
 ## 4. Download, convert, verify
-**a. With the MCP tools.** Run `steps` in order, passing each step's `args` **verbatim**:
+**a. With the MCP tools.** For each crop in `crops`, in order, run its `steps` passing each step's `args`
+**verbatim**, then finalize it (below) before starting the next crop:
 - `fetch_dataset`: for a sample over ~300 MB add `background=True`, and call again with the same
   arguments until `status` is `success`. A cut-off download resumes.
 - `convert`: must return `status: success`. A step the plan gives as `submit_job` (sample over 2 GB)
   needs the user's LSF `project`; follow it with `check_job_status` until it is done.
-- `verify_output`: `overall` must be `pass`. `fail` or `unverified` means stop: keep the output and
-  the downloads, and report the failing checks. Don't delete or retry blindly.
+- `verify_output`: `overall` must be `pass`. `fail` or `unverified` means that crop failed: keep its
+  output and downloads, note the failing checks, and go on with the next crop. Don't delete or retry blindly.
 
-Then record the crop and clean up:
+Record the passing crop and delete its downloads:
 ```bash
 python tools/miao_run.py <root>/staging/<id>-plan.json --finalize [--keep-source]
 ```
-It refuses unless the crop's `verification.json` says `pass`. It then adds the crop to `manifest.json`
-and deletes `<root>/staging/<id>/`.
+It records every crop whose `verification.json` says `pass` and that isn't recorded yet: it adds the
+crop to `manifest.json`, fills each label's `bbox.size`, and deletes that crop's downloads. Crops
+already recorded are skipped, so running it after each crop is safe.
 
 **b. Without the MCP (runner).** Same steps, same checks, one command:
 ```bash
 pixi run --manifest-path "$TS_REPO/pyproject.toml" python "$PWD/tools/miao_run.py" "$PWD/<root>/staging/<id>-plan.json" [--keep-source]
 ```
-It stops at the first step that doesn't succeed and finalizes only after `verify_output` passes.
-The runner downloads in the foreground: for samples over 2 GB use the MCP path (a) instead.
+It works through the crops one at a time, with the same checks and the same finalize step.
+- **Resumable:** crops already recorded with a passing verification are skipped, and a half-written crop
+  from an interrupted run is started over. After an interruption, just run the same command again.
+- **A failing crop** keeps its output and downloads. The run goes on to the next crop, then exits 1 and
+  lists the failures in its summary line.
+- **Over 2 GB:** the runner downloads in the foreground and doesn't use the cluster. A crop the plan
+  sends to `submit_job` is reported as failed ("needs the LSF cluster"); run that crop with the MCP
+  path (a). For a long `whole` run, start the runner in the background and watch its JSON lines.
 
 ## 5. Report
 Short and factual:
-- the crop path, its folder tree (`find <crop> -maxdepth 3 -not -path '*/c/*'`), and its size on disk
-- `verify_output`: overall, plus the identity and voxel-size checks
+- the dataset folder, the crops written / already done / failed (from the runner's summary, or your
+  own count), one crop's folder tree (`find <crop> -maxdepth 3 -not -path '*/c/*'`), and the size on disk
+- `verify_output`: overall per crop, plus the identity and voxel-size checks; the failing checks of any
+  failed crop
+- files left out (`unpaired`, `notes`) and why
 - the label folder names, and each label's `review_needed` (what a person still has to fill in, e.g.
   `proofreading_status`)
 - anything you asked the user and their answer (label class, organism)
@@ -134,3 +158,9 @@ python tools/miao_layout.py datasets/3D/ssSEM/zenodo-7142003-snemi3d-neurites-ss
 s0–s2 (6 → 12 → 24 nm in x/y; z stays 30 nm). `verify_output: pass` (whole-array identity for both
 arrays at s0, all levels consistent). Two zip members, about 315 MB downloaded; 131 MB on disk after
 conversion; about 90 s.
+
+With `--whole`, the same record plans 2 crops: `crop-001` (train, raw + labels, already done above, so
+it's skipped) and `crop-002` (the unlabeled test volume, raw only). Whole-dataset run of
+`embedseg-mouse-skull-nuclei-cbg` (`--label-class nucleus --name embedseg-mouse-skull --whole`):
+`demo/data/lm-mouse-embedseg-mouse-skull/` with 3 crops (train X1, train X2_left, test X2_right), each
+raw + `labels/manual_gt-nucleus-instance/`, all `pass`, about 26 s.

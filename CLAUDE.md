@@ -122,8 +122,8 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
 | `python tools/labels.py <file>` | the PR labels a record gets |
 | `python tools/download_check.py <url\|zip::member> --id ID [--tensorswitch SRC]` | is this a direct link TensorSwitch can fetch (one range request) |
 | `python tools/convertibility.py [files] [--summary\|--json] [--tensorswitch SRC]` | what blocks automatic conversion (read-only report) |
-| `python tools/miao_layout.py <file> --root R --tensorswitch SRC --label-class C [--name N]` | plan a record's sample unit into the miao layout (miao#13): MCP steps + label metadata, read-only |
-| `python tools/miao_run.py <plan.json> [--finalize]` | run that plan with TensorSwitch without the MCP, or record a crop the MCP already verified |
+| `python tools/miao_layout.py <file> --root R --tensorswitch SRC --label-class C [--name N] [--whole]` | plan a record (sample unit, or every file with `--whole`) into the miao layout (miao#13), one crop per raw/label pair: MCP steps + label metadata, read-only |
+| `python tools/miao_run.py <plan.json> [--finalize]` | run that plan crop by crop with TensorSwitch (resumable; downloads deleted per crop), or record crops the MCP already verified |
 | `python tools/place.py <file>\|--all\|--pr-branches` | move records to `datasets/<dimensionality>/<modality>/` |
 | `python tools/publish.py pr-pull <id>` / `pr-update <file>` | enricher: edit the record on an open PR's branch |
 | `python tools/check_links.py [--oldest N] [--write]` | link rot check |
