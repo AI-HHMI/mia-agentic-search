@@ -1,11 +1,11 @@
-schema_version: '1.1'
+schema_version: '1.2'
 id: zenodo-14138806-spheroid-lsfm-nuclei-centroids
 title: Spheroid LSFM dataset with nuclei centroid annotations
 short_name: Spheroid nuclei centroids (light-sheet)
 description: Light-sheet fluorescence microscopy image patches of 3D spheroids of two cell lines (LN18-RED and SH-SY5Y)
-  with nuclei centroid annotations for model training and evaluation. LN18-RED holds pretraining patches with
-  weak centroid annotations (from seeded watershed); SH-SY5Y holds train/validation and test patches with manual
-  centroid annotations. Preprocessed whole images and trained model weights are included.
+  with nuclei centroid annotations for model training and evaluation. LN18-RED holds pretraining patches with weak
+  centroid annotations (from seeded watershed); SH-SY5Y holds train/validation and test patches with manual centroid
+  annotations. Preprocessed whole images and trained model weights are included.
 landing_url: https://zenodo.org/records/14138806
 doi: 10.5281/zenodo.14138806
 repository: Zenodo
@@ -23,8 +23,11 @@ imaging:
   modality:
   - light-sheet
   dimensionality: 3D
-  voxel_size_nm: null
-  channels: null
+  voxel_size_nm:
+    x: 359.4
+    y: 359.4
+    z: 1999.9
+  channels: 1
   organism:
   - Homo sapiens
   sample: 3D spheroids of LN18-RED (glioblastoma) and SH-SY5Y (neuroblastoma) cell lines
@@ -41,8 +44,9 @@ annotations:
   present: true
   types:
   - points
-  coverage: unknown
-  format: One CSV of nuclei centroid coordinates per image patch (points_csv/sample_XX/patch_xxxx.csv)
+  coverage: dense
+  format: One CSV of nuclei centroids per patch (points_csv/sample_XX/patch_NNNN.csv; columns index, axis-0, axis-1,
+    axis-2 in voxel units of the patch)
   source: mixed
 ml:
   tasks:
@@ -60,16 +64,106 @@ provenance:
   - https://zenodo.org/api/records/14138806
   - https://github.com/DeVosLab/PAC-MAP
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1016%2Fj.compbiomed.2024.109561%22&format=json&resultType=core&pageSize=3
-  confidence: 0.6
+  - https://raw.githubusercontent.com/DeVosLab/PAC-MAP/main/configs/SH-SY5Y.py
+  - https://raw.githubusercontent.com/DeVosLab/PAC-MAP/main/configs/LN18-RED.py
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-01T23:00:00Z'
-notes: 'Everything here comes from the Zenodo record description and the PAC-MAP GitHub page; the paper is not open
-  access (Europe PMC abstract only) and the bioRxiv preprint (10.1101/2024.07.18.602066) returned HTTP 429, and
-  the 18.7 GB dataset_upload.zip could not be listed (peek_archive TLS errors), so voxel size, microscope, stain,
-  patch/nucleus counts, and image dimensions are unknown. Annotation source is "mixed": weak seeded-watershed
-  centroids for LN18-RED pretraining, manual centroids for SH-SY5Y train and test. Size is the sum of three Zenodo
-  files (dataset_upload.zip 18.7 GB, preprocessed_images.zip 13.9 GB, models.zip 0.7 GB of model weights);
-  n_items not stated. Formats: patches are .tif per the description; CSV is the annotation format.'
+  annotations_verified: true
+  last_checked: '2026-10-06T22:05:00Z'
+notes: 'Annotation source is "mixed": weak seeded-watershed centroids for LN18-RED pretraining, manual centroids
+  for SH-SY5Y train and test. Paper not open access; bioRxiv preprint returned HTTP 429. enricher: size 33,339,885,884
+  B confirmed by Zenodo file listing; models.zip (0.7 GB) holds model weights only. enricher: voxel size 359.4x359.4x1999.9
+  nm from the preprocessed TIFF ImageJ header (unit=micron, spacing=1.9999, 2.7824 px/micron) and PAC-MAP configs
+  voxelsize [1.9999, 0.3594, 0.3594] (was null); configs set target = current voxel size, so patches are not resampled.
+  enricher: annotations verified in SH-SY5Y test.zip (patch tif + csv per patch); coverage dense per patch (every
+  nucleus centroid listed). channels 1 from sample.'
+technical:
+  method: sample
+  inspected_at: '2026-10-06T22:05:00Z'
+  inspected_urls:
+  - https://zenodo.org/records/14138806
+  - https://zenodo.org/api/records/14138806/files/dataset_upload.zip/content
+  - https://zenodo.org/api/records/14138806/files/preprocessed_images.zip/content
+  bytes_downloaded: 84545123
+  size_source: file-listing
+  layout:
+    tree: "dataset_upload.zip  18.7 GB\n  dataset_upload/SH-SY5Y/test.zip   84 MB  (nested zip)\n    test/patches/sample_01/\
+      \ 12 .tif, sample_02/ 6 .tif\n    test/points_csv/sample_01/ 12 .csv, sample_02/ 6 .csv\n  dataset_upload/SH-SY5Y/train.zip\
+      \  129 MB (nested zip, not opened)\n  dataset_upload/LN18-RED/pretrain/patches/sample_01..06.zip  18.4 GB\
+      \ (nested zips)\n  dataset_upload/LN18-RED/pretrain/patches_binary.zip  135 MB\n  dataset_upload/LN18-RED/pretrain/points_csv.zip\
+      \  3.5 MB\npreprocessed_images.zip  13.9 GB\n  preprocessed_images/LN-18-RED/sample_01..06.tif  13.5 GB\n\
+      \  preprocessed_images/SH-SY5Y/sample_01..02.tif  437 MB\nmodels.zip  0.7 GB  (48 .pt model weights)"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/14138806/files/preprocessed_images.zip/content::preprocessed_images/SH-SY5Y/sample_02.tif
+    size_bytes: 200715146
+    description: One whole preprocessed SH-SY5Y spheroid image (raw only; its centroid labels exist only per patch
+      inside the nested SH-SY5Y zips)
+  arrays:
+  - role: raw
+    path_pattern: dataset_upload/*/*.zip::*/patches/sample_*/patch_*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 46
+    - 256
+    - 256
+    shape_varies: false
+    dtype: float32
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0.0
+    - 0.9438315
+    normalization: rescaled
+    alignment: not-applicable
+    alignment_notes: Patches cut from the preprocessed whole images with patch_size (46,1,256,256) and stride (40,1,224,224),
+      per the ImageJ description in each patch.
+  - role: raw
+    path_pattern: preprocessed_images/*/sample_*.tif
+    format: tiff
+    axes: zyx
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Whole preprocessed spheroid images; SH-SY5Y sample_02 first page 920x1137 with 138 slices (header
+      only).
+  - role: label
+    path_pattern: dataset_upload/*/*.zip::*/points_csv/sample_*/patch_*.csv
+    format: csv
+    axes: null
+    shape:
+    - 45
+    - 4
+    shape_varies: true
+    dtype: float64
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: points-table
+    classes: null
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: 'patch_NNNN.csv pairs with patch_NNNN.tif in the parallel patches/ folder; columns axis-0,
+      axis-1, axis-2 are z, y, x voxel coordinates within the patch (sample: z 34-43, y/x within 0-256).'
+  notes: 'Listing: Zenodo API, 3 zips (exact sizes, 33.3 GB) plus member lists. Data are nested zips (deflated),
+    so tools could not peek inside; a scratch range-reader downloaded only SH-SY5Y/test.zip (84 MB) and read one
+    patch: float32 ImageJ hyperstack 46x256x256, deflate, values 0..0.944 (mean 0.128, p99 0.52; one sample; float
+    in [0,1] -> rescaled). Its CSV has a header and 45 rows of index, z, y, x centroids. All 12 sample_01 test patches
+    are 46x256x256. Header of preprocessed_images/SH-SY5Y/sample_02.tif (first 64 KB decompressed): 920x1137 px,
+    138 slices, 32-bit, unit=micron, spacing=1.9999, 2.7824 px/micron. train.zip and the LN18-RED patch zips were
+    not opened. TensorSwitch cannot read zip-in-zip members, so patch/CSV patterns use a double :: for the nested
+    zip and the sample is a whole preprocessed image (zip member, raw only); the labelled patches need the nested
+    zips (e.g. dataset_upload.zip::dataset_upload/SH-SY5Y/test.zip, 84 MB, usable).'
