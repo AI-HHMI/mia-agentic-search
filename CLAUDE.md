@@ -85,8 +85,19 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
   claims (`method`, confirmed size, observed values) that aren't backed by a logged read.
 - **Labels are computed, not added:** `.github/workflows/label.yml` runs `tools/labels.py` on every push:
   `dim:`, `org:`, `modality:`, `fmt:`, `dtype:`, `anno:`, `label-enc:`, `license:<spdx as written>`,
-  `size:`, `auto-download` (size confirmed by a complete file listing, < 50 GB, open access), `enriched` and
-  `license-verification-needed` (`license.spdx: unknown`).
+  `size:`, `auto-download` (size confirmed by a complete file listing, < 50 GB, open access), `enriched`,
+  `license-verification-needed` (`license.spdx: unknown`) and `voxel-size-found` / `voxel-size-missing`
+  (`imaging.voxel_size_nm` has x, y and, for 3D data, z). Merged PRs are relabelled from the record on
+  `main` whenever records change there, so a voxel size filled in later shows up on them too.
+- **Voxel size:** conversion can't proceed without it, so the enricher searches hard for it (skill step 4a:
+  headers, repository APIs, archive READMEs, the full paper, code repos, upstream datasets), and makes a
+  second pass over PRs enriched before that.
+- **Download links:** TensorSwitch fetches files itself, so the enricher also searches hard for direct links it can
+  use (skill step 4b: repository file APIs, the full landing page, zip members, the paper, code repos), checked with
+  `tools/download_check.py`, for `technical.sample.urls` and, when one direct archive exists, `data.download_url`.
+- **Conversion readiness:** the enricher also runs `tools/convertibility.py` (issues #518 / #519) with TensorSwitch's
+  record planner, and fixes what blocks automatic conversion from evidence: concrete sample files, HDF5 dataset
+  names, real globs in `path_pattern`, one organism per file set, a clear modality, `annotations.source`.
   License labels are the SPDX id verbatim, with no interpretation.
 - **Auto-merge** (`tools/automerge.py`) merges PRs whose labels meet a fixed policy, but never a possible
   duplicate (`tools/common.py:similarity_reasons`) of a record on main or another open PR. Agents never merge,
@@ -109,6 +120,8 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
 | `python tools/probe.py <url> [--glob G] --id ID` | shape / dtype / compression / voxel size from file headers (enricher) |
 | `python tools/sample.py --id ID --raw S [--label S]` | download a small sample, measure it, delete it (enricher) |
 | `python tools/labels.py <file>` | the PR labels a record gets |
+| `python tools/download_check.py <url\|zip::member> --id ID [--tensorswitch SRC]` | is this a direct link TensorSwitch can fetch (one range request) |
+| `python tools/convertibility.py [files] [--summary\|--json] [--tensorswitch SRC]` | what blocks automatic conversion (read-only report) |
 | `python tools/place.py <file>\|--all\|--pr-branches` | move records to `datasets/<dimensionality>/<modality>/` |
 | `python tools/publish.py pr-pull <id>` / `pr-update <file>` | enricher: edit the record on an open PR's branch |
 | `python tools/check_links.py [--oldest N] [--write]` | link rot check |

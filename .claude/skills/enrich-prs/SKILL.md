@@ -1,6 +1,6 @@
 ---
 name: enrich-prs
-description: Enricher run. Goes through open dataset PRs that aren't enriched yet and inspects the actual files (folder structure, confirmed size, shapes, dtypes, compression, value ranges, label encoding, raw/label alignment, license), writes the results into the PR's record and updates the PR. Labels follow automatically. Optional args are limit=N (max PRs, default 20), pr=<number> (just that PR), shard=K/N (only PRs whose number mod N is K, for parallel runs) and dry-run.
+description: Enricher run. Goes through open dataset PRs that aren't enriched yet and inspects the actual files (folder structure, confirmed size, shapes, dtypes, compression, value ranges, label encoding, raw/label alignment, license), searches hard for the voxel size and for direct download links TensorSwitch can fetch, fixes what blocks automatic conversion (tools/convertibility.py, TensorSwitch planner), writes the results into the PR's record and updates the PR. Labels follow automatically. Optional args are limit=N (max PRs, default 20), pr=<number> (just that PR), shard=K/N (only PRs whose number mod N is K, for parallel runs) and dry-run.
 ---
 
 # enrich-prs
@@ -24,7 +24,11 @@ git fetch origin
 git checkout -q --detach origin/main
 python tools/publish.py state-pull --routine enricher      # skip in dry-run
 python tools/run_log.py start --routine enricher           # add --dry-run in dry-run; note the printed path
+# TensorSwitch's record planner, for step 5a (it only reads records; nothing is downloaded or converted)
+git clone -q --depth 1 -b unified https://github.com/JaneliaSciComp/tensorswitch "${TMPDIR:-/tmp}/tensorswitch" \
+  && TS="${TMPDIR:-/tmp}/tensorswitch/src"
 ```
+If the clone fails, run step 5a without `--tensorswitch` and say so in the PR comment.
 
 ## 1. The queue
 ```bash
@@ -36,6 +40,12 @@ The queue is the open PRs whose branch starts with `claude/dataset/` and that **
 With `shard=K/N`, keep only PRs whose number modulo N equals K. Several runs with different K then
 split the backlog without ever touching the same PR.
 
+**Second pass: voxel size and conversion readiness.** When that queue is empty, continue with the open
+dataset PRs that *are* `enriched` but whose comments have no `Conversion readiness` heading yet
+(`gh pr view <n> --json comments`), i.e. PRs enriched before steps 4a, 4b and 5a existed, oldest first.
+For these, run only steps 2, 4a, 4b, 5a and 6. Keep the inspected values in `technical`; change only what
+4a, 4b and 5a fix, and post their results as the comment.
+
 Work through it one PR at a time:
 ```
 while python tools/run_log.py continue --time-only; do      # exit 1 = the 110-minute cutoff
@@ -43,7 +53,7 @@ while python tools/run_log.py continue --time-only; do      # exit 1 = the 110-m
     steps 2–7 for it
 done
 ```
-Spend about **10 minutes per PR**, and check `python tools/run_log.py show` (`elapsed_min`) as you go.
+Spend about **10 minutes per PR**, plus up to 15 more for steps 4a, 4b and 5a, and check `python tools/run_log.py show` (`elapsed_min`) as you go.
 If a PR needs much longer, write down what you have (method `metadata-only` or `header` is fine),
 and say in `technical.notes` what is still open.
 
@@ -155,9 +165,94 @@ Only find and record it.
   Add a draft request to the PR comment (step 6) that a human could send to the authors:
   a short, polite note asking under which license the data may be reused. **Never contact authors yourself.**
 
+## 4a. Voxel size: search until you find it
+`imaging.voxel_size_nm` is what conversion needs most: TensorSwitch never guesses a voxel size, so a
+record without one can't be converted. The PR is labelled `voxel-size-found` or `voxel-size-missing`
+from it (found = `x`, `y` and, for 3D / 3D+t, `z`). If the record's value is missing or incomplete,
+**work through every source below before you give up**, and note each one you checked:
+1. **File headers** of each role you probed in 3c (`voxel_size_nm` in the probe output), plus
+   metadata sidecars: OME-XML, `.zattrs` / `zarr.json`, N5 `attributes.json`, neuroglancer `info`,
+   HDF5 attributes (`resolution`, `element_size_um`, `spacing`). Probe one more file if needed.
+2. **The repository's structured metadata:**
+   - EMPIAR: `https://www.ebi.ac.uk/empiar/api/entry/EMPIAR-<n>/` (`image_sets[].pixel_width` / `pixel_height`, in Å)
+   - BioImage Archive: `https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD<n>` (REMBI image acquisition sections)
+   - Zenodo: `https://zenodo.org/api/records/<n>` (description, notes, other versions, related identifiers)
+   - IDR: the `imgData` physical sizes; CZ cryoET portal: the tomogram's `voxel_spacing`
+3. **Docs inside the data:** README, `*.txt`, `*.json`, `*.xml`, `*.csv` in the archives (`peek_archive.py --cat`).
+4. **The paper, in full** (`tools/paper.py`): Methods / image acquisition, Data availability, figure
+   legends, supplementary tables. If the record cites no paper, search for one by title and authors.
+5. **The code repository** linked from the page or paper: README, configs and data loaders
+   (`resolution`, `voxel_size`, `spacing`, `scale`, `pixel_size`).
+6. **Upstream sources:** for a compiled benchmark, a challenge release or a re-packaged subset, the
+   original dataset or paper of each part. Check the files match it (not downsampled, binned or
+   resampled; compare shapes).
+
+Rules:
+- A value counts only if a source you read **states** it, with a unit. Convert exactly (1 µm = 1000 nm,
+  1 Å = 0.1 nm). Never compute it from microscope, objective and camera specifications.
+- Distrust header defaults (1 px = 1 µm, 1 Å, 1.0) and values implausible for the modality. When a
+  header and the docs disagree, the docs win; note the conflict.
+- Sub-datasets with different voxel sizes: set `voxel_size_nm` only if they all share one. Otherwise
+  leave it `null` and list each subset's size and source in `notes`.
+- Only the lateral size is stated for 3D data: fill `x` and `y`, leave `z: null` (the PR stays
+  `voxel-size-missing`) and say so in `notes`.
+- Add every page that states the value to `evidence_urls` (logged with `run_log.py fetched`), and add a
+  `notes` line such as `enricher: voxel size 4x4x40 nm from paper Methods (was null)`.
+- Not found anywhere: keep it `null` and write in `technical.notes` what you checked
+  (`voxel size not found; checked: header, EMPIAR API, README, paper Methods, GitHub repo`).
+
+## 4b. Download links: search until TensorSwitch can fetch them
+TensorSwitch downloads a record's files itself (`fetch_dataset`), so it needs **direct file links**, not
+pages. It accepts `http(s)`, `ftp` and `s3` URLs on its host allowlist, and `<zip url>::<member>` to pull one
+file out of a remote zip (that needs range requests). A landing page, a folder index, a "Download" button
+behind JavaScript or a login page is not usable. Check every candidate with:
+```bash
+python tools/download_check.py <url> ['<zip url>::<member>' ...] --id <id> --tensorswitch "$TS"
+```
+`usable: true` is the bar. Find usable links for two fields:
+- `technical.sample.urls`: the sample unit (smallest raw file and its label files), one usable spec each.
+- `data.download_url`: the whole dataset as **one direct file** (usually the archive) when one exists.
+  If the dataset is only offered as many files or a folder, keep the folder/landing URL here, and say in
+  `technical.notes` where the direct files live (the listing has them).
+
+If the current links aren't usable, **work through every route below before giving up**, and note each one:
+1. **Repository file APIs**, which give direct URLs:
+   - Zenodo: `https://zenodo.org/api/records/<n>` → `files[].links.self` (`…/files/<name>/content`); check
+     newer versions too (`/versions/latest`)
+   - EMPIAR: `https://ftp.ebi.ac.uk/empiar/world_availability/<n>/` (the https form of the FTP tree)
+   - BioImage Archive: `https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/<last 3 digits>/S-BIAD<n>/Files/…`, or
+     the study's file list from `https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD<n>/info`
+   - figshare: `https://api.figshare.com/v2/articles/<id>` → `files[].download_url`
+   - Dryad: `https://datadryad.org/api/v2/datasets/doi:<doi>` → versions → files → `_links.stash:download`
+   - Dataverse: `/api/datasets/:persistentId/?persistentId=doi:<doi>` → `/api/access/datafile/<id>`
+   - OSF: `https://api.osf.io/v2/nodes/<id>/files/` → `links.download`; Mendeley Data: its public API
+   - Hugging Face: `https://huggingface.co/datasets/<repo>/resolve/main/<path>`
+   - S3 / GCS buckets: list the prefix (`tools/listing.py`) and take object URLs
+   - CZ cryoET portal: `files.cryoetdataportal.cziscience.com` object URLs from the S3 listing
+2. **The landing page in full**: download buttons often point to a direct URL (inspect the links, not
+   the button text); "mirror", "FTP", "AWS" or "Globus" sections; per-file tables.
+3. **Archive members**: if only a large zip is direct, use `<zip url>::<member>` for the sample (find
+   the member with `tools/peek_archive.py`).
+4. **The paper's Data availability section and supplement** (`tools/paper.py`), and the **code
+   repository's README** (download scripts list the exact URLs; read them, never run them).
+5. **Upstream sources**: for a re-release, the original repository's direct files, if they're the same files.
+6. **Equivalent hosts**: `ftp://` paths on EBI also exist as `https://ftp.ebi.ac.uk/…` (prefer https: ranges
+   and zip members work there); `s3://bucket/key` is `https://bucket.s3.amazonaws.com/key`.
+
+Rules:
+- Only links you checked with `download_check.py` in this run, and that point to **this dataset's files**.
+  Never construct a URL by guessing a path; derive it from a listing, an API response or a page.
+- Chunked stores (Zarr, N5, neuroglancer precomputed) are folders by design: cite the store's root URL
+  and check it with `tools/probe.py` instead. TensorSwitch reads those remotely.
+- A usable link on a host TensorSwitch doesn't allow yet: record it anyway, and name the host in the PR
+  comment so it can be added to the allowlist.
+- Nothing direct exists (registration, Globus / Aspera only, "on request", download behind a form):
+  keep the landing URL, set `data.download_method` to what it is (`globus`, `aspera`, `other`), and write
+  in `technical.notes` what you checked (`no direct download: Zenodo API lists none, page offers Globus only`).
+
 ## 5. Other fields
 Inspection often answers fields the harvester left empty or got wrong:
-- `imaging.voxel_size_nm`, `imaging.channels` and `imaging.dimensionality`
+- `imaging.channels` and `imaging.dimensionality` (`imaging.voxel_size_nm`: step 4a)
 - `data.formats` (never leave `other` for a format you probed, and never keep `other` next to a known
   format; it is only for records where no listed format applies) and `data.n_items`
 - `annotations.format`, `annotations.types`
@@ -167,6 +262,37 @@ Fill or correct them only from what you inspected, and add one short `notes` lin
 (`enricher: voxel size from OME-Zarr scale (was null)`). `notes` is limited to 1000 characters;
 inspection details go in `technical.notes`. You may adjust `provenance.confidence` up or down to
 match the evidence (the caps in CLAUDE.md still apply). Set `verification.last_checked` to now.
+
+## 5a. Conversion readiness (issues #518, #519)
+Records are converted to OME-Zarr automatically by TensorSwitch, which reads the record and stops on
+anything it doesn't settle. After steps 3–5, check what still blocks it:
+```bash
+python tools/convertibility.py <file> --tensorswitch "$TS"     # needs / helpful, plus the planner's verdict
+```
+Fix every **need**, and every **helpful** item you can, from what you inspected or read in this run.
+Rerun until nothing fixable is left.
+
+| Gap | Fix |
+|---|---|
+| no `technical` / no `arrays` | steps 3a–d |
+| no `sample.urls`, a landing page / folder, or a host not on the allowlist | step 4b |
+| `data.download_url` a landing page / folder | step 4b (one direct archive or file, if the dataset offers one) |
+| sample file matches no array | correct the `path_pattern` (or the sample) so each sample file matches its array |
+| no voxel size | step 4a |
+| `organism` empty | NCBI name(s) from the page or paper |
+| several organisms | keep them all; one `notes` line saying which files or folders belong to each (`organisms: Homo sapiens = hela_cell/, Rattus norvegicus = lucchi_pp/`). Each organism becomes its own converted dataset. |
+| `modality` only `other`, `other` next to a clear value, or mixed families | the listed value that applies; if EM and light/X-ray data are mixed, a `notes` line saying which files are which |
+| HDF5 array without a dataset name | append ` (<dataset path>)` from the probe's dataset list, always in this spelling; rewrite ` :: name` to it. One array entry per dataset. |
+| `path_pattern` with placeholders (`<name>`, `NNN`, `###`) or a comma list | one real glob (`*`, `?`, `[0-9]`, `{a,b}`) that matches exactly this array's files in the listing; check it against the listing |
+| HDF5 array without `axes` | only when the docs, paper or file attributes state the axis order; otherwise leave `null` and say why in `technical.notes` (the step 3c rule stands) |
+| `annotations.source` unknown / mixed | `manual`, `proofread` or `automatic` from the paper's Methods; `mixed` only if it really is, with a `notes` line saying which arrays are which |
+| `annotations.coverage` partial / unknown | a `notes` line on what is annotated: sparse crops, N of M slices, a sub-volume and where |
+
+- **Never invent a value to clear a need.** A need that no source settles stays, with what you checked.
+- What #518 lists as *new fields* (`label_class`, file arrangement, raw↔label pairing rule,
+  `expansion_factor`, annotation tool) is not in the schema yet. Don't add keys: put the structure
+  annotated in `classes` / `alignment_notes`, the pairing rule in `alignment_notes`, the rest in `notes`.
+- `notes` is limited to 1000 characters, so keep these lines short.
 
 ## 6. Write, validate, publish
 Set `schema_version: '1.2'` and write the `technical` block:
@@ -205,6 +331,13 @@ your changes on top, respecting their edit, and publish again.
 - a heading `Enricher inspection`
 - which files were listed, probed and sampled, with byte counts
 - the key raw tool outputs: the listing's JSON line, and each probe/sample shape, dtype, value range and hints
+- a `Conversion readiness` heading: the `convertibility.py` report before and after your fixes, the
+  TensorSwitch status (`ready` / `partial` / `blocked`) and planner warnings, and each remaining need
+  with why it couldn't be settled (always include this section; the second pass in step 1 looks for it)
+- a `Download link search` heading: each link and its `download_check.py` result (`usable`, size,
+  range requests), or every route checked without finding one; hosts that need adding to the allowlist
+- a `Voxel size search` heading: the value and the quote that states it, or every source checked
+  without finding it
 - what's still unknown and why
 - the draft license request, if any
 
