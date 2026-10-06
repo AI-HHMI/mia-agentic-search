@@ -72,7 +72,7 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-09-30T19:08:18Z'
+  last_checked: '2026-10-06T23:00:00Z'
 notes: 'Also mirrored on AWS S3 (bossdb-open-data) and GCS. Imagery is 8x8x40 nm (downsampled from ~4 nm acquisition);
   the nominal 40 nm section thickness was used for z. Segmentation is automated (CNN affinities) with proofreading
   of a subset of neurons. Annotation layers were confirmed from the v117 manifest page, not by browsing the bucket
@@ -88,17 +88,19 @@ technical:
   bytes_downloaded: 0
   size_source: unknown
   layout:
-    tree: |
-      s3://bossdb-open-data/iarpa_microns/minnie/minnie65/   (top-level prefixes only)
-        em/                               precomputed EM, 9 scales
-        seg/                              precomputed segmentation, 11 scales
-        autoseg/, autoseg-sharded/, ws/
-        clefts/, clefts-sharded/          synaptic clefts
-        nuclei/, nuclei-sharded/, nucleus_detection/, nucleus_neuron_classification/
-        skeletons/, synapse_graph/, cell_types/
+    tree: "s3://bossdb-open-data/iarpa_microns/minnie/minnie65/   (top-level prefixes only)\n  em/             \
+      \                  precomputed EM, 9 scales\n  seg/                              precomputed segmentation,\
+      \ 11 scales\n  autoseg/, autoseg-sharded/, ws/\n  clefts/, clefts-sharded/          synaptic clefts\n  nuclei/,\
+      \ nuclei-sharded/, nucleus_detection/, nucleus_neuron_classification/\n  skeletons/, synapse_graph/, cell_types/\n"
     n_files: null
     listing_complete: false
-  sample: null
+  sample:
+    urls:
+    - https://bossdb-open-data.s3.amazonaws.com/iarpa_microns/minnie/minnie65/em
+    - https://bossdb-open-data.s3.amazonaws.com/iarpa_microns/minnie/minnie65/seg
+    size_bytes: null
+    description: The em and seg Neuroglancer precomputed layers (sharded, read remotely); a test should read one
+      small box where both overlap, e.g. inside the seg bounds starting at voxel (26385, 30308, 14850) x,y,z
   arrays:
   - role: raw
     path_pattern: iarpa_microns/minnie/minnie65/em
@@ -145,5 +147,7 @@ technical:
     9 scales, raw encoding in gzip shards, chunk 128x128x16 at 8_8_40. seg: uint64, 11 scales, compressed_segmentation
     (block 16x16x2) in gzip shards, chunk 128x128x32. No pixel data sampled and no file listing (petabyte-scale,
     sharded). Seg encoding recorded as instance-ids because it is the neuron segmentation volume (record: instance-segmentation);
-    IDs not sampled.'
+    IDs not sampled. Second pass 2026-10-06: sample.urls set to the em/seg precomputed layer roots (chunked stores,
+    read remotely; info re-probed: 8x8x40 nm, em uint8 raw shards, seg uint64 compressed_segmentation). No single-file
+    sample exists.'
   inspected_at: '2026-09-30T19:08:18Z'
