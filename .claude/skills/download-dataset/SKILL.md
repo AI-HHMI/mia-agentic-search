@@ -14,7 +14,8 @@ nothing here edits a record or touches `main`. This skill downloads data, so in 
 - Only the record's **sample unit** (`technical.sample.urls`: one raw plus its labels) is downloaded.
   Whole datasets are out of scope for now.
 - Never run code that ships with a dataset, never unpickle. Downloads stay in `<root>/staging/`.
-- `demo/data/` and `demo/staging/` are git-ignored. Never commit converted data.
+- `demo/` is git-ignored as a whole: it stays local and never goes to GitHub. Never commit converted data,
+  and if you choose another `root`, keep it out of git too.
 
 ## Output layout (miao#13)
 ```
