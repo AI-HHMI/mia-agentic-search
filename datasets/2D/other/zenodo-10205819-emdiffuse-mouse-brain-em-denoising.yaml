@@ -23,10 +23,7 @@ imaging:
   modality:
   - other
   dimensionality: 2D
-  voxel_size_nm:
-    x: 3.3
-    y: 3.3
-    z: null
+  voxel_size_nm: null
   channels: null
   organism:
   - Mus musculus
@@ -71,15 +68,15 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-09-30T21:16:30Z'
+  last_checked: '2026-10-06T23:40:00Z'
 notes: 'No license is shown in the Zenodo API record; the CC-BY-4.0 link in the paper full text refers to the article,
-  so the dataset license is left unknown. peek_archive of EMDiffuse_dataset.zip lists 822 TIFFs (~6.4 GB uncompressed)
-  in brain_train, brain_test and Heart/Liver/Bone Marrow/HeLa folders (per the Zenodo description). Pixel size 3.3
-  nm is for the brain ground truth (raw super-resolution input 6.6 nm); the paper gives 4.4 nm for liver/heart/bone
-  marrow and 2.1 nm for HeLa. Imaging on an FEI Verios SEM at 2 kV; the paper does not name the SEM mode more specifically
-  than SEM, so modality is other. Ground truth is the longest exposure, not a manual annotation. Species of HeLa
-  is inferred from the cell line name. enricher: license still unknown (GitHub LICENSE is MIT for the code; no license
-  in Zenodo API). The pairs ship unregistered; the repo register.py aligns them.'
+  so the dataset license is left unknown. Pixel size differs per subset (paper): brain 3.3 nm (40,000x; 2w super-resolution
+  inputs 6.6 nm), liver/heart/bone marrow 4.4 nm, HeLa 2.1 nm; enricher: voxel_size_nm set to null (was 3.3 nm,
+  brain only). Imaging on an FEI Verios SEM at 2 kV; the paper does not name the SEM mode more specifically than
+  SEM, so modality is other. Ground truth is the longest exposure, not a manual annotation. enricher: license still
+  unknown (GitHub LICENSE is MIT for the code; no license in Zenodo API). The pairs ship unregistered; the repo
+  register.py aligns them. organisms: Mus musculus = brain_train/, brain_test/, Heart/, Liver/ (Zenodo description)
+  and BM/; Homo sapiens = HeLa/ (HeLa cell line).'
 technical:
   method: sample
   inspected_urls:
@@ -88,17 +85,12 @@ technical:
   bytes_downloaded: 14124000
   size_source: file-listing
   layout:
-    tree: |
-      ./                                     1 files    5.3 GB  .zip
-      EMDiffuse_dataset.zip/EMDiffuse_dataset/
-        brain_train/<roi>/   (x70 dirs)    628 files    4.6 GB  .tif
-        brain_test/<roi>/    (x3 dirs)      27 files  196.4 MB  .tif
-        Liver/<roi>/         (x17 dirs)     67 files  729.9 MB  .tif
-        Heart/<roi>/         (x10 dirs)     40 files  435.8 MB  .tif
-        BM/<roi>/            (x10 dirs)     40 files  435.8 MB  .tif
-        HeLa/<roi>/          (x10 dirs)     20 files   73.1 MB  .tif
-        (+3 .DS_Store files)
-      per ROI (e.g. brain_train/61): <Tissue>__2w_01..03.tif, <Tissue>__4w_04..09.tif
+    tree: "./                                     1 files    5.3 GB  .zip\nEMDiffuse_dataset.zip/EMDiffuse_dataset/\n\
+      \  brain_train/<roi>/   (x70 dirs)    628 files    4.6 GB  .tif\n  brain_test/<roi>/    (x3 dirs)      27\
+      \ files  196.4 MB  .tif\n  Liver/<roi>/         (x17 dirs)     67 files  729.9 MB  .tif\n  Heart/<roi>/  \
+      \       (x10 dirs)     40 files  435.8 MB  .tif\n  BM/<roi>/            (x10 dirs)     40 files  435.8 MB\
+      \  .tif\n  HeLa/<roi>/          (x10 dirs)     20 files   73.1 MB  .tif\n  (+3 .DS_Store files)\nper ROI (e.g.\
+      \ brain_train/61): <Tissue>__2w_01..03.tif, <Tissue>__4w_04..09.tif\n"
     n_files: 1
     listing_complete: true
   sample:
@@ -109,7 +101,7 @@ technical:
     description: One noisy / ground-truth pair from one brain ROI (two 1768x2048 uint16 TIFFs)
   arrays:
   - role: raw
-    path_pattern: EMDiffuse_dataset/*/<roi>/<Tissue>__4w_0[4-8].tif
+    path_pattern: EMDiffuse_dataset/*/*/*__4w_0[4-8].tif
     format: tiff
     axes: yx
     shape:
@@ -128,7 +120,7 @@ technical:
     alignment_notes: Denoising inputs (shorter exposures at 40,000x). <Tissue>__2w_01..03.tif are the super-resolution
       inputs (20,000x), same 1768x2048 uint16 format per probe.
   - role: target
-    path_pattern: EMDiffuse_dataset/*/<roi>/<Tissue>__4w_09.tif
+    path_pattern: EMDiffuse_dataset/*/*/*__4w_09.tif
     format: tiff
     axes: yx
     shape:
@@ -152,5 +144,7 @@ technical:
     authors'' register.py (read as text, not run): _09 is the ground truth, 4w_04-08 are the denoising inputs, 2w_*
     are the super-resolution inputs. Some ROIs (e.g. HeLa/1, Liver/1) have only a subset of the exposures. Probe
     of Brain__2w_01.tif: single page, uncompressed uint16 1768x2048; the probe of 4w_09 hit a TLS EOF, but the sample
-    read it. Sample from one pair only: input 4919-56424 (mean 30692), target 8224-48634 (mean 33136).'
+    read it. Sample from one pair only: input 4919-56424 (mean 30692), target 8224-48634 (mean 33136). Second pass
+    2026-10-06: listing and the brain_train/61 pair sample repeated (same values); path patterns made globs (<Tissue>/<roi>
+    -> *).'
   inspected_at: '2026-09-30T21:16:30Z'
