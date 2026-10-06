@@ -3,6 +3,7 @@
     python tools/labels.py <record.yaml>          # print the labels, one per line
     python tools/labels.py sync --pr N            # CI: set PR N's labels from the record on its head
     python tools/labels.py sync --all-open        # CI: same for every open claude/dataset/* PR
+    python tools/labels.py sync --merged          # CI: merged claude/dataset/* PRs, from the record now on main
 
 Agents never add labels by hand: they fill in the record and .github/workflows/label.yml runs `sync`
 on every push. Labels outside the managed prefixes (e.g. new-datasets) are left alone.
@@ -11,6 +12,7 @@ on every push. Labels outside the managed prefixes (e.g. new-datasets) are left 
   label-enc:instance-ids · license:CC-BY-4.0 (the SPDX id as written, not interpreted) · size:1-10GB
   auto-download (size confirmed by a complete file listing, < 50 GB, open access) · enriched
   license-verification-needed (license.spdx is unknown)
+  voxel-size-found / voxel-size-missing (imaging.voxel_size_nm has x, y and, for 3D data, z)
 """
 import argparse
 import json
@@ -40,6 +42,8 @@ FLAGS = {
     "auto-download": ("0E8A16", "Size confirmed by a complete file listing, < 50 GB, open access"),
     "enriched": ("006B75", "Technical metadata filled in by the enricher routine"),
     "license-verification-needed": ("B60205", "No license found yet; a human (or agent) needs to find or request it"),
+    "voxel-size-found": ("0E8A16", "imaging.voxel_size_nm is filled (x, y and, for 3D data, z)"),
+    "voxel-size-missing": ("E99695", "No voxel / pixel size in the record yet; conversion needs it"),
 }
 SIZE_BUCKETS = [(10**9, "<1GB"), (10 * 10**9, "1-10GB"), (50 * 10**9, "10-50GB"), (500 * 10**9, "50-500GB")]
 MAX_LEN = 50  # GitHub's label name limit
@@ -47,6 +51,11 @@ MAX_LEN = 50  # GitHub's label name limit
 
 def _label(prefix, value):
     return (prefix + str(value))[:MAX_LEN]
+
+
+def voxel_size_found(im):
+    vs = im.get("voxel_size_nm") or {}
+    return bool(vs.get("x") and vs.get("y") and (vs.get("z") or str(im.get("dimensionality", "")).startswith("2D")))
 
 
 def labels_for(r):
@@ -79,6 +88,7 @@ def labels_for(r):
         out.append("auto-download")
     if tech:
         out.append("enriched")
+    out.append("voxel-size-found" if voxel_size_found(im) else "voxel-size-missing")
     return list(dict.fromkeys(out))
 
 
@@ -112,13 +122,23 @@ def record_on_pr(number):
     return yaml.load(_run("git", "show", f"{ref}:{paths[0]}"), Loader=_NoDatesLoader), paths
 
 
-def sync(number, repo_labels):
-    rec, paths = record_on_pr(number)
+def record_on_main(record_id, paths_by_id):
+    """The record now on main for a merged PR (it may have been corrected since the merge)."""
+    path = paths_by_id.get(record_id)
+    if path is None:
+        return None, []
+    return yaml.load(_run("git", "show", f"origin/main:{path}"), Loader=_NoDatesLoader), [path]
+
+
+def sync(number, repo_labels, rec=None, paths=None, have=None):
+    if rec is None:
+        rec, paths = record_on_pr(number)
     if rec is None:
         print(f"#{number}: expected one record, found {paths}; labels unchanged")
         return
     want = set(labels_for(rec))
-    have = {lab["name"] for lab in json.loads(_run("gh", "pr", "view", str(number), "--json", "labels"))["labels"]}
+    if have is None:
+        have = {lab["name"] for lab in json.loads(_run("gh", "pr", "view", str(number), "--json", "labels"))["labels"]}
     add = sorted(want - have)
     remove = sorted(n for n in have - want if managed(n))
     for name in add:
@@ -146,10 +166,22 @@ def main():
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--pr", type=int)
     g.add_argument("--all-open", action="store_true")
+    g.add_argument("--merged", action="store_true")
     a = ap.parse_args(sys.argv[2:])
     repo_labels = {lab["name"] for lab in json.loads(_run("gh", "label", "list", "--limit", "1000", "--json", "name"))}
     if a.pr:
         sync(a.pr, repo_labels)
+        return
+    if a.merged:
+        _run("git", "fetch", "-q", "origin", "main")
+        paths_by_id = {Path(p).stem: p for p in _run("git", "ls-tree", "-r", "--name-only", "origin/main", "--", "datasets/").split()
+                       if p.endswith(".yaml")}
+        prs = json.loads(_run("gh", "pr", "list", "--state", "merged", "--limit", "2000", "--json", "number,headRefName,labels"))
+        for pr in prs:
+            if pr["headRefName"].startswith(DATASET_BRANCH_PREFIX):
+                rec_id = pr["headRefName"].removeprefix(DATASET_BRANCH_PREFIX)
+                rec, paths = record_on_main(rec_id, paths_by_id)
+                sync(pr["number"], repo_labels, rec, paths, {lab["name"] for lab in pr["labels"]})
         return
     prs = json.loads(_run("gh", "pr", "list", "--state", "open", "--limit", "500", "--json", "number,headRefName"))
     for pr in prs:

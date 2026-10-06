@@ -1,6 +1,6 @@
 ---
 name: enrich-prs
-description: Enricher run. Goes through open dataset PRs that aren't enriched yet and inspects the actual files (folder structure, confirmed size, shapes, dtypes, compression, value ranges, label encoding, raw/label alignment, license), writes the results into the PR's record and updates the PR. Labels follow automatically. Optional args are limit=N (max PRs, default 20), pr=<number> (just that PR), shard=K/N (only PRs whose number mod N is K, for parallel runs) and dry-run.
+description: Enricher run. Goes through open dataset PRs that aren't enriched yet and inspects the actual files (folder structure, confirmed size, shapes, dtypes, compression, value ranges, label encoding, raw/label alignment, license), searches hard for the voxel size, writes the results into the PR's record and updates the PR. Labels follow automatically. Optional args are limit=N (max PRs, default 20), pr=<number> (just that PR), shard=K/N (only PRs whose number mod N is K, for parallel runs) and dry-run.
 ---
 
 # enrich-prs
@@ -36,6 +36,11 @@ The queue is the open PRs whose branch starts with `claude/dataset/` and that **
 With `shard=K/N`, keep only PRs whose number modulo N equals K. Several runs with different K then
 split the backlog without ever touching the same PR.
 
+**Second pass, voxel size.** When that queue is empty, continue with the open dataset PRs that *are*
+`enriched` but still labelled `voxel-size-missing`, and whose comments have no `Voxel size search`
+heading yet (`gh pr view <n> --json comments`), oldest first. For these, run only steps 2, 4a and 6:
+keep `technical` as it is (only add to `technical.notes`), and post the step 4a result as the comment.
+
 Work through it one PR at a time:
 ```
 while python tools/run_log.py continue --time-only; do      # exit 1 = the 110-minute cutoff
@@ -43,7 +48,7 @@ while python tools/run_log.py continue --time-only; do      # exit 1 = the 110-m
     steps 2–7 for it
 done
 ```
-Spend about **10 minutes per PR**, and check `python tools/run_log.py show` (`elapsed_min`) as you go.
+Spend about **10 minutes per PR**, plus up to 10 more for step 4a when the voxel size is missing, and check `python tools/run_log.py show` (`elapsed_min`) as you go.
 If a PR needs much longer, write down what you have (method `metadata-only` or `header` is fine),
 and say in `technical.notes` what is still open.
 
@@ -155,9 +160,45 @@ Only find and record it.
   Add a draft request to the PR comment (step 6) that a human could send to the authors:
   a short, polite note asking under which license the data may be reused. **Never contact authors yourself.**
 
+## 4a. Voxel size: search until you find it
+`imaging.voxel_size_nm` is what conversion needs most: TensorSwitch never guesses a voxel size, so a
+record without one can't be converted. The PR is labelled `voxel-size-found` or `voxel-size-missing`
+from it (found = `x`, `y` and, for 3D / 3D+t, `z`). If the record's value is missing or incomplete,
+**work through every source below before you give up**, and note each one you checked:
+1. **File headers** of each role you probed in 3c (`voxel_size_nm` in the probe output), plus
+   metadata sidecars: OME-XML, `.zattrs` / `zarr.json`, N5 `attributes.json`, neuroglancer `info`,
+   HDF5 attributes (`resolution`, `element_size_um`, `spacing`). Probe one more file if needed.
+2. **The repository's structured metadata:**
+   - EMPIAR: `https://www.ebi.ac.uk/empiar/api/entry/EMPIAR-<n>/` (`image_sets[].pixel_width` / `pixel_height`, in Å)
+   - BioImage Archive: `https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD<n>` (REMBI image acquisition sections)
+   - Zenodo: `https://zenodo.org/api/records/<n>` (description, notes, other versions, related identifiers)
+   - IDR: the `imgData` physical sizes; CZ cryoET portal: the tomogram's `voxel_spacing`
+3. **Docs inside the data:** README, `*.txt`, `*.json`, `*.xml`, `*.csv` in the archives (`peek_archive.py --cat`).
+4. **The paper, in full** (`tools/paper.py`): Methods / image acquisition, Data availability, figure
+   legends, supplementary tables. If the record cites no paper, search for one by title and authors.
+5. **The code repository** linked from the page or paper: README, configs and data loaders
+   (`resolution`, `voxel_size`, `spacing`, `scale`, `pixel_size`).
+6. **Upstream sources:** for a compiled benchmark, a challenge release or a re-packaged subset, the
+   original dataset or paper of each part. Check the files match it (not downsampled, binned or
+   resampled; compare shapes).
+
+Rules:
+- A value counts only if a source you read **states** it, with a unit. Convert exactly (1 µm = 1000 nm,
+  1 Å = 0.1 nm). Never compute it from microscope, objective and camera specifications.
+- Distrust header defaults (1 px = 1 µm, 1 Å, 1.0) and values implausible for the modality. When a
+  header and the docs disagree, the docs win; note the conflict.
+- Sub-datasets with different voxel sizes: set `voxel_size_nm` only if they all share one. Otherwise
+  leave it `null` and list each subset's size and source in `notes`.
+- Only the lateral size is stated for 3D data: fill `x` and `y`, leave `z: null` (the PR stays
+  `voxel-size-missing`) and say so in `notes`.
+- Add every page that states the value to `evidence_urls` (logged with `run_log.py fetched`), and add a
+  `notes` line such as `enricher: voxel size 4x4x40 nm from paper Methods (was null)`.
+- Not found anywhere: keep it `null` and write in `technical.notes` what you checked
+  (`voxel size not found; checked: header, EMPIAR API, README, paper Methods, GitHub repo`).
+
 ## 5. Other fields
 Inspection often answers fields the harvester left empty or got wrong:
-- `imaging.voxel_size_nm`, `imaging.channels` and `imaging.dimensionality`
+- `imaging.channels` and `imaging.dimensionality` (`imaging.voxel_size_nm`: step 4a)
 - `data.formats` (never leave `other` for a format you probed, and never keep `other` next to a known
   format; it is only for records where no listed format applies) and `data.n_items`
 - `annotations.format`, `annotations.types`
@@ -205,6 +246,8 @@ your changes on top, respecting their edit, and publish again.
 - a heading `Enricher inspection`
 - which files were listed, probed and sampled, with byte counts
 - the key raw tool outputs: the listing's JSON line, and each probe/sample shape, dtype, value range and hints
+- a `Voxel size search` heading: the value and the quote that states it, or every source checked
+  without finding it (always include this section; the second pass in step 1 looks for it)
 - what's still unknown and why
 - the draft license request, if any
 

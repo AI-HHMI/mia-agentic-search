@@ -85,8 +85,13 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
   claims (`method`, confirmed size, observed values) that aren't backed by a logged read.
 - **Labels are computed, not added:** `.github/workflows/label.yml` runs `tools/labels.py` on every push:
   `dim:`, `org:`, `modality:`, `fmt:`, `dtype:`, `anno:`, `label-enc:`, `license:<spdx as written>`,
-  `size:`, `auto-download` (size confirmed by a complete file listing, < 50 GB, open access), `enriched` and
-  `license-verification-needed` (`license.spdx: unknown`).
+  `size:`, `auto-download` (size confirmed by a complete file listing, < 50 GB, open access), `enriched`,
+  `license-verification-needed` (`license.spdx: unknown`) and `voxel-size-found` / `voxel-size-missing`
+  (`imaging.voxel_size_nm` has x, y and, for 3D data, z). Merged PRs are relabelled from the record on
+  `main` whenever records change there, so a voxel size filled in later shows up on them too.
+- **Voxel size:** conversion can't proceed without it, so the enricher searches hard for it (skill step 4a:
+  headers, repository APIs, archive READMEs, the full paper, code repos, upstream datasets), and makes a
+  second pass over enriched PRs still labelled `voxel-size-missing`.
   License labels are the SPDX id verbatim, with no interpretation.
 - **Auto-merge** (`tools/automerge.py`) merges PRs whose labels meet a fixed policy, but never a possible
   duplicate (`tools/common.py:similarity_reasons`) of a record on main or another open PR. Agents never merge,

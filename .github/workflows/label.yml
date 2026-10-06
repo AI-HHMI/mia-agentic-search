@@ -5,13 +5,16 @@ name: label-agent-prs
 on:
   pull_request:
     types: [opened, reopened, synchronize]
-  workflow_dispatch:   # relabel every open dataset PR, e.g. after changing tools/labels.py
+  workflow_dispatch:   # relabel every open and merged dataset PR, e.g. after changing tools/labels.py
+  push:                # a record on main changed (e.g. a voxel size was filled in): relabel the merged PRs
+    branches: [main]
+    paths: ['datasets/**', 'tools/labels.py']
 permissions:
   contents: read
   pull-requests: write
   issues: write        # creating missing labels
 concurrency:
-  group: labels-${{ github.event.pull_request.number || 'all' }}
+  group: labels-${{ github.event.pull_request.number || github.event_name }}   # a push to main must not cancel a full relabel
   cancel-in-progress: true
 jobs:
   label:
@@ -25,7 +28,9 @@ jobs:
           LABEL: ${{ startsWith(github.head_ref, 'claude/dataset/') && 'new-datasets' || 'maintenance' }}
         run: gh pr edit ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --add-label "$LABEL"
   record-labels:
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.head_ref, 'claude/dataset/')
+    if: >-
+      github.event_name == 'workflow_dispatch' || github.event_name == 'push' ||
+      startsWith(github.head_ref, 'claude/dataset/')
     runs-on: ubuntu-latest
     steps:
       # Run main's tools/labels.py; the PR's record is only read with `git show`, never executed.
@@ -38,5 +43,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
-          if [ "${{ github.event_name }}" = workflow_dispatch ]; then python tools/labels.py sync --all-open
-          else python tools/labels.py sync --pr ${{ github.event.pull_request.number }}; fi
+          case "${{ github.event_name }}" in
+            workflow_dispatch) python tools/labels.py sync --all-open && python tools/labels.py sync --merged ;;
+            push) python tools/labels.py sync --merged ;;
+            *) python tools/labels.py sync --pr ${{ github.event.pull_request.number }} ;;
+          esac
