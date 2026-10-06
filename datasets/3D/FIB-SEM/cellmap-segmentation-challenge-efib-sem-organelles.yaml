@@ -17,10 +17,7 @@ imaging:
   modality:
   - FIB-SEM
   dimensionality: 3D
-  voxel_size_nm:
-    x: 4
-    y: 4
-    z: 4
+  voxel_size_nm: null
   channels: 1
   organism:
   - Mus musculus
@@ -68,15 +65,16 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-09-30T19:01:38Z'
+  last_checked: '2026-10-06T22:55:00Z'
 notes: 'The Figshare item itself only holds the white-paper PDF; the imaging data and crops are hosted on OpenOrganelle
-  / S3 and fetched with the challenge repo''s `csc fetch-data` (default download ~36.7 GB as zarr). Voxel size is
-  4 nm or 8 nm isotropic per the challenge page; 4 nm is listed as the finest and per-dataset values were not checked.
-  Per-crop annotation coverage, exact split and file listing were not inspected (Figshare landing page returned
-  403; the white paper PDF was not read). License CC BY 4.0 is from the Figshare record. Collection DOI 10.25378/janelia.c.7456966
-  has 311 articles (per-crop records). enricher: example dataset jrc_hela-2 on S3 (janelia-cosem-datasets) is OME-Zarr,
-  EM 4x4x5.24 nm, labels per crop as binary masks at 2x2x2.62 nm; annotations_verified left unchanged (line touched
-  in a human edit).'
+  / S3 and fetched with the challenge repo''s `csc fetch-data` (default download ~36.7 GB as zarr). Voxel size varies
+  per dataset (challenge page: 4 nm or 8 nm; jrc_hela-2 EM is 4x4x5.24 nm per OME-Zarr scale, its crops 2x2x2.62
+  nm), so null. Per-crop annotation coverage, exact split and file listing were not inspected (Figshare landing
+  page returned 403; the white paper PDF was not read). License CC BY 4.0 is from the Figshare record. Collection
+  DOI 10.25378/janelia.c.7456966 has 311 articles (per-crop records). enricher: jrc_hela-2 inspected on S3 (OME-Zarr,
+  binary masks per crop); annotations_verified left unchanged (line touched in a human edit). enricher: voxel_size_nm
+  set to null (was 4x4x4; datasets differ). Coverage: sparse dense-labelled crops inside each EM volume (e.g. jrc_hela-2
+  crop1 200x1000x1000 at 2 nm), not whole volumes.'
 technical:
   method: sample
   inspected_urls:
@@ -90,14 +88,11 @@ technical:
   bytes_downloaded: 109700000
   size_source: unknown
   layout:
-    tree: |
-      (partial: one of the challenge datasets, listed by S3 prefix only)
-      s3://janelia-cosem-datasets/jrc_hela-2/jrc_hela-2.zarr/recon-1/
-        em/fibsem-uint8/                 OME-Zarr, levels s0-s5
-        labels/groundtruth/crop<N>/      crop1, crop13, crop14, crop15, crop16, crop113, crop155, ...
-          all/                           OME-Zarr
-          <class>/                       one OME-Zarr per class: mito, mito_mem, mito_lum, er, er_mem,
-                                         golgi, lyso, ld, endo, chrom, ecs, cell, cyto, ... (40+ in crop1)
+    tree: "(partial: one of the challenge datasets, listed by S3 prefix only)\ns3://janelia-cosem-datasets/jrc_hela-2/jrc_hela-2.zarr/recon-1/\n\
+      \  em/fibsem-uint8/                 OME-Zarr, levels s0-s5\n  labels/groundtruth/crop<N>/      crop1, crop13,\
+      \ crop14, crop15, crop16, crop113, crop155, ...\n    all/                           OME-Zarr\n    <class>/\
+      \                       one OME-Zarr per class: mito, mito_mem, mito_lum, er, er_mem,\n                  \
+      \                 golgi, lyso, ld, endo, chrom, ecs, cell, cyto, ... (40+ in crop1)\n"
     n_files: null
     listing_complete: false
   sample:
@@ -109,7 +104,7 @@ technical:
       at s0; read a crop only)
   arrays:
   - role: raw
-    path_pattern: <dataset>/<dataset>.zarr/recon-1/em/fibsem-uint8
+    path_pattern: '*/*.zarr/recon-1/em/fibsem-uint8'
     format: ome-zarr
     axes: zyx
     shape:
@@ -131,7 +126,7 @@ technical:
     alignment: not-applicable
     alignment_notes: null
   - role: label
-    path_pattern: <dataset>/<dataset>.zarr/recon-1/labels/groundtruth/crop*/<class>
+    path_pattern: '*/*.zarr/recon-1/labels/groundtruth/crop*/*'
     format: ome-zarr
     axes: zyx
     shape:
@@ -158,7 +153,7 @@ technical:
       4]) and a translation (crop1: [3132.21, 899, 25863] nm) placing it in the EM volume.'
   notes: 'Only jrc_hela-2 inspected (S3 prefix listings + zarr metadata); the challenge''s full dataset list and
     total size were not enumerated, so no size or file count. EM: OME-Zarr v2, 6 levels, zstd, uint8, 4x4x5.24 nm
-    (record says 4 nm isotropic; kept, varies per dataset). crop1 mito (and ''all'') at 2x2x2.62 nm, 4 levels. Samples:
+    (varies per dataset, so record voxel size is null). crop1 mito (and ''all'') at 2x2x2.62 nm, 4 levels. Samples:
     EM s0 central crop [398,400,375] 59-193; crop1 mito s0 crop [200,500,500] {0,1}. The ''all'' array''s encoding
-    was not sampled.'
+    was not sampled. Second pass 2026-10-06: path patterns made globs; probes and samples repeated (same values).'
   inspected_at: '2026-09-30T19:01:38Z'
