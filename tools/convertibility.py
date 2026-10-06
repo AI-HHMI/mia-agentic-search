@@ -20,9 +20,11 @@ import sys
 import types
 from collections import Counter
 from pathlib import Path
+from urllib.parse import urlsplit
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.common import ROOT, load_yaml  # noqa: E402
+from tools.download_check import ALLOWED_HOSTS, SCHEMES  # noqa: E402
 
 FAMILIES = {
     "em": {"FIB-SEM", "SBF-SEM", "ssTEM", "ssSEM", "TEM", "cryo-EM", "cryo-ET"},
@@ -57,6 +59,14 @@ def _sample_file(url):
     if url.endswith("/"):
         return ""
     return url.removesuffix("/content")    # Zenodo API download links: .../files/<name>/content
+
+
+def _host_ok(url):
+    p = urlsplit(url.split("::", 1)[0])
+    host = (p.netloc if p.scheme == "s3" else p.hostname or "").lower()
+    if p.scheme == "s3":
+        return True                                   # s3://bucket/... -> bucket.s3.amazonaws.com
+    return p.scheme in SCHEMES and any(host == h or host.endswith("." + h) for h in ALLOWED_HOSTS)
 
 
 def _expand_braces(pattern):
@@ -96,6 +106,17 @@ def check(r):
             needs.append(f"sample URL is a landing page or folder, not a file: {u}")
         elif arrays and not any(_matches(f, a.get("path_pattern") or "") for a in arrays):
             helpful.append(f"sample file matches no array path_pattern: {f}")
+        if not _host_ok(u):
+            needs.append(f"sample URL host is not on TensorSwitch's fetch allowlist: {u}")
+    dl = (r.get("data") or {}).get("download_url")
+    if not dl:
+        helpful.append("no data.download_url")
+    else:
+        f = _sample_file(dl)
+        if not f or not FILE_EXT.search(f.rstrip("/")):
+            helpful.append(f"data.download_url is a landing page or folder, not a file (whole-dataset conversion needs a direct archive or file): {dl}")
+        if not _host_ok(dl):
+            helpful.append(f"data.download_url host is not on TensorSwitch's fetch allowlist: {dl}")
 
     if not voxel_complete(im):
         fmts = {a.get("format") for a in arrays if a.get("role") in ("raw", "target")} or set((r.get("data") or {}).get("formats") or [])
