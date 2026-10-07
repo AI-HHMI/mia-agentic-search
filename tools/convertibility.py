@@ -87,7 +87,43 @@ def _matches(path, pattern):
     return False
 
 
-def check(r):
+def ts_params(src, tool):
+    """Parameter names of a TensorSwitch MCP tool, read from mcp_server.py's source (nothing is imported)."""
+    try:
+        text = (Path(src).resolve() / "tensorswitch_v2" / "mcp_server.py").read_text()
+    except OSError:
+        return set()
+    m = re.search(rf"^def {tool}\((.*?)\)\s*->", text, re.S | re.M)
+    return set(re.findall(r"^\s*(\w+)\s*:", m.group(1), re.M)) if m else set()
+
+
+def input_axes_supported(src):
+    """Can `convert` be told what each source axis is? (TensorSwitch's `input_axes`; `axes_order` only reorders z/y/x.)"""
+    return bool(src) and "input_axes" in ts_params(src, "convert")
+
+
+def tiff_axes_needs(arrays, input_axes=False):
+    """TIFF arrays TensorSwitch would convert with unnamed axes. Its TIFF reader takes tifffile's axes as they are:
+    samples per pixel become an axis `s` and the pages of a plain multi-page TIFF an axis `i`, neither a channel
+    nor z, so the output has no z scale and verify_output can't match it to the source. A TIFF page is always
+    y, x (plus samples), so recorded axes that don't end in `yx` mean samples per pixel: RGB, or channels or z
+    slices stored as samples. Plain multi-page files recorded as `zyx` are caught at planning time by the
+    header probe in tools/miao_layout.py."""
+    needs = []
+    for a in arrays:
+        if a.get("format") != "tiff" or a.get("role") not in ("raw", "label", "target"):
+            continue
+        ax, pat = a.get("axes"), a.get("path_pattern") or "?"
+        if not ax:
+            needs.append(f"TIFF {a['role']} array without axes (tifffile's guess would name them): {pat}")
+        elif not ax.endswith("yx") and not input_axes:
+            needs.append(f"TIFF {a['role']} array with axes {ax} (samples per pixel): TensorSwitch can't take "
+                         f"the axes from the record yet (no input_axes) and names that axis `s`: {pat}")
+    return needs
+
+
+def check(r, input_axes=False):
+    """(needs, helpful). `input_axes`: TensorSwitch's convert accepts input_axes (see input_axes_supported)."""
     im, an = r.get("imaging") or {}, r.get("annotations") or {}
     tech = r.get("technical") or {}
     arrays = [a for a in tech.get("arrays") or [] if isinstance(a, dict)]
@@ -153,6 +189,8 @@ def check(r):
             helpful.append(f"path_pattern has placeholders instead of a glob: {pat}")
         if ", " in pat:
             helpful.append(f"path_pattern is a list, not one glob: {pat}")
+    if str(im.get("dimensionality", "")).startswith("3D"):      # what TensorSwitch / the miao layout convert today
+        needs += tiff_axes_needs(arrays, input_axes)
     if an.get("present") and an.get("source") in ("unknown", "mixed", None):
         helpful.append(f"annotations.source is {an.get('source') or 'missing'}")
     if an.get("present") and an.get("coverage") in ("unknown", "partial"):
@@ -188,9 +226,10 @@ def main():
         except Exception as e:  # report, never fail
             print(f"note: TensorSwitch planner not loaded ({e}); skipping it", file=sys.stderr)
     counts, rows = Counter(), []
+    in_axes = input_axes_supported(a.tensorswitch)
     for p in paths:
         r = load_yaml(p)
-        needs, helpful = check(r)
+        needs, helpful = check(r, in_axes)
         row = {"id": r.get("id"), "path": str(p), "dimensionality": (r.get("imaging") or {}).get("dimensionality"),
                "needs": needs, "helpful": helpful}
         if rp is not None and str(row["dimensionality"]).startswith("3D"):

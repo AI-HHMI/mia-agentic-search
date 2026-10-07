@@ -113,6 +113,18 @@ python tools/probe.py <zip url> --glob '*/masks/*.tif' --n 2 --id <id>      # me
   only if it's plausible for the modality and agrees with the docs; uncalibrated files often say
   1 px = 1 µm. If it conflicts with the record, keep the record's value and note the conflict.
 - `axes: null` means the file doesn't say. Only set axes when the header or the docs state them.
+- **TIFF arrays of 3D / 3D+t records need `axes`** (slowest to fastest). TensorSwitch converts TIFFs only when the record says
+  what each axis is: its TIFF reader names samples per pixel `s` and the pages of a plain multi-page TIFF
+  `i`, neither a channel nor z, and a record without TIFF axes is not download-ready. From the probe:
+  - `tiff_layout: imagej` or `ome`: the header's `axes` are right; copy them.
+  - `tiff_layout: plain` with several pages (`axes: null`): the page axis is z, t or c. Take it from the
+    docs, the paper or the file names (e.g. `zyx` for a z-stack); if nothing says, keep `null` and say so.
+  - `samples_per_pixel` > 1 is the **last** axis. RGB colour (photometric 2) is `s`; samples that are
+    really channels are `c`, and z slices stored per pixel (photometric 1 with 50 samples, say) are `z`
+    (`yxz`). If an RGB file is one channel per the docs, check with tools/sample.py:
+    `samples_identical: true` means grey stored as RGB; write `s` and say so in `alignment_notes`.
+  - Recorded axes not ending in `yx` (samples per pixel) keep the record not download-ready until
+    TensorSwitch accepts `input_axes`; record them correctly anyway, the converter will use them.
 
 **d. Sample.** Download the smallest raw + label pair and measure it. The budget is 500 MB per
 record per run, and the tool enforces it.
@@ -285,6 +297,8 @@ Rerun until nothing fixable is left.
 | HDF5 array without a dataset name | append ` (<dataset path>)` from the probe's dataset list, always in this spelling; rewrite ` :: name` to it. One array entry per dataset. |
 | `path_pattern` with placeholders (`<name>`, `NNN`, `###`) or a comma list | one real glob (`*`, `?`, `[0-9]`, `{a,b}`) that matches exactly this array's files in the listing; check it against the listing |
 | HDF5 array without `axes` | only when the docs, paper or file attributes state the axis order; otherwise leave `null` and say why in `technical.notes` (the step 3c rule stands) |
+| TIFF array without `axes` | probe a file of that array and follow the step 3c TIFF rules (`tiff_layout`, `samples_per_pixel`); never copy `axes: null` from a plain multi-page TIFF into a guess |
+| TIFF array with axes not ending in `yx` | correct if the probe or docs show otherwise; if right (samples per pixel), keep it. This need stays until TensorSwitch accepts `input_axes`; say so in `technical.notes` |
 | `annotations.source` unknown / mixed | `manual`, `proofread` or `automatic` from the paper's Methods; `mixed` only if it really is, with a `notes` line saying which arrays are which |
 | `annotations.coverage` partial / unknown | a `notes` line on what is annotated: sparse crops, N of M slices, a sub-volume and where |
 

@@ -67,9 +67,30 @@ def finish(plan, c, keep_source):
             staging.rmdir()
 
 
+def tiff_axes_problem(path):
+    """What TensorSwitch's TIFF reader would name wrongly in this downloaded file, or None. It takes tifffile's
+    series axes as they are when every letter is known (ZYXTCSI): samples per pixel become `s` and the pages of
+    a TIFF without ImageJ/OME/shape metadata `i`, neither a channel nor z. Unknown letters (Q, from tifffile's
+    own shape metadata) make it name the axes from the number of dimensions instead, which is fine."""
+    import tifffile
+    with tifffile.TiffFile(path) as tif:
+        axes = tif.series[0].axes if tif.series else ""
+    if not set(axes) <= set("ZYXTCSI"):
+        return None
+    bad = [f"{ax} ({'samples per pixel' if ax == 'S' else 'pages without ImageJ/OME metadata'})" for ax in "SI" if ax in axes]
+    return f"{Path(path).name}: tifffile axes {axes}, TensorSwitch would name {', '.join(bad)} as an axis " \
+           f"`{'`/`'.join(ax.lower() for ax in 'SI' if ax in axes)}`; needs input_axes" if bad else None
+
+
 def run_crop(ts, plan, c):
     """Run one crop's steps; returns None on success or the reason it failed."""
     for i, step in enumerate(c["steps"], 1):
+        args = step["args"]
+        if (step["tool"] in ("convert", "submit_job") and not args.get("input_axes")
+                and str(args.get("input_path", "")).lower().endswith((".tif", ".tiff"))):
+            problem = tiff_axes_problem(args["input_path"])   # the header probe can't read every zip member
+            if problem:
+                return f"step {i} ({step['tool']}) not run: {problem}"
         result = json.loads(getattr(ts, step["tool"])(**step["args"]))
         status = result.get("overall") if step["tool"] == "verify_output" else result.get("status")
         print(json.dumps({"crop": Path(c["crop"]).name, "step": i, "tool": step["tool"], "status": status,
