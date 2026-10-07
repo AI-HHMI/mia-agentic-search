@@ -1,0 +1,183 @@
+schema_version: '1.2'
+id: tissuenet-multiplexed-tissue-whole-cell
+title: 'TissueNet: whole-cell and nuclear segmentation training dataset for multiplexed tissue images'
+short_name: TissueNet tissue whole-cell segmentation
+description: Paired 2D multiplexed tissue images and manually curated whole-cell and nuclear instance
+  annotations (about 1.3 million whole-cell and 1.2 million nuclear labels) from six imaging platforms
+  (CODEX, CyCIF, MIBI-TOF, Vectra, IMC, MxIF), nine organ types and three species, released to train the
+  Mesmer segmentation model. Hosted at the DeepCell Datasets portal.
+landing_url: https://datasets.deepcell.org/
+doi: null
+repository: other
+accession: null
+authors:
+- Noah F. Greenwald
+- Geneva Miller
+- Erick Moen
+- Alex Kong
+- Adam Kagel
+- Thomas Dougherty
+- Christine Camacho Fullaway
+- Brianna J. McIntosh
+- Ke Xuan Leow
+- Morgan Sarah Schwartz
+- Cole Pavelchek
+- Sunny Cui
+- Isabella Camplisson
+- Omer Bar-Tal
+- Jaiveer Singh
+- Mara Fong
+- Gautam Chaudhry
+- Zion Abraham
+- Jackson Moseley
+- Shiri Warshawsky
+- Erin Soon
+- Shirley Greenbaum
+- Tyler Risom
+- Travis Hollmann
+- Sean C. Bendall
+- Leeat Keren
+- William Graf
+- Michael Angelo
+- David Van Valen
+publications:
+- title: Whole-cell segmentation of tissue images with human-level performance using large-scale data
+    annotation and deep learning
+  doi: 10.1038/s41587-021-01094-0
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC9010346/
+date_published: '2022-04-01'
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 2
+  organism:
+  - Homo sapiens
+  - Mus musculus
+  - Macaca mulatta
+  sample: tissue sections from nine organ types, normal and diseased
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: null
+  n_items: null
+  access: registration
+  download_url: https://datasets.deepcell.org/
+  download_method: api
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: paired image and whole-cell / nuclear label masks stored in .npz files
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: custom
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-09-30T07:13:34Z'
+  evidence_urls:
+  - https://datasets.deepcell.org/
+  - https://pmc.ncbi.nlm.nih.gov/articles/PMC9010346/
+  - https://deepcell.readthedocs.io/en/master/data-gallery/tissuenet.html
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22Whole-cell+segmentation+of+tissue+images+with+human-level+performance+using+large-scale+data+annotation+and+deep+learning%22&format=json&resultType=core&pageSize=3
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-07T19:02:25Z'
+notes: 'License per DeepCell docs is a "modified Apache license for non-commercial academic use only"
+  (custom, no URL found). Access needs a free DeepCell API key. Split is 80/10/10 (train/val/test) per
+  the paper; the docs list ~2,600 train 512x512 images (v1.1, April 2022, extra manual QC round). The
+  portal is JavaScript-rendered and the file listing could not be read, so file names, total size and
+  pixel size were not verified; the paper text and docs did not state pixel size in the parts read. Annotation
+  source is human-in-the-loop (model-assisted crowdsourced plus expert QC), hence mixed. date_published
+  is approximate (paper year 2022 / v1.1 April 2022).
+
+  enricher: formats stays other (NumPy .npz, not in enum); channels 2 from the public sample file.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://deepcell-data.s3.amazonaws.com/multiplex/tissuenet-sample.npz
+  bytes_downloaded: 4023848
+  size_source: unknown
+  layout:
+    tree: "tissuenet_v1-1.zip   (API-key download, contents per deepcell-tf loader)\n  train.npz  X, y,\
+      \ meta\n  val.npz    X, y, meta\n  test.npz   X, y, meta\ntissuenet-sample.npz (public sample, 4,023,848\
+      \ bytes)\n  X.npy  4.2 MB\n  y.npy  2.1 MB\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://deepcell-data.s3.amazonaws.com/multiplex/tissuenet-sample.npz
+    size_bytes: 4023848
+    description: Public single-image TissueNet sample (X 512x512x2 image, y 512x512x1 label) that DeepCell
+      ships without an API key.
+  arrays:
+  - role: raw
+    path_pattern: '*.npz::X.npy'
+    format: other
+    axes: null
+    shape:
+    - 1
+    - 512
+    - 512
+    - 2
+    shape_varies: true
+    dtype: float64
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0.4000128100353324
+    - 27.140319118517475
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '*.npz::y.npy'
+    format: other
+    axes: null
+    shape:
+    - 1
+    - 512
+    - 512
+    - 1
+    shape_varies: true
+    dtype: float64
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 1549
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 177
+    alignment: same-grid
+    alignment_notes: X and y are stored together in one .npz with matching batch/y/x dimensions (512x512);
+      last axis is channels.
+  notes: 'Full dataset (tissuenet_v1-1.zip) needs a DeepCell API key, so it was not listed or sampled;
+    the loader source (deepcell-tf datasets/tissue_net.py, dataset.py; read, not run) shows train/val/test.npz
+    with X, y and meta arrays. Only the public tissuenet-sample.npz was downloaded (4.0 MB) and read with
+    a script (numpy, allow_pickle=False, headers checked first; no object arrays). X float64 (1,512,512,2),
+    range [0.40, 27.14] in one sample; y float64 (1,512,512,1) with 177 values 0..1549, read as instance
+    IDs (docs: whole-cell/nuclear instance labels). Axes are not stated in the file; the loader treats
+    the last axis as channels. The full-dataset y may hold 2 channels (whole-cell and nuclear); not verified.
+    npz members are deflate-compressed. Second pass 2026-10-06: sample URL switched from the regional
+    host deepcell-data.s3.us-west-1.amazonaws.com to the equivalent deepcell-data.s3.amazonaws.com (same
+    object, 4,023,848 B; on the TensorSwitch allowlist) and re-read (same values). Size pass: no size.
+    The zip needs an API key (no listing), no page states its size, and the loader docstring gives only
+    approximate counts (~2600 train 512x512; val/test ~300 each, re-tiled to 256x256), with the full label
+    channel count unverified, so no estimate.'
+  inspected_at: '2026-09-30T21:15:02Z'
