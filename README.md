@@ -31,8 +31,8 @@ Five [Claude routines](https://claude.ai/code/routines) run in the cloud:
 - Add the label **`hold`** to stop auto-merge from merging a PR.
 
 **Labels** (computed by `tools/labels.py`, never set by hand): `dim:` · `org:` · `modality:` · `fmt:` ·
-`dtype:` · `anno:` · `label-enc:` · `license:<SPDX id>` · `size:` · `auto-download` (confirmed size < 50 GB,
-open access) · `enriched` · `license-verification-needed` (no license found).
+`dtype:` · `anno:` · `label-enc:` · `license:<SPDX id>` · `size:` · `download-ready` / `download-not-ready`
+(`tools/readiness.py`) · `enriched` · `license-verification-needed` (no license found).
 
 **Auto-merge** (`tools/automerge.py`, runs after each labelling and hourly; on while the repo
 variable `AUTO_MERGE` is `true`) merges a PR when all of these hold:

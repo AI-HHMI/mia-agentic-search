@@ -97,8 +97,8 @@ python tools/listing.py <url> [<url> ...] --id <id> --expand-zips --examples 3
   and `layout.listing_complete` from the JSON line.
 - **Confirmed size:** set `size_source: file-listing` only if the JSON says `"size_source": "file-listing"`
   **and** your URLs cover every file the dataset offers. Then set `data.size_bytes` to exactly
-  `total_bytes`; the validator checks this. The `auto-download` label depends on it (confirmed and
-  < 50 GB), so when in doubt don't claim it.
+  `total_bytes`; the validator checks this. The download queue fetches the whole dataset only with a
+  confirmed size < 50 GB (`tools/readiness.py:whole_download_ok`), so when in doubt don't claim it.
 - Otherwise, use `page-stated` or `paper` when a page or the paper states the size, and leave the existing
   `size_bytes` unless you have a better stated value. If nothing states it, **estimate it (step 4c)**:
   never leave `size_bytes` null when the arrays' shapes and dtypes are known.
@@ -286,7 +286,7 @@ python tools/estimate_size.py <file> --count 0=80 --count 1=80                  
 - Use the result only when `missing` is empty. Set `data.size_bytes` to `total_bytes` and
   `technical.size_source: estimated`, and add its `technical_notes_line` to `technical.notes` (it says
   how the number was made, and that it's the uncompressed size: compressed files download smaller).
-  The PR then gets its `size:` label and a `size-estimated` flag; `auto-download` still needs a listing.
+  The PR then gets its `size:` label and a `size-estimated` flag; a whole-dataset download still needs a listing.
 - Never replace a `file-listing`, `page-stated` or `paper` size with an estimate (the tool warns).
 - `missing` not empty: keep `size_bytes` null and say in `technical.notes` what's missing (a count, a
   dtype, a shape). In the PR comment, put the result under a `Size estimate` heading either way.
@@ -395,4 +395,4 @@ If a Slack connector is available, post to `#mia-harvester` only when the run st
 or `counts.error ≥ 3`.
 
 End with a short summary: runtime, PRs enriched (number, title, method, and whether it got
-`auto-download`), PRs skipped or failed with reasons, and how many unenriched PRs are left in the queue.
+`download-ready`), PRs skipped or failed with reasons, and how many unenriched PRs are left in the queue.

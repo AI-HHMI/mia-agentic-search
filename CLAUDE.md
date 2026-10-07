@@ -85,11 +85,11 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
   claims (`method`, confirmed size, observed values) that aren't backed by a logged read.
 - **Labels are computed, not added:** `.github/workflows/label.yml` runs `tools/labels.py` on every push:
   `dim:`, `org:`, `modality:`, `fmt:`, `dtype:`, `anno:`, `label-enc:`, `license:<spdx as written>`,
-  `size:`, `auto-download` (size confirmed by a complete file listing, < 50 GB, open access), `enriched`,
+  `size:`, `enriched`,
   `license-verification-needed` (`license.spdx: unknown`), `size-estimated` (`technical.size_source: estimated`:
   the `size:` label comes from files × voxels × bytes per voxel, `tools/estimate_size.py`, not a listing) and `voxel-size-found` / `voxel-size-missing`
-  (`imaging.voxel_size_nm` has x, y and, for 3D data, z), and for 3D / 3D+t `download-ready` /
-  `download-not-ready` (`tools/readiness.py`; CI clones TensorSwitch for its planner). Merged PRs are relabelled from the record on
+  (`imaging.voxel_size_nm` has x, y and, for 3D data, z), and `download-ready` / `download-not-ready`
+  (`tools/readiness.py`, the one rule for downloads; CI clones TensorSwitch for its planner). Merged PRs are relabelled from the record on
   `main` whenever records change there, so a voxel size filled in later shows up on them too.
   License labels are the SPDX id verbatim, with no interpretation.
 - **Voxel size:** conversion can't proceed without it, so the enricher searches hard for it (skill step 4a:

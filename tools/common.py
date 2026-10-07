@@ -27,7 +27,7 @@ DATASET_BRANCH_PREFIX = "claude/dataset/"  # one branch + PR per proposed datase
 STATE_BRANCH_PREFIX = "claude/state/"      # per-routine frontier + run logs, never reviewed
 
 # Enricher: technical inspection of proposed datasets (see .claude/skills/enrich-prs).
-AUTO_DOWNLOAD_MAX_BYTES = 50 * 10**9       # `auto-download` label only below this, and only for a confirmed size
+WHOLE_DOWNLOAD_MAX_BYTES = 50 * 10**9      # download queue: whole dataset only below this, and only for a confirmed size
 SAMPLE_MAX_BYTES = 500 * 10**6             # per dataset and run, summed over all tools/sample.py downloads
 CONFIRMED_SIZE_SOURCES = ("file-listing",)  # technical.size_source values that count as a confirmed size
 # Version-control / OS files inside archives and folders: not part of the dataset.

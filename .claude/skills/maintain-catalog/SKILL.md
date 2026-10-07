@@ -58,7 +58,7 @@ Post a single message to `#mia-harvester`:
 - **Last 24h:** runs per routine (ok / partial / failed), records proposed, duplicates skipped, errors.
 - **Catalog:** total records on `main`, new records merged in the last 24h.
 - **Review queue:** number of open `new-datasets` PRs (one dataset each) and the oldest ones' ages. Stale ones get ⚠.
-  Also how many are `enriched`, how many have `auto-download`, and how many have `license:unknown`.
+  Also how many are `enriched`, how many are `download-ready`, and how many have `license:unknown`.
 - **Link health:** records checked and how many are broken.
 - **Stale routines:** list them, if any.
 

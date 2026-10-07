@@ -10,7 +10,8 @@
 $TENSORSWITCH_SRC), the smallest one that isn't downloaded, skipped, or failed twice already. It
 skips records larger than --max-gb (an unattended run can't ask), and stops if the disk under --root
 has less than 3x the dataset's size free. It prints the record path, its size, and the mode:
-`whole` when the data is one zip of at most 50 GB, else `sample-unit`.
+`whole` when the data is one zip whose size is confirmed by a file listing and < 50 GB
+(tools/readiness.py:whole_download_ok), else `sample-unit`.
 
 `record` writes the outcome. A `downloaded` entry holds the dataset folder, the crops from its
 manifest.json, the size on disk, the scope, the date, and the record's git commit, so a later
@@ -27,11 +28,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.common import ROOT, STATE_DIR, iter_record_paths, load_yaml  # noqa: E402
-from tools.readiness import planner, readiness  # noqa: E402
+from tools.readiness import planner, readiness, whole_download_ok  # noqa: E402
 
 LIST = STATE_DIR / "downloads.json"
 MAX_FAILURES = 2
-WHOLE_MAX_BYTES = 50 * 1024 ** 3
 
 
 def now():
@@ -59,8 +59,7 @@ def mode_for(r):
     url = ((r.get("data") or {}).get("download_url") or "").split("?")[0].removesuffix("/content").lower()
     samples = ((r.get("technical") or {}).get("sample") or {}).get("urls") or []
     zipped = url.endswith(".zip") or any("::" in u for u in samples)
-    size = (r.get("data") or {}).get("size_bytes")
-    return "whole" if zipped and size and size <= WHOLE_MAX_BYTES else "sample-unit"
+    return "whole" if zipped and whole_download_ok(r) else "sample-unit"
 
 
 def cmd_next(a):

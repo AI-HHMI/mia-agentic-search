@@ -10,12 +10,13 @@ on every push. Labels outside the managed prefixes (e.g. new-datasets) are left 
 
   dim:3D · org:Mus musculus · modality:FIB-SEM · fmt:tiff · dtype:uint16 · anno:instance-segmentation
   label-enc:instance-ids · license:CC-BY-4.0 (the SPDX id as written, not interpreted) · size:1-10GB
-  auto-download (size confirmed by a complete file listing, < 50 GB, open access) · enriched
+  enriched
   license-verification-needed (license.spdx is unknown)
   size-estimated (data.size_bytes is an estimate from shapes x dtypes: technical.size_source estimated)
   voxel-size-found / voxel-size-missing (imaging.voxel_size_nm has x, y and, for 3D data, z)
-  download-ready / download-not-ready (3D and 3D+t only: tools/readiness.py; needs $TENSORSWITCH_SRC,
-  without it neither label is set, so the auto-merge gate fails closed)
+  download-ready / download-not-ready (tools/readiness.py, the one rule for downloads; it replaces the
+  retired auto-download label). Needs $TENSORSWITCH_SRC; without it a record that passes every other
+  check gets neither label, so the auto-merge gate fails closed.
 """
 import argparse
 import json
@@ -26,8 +27,7 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import (AUTO_DOWNLOAD_MAX_BYTES, CONFIRMED_SIZE_SOURCES, DATASET_BRANCH_PREFIX,  # noqa: E402
-                          ROOT, _NoDatesLoader, load_yaml)
+from tools.common import DATASET_BRANCH_PREFIX, ROOT, _NoDatesLoader, load_yaml  # noqa: E402
 
 # prefix -> (colour, description)
 GROUPS = {
@@ -42,15 +42,15 @@ GROUPS = {
     "size:": ("BFDADC", "Total download size"),
 }
 FLAGS = {
-    "auto-download": ("0E8A16", "Size confirmed by a complete file listing, < 50 GB, open access"),
     "enriched": ("006B75", "Technical metadata filled in by the enricher routine"),
     "license-verification-needed": ("B60205", "No license found yet; a human (or agent) needs to find or request it"),
     "size-estimated": ("FBCA04", "size: label from an estimate (files x voxels x bytes per voxel), not a file listing"),
     "voxel-size-found": ("0E8A16", "imaging.voxel_size_nm is filled (x, y and, for 3D data, z)"),
     "voxel-size-missing": ("E99695", "No voxel / pixel size in the record yet; conversion needs it"),
-    "download-ready": ("0E8A16", "3D: /download-dataset can convert it unattended (tools/readiness.py)"),
-    "download-not-ready": ("B60205", "3D: something blocks the download; see tools/readiness.py"),
+    "download-ready": ("0E8A16", "/download-dataset can convert it unattended (tools/readiness.py)"),
+    "download-not-ready": ("B60205", "Something blocks the download; see tools/readiness.py"),
 }
+RETIRED = {"auto-download"}  # no longer set; sync still removes them from PRs
 SIZE_BUCKETS = [(10**9, "<1GB"), (10 * 10**9, "1-10GB"), (50 * 10**9, "10-50GB"), (500 * 10**9, "50-500GB")]
 MAX_LEN = 50  # GitHub's label name limit
 
@@ -91,22 +91,18 @@ def labels_for(r):
         out.append("size:" + next((name for limit, name in SIZE_BUCKETS if size < limit), ">500GB"))
         if tech.get("size_source") == "estimated":
             out.append("size-estimated")
-    if (size is not None and size < AUTO_DOWNLOAD_MAX_BYTES and tech.get("size_source") in CONFIRMED_SIZE_SOURCES
-            and da.get("access") == "open"):
-        out.append("auto-download")
     if tech:
         out.append("enriched")
     out.append("voxel-size-found" if voxel_size_found(im) else "voxel-size-missing")
-    if str(im.get("dimensionality")) in ("3D", "3D+t"):
-        from tools.readiness import readiness
-        status = readiness(r)[0]
-        if status != "unknown":
-            out.append("download-ready" if status == "ready" else "download-not-ready")
+    from tools.readiness import readiness
+    status = readiness(r)[0]
+    if status != "unknown":
+        out.append("download-ready" if status == "ready" else "download-not-ready")
     return list(dict.fromkeys(out))
 
 
 def managed(name):
-    return name in FLAGS or any(name.startswith(p) for p in GROUPS)
+    return name in FLAGS or name in RETIRED or any(name.startswith(p) for p in GROUPS)
 
 
 def style(name):

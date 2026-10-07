@@ -3,8 +3,9 @@
     python tools/readiness.py <file> [<file> ...] [--tensorswitch SRC]     # one line per record
     TENSORSWITCH_SRC=../tensorswitch/src python tools/readiness.py <file>  # same, planner from the env
 
-One rule, used by the auto-merge gate (the `download-ready` label, via tools/labels.py) and by the
-download queue (tools/download_queue.py). A record is ready when all of these hold:
+One rule for the `download-ready` / `download-not-ready` labels (tools/labels.py, the auto-merge gate)
+and the download queue (tools/download_queue.py). A record is ready when all of these hold:
+  0. data.access is open (an unattended run can't register);
   1. it is 3D (3D+t isn't covered by the miao layout yet);
   2. tools/convertibility.py lists no needs;
   3. imaging.voxel_size_nm has x, y and z (the label metadata needs it, whatever the format);
@@ -16,6 +17,8 @@ download queue (tools/download_queue.py). A record is ready when all of these ho
      as 2D (single slices are not volumes).
 Check 2 includes the TIFF axes rule (tools/convertibility.py:tiff_axes_needs): every TIFF array states
 its axes, and, until TensorSwitch's convert accepts `input_axes`, they end in `yx` (no samples axis).
+The queue downloads a ready record whole (`whole_download_ok`) when it is one zip whose size is confirmed
+by a complete file listing and below WHOLE_DOWNLOAD_MAX_BYTES (50 GB); otherwise its sample unit.
 Check 7 needs the TensorSwitch source (--tensorswitch or $TENSORSWITCH_SRC). Without it the answer
 is `unknown`, never `ready`. Read-only; nothing is downloaded.
 """
@@ -26,7 +29,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import load_yaml  # noqa: E402
+from tools.common import WHOLE_DOWNLOAD_MAX_BYTES, CONFIRMED_SIZE_SOURCES, load_yaml  # noqa: E402
 from tools.convertibility import _planner, check, input_axes_supported  # noqa: E402
 from tools.miao_layout import ORGANISM_SHORT  # noqa: E402
 
@@ -51,6 +54,9 @@ def readiness(r, src=None):
     """(status, reasons): status is 'ready', 'not-ready', or 'unknown' (planner unavailable)."""
     im = r.get("imaging") or {}
     reasons = []
+    access = (r.get("data") or {}).get("access")
+    if access != "open":
+        reasons.append(f"access {access}: an unattended download needs open access")
     dim = str(im.get("dimensionality"))
     if dim != "3D":
         reasons.append(f"dimensionality {dim}: only 3D is covered by the miao layout yet")
@@ -85,6 +91,13 @@ def readiness(r, src=None):
     except Exception as e:
         reasons.append(f"TensorSwitch planner failed: {e}")
     return ("not-ready" if reasons else "ready"), reasons
+
+
+def whole_download_ok(r):
+    """Size confirmed by a complete file listing and below WHOLE_DOWNLOAD_MAX_BYTES."""
+    size = (r.get("data") or {}).get("size_bytes")
+    return (size is not None and size < WHOLE_DOWNLOAD_MAX_BYTES
+            and (r.get("technical") or {}).get("size_source") in CONFIRMED_SIZE_SOURCES)
 
 
 def main():
