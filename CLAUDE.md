@@ -86,7 +86,8 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
 - **Labels are computed, not added:** `.github/workflows/label.yml` runs `tools/labels.py` on every push:
   `dim:`, `org:`, `modality:`, `fmt:`, `dtype:`, `anno:`, `label-enc:`, `license:<spdx as written>`,
   `size:`, `auto-download` (size confirmed by a complete file listing, < 50 GB, open access), `enriched`,
-  `license-verification-needed` (`license.spdx: unknown`) and `voxel-size-found` / `voxel-size-missing`
+  `license-verification-needed` (`license.spdx: unknown`), `size-estimated` (`technical.size_source: estimated`:
+  the `size:` label comes from files × voxels × bytes per voxel, `tools/estimate_size.py`, not a listing) and `voxel-size-found` / `voxel-size-missing`
   (`imaging.voxel_size_nm` has x, y and, for 3D data, z), and for 3D / 3D+t `download-ready` /
   `download-not-ready` (`tools/readiness.py`; CI clones TensorSwitch for its planner). Merged PRs are relabelled from the record on
   `main` whenever records change there, so a voxel size filled in later shows up on them too.
@@ -122,6 +123,7 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
 | `python tools/listing.py <url> [<url> ...] --id ID` | full file listing → folder tree, exact total size (enricher) |
 | `python tools/probe.py <url> [--glob G] --id ID` | shape / dtype / compression / voxel size from file headers (enricher) |
 | `python tools/sample.py --id ID --raw S [--label S]` | download a small sample, measure it, delete it (enricher) |
+| `python tools/estimate_size.py <file> --files F \| --count I=N` | size from files × voxels × bytes per voxel, when nothing states it (enricher) |
 | `python tools/labels.py <file>` | the PR labels a record gets |
 | `python tools/download_check.py <url\|zip::member> --id ID [--tensorswitch SRC]` | is this a direct link TensorSwitch can fetch (one range request) |
 | `python tools/convertibility.py [files] [--summary\|--json] [--tensorswitch SRC]` | what blocks automatic conversion (read-only report) |
