@@ -212,8 +212,16 @@ def crop_steps(r, sample, plan, crop, cls_by_index, voxel, today, raw_attrs, inp
                 args["extra_attributes"] = json.dumps(raw_attrs)
         elif step["tool"] == "verify_output":
             args["output_path"] = str(crop)
-            args["labels"] = ";".join(f"{keys.get(k, k)}={v}" for k, v in
-                                      (item.split("=", 1) for item in args.get("labels", "").split(";") if item))
+            # the same axes and label names convert got, or verify_output can't match source and output axes
+            given = input_axes or {}
+            if given.get(args.get("source_path")):
+                args["input_axes"] = given[args["source_path"]]
+            srcs = dict(item.split("=", 1) for item in args.get("labels", "").split(";") if item)
+            args["labels"] = ";".join(f"{keys.get(k, k)}={v}" for k, v in srcs.items())
+            if args.get("label_input_axes"):
+                args["label_input_axes"] = ";".join(
+                    f"{keys.get(k, k)}={given.get(srcs.get(k)) or v}" for k, v in
+                    (item.split("=", 1) for item in args["label_input_axes"].split(";") if item))
         steps.append({"tool": step["tool"], "args": args})
     files = [s["args"]["spec"] for s in steps if s["tool"] == "fetch_dataset"]
     staged = [s["args"]["input_path"] for s in steps if s["tool"] in ("convert", "submit_job")]
