@@ -70,17 +70,16 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T11:40:09Z'
-notes: 'Training zip listed with tools/listing.py (exact zip size): 01/ 65 tif; 01_GT/SEG 5 tif; 01_GT/TRA
-  65 tif + man_track.txt; 02/ 210 tif; 02_GT/SEG 5 tif; 02_GT/TRA 210 tif (no silver truth). Pixel/voxel
-  size, microscope, time step and cell type come from the CTC dataset table; organism and sample from
-  that table and the Nature Methods paper. Terms are custom: CTC-related use needs no consent, non-CTC
-  scientific use requires organizer permission, commercial use needs organizer and data-provider permission,
-  cloning is prohibited, and the Nature Methods paper must be cited. Test set annotations are secret.
-  Gold-truth segmentation covers only a subset of frames (annotations.coverage partial). Well-known benchmark;
-  confidence kept moderate given the permission-based terms. Differs from other CTC records (e.g. ctc-fluo-c3dh-a549,
-  ctc-fluo-n3dh-ce): a separate CTC dataset with its own cells/organism, microscope and zip. enricher:
-  annotations.format fixed (no NN_ST).'
+  last_checked: '2026-10-07T04:21:34Z'
+notes: 'Folder layout in technical.layout. Pixel/voxel size, microscope, time step and cell type come
+  from the CTC dataset table; organism and sample from that table and the Nature Methods paper. Terms
+  are custom: CTC-related use needs no consent, non-CTC scientific use requires organizer permission,
+  commercial use needs organizer and data-provider permission, cloning is prohibited, and the Nature Methods
+  paper must be cited. Test set annotations are secret. Well-known benchmark; confidence kept moderate
+  given the permission-based terms. Differs from other CTC records (e.g. ctc-fluo-c3dh-a549, ctc-fluo-n3dh-ce):
+  a separate CTC dataset with its own cells/organism, microscope and zip. enricher: annotations.format
+  fixed (no NN_ST). enricher: coverage = 01_GT/SEG 5 2D slices from 5/65 time points; 02_GT/SEG 5 2D slices
+  from 5/210 time points (gold SEG on selected frames only, CTC conventions).'
 technical:
   method: sample
   inspected_urls:
@@ -89,11 +88,16 @@ technical:
   bytes_downloaded: 77463643
   size_source: file-listing
   layout:
-    tree: "Fluo-N3DL-TRIC.zip   22,088,481,712 B, 562 members\n  Fluo-N3DL-TRIC/\n    01/         65 t<TTT>.tif\
-      \ (~79 MB each)   5.2 GB\n    01_GT/SEG/  5 man_seg_<TTT>_<ZZZ>.tif (single slices)\n    01_GT/TRA/\
-      \  65 man_track<TTT>.tif + man_track.txt\n    02/         210 t<TTT>.tif   17.8 GB\n    02_GT/SEG/\
-      \  5 man_seg_<TTT>_<ZZZ>.tif\n    02_GT/TRA/  210 + man_track.txt\n  (no silver truth / ERR_SEG\
-      \ folders)\n"
+    tree: |
+      Fluo-N3DL-TRIC.zip   22,088,481,712 B, 562 members
+        Fluo-N3DL-TRIC/
+          01/         65 t<TTT>.tif (~79 MB each)   5.2 GB
+          01_GT/SEG/  5 man_seg_<TTT>_<ZZZ>.tif (single slices)
+          01_GT/TRA/  65 man_track<TTT>.tif + man_track.txt
+          02/         210 t<TTT>.tif   17.8 GB
+          02_GT/SEG/  5 man_seg_<TTT>_<ZZZ>.tif
+          02_GT/TRA/  210 + man_track.txt
+        (no silver truth / ERR_SEG folders)
     n_files: 1
     listing_complete: true
   sample:
@@ -104,7 +108,7 @@ technical:
     description: Volume 021 of sequence 01 and its gold-truth segmentation of slice 4 (zip members, compressed).
   arrays:
   - role: raw
-    path_pattern: 0N/t<T>.tif
+    path_pattern: '*/0[0-9]/t*.tif'
     format: tiff
     axes: zyx
     shape:
@@ -123,7 +127,7 @@ technical:
     alignment: not-applicable
     alignment_notes: null
   - role: label
-    path_pattern: 0N_GT/SEG/man_seg_<T>_<Z>.tif
+    path_pattern: '*/0[0-9]_GT/SEG/man_seg*.tif'
     format: tiff
     axes: yx
     shape:
@@ -144,7 +148,7 @@ technical:
     alignment_notes: man_seg_<T>_<Z>.tif is slice Z of 0N/t<T>.tif (CTC convention); 2454x1693 matches
       the raw slice size. Not all objects are segmented.
   - role: label
-    path_pattern: 0N_GT/TRA/man_track<T>.tif
+    path_pattern: '*/0[0-9]_GT/TRA/man_track*.tif'
     format: tiff
     axes: zyx
     shape:
@@ -171,5 +175,8 @@ technical:
     (t021 of 01): raw 13x2454x1693 uint16 0..6894 (p1 296, p50 431, p99 939); GT slice 0..119 (120 values);
     man_track021 0..131 (128 values), same grid. 13 pages per volume (what the page axis means in the
     cartographic projection is not documented here). 01 man_track.txt has 306 tracks. Raw TIFF compression
-    not probed.'
-  inspected_at: '2026-10-01T11:40:09Z'
+    not probed. Second pass: path_pattern globs checked against the zip member list (0[0-9]/t*.tif 275,
+    0[0-9]_GT/SEG/man_seg*.tif 10, 0[0-9]_GT/TRA/man_track*.tif 275). Voxel size not found; checked: CTC
+    3D dataset table ("NA due to cartographic projections"), TIFF metadata of 01/t021.tif (sample.py:
+    none; probe.py cannot read the deflated member header), CTC conventions PDF.'
+  inspected_at: '2026-10-07T04:20:44Z'
