@@ -64,12 +64,13 @@ provenance:
   evidence_urls:
   - https://pmc.ncbi.nlm.nih.gov/articles/PMC9010346/
   - https://datasets.deepcell.org/data
+  - https://raw.githubusercontent.com/vanvalenlab/deepcell-tf/master/deepcell/datasets/tissue_net.py
   confidence: 0.5
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-01T08:37:48Z'
+  annotations_verified: true
+  last_checked: '2026-10-07T05:00:00Z'
 notes: 'From the paper (PMC9010346): data is "available at datasets.deepcell.org for non-commercial use"
   (custom terms, no SPDX id or license URL found); 80/10/10 train/val/test split; images cropped to 256x256;
   1.3M whole-cell and 1.2M nuclear annotations; human, mouse and macaque. The deepcell page fetched this
@@ -77,19 +78,72 @@ notes: 'From the paper (PMC9010346): data is "available at datasets.deepcell.org
   count, size, voxel size and access mode (registration assumed) are NOT verified. Annotation source (human-in-the-loop
   crowdsourced, corrected by experts) mapped to proofread. Unverified fields need maintainer check.'
 technical:
-  method: metadata-only
+  method: sample
+  inspected_at: '2026-10-07T05:00:00Z'
   inspected_urls:
-  - https://datasets.deepcell.org/data
-  bytes_downloaded: 0
+  - https://deepcell-data.s3.amazonaws.com/multiplex/tissuenet-sample.npz
+  bytes_downloaded: 4023848
   size_source: unknown
   layout:
-    tree: null
+    tree: "tissuenet_v1-1.zip (DeepCell API key needed; not listed): train / val / test .npz (X, y, meta)\
+      \ per the deepcell-tf loader\npublic sample: s3://deepcell-data/multiplex/tissuenet-sample.npz \
+      \ 4,023,848 B\n  X.npy  4.2 MB  float64 [1,512,512,2]\n  y.npy  2.1 MB  float64 [1,512,512,1]\n"
     n_files: null
     listing_complete: false
-  sample: null
-  arrays: []
-  notes: 'Not inspectable by the enricher: datasets.deepcell.org/data is a JavaScript app (the HTML only
-    says "You need to enable JavaScript to run this app") and downloads need a DeepCell account, so no
-    file listing, header or sample was possible. Format, size, shapes and label encoding remain unverified.
-    Another open PR (#100, tissuenet-multiplexed-tissue-whole-cell) describes the same TissueNet dataset.'
-  inspected_at: '2026-10-01T08:37:48Z'
+  sample:
+    urls:
+    - https://deepcell-data.s3.amazonaws.com/multiplex/tissuenet-sample.npz::X.npy
+    - https://deepcell-data.s3.amazonaws.com/multiplex/tissuenet-sample.npz::y.npy
+    size_bytes: 4023848
+    description: 'deepcell-tf TissueNetSample: one 512x512 two-channel image (X) with its label image
+      (y) in one npz'
+  arrays:
+  - role: raw
+    path_pattern: '*.npz::X.npy'
+    format: other
+    axes: null
+    shape:
+    - 1
+    - 512
+    - 512
+    - 2
+    shape_varies: true
+    dtype: float64
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0.4000128100353324
+    - 27.140319118517475
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '*.npz::y.npy'
+    format: other
+    axes: null
+    shape:
+    - 1
+    - 512
+    - 512
+    - 1
+    shape_varies: true
+    dtype: float64
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 1549
+    encoding: unknown
+    classes: null
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: X and y sit in the same .npz with matching batch / y / x sizes (512x512); last axis
+      = channels.
+  notes: 'The full dataset needs a DeepCell API key (deepcell-tf tissue_net.py: secure=True for tissuenet_v1-1.zip),
+    so it was not listed. deepcell-tf (read, not run) names a public TissueNetSample at deepcell-data.s3
+    (SAMPLE_URL, "a single sample image from TissueNet"), and says train images are 512x512 (about 2600),
+    val/test resized to 256x256. The npz was read with a scratch script (zip members, NPY header + frombuffer,
+    no pickle): X float64 [1,512,512,2] 0.40..27.14; y float64 [1,512,512,1] 0..1549 (integer-valued IDs
+    likely, not checked). One sample; axis names not stored. Same dataset as PR #100.'
