@@ -77,7 +77,7 @@ def validate_passed(repo, sha):
 
 
 def evaluate(repo, pr):
-    rec, paths = record_on_pr(pr["number"])
+    rec, paths = record_on_pr(pr["number"], pr)   # the branch at headRefOid, not the lagging pull ref
     if rec is None:
         return None, [f"expected one record, found {paths}"], None
     sha = subprocess.run(["git", "rev-parse", f"refs/remotes/origin/pr-{pr['number']}"], cwd=ROOT,
@@ -120,7 +120,7 @@ def main():
     a = ap.parse_args()
     repo = os.environ.get("GH_REPO") or gh("repo", "view", "--json", "nameWithOwner", "--jq", ".nameWithOwner").strip()
     prs = json.loads(gh("pr", "list", "--state", "open", "--limit", "500", "--json",
-                        "number,title,headRefName,headRefOid,isDraft,labels,mergeable"))
+                        "number,title,headRefName,headRefOid,isCrossRepository,isDraft,labels,mergeable"))
     rows, merged = [], 0
     catalog = [load_yaml(p) for p in iter_record_paths()]  # main; merged records are appended below
     checked = []

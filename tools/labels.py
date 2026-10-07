@@ -123,10 +123,32 @@ def _run(*cmd, check=True):
     return r.stdout
 
 
-def record_on_pr(number):
-    """The dataset record added or changed by PR `number` (read from git, never executed)."""
+def fetch_pr_head(number, head=None):
+    """Fetch PR `number`'s head commit into refs/remotes/origin/pr-<number>.
+
+    GitHub's pull/<n>/head ref can lag a push by a long time (seen: over half an hour), and labels or
+    auto-merge decisions made from it describe an old record. So read the PR's own branch, at the commit
+    GitHub reports as the PR's head (`head`: {"headRefName", "headRefOid"} if the caller has them).
+    The pull ref is only the fallback, for a branch on a fork or one that's gone."""
     ref = f"refs/remotes/origin/pr-{number}"
+    if head is None:
+        head = json.loads(_run("gh", "pr", "view", str(number), "--json", "headRefName,headRefOid,isCrossRepository"))
+    oid = head.get("headRefOid")
+    if not head.get("isCrossRepository") and head.get("headRefName") and \
+            subprocess.run(["git", "fetch", "-q", "origin", f"+refs/heads/{head['headRefName']}:{ref}"],
+                           cwd=ROOT, capture_output=True).returncode == 0 and \
+            (not oid or _run("git", "rev-parse", ref).strip() == oid):
+        return ref
+    if oid and subprocess.run(["git", "fetch", "-q", "origin", oid], cwd=ROOT, capture_output=True).returncode == 0:
+        _run("git", "update-ref", ref, oid)          # the exact head commit, even if the branch moved again
+        return ref
     _run("git", "fetch", "-q", "origin", f"+pull/{number}/head:{ref}")
+    return ref
+
+
+def record_on_pr(number, head=None):
+    """The dataset record added or changed by PR `number` at its current head (read from git, never executed)."""
+    ref = fetch_pr_head(number, head)
     _run("git", "fetch", "-q", "origin", "main")
     paths = [p for p in _run("git", "diff", "--name-only", "--diff-filter=AM", f"origin/main...{ref}", "--", "datasets/").split()
              if p.endswith(".yaml")]
@@ -143,9 +165,9 @@ def record_on_main(record_id, paths_by_id):
     return yaml.load(_run("git", "show", f"origin/main:{path}"), Loader=_NoDatesLoader), [path]
 
 
-def sync(number, repo_labels, rec=None, paths=None, have=None):
+def sync(number, repo_labels, rec=None, paths=None, have=None, head=None):
     if rec is None:
-        rec, paths = record_on_pr(number)
+        rec, paths = record_on_pr(number, head)
     if rec is None:
         print(f"#{number}: expected one record, found {paths}; labels unchanged")
         return
@@ -210,8 +232,9 @@ def main():
                 items.append((pr["number"], {"rec": rec, "paths": paths, "have": {lab["name"] for lab in pr["labels"]}}))
         sync_all(items, repo_labels)
         return
-    prs = json.loads(_run("gh", "pr", "list", "--state", "open", "--limit", "500", "--json", "number,headRefName"))
-    sync_all([(pr["number"], {}) for pr in prs if pr["headRefName"].startswith(DATASET_BRANCH_PREFIX)], repo_labels)
+    prs = json.loads(_run("gh", "pr", "list", "--state", "open", "--limit", "500", "--json",
+                          "number,headRefName,headRefOid,isCrossRepository"))
+    sync_all([(pr["number"], {"head": pr}) for pr in prs if pr["headRefName"].startswith(DATASET_BRANCH_PREFIX)], repo_labels)
 
 
 if __name__ == "__main__":
