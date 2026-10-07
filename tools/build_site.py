@@ -7,7 +7,8 @@ plus all fetched claude/* branches, so unmerged harvest runs are visible too.
 The "not merged" table lists open dataset PRs with the reasons auto-merge gives (tools/automerge.py),
 read from the PRs' labels and checks with `gh`; without GitHub access that table is left out.
 The gallery at the end shows the datasets downloaded into demo/data/ (tools/demo_gallery.py), with
-Fileglancer links; it's left out where demo/data/ doesn't exist (demo/ is git-ignored).
+Fileglancer links. Where demo/data/ doesn't exist (demo/ is git-ignored, e.g. on GitHub) it uses the copy the
+workstation publishes to claude/state/gallery, and it's left out if there is none.
 """
 import argparse
 import json
@@ -18,7 +19,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.collect_runs import collect  # noqa: E402
 from tools.automerge import HOLD_LABELS, criteria_failures, duplicate_reasons  # noqa: E402
-from tools.demo_gallery import gallery  # noqa: E402
+from tools.demo_gallery import gallery, published_gallery  # noqa: E402
 from tools.common import DATASET_BRANCH_PREFIX, ROOT, iter_record_paths, load_yaml, pending_records  # noqa: E402
 
 TEMPLATE = Path(__file__).resolve().parent / "site_template.html"
@@ -75,7 +76,7 @@ def main():
 
     (out / "catalog.json").write_text(json.dumps(records, indent=1, ensure_ascii=False))
     payload = json.dumps({"records": records, "runs": runs[:500], "unmerged": unmerged_prs(),
-                          "gallery": gallery()},
+                          "gallery": gallery() or published_gallery()},
                          ensure_ascii=False).replace("</", "<\\/")
     (out / "index.html").write_text(TEMPLATE.read_text().replace("/*__DATA__*/null", payload))
     print(f"wrote {out.relative_to(ROOT)}/index.html ({len(records)} records, {len(runs)} runs)")

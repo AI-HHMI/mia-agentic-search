@@ -4,7 +4,8 @@
     python tools/publish.py dataset <record.yaml>       # push record to its own branch claude/dataset/<id>,
                                                         # filed at datasets/<dimensionality>/<modality>/<id>.yaml
     python tools/publish.py state-push --routine R     # save frontier + run logs to claude/state/R
-                                                        # (downloader: also state/downloads.json)
+                                                        # (downloader: also state/downloads.json;
+                                                        #  gallery: only state/gallery.json, tools/demo_gallery.py)
     python tools/publish.py pr-pull <id>               # enricher: put claude/dataset/<id>'s record in the tree
     python tools/publish.py pr-update <record.yaml>    # enricher: commit it back onto that branch
 
@@ -42,6 +43,8 @@ def remote_exists(branch):
 
 
 def state_paths(routine):
+    if routine == "gallery":   # dashboard gallery of demo/data/ (tools/demo_gallery.py --publish)
+        return [STATE_DIR / "gallery.json"]
     extra = [STATE_DIR / "downloads.json"] if routine == "downloader" else []   # tools/download_queue.py
     return [FRONTIER_DIR / f"{routine}.yaml", *sorted(RUNS_DIR.glob(f"{routine}-*.json")), *extra]
 
@@ -77,7 +80,8 @@ def _cleanup(tmp):
 
 
 def state_push(routine, attempts=5):
-    """Parallel runs of one routine push to the same state branch; retry on a rejected (raced) push."""
+    """Parallel runs of one routine push to the same state branch; retry on a rejected (raced) push.
+    Returns whether anything was pushed."""
     import time
     for i in range(attempts):
         try:
@@ -107,8 +111,9 @@ def _state_push(routine):
             run("commit", "-q", "-m", f"state({routine}): frontier + run logs", cwd=tmp)
             run("push", "-q", "origin", f"HEAD:refs/heads/{branch}", cwd=tmp)
             print(f"pushed {branch}")
-        else:
-            print("state unchanged")
+            return True
+        print("state unchanged")
+        return False
     finally:
         _cleanup(tmp)
         git("branch", "-D", f"tmp-state-{routine}")

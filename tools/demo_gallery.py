@@ -1,12 +1,16 @@
 """Thumbnails of the datasets downloaded into demo/data/ (the miao layout), for the dashboard gallery.
 
-    python tools/demo_gallery.py [--data demo/data]   # prints the gallery entries (without images)
+    python tools/demo_gallery.py [--data demo/data]             # prints the gallery entries (without images)
+    python tools/demo_gallery.py --publish [--data demo/data]   # push it to claude/state/gallery, redeploy Pages
 
 One entry per dataset folder: a JPEG thumbnail of the middle slice of crop-001's raw array
 (label instances drawn as colored outlines when the crop has labels), the number of crops, the
 catalog record it came from and a Fileglancer link to the folder. demo/ is git-ignored, so the
-gallery is empty wherever demo/data/ doesn't exist (e.g. the GitHub Pages build), and numpy, zarr
-and Pillow are imported only when there is something to draw (CI installs just requirements.txt).
+GitHub Pages build has no demo/data/: the workstation publishes the gallery (thumbnails included) as
+state/gallery.json on claude/state/gallery (tools/cron/publish_gallery.sh, every 10 min), and the
+build falls back to that copy. --publish pushes only when the gallery changed, then starts the dashboard
+workflow. numpy, zarr and Pillow are imported only when there is something to draw (CI installs just
+requirements.txt).
 """
 import argparse
 import base64
@@ -16,10 +20,12 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import ROOT  # noqa: E402
+from tools.common import ROOT, STATE_BRANCH_PREFIX, STATE_DIR, git  # noqa: E402
 
 FILEGLANCER = "https://fileglancer.int.janelia.org/browse/"
 THUMB_PX = 256
+PUBLISHED = STATE_DIR / "gallery.json"
+GALLERY_BRANCH = STATE_BRANCH_PREFIX + "gallery"
 CHANNEL_AXES = {"c", "s"}
 
 
@@ -145,8 +151,37 @@ def gallery(data_dir: Path = ROOT / "demo" / "data", images: bool = True):
     return entries
 
 
+def published_gallery():
+    """The gallery last published from the workstation (needs a fetched origin/claude/state/gallery); [] if none."""
+    text = git("show", f"origin/{GALLERY_BRANCH}:state/gallery.json")
+    try:
+        return json.loads(text) if text else []
+    except json.JSONDecodeError:
+        return []
+
+
+def publish(data_dir: Path):
+    """Write state/gallery.json, push it if it changed, and redeploy the dashboard."""
+    import subprocess
+    from tools.publish import state_push
+    entries = gallery(data_dir)
+    if not entries:
+        sys.exit(f"no datasets in {data_dir}; nothing published")
+    PUBLISHED.parent.mkdir(parents=True, exist_ok=True)
+    PUBLISHED.write_text(json.dumps(entries, indent=1, sort_keys=True) + "\n")
+    if state_push("gallery"):
+        r = subprocess.run(["gh", "workflow", "run", "pages.yml", "--ref", "main"], cwd=ROOT,
+                           capture_output=True, text=True)
+        print("dashboard redeploy started" if r.returncode == 0
+              else f"note: couldn't start the dashboard workflow ({r.stderr.strip()[:300]}); the hourly build picks it up")
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--data", default=str(ROOT / "demo" / "data"))
+    ap.add_argument("--publish", action="store_true", help="push to claude/state/gallery and redeploy the dashboard")
     a = ap.parse_args()
-    print(json.dumps(gallery(Path(a.data), images=False), indent=1))
+    if a.publish:
+        publish(Path(a.data))
+    else:
+        print(json.dumps(gallery(Path(a.data), images=False), indent=1))
