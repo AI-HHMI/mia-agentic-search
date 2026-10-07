@@ -19,6 +19,8 @@ jobs:
         with: { python-version: "3.12" }
       - run: pip install -r requirements.txt
       - run: git fetch origin "pull/${{ github.event.pull_request.number }}/head:pr-head"
+      # open dataset branches: their records keep identity keys they share with this one (tools/reject_from_pr.py)
+      - run: git fetch origin "+refs/heads/claude/dataset/*:refs/remotes/origin/claude/dataset/*"
       # main is protected, so rejections go to the unprotected `rejections` branch,
       # which tools/common.py:load_rejected() reads alongside state/rejected.yaml.
       - name: Check out rejections branch

@@ -4,6 +4,10 @@
 
 The workflow writes --out inside a worktree of the unprotected `rejections` branch,
 because GITHUB_TOKEN cannot push to the protected main branch.
+
+The record id is always rejected. Its identity keys (DOI, accession, landing URL) are rejected only when no
+record on main or on another open claude/dataset/* branch still has them: a PR closed as a duplicate shares
+those keys with the record that was kept, and rejecting them would reject that one too.
 """
 import argparse
 import subprocess
@@ -13,7 +17,8 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import ROOT, _NoDatesLoader, dump_yaml, identity_keys, load_rejected, load_yaml  # noqa: E402
+from tools.common import (ROOT, _NoDatesLoader, dump_yaml, identity_keys, iter_record_paths,  # noqa: E402
+                          load_rejected, load_yaml, pending_records)
 
 
 def git(*args):
@@ -33,18 +38,22 @@ def main():
 
     merge_base = git("merge-base", a.base, a.head).strip()
     added = git("diff", "--name-only", "--diff-filter=A", merge_base, a.head, "--", "datasets/").split()
-    new = []
+    new, kept = [], []
+    others = [load_yaml(p) or {} for p in iter_record_paths()] + list(pending_records().values())
     for path in added:
         if not path.endswith(".yaml"):
             continue
         rec = yaml.load(git("show", f"{a.head}:{path}"), Loader=_NoDatesLoader) or {}
-        for key in [rec.get("id"), *identity_keys(rec)]:
+        held = {k for o in others if o.get("id") != rec.get("id") for k in identity_keys(o)}
+        kept += sorted(set(identity_keys(rec)) & held)
+        for key in [rec.get("id"), *(k for k in identity_keys(rec) if k not in held)]:
             if key and key not in rejected:
                 rejected.append(key)
                 new.append(key)
     out.parent.mkdir(parents=True, exist_ok=True)
     dump_yaml({"rejected": rejected}, out)
-    print(f"added {len(new)} rejected key(s) from {len(added)} file(s)")
+    print(f"added {len(new)} rejected key(s) from {len(added)} file(s)"
+          + (f"; not rejected, another record has them: {kept}" if kept else ""))
 
 
 if __name__ == "__main__":
