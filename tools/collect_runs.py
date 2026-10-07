@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import ROOT, RUNS_DIR  # noqa: E402
+from tools.common import ROOT, RUNS_DIR, git_objects, tree_names  # noqa: E402
 
 
 def _git(*args):
@@ -24,13 +24,20 @@ def collect(all_branches=True, include_dry_runs=False):
             runs[p.name] = json.loads(p.read_text())
     if all_branches:
         refs = _git("for-each-ref", "--format=%(refname:short)", "refs/remotes/origin/claude/").split()
+        # two batched reads (run-log folders, then the logs) instead of git calls per branch and file
+        trees = git_objects(f"{ref}:state/runs" for ref in refs)
+        wanted = {}
         for ref in refs:
-            for name in _git("ls-tree", "--name-only", f"{ref}:state/runs").split():
-                if name.endswith(".json") and name not in runs:
-                    try:
-                        runs[name] = json.loads(_git("show", f"{ref}:state/runs/{name}"))
-                    except json.JSONDecodeError:
-                        continue
+            tree = trees.get(f"{ref}:state/runs")
+            for name in tree_names(tree[1]) if tree and tree[0] == "tree" else []:
+                if name.endswith(".json") and name not in runs and name not in wanted:
+                    wanted[name] = f"{ref}:state/runs/{name}"
+        blobs = git_objects(wanted.values())
+        for name, spec in wanted.items():
+            try:
+                runs[name] = json.loads(blobs[spec][1])
+            except (KeyError, json.JSONDecodeError):
+                continue
     out = [r for r in runs.values() if include_dry_runs or not r.get("dry_run")]
     return sorted(out, key=lambda r: r["started_at"], reverse=True)
 

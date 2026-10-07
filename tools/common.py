@@ -52,16 +52,69 @@ def git(*args, check=False):
     return out.stdout if out.returncode == 0 else ""
 
 
-def pending_records():
-    """Records proposed on open claude/dataset/* branches but not yet on main: {branch: record}."""
+def git_objects(specs):
+    """Read many `<rev>:<path>` objects with one `git cat-file --batch`: {spec: (type, bytes)}, missing ones left out.
+
+    One process instead of one per branch matters on slow filesystems (NFS), where each git call costs ~0.1-1 s.
+    """
+    specs = list(dict.fromkeys(specs))
+    if not specs:
+        return {}
+    out = subprocess.run(["git", "cat-file", "--batch"], cwd=ROOT, input="\n".join(specs).encode() + b"\n",
+                         capture_output=True, check=False).stdout
+    found, pos = {}, 0
+    for spec in specs:
+        end = out.index(b"\n", pos)
+        header = out[pos:end].split()
+        pos = end + 1
+        if len(header) != 3:  # "<spec> missing" / "ambiguous"
+            continue
+        size = int(header[2])
+        found[spec] = (header[1].decode(), out[pos:pos + size])
+        pos += size + 1
+    return found
+
+
+def tree_names(raw):
+    """Entry names of a raw tree object (as `git cat-file --batch` returns it)."""
+    names, pos = [], 0
+    while pos < len(raw):
+        nul = raw.index(b"\0", pos)
+        names.append(raw[raw.index(b" ", pos) + 1:nul].decode())
+        pos = nul + 21  # 20-byte SHA-1 after the name
+    return names
+
+
+def pending_records(branches=None):
+    """Records proposed on open claude/dataset/* branches but not yet on main: {branch: record}.
+
+    `branches` (names without `origin/`) limits it to those, e.g. the head branches of open PRs; local clones
+    keep remote-tracking refs of merged or closed PRs until `git fetch --prune`.
+    """
+    refs = git("for-each-ref", "--format=%(refname:short)", f"refs/remotes/origin/{DATASET_BRANCH_PREFIX}").split()
+    if branches is not None:
+        wanted = set(branches)
+        refs = [r for r in refs if r.removeprefix("origin/") in wanted]
+    if not refs:
+        return {}
+    # Files added by each branch's own commits, in one `git log` (one merge-base per branch is slow on NFS).
+    # --source names the ref each commit was reached from; files deleted or moved later are missing at the tip.
+    log = git("log", "--source", "--no-renames", "--diff-filter=A", "--name-only", "--format=%x00%S",
+              *refs, "--not", "origin/main", "--", "datasets/")
+    on_main = set(git("ls-tree", "-r", "--name-only", "origin/main", "--", "datasets/").split())  # e.g. a record moved
+    added = set()
+    for block in log.split("\0")[1:]:
+        ref, *paths = block.split("\n")
+        added.update((ref.strip(), path) for path in paths if path.endswith(".yaml") and path not in on_main)
+    blobs = git_objects(f"{ref}:{path}" for ref, path in sorted(added))
     found = {}
-    for ref in git("for-each-ref", "--format=%(refname:short)", f"refs/remotes/origin/{DATASET_BRANCH_PREFIX}").split():
-        for path in git("diff", "--name-only", "--diff-filter=A", f"origin/main...{ref}", "--", "datasets/").split():
-            if path.endswith(".yaml"):
-                try:
-                    found[ref.removeprefix("origin/")] = yaml.load(git("show", f"{ref}:{path}"), Loader=_NoDatesLoader) or {}
-                except yaml.YAMLError:
-                    pass
+    for ref, path in sorted(added):
+        blob = blobs.get(f"{ref}:{path}")
+        if blob and blob[0] == "blob":
+            try:
+                found[ref.removeprefix("origin/")] = yaml.load(blob[1].decode(), Loader=_NoDatesLoader) or {}
+            except yaml.YAMLError:
+                pass
     return found
 
 

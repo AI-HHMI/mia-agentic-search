@@ -34,12 +34,12 @@ def unmerged_prs():
     except (OSError, subprocess.SubprocessError) as e:
         print(f"note: open PRs not included ({(getattr(e, 'stderr', '') or str(e))[:300]})", file=sys.stderr)
         return None
-    open_recs = pending_records()  # branch -> record, from the fetched claude/dataset/* refs
+    prs = [pr for pr in json.loads(out) if pr["headRefName"].startswith(DATASET_BRANCH_PREFIX)]
+    # branch -> record, from the fetched refs of open PRs only (stale refs of closed PRs aren't duplicates)
+    open_recs = pending_records([pr["headRefName"] for pr in prs])
     catalog = [load_yaml(p) for p in iter_record_paths()]
     rows = []
-    for pr in json.loads(out):
-        if not pr["headRefName"].startswith(DATASET_BRANCH_PREFIX):
-            continue
+    for pr in prs:
         labels = [lab["name"] for lab in pr["labels"]]
         reasons = criteria_failures(labels)
         checks = [c for c in pr.get("statusCheckRollup") or [] if c.get("name") == "validate"]
