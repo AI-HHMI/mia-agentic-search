@@ -83,23 +83,32 @@ def check_technical(record):
     return errors
 
 
-def check_inspection_log(record, run):
-    """With --run-log: the enricher's listing / header / sample claims must be backed by run log entries."""
+def check_inspection_log(record, run, baseline=None):
+    """With --run-log: the enricher's listing / header / sample claims must be backed by run log entries.
+    Claims the record already made, unchanged, in `baseline` (the record as pulled from its PR branch) were
+    backed by the run that made them, so a later pass that keeps them (e.g. one that only adds a size) isn't
+    asked to inspect the files again."""
     t = record.get("technical")
     if not isinstance(t, dict):
         return []
+    bt = ((baseline or {}).get("technical") or {}) if isinstance(baseline, dict) else {}
+    bd = ((baseline or {}).get("data") or {}) if isinstance(baseline, dict) else {}
     errors, rid = [], record.get("id")
     fetched = {normalize_url(u) for u in run.get("fetched_urls", [])}
+    known = {normalize_url(u) for u in bt.get("inspected_urls") or []}
     for u in t.get("inspected_urls") or []:
-        if normalize_url(u) not in fetched:
+        if normalize_url(u) not in fetched and normalize_url(u) not in known:
             errors.append(f"technical.inspected_urls entry not in run log: {u}")
     mine = [e for e in run.get("inspected", []) if e.get("id") == rid]
     kinds = {e.get("kind") for e in mine}
-    if t.get("method") == "sample" and "sample" not in kinds:
+    same_method = bool(bt) and bt.get("method") == t.get("method")
+    if t.get("method") == "sample" and "sample" not in kinds and not same_method:
         errors.append("technical.method is 'sample' but the run log has no tools/sample.py entry for this id")
-    if t.get("method") == "header" and not kinds & {"header", "sample"}:
+    if t.get("method") == "header" and not kinds & {"header", "sample"} and not same_method:
         errors.append("technical.method is 'header' but the run log has no tools/probe.py entry for this id")
-    if t.get("size_source") in CONFIRMED_SIZE_SOURCES:
+    same_size = (bool(bt) and bt.get("size_source") == t.get("size_source")
+                 and bd.get("size_bytes") == (record.get("data") or {}).get("size_bytes"))
+    if t.get("size_source") in CONFIRMED_SIZE_SOURCES and not same_size:
         totals = {e.get("total_bytes") for e in mine if e.get("kind") == "listing" and e.get("size_source") == "file-listing"}
         size = (record.get("data") or {}).get("size_bytes")
         if not totals:
@@ -115,6 +124,7 @@ def main():
     ap.add_argument("paths", nargs="*", help="files/dirs to validate (default: datasets/)")
     ap.add_argument("--run-log", help="require every evidence_url to appear in this run log's fetched URLs")
     ap.add_argument("--baseline", help="the record before this run's edits (tools/publish.py pr-pull saves it); "
+                    "its technical claims, unchanged, were backed by an earlier run's log; "
                     "its evidence_urls were logged by an earlier run and are not re-checked")
     ap.add_argument("--min-confidence", type=float, default=None,
                     help="fail records below this provenance.confidence (harvest PRs use 0.5)")
@@ -126,7 +136,7 @@ def main():
     all_paths = list(iter_record_paths([DATASETS_DIR] + ([DRAFTS_DIR] if DRAFTS_DIR.exists() else [])))
     rejected = set(load_rejected())
     fetched = run = None
-    baseline_urls = set()
+    baseline_urls, base = set(), None
     if a.baseline:
         base = load_yaml(a.baseline) or {}
         baseline_urls = {normalize_url(u) for u in (base.get("provenance") or {}).get("evidence_urls", [])}
@@ -176,7 +186,7 @@ def main():
                 for u in (rec.get("provenance") or {}).get("evidence_urls", []):
                     if normalize_url(u) not in fetched and normalize_url(u) not in baseline_urls:
                         errs.append(f"evidence url not in run log fetched_urls: {u}")
-                errs += check_inspection_log(rec, run)
+                errs += check_inspection_log(rec, run, base)
         if errs:
             problems.setdefault(p, []).extend(errs)
 
