@@ -47,7 +47,7 @@ data:
   formats:
   - hdf5
   - tiff
-  size_bytes: null
+  size_bytes: 1565992592
   n_items: 2
   access: open
   download_url: https://drive.google.com/drive/folders/1_4CrlYvzx0ITnGlJOHdgcTRgeSkm9wT8
@@ -83,7 +83,7 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-06T21:13:16Z'
+  last_checked: '2026-10-07T19:01:48Z'
 notes: 'Voxel sizes (paper Table 1): zebrafish EM 0.48 x 0.51 x 0.51 um (z,y,x; downsampled from 30x4x4
   nm), mouse micro-CT 720 nm isotropic. Challenge page says raw images and train/val annotations are downloadable
   (Google Drive link) while complete annotations need a data request form. No license for the data is
@@ -105,7 +105,7 @@ technical:
   - https://drive.google.com/uc?export=download&id=13d4LVewMZh3cahEeTEICBkFrhIV5fbgW
   - https://drive.google.com/uc?export=download&id=10Y-EzHTwc7Xnyqzvzr4UY9UKhMMNIYsE
   bytes_downloaded: 225307
-  size_source: unknown
+  size_source: estimated
   layout:
     tree: "NucMM (Google Drive folder)\n  Mouse (NucMM-M)/\n    README.txt\n    image.h5             \
       \    whole micro-CT volume (not readable: Drive confirm page)\n    Image/train/  img_ZZZ_YYY_XXX.h5\
@@ -222,9 +222,13 @@ technical:
     alignment_notes: Binary mask of the zebrafish brain region on the grid of the whole EM volume (README.txt);
       the README gives volume and crop sizes, mask shape from the header.
   notes: 'Drive folder walked via embeddedfolderview pages (127 files: 2 README, 2 whole volumes, 1 mask,
-    122 crops); Drive gives no sizes, so size unknown. Headers (h5py via range reads): crops store one
+    122 crops); the folder view gives no sizes. Headers (h5py via range reads): crops store one
     dataset ''main'', gzip; zebrafish img uint8 64^3 chunks 16x16x32, seg uint32 64^3; mouse img uint8
     192^3, seg uint16 192^3; mask.h5 uint8 397x1450x2000. Sample (one zebrafish pair): raw 0..208, label
     62 distinct values up to 167599 (global instance IDs). Mouse crops not sampled. image.tif and mouse
     image.h5 sit behind Drive''s virus-scan confirm page, not readable here. READMEs: train/val crop start
-    coordinates; full-volume labels only on request. Axis order not stated, so axes null.'
+    coordinates; full-volume labels only on request. Axis order not stated, so axes null. Size pass: re-walked the
+    folder (129 files: 2 README, image.tif, image.h5, mask.h5, 124 crops) and read each file''s size from a 1-byte
+    range request (Content-Range) on drive.usercontent.google.com: sum 1,565,992,592 B (image.tif 1,151,358,851;
+    image.h5 355,450,278; mask.h5 4,506,748; crops 54.7 MB). Exact host sizes, but not from tools/listing.py
+    (no Drive support), so size_source is estimated, not file-listing.'
