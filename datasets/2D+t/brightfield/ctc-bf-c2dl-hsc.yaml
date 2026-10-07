@@ -73,16 +73,16 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T11:15:19Z'
-notes: 'Training zip listed with tools/listing.py (exact zip size): 01/ 1764 tif; 01_GT/SEG 49 tif; 01_GT/TRA
-  1764 tif + man_track.txt; 01_ST/SEG 1764 tif; 02/ 1764 tif; 02_GT/SEG 8 tif; 02_GT/TRA; 02_ST/SEG. Pixel/voxel
-  size, microscope, time step and cell type come from the CTC dataset table; organism and sample from
-  that table and the Nature Methods paper. Terms are custom: CTC-related use needs no consent, non-CTC
-  scientific use requires organizer permission, commercial use needs organizer and data-provider permission,
-  cloning is prohibited, and the Nature Methods paper must be cited. Test set annotations are secret.
-  Gold-truth segmentation covers only a subset of frames (annotations.coverage partial). Well-known benchmark;
-  confidence kept moderate given the permission-based terms. enricher: size_bytes from the exact zip size
-  (was rounded); 0N_ERR_SEG folders also present.'
+  last_checked: '2026-10-07T04:11:58Z'
+notes: 'Folder layout in technical.layout. Pixel/voxel size, microscope, time step and cell type come
+  from the CTC dataset table; organism and sample from that table and the Nature Methods paper. Terms
+  are custom: CTC-related use needs no consent, non-CTC scientific use requires organizer permission,
+  commercial use needs organizer and data-provider permission, cloning is prohibited, and the Nature Methods
+  paper must be cited. Test set annotations are secret. Well-known benchmark; confidence kept moderate
+  given the permission-based terms. enricher: size_bytes from the exact zip size (was rounded); 0N_ERR_SEG
+  folders also present. enricher: source mixed = 0N_GT gold truth (human-origin) and 0N_ST/SEG silver
+  truth (computer-origin), per CTC conventions. enricher: coverage = 01_GT/SEG 49 of 1764 frames; 02_GT/SEG
+  8 of 1764 frames (gold SEG only on selected frames, per CTC conventions); TRA markers on every frame.'
 technical:
   method: sample
   inspected_urls:
@@ -91,11 +91,19 @@ technical:
   bytes_downloaded: 999966
   size_source: file-listing
   layout:
-    tree: "BF-C2DL-HSC.zip   1,724,188,050 B, 14,171 members\n  BF-C2DL-HSC/\n    01/          1764 t<T>.tif\
-      \   901.3 MB\n    01_ERR_SEG/  1764 .tif\n    01_GT/SEG/   49 man_seg<T>.tif\n    01_GT/TRA/   1764\
-      \ man_track<T>.tif + man_track.txt\n    01_ST/SEG/   1764 man_seg<T>.tif\n    02/          1764\
-      \ t<T>.tif   786.4 MB\n    02_ERR_SEG/  1764 .tif\n    02_GT/SEG/   8 man_seg<T>.tif\n    02_GT/TRA/\
-      \   1764 + man_track.txt\n    02_ST/SEG/   1764 man_seg<T>.tif\n"
+    tree: |
+      BF-C2DL-HSC.zip   1,724,188,050 B, 14,171 members
+        BF-C2DL-HSC/
+          01/          1764 t<T>.tif   901.3 MB
+          01_ERR_SEG/  1764 .tif
+          01_GT/SEG/   49 man_seg<T>.tif
+          01_GT/TRA/   1764 man_track<T>.tif + man_track.txt
+          01_ST/SEG/   1764 man_seg<T>.tif
+          02/          1764 t<T>.tif   786.4 MB
+          02_ERR_SEG/  1764 .tif
+          02_GT/SEG/   8 man_seg<T>.tif
+          02_GT/TRA/   1764 + man_track.txt
+          02_ST/SEG/   1764 man_seg<T>.tif
     n_files: 1
     listing_complete: true
   sample:
@@ -106,7 +114,7 @@ technical:
     description: Frame 1743 of sequence 01 and its gold-truth segmentation (zip members, compressed).
   arrays:
   - role: raw
-    path_pattern: 0N/t<T>.tif
+    path_pattern: '*/0[0-9]/t*.tif'
     format: tiff
     axes: yx
     shape:
@@ -124,7 +132,7 @@ technical:
     alignment: not-applicable
     alignment_notes: null
   - role: label
-    path_pattern: 0N_GT/SEG/man_seg<T>.tif
+    path_pattern: '*/0[0-9]_GT/SEG/man_seg*.tif'
     format: tiff
     axes: yx
     shape:
@@ -145,7 +153,7 @@ technical:
     alignment_notes: GT/SEG/man_seg<T>.tif pairs with 0N/t<T>.tif (same index T); identical shape in the
       sample.
   - role: label
-    path_pattern: 0N_GT/TRA/man_track<T>.tif
+    path_pattern: '*/0[0-9]_GT/TRA/man_track*.tif'
     format: tiff
     axes: yx
     shape: &id001
@@ -166,7 +174,7 @@ technical:
     alignment_notes: Tracking markers per frame (labels propagated over time); lineage in 0N_GT/TRA/man_track.txt
       (L B E P rows).
   - role: label
-    path_pattern: 0N_ST/SEG/man_seg<T>.tif
+    path_pattern: '*/0[0-9]_ST/SEG/man_seg*.tif'
     format: tiff
     axes: yx
     shape: *id001
@@ -188,5 +196,7 @@ technical:
     unique positive labels per object, background 0; GT SEG only on selected frames. Probes: t0058 1010x1010
     uint8 LZW, man_seg0058 1010x1010 uint16 LZW. Samples: t0058 27..254 + man_seg0058 {0,1}; t1743 26..244
     + man_seg1743 0..12 (13 values); man_track0058 {0,1} and ST man_seg0058 {0,1} (one cell early in the
-    movie). 01 man_track.txt has 24 tracks. Normalization unknown.'
-  inspected_at: '2026-10-01T11:15:19Z'
+    movie). 01 man_track.txt has 24 tracks. Normalization unknown. Second pass: path_pattern globs checked
+    against the zip member list (0[0-9]/t*.tif 3528, 0[0-9]_GT/SEG/man_seg*.tif 57, 0[0-9]_GT/TRA/man_track*.tif
+    3528, 0[0-9]_ST/SEG/man_seg*.tif 3528).'
+  inspected_at: '2026-10-07T04:11:50Z'
