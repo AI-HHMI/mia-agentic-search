@@ -35,8 +35,21 @@ imaging:
   voxel_size_nm: null
   channels: null
   organism:
-  - Campylobacter
+  - Campylobacter jejuni
+  - Bdellovibrio bacteriovorus
+  - Caulobacter crescentus
+  - Helicobacter hepaticus
+  - Helicobacter pylori
+  - Hylemonella gracilis
+  - Hyphomonas neptunium
+  - Legionella pneumophila
+  - Proteus mirabilis
+  - Pseudomonas aeruginosa
+  - Salmonella typhimurium
+  - Thermococcus kodakarensis
   - Vibrio cholerae
+  - Vibrio fischeri
+  - Vibrio harveyi
   sample: Bacterial cells (flagellar motor / pilus genotype strains), plunge-frozen
   labels_stains: []
 data:
@@ -53,7 +66,7 @@ annotations:
   - points
   coverage: unknown
   format: 3D point coordinates (one per flagellar motor) in the CryoET Data Portal / copick layout
-  source: mixed
+  source: proofread
 ml:
   tasks:
   - detection
@@ -72,21 +85,22 @@ provenance:
   - https://arxiv.org/html/2606.10255
   - https://cryoet-data-portal-public.s3.amazonaws.com/depositions_metadata/10332/deposition_metadata.json
   - https://files.cryoetdataportal.cziscience.com/10212/mba2012-01-13-1/Reconstructions/VoxelSpacing15.600/Annotations/102/bacterial_type_flagellum_motor-1.0.json
+  - https://files.cryoetdataportal.cziscience.com/10212/dataset_metadata.json
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T06:47:26Z'
-notes: 'Train split is deposition CZCDP-10332 (1,559 annotations, labelled as 1,559 training tomograms
-  in the POPSICLE paper; the portal page itself lists 0 tomograms for this deposition, which only holds
-  annotations linked to portal tilt series/tomograms). Test split: CZCDP-10347 (843 tomograms, released
-  2026-04-29). CC0 stated for POPSICLE datasets in the arXiv paper, not on the deposition page. Voxel
-  size, microscope and formats per tomogram not checked (portal tomograms are typically MRC/OME-Zarr per
-  POPSICLE); bioRxiv preprint 10.1101/2025.04.23.650258 could not be fetched (HTTP 429). Organism: deposition
-  page says Campylobacter motB mutant; POPSICLE says primarily Vibrio cholerae. annotations_verified false:
-  no file listing seen. enricher: one deposition-10332 point annotation file seen and read (dataset 10212),
-  so annotations_verified true.'
+  last_checked: '2026-10-07T04:15:00Z'
+notes: 'Train split is deposition CZCDP-10332 (1,559 annotations; the deposition holds only annotations
+  on existing portal tomograms). Test split: CZCDP-10347. CC0 stated for POPSICLE datasets in the arXiv
+  paper, not on the deposition page. enricher: organism from the deposition page organismName values (15
+  species; was Campylobacter, Vibrio cholerae). organisms: Campylobacter jejuni = dataset 10212 (dataset_metadata.json);
+  the other source datasets were not resolved to IDs (GraphQL unreachable); one organism per <dataset>/
+  folder. enricher: annotations.source proofread (annotation metadata: "3D UNet ensemble -> Napari manual
+  annotation", hybrid, ground truth; was mixed). enricher: coverage: one point file per annotated run
+  (1 point in run mba2012-01-13-1); whether runs without motors are included is not stated. Voxel size
+  varies by source dataset (15.6 A for 10212), so left null.'
 technical:
   method: header
   inspected_urls:
@@ -102,10 +116,16 @@ technical:
       \   67 B, 1 point\n    Annotations/100, 101/   membrane masks from other depositions\n"
     n_files: null
     listing_complete: false
-  sample: null
+  sample:
+    urls:
+    - https://files.cryoetdataportal.cziscience.com/10212/mba2012-01-13-1/Reconstructions/VoxelSpacing15.600/Tomograms/100/mba2012-01-13-1.mrc
+    - https://files.cryoetdataportal.cziscience.com/10212/mba2012-01-13-1/Reconstructions/VoxelSpacing15.600/Annotations/102/bacterial_type_flagellum_motor-1.0_point.ndjson
+    size_bytes: 144704027
+    description: 'Run mba2012-01-13-1 of dataset 10212 (Campylobacter jejuni motB): 15.6 A tomogram and
+      its one-point motor annotation'
   arrays:
   - role: raw
-    path_pattern: <dataset>/<run>/Reconstructions/VoxelSpacing*/Tomograms/*/<run>.mrc
+    path_pattern: '*/*/Reconstructions/VoxelSpacing*/Tomograms/*/*.mrc'
     format: mrc
     axes: zyx
     shape:
@@ -122,7 +142,7 @@ technical:
     alignment: not-applicable
     alignment_notes: null
   - role: label
-    path_pattern: <dataset>/<run>/Reconstructions/VoxelSpacing*/Annotations/*/bacterial_type_flagellum_motor-1.0_point.ndjson
+    path_pattern: '*/*/Reconstructions/VoxelSpacing*/Annotations/*/bacterial_type_flagellum_motor-1.0_point.ndjson'
     format: json
     axes: null
     shape:
@@ -146,5 +166,7 @@ technical:
     deposition_id 10332, method "3D UNet ensemble -> Napari manual annotation", hybrid, ground truth,
     object_count 1. Its ndjson holds one point (197,159,103). Tomogram header (probe.py): MRC float32
     zyx 207x342x511, 15.6 A voxels; header min/max/mean 6/82/44.9. Total size, run count and other datasets''
-    voxel spacings not checked.'
+    voxel spacings not checked. 2nd pass: placeholders in path_pattern replaced by globs; sample unit
+    set (MRC + ndjson re-read, 67 B); organisms from the deposition page; 10212 = Campylobacter jejuni
+    (dataset_metadata.json).'
   inspected_at: '2026-10-01T06:47:26Z'
