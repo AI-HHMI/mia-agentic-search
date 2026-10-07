@@ -2,10 +2,9 @@ schema_version: '1.2'
 id: allen-nuclear-project-dataset-1-son-hipsc
 title: Nuclear Project Dataset 1 (SON nuclear speckles, 3D single-cell images and segmentations)
 short_name: hiPSC 3D single cells, SON speckles + masks
-description: Over 59,000 3D single-cell crops of live gene-edited hiPSCs with mEGFP-tagged SON (nuclear
-  speckles), plus NucBlue DNA and CellMask membrane dyes and label-free predicted nucleolar/nuclear-envelope
-  channels, each with 3D segmentation masks of cell, DNA, SON and predicted structures and a binary mitotic-stage
-  label.
+description: Over 59,000 3D single-cell crops of live gene-edited hiPSCs with mEGFP-tagged SON (nuclear speckles),
+  plus NucBlue DNA and CellMask membrane dyes and label-free predicted nucleolar/nuclear-envelope channels, each
+  with 3D segmentation masks of cell, DNA, SON and predicted structures and a binary mitotic-stage label.
 landing_url: https://open.quiltdata.com/b/allencell/packages/aics/nuclear_project_dataset_1
 doi: null
 repository: other
@@ -45,8 +44,8 @@ annotations:
   - instance-segmentation
   - classification
   coverage: dense
-  format: crop_seg multi-channel uint8 3D OME-TIFF masks (0/255) for DNA, membrane, SON and label-free
-    channels; metadata.csv mitotic_stage 0/1
+  format: crop_seg multi-channel uint8 3D OME-TIFF masks (0/255) for DNA, membrane, SON and label-free channels;
+    metadata.csv mitotic_stage 0/1
   source: unknown
 ml:
   tasks:
@@ -71,16 +70,16 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T14:22:07Z'
-notes: 'Very large: 59,650 crop_raw files (3.39 TB) and 59,651 crop_seg files (20.6 GB) from a complete
-  S3 listing; metadata.csv has 67,236 rows (more than the files listed). Voxel size 0.108 um isotropic
-  per metadata.csv scale_micron; README says originals were 0.108 x 0.108 x 0.29 um and Z was interpolated.
-  No paper is linked, so no Methods were read; microscope, objective and who/what produced the segmentations
-  are not stated in the README (annotation source unknown). The 3 label-free channels (FBL, NPM1, LMNB1)
-  are model predictions, not measurements, and the README advises using the DNA-based nuclear segmentation.
-  mitotic_stage comes from an automatic classifier still in R&D. Sibling packages nuclear_project_dataset_2
-  to 4 (TRF2, POLR2A, PCNA lines) are not covered here. Licence is the Allen Institute custom Terms of
-  Use. enricher: size set to the exact S3 listing total incl. README/metadata (was 3,411,348,793,539).'
+  last_checked: '2026-10-07T05:01:00Z'
+notes: 'Very large: 59,650 crop_raw files (3.39 TB) and 59,651 crop_seg files (20.6 GB) from a complete S3 listing;
+  metadata.csv has 67,236 rows (more than the files listed). Voxel size 0.108 um isotropic per metadata.csv scale_micron;
+  README says originals were 0.108 x 0.108 x 0.29 um and Z was interpolated. No paper is linked, so no Methods were
+  read; microscope, objective and who/what produced the segmentations are not stated in the README (annotation source
+  unknown). The 3 label-free channels (FBL, NPM1, LMNB1) are model predictions, not measurements, and the README
+  advises using the DNA-based nuclear segmentation. mitotic_stage comes from an automatic classifier still in R&D.
+  Sibling packages nuclear_project_dataset_2 to 4 (TRF2, POLR2A, PCNA lines) are not covered here. Licence is the
+  Allen Institute custom Terms of Use. enricher: size set to the exact S3 listing total incl. README/metadata (was
+  3,411,348,793,539).'
 technical:
   method: sample
   inspected_urls:
@@ -91,9 +90,9 @@ technical:
   bytes_downloaded: 170423345
   size_source: file-listing
   layout:
-    tree: "s3://allencell/aics/nuclear_project_dataset_1/   119,303 files, 3,411,368,911,388 B\n  README.md,\
-      \ metadata.csv                 2 files, 20.1 MB\n  crop_raw/<hash>_raw.ome.tif             59,650\
-      \ files, 3.4 TB\n  crop_seg/<hash>_segmentation.ome.tif    59,651 files, 20.6 GB\n"
+    tree: "s3://allencell/aics/nuclear_project_dataset_1/   119,303 files, 3,411,368,911,388 B\n  README.md, metadata.csv\
+      \                 2 files, 20.1 MB\n  crop_raw/<hash>_raw.ome.tif             59,650 files, 3.4 TB\n  crop_seg/<hash>_segmentation.ome.tif\
+      \    59,651 files, 20.6 GB\n"
     n_files: 119303
     listing_complete: true
   sample:
@@ -105,7 +104,7 @@ technical:
       not by name).
   arrays:
   - role: raw
-    path_pattern: crop_raw/<hash>_raw.ome.tif
+    path_pattern: crop_raw/*_raw.ome.tif
     format: ome-tiff
     axes: zcyx
     shape:
@@ -125,7 +124,7 @@ technical:
     alignment: not-applicable
     alignment_notes: null
   - role: label
-    path_pattern: crop_seg/<hash>_segmentation.ome.tif
+    path_pattern: crop_seg/*_segmentation.ome.tif
     format: ome-tiff
     axes: zcyx
     shape:
@@ -146,12 +145,15 @@ technical:
     n_ids_observed: 2
     alignment: same-grid
     alignment_notes: 'Pairs come from metadata.csv (CellId, crop_raw, crop_seg; e.g. crop_raw/40ea4ae1_raw.ome.tif
-      <-> crop_seg/0648f902_segmentation.ome.tif), file hashes differ. Same ZCYX shape; one 0/255 mask
-      channel per raw channel (name_dict: dna, membrane, son, labelfree_fbl/npm1/lmnb1 + _segmentation).'
-  notes: 'S3 listing complete (119,303 files, exact sizes). Probed raw 00026e52 (143x3x377x270 ZCYX uint16
-    deflate, BigTIFF: only 3 channels, likely one of the cell lines added Dec 2020) and the first metadata
-    pair (107x6x404x479 raw uint16 / seg uint8, deflate). Sampled that pair: raw 31..65022 over all 6
-    channels (one cell; label-free channels are model outputs), seg values {0, 255} as README states.
-    metadata.csv scale_micron [0.108, 0.108, 0.108]; README: Z interpolated from 0.29 um. Shapes and channel
-    counts vary per cell.'
-  inspected_at: '2026-10-01T14:22:07Z'
+      <-> crop_seg/0648f902_segmentation.ome.tif), file hashes differ. Same ZCYX shape; one 0/255 mask channel per
+      raw channel (name_dict: dna, membrane, son, labelfree_fbl/npm1/lmnb1 + _segmentation).'
+  notes: 'S3 listing complete (119,303 files, exact sizes). Probed raw 00026e52 (143x3x377x270 ZCYX uint16 deflate,
+    BigTIFF: only 3 channels, likely one of the cell lines added Dec 2020) and the first metadata pair (107x6x404x479
+    raw uint16 / seg uint8, deflate). Sampled that pair: raw 31..65022 over all 6 channels (one cell; label-free
+    channels are model outputs), seg values {0, 255} as README states. metadata.csv scale_micron [0.108, 0.108,
+    0.108]; README: Z interpolated from 0.29 um. Shapes and channel counts vary per cell. Second pass 2026-10-07:
+    re-listed (same 119,303 files / total), re-probed 00026e52 and re-sampled the first pair (same shapes); path_pattern
+    placeholders replaced by globs; sample URLs pass download_check. data.download_url stays the S3 prefix (no single
+    archive; 3.4 TB). annotations.source still unknown: README says only that masks are 3D segmentations of each
+    channel, not how they were made.'
+  inspected_at: '2026-10-07T05:01:00Z'
