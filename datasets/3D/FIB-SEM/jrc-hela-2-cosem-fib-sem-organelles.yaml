@@ -34,7 +34,7 @@ data:
   - zarr
   - n5
   - precomputed
-  size_bytes: null
+  size_bytes: 125107648000
   n_items: 1
   access: open
   download_url: s3://janelia-cosem-datasets/jrc_hela-2/
@@ -69,7 +69,7 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-09-30T20:52:31Z'
+  last_checked: '2026-10-07T19:00:38Z'
 notes: 'Verified from the S3 bucket listing: jrc_hela-2.zarr/recon-1/labels/groundtruth contains 26 cropN
   groups, and crop1 metadata lists the class names; voxel size and dimensions come from n5/zarr attributes.
   CC-BY-4.0 is stated for the collection on the AWS registry page, not per dataset. Paper full text was
@@ -80,7 +80,8 @@ notes: 'Verified from the S3 bucket listing: jrc_hela-2.zarr/recon-1/labels/grou
   jrc_ctl-id8-*, ...) that could become separate records.
 
   enricher: format list kept; probed recon-1 em/fibsem-uint8 (zstd OME-Zarr) and groundtruth crops (labels
-  on a 2x finer grid).'
+  on a 2x finer grid). enricher: size estimated 125.1 GB uncompressed (EM s0 + 26 crop ''all'' arrays;
+  was null)'
 technical:
   method: sample
   inspected_urls:
@@ -91,12 +92,12 @@ technical:
   - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_hela-2/jrc_hela-2.zarr/recon-1/em/fibsem-uint8/s1
   - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_hela-2/jrc_hela-2.zarr/recon-1/labels/groundtruth/crop1/all/s1
   bytes_downloaded: 194400000
-  size_source: unknown
+  size_source: estimated
   layout:
-    tree: "jrc_hela-2/\n  thumbnail.jpg\n  jrc_hela-2.n5/\n  neuroglancer/\n\
-      \  jrc_hela-2.zarr/recon-1/\n    em/fibsem-uint8/            s0..s5 (OME-Zarr multiscale)\n    labels/groundtruth/crop1..\
-      \  26 crop groups, one array per class\n      cropN/all                 all classes in one array\n\
-      \      cropN/<class>             ~60 per-class arrays (mito, er, golgi, ...)\n"
+    tree: "jrc_hela-2/\n  thumbnail.jpg\n  jrc_hela-2.n5/\n  neuroglancer/\n  jrc_hela-2.zarr/recon-1/\n\
+      \    em/fibsem-uint8/            s0..s5 (OME-Zarr multiscale)\n    labels/groundtruth/crop1..  26\
+      \ crop groups, one array per class\n      cropN/all                 all classes in one array\n \
+      \     cropN/<class>             ~60 per-class arrays (mito, er, golgi, ...)\n"
     n_files: null
     listing_complete: false
   sample:
@@ -157,5 +158,9 @@ technical:
     via probe.py; samples: central crops of em s0 and s1 (value range [3,184] from the s1 crop, one sample,
     uint8) and crop1/all s0 and s1 (15 distinct values 1..36, no zeros). crop1 .zattrs lists cellmap.annotation.class_names
     (ecs, pm, mito_mem, mito_lum, ...), but the id-to-name mapping is not stated there, so classes left
-    null. Only crop1 shape probed; other crops vary. size_bytes unknown.'
+    null. Only crop1 shape probed; other crops vary. size_bytes unknown. Third pass 2026-10-07: size estimated
+    (uncompressed): raw 1 x 6368x1600x12000 uint8 + label 26 crops (''all'' s0, shapes read from each
+    crop''s .zarray this run, 2,842,048,000 voxels) uint8 = 125,107,648,000 B (125.1 GB). Level s0 only;
+    per-class crop arrays, pyramid levels and the n5 / precomputed copies are not counted; zstd/lz4 chunks
+    download smaller.'
   inspected_at: '2026-09-30T20:52:31Z'
