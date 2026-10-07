@@ -55,7 +55,7 @@ data:
   formats:
   - ome-zarr
   - mrc
-  size_bytes: null
+  size_bytes: 237942495751
   n_items: 80
   access: open
   download_url: https://cryoetdataportal.czscience.com/depositions/10350
@@ -92,7 +92,7 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-07T04:00:00Z'
+  last_checked: '2026-10-07T19:00:14Z'
 notes: 'Voxel size 20 A (resampled) from the portal page; all 80 tomograms at voxelSpacing 20, WBP/IMOD
   (deposition page). CC0 stated in the POPSICLE paper. 68/12 train/test split from the paper. Distinct
   from czii-10440 (particle picking phantom). enricher: organism from the deposition page organismName
@@ -108,16 +108,20 @@ technical:
   - https://files.cryoetdataportal.cziscience.com/10054/dga2016-09-09-33/Reconstructions/VoxelSpacing20.000/Tomograms/101/dga2016-09-09-33.zarr/0
   - https://files.cryoetdataportal.cziscience.com/10054/dga2016-09-09-33/Reconstructions/VoxelSpacing20.000/Annotations/100/cytoplasm-1.0_segmentationmask.zarr/0
   bytes_downloaded: 69962684
-  size_source: unknown
+  size_source: file-listing
   layout:
-    tree: "deposition 10350 annotations sit in 13 existing portal datasets, e.g. 10054 (Coxiella burnetii_wt):\n\
-      \  10054/dga2016-09-09-33/Reconstructions/VoxelSpacing20.000/\n    Tomograms/101/dga2016-09-09-33.mrc\
-      \ (561,900,824 B) + .zarr (OME-Zarr, 3 levels)\n    Annotations/100/cytoplasm-1.0.json + _segmentationmask.mrc\
-      \ (140,475,974 B) + .zarr\n    Annotations/102/membrane-1.0...;  Annotations/104/periplasmic_space-1.0...\n\
-      \  other runs of 10350 in 10054 (deposition page): dga2016-09-09-32, -35, -42, -51, -6, -78\n  runs\
-      \ without 10350 annotations have only VoxelSpacing16.145/\n"
-    n_files: null
-    listing_complete: false
+    tree: |
+      deposition 10350: 80 runs in 13 portal datasets, 26,465 files, 237,942,495,751 B (S3 listing, exact)
+      <dataset>/<run>/Reconstructions/VoxelSpacing20.000/   (x80; created by this deposition)
+        Tomograms/101/<run>.mrc + tomogram_metadata.json + <run>.zarr/ (OME-Zarr, 3 levels)   154.5 GB
+        Annotations/<n>/<object>-1.0.json + _segmentationmask.mrc + .zarr/   317 masks   81.9 GB
+        NeuroglancerPrecompute/   1.4 GB
+        Images/101/   thumbnails (.png)   0.15 GB
+      e.g. 10054/dga2016-09-09-33/: Tomograms/101/dga2016-09-09-33.mrc (561,900,824 B);
+        Annotations/100 cytoplasm, 102 membrane, 104 periplasmic_space (_segmentationmask.mrc 140,475,974 B each)
+      runs without 10350 annotations have only VoxelSpacing16.145/
+    n_files: 26465
+    listing_complete: true
   sample:
     urls:
     - https://files.cryoetdataportal.cziscience.com/10054/dga2016-09-09-33/Reconstructions/VoxelSpacing20.000/Tomograms/101/dga2016-09-09-33.mrc
@@ -185,4 +189,4 @@ technical:
     by tool): tomogram -0.95..1.59, median 0.50; mask {0,1}. Values from one run. Annotation 100 metadata:
     deposition_id 10350, method_type hybrid, ground_truth_status true, "semi-manual annotation using napari-nnInteractive,
     followed by an agent-designed copick curation pipeline and manual correction". Classes beyond those
-    3 masks of this run named from deposition_metadata.json. Total size and the full run list not resolved.'
+    3 masks of this run named from deposition_metadata.json. Size pass: portal GraphQL API lists 80 tomograms (all 20 A) and 317 mask annotations (each mrc + zarr) for deposition 10350; listing.py over the 80 runs'' VoxelSpacing20.000/ prefixes found exactly those 80 tomograms and 317 annotation folders, nothing else: 26,465 files, 237,942,495,751 B (confirmed; includes the zarr copies, Neuroglancer precomputed and thumbnails).'
