@@ -176,7 +176,7 @@ def probe_tiff(f, max_pages=100000, request_budget=15):
     comp = TIFF_COMPRESSION.get(_first(tags, 259, 1), "other")
     desc = tags.get(270, "") if isinstance(tags.get(270), str) else ""
     res = {"format": "tiff", "dtype": _dtype(kind, bits), "compression": comp, "lossy": LOSSY.get(comp, False),
-           "page_shape": [h, w] + ([spp] if spp > 1 else []), "photometric": _first(tags, 262),
+           "page_shape": [h, w] + ([spp] if spp > 1 else []), "samples_per_pixel": spp, "photometric": _first(tags, 262),
            "tiled": 322 in tags, "chunks": [_first(tags, 323), _first(tags, 322)] if 322 in tags else None,
            "bigtiff": big, "notes": []}
     if _first(tags, 262) == 3:
@@ -251,6 +251,17 @@ def probe_tiff(f, max_pages=100000, request_budget=15):
                             else "single page")
         if not res["pages_complete"]:
             res["notes"].append(f"stopped counting pages at {pages}; shape[0] is a lower bound")
+    # how the axes are known: "imagej" / "ome" from the metadata, "shaped" (tifffile JSON), else "plain"
+    res["tiff_layout"] = ("imagej" if "imagej" in res else "ome" if res["format"] == "ome-tiff"
+                          else "shaped" if desc.startswith("{") and '"shape"' in desc else "plain")
+    if spp > 1 and _first(tags, 262) != 2:
+        res["notes"].append(f"{spp} samples per pixel but not RGB (photometric {_first(tags, 262)}): the samples "
+                            "are probably channels or z slices stored per pixel; take the axis from the docs")
+    elif spp > 1:
+        res["notes"].append(f"RGB, {spp} samples per pixel: if the docs say one channel, check whether the "
+                            "samples are identical (grey stored as RGB) with tools/sample.py")
+    if res["tiff_layout"] == "plain" and pages > 1:
+        res["notes"].append("conversion names an unstated page axis `i` (not z): record axes from the docs")
     if res.get("voxel_size_nm"):
         res["notes"].append("voxel size is the calibration stored in the file; check it is plausible "
                             "(uncalibrated files often say 1 px = 1 unit)")

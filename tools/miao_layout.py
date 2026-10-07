@@ -27,7 +27,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.common import load_yaml  # noqa: E402
-from tools.convertibility import FAMILIES, _planner, family  # noqa: E402
+from tools.convertibility import FAMILIES, _planner, family, input_axes_supported, tiff_axes_needs  # noqa: E402
 
 # NCBI scientific name -> short folder name. Extend as records need it; an organism not listed is a stop.
 ORGANISM_SHORT = {
@@ -125,7 +125,61 @@ def label_attrs(r, array, label_class, voxel, today):
     }
 
 
-def crop_steps(r, sample, plan, crop, cls_by_index, voxel, today, raw_attrs):
+_ZIPS = {}
+
+
+def tiff_header(spec):
+    """tools/probe.py's reading of a TIFF's header (a few KB by range requests; zip members in place)."""
+    from tools.peek_archive import zip_entries
+    from tools.probe import http_url, probe_url, probe_zip_member
+    url, _, member = spec.partition("::")
+    try:
+        if not member:
+            return probe_url(url)[0]
+        if url not in _ZIPS:
+            _ZIPS[url] = {e["name"]: e for e in zip_entries(http_url(url))[1]}
+        entry = _ZIPS[url].get(member)
+        return probe_zip_member(http_url(url), entry, 8 * 10**6)[0] if entry else {"error": f"{member} not in the zip"}
+    except Exception as e:  # noqa: BLE001
+        return {"error": f"{type(e).__name__}: {e}"}
+
+
+def tiff_axes(r, plan, input_axes):
+    """For each TIFF the plan converts: the axes to pass as input_axes ({input_path: axes}), stop reasons and notes.
+    TensorSwitch's TIFF reader names samples per pixel `s` and the pages of a plain multi-page TIFF `i` (neither a
+    channel nor z), so until convert accepts input_axes those files are a stop, found from the header. With
+    input_axes the record's axes are passed (`s` as `c`: samples are channels to OME-NGFF)."""
+    arrays = (r.get("technical") or {}).get("arrays") or []
+    given, stops, notes = {}, [], []
+    for p in plan["arrays"]:
+        a = arrays[p["index"]] if p["index"] < len(arrays) else {}
+        if not p.get("convertible") or a.get("format") != "tiff" or not p.get("fetch"):
+            continue
+        spec, rec_axes = p["fetch"]["spec"], a.get("axes")
+        name = spec.rsplit("::", 1)[-1].rsplit("/", 1)[-1]
+        if input_axes:
+            if rec_axes:
+                given[p["convert_args"]["input_path"]] = rec_axes.replace("s", "c")
+            continue                           # no axes: already a stop (tiff_axes_needs)
+        h = tiff_header(spec)
+        # what tifffile (TensorSwitch's reader) makes of it: samples per pixel -> S, the pages of a TIFF with no
+        # ImageJ / OME / tifffile-shape metadata -> I. tifffile-shaped files give Q, which TensorSwitch ignores
+        # and replaces by z/y/x from the number of dimensions, so those convert correctly.
+        if "error" in h or "tiff_layout" not in h:
+            notes.append(f"{name}: TIFF header not read ({h.get('error') or '; '.join(h.get('notes', []))}); axes unchecked")
+            continue
+        how = None
+        if h["samples_per_pixel"] > 1:
+            how = f"{h['samples_per_pixel']} samples per pixel (TensorSwitch names that axis `s`)"
+        elif h["tiff_layout"] == "plain" and (h.get("pages_counted") or 1) > 1:
+            how = f"{h['pages_counted']}+ pages with no ImageJ/OME metadata (TensorSwitch names that axis `i`)"
+        if how:
+            stops.append(f"{name} ({p['role']}, record axes {rec_axes}): {how}, so the output gets no channel/z "
+                         f"scale and verify_output can't match it to the source; needs TensorSwitch's input_axes")
+    return given, stops, notes
+
+
+def crop_steps(r, sample, plan, crop, cls_by_index, voxel, today, raw_attrs, input_axes=None):
     """Rewrite one TensorSwitch sample plan into steps writing to `crop` (miao#13 names and metadata)."""
     arrays = (r.get("technical") or {}).get("arrays") or []
     labels, keys = {}, {}
@@ -147,6 +201,8 @@ def crop_steps(r, sample, plan, crop, cls_by_index, voxel, today, raw_attrs):
             # and averaging instance IDs would invent IDs that don't exist
             args["auto_multiscale"] = True
             args["downsample_method"] = "mode" if args.get("is_label") else "mean"
+            if (input_axes or {}).get(args.get("input_path")):
+                args["input_axes"] = input_axes[args["input_path"]]   # from technical.arrays[].axes
             if args.get("is_label"):
                 key = keys[args["label_key"]]
                 args["label_key"] = key
@@ -219,6 +275,8 @@ def main():
 
     rp = _planner(a.tensorswitch)
     arrays = (r.get("technical") or {}).get("arrays") or []
+    in_axes = input_axes_supported(a.tensorswitch)
+    stop += tiff_axes_needs(arrays, in_axes)
     label_index = [i for i, x in enumerate(arrays) if x.get("role") == "label"]
     if any(x.get("role") not in ("raw", "label") for x in arrays):
         stop.append("the record has restoration targets or other roles; miao#13 only defines raw/ and labels/")
@@ -259,6 +317,17 @@ def main():
     elif not stop:
         samples.append(("sample-unit", base))
 
+    # TIFF axes: probe each crop's TIFFs (or pass the record's axes when TensorSwitch accepts input_axes).
+    # Files with the same layout behave the same, so one stop reason per distinct message is enough.
+    axes_by_sample = []
+    for smp_name, sp in samples:
+        given, s_stops, s_notes = tiff_axes(r, sp, in_axes)
+        axes_by_sample.append(given)
+        stop += [x for x in s_stops if x not in stop]
+        notes += [f"{smp_name}: {x}" for x in s_notes]
+        if s_stops:
+            break                       # the layout is shared by the dataset's files: don't probe every one
+
     name = slug(a.name or default_name(r))
     dataset_dir = root / "data" / f"{fam}-{ORGANISM_SHORT.get(org, 'unknown')}-{name}"
     out = {"record": r["id"], "scope": "dataset" if a.whole else "sample-unit", "dataset_dir": str(dataset_dir),
@@ -273,8 +342,8 @@ def main():
     raw_attrs = {"source_record": r["id"], "dataset_doi": r.get("doi"), "license": (r.get("license") or {}).get("spdx"),
                  "publication": ((r.get("publications") or [{}])[0]).get("doi"), "title": r.get("title")}
     file_sets = [[s["args"]["spec"] for s in sp["steps"] if s["tool"] == "fetch_dataset"] for _, sp in samples]
-    for (sample, sp), crop in zip(samples, assign_crops(dataset_dir, r["id"], file_sets)):
-        c = crop_steps(r, sample, sp, crop, cls_by_index, voxel, today, raw_attrs)
+    for (sample, sp), crop, given in zip(samples, assign_crops(dataset_dir, r["id"], file_sets), axes_by_sample):
+        c = crop_steps(r, sample, sp, crop, cls_by_index, voxel, today, raw_attrs, given)
         out["crops"].append(c)
     for key, attrs in (out["crops"][0]["labels"] if out["crops"] else {}).items():
         review += [f"{key}: {x}" for x in attrs["review_needed"]]

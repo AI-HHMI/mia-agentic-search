@@ -99,7 +99,8 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
   `tools/download_check.py`, for `technical.sample.urls` and, when one direct archive exists, `data.download_url`.
 - **Conversion readiness:** the enricher also runs `tools/convertibility.py` (issues #518 / #519) with TensorSwitch's
   record planner, and fixes what blocks automatic conversion from evidence: concrete sample files, HDF5 dataset
-  names, real globs in `path_pattern`, one organism per file set, a clear modality, `annotations.source`.
+  names, real globs in `path_pattern`, one organism per file set, a clear modality, `annotations.source`, and
+  `axes` for every TIFF array (TensorSwitch names RGB samples `s` and unstated page axes `i`; skill step 3c).
 - **Auto-merge** (`tools/automerge.py`) merges PRs whose labels meet a fixed policy (3D / 3D+t PRs only when
   `download-ready`), but never a possible
   duplicate (`tools/common.py:similarity_reasons`) of a record on main or another open PR. Agents never merge,

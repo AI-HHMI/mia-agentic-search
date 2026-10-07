@@ -177,6 +177,10 @@ def stats(arr, role):
     out = {"shape": list(a.shape), "dtype": str(a.dtype), "hints": []}
     if flat.size == 0:
         return out
+    if a.ndim >= 3 and 2 <= a.shape[-1] <= 4:       # RGB(A) samples: grey stored as colour?
+        out["samples_identical"] = bool(all(np.array_equal(a[..., 0], a[..., k]) for k in range(1, a.shape[-1])))
+        if out["samples_identical"]:
+            out["hints"].append(f"the {a.shape[-1]} samples on the last axis are identical: one channel stored as RGB")
     if a.dtype.kind in "c":
         flat = np.abs(flat)
     finite = flat[np.isfinite(flat)] if a.dtype.kind == "f" else flat

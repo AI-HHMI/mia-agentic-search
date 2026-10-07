@@ -14,6 +14,8 @@ download queue (tools/download_queue.py). A record is ready when all of these ho
      puts every label at offset 0 on the raw grid);
   7. TensorSwitch's record planner says `ready`, and doesn't flag a raw or label array of a 3D record
      as 2D (single slices are not volumes).
+Check 2 includes the TIFF axes rule (tools/convertibility.py:tiff_axes_needs): every TIFF array states
+its axes, and, until TensorSwitch's convert accepts `input_axes`, they end in `yx` (no samples axis).
 Check 7 needs the TensorSwitch source (--tensorswitch or $TENSORSWITCH_SRC). Without it the answer
 is `unknown`, never `ready`. Read-only; nothing is downloaded.
 """
@@ -25,7 +27,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.common import load_yaml  # noqa: E402
-from tools.convertibility import _planner, check  # noqa: E402
+from tools.convertibility import _planner, check, input_axes_supported  # noqa: E402
 from tools.miao_layout import ORGANISM_SHORT  # noqa: E402
 
 _PLANNER = {}
@@ -52,7 +54,7 @@ def readiness(r, src=None):
     dim = str(im.get("dimensionality"))
     if dim != "3D":
         reasons.append(f"dimensionality {dim}: only 3D is covered by the miao layout yet")
-    reasons += check(r)[0]
+    reasons += check(r, input_axes_supported(src or os.environ.get("TENSORSWITCH_SRC")))[0]
     vs = im.get("voxel_size_nm") or {}
     if not (vs.get("x") and vs.get("y") and vs.get("z")):
         reasons.append("imaging.voxel_size_nm needs x, y and z")
