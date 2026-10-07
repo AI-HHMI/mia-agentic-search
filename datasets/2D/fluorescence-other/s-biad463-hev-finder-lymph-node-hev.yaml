@@ -75,23 +75,23 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-01T08:35:51Z'
+  last_checked: '2026-10-07T04:50:00Z'
 notes: 'No licence or terms are given in the BioStudies record or the paper (Data availability only says
   raw images are in this entry), so license is unknown and needs checking. 1,346 files, 23.8 GB: Training_coco
   (COCO_annotations.json, 71 MB, plus 1,336 PNG tiles in DCIS / IDC with metastasis / IDC without metastasis
   folders by patient; 608 of them are *_rgb_labels.png label images) and Validation_raw (nine whole-slide
-  OME-TIFFs, 0.6-3.4 GB, patients not used for training). A probed example tile and its label image are
-  917 x 1934 RGB uint8 PNGs. The paper trained Mask R-CNN on 12,524 manually classified HEVs from 51 patients
-  as non-dilated, intermediately dilated (lumen < 10 um) or highly dilated (lumen > 10 um); the COCO file
-  content itself was not opened. Imaging: Vectra Polaris whole-slide scanner, 20x objective; the paper
-  text states 5 um/pixel, which looks like a typo, so voxel_size_nm is left null. Whether the validation
-  scans carry annotations is not stated.'
+  OME-TIFFs, 0.6-3.4 GB, patients not used for training). The paper trained Mask R-CNN on 12,524 manually
+  classified HEVs from 51 patients as non-dilated, intermediately dilated (lumen < 10 um) or highly dilated
+  (lumen > 10 um); the COCO file content itself was not opened. Imaging: Vectra Polaris whole-slide scanner,
+  20x objective; paper says 5 um/pixel (typo?), validation OME-TIFF header 496.1 nm: conflict, voxel_size_nm
+  null. Whether the validation scans carry annotations is not stated.'
 technical:
   method: sample
   inspected_urls:
   - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/463/S-BIAD463/Files/file_list.json
   - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/463/S-BIAD463/Files/my_submission/Training_coco/IDC%20without%20metastasis/Patient_055/1.png
   - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/463/S-BIAD463/Files/my_submission/Training_coco/IDC%20without%20metastasis/Patient_055/1_rgb_labels.png
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/463/S-BIAD463/Files/my_submission/Validation_raw/DCIS/Patient_test_1.ome.tiff
   bytes_downloaded: 4874367
   size_source: page-stated
   layout:
@@ -110,7 +110,7 @@ technical:
     description: One median-sized training tile (Patient_055 tile 1) and its RGB label image.
   arrays:
   - role: raw
-    path_pattern: Training_coco/<group>/Patient_###/<n>.png
+    path_pattern: Training_coco/*/Patient_*/{[0-9],[0-9][0-9],[0-9][0-9][0-9]}.png
     format: png
     axes: yxs
     shape:
@@ -129,7 +129,7 @@ technical:
     alignment: not-applicable
     alignment_notes: null
   - role: label
-    path_pattern: Training_coco/<group>/Patient_###/<n>_rgb_labels.png
+    path_pattern: Training_coco/*/Patient_*/*_rgb_labels.png
     format: png
     axes: yxs
     shape:
@@ -150,7 +150,7 @@ technical:
     alignment: same-grid
     alignment_notes: <n>_rgb_labels.png sits beside <n>.png; identical 924x1934x3 shape in the sample.
   - role: label
-    path_pattern: Training_coco/COCO_annotations.json (and per-patient annotations.json)
+    path_pattern: Training_coco/COCO_annotations.json
     format: json
     axes: null
     shape: null
@@ -163,12 +163,18 @@ technical:
     classes: null
     n_ids_observed: null
     alignment: same-grid
-    alignment_notes: COCO format per the BioStudies file description; contents not opened.
+    alignment_notes: COCO format per the BioStudies file description; contents not opened. Each patient
+      folder also has an annotations.json and an annotations.png (60 each in file_list.json).
   notes: 'File list from the BioStudies file_list.json (exact sizes, total 23,750,602,427 B, matching
     the record; not tools/listing.py, which times out on this FTP, so size_source page-stated). Sampled
     Patient_055 tile 1 - image RGB uint8 924x1934x3, 0..255 (mean 14.7, mostly dark fluorescence background);
     label RGB uint8 same shape, 0..255 per channel; the colour-to-class or colour-to-instance mapping
     is not documented in the pages read, so classes null and n_ids_observed not computed. A per-patient
     annotations.json returned HTTP 403 (server refused), so the COCO categories were not read. License
-    still not found: the BioStudies API record has no licence attribute.'
+    still not found: the BioStudies API record has no licence attribute. 2nd pass: placeholders replaced
+    by globs checked against file_list.json: raw {[0-9],[0-9][0-9],[0-9][0-9][0-9]}.png matches 608 tiles
+    (incl. DCIS/Pilot cohort/Patient_*), *_rgb_labels.png 608; per-patient annotations.png excluded. Probe
+    of Validation_raw/DCIS/Patient_test_1.ome.tiff: OME-TIFF cyx 5x14400x17280 uint8, LZW, tiled 1024,
+    OME PhysicalSize 496.1 nm; the paper says 5 um/pixel, so the conflict leaves voxel_size_nm null (and
+    whether the PNG tiles keep that scale is not stated).'
   inspected_at: '2026-10-01T08:35:51Z'
