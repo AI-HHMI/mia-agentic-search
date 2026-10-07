@@ -25,7 +25,7 @@ publications:
 date_published: '2022-01-01'
 imaging:
   modality:
-  - other
+  - brightfield
   dimensionality: 2D
   voxel_size_nm: null
   channels: 3
@@ -81,30 +81,36 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-01T12:10:23Z'
+  last_checked: '2026-10-07T04:28:19Z'
 notes: 'No license statement on the BioStudies page or in the paper, so license is unknown. The human-annotated
   set has 42,655 TIFF thumbnails (healthy 30,094; ring 9,214; troph 2,603; schizont 744 per the annotation
   file list); the machine-labelled thumbnails (581,737 TIFFs) and segmentation label matrices (7,394 PNGs)
   come from the authors'' ResNet-50/GoogLeNet pipeline, so annotations are mixed. Human labels were assigned
-  by sorting 285 nm thumbnails and copied to the other wavelengths (paper Methods). Modality is deep-UV
-  transmitted-light absorption microscopy, recorded as other. Pixel size not determined. A sibling study
-  S-BIAD44 was not examined. enricher: size_bytes = 45,540,159,493 B summed from the four file-list JSONs
-  (680,977 files; was null); png added to formats for the label matrices.'
+  by sorting 285 nm thumbnails and copied to the other wavelengths (paper Methods). Pixel size not determined.
+  enricher: size_bytes = 45,540,159,493 B summed from the four file-list JSONs (680,977 files; was null);
+  png added to formats for the label matrices. enricher: modality brightfield (was other): deep-UV transmitted-light
+  (absorption) microscopy, paper Methods. organisms: every image shows human (Homo sapiens) red blood
+  cells, infected or not with Plasmodium falciparum; not separable by file.'
 technical:
   method: sample
   inspected_urls:
   - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/043/S-BIAD43/Files/s-bsst559-567/Processed%20Data/UVScope/Human%20annotated/Master%20Classifier%20Training/Human%20sorted%20RBCs/healthy/UVM-2019-07-03-11-46-41_img_001_RBC_00004.tif
   - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/043/S-BIAD43/Files/s-bsst559-567/Processed%20Data/UVScope/Training%20and%20validation/UVM-2019-07-03-11-46-41/RefocusedRegistered/Schizonts_sl1_ch1_p100_t1.tif
   - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/043/S-BIAD43/Files/s-bsst559-567/Processed%20Data/UVScope/Training%20and%20validation/UVM-2019-07-03-11-46-41/Matlab-RBC%20Label%20Matrix/285%20nm/sl3/pixelLabel_10.png
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/043/S-BIAD43/Files/UV_annotatedcell_file_list.json
   bytes_downloaded: 740958
   size_source: page-stated
   layout:
-    tree: "Files/  UV_{annotatedcell,cellthumbnail,imageandmetad,segmatrix}_file_list.{json,tsv}\n  s-bsst559-567/Processed\
-      \ Data/UVScope/\n    Human annotated/Master Classifier Training/Human sorted RBCs/<class>/*.tif\n\
-      \                                   42,655 TIFF thumbnails, 692,049,248 B\n    Training and validation/<session>/\n\
-      \      Matlab-RBC Instances/<nm>/sl<k>/*.tif   581,737 thumbnails, 8,976,461,616 B\n      RefocusedRegistered/*.tif\
-      \ (+ xls/csv metadata)  49,191 files, 35,816,398,658 B\n      Matlab-RBC Label Matrix/<nm>/sl<k>/pixelLabel_<n>.png\
-      \  7,394 PNGs, 55,249,971 B\n680,977 files, 45,540,159,493 B (file lists)\n"
+    tree: |
+      Files/  UV_{annotatedcell,cellthumbnail,imageandmetad,segmatrix}_file_list.{json,tsv}
+        s-bsst559-567/Processed Data/UVScope/
+          Human annotated/Master Classifier Training/Human sorted RBCs/<class>/*.tif
+                                         42,655 TIFF thumbnails, 692,049,248 B
+          Training and validation/<session>/
+            Matlab-RBC Instances/<nm>/sl<k>/*.tif   581,737 thumbnails, 8,976,461,616 B
+            RefocusedRegistered/*.tif (+ xls/csv metadata)  49,191 files, 35,816,398,658 B
+            Matlab-RBC Label Matrix/<nm>/sl<k>/pixelLabel_<n>.png  7,394 PNGs, 55,249,971 B
+      680,977 files, 45,540,159,493 B (file lists)
     n_files: 680985
     listing_complete: true
   sample:
@@ -114,7 +120,7 @@ technical:
     description: One human-labelled thumbnail (class healthy, given by its folder).
   arrays:
   - role: raw
-    path_pattern: Human annotated/.../Human sorted RBCs/<class>/<session>_img_<n>_RBC_<m>.tif
+    path_pattern: '*/Human annotated/*/*.tif'
     format: tiff
     axes: yx
     shape:
@@ -133,7 +139,7 @@ technical:
     alignment_notes: Class label is the parent folder name (healthy, ring, troph, schizont) and the CellLabel
       column of the file list.
   - role: raw
-    path_pattern: Training and validation/<session>/RefocusedRegistered/*.tif
+    path_pattern: '*/Training and validation/*/RefocusedRegistered/*.tif'
     format: tiff
     axes: yx
     shape:
@@ -151,7 +157,7 @@ technical:
     alignment: not-applicable
     alignment_notes: null
   - role: label
-    path_pattern: Training and validation/<session>/Matlab-RBC Label Matrix/<nm>/sl<k>/pixelLabel_<n>.png
+    path_pattern: '*/Training and validation/*/Matlab-RBC Label Matrix/*/sl*/pixelLabel_*.png'
     format: png
     axes: yx
     shape:
@@ -176,5 +182,9 @@ technical:
     matrix PNG gray uint8 520x696. Samples (one each): thumbnail 0..65535 (hint: full range, possibly
     contrast-stretched); registered frame 3364..65535; label PNG values {1: 243212, 2: 118708}, two classes
     (likely background vs cell, not documented), so encoding unknown. Normalization unknown. Value ranges
-    are from single samples. License still not found.'
-  inspected_at: '2026-10-01T12:10:23Z'
+    are from single samples. License still not found. Second pass: globs checked against the file-list
+    JSONs: 42,655/42,655 human-annotated thumbnails; 19,136 RefocusedRegistered TIFFs and 1,420 label
+    PNGs under Training and validation (Titration/ holds further registered frames and label matrices,
+    not listed as arrays). Voxel size not found; checked: TIFF header (no calibration), BioStudies record,
+    paper (100x/0.85 Ultrafluar objective, PCO.Ultraviolet camera, no pixel size).'
+  inspected_at: '2026-10-07T04:28:19Z'
