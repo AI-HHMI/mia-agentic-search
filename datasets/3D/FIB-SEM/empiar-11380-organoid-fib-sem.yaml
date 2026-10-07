@@ -2,10 +2,9 @@ schema_version: '1.2'
 id: empiar-11380-organoid-fib-sem
 title: Light and electron microscopy continuum-resolution imaging of 3D cell cultures
 short_name: Organoid organelle segmentation (FIB-SEM)
-description: Four FIB-SEM volumes of a BT474 breast cancer spheroid (F059) and patient-derived colorectal
-  cancer organoids (F107_A1-A3), each with matching MRC segmentation volumes of organelles (mitochondria,
-  nuclei, microvillar actin bundles, cell junctions, entotic cell). Released with the continuum-resolution
-  CLEM pipeline paper.
+description: Four FIB-SEM volumes of a BT474 breast cancer spheroid (F059) and patient-derived colorectal cancer
+  organoids (F107_A1-A3), each with matching MRC segmentation volumes of organelles (mitochondria, nuclei, microvillar
+  actin bundles, cell junctions, entotic cell). Released with the continuum-resolution CLEM pipeline paper.
 landing_url: https://www.ebi.ac.uk/empiar/EMPIAR-11380/
 doi: 10.6019/EMPIAR-11380
 repository: EMPIAR
@@ -28,15 +27,12 @@ imaging:
   modality:
   - FIB-SEM
   dimensionality: 3D
-  voxel_size_nm:
-    x: 20
-    y: 20
-    z: 20
+  voxel_size_nm: null
   channels: null
   organism:
   - Homo sapiens
-  sample: BT474 human breast cancer cell line spheroid (F059) and patient-derived colorectal cancer organoids
-    (F107), high-pressure frozen and resin embedded
+  sample: BT474 human breast cancer cell line spheroid (F059) and patient-derived colorectal cancer organoids (F107),
+    high-pressure frozen and resin embedded
   labels_stains:
   - uranyl acetate
 data:
@@ -78,16 +74,13 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T19:55:49Z'
-notes: 'Total size stated as 72.9 GB on EMPIAR (not summed from the listing, so size_bytes left null).
-  The README lists 4 acquisitions, F059, F107_A1, F107_A2, F107_A3; the listing shows a raw volume plus
-  2-5 mask volumes each. Voxel size 20 nm is from the MRC header of F059_bin2.mrc (1446x1683x1928, int8);
-  the paper says whole-organoid acquisitions at 15x15x20 nm were binned twice and cells at 10 nm isotropic,
-  so the header value is unverified for the other volumes. License CC0 from the EMPIAR page title block.
-  Segmentations were produced by Dragonfly CNNs trained on manual annotation of 2-5 subframes per dataset,
-  so labels are model predictions (source: automatic). Also deposited as BioImage Archive S-BIAD610 (fluorescence
-  plus EM). enricher: MRC headers give 30 nm isotropic for all F107 volumes (20 nm only for F059); record
-  keeps 20 nm, see technical.notes.'
+  last_checked: '2026-10-07T10:50:37Z'
+notes: 'Total size stated as 72.9 GB on EMPIAR. README lists 4 acquisitions, F059, F107_A1-A3; each has a raw volume
+  plus 2-5 mask volumes. License CC0 from the EMPIAR page. Segmentations from Dragonfly CNNs trained on manual annotation
+  of 2-5 subframes per dataset (source: automatic). Also deposited as BioImage Archive S-BIAD610. voxel sizes differ
+  by subset: F059 20 nm isotropic (MRC header; paper: 10 nm isotropic cells, binned 2x); F107_A1-A3 30x30x40 nm
+  (paper Methods: 15x15x20 nm whole organoids binned twice; MRC header says 30 nm isotropic, docs win). enricher:
+  voxel_size_nm set to null (was 20x20x20, F059 only).'
 technical:
   method: sample
   inspected_urls:
@@ -104,25 +97,21 @@ technical:
   bytes_downloaded: 12218950
   size_source: estimated
   layout:
-    tree: |
-      data/  20 files, ~78.2 GB (HTTP index, rounded sizes)
-        README.rtf
-        F059_bin2.mrc  + _mitos, _nuclei                          4.4G each
-        F107_A1_bin2.mrc + _actin, _entotic_cell, _junctions, _mitos, _nuclei   3.1G each
-        F107_A2_bin2.mrc + _actin, _junctions, _mitos, _nuclei    2.9G each
-        F107_A3_bin2.mrc + _actin, _junctions, _mitos, _nuclei    5.3G each
+    tree: "data/  20 files, ~78.2 GB (HTTP index, rounded sizes)\n  README.rtf\n  F059_bin2.mrc  + _mitos, _nuclei\
+      \                          4.4G each\n  F107_A1_bin2.mrc + _actin, _entotic_cell, _junctions, _mitos, _nuclei\
+      \   3.1G each\n  F107_A2_bin2.mrc + _actin, _junctions, _mitos, _nuclei    2.9G each\n  F107_A3_bin2.mrc +\
+      \ _actin, _junctions, _mitos, _nuclei    5.3G each\n"
     n_files: 20
     listing_complete: true
   sample:
     urls:
     - https://ftp.ebi.ac.uk/empiar/world_availability/11380/data/F107_A2_bin2.mrc
     - https://ftp.ebi.ac.uk/empiar/world_availability/11380/data/F107_A2_bin2_mitos.mrc
-    size_bytes: null
-    description: Smallest acquisition (F107_A2, ~2.9 GB per file) with one mask volume; no smaller unit
-      exists.
+    size_bytes: 6292719248
+    description: Smallest acquisition (F107_A2, ~2.9 GB per file) with one mask volume; no smaller unit exists.
   arrays:
   - role: raw
-    path_pattern: <acq>_bin2.mrc
+    path_pattern: F*_bin2.mrc
     format: mrc
     axes: zyx
     shape:
@@ -141,7 +130,7 @@ technical:
     alignment: not-applicable
     alignment_notes: null
   - role: label
-    path_pattern: <acq>_bin2_{mitos,nuclei,actin,junctions,entotic_cell}.mrc
+    path_pattern: F*_bin2_*.mrc
     format: mrc
     axes: zyx
     shape:
@@ -160,17 +149,18 @@ technical:
     classes: null
     n_ids_observed: 2
     alignment: same-grid
-    alignment_notes: One binary mask volume per organelle, named <acq>_bin2_<organelle>.mrc; header shape
-      and voxel size identical to <acq>_bin2.mrc for every pair probed (F059, F107_A1, F107_A3). Organelle
-      (mitochondria, nuclei, actin, junctions, entotic cell) is given by the file name; 127 = foreground,
-      -128 = background.
-  notes: 'HTTP index lists 20 files (19 MRC + README.rtf), ~78.2 GB with rounded sizes (FTP listing timed
-    out), so size_bytes stays null; EMPIAR states 72.9 GB. Headers (probe.py, 7 files): F059 1446x1683x1928,
-    F107_A1 1350x1506x1647, F107_A2 1610x1410x1386, F107_A3 1749x1524x2130 (z,y,x), all MRC mode 0 (int8),
-    uncompressed. Header voxel size is 20 nm isotropic for F059 but 30 nm isotropic for all F107 files;
-    record keeps 20 nm (F059), consistent with the paper''s 15 nm binned twice for F107. Sample: middle
-    z-slice read by range from 4 files (custom script, 12.2 MB): F059 raw int8 [-128, 84], mean -67.7,
-    -128 in ~50% of pixels (likely padding outside the sample); F059 mitos and nuclei masks contain only
-    -128 and 127 (binary, stored as signed int8: 127 = foreground); F107_A1 entotic_cell is all -128 in
-    its middle slice. Class names from file names. Values are from single slices.'
-  inspected_at: '2026-10-01T19:55:49Z'
+    alignment_notes: One binary mask volume per organelle, named <acq>_bin2_<organelle>.mrc; header shape and voxel
+      size identical to <acq>_bin2.mrc for every pair probed (F059, F107_A1, F107_A3). Organelle (mitochondria,
+      nuclei, actin, junctions, entotic cell) is given by the file name; 127 = foreground, -128 = background.
+  notes: 'HTTP index lists 20 files (19 MRC + README.rtf), ~78.2 GB with rounded sizes (FTP listing timed out),
+    so size_bytes stays null; EMPIAR states 72.9 GB. Headers (probe.py, 7 files): F059 1446x1683x1928, F107_A1 1350x1506x1647,
+    F107_A2 1610x1410x1386, F107_A3 1749x1524x2130 (z,y,x), all MRC mode 0 (int8), uncompressed. Header voxel size
+    is 20 nm isotropic for F059 but 30 nm isotropic for all F107 files;  Sample: middle z-slice read by range from
+    4 files (custom script, 12.2 MB): F059 raw int8 [-128, 84], mean -67.7, -128 in ~50% of pixels (likely padding
+    outside the sample); F059 mitos and nuclei masks contain only -128 and 127 (binary, stored as signed int8: 127
+    = foreground); F107_A1 entotic_cell is all -128 in its middle slice. Class names from file names. Values are
+    from single slices. Second pass: voxel_size_nm null because subsets differ (F059 20 nm iso; F107 30x30x40 nm
+    per paper Methods, header 30 iso). Voxel size checked: MRC headers, EMPIAR API (no pixel_width), paper Methods.
+    data.download_url stays the folder: no single archive; direct per-file MRC URLs are in the listing (download_check
+    usable, range requests).'
+  inspected_at: '2026-10-07T10:50:37Z'
