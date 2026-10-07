@@ -85,6 +85,17 @@ details.reason summary:focus-visible { outline: 2px solid var(--series-1); outli
 details.reason .prs { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 13px; }
 ul.why li { margin: 0 0 2px; }
 code { font-size: 12px; }
+.gallery { grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); }
+.gallery a.thumb { display: block; text-decoration: none; color: inherit; padding: 0; overflow: hidden; }
+.gallery a.thumb:hover { border-color: var(--text-muted); }
+.gallery a.thumb:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; }
+.gallery .img { aspect-ratio: 1; background: #000; display: flex; align-items: center; justify-content: center; }
+.gallery img { max-width: 100%; max-height: 100%; display: block; }
+.gallery .img .empty { font-size: 12px; }
+.gallery .meta { padding: 10px 12px 12px; }
+.gallery .name { font-weight: 600; font-size: 13px; overflow-wrap: anywhere; }
+.gallery .info { color: var(--text-secondary); font-size: 12px; margin-top: 2px; }
+.gallery .rec { color: var(--text-muted); font-size: 12px; margin-top: 4px; overflow-wrap: anywhere; }
 #tip { position: fixed; pointer-events: none; background: var(--surface-1); color: var(--text-primary); border: 1px solid var(--border);
   border-radius: 6px; padding: 5px 8px; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.15); display: none; z-index: 10; }
 </style>
@@ -112,6 +123,13 @@ code { font-size: 12px; }
     <div class="scroll"><table id="runs"></table></div>
     <button type="button" id="runs-more" class="more" aria-controls="runs" hidden></button>
   </section>
+
+  <div id="gallery-wrap" hidden>
+    <hr class="divider">
+    <h2 class="sec">Downloaded datasets</h2>
+    <p class="scale-note" style="margin:-4px 0 12px">Middle slice of each dataset's first crop (label outlines in color), converted to OME-Zarr in <code>demo/data/</code>. Click to browse in Fileglancer.</p>
+    <section class="grid gallery" id="gallery"></section>
+  </div>
 </main>
 <div id="tip" role="tooltip"></div>
 <script>
@@ -285,6 +303,25 @@ if (unmerged === null || unmerged === undefined) {
     `<p class="scale-note" style="margin:8px 0 0">${blocked.length} of ${unmerged.length} open dataset PRs, when this page was built.</p><div id="reason-prs">${lists}</div>`);
 }
 drawBars();
+
+// Gallery of the datasets downloaded into demo/data/ (tools/demo_gallery.py), linked to Fileglancer
+(function () {
+  const items = DATA.gallery || [];
+  if (!items.length) return;
+  const titles = Object.fromEntries(recs.map(r => [r.id, r.short_name || r.title]));
+  document.getElementById("gallery-wrap").hidden = false;
+  document.getElementById("gallery").innerHTML = items.map(g => {
+    const shape = g.shape ? `${g.axes} ${g.shape.join("×")} · ${g.dtype}` : "";
+    const crops = `${g.crops} crop${g.crops === 1 ? "" : "s"}`;
+    const labels = g.labels?.length ? g.labels.join(", ") : "no labels";
+    return `<a class="card thumb" href="${esc(g.url)}" target="_blank" rel="noopener">
+      <div class="img">${g.thumb ? `<img src="${g.thumb}" alt="${esc(g.name)}" loading="lazy">` : `<span class="empty">no preview</span>`}</div>
+      <div class="meta"><div class="name">${esc(g.name)}</div>
+        <div class="info">${esc(crops)}${shape ? " · " + esc(shape) : ""}</div>
+        <div class="info">${esc(labels)}</div>
+        ${g.record ? `<div class="rec">${esc(titles[g.record] || g.record)}</div>` : ""}</div></a>`;
+  }).join("");
+})();
 </script>
 </body>
 </html>
