@@ -65,7 +65,7 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T05:19:37Z'
+  last_checked: '2026-10-07T04:10:00Z'
 notes: 'Zip listing (peek_archive): 1402 each of N-C.bmp (image crop), N-GT.bmp (ground truth), N-CNN-R/GVF-R/PIG-R.bmp
   results, plus RESULTS.m; size 76.7 MB is the zip. Paper: 679 microscopy images with 1402 SARS-CoV-2
   instances, masks by a medical specialist; images are crops (256x256 network input) so n_items counts
@@ -76,7 +76,6 @@ notes: 'Zip listing (peek_archive): 1402 each of N-C.bmp (image crop), N-GT.bmp 
 technical:
   method: sample
   inspected_urls:
-  - https://zenodo.org/records/20420483
   - https://zenodo.org/records/20420483/files/SARS-CoV-2%20Microscopy%20Images%20Database.zip
   bytes_downloaded: 155170
   size_source: file-listing
@@ -94,7 +93,7 @@ technical:
     description: Crop 1 and its ground-truth mask (uncompressed sizes)
   arrays:
   - role: raw
-    path_pattern: SARS-CoV-2 Microscopy Images Database.zip::ResultsVirusSegmentation/<N>C.bmp
+    path_pattern: SARS-CoV-2 Microscopy Images Database.zip::ResultsVirusSegmentation/*C.bmp
     format: other
     axes: yx
     shape:
@@ -112,7 +111,7 @@ technical:
     alignment: not-applicable
     alignment_notes: null
   - role: label
-    path_pattern: SARS-CoV-2 Microscopy Images Database.zip::ResultsVirusSegmentation/<N>GT.bmp
+    path_pattern: SARS-CoV-2 Microscopy Images Database.zip::ResultsVirusSegmentation/*GT.bmp
     format: other
     axes: yx
     shape:
@@ -138,5 +137,8 @@ technical:
     sample.py does not read BMP, so a scratch script (PIL over zip range reads) opened pairs 1 and 1000:
     images 8-bit greyscale (mode L) 240x240 uncompressed BMP, values 1-242 and 12-235, normalization unknown;
     GT masks 1-bit BMP 240x240 with values {0,1}: binary virus masks. The crops are 240x240 here, not
-    the 256x256 network input size quoted in the record notes.'
+    the 256x256 network input size quoted in the record notes. 2nd pass: path_pattern placeholders <N>
+    -> * (*C.bmp matches only the crops, *GT.bmp only the masks); re-read pair 1 by zip range (scratch
+    script, PIL): 1C.bmp L 240x240 1-242, 1GT.bmp 1-bit 240x240 {0,1}; ~0.8 MB read (central directory
+    + 2 members, estimate).'
   inspected_at: '2026-10-01T05:19:37Z'
