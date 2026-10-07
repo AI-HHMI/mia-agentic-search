@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: huggingface-coral-neuron-reconstruction-fmost
 title: 'CORAL: A Benchmark for Structure-aware and Brain-wide Neuron Reconstruction in Light Microscopy'
 short_name: CORAL mouse-brain neuron tracing (fMOST)
-description: Benchmark for neuron reconstruction from mouse whole-brain fMOST light microscopy; 1,937
-  local 3D image blocks (300 voxels per side) with SWC skeletons and masks plus train/val/test lists,
-  and whole-brain 2D slices with SWC reconstructions of 32 complete neurons.
+description: Benchmark for neuron reconstruction from mouse whole-brain fMOST light microscopy; 1,937 local 3D image
+  blocks (300 voxels per side) with SWC skeletons and masks plus train/val/test lists, and whole-brain 2D slices
+  with SWC reconstructions of 32 complete neurons.
 landing_url: https://huggingface.co/datasets/yangzekang2000/CORAL
 doi: null
 repository: HuggingFace
@@ -17,7 +17,7 @@ publications:
 date_published: '2026-05-10'
 imaging:
   modality:
-  - other
+  - fluorescence-other
   dimensionality: 3D
   voxel_size_nm:
     x: 350
@@ -43,8 +43,8 @@ annotations:
   - skeleton
   - semantic-segmentation
   coverage: dense
-  format: SWC neuron morphologies (per block in cubes1937/swcs, per neuron in swcs/single-neurons-step2,
-    merged all-neurons-step2.swc), block masks (cubes1937/mask-r1, TIFF), per-block metadata annos.json
+  format: SWC neuron morphologies (per block in cubes1937/swcs, per neuron in swcs/single-neurons-step2, merged
+    all-neurons-step2.swc), block masks (cubes1937/mask-r1, TIFF), per-block metadata annos.json
   source: manual
 ml:
   tasks:
@@ -69,15 +69,15 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T14:07:15Z'
-notes: 'Sources: HF dataset card and file listing (16,856 files; 1,937 cube TIFFs with SWC and mask TIFFs,
-  10,973 slice TIFFs, 32 neuron SWCs), GitHub README, arXiv HTML. LICENSE CONFLICT: card says cc-by-4.0,
-  paper footer says CC BY-NC-SA 4.0; card recorded. Counts differ: card lists 1,937 blocks (767 train,
-  140 val, 1,022 test, 8 unused), paper says 1,904 blocks. Modality is fMOST (no enum value, so other).
-  Voxel size is from the paper. Authors not named on the card or in the text read; strain/labelling not
-  stated. Annotation: three independent annotators in sequence (paper). enricher: size_bytes corrected
-  to 4.42 TB from the complete HF listing (was 21.3 GB): the whole-brain slices/ folder alone is 4.3 TB,
-  the cubes + masks + SWCs about 157 GB; cubes are uint16 300^3, masks uint8 binary.'
+  last_checked: '2026-10-07T06:02:00Z'
+notes: 'Sources: HF dataset card and file listing (16,856 files; 1,937 cube TIFFs with SWC and mask TIFFs, 10,973
+  slice TIFFs, 32 neuron SWCs), GitHub README, arXiv HTML. LICENSE CONFLICT: card says cc-by-4.0, paper footer says
+  CC BY-NC-SA 4.0; card recorded. Counts differ: card lists 1,937 blocks (767 train, 140 val, 1,022 test, 8 unused),
+  paper says 1,904 blocks. Modality fMOST (fluorescence micro-optical sectioning tomography) recorded as fluorescence-other
+  (enricher; was other). Voxel size is from the paper. Authors not named on the card or in the text read; strain/labelling
+  not stated. Annotation: three independent annotators in sequence (paper). enricher: size_bytes corrected to 4.42
+  TB from the complete HF listing (was 21.3 GB): the whole-brain slices/ folder alone is 4.3 TB, the cubes + masks
+  + SWCs about 157 GB; cubes are uint16 300^3, masks uint8 binary.'
 technical:
   method: sample
   inspected_urls:
@@ -119,7 +119,7 @@ technical:
     description: One 300^3 cube (54 MB) and its mask (27 MB); the matching SWC is cubes1937/swcs/cube300_x10200_y12400_z1900.swc.
   arrays:
   - role: raw
-    path_pattern: cubes1937/cubes/cube300_x<X>_y<Y>_z<Z>.tif
+    path_pattern: cubes1937/cubes/cube300_x*_y*_z*.tif
     format: tiff
     axes: null
     shape:
@@ -138,7 +138,7 @@ technical:
     alignment: not-applicable
     alignment_notes: null
   - role: label
-    path_pattern: cubes1937/mask-r1/cube300_x<X>_y<Y>_z<Z>_mask.tif
+    path_pattern: cubes1937/mask-r1/cube300_x*_y*_z*_mask.tif
     format: tiff
     axes: null
     shape:
@@ -157,10 +157,10 @@ technical:
     classes: null
     n_ids_observed: 2
     alignment: same-grid
-    alignment_notes: Mask and cube share the cube300_x<X>_y<Y>_z<Z> stem and the 300^3 shape; SWC skeletons
-      with the same stem are in cubes1937/swcs/.
+    alignment_notes: Mask and cube share the cube300_x<X>_y<Y>_z<Z> stem and the 300^3 shape; SWC skeletons with
+      the same stem are in cubes1937/swcs/.
   - role: raw
-    path_pattern: slices/<range>/CXU_slice_NNNNN_CH1.tif
+    path_pattern: slices/*/CXU_slice_*_CH1.tif
     format: tiff
     axes: yx
     shape:
@@ -176,10 +176,12 @@ technical:
     alignment: not-applicable
     alignment_notes: Whole-brain 2D sections; the 32 whole-neuron SWCs in swcs/ refer to this volume (coordinates
       not checked).
-  notes: 'HF API listing complete: 16,856 files, 4,423,623,049,572 B (exact). Probes: cube uint16 300
-    pages of 300x300, uncompressed, no calibration, axis order not stated; mask uint8 same shape; slice
-    00001 uint16 26865x26600 LZW, tiled 512x512. Sample cube: 0..1280, mean 41.5, p99 59 (hint: 12-bit
-    range; mostly dim background); mask values {0: 13,499,327, 1: 673} voxels, i.e. a very thin binary
-    mask (mask-r1 suggests a radius-1 rasterised skeleton, not documented in what was read). The 157 GB
-    block subset (cubes, masks, SWCs) can be downloaded without the 4.3 TB slices/ folder.'
-  inspected_at: '2026-10-01T14:07:15Z'
+  notes: 'HF API listing complete: 16,856 files, 4,423,623,049,572 B (exact). Probes: cube uint16 300 pages of 300x300,
+    uncompressed, no calibration, axis order not stated; mask uint8 same shape; slice 00001 uint16 26865x26600 LZW,
+    tiled 512x512. Sample cube: 0..1280, mean 41.5, p99 59 (hint: 12-bit range; mostly dim background); mask values
+    {0: 13,499,327, 1: 673} voxels, i.e. a very thin binary mask (mask-r1 suggests a radius-1 rasterised skeleton,
+    not documented in what was read). The 157 GB block subset (cubes, masks, SWCs) can be downloaded without the
+    4.3 TB slices/ folder. Second pass 2026-10-07: re-listed (same 16,856 files / total), re-probed slice 00001
+    and re-sampled the x10200_y12400_z1900 cube + mask (same values); real globs set; cube and mask URLs pass download_check.
+    Voxel size 0.35 x 0.35 x 1 um from arXiv 2608.30768 section 3.1; cube TIFFs carry no calibration.'
+  inspected_at: '2026-10-07T06:02:00Z'
