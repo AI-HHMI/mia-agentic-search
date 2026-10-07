@@ -82,7 +82,7 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-01T06:44:14Z'
+  last_checked: '2026-10-07T03:50:00Z'
 notes: 'BioStudies hosts only masks: Aggregations.zip (18 TIFF stacks, ROI_*.tiff, from volunteer drawings
   aggregated with CRIA), Expert.zip (2 stacks), Predictions.zip (U-Net outputs, not labels), classifications.tar.gz
   (~1 GB raw Zooniverse CSV) and movies. Images are linked EMPIAR entries: EMPIAR-10478 (18 cropped 2000x2000
@@ -98,6 +98,7 @@ technical:
   - https://www.ebi.ac.uk/biostudies/files/S-BSST448/Predictions.zip
   - https://www.ebi.ac.uk/biostudies/files/S-BSST448/Supplementary%20Movies.zip
   - https://www.ebi.ac.uk/biostudies/files/S-BSST448/classifications.tar.gz
+  - https://ftp.ebi.ac.uk/empiar/world_availability/10478/data/ROIs/ROI_1716-7800-517.tiff
   bytes_downloaded: 231097
   size_source: estimated
   layout:
@@ -111,10 +112,29 @@ technical:
     listing_complete: false
   sample:
     urls:
+    - https://ftp.ebi.ac.uk/empiar/world_availability/10478/data/ROIs/ROI_1716-7800-517.tiff
     - https://www.ebi.ac.uk/biostudies/files/S-BSST448/Aggregations.zip::ROI_1716-7800-517.tiff
-    size_bytes: 231097
-    description: Smallest aggregated mask (compressed member); the matching raw ROI is on EMPIAR-10478.
+    size_bytes: 417570248
+    description: 'ROI_1716-7800-517: raw ROI from EMPIAR-10478 (uint8 150x1391x2000) and its aggregated
+      volunteer mask.'
   arrays:
+  - role: raw
+    path_pattern: ROIs/ROI_*.tiff
+    format: tiff
+    axes: zyx
+    shape:
+    - 150
+    - 1391
+    - 2000
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
   - role: label
     path_pattern: Aggregations.zip::ROI_*.tiff
     format: tiff
@@ -134,13 +154,16 @@ technical:
     encoding: binary
     classes: null
     n_ids_observed: 2
-    alignment: unknown
-    alignment_notes: Named ROI_<x>-<y>-<z> like the EMPIAR-10478 ROIs; the raw side was not inspected
-      in this run, so the grid match is unverified here.
+    alignment: same-grid
+    alignment_notes: Aggregations.zip::ROI_<x>-<y>-<z>.tiff pairs with EMPIAR-10478 data/ROIs/ROI_<x>-<y>-<z>.tiff
+      by file name; for ROI_1716-7800-517 both are zyx 150x1391x2000 (probe of the raw, sample of the
+      mask).
   notes: 'Duplicate of open PR #159 (s-bsst448-etch-a-cell-nuclear-envelope, same accession, already enriched
     there). Complete listing of the 5 BioStudies files with zip indexes (1,363,884,336 B), but the raw
     images live on EMPIAR, so the dataset total is not confirmed (size_source estimated, size_bytes left
     null). Probe ROI_3972-1956-438.tiff: uint8 zyx 229x2000x2000, deflate, ImageJ z spacing 0.05. Sample
     of ROI_1716-7800-517.tiff: 150x1391x2000, values {0,255} (binary). Shapes vary per ROI. License: none
-    in the BioStudies API record or the EMPIAR-10478 API entry.'
+    in the BioStudies API record or the EMPIAR-10478 API entry. 2nd pass: raw side added: EMPIAR-10478
+    data/ROIs/ has 18 ROI_*.tiff (16.7 GB, http index, rounded); probe ROI_1716-7800-517.tiff: uint8 zyx
+    150x1391x2000 uncompressed, same shape as its mask.'
   inspected_at: '2026-10-01T06:44:14Z'
