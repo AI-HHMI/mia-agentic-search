@@ -31,7 +31,7 @@ imaging:
 data:
   formats:
   - ome-zarr
-  size_bytes: null
+  size_bytes: 2327554133401
   n_items: 484
   access: open
   download_url: https://cryoetdataportal.czscience.com/datasets/10445
@@ -65,7 +65,7 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-09-30T21:08:44Z'
+  last_checked: '2026-10-07T19:10:51Z'
 notes: 'Public test split (121 runs, 484 tomograms, 8,335 annotations per portal page) of the phantom deposition
   CZCDP-10310; training split is DS-10440 (separate PR), private test is DS-10446. Voxel spacing not stated on the
   DS-10445 page (DS-10440 lists 1.0012 nm; paper gives 1.51 A raw pixel size), so left null. Organism left empty:
@@ -86,10 +86,10 @@ technical:
   - https://cryoet-data-portal-public.s3.amazonaws.com/10445/TS_100_3/Reconstructions/VoxelSpacing4.990/Annotations/107/ferritin_complex-1.0.json
   - https://cryoet-data-portal-public.s3.amazonaws.com/10445/TS_100_3/Reconstructions/VoxelSpacing4.990/Annotations/101/ferritin_complex-1.0_point.ndjson
   bytes_downloaded: 72926950
-  size_source: unknown
+  size_source: file-listing
   layout:
     tree: |
-      (first 3,000 of >50,000 S3 objects; per run TS_<a>_<b>/)
+      s3://cryoet-data-portal-public/10445/  134,866 files, 2,327,554,133,401 B (complete listing); per run TS_<a>_<b>/
       Images/                                               2 files  294.4 KB  .png
       TS_#_#/Alignments/100/                    (x3 runs)   6 files  128.7 KB  .aln, .json
       TS_#_#/Frames/                            (x3 runs)  99 files    8.9 GB  .eer 93, .mdoc 3, .json 3
@@ -105,8 +105,8 @@ technical:
         NeuroglancerPrecompute/  point / orientedpoint / orientedmesh layers per object
         Images/100/, Images/101/
       objects: ferritin_complex, beta_amylase, beta_galactosidase, cytosolic_ribosome, thyroglobulin, pp7_vlp
-    n_files: null
-    listing_complete: false
+    n_files: 134866
+    listing_complete: true
   sample:
     urls:
     - https://cryoet-data-portal-public.s3.amazonaws.com/10445/TS_100_3/Reconstructions/VoxelSpacing10.012/Tomograms/102/TS_100_3.zarr
@@ -192,7 +192,8 @@ technical:
     alignment: scaled
     alignment_notes: Mask grid is 2x the tomogram grid per axis (368x1260x1260 vs 184x630x630) at 4.99 A vs 10.012
       A.
-  notes: 'S3 listing stopped at 50,000 objects (865.6 GB, incomplete, mostly EER frames), so size stays null. Probe:
+  notes: 'Size pass: full S3 listing of 10445/ (listing.py, no cap): 134,866 files, 2,327,554,133,401 B exact (2.3
+    TB, mostly raw EER frames; the first pass stopped at 50,000 objects). Probe:
     tomogram OME-Zarr v2, zyx, float32, blosc-lz4, scale 10.012 A; membrane mask int8, blosc-lz4, scale 4.99 A.
     One chunk-aligned central crop each: tomogram [184,157,315] -6.9e-5 to 2.5e-5 (mean ~0); membrane crop all 0
     (no membrane in that crop). Annotation metadata: 101 ferritin is ground_truth_status true, is_curator_recommended
