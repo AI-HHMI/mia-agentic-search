@@ -31,10 +31,7 @@ imaging:
   modality:
   - confocal
   dimensionality: 3D
-  voxel_size_nm:
-    x: 63
-    y: 63
-    z: 240
+  voxel_size_nm: null
   channels: 2
   organism:
   - Arabidopsis thaliana
@@ -58,7 +55,7 @@ annotations:
   coverage: dense
   format: Segmented-cell TIFF label stacks, MorphoGraphX .mgxm meshes with tissue/cell-type labels, per-cell
     attribute CSVs
-  source: mixed
+  source: proofread
 ml:
   tasks:
   - segmentation
@@ -80,35 +77,39 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-01T10:38:37Z'
+  last_checked: '2026-10-07T04:07:27Z'
 notes: 'Three zips on BioStudies: High-quality_dataset.zip (about 167 GB), Additional_dataset.zip (about
   12 GB; listed with peek_archive: per-ovule folders with raw cell_boundary TIFF, PlantSeg prediction
   TIFF, segmented_cells TIFF, .mgxm mesh and attribute CSV) and a topological-analysis zip (about 4 GB).
-  Total is roughly 184 GB, so size_bytes is left null because the file listing was not read in full. Voxel
-  size 0.063 x 0.063 x 0.24 um is the finest setting from the paper Methods; some stacks were captured
-  at 0.125 x 0.125 x 0.24 um. Segmentations come from PlantSeg followed by manual curation of meshes,
-  hence source mixed. No license statement found in the BioStudies API record or the paper Data availability
-  section. Annotations verified only in the Additional dataset listing; the High-quality zip was not listed.
-  enricher: size_bytes from the HTTP index of Wild_type/ (4 zips, rounded sizes, estimated; was null).
-  annotations_verified true after sampling segmented_cells label stacks.'
+  enricher: voxel size per stack is 63x63x240 nm or 125x125x240 nm (paper Methods: some stacks "captured
+  with 2x downsampled voxel size"), not stated per file, so voxel_size_nm is null (was 63x63x240). enricher:
+  source proofread (was mixed): PlantSeg segmentations, errors "partly manually corrected", only ovules
+  without apparent errors kept (paper). No license statement found in the BioStudies API record or the
+  paper Data availability section. enricher: size_bytes from the HTTP index of Wild_type/ (4 zips, rounded
+  sizes, estimated; was null). annotations_verified true after sampling segmented_cells label stacks.'
 technical:
   method: sample
-  inspected_at: '2026-10-01T10:38:37Z'
+  inspected_at: '2026-10-07T04:07:18Z'
   inspected_urls:
-  - https://ftp.ebi.ac.uk/biostudies/fire/S-BSST/475/S-BSST475/Files/
   - https://ftp.ebi.ac.uk/biostudies/fire/S-BSST/475/S-BSST475/Files/Wild_type/Additional_dataset.zip
   - https://ftp.ebi.ac.uk/biostudies/fire/S-BSST/475/S-BSST475/Files/Wild_type/High-quality_dataset.zip
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BSST/475/S-BSST475/Files/
   bytes_downloaded: 246178468
   size_source: estimated
   layout:
-    tree: "Files/Wild_type/\n  High-quality_dataset.zip   ~156 GB (309.5 GB uncompressed), 692 members\n\
-      \    Readme.txt\n    <stage>/<ovule ID>/   stage folders 1-I_1-II, 2-I, 2-II, 2-III, 2-IV, 2-V,\
-      \ ...\n      <ID>_cell_boundary.tif     raw cell-wall stack\n      <ID>_prediction.tif(f)     PlantSeg\
-      \ boundary prediction\n      <ID>_segmented_cells.tif   3D cell labels\n      <ID>_mesh.mgxm, <ID>_attributes.csv\
-      \   MorphoGraphX mesh, per-cell table\n  Additional_dataset.zip     ~11 GB (27.6 GB uncompressed),\
-      \ 74 members, same per-ovule layout + Readme.txt\n  topological_analysis_Arabidopsis_data.zip  \
-      \    ~4.1 GB\n  topological_analysis_Arabidopsis_data.zip.zip  ~3.7 GB\n4 files, ~187.7 GB (HTTP\
-      \ index, rounded)\n"
+    tree: |
+      Files/Wild_type/
+        High-quality_dataset.zip   ~156 GB (309.5 GB uncompressed), 692 members
+          Readme.txt
+          <stage>/<ovule ID>/   stage folders 1-I_1-II, 2-I, 2-II, 2-III, 2-IV, 2-V, ...
+            <ID>_cell_boundary.tif     raw cell-wall stack
+            <ID>_prediction.tif(f)     PlantSeg boundary prediction
+            <ID>_segmented_cells.tif   3D cell labels
+            <ID>_mesh.mgxm, <ID>_attributes.csv   MorphoGraphX mesh, per-cell table
+        Additional_dataset.zip     ~11 GB (27.6 GB uncompressed), 74 members, same per-ovule layout + Readme.txt
+        topological_analysis_Arabidopsis_data.zip      ~4.1 GB
+        topological_analysis_Arabidopsis_data.zip.zip  ~3.7 GB
+      4 files, ~187.7 GB (HTTP index, rounded)
     n_files: 4
     listing_complete: true
   sample:
@@ -120,7 +121,7 @@ technical:
       (compressed sizes in the zip).
   arrays:
   - role: raw
-    path_pattern: <stage>/<ID>/<ID>_cell_boundary.tif
+    path_pattern: '*_[Cc]ell_[Bb]oundary*.{tif,tiff}'
     format: tiff
     axes: null
     shape:
@@ -139,7 +140,7 @@ technical:
     alignment: not-applicable
     alignment_notes: null
   - role: label
-    path_pattern: <stage>/<ID>/<ID>_segmented_cells.tif(f)
+    path_pattern: '*_[Ss]egment*.{tif,tiff}'
     format: tiff
     axes: null
     shape:
@@ -153,7 +154,7 @@ technical:
     chunks: null
     value_range:
     - 0
-    - 1889
+    - 300
     encoding: instance-ids
     classes: null
     n_ids_observed: 296
@@ -163,7 +164,10 @@ technical:
   notes: 'FTP timed out; sizes from the HTTP index (rounded), zip members from the central directories.
     TIFF headers could not be read from the deflated members (probe failed), so the stacks were sampled.
     Ovule 502: cell_boundary 198x1333x667 uint16, 0..65460; segmented_cells same shape uint16, 0..300
-    with 296 IDs (instance labels). Ovule 223 segmented_cells: 405x1807x1807 uint16, 0..1889, 1888 IDs
-    (range pooled). Axis order not stated (z first by shape). Readme.txt (Additional zip) explains multi-ovule
-    IDs (ID_6x) and integer tissue labels in meshes; it has no license. Mesh and prediction files not
-    read.'
+    with 296 IDs (instance labels). Axis order not stated (z first by shape). Readme.txt (Additional zip)
+    explains multi-ovule IDs (ID_6x) and integer tissue labels in meshes; it has no license. Mesh and
+    prediction files not read. Second pass: both zip central directories listed (74 + 692 members; file
+    names vary in case, e.g. _Cell_Boundary/_cell_boundary, _Segmented_Cells/_segmented_cells/_Segmentation);
+    globs match 13+116 raw and 12+117 label stacks. Ovule 502 re-sampled (same values). The _Nuclei stacks
+    (TO-PRO-3) and _prediction(s) maps are not listed as arrays. Voxel size not in the TIFF metadata read
+    by sample.py.'
