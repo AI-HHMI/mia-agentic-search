@@ -73,16 +73,17 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T11:27:16Z'
-notes: 'Training zip listed with tools/listing.py (exact zip size): 01/ 250 tif; 01_GT/SEG 5 tif; 01_GT/TRA
-  195 tif + man_track.txt; 01_ST/SEG 195 tif; same for 02/ (5 GT SEG). Pixel/voxel size, microscope, time
-  step and cell type come from the CTC dataset table; organism and sample from that table and the Nature
-  Methods paper. Terms are custom: CTC-related use needs no consent, non-CTC scientific use requires organizer
-  permission, commercial use needs organizer and data-provider permission, cloning is prohibited, and
-  the Nature Methods paper must be cited. Test set annotations are secret. Gold-truth segmentation covers
-  only a subset of frames (annotations.coverage partial). Well-known benchmark; confidence kept moderate
+  last_checked: '2026-10-07T04:14:57Z'
+notes: 'Folder layout in technical.layout. Pixel/voxel size, microscope, time step and cell type come
+  from the CTC dataset table; organism and sample from that table and the Nature Methods paper. Terms
+  are custom: CTC-related use needs no consent, non-CTC scientific use requires organizer permission,
+  commercial use needs organizer and data-provider permission, cloning is prohibited, and the Nature Methods
+  paper must be cited. Test set annotations are secret. Well-known benchmark; confidence kept moderate
   given the permission-based terms. enricher: size_bytes from the exact zip size (was rounded); GT SEG
-  are 2D slices of the 3D volumes.'
+  are 2D slices of the 3D volumes. enricher: source mixed = 0N_GT gold truth (human-origin) and 0N_ST/SEG
+  silver truth (computer-origin), per CTC conventions. enricher: coverage = 01_GT/SEG 5 2D slices (man_seg_T_Z)
+  from 5 of 250 time points; 02_GT/SEG 5 2D slices (man_seg_T_Z) from 5 of 250 time points (gold SEG only
+  on selected frames, per CTC conventions); TRA markers on every frame.'
 technical:
   method: sample
   inspected_urls:
@@ -91,11 +92,19 @@ technical:
   bytes_downloaded: 5199529
   size_source: file-listing
   layout:
-    tree: "Fluo-N3DH-CE.zip   3,428,322,151 B, 1,667 members\n  Fluo-N3DH-CE/\n    01/          250 t<TTT>.tif\
-      \ (3D)   1.4 GB\n    01_ERR_SEG/  195 .tif\n    01_GT/SEG/   5 man_seg_<TTT>_<ZZZ>.tif (single slices)\n\
-      \    01_GT/TRA/   195 man_track<TTT>.tif + man_track.txt\n    01_ST/SEG/   195 man_seg<TTT>.tif\
-      \ (3D)\n    02/          250 t<TTT>.tif   1.9 GB\n    02_ERR_SEG/  190 .tif\n    02_GT/SEG/   5\
-      \ man_seg_<TTT>_<ZZZ>.tif\n    02_GT/TRA/   190 + man_track.txt\n    02_ST/SEG/   190 man_seg<TTT>.tif\n"
+    tree: |
+      Fluo-N3DH-CE.zip   3,428,322,151 B, 1,667 members
+        Fluo-N3DH-CE/
+          01/          250 t<TTT>.tif (3D)   1.4 GB
+          01_ERR_SEG/  195 .tif
+          01_GT/SEG/   5 man_seg_<TTT>_<ZZZ>.tif (single slices)
+          01_GT/TRA/   195 man_track<TTT>.tif + man_track.txt
+          01_ST/SEG/   195 man_seg<TTT>.tif (3D)
+          02/          250 t<TTT>.tif   1.9 GB
+          02_ERR_SEG/  190 .tif
+          02_GT/SEG/   5 man_seg_<TTT>_<ZZZ>.tif
+          02_GT/TRA/   190 + man_track.txt
+          02_ST/SEG/   190 man_seg<TTT>.tif
     n_files: 1
     listing_complete: true
   sample:
@@ -106,7 +115,7 @@ technical:
     description: Volume 078 of sequence 01 and its gold-truth segmentation of slice 17 (zip members, compressed).
   arrays:
   - role: raw
-    path_pattern: 0N/t<T>.tif
+    path_pattern: '*/0[0-9]/t*.tif'
     format: tiff
     axes: zyx
     shape:
@@ -125,7 +134,7 @@ technical:
     alignment: not-applicable
     alignment_notes: null
   - role: label
-    path_pattern: 0N_GT/SEG/man_seg_<T>_<Z>.tif
+    path_pattern: '*/0[0-9]_GT/SEG/man_seg*.tif'
     format: tiff
     axes: yx
     shape:
@@ -146,7 +155,7 @@ technical:
     alignment_notes: man_seg_<T>_<Z>.tif is slice Z of 0N/t<T>.tif (CTC convention); 512x708 matches the
       raw slice size.
   - role: label
-    path_pattern: 0N_GT/TRA/man_track<T>.tif
+    path_pattern: '*/0[0-9]_GT/TRA/man_track*.tif'
     format: tiff
     axes: zyx
     shape: &id001
@@ -168,7 +177,7 @@ technical:
     alignment_notes: Tracking markers per frame (labels propagated over time); lineage in 0N_GT/TRA/man_track.txt
       (L B E P rows).
   - role: label
-    path_pattern: 0N_ST/SEG/man_seg<T>.tif
+    path_pattern: '*/0[0-9]_ST/SEG/man_seg*.tif'
     format: tiff
     axes: zyx
     shape: *id001
@@ -191,5 +200,6 @@ technical:
     35 pages of 512x708 uint8 LZW (axes not stored in the file; zyx from the conventions); man_seg_078_017
     512x708 uint16. Samples (t078): raw 14..255 (p50 23, p99 130); GT slice 0..18 (19 values); man_track078
     0..718 and ST man_seg078 0..718 (52 values each, 35x512x708 same grid). 01 man_track.txt has 721 tracks.
-    Normalization unknown.'
-  inspected_at: '2026-10-01T11:27:16Z'
+    Normalization unknown. Second pass: path_pattern globs checked against the zip member list (0[0-9]/t*.tif
+    500, 0[0-9]_GT/SEG/man_seg*.tif 10, 0[0-9]_GT/TRA/man_track*.tif 385, 0[0-9]_ST/SEG/man_seg*.tif 385).'
+  inspected_at: '2026-10-07T04:14:57Z'
