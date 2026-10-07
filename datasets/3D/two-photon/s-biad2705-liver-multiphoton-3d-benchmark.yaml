@@ -83,7 +83,7 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T06:41:45Z'
+  last_checked: '2026-10-07T03:45:00Z'
 notes: 'Real data: 4 mice (G1, G2, Ch2, Ch3) with 8 raw .lsm stacks (m1, m2 each), 4 preprocessed five-channel
   TIFF stacks and 4 segmented-mask stacks; the rest is simulated or derived (conventional and CycleGAN
   simulations, idealized masks, RL/SelfNet restoration outputs, models; 21,793 files in SelfNet_train).
@@ -91,13 +91,14 @@ notes: 'Real data: 4 mice (G1, G2, Ch2, Ch3) with 8 raw .lsm stacks (m1, m2 each
   the microscopy (isotropy of simulated volumes not checked). Raw stacks are .lsm (not a schema format),
   so formats lists tiff only. Only the preprint abstract was available (Europe PMC, full text not open);
   preprint DOI from the Europe PMC record. Train/test splits not defined. enricher: size_bytes = sum of
-  Dataset_table_20260814.json (23,149 files; was null).'
+  Dataset_table_20260814.json (23,149 files; was null). enricher: annotations.source mixed = bile canaliculi
+  and sinusoids manual (Labkit), nuclei network + manual curation (record annotations.format).'
 technical:
   method: sample
   inspected_urls:
   - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/705/S-BIAD2705/Files/Dataset/Image_sets/Microscopy_images/Preprocessed/20221014_6_Control%28G1%29.tif
   - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/705/S-BIAD2705/Files/Dataset/Mask_sets/Microscopy_segmented_masks/Microscopy_G1_segmented_mask.tif
-  bytes_downloaded: 39601821
+  bytes_downloaded: 1002601821
   size_source: page-stated
   layout:
     tree: "Files/  Dataset_table_20260814.{json,tsv} (file list), Dataset/Naming_Convention.md\n  Dataset/Image_sets/Microscopy_images/\
@@ -112,7 +113,13 @@ technical:
       \ (file list)\n"
     n_files: 23149
     listing_complete: true
-  sample: null
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/705/S-BIAD2705/Files/Dataset/Image_sets/Microscopy_images/Preprocessed/20221014_6_Control%28G1%29.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/705/S-BIAD2705/Files/Dataset/Mask_sets/Microscopy_segmented_masks/Microscopy_G1_segmented_mask.tif
+    size_bytes: 6717982365
+    description: 'Mouse G1: preprocessed five-channel stack (czyx 5x259x868x1660) and its four-channel
+      mask; the smallest real raw+label pair.'
   arrays:
   - role: raw
     path_pattern: Dataset/Image_sets/Microscopy_images/Preprocessed/*.tif
@@ -135,7 +142,7 @@ technical:
     alignment: not-applicable
     alignment_notes: null
   - role: label
-    path_pattern: Dataset/Mask_sets/Microscopy_segmented_masks/Microscopy_<sample>_segmented_mask.tif
+    path_pattern: Dataset/Mask_sets/Microscopy_segmented_masks/Microscopy_*_segmented_mask.tif
     format: ome-tiff
     axes: czyx
     shape:
@@ -165,5 +172,8 @@ technical:
     range (39.6 MB). Raw: each channel 0/1..65534/65535, medians 886-6104, so the channels may be rescaled
     (unknown). Mask: channels 0, 1 and 3 are binary {0,100}; channel 2 has 304 values up to 1552 (instance
     IDs, likely nuclei). Which channel is which structure is not stated in the files read. Raw .lsm, simulated
-    sets and restoration outputs not probed. No small unit to sample (smallest real pair ~6.7 GB).'
+    sets and restoration outputs not probed. No small unit to sample (smallest real pair ~6.7 GB). 2nd
+    pass: mask pages c0..c3 at mid z re-read (scratch script, fsspec + tifffile): c0, c1, c3 {0,100},
+    c2 304 values up to 1510; that read walked the IFD chain with 1 MiB readahead blocks, so up to ~963
+    MB were transferred (estimate, over the 500 MB budget). Sample unit set to the G1 pair (6.7 GB).'
   inspected_at: '2026-10-01T06:41:45Z'
