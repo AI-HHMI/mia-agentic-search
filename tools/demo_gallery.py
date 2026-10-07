@@ -4,7 +4,7 @@
     python tools/demo_gallery.py --publish [--data demo/data]   # push it to claude/state/gallery, redeploy Pages
 
 One entry per dataset folder: a JPEG thumbnail of the middle slice of crop-001's raw array
-(label instances drawn as colored outlines when the crop has labels), the number of crops, the
+(label instances filled with a color per instance, semi-transparent, when the crop has labels), the number of crops, the
 catalog record it came from and a Fileglancer link to the folder. demo/ is git-ignored, so the
 GitHub Pages build has no demo/data/: the workstation publishes the gallery (thumbnails included) as
 state/gallery.json on claude/state/gallery (tools/cron/publish_gallery.sh, every 10 min), and the
@@ -24,6 +24,7 @@ from tools.common import ROOT, STATE_BRANCH_PREFIX, STATE_DIR, git  # noqa: E402
 
 FILEGLANCER = "https://fileglancer.int.janelia.org/browse/"
 THUMB_PX = 256
+LABEL_OPACITY = 0.45  # label instances are filled with their color at this opacity over the raw slice
 PUBLISHED = STATE_DIR / "gallery.json"
 GALLERY_BRANCH = STATE_BRANCH_PREFIX + "gallery"
 CHANNEL_AXES = {"c", "s"}
@@ -102,15 +103,12 @@ def thumbnail(crop: Path):
     labels = list(g["labels"].group_keys()) if "labels" in g else []
     if labels:
         lab = _resize(_slice2d(g["labels"][labels[0]], keep_channels=False).astype(np.int64), shape, nearest=True)
-        edge = np.zeros(lab.shape, bool)
-        edge[:-1] |= lab[:-1] != lab[1:]
-        edge[:, :-1] |= lab[:, :-1] != lab[:, 1:]
-        edge &= lab > 0
-        ids = lab[edge]
+        mask = lab > 0
+        ids = lab[mask]
         hue = (ids * 0.618033988749895) % 1.0
         colors = np.stack([np.abs(hue * 6 - 3) - 1, 2 - np.abs(hue * 6 - 2), 2 - np.abs(hue * 6 - 4)], -1).clip(0, 1)
         rgb = rgb.copy()
-        rgb[edge] = 0.25 * rgb[edge] + 0.75 * colors
+        rgb[mask] = (1 - LABEL_OPACITY) * rgb[mask] + LABEL_OPACITY * colors
     buf = io.BytesIO()
     Image.fromarray((rgb * 255).astype(np.uint8)).save(buf, "JPEG", quality=82)
     return buf.getvalue(), {"axes": "".join(_axes(raw)), "shape": list(s0.shape), "dtype": str(s0.dtype), "labels": labels}
