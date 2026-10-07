@@ -5,7 +5,8 @@
 One entry per dataset folder: a JPEG thumbnail of the middle slice of crop-001's raw array
 (label instances drawn as colored outlines when the crop has labels), the number of crops, the
 catalog record it came from and a Fileglancer link to the folder. demo/ is git-ignored, so the
-gallery is empty wherever demo/data/ doesn't exist (e.g. the GitHub Pages build).
+gallery is empty wherever demo/data/ doesn't exist (e.g. the GitHub Pages build), and numpy, zarr
+and Pillow are imported only when there is something to draw (CI installs just requirements.txt).
 """
 import argparse
 import base64
@@ -13,8 +14,6 @@ import io
 import json
 import sys
 from pathlib import Path
-
-import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.common import ROOT  # noqa: E402
@@ -38,6 +37,7 @@ def _axes(group):
 
 def _slice2d(group, keep_channels: bool):
     """Middle slice of the full-resolution array: (y, x) or (y, x, 3)."""
+    import numpy as np
     arr = group[group.attrs["ome"]["multiscales"][0]["datasets"][0]["path"]]
     axes = _axes(group)
     if len(axes) != arr.ndim:
@@ -62,11 +62,13 @@ def _slice2d(group, keep_channels: bool):
 
 
 def _normalize(img):
+    import numpy as np
     lo, hi = np.percentile(img, [1, 99.5])
     return np.clip((img - lo) / max(hi - lo, 1e-6), 0, 1)
 
 
 def _resize(img, shape, nearest=False):
+    import numpy as np
     from PIL import Image
     h, w = shape
     if nearest:
@@ -80,6 +82,7 @@ def _resize(img, shape, nearest=False):
 
 def thumbnail(crop: Path):
     """JPEG bytes and a short description of the crop's raw array."""
+    import numpy as np
     import zarr
     from PIL import Image
     g = zarr.open_group(str(crop), mode="r")
