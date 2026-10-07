@@ -46,6 +46,10 @@ dataset PRs that *are* `enriched` but whose comments have no `Conversion readine
 For these, run only steps 2, 4a, 4b, 5a and 6. Keep the inspected values in `technical`; change only what
 4a, 4b and 5a fix, and post their results as the comment.
 
+**Third pass: size.** Then continue with the open dataset PRs that are `enriched`, still labelled
+`size:unknown`, and whose comments have no `Size estimate` heading yet, oldest first. For these, run only
+steps 2, 4c and 6, and post the step 4c result as the comment.
+
 Work through it one PR at a time:
 ```
 while python tools/run_log.py continue --time-only; do      # exit 1 = the 110-minute cutoff
@@ -95,7 +99,9 @@ python tools/listing.py <url> [<url> ...] --id <id> --expand-zips --examples 3
   **and** your URLs cover every file the dataset offers. Then set `data.size_bytes` to exactly
   `total_bytes`; the validator checks this. The `auto-download` label depends on it (confirmed and
   < 50 GB), so when in doubt don't claim it.
-- Otherwise, use `page-stated`, `paper` or `estimated`, and leave the existing `size_bytes` unless you have a better stated value.
+- Otherwise, use `page-stated` or `paper` when a page or the paper states the size, and leave the existing
+  `size_bytes` unless you have a better stated value. If nothing states it, **estimate it (step 4c)**:
+  never leave `size_bytes` null when the arrays' shapes and dtypes are known.
 - For IDR, use its JSON API instead of downloading. `https://idr.openmicroscopy.org/webclient/imgData/<image id>/`
   gives size X/Y/Z/C/T, pixel type and physical sizes. For the CZ cryoET portal, use the S3 listing
   (listing.py handles `/datasets/<n>`) and probe the `.zarr` stores.
@@ -262,6 +268,29 @@ Rules:
   keep the landing URL, set `data.download_method` to what it is (`globus`, `aspera`, `other`), and write
   in `technical.notes` what you checked (`no direct download: Zenodo API lists none, page offers Globus only`).
 
+## 4c. Size: estimate it when nothing states it
+The `size:` label comes from `data.size_bytes`. When no complete listing (`file-listing`), page or paper
+gives the size, but `technical.arrays` has a shape and dtype for each raw / label / target array, compute
+it: **files × voxels per file (product of the shape) × bytes per voxel (dtype)**, summed over the arrays.
+```bash
+python tools/listing.py <url> [<url> ...] --expand-zips --json > /tmp/files.jsonl   # the files, one per line
+python tools/estimate_size.py <file> --files /tmp/files.jsonl                       # counts files per path_pattern
+python tools/estimate_size.py <file> --count 0=80 --count 1=80                      # counts from the docs instead
+```
+- **Files per array:** the listing entries matching the array's `path_pattern`, or `--count INDEX=N` (the
+  array's index in `technical.arrays`) when the docs, the paper or a listing you counted give it.
+  Chunked stores (zarr, ome-zarr, n5, precomputed) list chunks, not volumes: give their `--count` (a raw
+  store counts 1 when `data.n_items` is 1). Never guess a count; an array without one gets no estimate.
+- If it prints a `hint` that the listing has exact sizes for every file, and that listing covers the
+  whole dataset, use the listing's total as a confirmed size (step 3a) instead of the estimate.
+- Use the result only when `missing` is empty. Set `data.size_bytes` to `total_bytes` and
+  `technical.size_source: estimated`, and add its `technical_notes_line` to `technical.notes` (it says
+  how the number was made, and that it's the uncompressed size: compressed files download smaller).
+  The PR then gets its `size:` label and a `size-estimated` flag; `auto-download` still needs a listing.
+- Never replace a `file-listing`, `page-stated` or `paper` size with an estimate (the tool warns).
+- `missing` not empty: keep `size_bytes` null and say in `technical.notes` what's missing (a count, a
+  dtype, a shape). In the PR comment, put the result under a `Size estimate` heading either way.
+
 ## 5. Other fields
 Inspection often answers fields the harvester left empty or got wrong:
 - `imaging.channels` and `imaging.dimensionality` (`imaging.voxel_size_nm`: step 4a)
@@ -350,6 +379,8 @@ your changes on top, respecting their edit, and publish again.
   with why it couldn't be settled (always include this section; the second pass in step 1 looks for it)
 - a `Download link search` heading: each link and its `download_check.py` result (`usable`, size,
   range requests), or every route checked without finding one; hosts that need adding to the allowlist
+- a `Size estimate` heading: step 4c's `technical_notes_line`, or what was missing for an estimate
+  (skip it when a listing, page or paper gave the size)
 - a `Voxel size search` heading: the value and the quote that states it, or every source checked
   without finding it
 - what's still unknown and why

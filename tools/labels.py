@@ -12,6 +12,7 @@ on every push. Labels outside the managed prefixes (e.g. new-datasets) are left 
   label-enc:instance-ids · license:CC-BY-4.0 (the SPDX id as written, not interpreted) · size:1-10GB
   auto-download (size confirmed by a complete file listing, < 50 GB, open access) · enriched
   license-verification-needed (license.spdx is unknown)
+  size-estimated (data.size_bytes is an estimate from shapes x dtypes: technical.size_source estimated)
   voxel-size-found / voxel-size-missing (imaging.voxel_size_nm has x, y and, for 3D data, z)
   download-ready / download-not-ready (3D and 3D+t only: tools/readiness.py; needs $TENSORSWITCH_SRC,
   without it neither label is set, so the auto-merge gate fails closed)
@@ -44,6 +45,7 @@ FLAGS = {
     "auto-download": ("0E8A16", "Size confirmed by a complete file listing, < 50 GB, open access"),
     "enriched": ("006B75", "Technical metadata filled in by the enricher routine"),
     "license-verification-needed": ("B60205", "No license found yet; a human (or agent) needs to find or request it"),
+    "size-estimated": ("FBCA04", "size: label from an estimate (files x voxels x bytes per voxel), not a file listing"),
     "voxel-size-found": ("0E8A16", "imaging.voxel_size_nm is filled (x, y and, for 3D data, z)"),
     "voxel-size-missing": ("E99695", "No voxel / pixel size in the record yet; conversion needs it"),
     "download-ready": ("0E8A16", "3D: /download-dataset can convert it unattended (tools/readiness.py)"),
@@ -87,6 +89,8 @@ def labels_for(r):
         out.append("size:unknown")
     else:
         out.append("size:" + next((name for limit, name in SIZE_BUCKETS if size < limit), ">500GB"))
+        if tech.get("size_source") == "estimated":
+            out.append("size-estimated")
     if (size is not None and size < AUTO_DOWNLOAD_MAX_BYTES and tech.get("size_source") in CONFIRMED_SIZE_SOURCES
             and da.get("access") == "open"):
         out.append("auto-download")
