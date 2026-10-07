@@ -68,16 +68,15 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-01T08:40:55Z'
-notes: 'Explicitly released without annotations for self-supervised pretraining (the annotated fine-tuning
-  patches are a separate release). 63,411 files, all .tif slices: 35 sample stacks (vessel 9, amyloid
-  plaque 4, c-Fos 18, nucleus 4; counted from the per-structure sample tables). Voxel size, channel count
-  and total size were not stated on the BioStudies record, grand-challenge page, the Zenodo record (the
-  paper there is a short PDF) or the file listing, so they are null. No peer-reviewed paper found: the
-  BioStudies record cites only the Zenodo record 10991463 (a short descriptive PDF titled "Self-supervised
-  learning for 3D light-sheet microscopy image segmentation"), which is not listed as a publication. Organism:
-  nucleus images are human brain, the others mouse. enricher: size_bytes 3,890,705,828,060 B (3.9 TB)
-  summed from the four per-structure file lists (was null).'
+  last_checked: '2026-10-07T03:50:25Z'
+notes: 'Explicitly released without annotations for self-supervised pretraining (annotated fine-tuning
+  patches are a separate release). 63,411 .tif slices forming 35 sample stacks (vessel 9, amyloid plaque
+  4, c-Fos 18, nucleus 4). No peer-reviewed paper found; BioStudies cites only Zenodo 10991463 (a short
+  PDF). enricher: size_bytes 3,890,705,828,060 B summed from the four per-structure file lists (was null).
+  organisms: Homo sapiens = cell_nucleus/, Mus musculus = vessel/, Ab_plaques/, c-Fos_brain_cells/ (BioStudies
+  Biosample sections). enricher: voxel size differs by subset (BioStudies Image acquisition sections,
+  nominal): vessel 1625x1625x3000 nm, c-Fos 1625x1625x6000 nm, amyloid plaque 1630x1630x4000 nm, cell
+  nucleus 540x540x5000 nm, so voxel_size_nm stays null.'
 technical:
   method: header
   inspected_urls:
@@ -90,18 +89,26 @@ technical:
   bytes_downloaded: 0
   size_source: page-stated
   layout:
-    tree: "Files/\n  {vessel,Ab_plaque,c-Fos_brain_cell,cell_nucleus}_samples.{json,tsv}   file lists\
-      \ with sizes\n  brain_microscopy_image/brain_microscopy_image/\n    vessel/sample<k>/C0<c>/C0<c>_<zzzz>.tif\
-      \             35,972 slices, 547.9 GB\n    Ab_plaques/sample<k>/C0<c>/C0<c>_<zzzz>.tif         9,024\
-      \ slices, 181.4 GB\n    c-Fos_brain_cells/sample<k>/C0<c>/C0<c>_<zzzz>.tif  12,763 slices, 954.2\
-      \ GB\n    cell_nucleus/sample<k>/C0<c>/C0<c>_<zzzz>.tif       5,652 slices, 2,207.3 GB\n63,411 .tif\
-      \ + 8 list files\n"
+    tree: |
+      Files/
+        {vessel,Ab_plaque,c-Fos_brain_cell,cell_nucleus}_samples.{json,tsv}   file lists with sizes
+        brain_microscopy_image/brain_microscopy_image/
+          vessel/sample<k>/C0<c>/C0<c>_<zzzz>.tif             35,972 slices, 547.9 GB
+          Ab_plaques/sample<k>/C0<c>/C0<c>_<zzzz>.tif         9,024 slices, 181.4 GB
+          c-Fos_brain_cells/sample<k>/C0<c>/C0<c>_<zzzz>.tif  12,763 slices, 954.2 GB
+          cell_nucleus/sample<k>/C0<c>/C0<c>_<zzzz>.tif       5,652 slices, 2,207.3 GB
+      63,411 .tif + 8 list files
     n_files: 63419
     listing_complete: true
-  sample: null
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/197/S-BIAD1197/Files/brain_microscopy_image/brain_microscopy_image/vessel/sample1/C00/C00_0000.tif
+    size_bytes: 9175506
+    description: One z slice (vessel sample1, channel C00, slice 0000); the smallest whole stack (vessel
+      sample4 C01, 2,012 slices) is 20.3 GB.
   arrays:
   - role: raw
-    path_pattern: brain_microscopy_image/brain_microscopy_image/<structure>/sample<k>/C0<c>/C0<c>_<zzzz>.tif
+    path_pattern: brain_microscopy_image/brain_microscopy_image/*/sample*/C0[0-9]/C0[0-9]_[0-9][0-9][0-9][0-9].tif
     format: tiff
     axes: yx
     shape:
@@ -122,5 +129,7 @@ technical:
     single page uncompressed (ImageJ min/max 0/65535). Slice size and compression vary by structure. No
     labels (released for self-supervised pretraining). No sample downloaded: single slices are 9-466 MB
     and value statistics add little for unlabeled data. Another open PR (#29, s-biad1197-selma3d-lightsheet-unannotated)
-    describes the same study.'
-  inspected_at: '2026-10-01T08:40:55Z'
+    describes the same study. Second pass: path_pattern glob checked against all 63,411 listed paths (all
+    match). Sample is a single slice because every stack is 20-950 GB. No single archive exists; the files
+    are only offered individually under Files/ (direct https URLs in the four *_samples.json lists).'
+  inspected_at: '2026-10-07T03:50:25Z'
