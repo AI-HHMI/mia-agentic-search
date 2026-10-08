@@ -74,12 +74,82 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T18:20:00Z'
+  last_checked: '2026-10-08T19:30:00Z'
 notes: 'Listed the zip (6,179 members: 3,014 JPG in All_PvTk, 3,014 TXT in All_annotations, 150 Thumbs.db, ReadMe.docx), read
   the ReadMe.docx inside it and one annotation file, the NLM datasheet and the Diagnostics paper (Methods, data links). The
   ReadMe says the data is distributed under "a Creative Commons Attribution license" without a version, and asks to attribute
   NLM and cite the paper, so spdx is custom rather than CC-BY-4.0. The ReadMe text and the NLM datasheet disagree on species
   (ReadMe says P. falciparum, folder and datasheet say P. vivax); the paper calls this the P. vivax set. The datasheet lists
   annotations as parasites and white blood cells but the one file read only shows Parasitized rows. Pixel size not given; the
-  paper states 100x eyepiece magnification and 3024 x 4032 px. The paper also lists parasite radius statistics. Related sets
-  in the same directory (P. falciparum Thick_Smears_150, uninfected thick smears) are separate records.'
+  paper states 100x eyepiece magnification and 3024 x 4032 px. Related sets
+  in the same directory are separate records. enricher: organisms: each image shows human blood with P. vivax; not
+  split by folder.'
+technical:
+  method: sample
+  inspected_at: '2026-10-08T19:30:00Z'
+  inspected_urls:
+  - https://data.lhncbc.nlm.nih.gov/public/Malaria/NIH-NLM-ThickBloodSmearsPV/NIH-NLM-ThickBloodSmearsPV.zip
+  - https://data.lhncbc.nlm.nih.gov/public/Malaria/NIH-NLM-ThickBloodSmearsPV/NIH-NLM-ThickBloodSmearsPV.zip::NIH-NLM-ThickBloodSmearsPV/All_PvTk/PvTk100/20190709_171448.jpg
+  - https://data.lhncbc.nlm.nih.gov/public/Malaria/NIH-NLM-ThickBloodSmearsPV/NIH-NLM-ThickBloodSmearsPV.zip::NIH-NLM-ThickBloodSmearsPV/All_annotations/PvTk100/20190709_171448.txt
+  bytes_downloaded: 1584941
+  size_source: file-listing
+  layout:
+    tree: |
+      NIH-NLM-ThickBloodSmearsPV.zip (4.98 GB, 6,179 members)
+        NIH-NLM-ThickBloodSmearsPV/
+          ReadMe.docx                                  1 file  956.7 KB
+          All_PvTk/PvTk<n>/            (150 dirs)   3014 .jpg  5.0 GB  (+ Thumbs.db per dir)
+          All_annotations/PvTk<n>/     (150 dirs)   3014 .txt  2.5 MB  (same stem as the .jpg)
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.lhncbc.nlm.nih.gov/public/Malaria/NIH-NLM-ThickBloodSmearsPV/NIH-NLM-ThickBloodSmearsPV.zip::NIH-NLM-ThickBloodSmearsPV/All_PvTk/PvTk100/20190709_171448.jpg
+    - https://data.lhncbc.nlm.nih.gov/public/Malaria/NIH-NLM-ThickBloodSmearsPV/NIH-NLM-ThickBloodSmearsPV.zip::NIH-NLM-ThickBloodSmearsPV/All_annotations/PvTk100/20190709_171448.txt
+    size_bytes: 1608000
+    description: One smear photo (3024x4032 RGB JPEG, 1.6 MB) and its parasite circle list (17 parasites).
+  arrays:
+  - role: raw
+    path_pattern: NIH-NLM-ThickBloodSmearsPV.zip::NIH-NLM-ThickBloodSmearsPV/All_PvTk/*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 3024
+    - 4032
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Smartphone photos; pixel grid as stored (EXIF orientation not applied).
+  - role: label
+    path_pattern: NIH-NLM-ThickBloodSmearsPV.zip::NIH-NLM-ThickBloodSmearsPV/All_annotations/*/*.txt
+    format: csv
+    axes: null
+    shape:
+    - 17
+    - 9
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: points-table
+    classes:
+    - id: Parasitized
+      name: Plasmodium vivax parasite
+    alignment: same-grid
+    alignment_notes: All_annotations/<patient>/<stem>.txt pairs with All_PvTk/<patient>/<stem>.jpg. Line 1 is "n_parasites,4032,3024";
+      each row is id, label, comment, Circle, 2, centre x, centre y, circumference point x, y. x reaches 3250 > 3024, so x runs along
+      the stored 4032-px axis (stored pixel grid, not the EXIF-rotated view).
+  notes: 'Zip listed by range requests: 6,179 members (3,014 JPG, 3,014 TXT, 150 Thumbs.db, ReadMe.docx); exact zip size 4,979,641,074 B.
+    Probed and sampled PvTk100/20190709_171448.jpg: 3024x4032x3 uint8 RGB JPEG, values [0, 255] (one sample; hint full range,
+    not documented, so normalization unknown). Read its annotation (17 Parasitized circle rows; radius = distance from centre to the
+    circumference point). Labels are point/circle tables, not masks. Voxel size not found; checked: JPEG header (no calibration),
+    landing directory index, ReadMe (per the harvester), NLM malaria datasheet, Diagnostics paper full text (only 100x magnification
+    and image size). Host data.lhncbc.nlm.nih.gov is not on the TensorSwitch allowlist.'
+
