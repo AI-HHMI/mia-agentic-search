@@ -92,18 +92,131 @@ provenance:
   - https://raw.githubusercontent.com/e11bio/e11-open-data/main/README.md
   - https://e11bio-prism.s3.amazonaws.com/ls/images/full_dataset.zarr/raw/s0/.zarray
   - https://api.biorxiv.org/details/biorxiv/10.1101/2025.09.26.678648
+  - https://e11bio-prism.s3.amazonaws.com/ls/models/training_data/instance/crop_0.zarr/raw/.zattrs
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T03:28:04Z'
-notes: 'Hosted on the public S3 bucket s3://e11bio-prism/ls/ (aws s3 ls --no-sign-request). Raw array
-  images/full_dataset.zarr/raw/s0 has shape 18 x 1382 x 10856 x 21316 uint8 (zstd, 128-chunks), i.e. several
-  TB; total bucket size not stated, so size_bytes is null. n_items=1 volume. Voxel size ~35 x 35 x 80
-  nm (x,y,z) from the GitHub README and the preprint Methods. License: the GitHub README states CC BY-SA
-  4.0, while the AWS Open Data page points to https://e11.bio/terms-of-use (not read in full: page did
-  not render text), so check for a conflict. Annotation coverage is partial: dense segmentation is automatic,
-  with a subset of manually traced skeletons (~1,551) and proofread cells. Channel count shown is the
-  18-channel normalized raw group; other groups have 40 and 7 channels. Paper is a bioRxiv preprint. Skeleton/training-crop
-  counts not exhaustively listed.'
+  last_checked: '2026-10-08T06:10:00Z'
+notes: 'Hosted on the public S3 bucket s3://e11bio-prism/ls/. Total bucket size not stated, so size_bytes
+  is null. n_items=1 volume. Voxel size ~35 x 35 x 80 nm (x,y,z) from the GitHub README and the preprint
+  Methods. License: the GitHub README states CC BY-SA 4.0, while the AWS Open Data page points to https://e11.bio/terms-of-use
+  (not read in full: page did not render text), so check for a conflict. Annotation coverage is partial:
+  dense segmentation is automatic, with a subset of manually traced skeletons (~1,551) and proofread cells.
+  Channel count shown is the 18-channel normalized raw group; other groups have 40 and 7 channels. Paper
+  is a bioRxiv preprint. enricher: training_data/ = 14 instance, 17 semantic and 2 excitatory-synapse
+  zarr crops (36.2 GB, listed); skeletons/ has 3 .nml files. Zarr attrs say 400x168x168 nm (z,y,x, expanded
+  space); the record keeps the effective size.'
+technical:
+  method: sample
+  size_source: unknown
+  layout:
+    tree: "s3://e11bio-prism/ls/\n  images/full_dataset.zarr/   (zarr v2 groups, each with s0.. scales)\n\
+      \    raw/s0                    18 x 1382 x 10856 x 21316 uint8, zstd, chunks 18x128^3\n    all/,\
+      \ markers/, barcode_masks/\n    local_segmentation/s0     1358 x 10802 x 21262 uint64, blosc-lz4\n\
+      \    local_segmentation_spines/, barcode_relabeled_segmentation/, proofread_segmentation/\n  images/precomputed/\
+      \         neuroglancer precomputed copies\n  models/training_data/       28149 files  36.2 GB (complete\
+      \ listing)\n    instance/crop_#.zarr/     (x14)  raw [18,300,650,650] uint8 + labels [200,500,500]\
+      \ uint64   32.5 GB\n    semantic/crop_#.zarr/     (x17)  raw + labels, same shapes in crop_0   \
+      \                      3.7 GB\n    synapses/excitatory/crop_{0,1}.zarr/volumes/{ls_2channels_globalnorm,bassoon_*,psd95_*}\
+      \      15 MB\n  skeletons/   dataset_1220_1551skeletons_fixed.nml, dataset_1220_{2,8}skeletons_with_spine_heads.nml\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://e11bio-prism.s3.amazonaws.com/ls/models/training_data/instance/crop_0.zarr
+    size_bytes: null
+    description: 'Instance training crop 0: one zarr group with raw (18 channels x 300 x 650 x 650 uint8)
+      and labels (200 x 500 x 500 uint64 instance IDs, centred inside the raw crop).'
+  arrays:
+  - role: raw
+    path_pattern: models/training_data/*/crop_*.zarr/raw
+    format: zarr
+    axes: czyx
+    shape:
+    - 18
+    - 300
+    - 650
+    - 650
+    shape_varies: true
+    dtype: uint8
+    compression: blosc
+    value_range:
+    - 6
+    - 237
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Zarr v2 array, axis_names ["c0^","d0","d1","d2"], voxel_size [400,168,168] (z,y,x)
+      and an offset in nm in .zattrs; chunks 3x38x163x163.
+  - role: label
+    path_pattern: models/training_data/*/crop_*.zarr/labels
+    format: zarr
+    axes: zyx
+    shape:
+    - 200
+    - 500
+    - 500
+    shape_varies: true
+    dtype: uint64
+    compression: blosc
+    value_range:
+    - 0
+    - 693
+    encoding: instance-ids
+    classes: null
+    alignment: cropped
+    alignment_notes: 'Same voxel_size as raw; labels offset [263600,1166256,2355528] nm vs raw [243600,1153656,2342928],
+      i.e. a centred crop starting at voxel (50,75,75) of the raw. crop_name lonely_santa/sparse/sample_0
+      (sparse: few labelled cells, 10 IDs incl. 0 in the sampled plane).'
+  - role: raw
+    path_pattern: images/full_dataset.zarr/raw/s0
+    format: zarr
+    axes: czyx
+    shape:
+    - 18
+    - 1382
+    - 10856
+    - 21316
+    shape_varies: false
+    dtype: uint8
+    compression: zstd
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Full volume, 18-channel normalized raw group; voxel_size [400,168,168]. Multiscale
+      levels s0, s1, ...
+  - role: label
+    path_pattern: images/full_dataset.zarr/local_segmentation/s0
+    format: zarr
+    axes: zyx
+    shape:
+    - 1358
+    - 10802
+    - 21262
+    shape_varies: false
+    dtype: uint64
+    compression: blosc
+    encoding: instance-ids
+    classes: null
+    alignment: cropped
+    alignment_notes: Automatic segmentation, slightly smaller than raw s0 (offset not read). Proofread
+      and barcode-relabeled segmentations are sibling groups.
+  - role: label
+    path_pattern: skeletons/*.nml
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    encoding: graph
+    classes: null
+    alignment: unknown
+    alignment_notes: Manually traced skeletons (webKnossos .nml); 1,551 in the main file.
+  notes: 'S3 listing of models/training_data/ (listing.py): 28,149 files, 36,191,048,777 bytes, exact.
+    The images/ prefix (TB-scale zarr chunks) was not listed, so the total size is unknown. Probed zarr
+    headers of training crop raw/labels, full raw/s0 and local_segmentation/s0. Read one z plane of crop_0
+    labels (0-693, 10 unique IDs) and one plane of raw (6-237, mean 24.7) with zarr; one sample only.
+    Size estimate not made: the full raw alone is 18x1382x10856x21316 uint8 = ~5.76 TB uncompressed, but
+    the other full-volume arrays were not all probed. Voxel size kept at the README value (effective ~35x35x80
+    nm after ~5x expansion); file attributes are 168x168x400 nm in expanded space.'
