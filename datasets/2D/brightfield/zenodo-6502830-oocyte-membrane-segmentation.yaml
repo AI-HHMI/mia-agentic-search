@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: zenodo-6502830-oocyte-membrane-segmentation
 title: Segmentation of membrane of mouse, sea urchin and human oocytes from transmitted light images
 short_name: Oocyte membrane segmentation (transmitted light)
-description: Transmitted-light images of mouse and human oocytes and sea urchin eggs with ground-truth masks of the oocyte membrane (and, per the paper, zona pellucida for mouse and human), released to train segmentation networks for the Oocytor Fiji plugin. Train/test folders are provided.
+description: Transmitted-light images of mouse and human oocytes and sea urchin eggs with ground-truth masks of the oocyte
+  membrane (and, per the paper, zona pellucida for mouse and human), released to train segmentation networks for the
+  Oocytor Fiji plugin. Train/test folders are provided.
 landing_url: https://zenodo.org/records/6502830
 doi: 10.5281/zenodo.6502830
 repository: Zenodo
@@ -76,5 +78,66 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T20:30:00Z'
-notes: 'Single 1.2 GB SegmentationCortex.tar.gz. Archive listing was read only from the first ~30 MB (partial, 514 entries): mouse/exp2_test/mask/*.png seen; image folders, species folders and total image count not fully listed, so n_items is null. Paper reports 8256 ground-truth images (4432 mouse, 3824 human) plus 235 sea urchin images (185 train, 50 test), but the Zenodo subset may differ. Paper says images were resized to 0.1613 um/pixel (original 0.1135, 0.1613 or 0.227 um/pixel); voxel size is therefore the paper''s common resolution, not verified in file headers. Zona pellucida masks are mentioned in the paper but not verified in the archive. Pixel format (PNG) inferred from the partial listing. Related Zenodo record 10.5281/zenodo.6502852 (movies) not checked.'
+  last_checked: '2026-10-08T22:18:32Z'
+notes: 'Single 1.2 GB SegmentationCortex.tar.gz. organisms: Mus musculus = SegmentationCortex/mouse/ (seen); the human
+  and sea urchin folders lie beyond the first 150 MB of the stream and were not reached. Paper reports 8256 ground-truth
+  images (4432 mouse, 3824 human) plus 235 sea urchin images (185 train, 50 test); the Zenodo subset may differ, so n_items
+  is null. Paper says images were resized to 0.1613 um/pixel (original 0.1135, 0.1613 or 0.227 um/pixel); voxel size
+  is that common resolution, not in file headers. Zona pellucida masks are mentioned in the paper but not seen. Related
+  Zenodo record 10.5281/zenodo.6502852 (movies) not checked. enricher: masks verified as binary PNGs paired by name with
+  input/.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  1 file 1.2 GB: SegmentationCortex.tar.gz (gzip stream; first 150 MB read)
+      SegmentationCortex/
+        mouse/exp1/input/       >= 443 png (partial)
+        mouse/exp1/mask/        >= 701 png (partial)
+        mouse/exp2_test/input/  322 png
+        mouse/exp2_test/mask/   346 png
+        ... (remaining folders, e.g. human and sea urchin, not reached)
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: SegmentationCortex/*/*/input/*.png
+    format: png
+    axes: yx
+    shape:
+    - 516
+    - 490
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: SegmentationCortex/*/*/mask/*.png
+    format: png
+    axes: yx
+    shape:
+    - 516
+    - 490
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: <species>/<experiment>/mask/<name>.png pairs with .../input/<name>.png (same name, same shape, e.g.
+      movo_06_t133 516x490).
+  notes: 'The only file is a .tar.gz, which can''t be read by range. A scratch script streamed its first 150 MB (1,820
+    members) and a 40 MB second pass, reading PNGs in memory (nothing written or executed). Masks (6 read): uint8 {0,
+    255}, shapes 477-531 px per side, so sizes vary. Input movo_06_t133.png: uint8 516x490, range 0-255, 201 values (one
+    sample). sample is null: TensorSwitch can''t pull members out of a tar.gz; only the whole 1.2 GB archive downloads.
+    Voxel size 0.1613 um kept from the paper (record value).'
