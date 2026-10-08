@@ -66,5 +66,70 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T17:50:00Z'
-notes: 'Zenodo files: NCT-CRC-HE-100K.zip (11.7 GB, colour-normalised), NCT-CRC-HE-100K-NONORM.zip (11.7 GB) and CRC-VAL-HE-7K.zip (0.8 GB). Only CRC-VAL-HE-7K.zip was listed with peek_archive (7,180 TIFF patches in class folders); the 100K archives were not listed, so their file layout is taken from the Zenodo description and paper. Size counts the three archives; n_items counts 100,000 training plus 7,180 validation patches (NONORM is a second copy of the training patches). The 224 x 224 px, 0.5 um/px and nine classes come from the Zenodo description and the paper.'
+  last_checked: '2026-10-08T18:15:00Z'
+notes: 'Zenodo files: NCT-CRC-HE-100K.zip (11.7 GB, colour-normalised), NCT-CRC-HE-100K-NONORM.zip (11.7 GB) and CRC-VAL-HE-7K.zip (0.8 GB). Only CRC-VAL-HE-7K.zip was listed with peek_archive (7,180 TIFF patches in class folders); the 100K archives were not listed, so their file layout is taken from the Zenodo description and paper. Size counts the three archives; n_items counts 100,000 training plus 7,180 validation patches (NONORM is a second copy of the training patches). The 224 x 224 px, 0.5 um/px and nine classes come from the Zenodo description and the paper. enricher: all three zips listed (207,180 TIFFs, 9 class folders each); patches confirmed 224x224x3 uint8 PackBits TIFF.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                      3 files  24.2 GB  (207,180 zip members)\n  NCT-CRC-HE-100K.zip           11.7 GB\n    NCT-CRC-HE-100K/{ADI,BACK,DEB,LYM,MUC,MUS,NORM,STR,TUM}/<CLASS>-<ID>.tif\n      ADI 10,407  BACK 10,566  DEB 11,512  LYM 11,557  MUC 8,896\n      MUS 13,536  NORM 8,763  STR 10,446  TUM 14,317   (100,000)\n  NCT-CRC-HE-100K-NONORM.zip    11.7 GB\n    NCT-CRC-HE-100K-NONORM/<same 9 class folders, same counts>/*.tif\n  CRC-VAL-HE-7K.zip             0.8 GB\n    CRC-VAL-HE-7K/<CLASS>/<CLASS>-TCGA-<ID>.tif\n      ADI 1,338  BACK 847  DEB 339  LYM 634  MUC 1,035\n      MUS 592  NORM 741  STR 421  TUM 1,233   (7,180)"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/1214456/files/CRC-VAL-HE-7K.zip::CRC-VAL-HE-7K/TUM/TUM-TCGA-AAHIDTWA.tif
+    size_bytes: 152204
+    description: one 224x224 RGB TUM patch from the validation set; the class is the folder name (no separate label file)
+  arrays:
+  - role: raw
+    path_pattern: NCT-CRC-HE-100K.zip/NCT-CRC-HE-100K/*/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 224
+    - 224
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: packbits
+    value_range:
+    - 1
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'training set, Macenko colour-normalised (Zenodo description). Label = class folder / filename prefix: ADI adipose, BACK background, DEB debris, LYM lymphocytes, MUC mucus, MUS smooth muscle, NORM normal colon mucosa, STR cancer-associated stroma, TUM colorectal adenocarcinoma epithelium.'
+  - role: raw
+    path_pattern: NCT-CRC-HE-100K-NONORM.zip/NCT-CRC-HE-100K-NONORM/*/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 224
+    - 224
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: packbits
+    value_range:
+    - 12
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: same raw data as NCT-CRC-HE-100K without colour normalisation; tile selection differs (Zenodo description). Label = class folder.
+  - role: raw
+    path_pattern: CRC-VAL-HE-7K.zip/CRC-VAL-HE-7K/*/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 224
+    - 224
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: packbits
+    value_range:
+    - 4
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: external validation set; label = class folder (same 9 classes). Colour normalisation not stated for this set.
+  notes: 'Listing: Zenodo API + zip central directories, 3 zips, 207,180 TIFF members, 24,217,213,831 bytes (file-listing, complete). Probed 4 members (one per zip, plus a second ADI): plain single-page RGB TIFF, 224x224x3 uint8, PackBits, no resolution tag used. Sampled 4 members (ADI, TUM from 100K; TUM from VAL; MUS from NONORM; ~0.48 MB): value ranges are per array from one file each; RGB samples not identical. Labels are folder names only (no label arrays); classification signal per patch. Voxel size 0.5 um/px from Zenodo description ("224x224 pixels (px) at 0.5 microns per pixel"); file headers carry no calibration. Conflict: Zenodo says CRC-VAL-HE-7K comes from N=50 patients, the paper says 25 slides / 25 patients. No single archive for the whole dataset: three direct Zenodo zips (all usable with range requests). Readiness: 2D records are not covered by the miao layout yet.'
