@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: hf-siuseven-cmfi-17-microalgae-fields
 title: 'CMFI-17: Conditioned Microscopy Field Images v1.0'
 short_name: Microalgae fields with pseudo-instance masks
-description: 4,996 RGB microscopy fields (1360x1024 px JPEG) of the microalga Poterioochromonas malhamensis from a 0-72 h time course under light and dark regimes (17 conditions, three replicates), each paired with a uint16 Cellpose pseudo-instance mask. Train 3,990, validation 503, test 503, with a manifest of image-derived phenotype proxies.
+description: 4,996 RGB microscopy fields (1360x1024 px JPEG) of the microalga Poterioochromonas malhamensis from
+  a 0-72 h time course under light and dark regimes (17 conditions, three replicates), each paired with a uint16
+  Cellpose pseudo-instance mask. Train 3,990, validation 503, test 503, with a manifest of image-derived phenotype
+  proxies.
 landing_url: https://huggingface.co/datasets/SiuSeven/cmfi-17-v1-0
 doi: null
 repository: HuggingFace
@@ -18,17 +21,18 @@ imaging:
   channels: 3
   organism:
   - Poterioochromonas malhamensis
-  sample: Poterioochromonas malhamensis culture time course (0, 1, 2, 3, 6, 12, 24, 48, 72 h) under light and dark regimes, three biological replicates (replicate labels inferred, not recorded)
+  sample: Poterioochromonas malhamensis culture time course (0, 1, 2, 3, 6, 12, 24, 48, 72 h) under light and dark
+    regimes, three biological replicates (replicate labels inferred, not recorded)
   labels_stains: []
 data:
   formats:
   - jpeg
   - png
-  size_bytes: 530542345
+  size_bytes: 532058484
   n_items: 4996
   access: open
   download_url: null
-  download_method: other
+  download_method: http
 annotations:
   present: true
   types:
@@ -57,5 +61,92 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T12:26:16Z'
-notes: 'The masks are Cellpose pseudo-instance labels, not human ground truth (the README says so; model revision and thresholds are unrecorded), hence source automatic. No paper, microscope, objective, staining or pixel size is stated in the README or file listing checked, so modality is other and voxel size null. Replicate A/B/C labels are reconstructed from phenotype, not recorded. Size is the Hugging Face usedStorage figure (530,542,345 bytes) for the repo of about 10,000 files: JPEG images and PNG masks under data/{train,validation,test}/. Download is via the Hugging Face repository (git/hub API), so download_url is null. A derivative with 1024x1024 crops exists as SiuSeven/cmfi-17-1024 (same license, same images); this record is the source release.'
+  last_checked: '2026-10-08T14:50:00Z'
+notes: 'The masks are Cellpose pseudo-instance labels, not human ground truth (the README says so; model revision
+  and thresholds are unrecorded), hence source automatic. No paper, microscope, objective, staining or pixel size
+  is stated in the README or file listing checked, so modality is other and voxel size null. Replicate A/B/C labels
+  are reconstructed from phenotype, not recorded. Size is the complete file listing (enricher; was the usedStorage
+  figure 530,542,345 B) of 10,009 files: JPEG images and PNG masks under data/{train,validation,test}/. Download
+  is via the Hugging Face repository (git/hub API), so download_url is null. A derivative with 1024x1024 crops exists
+  as SiuSeven/cmfi-17-1024 (same license, same images); this record is the source release.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './                    .gitattributes, README.md, 1 .txt
+
+      canonical/            fov_manifest.parquet, splits.parquet, metadata.json (7.5 MB)
+
+      data/train/images/    3990 .jpg  347.6 MB
+
+      data/train/masks/     3990 .png   68.3 MB
+
+      data/validation/images/ 503 .jpg  43.9 MB
+
+      data/validation/masks/  503 .png   8.7 MB
+
+      data/test/images/     503 .jpg   43.8 MB
+
+      data/test/masks/      503 .png    8.6 MB
+
+      metadata/             11 files (.json, .csv, .parquet, checksums.sha256) 3.6 MB
+
+      '
+    n_files: 10009
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/SiuSeven/cmfi-17-v1-0/resolve/main/data/train/images/pm_tc_000bd8bef8ef1d1e.jpg
+    - https://huggingface.co/datasets/SiuSeven/cmfi-17-v1-0/resolve/main/data/train/masks/pm_tc_000bd8bef8ef1d1e.png
+    size_bytes: 111002
+    description: 'Training field pm_tc_000bd8bef8ef1d1e: one RGB JPEG and its pseudo-instance mask'
+  arrays:
+  - role: raw
+    path_pattern: data/*/images/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1024
+    - 1360
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    lossy: true
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: data/*/masks/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1024
+    - 1360
+    shape_varies: false
+    dtype: uint16
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 51
+    normalization: none
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 44
+    alignment: same-grid
+    alignment_notes: 'Pairs by file name: data/<split>/images/<observation_id>.jpg with data/<split>/masks/<observation_id>.png;
+      same 1024x1360 grid (raw has the RGB axis). README: images carry a bottom-right scale-bar annotation; the
+      canonical crop is the centre 1024x1024 (x0=168, y0=0).'
+  notes: 'Complete Hugging Face listing (10,009 files, exact sizes). Probed and sampled one pair (95,063 + 15,939
+    B): JPEG 1024x1360x3 uint8, full 0-255 range in that one sample; PNG gray uint16, 0 + 45 distinct IDs up to
+    51 (Cellpose pseudo-instance masks per README, so instance-ids). value_range is from one sample. Every file
+    is a direct resolve/main URL; there is no single archive, so download_url stays null and the files are listed
+    under data/. Voxel size not found; checked: JPEG/PNG headers (EXIF removed per README), README, canonical/metadata.json,
+    metadata/feature_schema.json (proxy units are pixels only), HF API; no paper or code repo is linked. The images
+    have a burned-in scale bar whose value is not stated in text.'
