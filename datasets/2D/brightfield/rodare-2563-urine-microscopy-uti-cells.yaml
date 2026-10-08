@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: rodare-2563-urine-microscopy-uti-cells
 title: Clinical urine microscopy for urinary tract infections
 short_name: Urinary cell segmentation, 7 classes (brightfield)
-description: >-
-  300 brightfield images (1392 x 1040, 16-bit TIFF, x20 objective) of unstained urine from patients with symptomatic UTI, with binary foreground masks and 7-class masks
-  for 3,562 manually annotated objects (rods, RBC/WBC, yeast, miscellaneous, single EPC, small and large EPC sheets).
+description: 300 brightfield images (1392 x 1040, 16-bit TIFF, x20 objective) of unstained urine from patients with symptomatic
+  UTI, with binary foreground masks and 7-class masks for 3,562 manually annotated objects (rods, RBC/WBC, yeast, miscellaneous,
+  single EPC, small and large EPC sheets).
 landing_url: https://rodare.hzdr.de/record/2563
 doi: 10.14278/rodare.2563
 repository: other
@@ -45,7 +45,7 @@ annotations:
   - semantic-segmentation
   - instance-segmentation
   coverage: dense
-  format: 'TIFF masks in folders img, bin_mask (0/1) and mult_mask (0-7)'
+  format: TIFF masks in folders img, bin_mask (0/1) and mult_mask (0-7)
   source: manual
 ml:
   tasks:
@@ -69,8 +69,90 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-08T11:44:35Z'
-notes: >-
-  The zip (ds1.zip, 2.27 GB) could not be listed remotely: the server answers without range support (accept-ranges: none), so the folder structure and class counts come from the paper's data-structure table
-  (img 300, bin_mask 300, mult_mask 300 TIFFs). Pixel size is not stated in the paper or record; the setup is described (Olympus BX41F, 20x/0.4 objective, 0.5x C-mount, Infinity 3S-1UR camera).
-  This is the latest of three RODARE versions (2473, 2562, 2563); concept DOI 10.14278/rodare.2472. Masks are semantic (class per pixel); instances can be derived as connected components, per the paper. No train/test split in the record.
+  last_checked: '2026-10-08T13:00:00Z'
+notes: 'The zip (ds1.zip, 2.27 GB) could not be listed remotely: the server answers without range support (accept-ranges:
+  none), so the folder structure and class counts come from the paper''s data-structure table (img 300, bin_mask 300, mult_mask
+  300 TIFFs). Pixel size is not stated in the paper or record; the setup is described (Olympus BX41F, 20x/0.4 objective, 0.5x
+  C-mount, Infinity 3S-1UR camera). This is the latest of three RODARE versions (2473, 2562, 2563); concept DOI 10.14278/rodare.2472.
+  Masks are semantic (class per pixel); instances can be derived as connected components, per the paper. No train/test split
+  in the record.'
+technical:
+  method: metadata-only
+  size_source: file-listing
+  layout:
+    tree: "ds1.zip  2.27 GB (the only file; members per paper Table 1:)\n  img/        300 TIFF (raw colour images)\n  bin_mask/\
+      \   300 TIFF (0/1)\n  mult_mask/  300 TIFF (0-7)\n"
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: ds1.zip::img/*.tif
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Raw colour brightfield images, 1392 x 1040 (paper), files numbered incrementally.
+  - role: label
+    path_pattern: ds1.zip::bin_mask/*.tif
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    value_range:
+    - 0
+    - 1
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: cell
+    alignment: same-grid
+    alignment_notes: Binary mask, 1392 x 1040, "for each corresponding raw colour image" (paper); same incremental file numbering
+      across the three folders.
+  - role: label
+    path_pattern: ds1.zip::mult_mask/*.tif
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    value_range:
+    - 0
+    - 7
+    normalization: unknown
+    encoding: semantic-ids
+    classes:
+    - id: null
+      name: rods
+    - id: null
+      name: RBC/WBC
+    - id: null
+      name: yeast
+    - id: null
+      name: miscellaneous
+    - id: null
+      name: single EPC
+    - id: null
+      name: small EPC sheet
+    - id: null
+      name: large EPC sheet
+    alignment: same-grid
+    alignment_notes: Multi-class mask with integer values 0-7 (paper); 7 classes named in the paper, value-to-class order
+      not stated in what was read.
+  notes: 'RODARE API lists one file, ds1.zip, 2,266,088,198 B. The server sends accept-ranges: none, so zip members cannot
+    be listed, probed or pulled (download-check: no range requests; host rodare.hzdr.de not on the TensorSwitch allowlist).
+    Layout, sizes and mask values from the Scientific Data paper (full text, Europe PMC): three folders of 300 TIFFs, masks
+    1392 x 1040, binary [0,1] and multi-class [0,7]; value_range on the label arrays is the documented range, not a sample.
+    Voxel size not found; checked: RODARE record, paper full text (setup only: Olympus BX41F, 20x/0.4, 0.5x C-mount, Infinity
+    3S-1UR camera; no um/pixel). Whole-file download only.'
