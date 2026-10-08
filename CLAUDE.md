@@ -20,7 +20,7 @@ humans review them (merge = accept, close = reject).
 6. Never edit or delete records on `main` from a harvest run. Corrections belong to the maintainer routine.
 7. Never push to `main`. **One dataset per PR:** publish each record with `tools/publish.py dataset`
    (branch `claude/dataset/<id>`), and use `tools/pr_text.py` for the PR title and body, verbatim.
-   Search state goes to `claude/state/<routine>` via `tools/publish.py state-push`.
+   Search state goes to the `state` branch (each routine owns its own files there) via `tools/publish.py state-push`.
 8. Slack notifications go to **`#mia-harvester`** via the Slack connector. Don't post to any other channel.
 9. **Run until 10 new datasets are published, max 2 hours.** Harvest runs keep searching, one frontier query
    at a time, until they publish 10 datasets (`target`, default 10) that aren't on `main`, have no open PR and
@@ -128,7 +128,7 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
 | `python tools/download_check.py <url\|zip::member> --id ID [--tensorswitch SRC]` | is this a direct link TensorSwitch can fetch (one range request) |
 | `python tools/convertibility.py [files] [--summary\|--json] [--tensorswitch SRC]` | what blocks automatic conversion (read-only report) |
 | `python tools/readiness.py <file> [--tensorswitch SRC]` | download readiness: ready / not-ready / unknown, with reasons (the auto-merge gate and the download queue) |
-| `python tools/download_queue.py next\|record\|list` | the download queue and the downloads list (`state/downloads.json` on `claude/state/downloader`) |
+| `python tools/download_queue.py next\|record\|list` | the download queue and the downloads list (`state/downloads.json` on the `state` branch) |
 | `python tools/miao_layout.py <file> --root R --tensorswitch SRC --label-class C [--name N] [--whole]` | plan a record (sample unit, or every file with `--whole`) into the miao layout (miao#13), one crop per raw/label pair: MCP steps + label metadata, read-only |
 | `python tools/miao_run.py <plan.json> [--finalize]` | run that plan crop by crop with TensorSwitch (resumable; downloads deleted per crop), or record crops the MCP already verified |
 | `python tools/place.py <file>\|--all\|--pr-branches` | move records to `datasets/<dimensionality>/<modality>/` |

@@ -13,7 +13,7 @@ Read `CLAUDE.md` first. Its hard rules and "usable" criteria apply to every step
 
 **How branches work:**
 - **Each dataset gets its own branch and PR:** `claude/dataset/<id>`, containing exactly one new file.
-- **This routine's search state lives on `claude/state/$ROUTINE`:** its frontier and run logs. That
+- **Search state lives on the `state` branch:** this routine owns its frontier and run logs there. That
   branch is pushed directly and never reviewed.
 - **You never create branches by hand.** `tools/publish.py` handles all branching and pushing.
 - **Your working tree stays on `origin/main`.** Leave records uncommitted there.

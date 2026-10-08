@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: "15 * * * *"   # hourly, so unmerged harvest runs on claude/* branches show up
+    - cron: "15 * * * *"   # hourly, so new runs on the state branch show up
   workflow_dispatch:
 permissions:
   contents: read
@@ -22,7 +22,8 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.12", cache: pip }
       - run: pip install -r requirements.txt
-      - run: git fetch --no-tags origin '+refs/heads/claude/*:refs/remotes/origin/claude/*' || true
+      - run: git fetch --no-tags origin '+refs/heads/claude/dataset/*:refs/remotes/origin/claude/dataset/*' || true
+      - run: git fetch --no-tags origin '+refs/heads/state:refs/remotes/origin/state' || true
       - run: python tools/build_site.py --out site
         env:
           GH_TOKEN: ${{ github.token }}

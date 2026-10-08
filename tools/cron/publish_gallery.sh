@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Dashboard gallery: thumbnails of $DATA (the converted datasets in demo/data/) pushed to
-# claude/state/gallery, so the GitHub Pages dashboard, which has no demo/, can show them.
+# the state branch, so the GitHub Pages dashboard, which has no demo/, can show them.
 # Pushes and redeploys the dashboard only when the gallery changed (a new dataset or crop).
 #
 #   crontab -e:   */10 * * * *  /groups/troidl/home/troidlj/mia-agentic-search/tools/cron/publish_gallery.sh

@@ -1,4 +1,4 @@
-"""The download queue and the list of downloaded datasets (state/downloads.json, on claude/state/downloader).
+"""The download queue and the list of downloaded datasets (state/downloads.json, on the state branch).
 
     python tools/download_queue.py next [--root demo] [--max-gb 10]   # the next record to download, as JSON
     python tools/download_queue.py record <id> downloaded --plan P --summary S

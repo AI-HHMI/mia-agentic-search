@@ -1,13 +1,13 @@
 """Thumbnails of the datasets downloaded into demo/data/ (the miao layout), for the dashboard gallery.
 
     python tools/demo_gallery.py [--data demo/data]             # prints the gallery entries (without images)
-    python tools/demo_gallery.py --publish [--data demo/data]   # push it to claude/state/gallery, redeploy Pages
+    python tools/demo_gallery.py --publish [--data demo/data]   # push it to the state branch, redeploy Pages
 
 One entry per dataset folder: a JPEG thumbnail of the middle slice of crop-001's raw array
 (label instances filled with a color per instance, semi-transparent, when the crop has labels), the number of crops, the
 catalog record it came from and a Fileglancer link to the folder. demo/ is git-ignored, so the
 GitHub Pages build has no demo/data/: the workstation publishes the gallery (thumbnails included) as
-state/gallery.json on claude/state/gallery (tools/cron/publish_gallery.sh, every 10 min), and the
+state/gallery.json on the state branch (tools/cron/publish_gallery.sh, every 10 min), and the
 build falls back to that copy. --publish pushes only when the gallery changed, then starts the dashboard
 workflow. numpy, zarr and Pillow are imported only when there is something to draw (CI installs just
 requirements.txt).
@@ -20,13 +20,12 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import ROOT, STATE_BRANCH_PREFIX, STATE_DIR, git  # noqa: E402
+from tools.common import ROOT, STATE_BRANCH, STATE_DIR, git  # noqa: E402
 
 FILEGLANCER = "https://fileglancer.int.janelia.org/browse/"
 THUMB_PX = 256
 LABEL_OPACITY = 0.45  # label instances are filled with their color at this opacity over the raw slice
 PUBLISHED = STATE_DIR / "gallery.json"
-GALLERY_BRANCH = STATE_BRANCH_PREFIX + "gallery"
 CHANNEL_AXES = {"c", "s"}
 
 
@@ -150,8 +149,8 @@ def gallery(data_dir: Path = ROOT / "demo" / "data", images: bool = True):
 
 
 def published_gallery():
-    """The gallery last published from the workstation (needs a fetched origin/claude/state/gallery); [] if none."""
-    text = git("show", f"origin/{GALLERY_BRANCH}:state/gallery.json")
+    """The gallery last published from the workstation (needs a fetched origin/state); [] if none."""
+    text = git("show", f"origin/{STATE_BRANCH}:state/gallery.json")
     try:
         return json.loads(text) if text else []
     except json.JSONDecodeError:
@@ -177,7 +176,7 @@ def publish(data_dir: Path):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--data", default=str(ROOT / "demo" / "data"))
-    ap.add_argument("--publish", action="store_true", help="push to claude/state/gallery and redeploy the dashboard")
+    ap.add_argument("--publish", action="store_true", help="push to the state branch and redeploy the dashboard")
     a = ap.parse_args()
     if a.publish:
         publish(Path(a.data))

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Hourly download agent: runs `/download-dataset next` with headless Claude Code, which downloads the
 # next download-ready dataset that isn't on the downloads list (state/downloads.json on
-# claude/state/downloader) and records the outcome. One dataset per run.
+# the state branch) and records the outcome. One dataset per run.
 #
 #   crontab -e:   17 * * * *  /groups/troidl/home/troidlj/mia-agentic-search/tools/cron/download_next.sh
 #

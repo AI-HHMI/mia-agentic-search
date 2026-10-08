@@ -3,12 +3,12 @@
     python tools/build_site.py [--out site]
 
 Writes <out>/index.html (self-contained) and <out>/catalog.json. Run logs come from main
-plus all fetched claude/* branches, so unmerged harvest runs are visible too.
+plus the fetched state branch (tools/collect_runs.py).
 The "not merged" table lists open dataset PRs with the reasons auto-merge gives (tools/automerge.py),
 read from the PRs' labels and checks with `gh`; without GitHub access that table is left out.
 The gallery at the end shows the datasets downloaded into demo/data/ (tools/demo_gallery.py), with
 Fileglancer links. Where demo/data/ doesn't exist (demo/ is git-ignored, e.g. on GitHub) it uses the copy the
-workstation publishes to claude/state/gallery, and it's left out if there is none.
+workstation publishes to the state branch, and it's left out if there is none.
 """
 import argparse
 import json
