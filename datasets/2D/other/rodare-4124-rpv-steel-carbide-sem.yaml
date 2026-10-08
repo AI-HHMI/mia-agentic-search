@@ -66,9 +66,61 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T11:47:19Z'
+  last_checked: '2026-10-08T13:05:31Z'
 notes: >-
   Materials-science SEM (no organism). Zip contents were listed from the archive index (cloud/preprocessed/images/*.tif, preprocessed/labels/*_label.png, a hold-out folder,
   processed_tiles as .pt tensors, trained model weights .ckpt, plus the authors' classical particle-analysis outputs for JFL as .bmp/.txt/.xlsx). The server ignores range requests, so the 1.28 GB zip
   was fetched once in full to read its index and deleted without extraction. Pixel size differs per steel: 2048 px width = 14.3 um (JFL, ~7.0 nm/px) or 11.5 um (ANP-10, ~5.6 nm/px) per the record, so
-  voxel_size_nm is null. The paper mentions three steels (JFL, ANP-10, ANP-3), the record two; 13 image pairs (SE + InLens). Paper trains on 10 of the 13 images; a hold-out folder exists.
+  voxel_size_nm is null. The paper mentions three steels (JFL, ANP-10, ANP-3), the record two; 13 image pairs (SE + InLens). Paper trains on 10 of the 13 images; a hold-out folder exists. enricher: code repo data/README lists ANP-3 too (Zeiss Ultra 55); labels binary 0/255 PNG per code repo.
+technical:
+  method: metadata-only
+  size_source: page-stated
+  layout:
+    tree: |-
+      data.zip (1277824353 bytes, Rodare API)
+      cloud/
+        preprocessed/
+          hold-out/
+          images/          (*.tif, SE2 and InLens per image)
+          labels/          (*_label.png)
+        processed_tiles/
+          images/
+          labels/          (.pt tensors)
+        tb_logs/
+          unet_model/      (trained weights)
+    n_files: null
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: cloud/preprocessed/images/*.tif
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: SE2 and InLens detector images are separate files of the same field (code repo io.read_image_pair); metadata bar cropped off the 2048 x 1404 originals.
+  - role: label
+    path_pattern: cloud/preprocessed/labels/*_label.png
+    format: png
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: uint8
+    compression: png
+    value_range: null
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: carbide
+    alignment: same-grid
+    alignment_notes: <image stem>_label.png pairs with <image stem>.tif in preprocessed/images; the code asserts image and label shapes match and writes masks as uint8(mask*255) (github.com/thawn/carde src/carde/image_processing.py).
+  notes: >-
+    Not inspectable this run: rodare.hzdr.de ignores range requests and reports no Content-Length, so tools/listing.py cannot read the zip index and no member can be probed; the only file is the 1.28 GB data.zip (Rodare API), over the 500 MB sample budget. Folder structure from the Rodare description and the code repo's data/README.md; label encoding and file naming from the code repo (github.com/thawn/carde, src/carde/image_processing.py and io.py, read, not run). Raw dtype, shapes and compression unknown. Size is the zip size from the Rodare API. Voxel size: the record/paper state image width 14.3 um (JFL) and 11.5 um (ANP-10) for 2048 px, i.e. two different pixel sizes (~7.0 / ~5.6 nm), and none for the ANP-3 hold-out image, so voxel_size_nm stays null; checked Rodare API, paper Methods, code README. No direct download TensorSwitch can use: the zip link is direct but the host is not on the allowlist and has no range requests (no zip members).
