@@ -1,33 +1,34 @@
-"""PR labels derived from a dataset record, so labels always match the YAML.
+"""PR labels derived from a dataset record, so labels always match the YAML; auto-merge follows from them.
 
-    python tools/labels.py <record.yaml>          # print the labels, one per line
-    python tools/labels.py sync --pr N            # CI: set PR N's labels from the record on its head
-    python tools/labels.py sync --all-open        # CI: same for every open claude/dataset/* PR
-    python tools/labels.py sync --merged          # CI: merged claude/dataset/* PRs, from the record now on main
+    python tools/labels.py <record.yaml>                 # print the labels, one per line
+    python tools/labels.py sync --pr N [--merge]         # CI: set PR N's labels from the record on its head
+    python tools/labels.py sync --all-open [--merge]     # CI: same for every open claude/dataset/* PR
 
 Agents never add labels by hand: they fill in the record and .github/workflows/label.yml runs `sync`
-on every push. Labels outside the managed prefixes (e.g. new-datasets) are left alone.
+on every push. Labels outside the managed prefixes (e.g. new-datasets, hold, not-duplicate) are left alone;
+merged PRs keep the labels they were merged with.
 
-  dim:3D · org:Mus musculus · modality:FIB-SEM · fmt:tiff · dtype:uint16 · anno:instance-segmentation
-  label-enc:instance-ids · license:CC-BY-4.0 (the SPDX id as written, not interpreted) · size:1-10GB
+With --merge, a PR that meets tools/automerge.py gets GitHub's native auto-merge (`gh pr merge --auto
+--match-head-commit`), which merges once the required `validate` check passes; a PR that no longer meets
+it has auto-merge disabled.
+
+  dim:3D · org:Mus musculus · modality:FIB-SEM · fmt:tiff · anno:instance-segmentation
+  license:CC-BY-4.0 (the SPDX id as written, not interpreted) · size:1-10GB
   enriched
-  license-verification-needed (license.spdx is unknown)
-  size-estimated (data.size_bytes is an estimate from shapes x dtypes: technical.size_source estimated)
-  voxel-size-found / voxel-size-missing (imaging.voxel_size_nm has x, y and, for 3D data, z)
-  download-ready / download-not-ready (tools/readiness.py, the one rule for downloads; it replaces the
-  retired auto-download label). Needs $TENSORSWITCH_SRC; without it a record that passes every other
-  check gets neither label, so the auto-merge gate fails closed.
+  voxel-size-missing (imaging.voxel_size_nm lacks x, y or, for 3D data, z)
+  download-ready / download-not-ready (tools/readiness.py, the one rule for downloads). Needs
+  $TENSORSWITCH_SRC; without it a record that passes every other check gets neither label.
 """
 import argparse
 import json
 import subprocess
 import sys
+import time
 from pathlib import Path
 
-import yaml
-
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import DATASET_BRANCH_PREFIX, ROOT, _NoDatesLoader, load_yaml  # noqa: E402
+from tools.automerge import failures  # noqa: E402
+from tools.common import DATASET_BRANCH_PREFIX, ROOT, git, iter_record_paths, load_yaml, pending_records  # noqa: E402
 
 # prefix -> (colour, description)
 GROUPS = {
@@ -35,22 +36,19 @@ GROUPS = {
     "org:": ("5319E7", "Organism"),
     "modality:": ("1D76DB", "Imaging modality"),
     "fmt:": ("C5DEF5", "File format"),
-    "dtype:": ("BFD4F2", "Pixel data type of the raw images (inspected)"),
     "anno:": ("FBCA04", "Annotation type"),
-    "label-enc:": ("FEF2C0", "How labels are stored (inspected)"),
     "license:": ("D93F0B", "License as stated by the dataset (SPDX id, not interpreted)"),
     "size:": ("BFDADC", "Total download size"),
 }
 FLAGS = {
     "enriched": ("006B75", "Technical metadata filled in by the enricher routine"),
-    "license-verification-needed": ("B60205", "No license found yet; a human (or agent) needs to find or request it"),
-    "size-estimated": ("FBCA04", "size: label from an estimate (files x voxels x bytes per voxel), not a file listing"),
-    "voxel-size-found": ("0E8A16", "imaging.voxel_size_nm is filled (x, y and, for 3D data, z)"),
     "voxel-size-missing": ("E99695", "No voxel / pixel size in the record yet; conversion needs it"),
     "download-ready": ("0E8A16", "/download-dataset can convert it unattended (tools/readiness.py)"),
     "download-not-ready": ("B60205", "Something blocks the download; see tools/readiness.py"),
 }
-RETIRED = {"auto-download"}  # no longer set; sync still removes them from PRs
+# No longer set; sync still removes them from open PRs.
+RETIRED = {"auto-download", "license-verification-needed", "size-estimated", "voxel-size-found"}
+RETIRED_PREFIXES = ("dtype:", "label-enc:")
 SIZE_BUCKETS = [(10**9, "<1GB"), (10 * 10**9, "1-10GB"), (50 * 10**9, "10-50GB"), (500 * 10**9, "50-500GB")]
 MAX_LEN = 50  # GitHub's label name limit
 
@@ -59,15 +57,8 @@ def _label(prefix, value):
     return (prefix + str(value))[:MAX_LEN].rstrip()   # GitHub strips a trailing space, so a cut there would 404
 
 
-def voxel_size_found(im):
-    vs = im.get("voxel_size_nm") or {}
-    return bool(vs.get("x") and vs.get("y") and (vs.get("z") or str(im.get("dimensionality", "")).startswith("2D")))
-
-
 def labels_for(r):
     im, da, an = r.get("imaging") or {}, r.get("data") or {}, r.get("annotations") or {}
-    tech = r.get("technical") or {}
-    arrays = [a for a in tech.get("arrays") or [] if isinstance(a, dict)]
     out = []
     if im.get("dimensionality"):
         out.append(_label("dim:", im["dimensionality"]))
@@ -75,25 +66,15 @@ def labels_for(r):
     out += [_label("org:", o) for o in orgs[:4]] or ["org:unknown"]
     out += [_label("modality:", m) for m in im.get("modality") or []]
     out += [_label("fmt:", f) for f in da.get("formats") or []]
-    out += [_label("dtype:", d) for d in dict.fromkeys(a.get("dtype") for a in arrays if a.get("role") in ("raw", "target"))
-            if d and d != "unknown"]
     out += [_label("anno:", t) for t in an.get("types") or []] if an.get("present") else ["anno:none"]
-    out += [_label("label-enc:", e) for e in dict.fromkeys(a.get("encoding") for a in arrays if a.get("role") == "label")
-            if e and e != "unknown"]
-    spdx = (r.get("license") or {}).get("spdx") or "unknown"
-    out.append(_label("license:", spdx))
-    if spdx == "unknown":
-        out.append("license-verification-needed")
+    out.append(_label("license:", (r.get("license") or {}).get("spdx") or "unknown"))
     size = da.get("size_bytes")
-    if size is None:
-        out.append("size:unknown")
-    else:
-        out.append("size:" + next((name for limit, name in SIZE_BUCKETS if size < limit), ">500GB"))
-        if tech.get("size_source") == "estimated":
-            out.append("size-estimated")
-    if tech:
+    out.append("size:" + ("unknown" if size is None else next((n for lim, n in SIZE_BUCKETS if size < lim), ">500GB")))
+    if r.get("technical"):
         out.append("enriched")
-    out.append("voxel-size-found" if voxel_size_found(im) else "voxel-size-missing")
+    vs = im.get("voxel_size_nm") or {}
+    if not (vs.get("x") and vs.get("y") and (vs.get("z") or str(im.get("dimensionality", "")).startswith("2D"))):
+        out.append("voxel-size-missing")
     from tools.readiness import readiness
     status = readiness(r)[0]
     if status != "unknown":
@@ -102,102 +83,44 @@ def labels_for(r):
 
 
 def managed(name):
-    return name in FLAGS or name in RETIRED or any(name.startswith(p) for p in GROUPS)
+    return name in FLAGS or name in RETIRED or name.startswith(RETIRED_PREFIXES) or any(name.startswith(p) for p in GROUPS)
 
 
-def style(name):
-    if name in FLAGS:
-        return FLAGS[name]
-    prefix = next(p for p in GROUPS if name.startswith(p))
-    return GROUPS[prefix]
+def gh(*args):
+    """`gh ...` with 3 tries (GitHub's API fails transiently); exits on the last failure."""
+    for attempt in range(3):
+        r = subprocess.run(["gh", *args], cwd=ROOT, capture_output=True, text=True)
+        if r.returncode == 0:
+            return r.stdout
+        if attempt < 2:
+            time.sleep(5 * 2 ** attempt)
+    sys.exit(f"gh {' '.join(args)} failed:\n{r.stderr.strip()}")
 
 
-def _run(*cmd, check=True):
-    r = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
-    if check and r.returncode != 0:
-        sys.exit(f"{' '.join(cmd)} failed:\n{r.stderr.strip()}")
-    return r.stdout
-
-
-def fetch_pr_head(number, head=None):
-    """Fetch PR `number`'s head commit into refs/remotes/origin/pr-<number>.
-
-    GitHub's pull/<n>/head ref can lag a push by a long time (seen: over half an hour), and labels or
-    auto-merge decisions made from it describe an old record. So read the PR's own branch, at the commit
-    GitHub reports as the PR's head (`head`: {"headRefName", "headRefOid"} if the caller has them).
-    The pull ref is only the fallback, for a branch on a fork or one that's gone."""
-    ref = f"refs/remotes/origin/pr-{number}"
-    if head is None:
-        head = json.loads(_run("gh", "pr", "view", str(number), "--json", "headRefName,headRefOid,isCrossRepository"))
-    oid = head.get("headRefOid")
-    if not head.get("isCrossRepository") and head.get("headRefName") and \
-            subprocess.run(["git", "fetch", "-q", "origin", f"+refs/heads/{head['headRefName']}:{ref}"],
-                           cwd=ROOT, capture_output=True).returncode == 0 and \
-            (not oid or _run("git", "rev-parse", ref).strip() == oid):
-        return ref
-    if oid and subprocess.run(["git", "fetch", "-q", "origin", oid], cwd=ROOT, capture_output=True).returncode == 0:
-        _run("git", "update-ref", ref, oid)          # the exact head commit, even if the branch moved again
-        return ref
-    _run("git", "fetch", "-q", "origin", f"+pull/{number}/head:{ref}")
-    return ref
-
-
-def record_on_pr(number, head=None):
-    """The dataset record added or changed by PR `number` at its current head (read from git, never executed)."""
-    ref = fetch_pr_head(number, head)
-    _run("git", "fetch", "-q", "origin", "main")
-    paths = [p for p in _run("git", "diff", "--name-only", "--diff-filter=AM", f"origin/main...{ref}", "--", "datasets/").split()
-             if p.endswith(".yaml")]
-    if len(paths) != 1:
-        return None, paths
-    return yaml.load(_run("git", "show", f"{ref}:{paths[0]}"), Loader=_NoDatesLoader), paths
-
-
-def record_on_main(record_id, paths_by_id):
-    """The record now on main for a merged PR (it may have been corrected since the merge)."""
-    path = paths_by_id.get(record_id)
-    if path is None:
-        return None, []
-    return yaml.load(_run("git", "show", f"origin/main:{path}"), Loader=_NoDatesLoader), [path]
-
-
-def sync(number, repo_labels, rec=None, paths=None, have=None, head=None):
-    if rec is None:
-        rec, paths = record_on_pr(number, head)
-    if rec is None:
-        print(f"#{number}: expected one record, found {paths}; labels unchanged")
-        return
-    want = set(labels_for(rec))
-    if have is None:
-        have = {lab["name"] for lab in json.loads(_run("gh", "pr", "view", str(number), "--json", "labels"))["labels"]}
-    add = sorted(want - have)
-    remove = sorted(n for n in have - want if managed(n))
+def sync(pr, rec, sha, repo_labels, others, merge):
+    """Set PR `pr`'s labels from `rec` (its record at branch commit `sha`); with `merge`, (un)set auto-merge."""
+    n = str(pr["number"])
+    want = labels_for(rec)
+    have = {lab["name"] for lab in pr["labels"]}
+    add = sorted(set(want) - have)
+    remove = sorted(name for name in have - set(want) if managed(name))
     for name in add:
         if name not in repo_labels:
-            color, desc = style(name)
-            _run("gh", "label", "create", name, "--color", color, "--description", desc, "--force")
+            color, desc = FLAGS.get(name) or GROUPS[next(p for p in GROUPS if name.startswith(p))]
+            gh("label", "create", name, "--color", color, "--description", desc, "--force")
             repo_labels.add(name)
-    cmd = ["gh", "pr", "edit", str(number)]
-    for name in add:
-        cmd += ["--add-label", name]
-    for name in remove:
-        cmd += ["--remove-label", name]
     if add or remove:
-        _run(*cmd)
-    print(f"#{number} {rec.get('id')}: +{add} -{remove}")
-
-
-def sync_all(items, repo_labels):
-    """sync() each (number, kwargs); one failing PR is reported and doesn't stop the others."""
-    failed = []
-    for number, kw in items:
-        try:
-            sync(number, repo_labels, **kw)
-        except SystemExit as e:
-            print(f"#{number}: FAILED {e}")
-            failed.append(number)
-    if failed:
-        sys.exit(f"{len(failed)} PR(s) failed: {failed}")
+        gh("pr", "edit", n, *(f"--add-label={x}" for x in add), *(f"--remove-label={x}" for x in remove))
+    verdict = ""
+    if merge and sha == pr["headRefOid"]:  # otherwise a push is on its way, and its own run decides
+        fails = failures(want, pr, rec, others)
+        if not fails:
+            gh("pr", "merge", n, "--auto", "--merge", "--match-head-commit", sha, "--delete-branch")
+            verdict = "; auto-merge on"
+        elif pr.get("autoMergeRequest"):
+            gh("pr", "merge", n, "--disable-auto")
+            verdict = f"; auto-merge off: {'; '.join(fails)}"
+    print(f"#{n} {rec.get('id')}: +{add} -{remove}{verdict}")
 
 
 def main():
@@ -210,27 +133,35 @@ def main():
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--pr", type=int)
     g.add_argument("--all-open", action="store_true")
-    g.add_argument("--merged", action="store_true")
+    ap.add_argument("--merge", action="store_true", help="enable / disable auto-merge (repo variable AUTO_MERGE)")
     a = ap.parse_args(sys.argv[2:])
-    repo_labels = {lab["name"] for lab in json.loads(_run("gh", "label", "list", "--limit", "1000", "--json", "name"))}
-    if a.pr:
-        sync(a.pr, repo_labels)
-        return
-    if a.merged:
-        _run("git", "fetch", "-q", "origin", "main")
-        paths_by_id = {Path(p).stem: p for p in _run("git", "ls-tree", "-r", "--name-only", "origin/main", "--", "datasets/").split()
-                       if p.endswith(".yaml")}
-        prs = json.loads(_run("gh", "pr", "list", "--state", "merged", "--limit", "2000", "--json", "number,headRefName,labels"))
-        items = []
-        for pr in prs:
-            if pr["headRefName"].startswith(DATASET_BRANCH_PREFIX):
-                rec, paths = record_on_main(pr["headRefName"].removeprefix(DATASET_BRANCH_PREFIX), paths_by_id)
-                items.append((pr["number"], {"rec": rec, "paths": paths, "have": {lab["name"] for lab in pr["labels"]}}))
-        sync_all(items, repo_labels)
-        return
-    prs = json.loads(_run("gh", "pr", "list", "--state", "open", "--limit", "500", "--json",
-                          "number,headRefName,headRefOid,isCrossRepository"))
-    sync_all([(pr["number"], {"head": pr}) for pr in prs if pr["headRefName"].startswith(DATASET_BRANCH_PREFIX)], repo_labels)
+    prs = [pr for pr in json.loads(gh("pr", "list", "--state", "open", "--limit", "500", "--json",
+                                      "number,headRefName,headRefOid,isDraft,labels,autoMergeRequest"))
+           if pr["headRefName"].startswith(DATASET_BRANCH_PREFIX)]
+    # Every dataset branch in one fetch: the PR's own record, and the open ones it may duplicate.
+    subprocess.run(["git", "fetch", "-q", "--prune", "--no-tags", "origin", "+refs/heads/main:refs/remotes/origin/main",
+                    f"+refs/heads/{DATASET_BRANCH_PREFIX}*:refs/remotes/origin/{DATASET_BRANCH_PREFIX}*"],
+                   cwd=ROOT, check=True)
+    heads = dict(line.split() for line in git("for-each-ref", "--format=%(refname:short) %(objectname)",
+                                              f"refs/remotes/origin/{DATASET_BRANCH_PREFIX}").splitlines())
+    recs = pending_records([pr["headRefName"] for pr in prs])
+    others = [load_yaml(p) for p in iter_record_paths()] + list(recs.values())
+    repo_labels = {lab["name"] for lab in json.loads(gh("label", "list", "--limit", "1000", "--json", "name"))}
+    failed = []
+    for pr in prs:
+        if a.pr and pr["number"] != a.pr:
+            continue
+        rec = recs.get(pr["headRefName"])
+        if rec is None:
+            print(f"#{pr['number']}: no new record on {pr['headRefName']}; labels unchanged")
+            continue
+        try:
+            sync(pr, rec, heads.get("origin/" + pr["headRefName"]), repo_labels, others, a.merge)
+        except SystemExit as e:  # one failing PR is reported and doesn't stop the others
+            print(f"#{pr['number']}: FAILED {e}")
+            failed.append(pr["number"])
+    if failed:
+        sys.exit(f"{len(failed)} PR(s) failed: {failed}")
 
 
 if __name__ == "__main__":

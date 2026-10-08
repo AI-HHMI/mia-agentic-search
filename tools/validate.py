@@ -110,10 +110,10 @@ def main():
         if isinstance(rec, dict):
             errs += check_location(p, rec)
             if rec.get("id") in rejected:
-                errs.append(f"id {rec['id']!r} was rejected (state/rejected.yaml or rejections branch)")
+                errs.append(f"id {rec['id']!r} was rejected (state/rejected.yaml or a closed PR)")
             for k in identity_keys(rec):
                 if k in rejected:
-                    errs.append(f"{k} was rejected (state/rejected.yaml or rejections branch)")
+                    errs.append(f"{k} was rejected (state/rejected.yaml or a closed PR)")
             conf = (rec.get("provenance") or {}).get("confidence")
             ver = rec.get("verification") or {}
             if isinstance(conf, (int, float)):

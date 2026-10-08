@@ -81,15 +81,11 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
   record per run (`tools/sample.py`, enforced). Never download a whole dataset.
 - **Untrusted data:** never run code that ships with a dataset, never unpickle, never `pip install` packages
   a dataset names. Samples live in temp dirs and are deleted.
-- **Labels are computed, not added:** `.github/workflows/label.yml` runs `tools/labels.py` on every push:
-  `dim:`, `org:`, `modality:`, `fmt:`, `dtype:`, `anno:`, `label-enc:`, `license:<spdx as written>`,
-  `size:`, `enriched`,
-  `license-verification-needed` (`license.spdx: unknown`), `size-estimated` (`technical.size_source: estimated`:
-  the `size:` label comes from files × voxels × bytes per voxel, `tools/estimate_size.py`, not a listing) and `voxel-size-found` / `voxel-size-missing`
-  (`imaging.voxel_size_nm` has x, y and, for 3D data, z), and `download-ready` / `download-not-ready`
-  (`tools/readiness.py`, the one rule for downloads; CI clones TensorSwitch for its planner). Merged PRs are relabelled from the record on
-  `main` whenever records change there, so a voxel size filled in later shows up on them too.
-  License labels are the SPDX id verbatim, with no interpretation.
+- **Labels are computed, not added:** `.github/workflows/label.yml` runs `tools/labels.py` on every push to an
+  open dataset PR: `dim:`, `org:`, `modality:`, `fmt:`, `anno:`, `license:<spdx as written>` (verbatim, no
+  interpretation), `size:`, `enriched`, `voxel-size-missing` (`imaging.voxel_size_nm` lacks x, y or, for 3D data, z)
+  and `download-ready` / `download-not-ready` (`tools/readiness.py`, the one rule for downloads; CI clones
+  TensorSwitch for its planner and fails without it). Merged PRs keep the labels they were merged with.
 - **Voxel size:** conversion can't proceed without it, so the enricher searches hard for it (skill step 4a:
   headers, repository APIs, archive READMEs, the full paper, code repos, upstream datasets).
 - **Download links:** TensorSwitch fetches files itself, so the enricher also searches hard for direct links it can
@@ -99,10 +95,14 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
   record planner), and fixes what blocks automatic conversion from evidence: concrete sample files, HDF5 dataset
   names, real globs in `path_pattern`, one organism per file set, a clear modality, `annotations.source`, and
   `axes` for every TIFF array (TensorSwitch names RGB samples `s` and unstated page axes `i`; skill step 3c).
-- **Auto-merge** (`tools/automerge.py`) merges PRs whose labels meet a fixed policy (3D / 3D+t PRs only when
-  `download-ready`), but never a possible
-  duplicate (`tools/common.py:similarity_reasons`) of a record on main or another open PR. Agents never merge,
-  approve or close PRs themselves, and never add or remove the `hold` label.
+- **Auto-merge** (`tools/automerge.py`): after labelling, a PR that is enriched, has a dimensionality, a known
+  license and only known formats, isn't a draft or on `hold`, and isn't a possible duplicate
+  (`tools/common.py:similarity_reasons`) of a record on main or another open PR gets GitHub's native auto-merge,
+  which merges once `validate` passes. A human adds `not-duplicate` to clear a possible duplicate. Agents never
+  merge, approve or close PRs themselves, and never add or remove the `hold` or `not-duplicate` labels.
+- **Rejections** aren't stored: a closed, unmerged dataset PR rejects its record id and the identity keys no
+  other record holds (`tools/common.py:load_rejected`, from the PRs' `refs/pull/*/head`), plus the hand-curated
+  `state/rejected.yaml`.
 
 ## Tools (all in `tools/`, run from repo root)
 | Command | Purpose |

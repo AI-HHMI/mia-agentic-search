@@ -1,46 +1,15 @@
-name: record-rejections
+name: delete-closed-dataset-branch
+# A leftover claude/dataset/* branch makes dedup report the dataset as "pending" forever, so delete it once
+# its PR is merged or closed (GitHub keeps the PR's commits as refs/pull/<n>/head either way; a closed PR's
+# record counts as rejected from there, tools/common.py:load_rejected).
 on:
   pull_request:
     types: [closed]
 permissions:
   contents: write
-concurrency: { group: rejections, cancel-in-progress: false }
 jobs:
-  reject:
-    if: >-
-      github.event.pull_request.merged == false &&
-      (startsWith(github.event.pull_request.head.ref, 'claude/dataset/') ||
-       contains(github.event.pull_request.labels.*.name, 'new-datasets'))
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with: { ref: main, fetch-depth: 0 }
-      - uses: actions/setup-python@v5
-        with: { python-version: "3.12" }
-      - run: pip install -r requirements.txt
-      - run: git fetch origin "pull/${{ github.event.pull_request.number }}/head:pr-head"
-      # open dataset branches: their records keep identity keys they share with this one (tools/reject_from_pr.py)
-      - run: git fetch origin "+refs/heads/claude/dataset/*:refs/remotes/origin/claude/dataset/*"
-      # main is protected, so rejections go to the unprotected `rejections` branch,
-      # which tools/common.py:load_rejected() reads alongside state/rejected.yaml.
-      - name: Check out rejections branch
-        run: |
-          if git fetch origin rejections:rejections; then git worktree add ../rej rejections
-          else git worktree add --orphan -b rejections ../rej; fi
-      - run: python tools/reject_from_pr.py origin/main pr-head --out ../rej/state/rejected.yaml
-      - name: Commit and push
-        working-directory: ../rej
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add state/rejected.yaml
-          git diff --cached --quiet || { git commit -m "reject records from #${{ github.event.pull_request.number }}"; git push origin rejections; }
-  # A leftover claude/dataset/* branch makes dedup report the dataset as "pending" forever,
-  # so delete it once its PR is merged or closed (GitHub keeps the PR's commits either way).
   delete-branch:
-    needs: [reject]
-    # run even when `reject` was skipped (merged PRs)
-    if: always() && startsWith(github.event.pull_request.head.ref, 'claude/dataset/')
+    if: startsWith(github.event.pull_request.head.ref, 'claude/dataset/')
     runs-on: ubuntu-latest
     steps:
       - env:
