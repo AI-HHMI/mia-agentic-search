@@ -1,0 +1,173 @@
+schema_version: '1.2'
+id: zenodo-5748891-flywire-em-neuron-ground-truth
+title: 'FlyWire: Online community for whole-brain connectomics'
+short_name: FlyWire fly brain neuron ground truth (EM)
+description: 'Ground-truth segmentations for 3D neuron reconstruction from electron microscopy of the
+  adult fly brain: re-aligned CREMI volumes, densely annotated ''focused'' volumes, sparsely annotated
+  volumes of failure modes, and semi-automatic neuron/glia labels.'
+landing_url: https://zenodo.org/records/5748891
+doi: 10.5281/zenodo.5748891
+repository: Zenodo
+accession: '5748891'
+authors:
+- Sven Dorkenwald
+- Claire McKellar
+- Thomas Macrina
+- Nico Kemnitz
+- Kisuk Lee
+- Ran Lu
+publications:
+- title: 'FlyWire: online community for whole-brain connectomics'
+  doi: 10.1038/s41592-021-01330-0
+  url: https://doi.org/10.1038/s41592-021-01330-0
+date_published: '2021-12-22'
+imaging:
+  modality:
+  - ssTEM
+  dimensionality: 3D
+  voxel_size_nm: null
+  channels: null
+  organism:
+  - Drosophila melanogaster
+  sample: adult fly whole brain (FAFB serial-section EM)
+  labels_stains: []
+data:
+  formats:
+  - hdf5
+  size_bytes: 7468559762
+  n_items: null
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: partial
+  format: HDF5 label volumes in tar.gz archives (cremi_realigned, focused, sparse, glia)
+  source: proofread
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-08T05:29:36Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/5748891
+  - https://zenodo.org/records/5748891
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8903166/fullTextXML
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T06:12:00Z'
+notes: 'Four tar.gz archives (sparse 439 MB, cremi_realigned 1.5 GB, focused 331 MB, glia 5.2 GB) (contents
+  listed by the enricher). The CREMI volumes are re-aligned versions of the CREMI challenge data (see
+  the existing CREMI record on main); the focused, sparse and glia sets are additional. ssTEM is the best-fit
+  modality for the FAFB serial-section EM source but is not stated on the Zenodo page. Voxel size not
+  stated on the Zenodo page or in the FlyWire paper''s Methods text read (only a 64x64x40 nm transform
+  grid is mentioned). download_url left null because the record has four separate archives. enricher:
+  focused and sparse .h5 volumes carry resolution [40, 8, 8] nm (z, y, x) on every dataset; cremi_realigned
+  and glia could not be read (2.1 GB and 5.2 GB members), so voxel_size_nm stays null (subsets may differ).
+  Annotations verified (segmentation datasets seen).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "sparse.tar.gz            438,854,522 B\n  sparse/sparse_vol<NNN>.h5          (e.g. vol012,\
+      \ vol037: 36x576x576, 47,779,840 B)\ncremi_realigned.tar.gz  1,535,080,156 B\n  cremi_realigned/cremi_{a,b,c}_realigned.h5,\
+      \ cremi_b_realigned_new.h5  (cremi_b_realigned.h5 2,148,304,096 B)\nfocused.tar.gz            331,282,554\
+      \ B\n  focused/focused_vol<NNN>.h5        (52x768x768 to 148x768x768, 153-349 MB each)\nglia.tar.gz\
+      \             5,163,342,530 B  (not opened)\n4 files, 7,468,559,762 B (Zenodo listing)\n"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/5748891/files/focused.tar.gz/content
+    size_bytes: 331282554
+    description: Smallest archive (focused, densely annotated volumes); a tar.gz has no random access,
+      so a single volume can't be fetched alone.
+  arrays:
+  - role: raw
+    path_pattern: '{focused,sparse}.tar.gz::*/*_vol*.h5 (/volumes/image)'
+    format: hdf5
+    axes: null
+    shape:
+    - 52
+    - 768
+    - 768
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 253
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Dataset attribute resolution [40.0, 8.0, 8.0]; shapes 36x576x576 (sparse) to 148x768x768
+      (focused_vol001).
+  - role: label
+    path_pattern: '{focused,sparse}.tar.gz::*/*_vol*.h5 (/volumes/segmentation)'
+    format: hdf5
+    axes: null
+    shape:
+    - 52
+    - 768
+    - 768
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range: null
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same file, same shape and resolution attribute as /volumes/image. /annotations/{object_ids,glia_ids,esophagus_ids,swirl_ids}
+      list segment IDs by type in focused volumes.
+  - role: label
+    path_pattern: '{focused,sparse}.tar.gz::*/*_vol*.h5 (/volumes/mask)'
+    format: hdf5
+    axes: null
+    shape:
+    - 52
+    - 768
+    - 768
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range: null
+    encoding: unknown
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same file and shape as /volumes/image; meaning not documented.
+  - role: label
+    path_pattern: focused.tar.gz::focused/focused_vol*.h5 (/volumes/mitochondria)
+    format: hdf5
+    axes: null
+    shape:
+    - 52
+    - 768
+    - 768
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range: null
+    encoding: unknown
+    classes: null
+    alignment: same-grid
+    alignment_notes: Present in most focused volumes (not in vol001, vol004); same shape as the image.
+  notes: 'Zenodo listing: 4 tar.gz, exact sizes. Archives streamed in memory (tarfile); each .h5 member
+    written to a temp file, headers read with h5py, then deleted (nothing run). focused.tar.gz read in
+    full (331,282,554 B; at least 7 volumes, member list in the PR comment truncated), first 90 MB of
+    sparse.tar.gz (5 volumes), first 75 MB of cremi_realigned.tar.gz (only the 2.1 GB cremi_b_realigned.h5
+    header entry, unreadable). glia.tar.gz not opened. All datasets uncompressed, contiguous. Image ranges
+    from 64^3 corner crops only (0..253 over volumes); segmentation/mask/mitochondria corners were all
+    0, so their value ranges are unknown; segmentation encoding instance-ids from the docs (neuron reconstruction
+    ground truth). Axes null: the files give only resolution [40, 8, 8], not axis names (CREMI convention
+    would be zyx). Sample budget used (~496 MB).'
