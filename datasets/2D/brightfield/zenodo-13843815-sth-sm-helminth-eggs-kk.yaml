@@ -46,7 +46,7 @@ annotations:
   - bounding-box
   - classification
   coverage: dense
-  format: 'COCO-format JSON, one file per image in annotations/ (image_00001.json etc.), four egg classes'
+  format: 'Per-image JSON in annotations/ (image_NNNNN.json, same stem as the PNG): filename, size, objects[] with label (ASC., TRI., HKW., SCH.), bbox [xmin, ymin, xmax, ymax] in pixels and area; README calls it COCO-style'
   source: manual
 ml:
   tasks:
@@ -69,5 +69,78 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T15:00:00Z'
-notes: 'Zenodo API: one 36 GB zip (CC BY 4.0). peek_archive: 10,562 PNG images, 10,562 per-image JSON annotation files in annotations/, one .txt and one .md at the root. Image sizes from the record: 2028 x 1520 px (Schistoscope) and 1640 x 1232 px (AI4NTD). Paper (open access, read): 4x / 0.10 NA objective; pixel size not stated. The paper reports a 70/20/10 train/validation/test split (10,820 FOV images in its table versus 10,562 in the deposit), but no split file was seen in the listing, so splits_provided is false. Egg counts per Zenodo: A. lumbricoides 8,600, T. trichiura 4,083, hookworm 4,512, S. mansoni 3,920. Organism lists the three species with NCBI-style names; hookworm (Ancylostomatidae) has no single species name and is omitted. Kato-Katz images from the AI4NTD Kaggle set are included under the same licence statement.'
+  last_checked: '2026-10-08T16:05:00Z'
+notes: 'Zenodo API: one 36 GB zip (CC BY 4.0). peek_archive: 10,562 PNG images, 10,562 per-image JSON annotation files in annotations/, one .txt and one .md at the root. Image sizes from the record: 2028 x 1520 px (Schistoscope) and 1640 x 1232 px (AI4NTD). Paper (open access, read): 4x / 0.10 NA objective; pixel size not stated. The paper reports a 70/20/10 train/validation/test split (10,820 FOV images in its table versus 10,562 in the deposit), but no split file was seen in the listing, so splits_provided is false. Egg counts per Zenodo: A. lumbricoides 8,600, T. trichiura 4,083, hookworm 4,512, S. mansoni 3,920. Organism lists the three species with NCBI-style names; hookworm (Ancylostomatidae) has no single species name and is omitted. Kato-Katz images from the AI4NTD Kaggle set are included under the same licence statement. enricher: annotations.format corrected (per-image JSON, not one COCO file). Organisms: eggs of all classes co-occur in images; no per-species folders.'
+technical:
+  method: sample
+  inspected_at: '2026-10-08T16:05:00Z'
+  inspected_urls:
+  - https://zenodo.org/api/records/13843815
+  - https://zenodo.org/records/13843815/files/STH_and_SM_Dataset_v1_0.zip::STH_and_SM_Dataset_v1_0/documentation/README.md
+  - https://zenodo.org/records/13843815/files/STH_and_SM_Dataset_v1_0.zip::STH_and_SM_Dataset_v1_0/documentation/class_map.txt
+  - https://zenodo.org/records/13843815/files/STH_and_SM_Dataset_v1_0.zip::STH_and_SM_Dataset_v1_0/images/image_00001.png
+  - https://zenodo.org/records/13843815/files/STH_and_SM_Dataset_v1_0.zip::STH_and_SM_Dataset_v1_0/images/image_10562.png
+  - https://zenodo.org/records/13843815/files/STH_and_SM_Dataset_v1_0.zip::STH_and_SM_Dataset_v1_0/annotations/image_00001.json
+  bytes_downloaded: 3514947
+  size_source: file-listing
+  layout:
+    tree: |
+      ./                                   1 file, 36.0 GB
+        STH_and_SM_Dataset_v1_0.zip        21,126 members
+          STH_and_SM_Dataset_v1_0/
+            images/          10562 .png   36.0 GB  (image_00001.png ... image_10562.png)
+            annotations/     10562 .json  7.2 MB   (image_00001.json ..., same stems)
+            documentation/   README.md, class_map.txt
+    n_files: 21127
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/13843815/files/STH_and_SM_Dataset_v1_0.zip::STH_and_SM_Dataset_v1_0/images/image_00001.png
+    - https://zenodo.org/records/13843815/files/STH_and_SM_Dataset_v1_0.zip::STH_and_SM_Dataset_v1_0/annotations/image_00001.json
+    size_bytes: 3514589
+    description: One Schistoscope field of view (2028x1520 RGB PNG) and its per-image box JSON (one hookworm, one S. mansoni egg).
+  arrays:
+  - role: raw
+    path_pattern: STH_and_SM_Dataset_v1_0.zip/STH_and_SM_Dataset_v1_0/images/image_*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1520
+    - 2028
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 23
+    - 195
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: STH_and_SM_Dataset_v1_0.zip/STH_and_SM_Dataset_v1_0/annotations/image_*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    encoding: boxes-table
+    classes:
+    - id: 1
+      name: ASC. (Ascaris lumbricoides)
+    - id: 2
+      name: TRI. (Trichuris trichiura)
+    - id: 3
+      name: HKW. (hookworm)
+    - id: 4
+      name: SCH. (Schistosoma mansoni)
+    alignment: same-grid
+    alignment_notes: annotations/image_N.json pairs with images/image_N.png; boxes [xmin, ymin, xmax, ymax] in pixel coordinates of that image (README); the JSON repeats the image width/height (2028x1520 for image_00001). Labels are strings; class_map.txt maps 0 '???', 1 ASC., 2 TRI., 3 HKW., 4 SCH.
+  notes: 'Listed all 21,126 zip members with exact sizes (35,953,708,159 bytes). Probed image_00001.png (Schistoscope, 1520x2028x3) and image_10562.png (AI4NTD, 1232x1640x3): RGB uint8 PNG, so shape varies by source. Sampled image_00001.png: values [23, 195] (one image), true RGB. Read annotations/image_00001.json, README.md and class_map.txt with peek_archive. Voxel size not found; checked: PNG headers (probe reports no physical size), Zenodo API description, zip README, paper full text (4x/0.10 NA objective only); the two sources use different devices and resolutions, so one pixel size may not apply to all images. No split files in the deposit (paper describes a 70/20/10 split). Organism: one image can hold eggs of several species, so files cannot be grouped per organism.'
