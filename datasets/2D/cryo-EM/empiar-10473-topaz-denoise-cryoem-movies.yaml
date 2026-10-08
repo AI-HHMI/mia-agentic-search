@@ -1,6 +1,7 @@
 schema_version: '1.2'
 id: empiar-10473-topaz-denoise-cryoem-movies
-title: Micrograph frames from 110 internal SEMC/NYSBC test datasets used for Topaz-Denoise model generation & analysis
+title: Micrograph frames from 110 internal SEMC/NYSBC test datasets used for Topaz-Denoise model generation
+  & analysis
 short_name: Topaz-Denoise cryo-EM movie frames (110 sets)
 description: Unaligned multi-frame cryo-EM micrograph movies (about 50 frames each, 16-bit) from 110 Simons
   Electron Microscopy Center / NYSBC datasets used to train and analyse the Topaz-Denoise Noise2Noise
@@ -38,8 +39,8 @@ data:
   size_bytes: 33900000000000
   n_items: null
   access: open
-  download_url: https://www.ebi.ac.uk/empiar/EMPIAR-10473/
-  download_method: other
+  download_url: https://ftp.ebi.ac.uk/empiar/world_availability/10473/data/
+  download_method: http
 annotations:
   present: false
   types: []
@@ -63,15 +64,97 @@ provenance:
   - https://www.ebi.ac.uk/empiar/EMPIAR-10473/
   - https://www.ebi.ac.uk/empiar/api/entry/EMPIAR-10473/
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7567117/fullTextXML
+  - https://ftp.ebi.ac.uk/empiar/world_availability/10473/data/Micrograph_frames_from_110_internal_SEMC-NYSBC_test_datasets.xlsx
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-08T13:20:00Z'
+  last_checked: '2026-10-08T14:05:00Z'
 notes: 'Usable without labels as denoising training data (Noise2Noise from movie frame halves, per the
-  Topaz-Denoise paper); the paper says the 110 NYSBC datasets were deposited here and that some were
-  used for the general models. Pixel size, dose and sample are per dataset in an Excel file inside the
-  entry (not opened), so voxel size and organism are left null. The EMPIAR API states 1,000,000 images
-  of 50 frames, which looks like a placeholder, so n_items is null. Size 33.9 TB as stated by EMPIAR,
-  far above what is practical to download; the enricher should only sample it. File listing not opened.'
+  Topaz-Denoise paper); the paper says the 110 NYSBC datasets were deposited here. The EMPIAR API states
+  1,000,000 images of 50 frames, which looks like a placeholder, so n_items is null. Size 33.9 TB as stated
+  by EMPIAR. enricher: voxel size stays null: the entry''s xlsx gives a pixel size per session from 0.33
+  to 1.54 A (e.g. 18dec19f 0.85 A, 17jun22b 1.10 A). Organism left empty: samples are mostly purified
+  proteins (T20S proteasome, aldolase, GDH, apoferritin, BSA, VLPs, microtubules) plus test images of
+  carbon, gold, ice and blank frames, per the xlsx. download_url now the FTP data folder (was the landing
+  page).'
+technical:
+  method: sample
+  inspected_at: '2026-10-08T14:05:00Z'
+  inspected_urls:
+  - https://ftp.ebi.ac.uk/empiar/world_availability/10473/data/
+  - https://ftp.ebi.ac.uk/empiar/world_availability/10473/data/frames/
+  - https://ftp.ebi.ac.uk/empiar/world_availability/10473/data/frames/17jun22b/
+  - https://ftp.ebi.ac.uk/empiar/world_availability/10473/data/frames/17jun23g/
+  - https://ftp.ebi.ac.uk/empiar/world_availability/10473/data/frames/18dec19f/rawdata/
+  - https://ftp.ebi.ac.uk/empiar/world_availability/10473/data/frames/19may10e/rawdata/
+  - https://ftp.ebi.ac.uk/empiar/world_availability/10473/data/frames/17sep29e/rawdata/
+  - https://ftp.ebi.ac.uk/empiar/world_availability/10473/data/Micrograph_frames_from_110_internal_SEMC-NYSBC_test_datasets.xlsx
+  - https://ftp.ebi.ac.uk/empiar/world_availability/10473/data/frames/18dec19f/rawdata/18dec19f_af1_00020gr_00003sq_v02_00003hln_00002enn.frames.tif
+  - https://ftp.ebi.ac.uk/empiar/world_availability/10473/data/frames/17jun22b/rawdata/17jun22b_a_00012gr_00004sq_v02_00002hln_00002enn.frames.mrc.bz2
+  bytes_downloaded: 198976228
+  size_source: page-stated
+  layout:
+    tree: "data/\n  Micrograph_frames_from_110_internal_SEMC-NYSBC_test_datasets.xlsx  per-session sample,\
+      \ pixel size, dose (18 KB)\n  frames/\n    <session>/rawdata/   110 sessions (17dec19d ... 19may10e)\n\
+      \      <name>.frames.tif       LZW multi-page TIFF movies (e.g. 18dec19f, 19may10e)\n      <name>.frames.mrc.bz2\
+      \   bzip2-compressed MRC movies (e.g. 17jun22b, 17sep29e)\n      transfer.log\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/empiar/world_availability/10473/data/frames/18dec19f/rawdata/18dec19f_af1_00020gr_00003sq_v02_00003hln_00002enn.frames.tif
+    size_bytes: 196860704
+    description: One 40-frame dose-fractionated movie of session 18dec19f (human apoferritin, 0.85 A/px
+      per the xlsx), 3710x3838 uint16 LZW TIFF.
+  arrays:
+  - role: raw
+    path_pattern: data/frames/*/rawdata/*.frames.tif
+    format: tiff
+    axes: tyx
+    shape:
+    - 40
+    - 3710
+    - 3838
+    shape_varies: true
+    dtype: uint16
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 49
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 'Plain multi-page TIFF; the pages are the dose-fractionation frames of one exposure
+      (SerialEM "Dose frac. image"; EMPIAR: unaligned micrograph frames, 50 frames per image), so the
+      page axis is t. Frame count varies (40 in the sample, 50 in the MRC sample).'
+  - role: raw
+    path_pattern: data/frames/*/rawdata/*.frames.mrc.bz2
+    format: mrc
+    axes: tyx
+    shape:
+    - 50
+    - 3710
+    - 3838
+    shape_varies: true
+    dtype: uint16
+    compression: bz2
+    lossy: false
+    chunks: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Whole-file bzip2 around an MRC (mode 6 = uint16, nz = 50 movie frames: the MRC section
+      axis is the frame index, so t; header cell gives 1 A/px, a default: the xlsx says 1.10 A for 17jun22b).
+      Must be decompressed before reading.'
+  notes: 'No complete listing: 110 session folders, some with thousands of movies (19may10e/rawdata has
+    ~6,250 entries); listed 5 sessions by HTTP index. Size 33.9 TB is EMPIAR-stated. Probed one TIFF (LZW,
+    3710x3838 pages, plain layout) and the MRC header of one .mrc.bz2 by decompressing its first 2 MB
+    (own script, requests + bz2). Sampled the TIFF whole (196.9 MB): 40 frames, values [0, 49], mean 0.95,
+    19 unique values, 38% zeros: electron counts per frame (normalization none, inferred). EMPIAR states
+    MRCS for some sessions too; none were seen in the sessions listed. Download: files are direct on ftp.ebi.ac.uk
+    (TIFF checked usable, range requests yes); no single archive, so download_url is the data folder.
+    The .mrc.bz2 files are whole-file bzip2, which TensorSwitch would have to decompress first. Voxel
+    size: per session in the xlsx (0.33-1.54 A), no single value; TIFF/MRC headers carry no or default
+    calibration.'
