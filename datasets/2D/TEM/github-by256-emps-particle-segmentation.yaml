@@ -1,0 +1,150 @@
+schema_version: '1.2'
+id: github-by256-emps-particle-segmentation
+title: 'EMPS: Electron Microscopy Particle Segmentation'
+short_name: Nanoparticle instance segmentation (TEM/SEM)
+description: 465 electron micrographs (SEM and TEM images of nanoparticles, cropped from published figures 2015-2020) with
+  human-drawn polygon annotations converted to per-particle instance segmentation maps (11,594 particles per the Dataset Ninja
+  mirror). The repository provides images/, segmaps/, VIA export, and train/test lists (366 / 99 images).
+landing_url: https://github.com/by256/emps
+doi: null
+repository: GitHub
+accession: null
+authors:
+- Batuhan Yildirim
+- Jacqueline M. Cole
+publications:
+- title: Bayesian Particle Instance Segmentation for Electron Microscopy Image Quantification
+  doi: 10.1021/acs.jcim.0c01455
+  url: https://doi.org/10.1021/acs.jcim.0c01455
+date_published: '2021-03-08'
+imaging:
+  modality:
+  - TEM
+  - other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: Nanoparticles and powders imaged by SEM and TEM, mined from literature figures
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: null
+  n_items: 465
+  access: open
+  download_url: null
+  download_method: other
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: segmaps/ instance segmentation maps; viadata.json (VGG Image Annotator polygons); metadata.csv with per-image regions;
+    train.csv and test.csv
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: EMPS
+  baseline_code_url: https://github.com/by256/emps
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-08T10:14:37Z'
+  evidence_urls:
+  - https://github.com/by256/emps
+  - https://datasetninja.com/emps
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8041280/fullTextXML
+  - https://raw.githubusercontent.com/by256/emps/HEAD/train.csv
+  - https://raw.githubusercontent.com/by256/emps/HEAD/test.csv
+  - https://raw.githubusercontent.com/by256/emps/HEAD/metadata.csv
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T12:10:00Z'
+notes: 'Original project site imagedataextractor.org returned 503, so data location comes from the GitHub repo (images/, segmaps/,
+  metadata.csv, train.csv, test.csv, viadata.json) and the Dataset Ninja mirror (Supervisely format, ~110.8 MB, Kaggle mirror).
+  CC BY 4.0 is stated by Dataset Ninja and the paper links CC BY 4.0; the GitHub repository carries an MIT LICENSE file (likely
+  code). Images come from journal figures reproduced with publisher permission, so reuse terms may be more restricted than
+  the stated license. Image modality is mixed SEM and TEM (paper search terms cover both); schema has no plain SEM value,
+  so other is listed. enricher: images/ and segmaps/ (465 PNGs each) listed from the git tree and probed; annotations verified.
+  Pixel size not stated (scale bars only in images). Split from paper: 366 train/validation, 99 test, grouped by source publication;
+  train.csv has 366 lines and test.csv 99.'
+technical:
+  method: sample
+  size_source: unknown
+  layout:
+    tree: "github.com/by256/emps (commit dd8f86d)\n  README.md, LICENSE (MIT), headerimage.png, .gitignore\n  metadata.csv\
+      \     filename, source DOI, figure locator, VIA regions (polylines)\n  viadata.json     VGG Image Annotator export\n\
+      \  train.csv        366 image ids\n  test.csv         99 image ids\n  images/          465 files  .png (RGB, e.g. 515x512,\
+      \ 512x680)\n  segmaps/         465 files  .png (uint16 instance maps, same names)\n"
+    n_files: 938
+    listing_complete: true
+  sample:
+    urls:
+    - https://raw.githubusercontent.com/by256/emps/dd8f86d/images/00655d9628.png
+    - https://raw.githubusercontent.com/by256/emps/dd8f86d/segmaps/00655d9628.png
+    size_bytes: 191713
+    description: One micrograph and its instance segmentation map
+  arrays:
+  - role: raw
+    path_pattern: images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 515
+    - 512
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 244
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Grey stored as RGB (the three samples are identical in the sample).
+  - role: label
+    path_pattern: segmaps/*.png
+    format: png
+    axes: yx
+    shape:
+    - 515
+    - 512
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 4
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same file name in images/ and segmaps/; same height and width (515x512 and 512x680 checked). 0 = background,
+      1..N = particles (README calls them instance segmentations).
+  - role: label
+    path_pattern: metadata.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: Per image the source paper DOI, figure locator and the VIA polyline regions the segmaps were drawn from;
+      viadata.json holds the same annotations in VIA format.
+  notes: 'File paths from a git tree of commit dd8f86d (938 files: 465 images, 465 segmaps, 8 others). Exact sizes were not
+    available (the GitHub API is not reachable from this session), so size_bytes stays null; Dataset Ninja states ~110.8 MB
+    for its Supervisely copy. Probed 2 images and 2 segmaps; sampled 00655d9628 (192 KB): image RGB with identical samples,
+    min 0 max 244 mean 126; segmap uint16 values 0..4 (79% background), one sample. Shapes vary per image, so no size estimate.'
