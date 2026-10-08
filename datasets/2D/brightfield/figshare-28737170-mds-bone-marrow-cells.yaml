@@ -30,10 +30,7 @@ imaging:
   modality:
   - brightfield
   dimensionality: 2D
-  voxel_size_nm:
-    x: 75
-    y: 75
-    z: null
+  voxel_size_nm: null
   channels: 3
   organism:
   - Homo sapiens
@@ -53,7 +50,7 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: 'Class label by folder name (32 categories per the paper text) plus CSV tables (main/ and add/) listing image path, cell class and diameter; camera resolution setting for add/'
+  format: 'Class label by folder name (32 class folders in main/, 22 in add/) plus CSV tables (main/ and add/) listing image path, cell class and diameter; camera resolution setting for add/'
   source: manual
 ml:
   tasks:
@@ -71,10 +68,69 @@ provenance:
   - https://api.figshare.com/v2/articles/28737170
   - https://ndownloader.figshare.com/files/53444426
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12635297/fullTextXML
+  - https://figshare.com/articles/dataset/A_large_dataset_of_bone_marrow_cells_in_myelodysplastic_syndrome_for_classification_systems/28737170
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T13:30:00Z'
-notes: 'Figshare API: one 250 MB zip, CC BY 4.0 (the paper text links CC BY-NC-ND for the article itself). peek_archive: 25,009 JPEG cell crops in class folders under main/ and add/, plus two CSVs. Paper (open access, read): annotation by a technician with expert review (up to 3 experts); the abstract says 27 categories while the text says 32, class count not resolved. The paper describes a 70/10/20 train/validation/test split (15,987 / 2,352 / 4,503 images) of the main images, but no split file was seen in the listing, so splits_provided is false. Pixel distance 75 nm applies to the whole-slide scans the main crops came from; the add/ images come from digital cameras with other resolution settings. Cropped images are 10% larger than the cell bounding box; each image is one cell, no masks or boxes are provided.'
+  last_checked: '2026-10-08T13:12:00Z'
+notes: 'Figshare API: one 250 MB zip, CC BY 4.0 (the paper text links CC BY-NC-ND for the article itself). Paper: annotation by a technician with expert review (up to 3 experts); the abstract says 27 categories, the text 32. The paper describes a 70/10/20 split (15,987 / 2,352 / 4,503) of the main images, but no split file is included, so splits_provided is false. Crops are 10% larger than the cell bounding box; one cell per image, no masks or boxes. enricher: voxel size set to null (was 75x75): the paper states 75 nm only for the MorphoInsight WSIs (main/, 22,842 images); add/ (2,167 camera images) has no stated pixel size. enricher: main/ has 32 class folders, matching the paper text.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: |-
+      dataset_BM_cell_MDS.zip            249.8 MB (25,011 members, 252.3 MB uncompressed)
+        main/info_main.csv               1.7 MB  (path, classification, diameter)
+        main/<class>/<class>_NNNN.jpeg   22,842 files in 32 class folders
+          e.g. Mature lymphocyte 3958, Late erythroblast 3555, Smudge cell 2215,
+          Band neutrophil 2208, Intermediate erythroblast 2084, Segmented neutrophil 1743,
+          ..., Histiocyte 3, Dysplastic megakaryocyte 1
+        add/info_add.csv                 153.0 KB  (path, classification, diameter, camera resolution)
+        add/<class>/<class>_NNN.jpeg     2,167 files in 22 class folders
+          e.g. Smudge cell 912, Intermediate erythroblast 226, Late erythroblast 212
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/53444426::main/Monocyte/Monocyte_0001.jpeg
+    size_bytes: 7815
+    description: One cropped monocyte image (class from folder name and main/info_main.csv)
+  arrays:
+  - role: raw
+    path_pattern: dataset_BM_cell_MDS.zip::*/*/*.jpeg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 275
+    - 275
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: dataset_BM_cell_MDS.zip::*/info_*.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'One row per image: path (backslash-separated, e.g. main\Band eosinophil\Band eosinophil_0000.jpeg), classification (same as the class folder name), diameter; add/info_add.csv also has a camera resolution column (e.g. 1.6M).'
+  notes: >-
+    Exact Figshare listing (one zip, 249,826,685 B) with all 25,011 zip members (25,009 jpeg + 2 csv).
+    Probed main/Monocyte_0000 (275x275x3), main/Monocyte_0001 (155x155x3) and add/Monocyte_000 (201x201x3): RGB uint8 JPEG, square crops of varying size.
+    Sampling failed (tools/sample.py could not open a member of the figshare ndownloader URL, which has no .zip suffix), so no value range was measured; method is header.
+    Read the head of both CSVs. Split counts in the paper (15,987/2,352/4,503) sum to the 22,842 main/ images, but no split file is included.
+    Voxel size: the paper states a 75 nm pixel distance for the MorphoInsight WSIs (main/) only; add/ images come from SmartV550Df/V650Df/V650D cameras with no stated pixel size; the crops are not stated to be resampled. Checked: JPEG headers (no calibration), Figshare API, CSVs, paper full text.
+    Not convertible yet: 2D (miao layout covers 3D only).
