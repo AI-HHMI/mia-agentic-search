@@ -1,12 +1,12 @@
 schema_version: '1.2'
 id: zenodo-20929332-cocomasld-liver-collagen-tiles
-title: 'CoCoMASLD: picrosirius red liver tiles with binary collagen segmentation masks, plus an example
-  slide and a clustering tile pool (Zenodo)'
+title: 'CoCoMASLD: picrosirius red liver tiles with binary collagen segmentation masks, plus an example slide and
+  a clustering tile pool (Zenodo)'
 short_name: Liver collagen segmentation tiles (PSR histology)
-description: 2,072 paired 512 x 512 picrosirius red (PSR) liver histology tiles and binary collagen masks
-  (968 from the discovery cohort, 1,104 from an extended retraining set), released with the Decoding Fibrosis
-  collagen-phenotype pipeline. The record also holds an example PSR whole-slide image (NDPI) with expected
-  outputs and a 2 GB pool of collagen probability-map tiles for clustering.
+description: 2,072 paired 512 x 512 picrosirius red (PSR) liver histology tiles and binary collagen masks (968 from
+  the discovery cohort, 1,104 from an extended retraining set), released with the Decoding Fibrosis collagen-phenotype
+  pipeline. The record also holds an example PSR whole-slide image (NDPI) with expected outputs and a 2 GB pool
+  of collagen probability-map tiles for clustering.
 landing_url: https://zenodo.org/records/20929332
 doi: 10.5281/zenodo.20929332
 repository: Zenodo
@@ -43,8 +43,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: masks/<tile id>.png binary collagen masks paired by file name with images/<tile id>.jpg (non-zero
-    = collagen); manifest.csv with checksums
+  format: masks/<tile id>.png binary collagen masks paired by file name with images/<tile id>.jpg (non-zero = collagen);
+    manifest.csv with checksums
   source: unknown
 ml:
   tasks:
@@ -67,11 +67,82 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T06:42:23Z'
-notes: 'Read the Zenodo page, API record (CC BY 4.0) and the READMEs inside the two tile zips: 968 pairs
-  of 512 x 512 (151 empty masks) and 1,104 extended retraining pairs, confirmed by the zip index. example_slide.zip
-  is one PSR .ndpi slide with outputs; the 2.0 GB clustering zip holds probability-map tiles, not annotated
-  images. The paper (Hepatology) is not open access, so only its abstract was read: annotators, procedure,
-  scanner, pixel size and species are not stated (organism empty, annotation source unknown, voxel size
-  null). The READMEs carry an unfinished note about confirming release approval and licence; the record
-  states CC BY 4.0. Size is the whole record (tile zips 0.78 GB).'
+  last_checked: '2026-10-08T08:30:00Z'
+notes: 'Read the Zenodo page, API record (CC BY 4.0) and the READMEs inside the two tile zips: 968 pairs of 512
+  x 512 (151 empty masks) and 1,104 extended retraining pairs, confirmed by the zip index. example_slide.zip is
+  one PSR .ndpi slide with outputs; the 2.0 GB clustering zip holds probability-map tiles, not annotated images.
+  The paper (Hepatology) is not open access, so only its abstract was read: annotators, procedure, scanner, pixel
+  size and species are not stated (organism empty, annotation source unknown, voxel size null). The READMEs carry
+  an unfinished note about confirming release approval and licence; the record states CC BY 4.0. Size is the whole
+  record (tile zips 0.78 GB).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                                             4 files  3.4 GB  .zip\ncollagen_segmentation_tiles_cocomasld_v1.zip/collagen_segmentation_tiles_cocomasld_v1/\n\
+      \  images/                                                    968 files  309.8 MB  .jpg  (collagen_tile_NNNNNN.jpg)\n\
+      \  masks/                                                     968 files    2.6 MB  .png  (same ID)\n  README.md,\
+      \ manifest.csv, dataset_summary.json\ncollagen_segmentation_tiles_cocomasld_extended_retraining_v1.zip/collagen_segmentation_tiles_cocomasld_extended_retraining_v1/\n\
+      \  images/                                                   1104 files  465.0 MB  .jpg\n  masks/        \
+      \                                            1104 files    6.5 MB  .png\n  README.md, manifest.csv, dataset_summary.json\n\
+      cdp_clustering_tiles_cocomasld_v1.zip/cdp_clustering_tiles_cocomasld_v1/\n  collagen_tiles/              \
+      \                            35584 files    2.0 GB  .png  (probability-map tiles, no labels)\n  + .md, .json,\
+      \ .csv\nexample_slide.zip/example_slide/                               6 files  593.4 MB  .ndpi 1, .tiff 3,\
+      \ .png 1, .csv 1\n"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/20929332/files/collagen_segmentation_tiles_cocomasld_v1.zip::collagen_segmentation_tiles_cocomasld_v1/images/collagen_tile_000005.jpg
+    - https://zenodo.org/records/20929332/files/collagen_segmentation_tiles_cocomasld_v1.zip::collagen_segmentation_tiles_cocomasld_v1/masks/collagen_tile_000005.png
+    size_bytes: 306120
+    description: One 512x512 PSR RGB tile and its binary collagen mask (tile 000005, 6% collagen)
+  arrays:
+  - role: raw
+    path_pattern: collagen_segmentation_tiles_cocomasld*.zip/*/images/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 14
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: PSR RGB tiles; 512x512 for all 968 v1 tiles per dataset_summary.json.
+  - role: label
+    path_pattern: collagen_segmentation_tiles_cocomasld*.zip/*/masks/*.png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: bool
+    compression: deflate
+    value_range:
+    - 0
+    - 1
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: collagen
+    alignment: same-grid
+    alignment_notes: 'Pairing: masks/<ID>.png belongs to images/<ID>.jpg (README; manifest.csv lists each pair with
+      SHA-256). 1-bit PNG (mode 1); README: any non-zero value is collagen. Same 512x512 grid.'
+  notes: 'Zenodo listing complete: 4 zips, 3,395,321,558 bytes (39,743 members). Read README.md, dataset_summary.json
+    (968 pairs, all 512x512, 151 empty masks) and manifest.csv of the v1 zip. Sample tile 000005: RGB uint8 14-255,
+    mean 191.6; mask 1-bit PNG, values {0: 246,068, 1: 16,076}. One sample; tools/sample.py crashed on the 1-bit
+    mask (bool dtype in np.percentile), so the mask was measured with its helpers after a cast to uint8. The extended-retraining
+    zip has the same layout (listing), not sampled. The clustering zip (probability maps) and example_slide.zip
+    (NDPI WSI + outputs) carry no training labels and are not arrays here. Pixel size not found; checked: JPEG/PNG
+    headers, Zenodo API record, README.md, dataset_summary.json, manifest.csv columns, GitHub repo mkatw/decoding-fibrosis
+    (README: slides scanned at 40x, no tile pixel size; collagen-segmentation code), paper (not open access, abstract
+    only). Whole dataset is 4 zips; download_url is the v1 tile zip.'
