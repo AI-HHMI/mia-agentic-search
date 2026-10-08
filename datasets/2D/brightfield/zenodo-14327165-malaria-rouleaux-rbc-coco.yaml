@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-14327165-malaria-rouleaux-rbc-coco
 title: Malaria Infected Rouleaux Red blood cells
 short_name: Malaria parasites in rouleaux RBCs (blood smear)
-description: 291 thin blood smear microscopy images (2396 x 2396 px JPEG) with rouleaux-formation red blood cells infected with
-  Plasmodium falciparum or P. malariae, annotated with COCO-format bounding boxes for two classes (white blood cell and
-  malaria parasite), split into train / val / test.
+description: 291 thin blood smear microscopy images (2396 x 2396 px JPEG) with rouleaux-formation red blood cells
+  infected with Plasmodium falciparum or P. malariae, annotated with COCO-format bounding boxes for two classes
+  (white blood cell and malaria parasite), split into train / val / test.
 landing_url: https://zenodo.org/records/14327165
 doi: 10.5281/zenodo.14327165
 repository: Zenodo
@@ -61,14 +61,69 @@ provenance:
   - https://zenodo.org/api/records/14327165
   - https://zenodo.org/api/records/14327165/files/ROLEX_COCO_V4_TWO_CLASSES.zip/content
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1016%2Fj.tice.2024.102677%22&format=json&resultType=core&pageSize=3
-  confidence: 0.7
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T05:35:00Z'
-notes: 'Zenodo: 2 classes (white blood cell, plasmodium parasites), COCO format; a 3-class version is available from the researcher
-  on request and is not part of this record. Zip listing (298 files): 291 JPEG images (train 232, val 29, test 30) and three COCO
-  JSON files (SuperAnnotate export; val image entries are 2396 x 2396 px). The paper is not open access (abstract only: thin smear
-  dataset, two Plasmodium species, YOLOv9s benchmark), so stain, microscope, magnification, who annotated and the class counts per image
-  are not confirmed. The listed COCO categories were not read (JSON read was truncated at 200 KB); classes come from the Zenodo page.'
+  last_checked: '2026-10-08T07:05:00Z'
+notes: 'Zenodo: 2 classes (WBC, parasites), COCO format; a 3-class version is available from the researcher on request
+  and is not part of this record. Zip (298 members): 291 JPEGs (train 232, val 29, test 30) and 3 COCO JSON files.
+  Paper not open access (abstract only), so stain, microscope, magnification and annotator are not confirmed. enricher:
+  COCO categories read: 1 WBC, 2 Parasite; 5125 boxes (4999 Parasite, 126 WBC); segmentation fields are the box
+  corners. organisms: every image shows Homo sapiens blood with Plasmodium falciparum or P. malariae; which species
+  is in which image is not recorded.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "./  1 file, 320.8 MB (Zenodo)\n  ROLEX_COCO_V4_TWO_CLASSES.zip   298 members\n    ROLEX_COCO_V4_TWO_CLASSES/\n\
+      \      train_images/  232 .jpeg + train.json (4165 boxes)\n      val_images/     29 .jpeg + val.json   (426\
+      \ boxes)\n      test_images/    30 .jpeg + test.json  (538 boxes)\n      .DS_Store files"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/14327165/files/ROLEX_COCO_V4_TWO_CLASSES.zip/content::ROLEX_COCO_V4_TWO_CLASSES/val_images/326.jpeg
+    - https://zenodo.org/api/records/14327165/files/ROLEX_COCO_V4_TWO_CLASSES.zip/content::ROLEX_COCO_V4_TWO_CLASSES/val_images/val.json
+    size_bytes: 1136336
+    description: One validation image and the COCO file of its split (boxes keyed by image_id; file_name gives the
+      JPEG).
+  arrays:
+  - role: raw
+    path_pattern: ROLEX_COCO_V4_TWO_CLASSES/*_images/*.jpeg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 2378
+    - 2372
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB smear images, about 2300-2396 px square (COCO width/height vary per image).
+  - role: label
+    path_pattern: ROLEX_COCO_V4_TWO_CLASSES/*_images/*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: none
+    encoding: boxes-table
+    classes:
+    - id: 1
+      name: WBC
+    - id: 2
+      name: Parasite
+    alignment: same-grid
+    alignment_notes: 'COCO: one JSON per split; bbox [x, y, w, h] in pixels of the JPEG named by images[].file_name;
+      segmentation repeats the box as a 4-corner polygon.'
+  notes: 'Listed with tools/listing.py (Zenodo, zip expanded): 1 file, 320,825,680 B, 298 members. Read all 3 COCO
+    JSON files in full and probed one JPEG header; no image sampled, so no value range. Voxel size not found; checked:
+    JPEG header (no calibration), Zenodo description, paper (Tissue and Cell 2024, not open access, abstract only).'
