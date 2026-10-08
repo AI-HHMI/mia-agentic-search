@@ -19,7 +19,8 @@ humans review them (merge = accept, close = reject).
 5. **Validate before pushing:** `python tools/validate.py <your files> --run-log <run log> --min-confidence 0.5` must pass.
 6. Never edit or delete records on `main` from a harvest run. Corrections belong to the maintainer routine.
 7. Never push to `main`. **One dataset per PR:** publish each record with `tools/publish.py dataset`
-   (branch `claude/dataset/<id>`), and use `tools/pr_text.py` for the PR title and body, verbatim.
+   (`--run-log F`): it refuses duplicates, pushes branch `claude/dataset/<id>` and opens the PR with the
+   `tools/pr_text.py` title and body, verbatim.
    Search state goes to `claude/state/<routine>` via `tools/publish.py state-push`.
 8. Slack notifications go to **`#mia-harvester`** via the Slack connector. Don't post to any other channel.
 9. **Run until 10 new datasets are published, max 2 hours.** Harvest runs keep searching, one frontier query
@@ -59,8 +60,7 @@ usable for training. Records below 0.5 aren't proposed. The validator caps it by
 - **File location** follows from the record: `datasets/<imaging.dimensionality>/<imaging.modality[0]>/<id>.yaml`.
   `tools/new_record.py` drafts into `drafts/` and `tools/publish.py` files the record; after changing the
   dimensionality or first modality of an existing record, move it with `python tools/place.py <file>`.
-  Put the modality that best describes the images first. Files still in the old `datasets/<repository>/`
-  layout pass validation with a warning.
+  Put the modality that best describes the images first.
 - `repository`: where the data is *hosted*. A dataset on its own website → `LabWebsite` or `other`.
 - `voxel_size_nm`: in **nanometres**, so 0.116 µm → 116. For 2D data, `z: null`.
 - `organism`: NCBI scientific names (`Mus musculus`, not "mouse").
@@ -109,11 +109,11 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
 |---|---|
 | `python -m tools.sources <empiar\|zenodo\|bioimage_archive\|idr> "<query>" --limit N` | structured repository search → candidate JSON lines |
 | `python tools/frontier.py next\|touch\|add --routine R` | which queries to run next; mark them searched |
-| `python tools/dedup.py ...` | already in catalog / rejected? |
+| `python tools/dedup.py ...` / `--record F` | already in catalog / open PR / rejected? (fetches main + dataset branches first) |
 | `python tools/new_record.py --id ID --repository REPO --by ROUTINE` | schema skeleton ("TODO" fields must be replaced) |
 | `python tools/validate.py [paths] [--run-log F] [--min-confidence 0.5]` | schema + catalog rules |
 | `python tools/run_log.py start\|query\|fetched\|event\|finish` | structured run log (monitoring) |
-| `python tools/publish.py state-pull\|state-push --routine R` / `dataset <file>` | restore/save search state; push one record to its own branch |
+| `python tools/publish.py state-pull\|state-push --routine R` / `dataset <file> [--run-log F]` | restore/save search state; dedup, push one record to its own branch and open its PR |
 | `python tools/pr_text.py <file> --title\|--body [--run-log F]` | PR title and body for a record (use verbatim) |
 | `python tools/paper.py --doi D \| --pmid P \| --title T` | find a paper and read its full text (Europe PMC / bioRxiv) |
 | `python tools/peek_archive.py <zip url> [--cat member]` | list files inside a remote zip without downloading it, or print a text member |
@@ -127,7 +127,7 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
 | `python tools/download_queue.py next\|record\|list` | the download queue and the downloads list (`state/downloads.json` on `claude/state/downloader`) |
 | `python tools/miao_layout.py <file> --root R --tensorswitch SRC --label-class C [--name N] [--whole]` | plan a record (sample unit, or every file with `--whole`) into the miao layout (miao#13), one crop per raw/label pair: MCP steps + label metadata, read-only |
 | `python tools/miao_run.py <plan.json> [--finalize]` | run that plan crop by crop with TensorSwitch (resumable; downloads deleted per crop), or record crops the MCP already verified |
-| `python tools/place.py <file>\|--all\|--pr-branches` | move records to `datasets/<dimensionality>/<modality>/` |
+| `python tools/place.py <file>` | move records to `datasets/<dimensionality>/<modality>/` |
 | `python tools/publish.py pr-pull <id>` / `pr-update <file>` | enricher: edit the record on an open PR's branch |
 | `python tools/check_links.py [--oldest N] [--write]` | link rot check |
 | `python tools/build_site.py` | build dashboard into `site/` |

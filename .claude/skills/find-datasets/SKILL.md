@@ -5,8 +5,7 @@ description: Harvest run. Search one source family until 10 new usable microscop
 
 # find-datasets
 
-Arguments: `$ARGUMENTS`. Parse `source` (required), `target` (default 10; `limit` is an old name for it)
-and `dry-run` (flag).
+Arguments: `$ARGUMENTS`. Parse `source` (required), `target` (default 10) and `dry-run` (flag).
 `ROUTINE=harvest-<source>`, `TARGET=<target>` (default 10).
 
 Read `CLAUDE.md` first. Its hard rules and "usable" criteria apply to every step.
@@ -21,7 +20,7 @@ Read `CLAUDE.md` first. Its hard rules and "usable" criteria apply to every step
 ## 0. Setup
 ```bash
 pip install -q -r requirements.txt
-git fetch origin                     # needed so dedup sees main, rejections and pending dataset branches
+git fetch origin                     # dedup.py and publish.py re-fetch main and dataset branches themselves
 git checkout -q --detach origin/main
 python tools/publish.py state-pull --routine $ROUTINE      # skip in dry-run
 python tools/run_log.py start --routine $ROUTINE --target $TARGET   # add --dry-run in dry-run; note the printed path
@@ -35,7 +34,7 @@ least one but fewer than `target` before the cutoff is still a success. Work thr
 
 ```
 while python tools/run_log.py continue; do      # exit 1 = stop (`target` datasets published, or 110 min used)
-    KEY = python tools/frontier.py next --routine $ROUTINE --fresh      # e.g. ["zenodo: FIB-SEM ground truth"]
+    KEY = python tools/frontier.py next --routine $ROUTINE      # e.g. ["zenodo: FIB-SEM ground truth"]
     if KEY is empty: add 3–5 new queries (see "Growing the frontier"), then retry;
                      if you still have none, stop with --stop-reason frontier-exhausted
     python tools/run_log.py query "<KEY>"
@@ -148,14 +147,13 @@ log `event error --id <slug> --reason "<validator message>"`.
 ## 5. Publish each dataset as its own PR (skip in dry-run)
 For each valid record, right after it validates:
 ```bash
-python tools/publish.py dataset <file>            # pushes claude/dataset/<id>; prints the branch
-python tools/pr_text.py <file> --title > /tmp/pr_title.txt
-python tools/pr_text.py <file> --body --run-log <run log path> > /tmp/pr_body.md
+python tools/publish.py dataset <file> --run-log <run log path>   # prints the PR URL
 ```
-Open a PR from that branch into `main`, using **exactly** that title and body (don't rewrite them).
-Use `gh pr create --base main --head claude/dataset/<id> --title "$(cat /tmp/pr_title.txt)" --body-file /tmp/pr_body.md`
-or the GitHub tooling available in this session. A workflow adds the `new-datasets` label automatically.
-Then log `python tools/run_log.py event added --id <slug> --pr-url <PR url>`.
+This re-runs dedup against freshly fetched main, open dataset PRs and rejections, and refuses (non-zero
+exit) a duplicate: then log `event duplicate` and move on. Otherwise it pushes `claude/dataset/<id>`, opens
+the PR with the `tools/pr_text.py` title and body, and logs `event added`. If only `gh pr create` fails, open
+the PR with that title and body verbatim using the GitHub tooling of this session, then log
+`run_log.py event added --id <slug> --pr-url <PR url>`.
 
 Never publish more than `target` datasets in one run, and never put two datasets in one PR. In dry-run, log
 `event added --id <slug>` without `--pr-url`; that counts towards the target for `run_log.py continue`.
@@ -169,14 +167,10 @@ python tools/publish.py state-push --routine $ROUTINE      # skip in dry-run
 ```
 
 ## 7. Notify
-If a Slack connector is available, post to `#mia-harvester` **only** when one of these is true:
-- the run status is `failed`,
-- the run hit the time limit or exhausted the frontier **without** finding a new dataset,
-- `counts.error ≥ 3`,
-- you added a record with `confidence ≥ 0.9` **and** `annotations.types` containing segmentation,
-  tracking or synapse labels (a "notable find"). Include the title, dataset page link and PR link.
-
-Otherwise stay quiet. The maintainer sends a daily digest.
+If a Slack connector is available, post to `#mia-harvester` **only** for a notable find: a record you added
+with `confidence ≥ 0.9` **and** `annotations.types` containing segmentation, tracking or synapse labels.
+Include the title, dataset page link and PR link. Otherwise stay quiet: the watchdog reports failed runs and
+the maintainer sends a daily digest.
 
 ## 8. Final message
 End with a short summary: the queries run, the runtime and stop reason, the counts from `run_log.py show`, and one line per PR opened (title + URL).

@@ -85,6 +85,30 @@ def tree_names(raw):
     return names
 
 
+def fetch_catalog():
+    """Fetch main and every dataset branch (pruning deleted ones), so dedup never works from stale refs."""
+    git("fetch", "-q", "--no-tags", "--prune", "origin", "+refs/heads/main:refs/remotes/origin/main",
+        f"+refs/heads/{DATASET_BRANCH_PREFIX}*:refs/remotes/origin/{DATASET_BRANCH_PREFIX}*")
+
+
+def open_pr_branches():
+    """Head branches of open PRs, or None without gh; dataset branches without an open PR don't count as pending."""
+    try:
+        out = subprocess.run(["gh", "pr", "list", "--state", "open", "--limit", "1000", "--json", "headRefName",
+                              "-q", ".[].headRefName"], cwd=ROOT, capture_output=True, text=True, timeout=60)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    return out.stdout.split() if out.returncode == 0 else None
+
+
+def main_records(ref="origin/main"):
+    """{path: record} on `ref`, read from git rather than the working tree, which may be hours old."""
+    paths = [p for p in git("ls-tree", "-r", "--name-only", ref, "--", "datasets/").split() if p.endswith(".yaml")]
+    blobs = git_objects(f"{ref}:{p}" for p in paths)
+    return {p: yaml.load(blobs[f"{ref}:{p}"][1].decode(), Loader=_NoDatesLoader) or {}
+            for p in paths if f"{ref}:{p}" in blobs}
+
+
 def pending_records(branches=None):
     """Records proposed on open claude/dataset/* branches but not yet on main: {branch: record}.
 
@@ -213,12 +237,6 @@ def canonical_path(record):
     return DATASETS_DIR / dim / mods[0] / f"{record['id']}.yaml"
 
 
-def legacy_path(record):
-    """The old layout, datasets/<repository-lowercase>/<id>.yaml; still accepted until every PR is moved."""
-    repo, rid = (record or {}).get("repository"), (record or {}).get("id")
-    return DATASETS_DIR / repo.lower() / f"{rid}.yaml" if isinstance(repo, str) and rid else None
-
-
 def rel(path):
     try:
         return str(Path(path).relative_to(ROOT))
@@ -245,7 +263,7 @@ def identity_keys(record):
         keys.append("doi:" + record["doi"].lower())
     if record.get("accession"):
         keys.append(f"acc:{record.get('repository', '').lower()}:{record['accession'].lower()}")
-    if record.get("landing_url"):
+    if record.get("landing_url") and not keys:  # several datasets can share a landing page (challenge sites)
         keys.append("url:" + normalize_url(record["landing_url"]))
     return keys
 
@@ -304,6 +322,9 @@ def similarity_reasons(a, b):
     da, db = ((r.get("data") or {}).get("download_url") for r in (a, b))
     if da and db and normalize_url(da) == normalize_url(db):
         reasons.append("same download URL")
+    ia, ib = ({k for k in identity_keys(r) if not k.startswith("url:")} for r in (a, b))
+    if ia and ib and not ia & ib:  # each has its own DOI / accession: different unless the download is the same
+        return reasons
     ta, tb = normalize_title(a.get("title")), normalize_title(b.get("title"))
     if not (ta and tb):
         return reasons

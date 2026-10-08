@@ -31,7 +31,7 @@ from tools.common import (HARVEST_TARGET, ROOT, RUN_BUDGET_MIN, RUNS_DIR, SEARCH
                           utcnow)
 
 CURRENT = STATE_DIR / ".current_run"
-EVENTS = ["candidate", "added", "duplicate", "rejected", "low-confidence", "error", "enriched", "skipped"]
+EVENTS = ["added", "duplicate", "rejected", "low-confidence", "error", "enriched", "skipped"]
 
 
 def _current():
@@ -69,6 +69,17 @@ def log_inspection(kind, url, record_id=None, **info):
         d["fetched_urls"].append(url)
     d.setdefault("inspected", []).append({"kind": kind, "url": url, "id": record_id, "at": utcnow(), **info})
     _save(p, d)
+
+
+def log_event(p, kind, record_id=None, reason=None, pr_url=None):
+    """Append an event to the run log at `p`; returns the updated log."""
+    d = _load(p)
+    d["events"].append({"type": kind, "id": record_id, "reason": reason, "pr_url": pr_url, "at": utcnow()})
+    d["counts"][kind] = d["counts"].get(kind, 0) + 1
+    if pr_url:
+        d["pr_urls"].append(pr_url)
+    _save(p, d)
+    return d
 
 
 def sampled_bytes(record_id):
@@ -144,13 +155,11 @@ def main():
     elif a.cmd == "query":
         d["queries"].append(a.text)
     elif a.cmd == "event":
-        d["events"].append({"type": a.type, "id": a.id, "reason": a.reason, "pr_url": a.pr_url, "at": utcnow()})
-        d["counts"][a.type] = d["counts"].get(a.type, 0) + 1
-        if a.pr_url:
-            d["pr_urls"].append(a.pr_url)
+        print(json.dumps(log_event(p, a.type, a.id, a.reason, a.pr_url)["counts"]))
+        return
     elif a.cmd == "continue":
         mins = _elapsed_min(d)
-        target = d.get("target") or 1  # run logs from before targets existed stopped after one
+        target = d["target"]
         found = d["counts"]["added"] >= target and not a.time_only
         info = {"elapsed_min": round(mins, 1), "search_cutoff_min": SEARCH_CUTOFF_MIN,
                 "budget_min": RUN_BUDGET_MIN, "new_datasets": d["counts"]["added"], "target": target}
@@ -165,7 +174,7 @@ def main():
         return
     elif a.cmd == "finish":
         d["finished_at"] = utcnow()
-        d["stop_reason"] = a.stop_reason or ("found" if d["counts"]["added"] >= (d.get("target") or 1) else
+        d["stop_reason"] = a.stop_reason or ("found" if d["counts"]["added"] >= d["target"] else
                                              "time-limit" if _elapsed_min(d) >= SEARCH_CUTOFF_MIN else "frontier-exhausted")
         done = d["counts"].get("added", 0) + d["counts"].get("enriched", 0)
         d["status"] = a.status or ("failed" if d["counts"]["error"] and not done

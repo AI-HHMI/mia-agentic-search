@@ -27,6 +27,10 @@ jobs:
             echo "::error::a dataset PR must change exactly one file under datasets/"; exit 1
           fi
           python tools/validate.py $changed --min-confidence 0.5
+      - name: Dataset PRs don't repeat a record of another open dataset PR
+        if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'claude/dataset/')
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: python tools/dedup.py --record "$(git diff --name-only origin/${{ github.base_ref }}...HEAD)" || [ $? = 3 ]
       - name: Slack alert on failure
         if: failure() && env.SLACK_WEBHOOK_URL != ''
         run: |

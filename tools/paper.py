@@ -19,7 +19,9 @@ from pathlib import Path
 
 import requests
 
-HEADERS = {"User-Agent": "mia-agentic-search/1.0 (microscopy dataset catalog)"}
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from tools.common import polite_get  # noqa: E402
+
 EPMC = "https://www.ebi.ac.uk/europepmc/webservices/rest"
 # Case-sensitive units, so concentrations like "5 µM" don't match.
 UNITS = re.compile(r"\d+(\.\d+)?\s*(nm|µm|μm|um|microns?)\b")
@@ -36,7 +38,7 @@ used = []
 
 
 def get(url, **params):
-    r = requests.get(url, params=params or None, headers=HEADERS, timeout=40)
+    r = polite_get(url, params=params or None, timeout=40)
     r.raise_for_status()
     used.append(r.url)
     return r

@@ -14,12 +14,11 @@ import sys
 
 import requests
 
-TIMEOUT = 30
-HEADERS = {"User-Agent": "mia-agentic-search/1.0 (microscopy dataset catalog)"}
+from tools.common import polite_get
 
 
 def _get(url, **params):
-    r = requests.get(url, params=params or None, headers=HEADERS, timeout=TIMEOUT)
+    r = polite_get(url, params=params or None, timeout=30)
     r.raise_for_status()
     return r.json()
 
