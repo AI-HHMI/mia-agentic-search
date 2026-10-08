@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zenodo-7544194-dopm-mouse-organoids-meshes
 title: Mouse Organoids imaged with Dual Oblique Plane Microscopy
 short_name: Mouse organoid nuclei and membrane meshes (dOPM)
-description: Two-channel (SiR-DNA nuclei, tdTomato membrane) 3D time-lapse movies of six mouse mammary organoids imaged
-  for 24 h with dual-view oblique plane (light-sheet) microscopy, with manually created and corrected nucleus and cell
-  membrane segmentation meshes, labelled mosaic images for seen and unseen validation frames, trained models, and a
-  spinning-disk mouse ES cell example.
+description: Two-channel (SiR-DNA nuclei, tdTomato membrane) 3D time-lapse movies of six mouse mammary
+  organoids imaged for 24 h with dual-view oblique plane (light-sheet) microscopy, with manually created
+  and corrected nucleus and cell membrane segmentation meshes, labelled mosaic images for seen and unseen
+  validation frames, trained models, and a spinning-disk mouse ES cell example.
 landing_url: https://zenodo.org/records/7544194
 doi: 10.5281/zenodo.7544194
 repository: Zenodo
@@ -32,8 +32,9 @@ imaging:
   channels: 2
   organism:
   - Mus musculus
-  sample: Cultured mouse mammary gland organoids (nuclei SiR-DNA, membrane tdTomato) imaged for 24 h at 11 min intervals on a
-    dual-view oblique plane microscope; supplementary mouse embryonic stem cell aggregate (H2B-RFP) on a spinning disk
+  sample: Cultured mouse mammary gland organoids (nuclei SiR-DNA, membrane tdTomato) imaged for 24 h at
+    11 min intervals on a dual-view oblique plane microscope; supplementary mouse embryonic stem cell
+    aggregate (H2B-RFP) on a spinning disk
   labels_stains:
   - SiR-DNA
   - tdTomato
@@ -51,8 +52,8 @@ annotations:
   types:
   - instance-segmentation
   coverage: dense
-  format: 'Mosaic TIFFs (labelled images, nuclei and membrane) plus segmentation meshes in .bmf binary mesh format (DM3D
-    Fiji plugin); trained models as .h5'
+  format: Mosaic TIFFs (labelled images, nuclei and membrane) plus segmentation meshes in .bmf binary
+    mesh format (DM3D Fiji plugin); trained models as .h5
   source: mixed
 ml:
   tasks:
@@ -75,10 +76,111 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T06:05:00Z'
-notes: 'Files per readme.md and API (6.68 GB): binned-images (6 movies, half resolution, 8-bit), meshes (nucleus and membrane,
-  six movies), seen-data (Tile_2 frames 3-5, 21-25, 133), unseen-data (frame t45 of Tiles 1-6), 4 models, spinning-disk
-  example, tutorial. n_items = 15 manually segmented 3D frames (9 seen + 6 unseen) per the preprint; the whole movies carry
-  network-assisted segmentations that were hand-corrected (source mixed). dOPM voxel size not found in readme or preprint
-  text; the mESC spinning-disk example is 244 nm xy / 2 um z. Preprint read, not the journal version. Seen = training,
-  unseen = validation, no split file.'
+  last_checked: '2026-10-08T06:23:00Z'
+notes: 'Files per readme.md and API (6.68 GB): binned-images (6 movies, half resolution, 8-bit), meshes
+  (nucleus and membrane, six movies), seen-data (Tile_2 frames 3-5, 21-25, 133), unseen-data (frame t45
+  of Tiles 1-6), 4 models, spinning-disk example, tutorial. n_items = 15 manually segmented 3D frames
+  (9 seen + 6 unseen) per the preprint; the whole movies carry network-assisted segmentations that were
+  hand-corrected (source mixed). dOPM voxel size not found in readme or preprint text; the mESC spinning-disk
+  example is 244 nm xy / 2 um z. Preprint read, not the journal version. Seen = training, unseen = validation,
+  no split file. enricher: seen/unseen TIFFs are ImageJ-calibrated 0.17381 um in x, y and z (isotropic
+  173.8 nm); binned movies are half resolution, so voxel_size_nm stays null (subsets differ).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'readme.md
+
+      binned-images.zip/binned-images/Tile_<1-6>_processed_binned-2b.tif      6   6.2 GB
+
+      meshes.zip/{dna-meshes,membrane-meshes}/Tile_<n>_*.bmf             12   915 MB
+
+      models.zip/models/*.h5                                              4   3.7 GB
+
+      seen-data.zip/seen-data/images/Tile_2_<frames>.tif                  3   655 MB
+
+      seen-data.zip/seen-data/mosaics/Tile_2_<frames>-{dna,membrane}-mosaic.tif  6  1.9 GB
+
+      seen-data.zip/seen-data/meshes/*.bmf                                6
+
+      unseen-data.zip/unseen-data/images/Tile_<1-6>_t45.tif               6   361 MB
+
+      unseen-data.zip/unseen-data/mosaics/Tile_<n>_t45_{dna,membrane}-mosaic.tif 12  1.1 GB
+
+      unseen-data.zip/unseen-data/meshes/*.bmf                           12
+
+      spinning-disk-example.zip (2 tif, 2 bmf), tutorial-data.zip (3 tif)
+
+      8 files, 6,683,000,688 B; 74 zip members (sizes unpacked)
+
+      '
+    n_files: 8
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7544194/files/unseen-data.zip::unseen-data/images/Tile_1_t45.tif
+    - https://zenodo.org/records/7544194/files/unseen-data.zip::unseen-data/mosaics/Tile_1_t45_dna-mosaic.tif
+    size_bytes: 16693913
+    description: One unseen validation frame (Tile 1, t45, 2 channels) and its DNA label mosaic (compressed
+      member sizes as downloaded).
+  arrays:
+  - role: raw
+    path_pattern: '{seen,unseen}-data.zip::*/images/*.tif'
+    format: tiff
+    axes: zcyx
+    shape:
+    - 318
+    - 2
+    - 272
+    - 269
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ hyperstack, 2 channels (SiR-DNA nuclei, tdTomato membrane). Seen-data files
+      hold several frames (e.g. Tile_2_3-5), not probed.
+  - role: label
+    path_pattern: '{seen,unseen}-data.zip::*/mosaics/*-mosaic.tif'
+    format: tiff
+    axes: zyxs
+    shape:
+    - 318
+    - 272
+    - 269
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 13
+    encoding: rgb-colors
+    classes: null
+    alignment: same-grid
+    alignment_notes: <image>-dna-mosaic.tif / -membrane-mosaic.tif pair with images/<image>.tif; same
+      z, y, x shape, origin and calibration in the sampled pair (raw has the extra channel axis).
+  - role: label
+    path_pattern: '*.zip::*/*.bmf'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    encoding: other
+    classes: null
+    alignment: unknown
+    alignment_notes: Binary mesh format (DM3D plugin / binarymeshformat), nucleus and membrane meshes
+      per movie or frame; not read.
+  notes: 'listing.py (Zenodo, --expand-zips): 8 files, exact sizes, complete. Members are deflated, so
+    probe.py could not read headers; sample.py read unseen Tile_1_t45.tif (ImageJ ZCYX 318x2x272x269 uint8,
+    0..255, mean 9.5) and Tile_1_t45_dna-mosaic.tif (ZYXS RGB uint8, 14 values 0..13, 99% zero: coloured
+    label mosaic). ImageJ metadata of both: unit microns, XResolution 5.753416 px/um, spacing 0.17381
+    um (isotropic 173.8 nm). Binned movies (half resolution per readme, so ~2x) were not read and are
+    left out of arrays: their axes are not known. Value ranges from one file. Paper full text not reachable
+    (bioRxiv API 500, source XML empty).'
