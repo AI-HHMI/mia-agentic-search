@@ -1,0 +1,154 @@
+schema_version: '1.2'
+id: tudatalib-3799-yeast-microstructures
+title: Yeast in Microstructures instance segmentation dataset
+short_name: Yeast cells in microfluidic traps (brightfield)
+description: 493 densely annotated 128x128 brightfield microscopy images of budding yeast (Saccharomyces
+  cerevisiae) growing in microfluidic trap structures, with pixel-wise instance masks, class labels and
+  bounding boxes for yeast cells and trap microstructures. Split into train/validation/test; released
+  with evaluation code (EMBC 2023). About 9k unlabeled images from the same setup are published separately.
+landing_url: https://christophreich1996.github.io/yeast_in_microstructures_dataset/
+doi: null
+repository: other
+accession: null
+authors:
+- Christoph Reich
+- Tim Prangemeier
+- André O. Françani
+- Heinz Koeppl
+publications:
+- title: An Instance Segmentation Dataset of Yeast Cells in Microstructures
+  doi: null
+  url: https://arxiv.org/abs/2304.07597
+date_published: null
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Saccharomyces cerevisiae
+  sample: Yeast cells in microfluidic trap microstructures
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: null
+  n_items: 493
+  access: open
+  download_url: https://tudatalib.ulb.tu-darmstadt.de/bitstream/handle/tudatalib/3799/yeast_cell_in_microstructures_dataset.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - bounding-box
+  coverage: dense
+  format: 'PyTorch .pt files per split: inputs [128x128], instances [Nx128x128] masks, classes [N], bounding_boxes
+    [Nx4]'
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/ChristophReich1996/Yeast-in-Microstructures-Dataset
+license:
+  spdx: MIT
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-09-30T20:13:54Z'
+  evidence_urls:
+  - https://christophreich1996.github.io/yeast_in_microstructures_dataset/
+  - https://github.com/ChristophReich1996/Yeast-in-Microstructures-Dataset
+  - https://arxiv.org/abs/2304.07597
+  - https://arxiv.org/html/2304.07597
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: false
+  last_checked: '2026-10-07T19:06:06Z'
+notes: 'Formats listed as other because the data are PyTorch .pt files (per GitHub README). The TUdatalib
+  record page returned an Anubis access-denied page and the zip could not be listed (peek_archive: not
+  a zip / not reachable), so file listing, size, DOI and exact split counts were not verified. Split counts
+  quoted by the paper HTML summary (296/249/148) do not sum to 493 and were not used. Pixel size not stated
+  on the project page, GitHub README or paper text available (images were cropped to 128x128 from higher-resolution
+  raw data). License MIT as stated on the project page.'
+technical:
+  method: metadata-only
+  inspected_at: '2026-09-30T20:58:55Z'
+  inspected_urls:
+  - https://tudatalib.ulb.tu-darmstadt.de/bitstream/handle/tudatalib/3799/yeast_cell_in_microstructures_dataset.zip
+  bytes_downloaded: 0
+  size_source: unknown
+  layout:
+    tree: "(from the GitHub README, not from a listing)\n{train,val,test}/\n  inputs/          one .pt\
+      \ per sample, image [128, 128]\n  instances/       one .pt per sample, instance masks [N, 128, 128]\n\
+      \  classes/         one .pt per sample, class per instance [N]\n  bounding_boxes/  one .pt per sample,\
+      \ boxes [N, 4] (x0 y0 x1 y1)\n"
+    n_files: null
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: '{train,val,test}/inputs/*.pt'
+    format: other
+    axes: yx
+    shape:
+    - 128
+    - 128
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    lossy: null
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '{train,val,test}/instances/*.pt'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    lossy: null
+    chunks: null
+    value_range: null
+    normalization: none
+    encoding: one-hot
+    classes: null
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: Per README, each sample has one .pt file (same name) in each of inputs/, instances/,
+      classes/, bounding_boxes/; instances are [N, 128, 128] per-instance masks on the input grid.
+  - role: label
+    path_pattern: '{train,val,test}/bounding_boxes/*.pt'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    lossy: null
+    chunks: null
+    value_range: null
+    normalization: none
+    encoding: boxes-table
+    classes: null
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: '[N, 4] boxes in x0y0x1y1 pixel coordinates of the 128x128 input (README).'
+  notes: 'Not inspected: the TUdatalib download URL (and the record page) returns an Anubis bot-protection
+    HTML page (HTTP 200, text/html) instead of the zip, so no listing, probe or sample was possible. Layout
+    and shapes above are from the GitHub README (Dataformat section). The files are PyTorch .pt tensors,
+    which can only be read by torch.load (pickle); the enricher never unpickles, so even with access,
+    dtype and value ranges would need a human check. Instance masks are stored as a stack of N per-instance
+    masks (one-hot style), not an ID image. Repo LICENSE file is MIT (for the code); project page states
+    MIT for the dataset (harvester). Third pass 2026-10-07: no size estimate: dtypes and label shapes
+    unknown (.pt tensors, never unpickled) and the download URL still returns the Anubis bot-check HTML
+    (HTTP 200, text/html, 7,433 B), so no file count or size.'
