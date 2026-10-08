@@ -6,8 +6,8 @@ description: Cell-membrane annotations (binary target masks) for cryo-ET tomogra
   a few experimental tomograms, used to train and test the ETSAM membrane-segmentation model. Per the paper, training
   uses 83 experimental tomograms from 25 CryoET Data Portal datasets plus 28 simulated tomograms; the test set has 10
   experimental tomograms whose ground truth was cleaned and corrected manually slice by slice (the deposit page also
-  mentions 10 simulated and 17 experimental test tomograms). Most experimental tomograms are not in the deposit and must be
-  fetched from the CryoET Data Portal.
+  mentions 10 simulated and 17 experimental test tomograms). Most experimental tomograms are not in the deposit and must
+  be fetched from the CryoET Data Portal.
 landing_url: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/K4JKCW
 doi: 10.7910/DVN/K4JKCW
 repository: other
@@ -67,9 +67,73 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T20:40:00Z'
-notes: 'Dataverse v5 lists 165 files (127.3 GB): <CDP dataset>/<run>/target_mask (experimental masks), emdb/ and empiar_11718/ (mask + tomogram),
-  polnet_data_1/ (10 simulated, 1 GB each) and polnet_data_2/ (18 simulated, 250 MB each). Most experimental runs have a mask only; their tomograms come from
-  the CryoET Data Portal. Per the paper, experimental masks come from the CDP (often AI-made) and were manually cleaned; test ground truth is hybrid AI plus
-  manual correction (source=mixed). Paper and deposit page disagree on test composition (10 experimental vs 10 simulated + 17 experimental). No split file
-  is listed. Voxel size is not stated on the page or in the paper and varies per run; organisms are mixed and not listed per file.'
+  last_checked: '2026-10-08T22:14:36Z'
+notes: 'Dataverse v5 lists 165 files (127.3 GB): <CDP dataset>/<run>/target_mask (experimental masks), emdb/ and empiar_11718/
+  (mask + tomogram), polnet_data_1/ (10 simulated, 1 GB each) and polnet_data_2/ (18 simulated, 250 MB each). Most experimental
+  runs have a mask only; their tomograms come from the CryoET Data Portal. Per the paper, experimental masks come from
+  the CDP (often AI-made) and were manually cleaned; test ground truth is hybrid AI plus manual correction (source=mixed).
+  Paper and deposit page disagree on test composition (10 experimental vs 10 simulated + 17 experimental). No split file
+  is listed. Voxel size is not stated on the page or in the paper and varies per run; organisms are mixed and not listed
+  per file. enricher: MRC headers give 1.3684 nm (empiar_11718) and 1.0 nm (polnet_data_2, CDP 10015/10980), so voxel
+  size stays null.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: |
+      ./  165 files 127.3 GB (Dataverse API, version 5)
+        <CDP dataset id>/<run id>/target_mask/<run>_target_mask.mrc   97 files in 34 dataset folders (masks only; tomograms on the CryoET Data Portal)
+        emdb/<entry>/{tomogram,target_mask}/*.mrc                       8 files
+        empiar_11718/<tomo>/{tomogram,target_mask}/*.mrc                4 files
+        polnet_data_1/<generation>/{tomogram,target_mask}/*.mrc        20 files (10 simulated)
+        polnet_data_2/polnet_data_2_generation_NN/{tomogram,target_mask}/*.mrc  36 files (18 simulated)
+    n_files: 165
+    listing_complete: true
+  sample:
+    urls:
+    - https://dataverse.harvard.edu/api/access/datafile/13163968
+    - https://dataverse.harvard.edu/api/access/datafile/13164048
+    size_bytes: 375002048
+    description: Simulated PolNet tomogram polnet_data_2_generation_00 (tomo_rec_0.mrc) and its membrane mask.
+  arrays:
+  - role: raw
+    path_pattern: '*/*/tomogram/*.mrc'
+    format: mrc
+    axes: zyx
+    shape:
+    - 250
+    - 500
+    - 500
+    shape_varies: true
+    dtype: float32
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Only emdb/, empiar_11718/ and polnet_data_*/ ship tomograms (37); the 97 CDP masks refer to CryoET
+      Data Portal tomograms.
+  - role: label
+    path_pattern: '*/*/target_mask/*.mrc'
+    format: mrc
+    axes: zyx
+    shape:
+    - 250
+    - 500
+    - 500
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 1
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: <folder>/<run>/target_mask/*.mrc pairs with <folder>/<run>/tomogram/*.mrc; shapes match in the probed
+      pairs (empiar_11718 tomo_012 500x927x959, polnet gen 00 250x500x500). Mask dtype varies (int16 in empiar_11718,
+      uint16 elsewhere).
+  notes: 'Dataverse API file list (165 files with exact sizes; not a tools/listing.py source, so size_source is page-stated).
+    MRC headers probed by range: empiar_11718 tomo_012 tomogram float32 500x927x959 and mask int16 (header 0-1), 1.3684
+    nm; CDP 10015/10980 mask uint16 624x972x690, 1.0 nm; polnet_data_2 gen 00 tomogram float32 250x500x500 (header -2.46
+    to 2.32) and mask uint16, 1.0 nm. Sampled the polnet mask (125 MB): values {0: 15411544, 1: 213456}, binary; its
+    250 MB tomogram is over sample.py''s per-file limit, so no raw range. Downloads redirect to presigned dvn-cloud-iqss.s3.amazonaws.com
+    URLs with range support.'
