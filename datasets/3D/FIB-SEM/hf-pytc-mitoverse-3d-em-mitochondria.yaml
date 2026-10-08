@@ -68,10 +68,77 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T20:40:00Z'
+  last_checked: '2026-10-08T21:38:00Z'
 notes: 'Read the HF card, API record (8,484 files, 27.8 GB summed) and catalog.json (212 volumes: 178 FIB-SEM, 16 ssTEM, 10 ssSEM,
   8 SBF-SEM; 29,833 instances; 15 distinct voxel sizes, so voxel_size_nm is null). The card says license "other" and that
   terms are per volume (see each volume''s source), with caveats for MICrONS and CellMap, so spdx is custom. Some labels were
   converted from binary masks to instances. Monkey and Drosophila volumes are left out of the organism list because the species
   are not named. No authors or paper are named. It re-packages sources that overlap catalogued records (MitoEM, Lucchi,
   CellMap, MitoEM2.0).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  README.md, catalog.json, splits/*.json            203.7 KB
+      data/<source>/<volume>.zarr/{img,mito}/  (zarr v2, 212 stores)
+        data/casser20/kasthuri++_test.zarr/       21 files  20.5 MB
+        data/conrad23/salivary_gland.zarr/       365 files 336.1 MB
+        data/han24/pos#.zarr/ (x3)               729 files   2.4 GB
+        data/muller21/high_c#.zarr/ (x4)         620 files 549.7 MB
+        data/openorganelle/jrc_*_crop#.zarr/  (~150 crops, small)
+        data/openorganelle/jrc_*_test{0,1}.zarr/  ~150-225 MB each
+        data/wei20/mitoEM-H.zarr/  (500x4096x4096)
+        ... 18 more directory groups
+    n_files: 8484
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/pytc/MitoVerse/resolve/main/data/casser20/kasthuri++_test.zarr/img
+    - https://huggingface.co/datasets/pytc/MitoVerse/resolve/main/data/casser20/kasthuri++_test.zarr/mito
+    size_bytes: 20500000
+    description: Kasthuri++ test volume (75x776x667, ssSEM 12x12x30 nm per catalog.json), image and mitochondria instances
+  arrays:
+  - role: raw
+    path_pattern: data/*/*.zarr/img
+    format: zarr
+    axes: zyx
+    shape:
+    - 75
+    - 776
+    - 667
+    shape_varies: true
+    dtype: uint8
+    compression: blosc
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Each volume store holds img and mito arrays on the same grid; per-volume voxel size, modality and species are in .zattrs (mitoverse) and catalog.json.
+  - role: label
+    path_pattern: data/*/*.zarr/mito
+    format: zarr
+    axes: zyx
+    shape:
+    - 75
+    - 776
+    - 667
+    shape_varies: true
+    dtype: uint8
+    compression: blosc
+    value_range:
+    - 0
+    - 119
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same shape and chunks (64,512,512) as img in the same store; 0 = background. dtype varies with instance count (uint16 in mitoEM-H).
+  notes: 'Listed the HF repo (8,484 files, exact sizes, 27,782,790,706 B). Read .zattrs and .zarray of kasthuri++_test.zarr:
+    img and mito are zarr v2, shape (75,776,667), chunks (64,512,512), blosc zstd level 5, uint8; mitoEM-H.zarr/mito is
+    uint16 (500,4096,4096). Sampled the whole kasthuri++_test volume (38.8 MB raw + label): img 0-255, mean 71.2 (hint:
+    full range used, possibly contrast-stretched; catalog says uint8 passthrough here, other volumes were rescaled from
+    float, e.g. p0.5/p99.5); mito 0-119, 120 unique ids (matches n_instances 119). Voxel sizes differ between volumes
+    (catalog.json voxel_nm, x,y,z): 8x8x8 nm (157 volumes), 8x8x40 (16), 16x16x16 (10), 8x8x30 (7), 16x16x15 (5), and 10
+    others, so imaging.voxel_size_nm stays null. Species in catalog.json: Mouse 119, Human 59, Monkey 15, Drosophila 13,
+    Zebrafish 4, C. elegans 1, Rat 1. No single direct archive: data are zarr stores (download_url stays null).'
