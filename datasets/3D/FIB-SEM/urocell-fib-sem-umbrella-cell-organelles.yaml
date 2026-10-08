@@ -50,7 +50,7 @@ annotations:
   - instance-segmentation
   coverage: partial
   format: Gzipped NIfTI label volumes in folders mito (binary, branched, contacting, instance, mesh), lyso, golgi, fv; meshes in OBJ
-  source: unknown
+  source: manual
 ml:
   tasks:
   - segmentation
@@ -65,15 +65,149 @@ provenance:
   discovered_at: '2026-10-08T19:13:36Z'
   evidence_urls:
   - https://github.com/MancaZerovnikMekuc/UroCell
+  - https://raw.githubusercontent.com/MancaZerovnikMekuc/UroCell/master/README.md
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1016%2Fj.compbiomed.2020.103693%22&format=json&resultType=core&pageSize=3
   confidence: 0.65
 verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-08T19:13:36Z'
+  last_checked: '2026-10-08T22:48:00Z'
 notes: 'Per the repository README: eight sub-volumes cut from 1056 serial sections (1366x1180 px); original pixels 5.49 nm binned 3x in x/y,
   giving about 16 x 16 x 15 nm voxels. Mitochondria and endolysosomes annotated in 5 sub-volumes each, fusiform vesicles in 4, Golgi in all 8 (approximate
-  except 2 precise). Raw volumes are data/fib1-*.nii.gz (8 files listed). The paper is not open access, so only the abstract was read; annotation procedure
-  (manual vs proofread) is therefore unknown, and annotation file listings were checked only at folder level. File sizes and repository download
+  except 2 precise). Raw volumes are data/fib1-*.nii.gz (8 files listed). The paper is not open access (abstract only). enricher: README calls all label volumes manual annotations, so source manual (was unknown). File sizes and repository download
   method were not shown, so size_bytes is null. Second paper: Zerovnik Mekuc et al. 2022, doi 10.1016/j.cmpb.2022.106959.'
+technical:
+  method: sample
+  size_source: unknown
+  layout:
+    tree: |
+      data/                        8 .nii.gz  (fib1-<i>-<j>-<k>.nii.gz, raw FIB-SEM sub-volumes)
+      mito/{binary,instance,branched,contacting}/  5 .nii.gz each
+      mito/mesh/, lyso/mesh/, golgi/*/mesh/, fv/mesh/   .obj meshes (Git LFS)
+      lyso/binary/                 5 .nii.gz
+      golgi/approximate/binary/    7 .nii.gz
+      golgi/precise/binary/        2 .nii.gz
+      fv/{binary,instance}/        4 .nii.gz each
+      README.md, compartments.png  (1,989 repo files, most of them .obj meshes)
+    n_files: 1989
+    listing_complete: false
+  sample:
+    urls:
+    - https://raw.githubusercontent.com/MancaZerovnikMekuc/UroCell/master/data/fib1-0-0-0.nii.gz
+    - https://raw.githubusercontent.com/MancaZerovnikMekuc/UroCell/master/mito/instance/fib1-0-0-0.nii.gz
+    size_bytes: 16495645
+    description: Sub-volume fib1-0-0-0 (256^3) with its mitochondria instance labels
+  arrays:
+  - role: raw
+    path_pattern: data/fib1-*.nii.gz
+    format: nifti
+    axes: zyx
+    shape:
+    - 256
+    - 256
+    - 256
+    shape_varies: false
+    dtype: float32
+    compression: gzip
+    value_range:
+    - 66.0
+    - 251.0
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Eight 256^3 sub-volumes; each label folder holds files with the same names for the sub-volumes it annotates.
+  - role: label
+    path_pattern: mito/instance/fib1-*.nii.gz
+    format: nifti
+    axes: zyx
+    shape:
+    - 256
+    - 256
+    - 256
+    shape_varies: false
+    dtype: int16
+    compression: gzip
+    value_range: 
+    - 0
+    - 39
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same file name as the raw sub-volume in data/ (fib1-<i>-<j>-<k>.nii.gz), same 256^3 grid. 0 = background, >0 = mitochondrion.
+  - role: label
+    path_pattern: mito/binary/fib1-*.nii.gz
+    format: nifti
+    axes: zyx
+    shape:
+    - 256
+    - 256
+    - 256
+    shape_varies: false
+    dtype: unknown
+    compression: gzip
+    value_range: null
+    encoding: binary
+    classes:
+    - id: 1
+      name: mitochondria
+    alignment: same-grid
+    alignment_notes: Same file name as the raw sub-volume in data/ (fib1-<i>-<j>-<k>.nii.gz), same 256^3 grid.
+  - role: label
+    path_pattern: lyso/binary/fib1-*.nii.gz
+    format: nifti
+    axes: zyx
+    shape:
+    - 256
+    - 256
+    - 256
+    shape_varies: false
+    dtype: unknown
+    compression: gzip
+    value_range: null
+    encoding: binary
+    classes:
+    - id: 1
+      name: endolysosome
+    alignment: same-grid
+    alignment_notes: Same file name as the raw sub-volume in data/ (fib1-<i>-<j>-<k>.nii.gz), same 256^3 grid.
+  - role: label
+    path_pattern: golgi/{approximate,precise}/binary/fib1-*.nii.gz
+    format: nifti
+    axes: zyx
+    shape:
+    - 256
+    - 256
+    - 256
+    shape_varies: false
+    dtype: unknown
+    compression: gzip
+    value_range: null
+    encoding: binary
+    classes:
+    - id: 1
+      name: Golgi apparatus
+    alignment: same-grid
+    alignment_notes: Same file name as the raw sub-volume in data/ (fib1-<i>-<j>-<k>.nii.gz), same 256^3 grid. approximate/ for 7 sub-volumes, precise/ for 2.
+  - role: label
+    path_pattern: fv/instance/fib1-*.nii.gz
+    format: nifti
+    axes: zyx
+    shape:
+    - 256
+    - 256
+    - 256
+    shape_varies: false
+    dtype: unknown
+    compression: gzip
+    value_range: null
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same file name as the raw sub-volume in data/ (fib1-<i>-<j>-<k>.nii.gz), same 256^3 grid. fv/binary/ holds the binary version.
+  notes: 'File names from a blobless git clone of the repository (1,989 files; the .obj meshes are Git LFS, the NIfTI
+    volumes are plain git files served by raw.githubusercontent.com). File sizes are not in that listing, so size_bytes
+    stays null (only the two sampled files are known: 16,375,615 and 120,030 B). Sampled data/fib1-0-0-0.nii.gz: 256^3
+    float32, 66-251, mean 212.7; mito/instance/fib1-0-0-0.nii.gz: 256^3 int16, 0-39, 40 unique (instances). Other label
+    folders were not sampled (dtype unknown; README gives 0/1 binary, 0/1/2 for branched and contacting). The NIfTI header
+    voxel size is not usable (2.2e11 nm); the record keeps 16x16x15 nm from the README. mito/branched and mito/contacting
+    (0/1/2 classes) are not listed as arrays.'
