@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: zenodo-15608143-sted-fm-pretraining-crops
 title: STED-FM dataset - about one million 224x224 STED microscopy crops for self-supervised pre-training
 short_name: STED-FM STED crops for self-supervised training
-description: Self-supervised training dataset of the STED-FM foundation model. 37,387 STED images of varying size from an Abberior Expert Line microscope, cut into 976,022 crops of 224x224 pixels (more than 20 labelled proteins, hippocampal and cortical neurons, HEK, NG108 and Caco2 cells, live and fixed cultures and tissue slices). A subset of 238,683 crops is labelled with one of 24 protein classes.
+description: Self-supervised training dataset of the STED-FM foundation model. 37,387 STED images of varying size
+  from an Abberior Expert Line microscope, cut into 976,022 crops of 224x224 pixels (more than 20 labelled proteins,
+  hippocampal and cortical neurons, HEK, NG108 and Caco2 cells, live and fixed cultures and tissue slices). A subset
+  of 238,683 crops is labelled with one of 24 protein classes.
 landing_url: https://zenodo.org/records/15608143
 doi: 10.5281/zenodo.15608143
 repository: Zenodo
@@ -24,7 +27,8 @@ imaging:
   voxel_size_nm: null
   channels: 1
   organism: []
-  sample: STED images of more than 20 labelled proteins in cultured hippocampal and cortical neurons, HEK, NG108 and Caco2 cells, live and fixed, and tissue slices
+  sample: STED images of more than 20 labelled proteins in cultured hippocampal and cortical neurons, HEK, NG108
+    and Caco2 cells, live and fixed, and tissue slices
   labels_stains: []
 data:
   formats:
@@ -63,5 +67,50 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-08T07:20:59Z'
-notes: 'Zenodo lists two zip files, STED-FM-dataset-crops.zip (19.0 GB, holding one 51 GB .tar) and STED-FM-subset-dataset-crops.zip (4.3 GB, one 13.1 GB .tar); tools/peek_archive.py cannot see inside the tars. The record description says files are npz with keys image and metadata (normalized and raw variants) and also mentions a raw tiff tar, which is not in the Zenodo file listing, so formats is other; the npz contents and the protein-label field were not inspected. Crop counts (976,022 total, 238,683 labelled in 24 classes) come from the paper Methods (bioRxiv 2025.06.06.656993, read as PDF) and the record. Pixel size and per-image acquisition parameters are not given in the record or the paper text read. The data are explicitly released for foundation-model pre-training; the class subset is a weak label from the labelled protein, not manual annotation. size_bytes is the sum of the two zips (the subset may overlap the full set).'
+  last_checked: '2026-10-08T09:15:00Z'
+notes: 'Zenodo lists two zip files, STED-FM-dataset-crops.zip (19.0 GB, holding one 51 GB .tar) and STED-FM-subset-dataset-crops.zip
+  (4.3 GB, one 13.1 GB .tar). The record description says files are npz with keys image and metadata (normalized
+  and raw variants) and also mentions a raw tiff tar, which is not in the Zenodo file listing, so formats is other;
+  Crop counts (976,022 total, 238,683 labelled in 24 classes) come from the paper Methods (bioRxiv 2025.06.06.656993,
+  read as PDF) and the record. Pixel size and per-image acquisition parameters are not given in the record or the
+  paper text read. The data are explicitly released for foundation-model pre-training; the class subset is a weak
+  label from the labelled protein, not manual annotation. size_bytes is the sum of the two zips (the subset may
+  overlap the full set). enricher: first tar members read (subset zip): npz with image 224x224 uint8; class = member-name
+  prefix (e.g. FUS-<uuid>-<y>-<x>).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  2 files  23.3 GB  .zip\n  STED-FM-dataset-crops.zip         19.0 GB  -> STED-FM-dataset-crops.tar\
+      \ (51.0 GB, deflated)\n  STED-FM-subset-dataset-crops.zip   4.3 GB  -> STED-FM-subset-dataset-crops.tar (13.1\
+      \ GB, deflated)\n    <PROTEIN>-<uuid>-<y>-<x>   npz crops without extension (~51 KB each), keys image, metadata\n"
+    n_files: 2
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: '*.zip/*.tar/*-*-*'
+    format: other
+    axes: yx
+    shape:
+    - 224
+    - 224
+    shape_varies: false
+    dtype: uint8
+    compression: unknown
+    value_range:
+    - 0
+    - 24
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'One crop per npz (key image). In the subset tar the protein class is the first token of the
+      member name (FUS-...); <y>-<x> are the crop offsets in the source image (inferred from names: multiples of
+      224). The npz metadata key is a pickled object array and was not loaded.'
+  notes: 'Zenodo listing complete: 2 zips, 23,269,768,337 B. Each zip holds one deflated tar (zip index: 13,101,762,560
+    and 50,971,781,120 B unpacked), so members are not range-readable; the first 4 MB of the subset zip were inflated
+    locally: 12 tar members FUS-21dda929-...-<y>-<x>, 51,020 B each, each an npz (PK) with image (224x224 uint8,
+    0-24 in the first crop) and metadata (object array, needs pickle; not loaded per the untrusted-data rule). Value
+    range from one crop. The Zenodo description says these crops are preprocessed for normalization (normalization
+    method not stated, hence unknown); the raw and tiff tars it mentions are not in the file listing. No sample:
+    TensorSwitch cannot read members of a tar inside a zip. Pixel size not found; checked: Zenodo description, npz
+    image array (no metadata read), paper per harvest.'
