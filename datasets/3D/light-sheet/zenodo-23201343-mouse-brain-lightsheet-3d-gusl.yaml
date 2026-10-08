@@ -1,0 +1,208 @@
+schema_version: '1.2'
+id: zenodo-23201343-mouse-brain-lightsheet-3d-gusl
+title: Mouse Brain Microscopy Dataset for 3D-GUSL
+short_name: Mouse brain light-sheet Lectin/c-Fos/TH masks
+description: Three mouse brain light-sheet fluorescence datasets (Lectin vasculature, c-Fos activity marker,
+  tyrosine hydroxylase neurons) with corresponding segmentation annotations, released with the 3D-GUSL
+  segmentation framework.
+landing_url: https://zenodo.org/records/23201343
+doi: 10.5281/zenodo.23201343
+repository: Zenodo
+accession: '23201343'
+authors:
+- Li-An Chu
+- Zijing Chen
+- C.-C. Jay Kuo
+publications: []
+date_published: '2026-10-07'
+imaging:
+  modality:
+  - light-sheet
+  dimensionality: 3D
+  voxel_size_nm: null
+  channels: null
+  organism:
+  - Mus musculus
+  sample: mouse brain with fluorescent labelling of vasculature (Lectin), c-Fos and tyrosine hydroxylase
+  labels_stains:
+  - Lectin
+  - c-Fos
+  - tyrosine hydroxylase
+data:
+  formats:
+  - tiff
+  size_bytes: 5347620352
+  n_items: null
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: unknown
+  format: per-z-slice mask TIFFs mirroring the image slice folders (cFOS/Lectin masks/<vol>/, TH Flatten_561_mask/);
+    binary {0,255} (uint8) or {0,65535} (uint16 TH)
+  source: unknown
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-08T05:43:19Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/23201343
+  - https://zenodo.org/records/23201343
+  - https://zenodo.org/records/23201343/files/cFOS.tar
+  - https://zenodo.org/records/23201343/files/TH.tar
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T06:35:53Z'
+notes: 'Three uncompressed tar archives (cFOS 384 MB, Lectin 892 MB, TH 4.1 GB). Tar headers read over
+  range requests: cFOS holds training_data/DatasetTIFF/images/01 and masks/01 with one TIFF per z slice
+  (51 slices each seen; ~5 MB images, ~2.5 MB masks); TH has test/01/Flatten_561/*.tif, so it also has
+  a test split. Lectin.tar was not opened. The manuscript is not identified on the record and could not
+  be found, so there is no paper source; voxel size, annotation procedure, number of volumes and mask
+  class encoding are unknown. Data come from the FIDELITY study (Lin et al.) per the record. download_url
+  is null because the record has three archives. enricher: tar headers walked (cFOS 100 slices, Lectin
+  874 files, TH first 200 entries); annotations verified. Lectin image header calibration 1.82 um/px lateral
+  (ImageJ), no z; cFOS and TH uncalibrated, so voxel_size_nm stays null.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "cFOS.tar     384,107,008 B\n  cFOS/training_data/DatasetTIFF/images/01/Traindata_z000NN.tiff\
+      \       50  (1600x1600 uint16)\n  cFOS/training_data/DatasetTIFF/masks/01/Trainmaskfixed_z000NN.tiff\
+      \   50\nLectin.tar   892,296,704 B\n  Lectin/training_data/training-data_YIN-HSU-3D/images/01/C0_rawNNNN.tif\
+      \   387  (787x864 uint16)\n  .../images/02/C0_rawNNNN.tif                                      \
+      \        50\n  .../masks/01/20906_imaris_revised_mask_NNNN.tif                          387\n  .../masks/02/...\
+      \                                                          50\nTH.tar     4,071,216,640 B  (first\
+      \ 200 entries walked)\n  TH/test/<NN>/Flatten_561/NNNN.tif        25 per volume (1600x2000 uint16)\n\
+      \  TH/test/<NN>/Flatten_561_mask/NNNN.tif   25 per volume\n  ... (test/01-04 seen; rest not walked)\n\
+      3 files, 5,347,620,352 B (Zenodo listing)\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/23201343/files/cFOS.tar/content
+    size_bytes: 384107008
+    description: Smallest archive (cFOS, one 50-slice training volume with masks); TensorSwitch can't
+      pull single members from a tar.
+  arrays:
+  - role: raw
+    path_pattern: cFOS.tar::cFOS/training_data/DatasetTIFF/images/*/Traindata_z*.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 1600
+    - 1600
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 65535
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: One TIFF per z slice (z index in the file name); 125 grey levels in steps of ~528,
+      i.e. 8-bit data spread over the uint16 range.
+  - role: label
+    path_pattern: cFOS.tar::cFOS/training_data/DatasetTIFF/masks/*/Trainmaskfixed_z*.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 1600
+    - 1600
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: masks/<vol>/Trainmaskfixed_z<NNNNN>.tiff pairs with images/<vol>/Traindata_z<NNNNN>.tiff
+      (same z index); same shape.
+  - role: raw
+    path_pattern: Lectin.tar::Lectin/training_data/training-data_YIN-HSU-3D/images/*/C0_raw*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 787
+    - 864
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 1865
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One TIFF per z slice; slice label FFPE_TBI_brain_3_lectin488_TH561_4x_C0_Z<n>.tif.
+  - role: label
+    path_pattern: Lectin.tar::Lectin/training_data/training-data_YIN-HSU-3D/masks/*/20906_imaris_revised_mask_*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 787
+    - 864
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: mask_<NNNN>.tif pairs with C0_raw<NNNN>.tif (same index, folders 01/02); same shape.
+  - role: raw
+    path_pattern: TH.tar::TH/test/*/Flatten_561/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1600
+    - 2000
+    shape_varies: null
+    dtype: uint16
+    compression: lzw
+    value_range:
+    - 0
+    - 1782
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One TIFF per z slice, 25 per volume folder.
+  - role: label
+    path_pattern: TH.tar::TH/test/*/Flatten_561_mask/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1600
+    - 2000
+    shape_varies: null
+    dtype: uint16
+    compression: lzw
+    value_range:
+    - 0
+    - 65535
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: Flatten_561_mask/<NNNN>.tif pairs with Flatten_561/<NNNN>.tif; same shape.
+  notes: 'Zenodo listing: 3 uncompressed tars, exact sizes. Tar headers walked with range requests (1
+    req/s): cFOS complete (107 entries), Lectin complete (883), TH first 200 entries (420 MB of 4.07 GB)
+    (test/01-04 seen; train folders, if any, not reached). One slice pair read per set (byte ranges of
+    members): cFOS z00025 image 0..65535, 125 levels; mask {0,255}. Lectin raw0100 0..1865; mask {0,255}.
+    TH test/01 0000 0..1782 LZW; mask {0,65535}. Value ranges from one slice each. Lectin TIFF: ImageJ
+    unit um, XResolution 0.549452 px/um (1.82 um/px), slice label says 4x; cFOS res 1 px/unit (uncalibrated);
+    TH none. No z spacing anywhere. Paper not found (title search in Europe PMC and the web).'
