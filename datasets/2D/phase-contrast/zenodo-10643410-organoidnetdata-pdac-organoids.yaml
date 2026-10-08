@@ -1,11 +1,12 @@
 schema_version: '1.2'
 id: zenodo-10643410-organoidnetdata-pdac-organoids
-title: 'OrganoIDNetData: A Curated Cell Life Imaging Dataset of Immune-enriched Pancreatic Cancer Organoids with Pre-trained AI Models'
+title: 'OrganoIDNetData: A Curated Cell Life Imaging Dataset of Immune-enriched Pancreatic Cancer Organoids with Pre-trained
+  AI Models'
 short_name: PDAC organoids with immune cells (phase)
 description: Phase-contrast Incucyte time-lapse fields of view of human and murine pancreatic ductal adenocarcinoma (PDAC)
   organoids co-cultured with immune cells (180 fields of view, 34,113 organoids), cut into 800x800 patches with manual
-  organoid masks from two annotators. Provides training (713), validation (179) and test (10) image/mask pairs, an
-  augmented training set, and Cellpose and StarDist baselines with pretrained models.
+  organoid masks from two annotators. Provides training (713), validation (179) and test (10) image/mask pairs, an augmented
+  training set, and Cellpose and StarDist baselines with pretrained models.
 landing_url: https://zenodo.org/records/10643410
 doi: 10.5281/zenodo.10643410
 repository: Zenodo
@@ -71,10 +72,71 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T21:40:00Z'
-notes: 'Zip listing (peek_archive, 16,290 files, 4.59 GB, 37.6 GB uncompressed): Dataset/Training 713, Validation 179, Test 10 image/mask
-  pairs (800x800 TIFF patches), Augmented 1,426 pairs (not counted in n_items), Raw_Data/Annotations.zip with the full fields of
-  view, and Source_Codes with Cellpose and StarDist training folders and pretrained models. Zenodo gives 180 fields of view
-  and 34,113 organoids; Incucyte S3 4x objective, 2.82 um per pixel (paper Methods), fields of 1408x1040 or 1280x852
-  px acquired every 4 h up to 100 h. Masks were drawn in Labkit by two annotators who agreed a consensus. Zenodo DOI taken
-  from the Crossref reference list; the paper text only cites it by number. Published 2024, found by literature search.'
+  last_checked: '2026-10-08T21:52:27Z'
+notes: 'organisms: Homo sapiens = Human_* files, Mus musculus = Mouse_* files (Dataset/Training, Validation, Augmented);
+  the 10 Test_* patches don''t say. Zip: Dataset/Training 713, Validation 179, Test 10 image/mask pairs (800x800 TIFF
+  patches), Augmented 1,426 pairs (not in n_items), Raw_Data/Annotations.zip (full fields of view), Source_Codes with
+  Cellpose/StarDist training folders and models. Zenodo: 180 fields of view, 34,113 organoids; Incucyte S3 4x, 2.82 um
+  per pixel (paper Methods), fields 1408x1040 or 1280x852 px every 4 h up to 100 h. Masks drawn in Labkit by two annotators
+  with a consensus. Zenodo DOI from the Crossref reference list.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      OrganoIDNetData.zip/OrganoIDNetData/   16290 members  4.6 GB (37.6 GB uncompressed)
+        Dataset/Training/Images/      713  <Human|Mouse>_<n>_<t>h_patch_<k>.tif
+        Dataset/Training/Masks/       713  <same stem>_mask.tif
+        Dataset/Validation/Images|Masks/  179 + 179
+        Dataset/Test/Images|Masks/         10 + 10
+        Dataset/Augmented/Images|Masks/  1426 + 1426
+        Raw_Data/                       3 (Annotations.zip 317 MB, .py, .ipynb)
+        Source_Codes/Cellpose/          Training_Folder 6417 tif, Validation_Folder 537, Pretrained_Model, AlgorithmPredictions 10
+        Source_Codes/StarDist/          Training_Folder 4278 tif, Validation_Folder 358, Pretrained_Model (h5, json)
+        Source_Codes/Compare_Methods/   image_metrics.csv, png, ipynb
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/10643410/files/OrganoIDNetData.zip::OrganoIDNetData/Dataset/Training/Images/Human_1_004h_patch_0.tif
+    - https://zenodo.org/records/10643410/files/OrganoIDNetData.zip::OrganoIDNetData/Dataset/Training/Masks/Human_1_004h_patch_0_mask.tif
+    size_bytes: 1920244
+    description: One 800x800 human-organoid patch and its instance mask.
+  arrays:
+  - role: raw
+    path_pattern: OrganoIDNetData/Dataset/*/Images/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 800
+    - 800
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: OrganoIDNetData/Dataset/*/Masks/*_mask.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 800
+    - 800
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 98
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Masks/<stem>_mask.tif pairs with Images/<stem>.tif in the same split folder; both 800x800.
+  notes: 'Probed and sampled Training/Images/Human_1_004h_patch_0.tif (uint8 800x800, uncompressed; range 0-255, mean
+    185.5, 128 values; one sample) and its _mask.tif (uint16 800x800; 0-98, 44 distinct ids, 97.6% background: instance
+    ids, consistent with the paper''s organoid instance masks). Images fill the uint8 range but normalization is not
+    documented, so unknown. Voxel size 2.82 um from the paper (record value kept); TIFF headers carry no calibration.'
