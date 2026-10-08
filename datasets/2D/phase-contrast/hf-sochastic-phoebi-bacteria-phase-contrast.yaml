@@ -1,0 +1,135 @@
+schema_version: '1.2'
+id: hf-sochastic-phoebi-bacteria-phase-contrast
+title: 'PHOEBI: Phase-contrast Optical bEnchmark for Bacterial Identification'
+short_name: PHOEBI bacterial mixtures (phase-contrast)
+description: 120,000 phase-contrast images (1024x1024 RGB JPEG, 1000x total magnification) of 40 culture combinations of six rod-shaped bacterial species (3,000 images each), with per-image multi-label species presence for open-world, compositional multi-label classification. A legacy 4-species subset (14 combinations, 14,000 images) is included. Random 80/10/10 and leave-combinations-out splits are provided.
+landing_url: https://huggingface.co/datasets/sochastic/PHOEBI
+doi: null
+repository: HuggingFace
+accession: null
+authors: []
+publications:
+- title: 'PHOEBI: An Open-World Benchmark for Multi-Label Bacterial Identification in Phase-Contrast Microscopy'
+  doi: 10.48550/arXiv.2606.22890
+  url: https://arxiv.org/abs/2606.22890
+date_published: '2026-09-26'
+imaging:
+  modality:
+  - phase-contrast
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Bacillus subtilis
+  - Bacillus thermoamylovorans
+  - Flavobacterium johnsoniae
+  - Klebsiella aerogenes
+  - Myxococcus xanthus
+  - Pseudomonas fluorescens
+  sample: Live bacterial cultures and mixtures; Fisherbrand upright phase-contrast microscope, 100x/1.25 NA oil objective, Fisherbrand CMOS colour camera
+  labels_stains: []
+data:
+  formats:
+  - jpeg
+  size_bytes: 16130102405
+  n_items: 134000
+  access: registration
+  download_url: https://huggingface.co/datasets/sochastic/PHOEBI
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  coverage: dense
+  format: Parquet columns (labels, combination, lco_split) plus splits.json files
+  source: automatic
+ml:
+  tasks:
+  - classification
+  splits_provided: true
+  benchmark: PHOEBI
+  baseline_code_url: https://github.com/eternal-f1ame/phoebi
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-08T17:30:00Z'
+  evidence_urls:
+  - https://huggingface.co/datasets/sochastic/PHOEBI/resolve/main/README.md
+  - https://huggingface.co/api/datasets/sochastic/PHOEBI
+  - https://arxiv.org/html/2606.22890
+  - https://arxiv.org/abs/2606.22890
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T19:04:00Z'
+notes: 'Images are stored as JPEG inside Parquet shards (phoebi6 and phoebi4 configs, 42 files, 16.1 GB total from the Hugging Face API). Labels are per-culture species presence copied to every image (parsed from the acquisition folder name; the paper bounds the over-statement of per-field presence at 4.9% on average), so this is multi-label image classification, not segmentation. n_items = 120,000 (phoebi6) + 14,000 (phoebi4). Pixel size is not reported in the paper or dataset card. Dataset created 2026-09-26; paper is an arXiv preprint (NeurIPS 2026 Datasets track). enricher: access registration (was open); the HF API reports gated = auto and the data files return HTTP 401 without a logged-in, terms-accepted account. enricher: no pixel size anywhere; crops were resampled to 1024 px per the README. organisms: images show mixtures, so species are not separable by file or folder (combination column per image).'
+technical:
+  method: metadata-only
+  inspected_at: '2026-10-08T19:04:00Z'
+  inspected_urls:
+  - https://huggingface.co/api/datasets/sochastic/PHOEBI
+  - https://huggingface.co/datasets/sochastic/PHOEBI/resolve/main/README.md
+  - https://huggingface.co/datasets/sochastic/PHOEBI/resolve/main/LICENSE
+  bytes_downloaded: 0
+  size_source: file-listing
+  layout:
+    tree: |
+      ./                    README.md, LICENSE, .gitattributes, croissant.json, lco_dev_folds.json,
+                            splits.json, splits_lco.json, splits_4class.json   (8 files, 50.3 MB)
+      data/phoebi4/         {train-0000[0-3]-of-00004,validation-00000-of-00001,test-00000-of-00001}.parquet   6 files, 2.4 GB
+      data/phoebi6/         {train-*-of-00022,validation-*,test-*-of-00003}.parquet   28 files, 13.7 GB
+    n_files: 42
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: data/phoebi*/*.parquet
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1024
+    - 1024
+    - 3
+    shape_varies: true
+    dtype: unknown
+    compression: jpeg
+    lossy: true
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: JPEG images stored in the `image` column of Parquet shards; phoebi6 images are 1024x1024 RGB, phoebi4 images are square, about 1,000-1,800 px (README).
+  - role: label
+    path_pattern: data/phoebi*/*.parquet
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    encoding: other
+    classes:
+    - id: bs
+      name: Bacillus subtilis
+    - id: bt
+      name: Bacillus thermoamylovorans
+    - id: fj
+      name: Flavobacterium johnsoniae
+    - id: ka
+      name: Klebsiella aerogenes
+    - id: mx
+      name: Myxococcus xanthus
+    - id: pf
+      name: Pseudomonas fluorescens
+    alignment: not-applicable
+    alignment_notes: Per-image multi-label species presence in the `labels` column (plus `combination` and, for phoebi6, `lco_split`), in the same Parquet row as the image; splits.json files list each image path with a multi-hot vector. phoebi4 codes b/f/k/p = bs/fj/ka/pf.
+  notes: 'Listing: Hugging Face API, 42 files, 16,130,102,405 B, complete. The dataset is gated (HF API gated: auto): every
+    data file, croissant.json and splits.json return HTTP 401 without a logged-in account that accepted the terms, so no
+    file was probed or sampled (and the agent tools cannot read Parquet). Array facts are from the README (image = RGB JPEG,
+    phoebi6 1024x1024, phoebi4 about 1,000-1,800 px square; labels = species codes). dtype not confirmed. Voxel size not
+    found; checked: README, arXiv HTML full text, code repo README. The README says each video frame gave three random
+    square crops resampled to 1024 x 1024, so there may be no single pixel size. Download: no direct link usable without
+    authentication (parquet download_check: HTTP 401); data.download_url is the landing page; TensorSwitch would need an
+    HF token. Smallest shards: phoebi4 validation (242,273,486 B) and test (243,139,473 B).'
