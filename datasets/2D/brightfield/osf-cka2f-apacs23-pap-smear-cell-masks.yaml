@@ -1,0 +1,149 @@
+schema_version: '1.2'
+id: osf-cka2f-apacs23-pap-smear-cell-masks
+title: APACS23 Pap smear cell segmentation
+short_name: APACS23 Pap smear cell masks (brightfield)
+description: 3,565 brightfield image slices (2000 x 2000 px, JPEG) cut from five 20x-scanned Pap smear
+  slides, with manually drawn binary masks of cell cytoplasm (about 37,000 cells) and a fixed train (2,227)
+  / test (1,338) split.
+landing_url: https://osf.io/cka2f
+doi: 10.17605/OSF.IO/CKA2F
+repository: OSF
+accession: cka2f
+authors:
+- Harangi B
+- Bogacsovics G
+- Toth J
+- Kovacs I
+- Dani E
+- Hajdu A
+publications:
+- title: Pixel-wise segmentation of cells in digitized Pap smear images
+  doi: 10.1038/s41597-024-03566-9
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC11227563/
+date_published: '2023-11-08'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 250
+    y: 250
+    z: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: Pap smear cervical cytology slides from five patients, digitised at 20x on a 3DHistech Pannoramic
+    1000 scanner
+  labels_stains:
+  - Papanicolaou
+data:
+  formats:
+  - jpeg
+  - png
+  size_bytes: 1723101623
+  n_items: 3565
+  access: open
+  download_url: null
+  download_method: other
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: Single-channel binary PNG per image (same name as the JPEG), cytoplasm white; overlapping cell
+    clusters are drawn as one object, nuclei not separate
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/gergobogacsovics/APACS23
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-08T21:55:00Z'
+  evidence_urls:
+  - https://api.osf.io/v2/nodes/cka2f/
+  - https://api.osf.io/v2/nodes/cka2f/files/osfstorage/
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11227563/fullTextXML
+  - https://api.osf.io/v2/nodes/cka2f/files/osfstorage/654b95c8b1613d0683b7aaf8/
+  - https://api.osf.io/v2/nodes/cka2f/files/osfstorage/654bb266f5503206ad8a0812/
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T23:04:34Z'
+notes: 'OSF API shows the public project (folders training and test) and the Scientific Data paper full
+  text was read: 3,565 images of 2000x2000 px in JPEG with same-named single-channel PNG masks, 7,130
+  files, 1.6 GB (size_bytes is the paper''s rounded figure), CC BY 4.0, splits 2,227 training / 1,338
+  test images from 3 and 2 slides, about 30,000 and 7,000 cells. The OSF file listing inside the folders
+  was not seen. Pixel size is not stated (20x scan; slide size about 100,000 x 200,000 px in MRXS). The
+  OSF node license field is empty; the license comes from the paper. enricher: voxel size 250 nm from
+  the paper Methods ("approximately 0.25 um/pixels", was null); size_bytes exact from the OSF file list
+  (7,130 files).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: |
+      osfstorage/                                    7,130 files  1.72 GB
+        training/APACS23_Training_Input/        2,227 files  1.22 GB  .jpg (smear_NN-NNNN.jpg)
+        training/APACS23_Training_GroundTruth/  2,227 files  20.2 MB  .png (same stem)
+        test/APACS23_Test_Input/                1,338 files  457.0 MB .jpg
+        test/APACS23_Test_GroundTruth/          1,338 files  24.0 MB  .png
+    n_files: 7130
+    listing_complete: true
+  sample:
+    urls:
+    - https://osf.io/download/gvypt/
+    - https://osf.io/download/654bbfaff5503206c38a08bd/
+    size_bytes: 293943
+    description: One 2000x2000 RGB JPEG slice (test smear_04-0734) and its 1-bit cytoplasm mask
+  arrays:
+  - role: raw
+    path_pattern: '*/APACS23_*_Input/*.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 2000
+    - 2000
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 5
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '*/APACS23_*_GroundTruth/*.png'
+    format: png
+    axes: yx
+    shape:
+    - 2000
+    - 2000
+    shape_varies: false
+    dtype: bool
+    compression: deflate
+    value_range:
+    - 0
+    - 1
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: 1
+      name: cell cytoplasm
+    alignment: same-grid
+    alignment_notes: <split>/APACS23_*_GroundTruth/<stem>.png pairs with <split>/APACS23_*_Input/<stem>.jpg
+      (same stem, same 2000x2000 grid in the sample).
+  notes: 'Sampled test smear_04-0734: RGB uint8 5-255 (mean 227); mask 1-bit PNG (mode 1), {False: 3890157,
+    True: 109843}. Values from one sample. tools/sample.py fails on 1-bit PNGs (numpy bool percentiles),
+    so the mask was read with Pillow in a temp dir. File list from the OSF API (no listing.py support
+    for OSF), hence page-stated. OSF downloads (osf.io/download/<id>/) redirect to storage.googleapis.com
+    and support ranges. No single archive.'
