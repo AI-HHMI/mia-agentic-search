@@ -2,8 +2,8 @@ schema_version: '1.2'
 id: zenodo-23103970-l929-phase-contrast-cells
 title: 'L929-PhC: Annotated Phase-Contrast Microscopy Dataset for Automated Cell Detection and Counting'
 short_name: L929 fibroblast detection (phase-contrast)
-description: 630 phase-contrast images (1280x960) of L929 fibroblasts from 7 time-lapse experiments, with 26,853 manually annotated cells as YOLO bounding boxes in 6 classes and a fixed train/valid/test
-  split.
+description: 630 phase-contrast images (1280x960) of L929 fibroblasts from 7 time-lapse experiments, with 26,853
+  manually annotated cells as YOLO bounding boxes in 6 classes and a fixed train/valid/test split.
 landing_url: https://zenodo.org/records/23103970
 doi: 10.5281/zenodo.23103970
 repository: Zenodo
@@ -19,7 +19,7 @@ imaging:
   - phase-contrast
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism: []
   sample: L929 fibroblast cell line (ATCC CCL-1) in culture, control and treatment conditions
   labels_stains: []
@@ -36,7 +36,8 @@ annotations:
   types:
   - bounding-box
   coverage: dense
-  format: 'YOLO txt labels per image (6 classes: cell, cell in division, dead cell, multi-nuclei cell, partially out of bounds cell, undilated cell)'
+  format: 'YOLO txt labels per image (6 classes: cell, cell in division, dead cell, multi-nuclei cell, partially
+    out of bounds cell, undilated cell)'
   source: manual
 ml:
   tasks:
@@ -59,7 +60,70 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T04:59:58Z'
-notes: 'Zenodo metadata says CC-BY-4.0 but licence.txt inside the zip says CC BY-NC 4.0; the stricter one is recorded. Pixel size not stated on the Zenodo page, in the zip''s read.me, or in file names (no
-  paper listed on the record), so voxel_size_nm is null. Organism left empty: the pages name the L929 line but do not state the species. Counts and split from read.me; zip listing confirms 630 jpg images
-  and 632 txt files (labels plus classes.txt, ...).'
+  last_checked: '2026-10-08T08:25:00Z'
+notes: 'Zenodo metadata says CC-BY-4.0 but licence.txt inside the zip says CC BY-NC 4.0; the stricter one is recorded.
+  Pixel size not stated on the Zenodo page, in the zip''s read.me, or in file names (no paper listed on the record),
+  so voxel_size_nm is null. Organism left empty: the pages name the L929 line but do not state the species. Counts
+  and split from read.me; zip listing confirms 630 jpg images and 632 txt files (labels plus classes.txt, ...).
+  enricher: JPEGs are single-channel 960 x 1280 (channels 1); file names carry "20x_Ph" (objective), no pixel size.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "./  1 file, 94.0 MB (Zenodo)\n  L929-PhC_Dataset.zip   1269 members\n    read.me, LICENSE.txt, classes.txt,\
+      \ dataset.yaml, annotations.json, agreement_analysis.xlsx\n    train/images/ 441 .jpg   train/labels/ 441\
+      \ .txt\n    valid/images/ 126 .jpg   valid/labels/ 126 .txt\n    test/images/   63 .jpg   test/labels/   63\
+      \ .txt\n    names: <hash>-<experiment>_P<n>_20x_Ph_<frame>.jpg; Thumbs.db files"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/23103970/files/L929-PhC_Dataset.zip::test/images/006942fa-1085_P2_20x_Ph_00545.jpg
+    - https://zenodo.org/records/23103970/files/L929-PhC_Dataset.zip::test/labels/006942fa-1085_P2_20x_Ph_00545.txt
+    size_bytes: 228087
+    description: One test image and its YOLO label file.
+  arrays:
+  - role: raw
+    path_pattern: '*/images/*.jpg'
+    format: jpeg
+    axes: yx
+    shape:
+    - 960
+    - 1280
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Greyscale phase-contrast frames (read.me: 1280 x 960 px).'
+  - role: label
+    path_pattern: '*/labels/*.txt'
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: cell
+    - id: 1
+      name: cell in division
+    - id: 2
+      name: dead cell
+    - id: 3
+      name: multi-nuclei cell
+    - id: 4
+      name: partially out of bounds cell
+    - id: 5
+      name: undilated cell
+    alignment: same-grid
+    alignment_notes: 'Pairing: <split>/labels/<stem>.txt <-> <split>/images/<stem>.jpg. YOLO rows "<class> <x_center>
+      <y_center> <w> <h>", normalised to image size (read.me).'
+  notes: 'Listed with tools/listing.py (Zenodo, zip expanded): 1 file, 94,042,553 B, 1269 members. Read read.me
+    and one label file; probed one JPEG header. No pixels sampled. Voxel size not found; checked: JPEG header, read.me,
+    Zenodo description (no paper listed).'
