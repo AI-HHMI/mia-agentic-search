@@ -1,82 +1,51 @@
 # Agentic Harvesting of Open-Source Microscopy Data
 
-AI agents find **usable microscopy training datasets** in repositories, papers and on the web,
-inspect their files, and propose each one as a pull request. PRs that meet a fixed policy are
-merged automatically; the rest wait for a human.
+AI agents find **usable microscopy training datasets**, inspect their files, and propose each one as a
+pull request. The repo is the catalog: one YAML record per dataset in
+`datasets/<dimensionality>/<modality>/<id>.yaml`, checked against `schema/dataset.schema.json`.
 
 **Dashboard:** https://ai-hhmi.github.io/mia-agentic-search/ · **Alerts:** Slack `#mia-harvester`
 
-## How it works
-Five [Claude routines](https://claude.ai/code/routines) run in the cloud:
+## The pipeline
+1. **Find.** Three hourly harvest routines search repositories (EMPIAR, BioImage Archive, Zenodo, IDR),
+   papers, and the web. Each new dataset becomes one PR (`tools/publish.py dataset`), which refuses
+   anything already on `main`, in an open PR, or rejected.
+2. **Inspect.** The hourly enricher reads each PR's file listing, headers and a small sample, and fills
+   in the record's `technical` block: size, shapes, dtypes, labels, voxel size, download links.
+3. **Label.** On every push, CI sets the PR's labels from its record (`tools/labels.py`), including
+   `download-ready` / `download-not-ready` (`tools/readiness.py`).
+4. **Merge.** If the PR is enriched, has a known license and known formats, and isn't a possible
+   duplicate, GitHub auto-merges it once `validate` passes (`tools/automerge.py`). Anything else waits
+   for a human.
+5. **Download.** A cron job on the workstation (`tools/cron/download_next.sh`) takes the next
+   `download-ready` dataset and converts it to OME-Zarr in the miao layout with TensorSwitch.
 
-| Routine | Runs (UTC) | Does |
-|---|---|---|
-| `harvest-repositories` | hourly at :36 | Searches EMPIAR, BioImage Archive, Zenodo, IDR |
-| `harvest-literature` | hourly at :10 | Searches papers that release data (bioRxiv, PubMed, journals, challenges) |
-| `harvest-websearch` | hourly at :11 | Searches portals, challenge sites, Hugging Face, Kaggle, lab pages |
-| `enricher` | hourly at :45 | Inspects the files of open dataset PRs and fills in the technical details |
-| `maintainer` | daily at 12:00 | Checks links, fills gaps in existing records, posts a Slack digest |
+A daily maintainer routine checks links, fills gaps in records, and posts a Slack digest. A watchdog
+alerts when a routine stops running or keeps failing.
 
-1. **Harvest.** Each run publishes up to **10 new datasets**, each as its own PR, skipping anything
-   already in the catalog, in an open PR, rejected, or a likely re-deposit of the same data.
-2. **Enrich.** The enricher reads file listings, headers and a small sample (≤ 500 MB) of each
-   dataset: folder tree, exact size, shapes, dtypes, compression, value ranges, label encoding,
-   raw ↔ label alignment and license. The PR gets a *Technical inspection* section and a report comment.
-3. **Label.** A workflow sets the PR's labels from its record on every push (see below).
-4. **Merge.** Auto-merge merges PRs that meet the policy; everything else stays open for review.
+## Reviewing
+- **Merge** a PR to accept it. **Close** it to reject it; a closed dataset is never proposed again.
+- **Edit the YAML** in the PR to fix a field. Agents never overwrite a field you changed.
+- Label **`hold`** to stop auto-merge; label **`not-duplicate`** to clear a false duplicate flag.
 
-## Reviewing PRs
-- **Merge** to accept, **close** to reject (it won't be proposed again: `load_rejected` reads closed PRs).
-- **Edit the YAML** in the PR to fix a field first; agents never overwrite a field you changed.
-- Add the label **`hold`** to stop auto-merge from merging a PR.
-
-**Labels** (computed by `tools/labels.py`, never set by hand): `dim:` · `org:` · `modality:` · `fmt:` ·
-`anno:` · `license:<SPDX id>` · `size:` · `enriched` · `voxel-size-missing` · `download-ready` /
-`download-not-ready` (`tools/readiness.py`).
-
-**Auto-merge** (`tools/automerge.py`; on while the repo variable `AUTO_MERGE` is `true`): after labelling,
-a PR gets GitHub's native auto-merge, which merges it once `validate` passes, when all of these hold:
-- `enriched`, with a dimensionality (2D, 2D+t, 3D or 3D+t);
-- a known license (not `license:unknown`);
-- only known formats (no `fmt:other`);
-- not a draft, no `hold`;
-- not a possible duplicate of a record on `main` or another open PR (add **`not-duplicate`** once you've checked).
-
-The dashboard lists every open PR that isn't merged, grouped by reason.
-
-## Repository
+## Layout
 | Path | Contents |
 |---|---|
-| `datasets/<dimensionality>/<modality>/<id>.yaml` | The catalog, one record per dataset, e.g. `datasets/3D/FIB-SEM/cremi.yaml` |
-| `schema/dataset.schema.json` | Record schema (v1.2; `technical` holds the enricher's findings) |
-| `CLAUDE.md` | Rules for the agents, including what counts as "usable" |
-| `.claude/skills/` | Agent procedures: `find-datasets`, `enrich-prs`, `maintain-catalog` |
-| `tools/` | Validation, dedup, file inspection, labels, auto-merge, publishing, dashboard |
-| `state/rejected.yaml` | Datasets that must not be proposed again, besides those of closed PRs |
+| `datasets/` | the catalog |
+| `CLAUDE.md` | rules for the agents, including what counts as "usable" |
+| `.claude/skills/` | `find-datasets`, `enrich-prs`, `maintain-catalog`, `download-dataset` |
+| `tools/` | validation, dedup, inspection, labels, merge policy, publishing, download, dashboard |
+| `state/rejected.yaml` | hand-curated rejections (closed PRs are rejected automatically) |
 
-Branches: `main` (protected catalog) · `claude/dataset/<id>` (one per proposed dataset, deleted when
-its PR closes) · `state` (search state, run logs, watchdog result).
-
-## Monitoring
-- **Dashboard:** catalog by dimensionality (modality and organism), new records per day, why open
-  PRs aren't merged, routine health and recent runs. Rebuilt hourly and after every merge.
-- **Slack:** failed runs, the daily digest, and watchdog alerts when a routine goes stale or keeps
-  failing (posted only when the alerts change; none while the repo variable `PAUSED` is `true`).
-- **Transcripts:** every agent session at claude.ai/code/routines.
-
-## Setup (done for this repo)
-1. **GitHub:** Pages from GitHub Actions; a ruleset on `main` requiring a PR and the `validate` check;
-   repo variable `AUTO_MERGE=true`; secret `SLACK_WEBHOOK_URL` (Slack incoming webhook).
-2. **Slack connector** for the agents (claude.ai → Settings → Connectors), then `/invite @Claude` in the channel.
-3. **Routines** as in the table, with prompts `/find-datasets source=repositories|literature|websearch`,
-   `/enrich-prs` and `/maintain-catalog`; Slack connector enabled; network access **Full**.
-   Harvesters use Sonnet, enricher and maintainer Opus.
+Branches: `main` (protected) · `claude/dataset/<id>` (one per proposed dataset) · `state` (search state,
+run logs, downloads list).
 
 ## Local use
 ```bash
-pip install -r requirements.txt                  # + requirements-inspect.txt for the enricher tools
-python tools/validate.py                         # check the catalog
-python tools/build_site.py                       # build the dashboard into site/
-claude -p "/find-datasets source=repositories target=1 dry-run"   # test a harvest run (no PRs)
-claude -p "/enrich-prs pr=126 dry-run"                            # test the enricher on one PR (no pushes)
+pip install -r requirements.txt
+python tools/validate.py                                   # check the catalog
+python tools/readiness.py --summary                        # what blocks downloads (needs $TENSORSWITCH_SRC)
+claude -p "/find-datasets source=repositories target=1 dry-run"
 ```
+Settings: repo variables `AUTO_MERGE=true` (merging on) and `PAUSED` (silences the watchdog), secret
+`SLACK_WEBHOOK_URL`; repo settings *Allow auto-merge* and *Automatically delete head branches* on.
