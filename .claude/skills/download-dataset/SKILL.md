@@ -1,12 +1,12 @@
 ---
 name: download-dataset
-description: Download a ready catalog record (its sample unit, or with whole the full dataset, crop by crop) and convert it to OME-Zarr in the miao layout (AI-HHMI/miao#13) with the TensorSwitch MCP, verified against the source. Args are the record (path or id), optionally root=<folder> (default demo), name=<short dataset name>, label_class=<class>[,<class>...] (one per label array), organism=<NCBI name>, whole, labelled-only, keep-source and dry-run. With `next` instead of a record, it runs unattended: it takes the next download-ready dataset that isn't on the downloads list, downloads it, and records the outcome (the hourly cron job).
+description: Download a ready catalog record (its sample unit, or with whole the full dataset, crop by crop) and convert it to OME-Zarr in the miao layout (AI-HHMI/miao#13) with TensorSwitch, verified against the source. Args are the record (path or id), optionally root=<folder> (default demo), name=<short dataset name>, label_class=<class>[,<class>...] (one per label array), organism=<NCBI name>, whole, keep-source and dry-run. With `next` instead of a record, it runs unattended: it takes the next download-ready dataset that isn't on the downloads list, downloads it, and records the outcome (the hourly cron job).
 ---
 
 # download-dataset
 
 Arguments: `$ARGUMENTS`. Parse the record (a path under `datasets/` or a record id), `root` (default
-`demo`), `name`, `label_class`, `organism`, `whole`, `labelled-only`, `keep-source` and `dry-run`.
+`demo`), `name`, `label_class`, `organism`, `whole`, `keep-source` and `dry-run`.
 If the argument is `next`, follow **Unattended mode** at the end instead.
 
 **Where the data goes is `root`, and only `root`:** converted crops go to `<root>/data/`, downloads in
@@ -17,7 +17,7 @@ voxel size the record doesn't settle is asked for, not guessed), metadata comes 
 nothing here edits a record or touches `main`. This skill downloads data, so in addition:
 - **Scope.** By default only the record's sample unit (`technical.sample.urls`: one raw plus its labels).
   With `whole`: every file of the dataset, one crop per raw/label pair. Raw files with no label become
-  raw-only crops unless `labelled-only`; labels with no raw are skipped and reported. `whole` needs the
+  raw-only crops; labels with no raw are skipped and reported. `whole` needs the
   record's data in one zip, and at most 50 GB (TensorSwitch's whole-dataset planner); folder and FTP
   datasets are not supported yet.
 - **One crop at a time:** a crop's files are fetched, converted, verified, recorded and deleted before
@@ -36,7 +36,8 @@ nothing here edits a record or touches `main`. This skill downloads data, so in 
         └── zarr.json                              label metadata (vocabulary below)
 ```
 - `modality`: the family of the first `imaging.modality`: `em`, `lm`, `xray` or `exm`.
-- `organism`: the short name from `tools/miao_layout.py:ORGANISM_SHORT` (`Mus musculus` → `mouse`).
+- `organism`: the short name from `tools/miao_layout.py:ORGANISM_SHORT` (`Mus musculus` → `mouse`), else a
+  slug of the NCBI name (`Chlorocebus sabaeus` → `chlorocebus-sabaeus`).
   One organism per dataset folder; a record with several needs `organism=` per sample unit.
 - `name`: short, lowercase, hyphenated: the dataset plus a region if it helps (`snemi3d`,
   `h01-cortex`). If not given, take it from the record's `short_name` / `title`, not from its id.
@@ -62,19 +63,13 @@ nothing here edits a record or touches `main`. This skill downloads data, so in 
 TS_REPO=${TENSORSWITCH_REPO:-../tensorswitch}        # TensorSwitch checkout on the `unified` branch, with `pixi install` done
 TS="$TS_REPO/src"
 ```
-Check the TensorSwitch MCP tools are available (`fetch_dataset`, `convert`, `verify_output`; look them
-up with ToolSearch "tensorswitch"). If they aren't, tell the user they can register it:
-```bash
-claude mcp add --transport stdio tensorswitch -- pixi run --manifest-path "$TS_REPO/pyproject.toml" python -m tensorswitch_v2.mcp_server
-```
-and continue with the **runner** (step 4b), which calls the same functions.
 
 ## 1. Is the record ready?
 ```bash
-python tools/convertibility.py <record.yaml> --tensorswitch "$TS"
+python tools/readiness.py <record.yaml> --tensorswitch "$TS"
 ```
-Continue only if it reports **no needs** and `tensorswitch: ready`. Otherwise stop, and report the
-needs and planner warnings to the user. Gaps are fixed in the record, through the enricher on an open
+Continue only if it says `ready` (`note:` lines don't block; they name labels the crops go without).
+Otherwise stop and report the reasons. Gaps are fixed in the record, through the enricher on an open
 PR or `/maintain-catalog` for records on `main`, never here.
 
 ## 2. Settle the names
@@ -93,7 +88,7 @@ Read the record in full (title, description, `annotations`, `technical.arrays`, 
 mkdir -p <root>/staging
 python tools/miao_layout.py <record.yaml> --root <root> --tensorswitch "$TS" \
     --label-class <class> [--label-class <class2> ...] --name <name> [--organism "<NCBI name>"] \
-    [--whole [--labelled-only]] > <root>/staging/<id>-plan.json
+    [--whole] > <root>/staging/<id>-plan.json
 ```
 The plan holds `dataset_dir`, `staging`, and `crops`. Each crop has its own `crop` path, `sample` name,
 `files`, `labels` metadata and ordered `steps` (tool + args). The plan also holds `unpaired` / `skipped`
@@ -106,40 +101,23 @@ needs the network; nothing is downloaded.
 - `dry-run`: stop here.
 
 ## 4. Download, convert, verify
-**a. With the MCP tools.** For each crop in `crops`, in order, run its `steps` passing each step's `args`
-**verbatim**, then finalize it (below) before starting the next crop:
-- `fetch_dataset`: for a sample over ~300 MB add `background=True`, and call again with the same
-  arguments until `status` is `success`. A cut-off download resumes.
-- `convert`: must return `status: success`. A step the plan gives as `submit_job` (sample over 2 GB)
-  needs the user's LSF `project`; follow it with `check_job_status` until it is done.
-- `verify_output`: `overall` must be `pass`. `fail` or `unverified` means that crop failed: keep its
-  output and downloads, note the failing checks, and go on with the next crop. Don't delete or retry blindly.
-
-Record the passing crop and delete its downloads:
-```bash
-python tools/miao_run.py <root>/staging/<id>-plan.json --finalize [--keep-source]
-```
-It records every crop whose `verification.json` says `pass` and that isn't recorded yet: it adds the
-crop to `manifest.json`, fills each label's `bbox.size`, and deletes that crop's downloads. Crops
-already recorded are skipped, so running it after each crop is safe.
-
-**b. Without the MCP (runner).** Same steps, same checks, one command:
 ```bash
 pixi run --manifest-path "$TS_REPO/pyproject.toml" python "$PWD/tools/miao_run.py" "$PWD/<root>/staging/<id>-plan.json" [--keep-source]
 ```
-It works through the crops one at a time, with the same checks and the same finalize step.
+The runner calls TensorSwitch's MCP functions in-process. Per crop, in turn: fetch its files, `convert`,
+`verify_output` (`overall` must be `pass`), then add the crop to `manifest.json`, fill each label's
+`bbox.size`, and delete its downloads.
 - **Resumable:** crops already recorded with a passing verification are skipped, and a half-written crop
   from an interrupted run is started over. After an interruption, just run the same command again.
 - **A failing crop** keeps its output and downloads. The run goes on to the next crop, then exits 1 and
-  lists the failures in its summary line.
-- **Over 2 GB:** the runner downloads in the foreground and doesn't use the cluster. A crop the plan
-  sends to `submit_job` is reported as failed ("needs the LSF cluster"); run that crop with the MCP
-  path (a). For a long `whole` run, start the runner in the background and watch its JSON lines.
+  lists the failures in its summary line. Don't delete or retry blindly.
+- **Over 2 GB:** a crop the plan sends to `submit_job` (the LSF cluster) is reported as failed; the queue
+  doesn't offer sample units that large. For a long `whole` run, start the runner in the background and
+  watch its JSON lines.
 
 ## 5. Report
 Short and factual:
-- the dataset folder, the crops written / already done / failed (from the runner's summary, or your
-  own count), one crop's folder tree (`find <crop> -maxdepth 3 -not -path '*/c/*'`), and the size on disk
+- the dataset folder, the crops written / already done / failed (from the runner's summary), one crop's folder tree (`find <crop> -maxdepth 3 -not -path '*/c/*'`), and the size on disk
 - `verify_output`: overall per crop, plus the identity and voxel-size checks; the failing checks of any
   failed crop
 - files left out (`unpaired`, `notes`) and why
@@ -184,7 +162,7 @@ python tools/download_queue.py next --root <root> --max-gb 10     # the next dow
     record a run still holds; skipping doesn't count as the run's record).
   - **Scope.** Plan with `--whole` when `mode` is `whole`, else the sample unit.
   - **Planning.** Write the plan with `--out <root>/staging/<id>-plan.json` (no shell redirects in this mode).
-  - **Running.** Use the runner (4b) with `--summary-out <root>/staging/<id>-summary.json`:
+  - **Running.** Use the runner (step 4) with `--summary-out <root>/staging/<id>-summary.json`:
     `pixi run --manifest-path "$TENSORSWITCH_REPO/pyproject.toml" python "$PWD/tools/miao_run.py" <plan> --summary-out <summary>`
 - **Record the outcome**, always, then save the list:
   ```bash
@@ -195,5 +173,5 @@ python tools/download_queue.py next --root <root> --max-gb 10     # the next dow
   ```
   A record that failed twice isn't offered again; `skipped` is permanent until someone removes the entry.
 - Never edit a record, never push to `main`. The only thing pushed is the downloads list, to
-  `claude/state/downloader`.
+  the `state` branch.
 - End with one short line: what was downloaded (crops, size on disk) or why nothing was.

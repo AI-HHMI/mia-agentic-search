@@ -4,6 +4,7 @@ import functools
 import json
 import re
 import subprocess
+import sys
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -16,15 +17,13 @@ DATASETS_DIR = ROOT / "datasets"
 DRAFTS_DIR = ROOT / "drafts"  # harvesters draft records here (git-ignored); publish.py files them in datasets/
 STATE_DIR = ROOT / "state"
 RUNS_DIR = STATE_DIR / "runs"
-REJECTED_PATH = STATE_DIR / "rejected.yaml"
-# Automatic rejections live on an unprotected branch, since workflows cannot push to protected main.
-REJECTIONS_REF = "origin/rejections"
+REJECTED_PATH = STATE_DIR / "rejected.yaml"  # hand-curated; closed PRs are rejected without it (load_rejected)
 FRONTIER_DIR = STATE_DIR / "frontier"  # one file per routine avoids cross-PR conflicts
 RUN_BUDGET_MIN = 120      # hard upper runtime per agent run
 HARVEST_TARGET = 10       # a harvest run stops after publishing this many new datasets (one PR each)
 SEARCH_CUTOFF_MIN = 110   # stop searching here, leaving time to publish PRs and save state
 DATASET_BRANCH_PREFIX = "claude/dataset/"  # one branch + PR per proposed dataset
-STATE_BRANCH_PREFIX = "claude/state/"      # per-routine frontier + run logs, never reviewed
+STATE_BRANCH = "state"  # orphan: frontiers, run logs, downloads, gallery, watchdog; each routine owns its files
 
 # Enricher: technical inspection of proposed datasets (see .claude/skills/enrich-prs).
 WHOLE_DOWNLOAD_MAX_BYTES = 50 * 10**9      # download queue: whole dataset only below this, and only for a confirmed size
@@ -85,6 +84,58 @@ def tree_names(raw):
     return names
 
 
+def fetch_catalog():
+    """Fetch main and every dataset branch (pruning deleted ones), so dedup never works from stale refs."""
+    git("fetch", "-q", "--no-tags", "--prune", "origin", "+refs/heads/main:refs/remotes/origin/main",
+        f"+refs/heads/{DATASET_BRANCH_PREFIX}*:refs/remotes/origin/{DATASET_BRANCH_PREFIX}*")
+
+
+def open_pr_branches():
+    """Head branches of open PRs, or None without gh; dataset branches without an open PR don't count as pending."""
+    try:
+        out = subprocess.run(["gh", "pr", "list", "--state", "open", "--limit", "1000", "--json", "headRefName",
+                              "-q", ".[].headRefName"], cwd=ROOT, capture_output=True, text=True, timeout=60)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    return out.stdout.split() if out.returncode == 0 else None
+
+
+def main_records(ref="origin/main"):
+    """{path: record} on `ref`, read from git rather than the working tree, which may be hours old."""
+    paths = [p for p in git("ls-tree", "-r", "--name-only", ref, "--", "datasets/").split() if p.endswith(".yaml")]
+    blobs = git_objects(f"{ref}:{p}" for p in paths)
+    return {p: yaml.load(blobs[f"{ref}:{p}"][1].decode(), Loader=_NoDatesLoader) or {}
+            for p in paths if f"{ref}:{p}" in blobs}
+
+
+def added_records(refs):
+    """Records the refs add that aren't on origin/main: [(ref, record, n)], n = record ids the ref adds in all.
+
+    One `git log` for all refs (one merge-base per ref is slow on NFS); --source names the ref each commit
+    was reached from. Files deleted or moved later are missing at the tip and left out."""
+    if not refs:
+        return []
+    log = git("log", "--source", "--no-renames", "--diff-filter=A", "--name-only", "--format=%x00%S",
+              *refs, "--not", "origin/main", "--", "datasets/")
+    on_main = set(git("ls-tree", "-r", "--name-only", "origin/main", "--", "datasets/").split())  # e.g. a record moved
+    added, ids = set(), {}
+    for block in log.split("\0")[1:]:
+        ref, *paths = block.split("\n")
+        paths = [p for p in paths if p.endswith(".yaml")]
+        ids.setdefault(ref.strip(), set()).update(Path(p).stem for p in paths)
+        added.update((ref.strip(), path) for path in paths if path not in on_main)
+    blobs = git_objects(f"{ref}:{path}" for ref, path in sorted(added))
+    found = []
+    for ref, path in sorted(added):
+        blob = blobs.get(f"{ref}:{path}")
+        if blob and blob[0] == "blob":
+            try:
+                found.append((ref, yaml.load(blob[1].decode(), Loader=_NoDatesLoader) or {}, len(ids[ref])))
+            except yaml.YAMLError:
+                pass
+    return found
+
+
 def pending_records(branches=None):
     """Records proposed on open claude/dataset/* branches but not yet on main: {branch: record}.
 
@@ -95,27 +146,7 @@ def pending_records(branches=None):
     if branches is not None:
         wanted = set(branches)
         refs = [r for r in refs if r.removeprefix("origin/") in wanted]
-    if not refs:
-        return {}
-    # Files added by each branch's own commits, in one `git log` (one merge-base per branch is slow on NFS).
-    # --source names the ref each commit was reached from; files deleted or moved later are missing at the tip.
-    log = git("log", "--source", "--no-renames", "--diff-filter=A", "--name-only", "--format=%x00%S",
-              *refs, "--not", "origin/main", "--", "datasets/")
-    on_main = set(git("ls-tree", "-r", "--name-only", "origin/main", "--", "datasets/").split())  # e.g. a record moved
-    added = set()
-    for block in log.split("\0")[1:]:
-        ref, *paths = block.split("\n")
-        added.update((ref.strip(), path) for path in paths if path.endswith(".yaml") and path not in on_main)
-    blobs = git_objects(f"{ref}:{path}" for ref, path in sorted(added))
-    found = {}
-    for ref, path in sorted(added):
-        blob = blobs.get(f"{ref}:{path}")
-        if blob and blob[0] == "blob":
-            try:
-                found[ref.removeprefix("origin/")] = yaml.load(blob[1].decode(), Loader=_NoDatesLoader) or {}
-            except yaml.YAMLError:
-                pass
-    return found
+    return {ref.removeprefix("origin/"): rec for ref, rec, _ in added_records(refs)}
 
 
 class _NoDatesLoader(yaml.SafeLoader):
@@ -133,14 +164,41 @@ def load_yaml(path):
         return yaml.load(f, Loader=_NoDatesLoader)
 
 
+@functools.lru_cache(maxsize=1)
+def fetch_pull_refs():
+    """Once per process: every PR's head (refs/pull/*, closed ones too) as origin/pr/<n>, the live dataset
+    branches (pruned, so a closed PR's deleted branch stops counting as open) and main. Plain git, no gh."""
+    r = subprocess.run(["git", "fetch", "-q", "--prune", "--no-tags", "origin",
+                        "+refs/pull/*/head:refs/remotes/origin/pr/*",
+                        f"+refs/heads/{DATASET_BRANCH_PREFIX}*:refs/remotes/origin/{DATASET_BRANCH_PREFIX}*",
+                        "+refs/heads/main:refs/remotes/origin/main"], cwd=ROOT, capture_output=True, text=True)
+    if r.returncode:
+        print(f"warning: fetching PR refs failed; rejections come from the refs already here: {r.stderr.strip()[:300]}",
+              file=sys.stderr)
+
+
 def load_rejected():
-    """Rejected keys: state/rejected.yaml in the working tree (manual) + the rejections branch (automatic)."""
-    keys = []
-    if REJECTED_PATH.exists():
-        keys += (load_yaml(REJECTED_PATH) or {}).get("rejected") or []
-    remote = git("show", f"{REJECTIONS_REF}:state/rejected.yaml")
-    if remote:
-        keys += (yaml.load(remote, Loader=_NoDatesLoader) or {}).get("rejected") or []
+    """Rejected keys: state/rejected.yaml (hand-curated) + the records closed-unmerged dataset PRs added.
+
+    A dataset PR adds exactly one record id (the batch PRs of the first harvests don't count). It is
+    closed-unmerged when its head isn't on origin/main (merged commits drop out of the `git log`) and its
+    record id is neither on main nor on a live claude/dataset/* branch. The id is always rejected; its
+    identity keys only when no record on main or on a live branch has them (a PR closed as a duplicate
+    shares those with the record that was kept)."""
+    keys = list((load_yaml(REJECTED_PATH) or {}).get("rejected") or []) if REJECTED_PATH.exists() else []
+    fetch_pull_refs()
+    main_paths = [p for p in git("ls-tree", "-r", "--name-only", "origin/main", "--", "datasets/").split()
+                  if p.endswith(".yaml")]
+    live = pending_records()
+    others = [yaml.load(b, Loader=getattr(yaml, "CSafeLoader", yaml.SafeLoader)) or {}  # ids and keys only: C is faster
+              for t, b in git_objects(f"origin/main:{p}" for p in main_paths).values() if t == "blob"]
+    others += live.values()
+    held = {k for r in others for k in identity_keys(r)}
+    kept = ({Path(p).stem for p in main_paths} | {r.get("id") for r in others}
+            | {b.removeprefix(DATASET_BRANCH_PREFIX) for b in live})
+    for _, rec, n in added_records(git("for-each-ref", "--format=%(refname:short)", "refs/remotes/origin/pr/").split()):
+        if n == 1 and rec.get("id") and rec["id"] not in kept:
+            keys += [rec["id"], *(k for k in identity_keys(rec) if k not in held)]
     return list(dict.fromkeys(keys))
 
 
@@ -213,12 +271,6 @@ def canonical_path(record):
     return DATASETS_DIR / dim / mods[0] / f"{record['id']}.yaml"
 
 
-def legacy_path(record):
-    """The old layout, datasets/<repository-lowercase>/<id>.yaml; still accepted until every PR is moved."""
-    repo, rid = (record or {}).get("repository"), (record or {}).get("id")
-    return DATASETS_DIR / repo.lower() / f"{rid}.yaml" if isinstance(repo, str) and rid else None
-
-
 def rel(path):
     try:
         return str(Path(path).relative_to(ROOT))
@@ -245,7 +297,7 @@ def identity_keys(record):
         keys.append("doi:" + record["doi"].lower())
     if record.get("accession"):
         keys.append(f"acc:{record.get('repository', '').lower()}:{record['accession'].lower()}")
-    if record.get("landing_url"):
+    if record.get("landing_url") and not keys:  # several datasets can share a landing page (challenge sites)
         keys.append("url:" + normalize_url(record["landing_url"]))
     return keys
 
@@ -292,6 +344,12 @@ def _title_rest_overlap(ta, tb):
     return len(ra & rb) / len(ra | rb) if ra | rb else 1.0
 
 
+def voxel_size_found(im):
+    """imaging.voxel_size_nm has x, y and, unless the data is 2D, z."""
+    vs = im.get("voxel_size_nm") or {}
+    return bool(vs.get("x") and vs.get("y") and (vs.get("z") or str(im.get("dimensionality", "")).startswith("2D")))
+
+
 def similarity_reasons(a, b):
     """Why records a and b are likely the same dataset (re-deposit, version, mirror); [] if not.
 
@@ -305,6 +363,11 @@ def similarity_reasons(a, b):
     if da and db and normalize_url(da) == normalize_url(db):
         reasons.append("same download URL")
     ta, tb = normalize_title(a.get("title")), normalize_title(b.get("title"))
+    ia, ib = ({k for k in identity_keys(r) if not k.startswith("url:")} for r in (a, b))
+    if ia and ib and not ia & ib:  # each has its own DOI / accession: different unless the download is the same,
+        if ta and ta == tb and a.get("repository") == b.get("repository") == "Zenodo":  # or a new Zenodo version
+            reasons.append("same title on Zenodo (another version?)")
+        return reasons
     if not (ta and tb):
         return reasons
     ratio = difflib.SequenceMatcher(None, ta, tb).ratio()
@@ -319,3 +382,14 @@ def similarity_reasons(a, b):
 
 def utcnow():
     return dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def human_size(n, unknown="unknown"):
+    """Bytes in decimal units: 1234567 -> '1.2 MB'."""
+    if n is None:
+        return unknown
+    for unit in ("B", "KB", "MB", "GB"):
+        if n < 1000:
+            return f"{n:.0f} B" if unit == "B" else f"{n:.1f} {unit}"
+        n /= 1000
+    return f"{n:.1f} TB"

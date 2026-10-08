@@ -1,6 +1,6 @@
 ---
 name: enrich-prs
-description: Enricher run. Goes through open dataset PRs that aren't enriched yet and inspects the actual files (folder structure, confirmed size, shapes, dtypes, compression, value ranges, label encoding, raw/label alignment, license), searches hard for the voxel size and for direct download links TensorSwitch can fetch, fixes what blocks automatic conversion (tools/convertibility.py, TensorSwitch planner), writes the results into the PR's record and updates the PR. Labels follow automatically. Optional args are limit=N (max PRs, default 20), pr=<number> (just that PR), shard=K/N (only PRs whose number mod N is K, for parallel runs) and dry-run.
+description: Enricher run. Goes through open dataset PRs that aren't enriched yet and inspects the actual files (folder structure, confirmed size, shapes, dtypes, compression, value ranges, label encoding, raw/label alignment, license), searches hard for the voxel size and for direct download links TensorSwitch can fetch, fixes what blocks automatic conversion (tools/readiness.py, TensorSwitch planner), writes the results into the PR's record and updates the PR. Labels follow automatically. Optional args are limit=N (max PRs, default 20), pr=<number> (just that PR), shard=K/N (only PRs whose number mod N is K, for parallel runs) and dry-run.
 ---
 
 # enrich-prs
@@ -8,14 +8,8 @@ description: Enricher run. Goes through open dataset PRs that aren't enriched ye
 Arguments: `$ARGUMENTS`. Parse `limit` (default 20), `pr` (optional), `shard` (optional, `K/N`) and `dry-run` (flag).
 `ROUTINE=enricher`.
 
-Read `CLAUDE.md` first. Its hard rules apply, in particular: **never invent values**. Everything you
-write must come from a page you fetched or a file you inspected in this run. This routine goes
-deeper than the harvesters: it reads file headers and small samples. It still never downloads a
-whole dataset.
-
-**What you change:** only the one record on each PR's `claude/dataset/<id>` branch, the PR body and
-one PR comment. Never another file, branch or PR, and never `main`. Labels are computed from the
-record by `.github/workflows/label.yml`, so **don't add labels yourself**.
+Read `CLAUDE.md` first (hard rules and the Enricher section apply). You change only the one record on
+each PR's `claude/dataset/<id>` branch, the PR body and one PR comment; labels follow from the record.
 
 ## 0. Setup
 ```bash
@@ -40,16 +34,6 @@ The queue is the open PRs whose branch starts with `claude/dataset/` and that **
 With `shard=K/N`, keep only PRs whose number modulo N equals K. Several runs with different K then
 split the backlog without ever touching the same PR.
 
-**Second pass: voxel size and conversion readiness.** When that queue is empty, continue with the open
-dataset PRs that *are* `enriched` but whose comments have no `Conversion readiness` heading yet
-(`gh pr view <n> --json comments`), i.e. PRs enriched before steps 4a, 4b and 5a existed, oldest first.
-For these, run only steps 2, 4a, 4b, 5a and 6. Keep the inspected values in `technical`; change only what
-4a, 4b and 5a fix, and post their results as the comment.
-
-**Third pass: size.** Then continue with the open dataset PRs that are `enriched`, still labelled
-`size:unknown`, and whose comments have no `Size estimate` heading yet, oldest first. For these, run only
-steps 2, 4c and 6, and post the step 4c result as the comment.
-
 Work through it one PR at a time:
 ```
 while python tools/run_log.py continue --time-only; do      # exit 1 = the 110-minute cutoff
@@ -63,7 +47,7 @@ and say in `technical.notes` what is still open.
 
 ## 2. Pull the record
 ```bash
-python tools/publish.py pr-pull <id>        # writes the record into the tree, saves a baseline copy
+python tools/publish.py pr-pull <id>        # writes the record into the tree
 gh pr view <number> --json body,comments
 ```
 - `human_edits` lists commits a person made on the branch. Run `git show <sha>` for each one, and
@@ -83,21 +67,21 @@ Answer these questions for the dataset. Each one maps to a field in `technical` 
 | Raw images, restoration targets or labels? | `arrays[].role` | file/folder names, docs |
 | Format, axes, tensor shape | `format`, `axes`, `shape`, `shape_varies` | `tools/probe.py` |
 | Data type (int / float, bits) | `dtype` | `tools/probe.py` |
-| Compression inside the files, lossy? | `compression`, `lossy`, `chunks` | `tools/probe.py` |
+| Compression inside the files | `compression` | `tools/probe.py` |
 | Intensity range, contrast-normalized? | `value_range`, `normalization` | `tools/sample.py` + docs |
-| What are the labels (binary, semantic IDs, instance IDs…)? | `encoding`, `classes`, `n_ids_observed` | `tools/sample.py` + docs |
+| What are the labels (binary, semantic IDs, instance IDs…)? | `encoding`, `classes` | `tools/sample.py` + docs |
 | How do labels align with the raw data? | `alignment`, `alignment_notes` | shapes, voxel sizes, transforms |
 
 **a. Listing.** Pass *all* of the dataset's top-level URLs: the record, every zip the page links to,
 the folder, the bucket prefix.
 ```bash
-python tools/listing.py <url> [<url> ...] --id <id> --expand-zips --examples 3
+python tools/listing.py <url> [<url> ...] --expand-zips --examples 3
 ```
 - Copy the tree into `layout.tree`. You may shorten it, but keep it ≤ 40 lines. Set `layout.n_files`
   and `layout.listing_complete` from the JSON line.
 - **Confirmed size:** set `size_source: file-listing` only if the JSON says `"size_source": "file-listing"`
   **and** your URLs cover every file the dataset offers. Then set `data.size_bytes` to exactly
-  `total_bytes`; the validator checks this. The download queue fetches the whole dataset only with a
+  `total_bytes`. The download queue fetches the whole dataset only with a
   confirmed size < 50 GB (`tools/readiness.py:whole_download_ok`), so when in doubt don't claim it.
 - Otherwise, use `page-stated` or `paper` when a page or the paper states the size, and leave the existing
   `size_bytes` unless you have a better stated value. If nothing states it, **estimate it (step 4c)**:
@@ -112,8 +96,8 @@ parallel `images/` and `masks/` folders, same well ID). Note the rule in `alignm
 
 **c. Headers.** These are cheap: a few KB per file.
 ```bash
-python tools/probe.py <file url> --id <id>
-python tools/probe.py <zip url> --glob '*/masks/*.tif' --n 2 --id <id>      # members of a remote zip
+python tools/probe.py <file url>
+python tools/probe.py <zip url> --glob '*/masks/*.tif' --n 2      # members of a remote zip
 ```
 - `voxel_size_nm` from a header is the stored calibration. Use it to fill `imaging.voxel_size_nm`
   only if it's plausible for the modality and agrees with the docs; uncalibrated files often say
@@ -129,8 +113,8 @@ python tools/probe.py <zip url> --glob '*/masks/*.tif' --n 2 --id <id>      # me
     really channels are `c`, and z slices stored per pixel (photometric 1 with 50 samples, say) are `z`
     (`yxz`). If an RGB file is one channel per the docs, check with tools/sample.py:
     `samples_identical: true` means grey stored as RGB; write `s` and say so in `alignment_notes`.
-  - Recorded axes not ending in `yx` (samples per pixel) keep the record not download-ready until
-    TensorSwitch accepts `input_axes`; record them correctly anyway, the converter will use them.
+  - TensorSwitch converts a TIFF with the recorded axes as its `input_axes`, so a TIFF array without
+    `axes` isn't converted at all.
 
 **d. Sample.** Download the smallest raw + label pair and measure it. The budget is 500 MB per
 record per run, and the tool enforces it.
@@ -147,7 +131,6 @@ Turn its output into fields like this. Its `hints` are heuristics, not facts:
 - `encoding`: `binary` for {0,1} / {0,255}; `instance-ids` or `semantic-ids` when the docs say so
   or the sample makes it unambiguous (e.g. hundreds of IDs); otherwise `unknown`. Put class names in
   `classes` only if the docs name them.
-- `n_ids_observed`: `n_unique` of the label sample.
 - `alignment`:
   - `same-grid` if shapes match and nothing says otherwise.
   - `scaled` if the shape ratio matches a voxel-size ratio.
@@ -162,14 +145,11 @@ Turn its output into fields like this. Its `hints` are heuristics, not facts:
 
 **f. Formats the tools can't read** (CZI, ND2, LIF, DICOM, custom binary, an API that serves chunks):
 you may write a short script in your scratch directory. Use only `aicsimageio`, `nd2`, `readlif`,
-`pydicom`, `ome-zarr`, `cryoet-data-portal` or `requests`. Stay within the sample budget. Log every
-read with `python tools/run_log.py inspected --kind header|sample --url <url> --id <id> --bytes <n>`.
+`pydicom`, `ome-zarr`, `cryoet-data-portal` or `requests`. Stay within the sample budget: log every
+download with `python tools/run_log.py inspected --url <url> --id <id> --bytes <n>`.
 Put the script's key output in the PR comment (step 6).
 
-**Untrusted data rules:** never run code that ships with a dataset (scripts, notebooks, `setup.py`),
-never `pip install` a package a dataset's README names (other than the ones above), and never
-unpickle anything (`pickle`, `joblib`, `torch.load`, `np.load(allow_pickle=True)`). Downloads go to
-temporary directories and are deleted. No whole-dataset downloads, ever.
+Untrusted data (CLAUDE.md) includes notebooks, `setup.py`, `joblib`, `torch.load` and `np.load(allow_pickle=True)`.
 
 ## 4. License
 The PR gets a `license:<spdx>` label straight from `license.spdx`. **Don't interpret the license.**
@@ -185,8 +165,8 @@ Only find and record it.
 
 ## 4a. Voxel size: search until you find it
 `imaging.voxel_size_nm` is what conversion needs most: TensorSwitch never guesses a voxel size, so a
-record without one can't be converted. The PR is labelled `voxel-size-found` or `voxel-size-missing`
-from it (found = `x`, `y` and, for 3D / 3D+t, `z`). If the record's value is missing or incomplete,
+record without one can't be converted. The PR is labelled `voxel-size-missing`
+until it has `x`, `y` and, for 3D / 3D+t, `z`. If the record's value is missing or incomplete,
 **work through every source below before you give up**, and note each one you checked:
 1. **File headers** of each role you probed in 3c (`voxel_size_nm` in the probe output), plus
    metadata sidecars: OME-XML, `.zattrs` / `zarr.json`, N5 `attributes.json`, neuroglancer `info`,
@@ -225,7 +205,7 @@ pages. It accepts `http(s)`, `ftp` and `s3` URLs on its host allowlist, and `<zi
 file out of a remote zip (that needs range requests). A landing page, a folder index, a "Download" button
 behind JavaScript or a login page is not usable. Check every candidate with:
 ```bash
-python tools/download_check.py <url> ['<zip url>::<member>' ...] --id <id> --tensorswitch "$TS"
+python tools/probe.py --download-check <url> ['<zip url>::<member>' ...] --tensorswitch "$TS"
 ```
 `usable: true` is the bar. Find usable links for two fields:
 - `technical.sample.urls`: the sample unit (smallest raw file and its label files), one usable spec each.
@@ -258,10 +238,10 @@ If the current links aren't usable, **work through every route below before givi
    and zip members work there); `s3://bucket/key` is `https://bucket.s3.amazonaws.com/key`.
 
 Rules:
-- Only links you checked with `download_check.py` in this run, and that point to **this dataset's files**.
+- Only links you checked with `probe.py --download-check` in this run, and that point to **this dataset's files**.
   Never construct a URL by guessing a path; derive it from a listing, an API response or a page.
 - Chunked stores (Zarr, N5, neuroglancer precomputed) are folders by design: cite the store's root URL
-  and check it with `tools/probe.py` instead. TensorSwitch reads those remotely.
+  and probe it (without `--download-check`) instead. TensorSwitch reads those remotely.
 - A usable link on a host TensorSwitch doesn't allow yet: record it anyway, and name the host in the PR
   comment so it can be added to the allowlist.
 - Nothing direct exists (registration, Globus / Aspera only, "on request", download behind a form):
@@ -286,7 +266,7 @@ python tools/estimate_size.py <file> --count 0=80 --count 1=80                  
 - Use the result only when `missing` is empty. Set `data.size_bytes` to `total_bytes` and
   `technical.size_source: estimated`, and add its `technical_notes_line` to `technical.notes` (it says
   how the number was made, and that it's the uncompressed size: compressed files download smaller).
-  The PR then gets its `size:` label and a `size-estimated` flag; a whole-dataset download still needs a listing.
+  The PR then gets its `size:` label; a whole-dataset download still needs a listing.
 - Never replace a `file-listing`, `page-stated` or `paper` size with an estimate (the tool warns).
 - `missing` not empty: keep `size_bytes` null and say in `technical.notes` what's missing (a count, a
   dtype, a shape). In the PR comment, put the result under a `Size estimate` heading either way.
@@ -308,30 +288,30 @@ match the evidence (the caps in CLAUDE.md still apply). Set `verification.last_c
 Records are converted to OME-Zarr automatically by TensorSwitch, which reads the record and stops on
 anything it doesn't settle. After steps 3–5, check what still blocks it:
 ```bash
-python tools/convertibility.py <file> --tensorswitch "$TS"     # needs / helpful, plus the planner's verdict
+python tools/readiness.py <file> --tensorswitch "$TS"     # ready / not-ready, with the reasons
 ```
-Fix every **need**, and every **helpful** item you can, from what you inspected or read in this run.
-Rerun until nothing fixable is left.
+Fix every reason you can from what you inspected or read in this run (`access` and `dimensionality`
+are facts, not gaps). Rerun until nothing fixable is left. Also check, without a reason telling you:
+`path_pattern` is one real glob, `annotations.source` and `coverage` are settled, and `data.download_url`
+is a direct archive when the dataset offers one.
 
 | Gap | Fix |
 |---|---|
-| no `technical` / no `arrays` | steps 3a–d |
-| no `sample.urls`, a landing page / folder, or a host not on the allowlist | step 4b |
+| planner: no `technical.arrays` | steps 3a–d |
+| planner: no `sample.urls` / no sample file matched an array, or a host not on the allowlist | step 4b; or correct the `path_pattern` so each sample file matches its array |
 | `data.download_url` a landing page / folder | step 4b (one direct archive or file, if the dataset offers one) |
-| sample file matches no array | correct the `path_pattern` (or the sample) so each sample file matches its array |
-| no voxel size | step 4a |
-| `organism` empty | NCBI name(s) from the page or paper |
+| no voxel size (x, y and z) | step 4a |
+| `organism` lists 0 | NCBI name(s) from the page or paper |
 | several organisms | keep them all; one `notes` line saying which files or folders belong to each (`organisms: Homo sapiens = hela_cell/, Rattus norvegicus = lucchi_pp/`). Each organism becomes its own converted dataset. |
-| `modality` only `other`, `other` next to a clear value, or mixed families | the listed value that applies; if EM and light/X-ray data are mixed, a `notes` line saying which files are which |
-| HDF5 array without a dataset name | append ` (<dataset path>)` from the probe's dataset list, always in this spelling; rewrite ` :: name` to it. One array entry per dataset. |
+| modality family unclear | the listed value that applies; if EM and light/X-ray data are mixed, a `notes` line saying which files are which |
+| HDF5 arrays without a dataset name | append ` (<dataset path>)` from the probe's dataset list, always in this spelling. One array entry per dataset. |
 | `path_pattern` with placeholders (`<name>`, `NNN`, `###`) or a comma list | one real glob (`*`, `?`, `[0-9]`, `{a,b}`) that matches exactly this array's files in the listing; check it against the listing |
 | HDF5 array without `axes` | only when the docs, paper or file attributes state the axis order; otherwise leave `null` and say why in `technical.notes` (the step 3c rule stands) |
 | TIFF array without `axes` | probe a file of that array and follow the step 3c TIFF rules (`tiff_layout`, `samples_per_pixel`); never copy `axes: null` from a plain multi-page TIFF into a guess |
-| TIFF array with axes not ending in `yx` | correct if the probe or docs show otherwise; if right (samples per pixel), keep it. This need stays until TensorSwitch accepts `input_axes`; say so in `technical.notes` |
 | `annotations.source` unknown / mixed | `manual`, `proofread` or `automatic` from the paper's Methods; `mixed` only if it really is, with a `notes` line saying which arrays are which |
 | `annotations.coverage` partial / unknown | a `notes` line on what is annotated: sparse crops, N of M slices, a sub-volume and where |
 
-- **Never invent a value to clear a need.** A need that no source settles stays, with what you checked.
+- **Never invent a value to clear a reason.** A reason that no source settles stays, with what you checked.
 - What #518 lists as *new fields* (`label_class`, file arrangement, raw↔label pairing rule,
   `expansion_factor`, annotation tool) is not in the schema yet. Don't add keys: put the structure
   annotated in `classes` / `alignment_notes`, the pairing rule in `alignment_notes`, the rest in `notes`.
@@ -340,9 +320,6 @@ Rerun until nothing fixable is left.
 ## 6. Write, validate, publish
 Set `schema_version: '1.2'` and write the `technical` block:
 - `method`: the deepest check done: `metadata-only`, `header` or `sample`
-- `inspected_at`: now
-- `inspected_urls`: the URLs you passed to listing / probe / sample
-- `bytes_downloaded`: the sum of the sample tools' `bytes_downloaded`
 - `size_source`, `layout`, `sample` (null if there is no sensible small unit), `arrays`, `notes`
 
 If a dataset can't be inspected at all (registration-only, Aspera/Globus only, dead links), still
@@ -350,7 +327,7 @@ write `technical` with `method: metadata-only` and explain why in `technical.not
 leaves the queue.
 
 ```bash
-python tools/validate.py <file> --run-log <enricher run log> --baseline state/.enrich/<id>.orig.yaml --min-confidence 0.5
+python tools/validate.py <file> --min-confidence 0.5
 ```
 Fix errors and re-validate. After 2 failed attempts, log `event error --id <id> --reason "<message>"`,
 delete the file and move on.
@@ -374,10 +351,9 @@ your changes on top, respecting their edit, and publish again.
 - a heading `Enricher inspection`
 - which files were listed, probed and sampled, with byte counts
 - the key raw tool outputs: the listing's JSON line, and each probe/sample shape, dtype, value range and hints
-- a `Conversion readiness` heading: the `convertibility.py` report before and after your fixes, the
-  TensorSwitch status (`ready` / `partial` / `blocked`) and planner warnings, and each remaining need
-  with why it couldn't be settled (always include this section; the second pass in step 1 looks for it)
-- a `Download link search` heading: each link and its `download_check.py` result (`usable`, size,
+- a `Conversion readiness` heading: the `readiness.py` report before and after your fixes, and each remaining reason
+  with why it couldn't be settled
+- a `Download link search` heading: each link and its `--download-check` result (`usable`, size,
   range requests), or every route checked without finding one; hosts that need adding to the allowlist
 - a `Size estimate` heading: step 4c's `technical_notes_line`, or what was missing for an estimate
   (skip it when a listing, page or paper gave the size)

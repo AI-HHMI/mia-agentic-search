@@ -10,15 +10,15 @@
     python tools/run_log.py event enriched|skipped --id X --pr-url <PR url> [--reason "..."]
     python tools/run_log.py finish [--status ok|partial|failed] [--stop-reason R]
     python tools/run_log.py show
-    python tools/run_log.py inspected --kind sample --url U --id X --bytes N [--note "..."]   # ad hoc scripts
+    python tools/run_log.py inspected --url U --id X --bytes N [--note "..."]   # samples by ad hoc scripts
     python tools/run_log.py recent-errors --routine enricher [--runs 5] [--min 2]            # ids to skip
 
 Harvest runs search until `target` new datasets (default HARVEST_TARGET, 10) are published or
 SEARCH_CUTOFF_MIN is reached; the whole run must end within RUN_BUDGET_MIN (tools/common.py).
 
 The active run's path is kept in state/.current_run (git-ignored).
-tools/listing.py, probe.py and sample.py append what they read to the run's `inspected` list
-(and its URLs to `fetched_urls`) via log_inspection(); the validator checks records against it.
+tools/sample.py appends each download to the run's `inspected` list via log_inspection(); sampled_bytes()
+sums them for the per-record sample budget.
 """
 import argparse
 import datetime as dt
@@ -31,7 +31,7 @@ from tools.common import (HARVEST_TARGET, ROOT, RUN_BUDGET_MIN, RUNS_DIR, SEARCH
                           utcnow)
 
 CURRENT = STATE_DIR / ".current_run"
-EVENTS = ["candidate", "added", "duplicate", "rejected", "low-confidence", "error", "enriched", "skipped"]
+EVENTS = ["added", "duplicate", "rejected", "low-confidence", "error", "enriched", "skipped"]
 
 
 def _current():
@@ -59,7 +59,7 @@ def active_run():
 
 
 def log_inspection(kind, url, record_id=None, **info):
-    """Record a listing / header / sample read in the active run log (no-op without one)."""
+    """Record a sample download in the active run log (no-op without one)."""
     p = active_run()
     if p is None or not p.exists():
         print(f"note: no active run log; {kind} of {url} not recorded", file=sys.stderr)
@@ -69,6 +69,17 @@ def log_inspection(kind, url, record_id=None, **info):
         d["fetched_urls"].append(url)
     d.setdefault("inspected", []).append({"kind": kind, "url": url, "id": record_id, "at": utcnow(), **info})
     _save(p, d)
+
+
+def log_event(p, kind, record_id=None, reason=None, pr_url=None):
+    """Append an event to the run log at `p`; returns the updated log."""
+    d = _load(p)
+    d["events"].append({"type": kind, "id": record_id, "reason": reason, "pr_url": pr_url, "at": utcnow()})
+    d["counts"][kind] = d["counts"].get(kind, 0) + 1
+    if pr_url:
+        d["pr_urls"].append(pr_url)
+    _save(p, d)
+    return d
 
 
 def sampled_bytes(record_id):
@@ -103,8 +114,7 @@ def main():
     c = sub.add_parser("continue")
     c.add_argument("--time-only", action="store_true", help="ignore found datasets; stop only at the search cutoff")
     sub.add_parser("show")
-    ins = sub.add_parser("inspected", help="log a read done by your own script (tools/*.py log themselves)")
-    ins.add_argument("--kind", required=True, choices=["listing", "header", "sample"])
+    ins = sub.add_parser("inspected", help="log a sample your own script downloaded (counts toward the budget)")
     ins.add_argument("--url", required=True)
     ins.add_argument("--id", required=True)
     ins.add_argument("--bytes", type=int, default=0)
@@ -124,7 +134,7 @@ def main():
         print(json.dumps(sorted(i for i, n in hits.items() if n >= a.min)))
         return
     if a.cmd == "inspected":
-        log_inspection(a.kind, a.url, a.id, bytes=a.bytes, note=a.note, manual=True)
+        log_inspection("sample", a.url, a.id, bytes=a.bytes, note=a.note, manual=True)
         return
 
     if a.cmd == "start":
@@ -145,13 +155,11 @@ def main():
     elif a.cmd == "query":
         d["queries"].append(a.text)
     elif a.cmd == "event":
-        d["events"].append({"type": a.type, "id": a.id, "reason": a.reason, "pr_url": a.pr_url, "at": utcnow()})
-        d["counts"][a.type] = d["counts"].get(a.type, 0) + 1
-        if a.pr_url:
-            d["pr_urls"].append(a.pr_url)
+        print(json.dumps(log_event(p, a.type, a.id, a.reason, a.pr_url)["counts"]))
+        return
     elif a.cmd == "continue":
         mins = _elapsed_min(d)
-        target = d.get("target") or 1  # run logs from before targets existed stopped after one
+        target = d["target"]
         found = d["counts"]["added"] >= target and not a.time_only
         info = {"elapsed_min": round(mins, 1), "search_cutoff_min": SEARCH_CUTOFF_MIN,
                 "budget_min": RUN_BUDGET_MIN, "new_datasets": d["counts"]["added"], "target": target}
@@ -166,7 +174,7 @@ def main():
         return
     elif a.cmd == "finish":
         d["finished_at"] = utcnow()
-        d["stop_reason"] = a.stop_reason or ("found" if d["counts"]["added"] >= (d.get("target") or 1) else
+        d["stop_reason"] = a.stop_reason or ("found" if d["counts"]["added"] >= d["target"] else
                                              "time-limit" if _elapsed_min(d) >= SEARCH_CUTOFF_MIN else "frontier-exhausted")
         done = d["counts"].get("added", 0) + d["counts"].get("enriched", 0)
         d["status"] = a.status or ("failed" if d["counts"]["error"] and not done

@@ -13,14 +13,15 @@ humans review them (merge = accept, close = reject).
 2. **Only the schema's fields and enum values.** Don't add keys. If nothing fits, use `other`
    and say what it is in `notes`.
 3. **Every URL in `provenance.evidence_urls` must be logged** with `tools/run_log.py fetched`.
-   CI rejects records citing pages you never logged.
+   `validate.py --run-log` rejects records citing pages you never logged.
 4. **Dedup before writing:** run `python tools/dedup.py --doi ... --repository ... --accession ... --url ... --title ... --paper-doi ... --download-url ...`.
    `duplicate`/`pending`/`rejected` → skip and log it. `possible-duplicate` → open both pages and decide.
 5. **Validate before pushing:** `python tools/validate.py <your files> --run-log <run log> --min-confidence 0.5` must pass.
 6. Never edit or delete records on `main` from a harvest run. Corrections belong to the maintainer routine.
 7. Never push to `main`. **One dataset per PR:** publish each record with `tools/publish.py dataset`
-   (branch `claude/dataset/<id>`), and use `tools/pr_text.py` for the PR title and body, verbatim.
-   Search state goes to `claude/state/<routine>` via `tools/publish.py state-push`.
+   (`--run-log F`): it refuses duplicates, pushes branch `claude/dataset/<id>` and opens the PR with the
+   `tools/pr_text.py` title and body, verbatim.
+   Search state goes to the `state` branch (each routine owns its own files there) via `tools/publish.py state-push`.
 8. Slack notifications go to **`#mia-harvester`** via the Slack connector. Don't post to any other channel.
 9. **Run until 10 new datasets are published, max 2 hours.** Harvest runs keep searching, one frontier query
    at a time, until they publish 10 datasets (`target`, default 10) that aren't on `main`, have no open PR and
@@ -59,8 +60,7 @@ usable for training. Records below 0.5 aren't proposed. The validator caps it by
 - **File location** follows from the record: `datasets/<imaging.dimensionality>/<imaging.modality[0]>/<id>.yaml`.
   `tools/new_record.py` drafts into `drafts/` and `tools/publish.py` files the record; after changing the
   dimensionality or first modality of an existing record, move it with `python tools/place.py <file>`.
-  Put the modality that best describes the images first. Files still in the old `datasets/<repository>/`
-  layout pass validation with a warning.
+  Put the modality that best describes the images first.
 - `repository`: where the data is *hosted*. A dataset on its own website → `LabWebsite` or `other`.
 - `voxel_size_nm`: in **nanometres**, so 0.116 µm → 116. For 2D data, `z: null`.
 - `organism`: NCBI scientific names (`Mus musculus`, not "mouse").
@@ -81,63 +81,58 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
   record per run (`tools/sample.py`, enforced). Never download a whole dataset.
 - **Untrusted data:** never run code that ships with a dataset, never unpickle, never `pip install` packages
   a dataset names. Samples live in temp dirs and are deleted.
-- **Evidence:** listing / probe / sample record themselves in the run log; `validate.py --run-log` rejects
-  claims (`method`, confirmed size, observed values) that aren't backed by a logged read.
-- **Labels are computed, not added:** `.github/workflows/label.yml` runs `tools/labels.py` on every push:
-  `dim:`, `org:`, `modality:`, `fmt:`, `dtype:`, `anno:`, `label-enc:`, `license:<spdx as written>`,
-  `size:`, `enriched`,
-  `license-verification-needed` (`license.spdx: unknown`), `size-estimated` (`technical.size_source: estimated`:
-  the `size:` label comes from files × voxels × bytes per voxel, `tools/estimate_size.py`, not a listing) and `voxel-size-found` / `voxel-size-missing`
-  (`imaging.voxel_size_nm` has x, y and, for 3D data, z), and `download-ready` / `download-not-ready`
-  (`tools/readiness.py`, the one rule for downloads; CI clones TensorSwitch for its planner). Merged PRs are relabelled from the record on
-  `main` whenever records change there, so a voxel size filled in later shows up on them too.
-  License labels are the SPDX id verbatim, with no interpretation.
+- **Labels are computed, not added:** `.github/workflows/label.yml` runs `tools/labels.py` on every push to an
+  open dataset PR: `dim:`, `org:`, `modality:`, `fmt:`, `anno:`, `license:<spdx as written>` (verbatim, no
+  interpretation), `size:`, `enriched`, `voxel-size-missing` (`imaging.voxel_size_nm` lacks x, y or, for 3D data, z)
+  and `download-ready` / `download-not-ready` (`tools/readiness.py`, the one rule for downloads; CI clones
+  TensorSwitch for its planner and fails without it). Merged PRs keep the labels they were merged with.
 - **Voxel size:** conversion can't proceed without it, so the enricher searches hard for it (skill step 4a:
-  headers, repository APIs, archive READMEs, the full paper, code repos, upstream datasets), and makes a
-  second pass over PRs enriched before that.
+  headers, repository APIs, archive READMEs, the full paper, code repos, upstream datasets).
 - **Download links:** TensorSwitch fetches files itself, so the enricher also searches hard for direct links it can
   use (skill step 4b: repository file APIs, the full landing page, zip members, the paper, code repos), checked with
-  `tools/download_check.py`, for `technical.sample.urls` and, when one direct archive exists, `data.download_url`.
-- **Conversion readiness:** the enricher also runs `tools/convertibility.py` (issues #518 / #519) with TensorSwitch's
-  record planner, and fixes what blocks automatic conversion from evidence: concrete sample files, HDF5 dataset
+  `tools/probe.py --download-check`, for `technical.sample.urls` and, when one direct archive exists, `data.download_url`.
+- **Conversion readiness:** the enricher also runs `tools/readiness.py` (issues #518 / #519, TensorSwitch's
+  record planner), and fixes what blocks automatic conversion from evidence: concrete sample files, HDF5 dataset
   names, real globs in `path_pattern`, one organism per file set, a clear modality, `annotations.source`, and
   `axes` for every TIFF array (TensorSwitch names RGB samples `s` and unstated page axes `i`; skill step 3c).
-- **Auto-merge** (`tools/automerge.py`) merges PRs whose labels meet a fixed policy (3D / 3D+t PRs only when
-  `download-ready`), but never a possible
-  duplicate (`tools/common.py:similarity_reasons`) of a record on main or another open PR. Agents never merge,
-  approve or close PRs themselves, and never add or remove the `hold` label.
+- **Auto-merge** (`tools/automerge.py`): after labelling, a PR that is enriched, has a dimensionality, a known
+  license and only known formats, isn't a draft or on `hold`, and isn't a possible duplicate
+  (`tools/common.py:similarity_reasons`) of a record on main or another open PR gets GitHub's native auto-merge,
+  which merges once `validate` passes. A human adds `not-duplicate` to clear a possible duplicate. Agents never
+  merge, approve or close PRs themselves, and never add or remove the `hold` or `not-duplicate` labels.
+- **Rejections** aren't stored: a closed, unmerged dataset PR rejects its record id and the identity keys no
+  other record holds (`tools/common.py:load_rejected`, from the PRs' `refs/pull/*/head`), plus the hand-curated
+  `state/rejected.yaml`.
 
 ## Tools (all in `tools/`, run from repo root)
 | Command | Purpose |
 |---|---|
 | `python -m tools.sources <empiar\|zenodo\|bioimage_archive\|idr> "<query>" --limit N` | structured repository search → candidate JSON lines |
 | `python tools/frontier.py next\|touch\|add --routine R` | which queries to run next; mark them searched |
-| `python tools/dedup.py ...` | already in catalog / rejected? |
+| `python tools/dedup.py ...` / `--record F` | already in catalog / open PR / rejected? (fetches main + dataset branches first) |
 | `python tools/new_record.py --id ID --repository REPO --by ROUTINE` | schema skeleton ("TODO" fields must be replaced) |
 | `python tools/validate.py [paths] [--run-log F] [--min-confidence 0.5]` | schema + catalog rules |
 | `python tools/run_log.py start\|query\|fetched\|event\|finish` | structured run log (monitoring) |
-| `python tools/publish.py state-pull\|state-push --routine R` / `dataset <file>` | restore/save search state; push one record to its own branch |
+| `python tools/publish.py state-pull\|state-push --routine R` / `dataset <file> [--run-log F]` | restore/save search state; dedup, push one record to its own branch and open its PR |
 | `python tools/pr_text.py <file> --title\|--body [--run-log F]` | PR title and body for a record (use verbatim) |
 | `python tools/paper.py --doi D \| --pmid P \| --title T` | find a paper and read its full text (Europe PMC / bioRxiv) |
 | `python tools/peek_archive.py <zip url> [--cat member]` | list files inside a remote zip without downloading it, or print a text member |
-| `python tools/listing.py <url> [<url> ...] --id ID` | full file listing → folder tree, exact total size (enricher) |
-| `python tools/probe.py <url> [--glob G] --id ID` | shape / dtype / compression / voxel size from file headers (enricher) |
+| `python tools/listing.py <url> [<url> ...]` | full file listing → folder tree, exact total size (enricher) |
+| `python tools/probe.py <url> [--glob G]` / `--download-check <url\|zip::member>` | shape / dtype / compression / voxel size from file headers; or: is this a direct link TensorSwitch can fetch (one range request) (enricher) |
 | `python tools/sample.py --id ID --raw S [--label S]` | download a small sample, measure it, delete it (enricher) |
 | `python tools/estimate_size.py <file> --files F \| --count I=N` | size from files × voxels × bytes per voxel, when nothing states it (enricher) |
 | `python tools/labels.py <file>` | the PR labels a record gets |
-| `python tools/download_check.py <url\|zip::member> --id ID [--tensorswitch SRC]` | is this a direct link TensorSwitch can fetch (one range request) |
-| `python tools/convertibility.py [files] [--summary\|--json] [--tensorswitch SRC]` | what blocks automatic conversion (read-only report) |
-| `python tools/readiness.py <file> [--tensorswitch SRC]` | download readiness: ready / not-ready / unknown, with reasons (the auto-merge gate and the download queue) |
-| `python tools/download_queue.py next\|record\|list` | the download queue and the downloads list (`state/downloads.json` on `claude/state/downloader`) |
-| `python tools/miao_layout.py <file> --root R --tensorswitch SRC --label-class C [--name N] [--whole]` | plan a record (sample unit, or every file with `--whole`) into the miao layout (miao#13), one crop per raw/label pair: MCP steps + label metadata, read-only |
-| `python tools/miao_run.py <plan.json> [--finalize]` | run that plan crop by crop with TensorSwitch (resumable; downloads deleted per crop), or record crops the MCP already verified |
-| `python tools/place.py <file>\|--all\|--pr-branches` | move records to `datasets/<dimensionality>/<modality>/` |
+| `python tools/readiness.py [files] [--summary\|--json] [--tensorswitch SRC]` | download readiness: ready / not-ready / unknown, with reasons (the `download-ready` label, the download queue, the enricher) |
+| `python tools/download_queue.py next\|record\|list` | the download queue and the downloads list (`state/downloads.json` on the `state` branch) |
+| `python tools/miao_layout.py <file> --root R --tensorswitch SRC --label-class C [--name N] [--whole]` | plan a record (sample unit, or every file with `--whole`) into the miao layout (miao#13), one crop per raw/label pair: steps + label metadata, read-only |
+| `python tools/miao_run.py <plan.json>` | run that plan crop by crop with TensorSwitch (resumable; downloads deleted per crop) |
+| `python tools/place.py <file>` | move records to `datasets/<dimensionality>/<modality>/` |
 | `python tools/publish.py pr-pull <id>` / `pr-update <file>` | enricher: edit the record on an open PR's branch |
 | `python tools/check_links.py [--oldest N] [--write]` | link rot check |
 | `python tools/build_site.py` | build dashboard into `site/` |
 
 Skills: `/find-datasets source=<repositories|literature|websearch>` (harvest), `/enrich-prs` (technical
 inspection of open PRs), `/maintain-catalog` (daily upkeep), `/download-dataset <record>` (download a ready record's
-sample unit, or the whole dataset, into the miao layout with the TensorSwitch MCP; output to `demo/` for now,
+sample unit, or the whole dataset, into the miao layout with TensorSwitch; output to `demo/` for now,
 git-ignored). `/download-dataset next` is the unattended download agent, run hourly by cron on the workstation
 (`tools/cron/download_next.sh`): one download-ready dataset per run, recorded in the downloads list.

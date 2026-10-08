@@ -1,25 +1,24 @@
 name: label-agent-prs
 # Agents can't reliably add labels themselves, so label their PRs here:
 # by branch name (new-datasets / maintenance) and, for dataset PRs, from the record's fields
-# (dim:, org:, fmt:, dtype:, license:, size:, download-ready, ... see tools/labels.py).
+# (dim:, org:, fmt:, license:, size:, download-ready, ... see tools/labels.py). Then auto-merge:
+# a PR that meets tools/automerge.py gets GitHub's native auto-merge, which waits for `validate`.
+# Merging is on while the repository variable AUTO_MERGE is "true".
 on:
   pull_request:
-    types: [opened, reopened, synchronize]
-  workflow_dispatch:   # relabel every open and merged dataset PR, e.g. after changing tools/labels.py
-  push:                # a record on main changed (e.g. a voxel size was filled in): relabel the merged PRs
-    branches: [main]
-    paths: ['datasets/**', 'tools/labels.py']
+    types: [opened, reopened, synchronize, labeled, unlabeled, ready_for_review, converted_to_draft]
+  workflow_dispatch:   # relabel (and re-decide auto-merge for) every open dataset PR, e.g. after changing tools/labels.py
 permissions:
-  contents: read
+  contents: write      # merging
   pull-requests: write
   issues: write        # creating missing labels
 concurrency:
-  group: labels-${{ github.event.pull_request.number || github.event_name }}   # a push to main must not cancel a full relabel
+  group: labels-${{ github.event.pull_request.number || github.event_name }}
   cancel-in-progress: true
 jobs:
   label:
     if: >-
-      github.event_name == 'pull_request' && github.event.action != 'synchronize' &&
+      github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'reopened') &&
       (startsWith(github.head_ref, 'claude/dataset/') || startsWith(github.head_ref, 'claude/maintainer'))
     runs-on: ubuntu-latest
     steps:
@@ -28,9 +27,7 @@ jobs:
           LABEL: ${{ startsWith(github.head_ref, 'claude/dataset/') && 'new-datasets' || 'maintenance' }}
         run: gh pr edit ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --add-label "$LABEL"
   record-labels:
-    if: >-
-      github.event_name == 'workflow_dispatch' || github.event_name == 'push' ||
-      startsWith(github.head_ref, 'claude/dataset/')
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.head_ref, 'claude/dataset/')
     runs-on: ubuntu-latest
     steps:
       # Run main's tools/labels.py; the PR's record is only read with `git show`, never executed.
@@ -39,16 +36,16 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.12", cache: pip }
       - run: pip install -r requirements.txt
-      - name: TensorSwitch record planner (for the download-ready label)
+      - name: TensorSwitch record planner (for the download-ready label; no planner, no run)
         run: |
+          set -euo pipefail
           git clone -q --depth 1 -b unified https://github.com/JaneliaSciComp/tensorswitch "$RUNNER_TEMP/tensorswitch"
+          test -d "$RUNNER_TEMP/tensorswitch/src"
           echo "TENSORSWITCH_SRC=$RUNNER_TEMP/tensorswitch/src" >> "$GITHUB_ENV"
       - env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-        run: |
-          case "${{ github.event_name }}" in
-            workflow_dispatch) python tools/labels.py sync --all-open && python tools/labels.py sync --merged ;;
-            push) python tools/labels.py sync --merged ;;
-            *) python tools/labels.py sync --pr ${{ github.event.pull_request.number }} ;;
-          esac
+        run: >-
+          python tools/labels.py sync
+          ${{ github.event_name == 'workflow_dispatch' && '--all-open' || format('--pr {0}', github.event.pull_request.number) }}
+          ${{ vars.AUTO_MERGE == 'true' && '--merge' || '' }}

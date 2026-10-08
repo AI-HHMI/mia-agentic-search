@@ -1,17 +1,19 @@
 """Git plumbing for harvest runs, so agents never juggle branches by hand.
 
-    python tools/publish.py state-pull --routine R     # restore frontier + run logs from claude/state/R
-    python tools/publish.py dataset <record.yaml>       # push record to its own branch claude/dataset/<id>,
-                                                        # filed at datasets/<dimensionality>/<modality>/<id>.yaml
-    python tools/publish.py state-push --routine R     # save frontier + run logs to claude/state/R
-                                                        # (downloader: also state/downloads.json;
-                                                        #  gallery: only state/gallery.json, tools/demo_gallery.py)
+    python tools/publish.py state-pull --routine R     # restore R's frontier + run logs from the state branch
+    python tools/publish.py dataset <record.yaml> [--run-log F]   # refuse duplicates, push the record to its
+                                                        # own branch claude/dataset/<id> (filed at
+                                                        # datasets/<dimensionality>/<modality>/<id>.yaml),
+                                                        # open its PR and log `event added` in F
+    python tools/publish.py state-push --routine R     # save them there (downloader: also state/downloads.json;
+                                                        # gallery / watchdog: state/<R>.json)
     python tools/publish.py pr-pull <id>               # enricher: put claude/dataset/<id>'s record in the tree
     python tools/publish.py pr-update <record.yaml>    # enricher: commit it back onto that branch
 
 The working tree stays on origin/main. Records are left uncommitted there and each one is
 committed in a temporary worktree, so every dataset branch contains exactly one new file.
-State branches are orphans holding only state/ files; they are pushed directly and never reviewed.
+The state branch is an orphan holding only state/ files, pushed directly and never reviewed. All routines
+share it, each pulling and pushing only the files it owns (`owns`), so they never conflict.
 
 pr-pull records the branch head it read (state/.enrich/, git-ignored). pr-update commits on top of
 exactly that head and pushes without force, so if anyone pushed in the meantime the push is
@@ -19,6 +21,7 @@ refused instead of overwriting their edit: pull again and redo the change.
 """
 import argparse
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -26,9 +29,11 @@ import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import (DATASET_BRANCH_PREFIX, FRONTIER_DIR, ROOT, RUNS_DIR,  # noqa: E402
-                          STATE_BRANCH_PREFIX, STATE_DIR, canonical_path, git, load_yaml, rel)
-from tools.pr_text import title  # noqa: E402
+from tools.common import (DATASET_BRANCH_PREFIX, ROOT, STATE_BRANCH,  # noqa: E402
+                          STATE_DIR, canonical_path, git, load_yaml, rel)
+from tools.dedup import check  # noqa: E402
+from tools.pr_text import body, title  # noqa: E402
+from tools.run_log import log_event  # noqa: E402
 
 
 def run(*args, cwd=ROOT):
@@ -42,21 +47,26 @@ def remote_exists(branch):
     return bool(git("ls-remote", "--heads", "origin", branch).strip())
 
 
-def state_paths(routine):
-    if routine == "gallery":   # dashboard gallery of demo/data/ (tools/demo_gallery.py --publish)
-        return [STATE_DIR / "gallery.json"]
-    extra = [STATE_DIR / "downloads.json"] if routine == "downloader" else []   # tools/download_queue.py
-    return [FRONTIER_DIR / f"{routine}.yaml", *sorted(RUNS_DIR.glob(f"{routine}-*.json")), *extra]
+# downloader: tools/download_queue.py · gallery: tools/demo_gallery.py · watchdog: tools/watchdog.py
+OWN_FILE = {"downloader": "downloads.json", "gallery": "gallery.json", "watchdog": "watchdog.json"}
+
+
+def owns(routine, path):
+    """The state/ files a routine writes: its frontier, its run logs and its OWN_FILE."""
+    return (path in (f"state/frontier/{routine}.yaml", f"state/{OWN_FILE.get(routine, '')}")
+            or bool(re.fullmatch(rf"state/runs/{re.escape(routine)}-[^/]+\.json", path)))
 
 
 def state_pull(routine):
-    branch = STATE_BRANCH_PREFIX + routine
+    branch = STATE_BRANCH
     if not remote_exists(branch):
-        print(f"no {branch} yet; starting from the frontier on main")
+        print(f"no {branch} branch yet; starting from the frontier on main")
         return
     run("fetch", "-q", "origin", f"+{branch}:refs/remotes/origin/{branch}")
     n = 0
     for path in git("ls-tree", "-r", "--name-only", f"origin/{branch}", "state/").split():
+        if not owns(routine, path):
+            continue
         dest = ROOT / path
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_text(run("show", f"origin/{branch}:{path}"))
@@ -80,7 +90,7 @@ def _cleanup(tmp):
 
 
 def state_push(routine, attempts=5):
-    """Parallel runs of one routine push to the same state branch; retry on a rejected (raced) push.
+    """All routines push to the one state branch; retry on a rejected (raced) push.
     Returns whether anything was pushed."""
     import time
     for i in range(attempts):
@@ -94,15 +104,15 @@ def state_push(routine, attempts=5):
 
 
 def _state_push(routine):
-    branch = STATE_BRANCH_PREFIX + routine
+    branch = STATE_BRANCH
     if remote_exists(branch):
         run("fetch", "-q", "origin", f"+{branch}:refs/remotes/origin/{branch}")
         tmp = _worktree(f"origin/{branch}")
     else:
         tmp = _worktree(orphan_branch=f"tmp-state-{routine}")
     try:
-        for src in state_paths(routine):
-            if src.exists():
+        for src in STATE_DIR.rglob("*"):
+            if src.is_file() and owns(routine, rel(src)):
                 dest = tmp / src.relative_to(ROOT)
                 dest.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(src, dest)
@@ -119,7 +129,7 @@ def _state_push(routine):
         git("branch", "-D", f"tmp-state-{routine}")
 
 
-def dataset(record_path):
+def dataset(record_path, run_log=None):
     src = Path(record_path).resolve()
     rec = load_yaml(src)
     branch = DATASET_BRANCH_PREFIX + rec["id"]
@@ -128,7 +138,9 @@ def dataset(record_path):
     target = canonical_path(rec)
     if target is None:
         sys.exit("imaging.dimensionality / imaging.modality are not filled in; can't file the record")
-    run("fetch", "-q", "origin", "main")
+    status, matches = check(rec)  # fetches main + dataset branches now, not at the start of the run
+    if status in ("duplicate", "pending", "rejected"):
+        sys.exit(f"not published: {status} {json.dumps(matches)}; log `run_log.py event duplicate` and skip it")
     tmp = _worktree("origin/main")
     try:
         dest = tmp / target.relative_to(ROOT)
@@ -139,7 +151,15 @@ def dataset(record_path):
         run("push", "-q", "origin", f"HEAD:refs/heads/{branch}", cwd=tmp)
     finally:
         _cleanup(tmp)
-    print(branch)
+    r = subprocess.run(["gh", "pr", "create", "--base", "main", "--head", branch, "--title", title(rec),
+                        "--body-file", "-"], cwd=ROOT, input=body(rec, target, run_log), capture_output=True, text=True)
+    if r.returncode != 0:
+        sys.exit(f"pushed {branch} but `gh pr create` failed; open its PR with tools/pr_text.py's title and body "
+                 f"and log `run_log.py event added` yourself:\n{r.stderr.strip()}")
+    url = r.stdout.strip().splitlines()[-1]
+    if run_log:
+        log_event(Path(run_log), "added", rec["id"], pr_url=url)
+    print(url)
 
 
 ENRICH_DIR = STATE_DIR / ".enrich"
@@ -216,7 +236,9 @@ def main():
     sub = ap.add_subparsers(dest="cmd", required=True)
     for name in ("state-pull", "state-push"):
         sub.add_parser(name).add_argument("--routine", required=True)
-    sub.add_parser("dataset").add_argument("record")
+    ds = sub.add_parser("dataset")
+    ds.add_argument("record")
+    ds.add_argument("--run-log", help="the harvest run log: cited in the PR body, gets the `added` event")
     sub.add_parser("pr-pull").add_argument("id")
     sub.add_parser("pr-update").add_argument("record")
     a = ap.parse_args()
@@ -230,7 +252,7 @@ def main():
         pr_update(a.record)
     else:
         print(f"{rel(Path(a.record).resolve())} -> ", end="", flush=True)
-        dataset(a.record)
+        dataset(a.record, a.run_log)
 
 
 if __name__ == "__main__":

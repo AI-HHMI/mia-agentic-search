@@ -1,22 +1,18 @@
 """Validate dataset records against the schema and catalog-wide rules.
 
     python tools/validate.py [paths...] [--run-log state/runs/<file>.json] [--min-confidence 0.5]
-    python tools/validate.py <file> --run-log <enricher log> --baseline <record as pulled>   # enricher
 
 Exit code 0 = all records valid, 1 = errors found.
 """
 import argparse
-import difflib
 import json
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.common import (CONFIDENCE_CAPS, CONFIRMED_SIZE_SOURCES, DATASETS_DIR, DRAFTS_DIR, PAPER_HOSTS,  # noqa: E402
-                          canonical_path, identity_keys, iter_record_paths, legacy_path, load_rejected, load_yaml,
-                          similarity_reasons,
-                          normalize_title, normalize_url, rel, validator)
-
+                          canonical_path, identity_keys, iter_record_paths, load_rejected, load_yaml,
+                          normalize_title, normalize_url, rel, similarity_reasons, validator)
 
 
 def check_record(path, record, v):
@@ -44,18 +40,12 @@ def check_record(path, record, v):
 
 
 def check_location(path, record):
-    """(errors, warnings) for where the file lives. Drafts outside datasets/ are not checked."""
-    try:
-        path.relative_to(DATASETS_DIR)
-    except ValueError:
-        return [], []
+    """Errors for where the file lives. Drafts outside datasets/ are not checked."""
     want = canonical_path(record)
-    if want is None or path == want:
-        return [], []
-    if path == legacy_path(record):
-        return [], [f"old layout; the record belongs in {rel(want)} (python tools/place.py {rel(path)})"]
+    if want is None or path == want or DATASETS_DIR not in path.parents:
+        return []
     return [f"file must live in {rel(want)} (datasets/<dimensionality>/<first modality>/); "
-            f"move it with `python tools/place.py {rel(path)}`"], []
+            f"move it with `python tools/place.py {rel(path)}`"]
 
 
 def check_technical(record):
@@ -64,17 +54,14 @@ def check_technical(record):
     if not isinstance(t, dict):
         return []
     errors = []
-    if record.get("schema_version") != "1.2":
-        errors.append("a record with `technical` must have schema_version '1.2'")
     arrays = [a for a in t.get("arrays") or [] if isinstance(a, dict)]
     if t.get("method") in ("header", "sample") and not arrays:
         errors.append(f"technical.method is {t.get('method')!r} but technical.arrays is empty")
     if t.get("method") != "sample":
         for a in arrays:
-            for key in ("value_range", "n_ids_observed"):
-                if a.get(key) is not None:
-                    errors.append(f"technical.arrays[{a.get('path_pattern')}].{key} needs technical.method 'sample' "
-                                  "(observed values come only from tools/sample.py)")
+            if a.get("value_range") is not None:
+                errors.append(f"technical.arrays[{a.get('path_pattern')}].value_range needs technical.method 'sample' "
+                              "(observed values come only from tools/sample.py)")
     if t.get("size_source") in CONFIRMED_SIZE_SOURCES:
         if (record.get("data") or {}).get("size_bytes") is None:
             errors.append("technical.size_source is 'file-listing' but data.size_bytes is null")
@@ -83,49 +70,10 @@ def check_technical(record):
     return errors
 
 
-def check_inspection_log(record, run, baseline=None):
-    """With --run-log: the enricher's listing / header / sample claims must be backed by run log entries.
-    Claims the record already made, unchanged, in `baseline` (the record as pulled from its PR branch) were
-    backed by the run that made them, so a later pass that keeps them (e.g. one that only adds a size) isn't
-    asked to inspect the files again."""
-    t = record.get("technical")
-    if not isinstance(t, dict):
-        return []
-    bt = ((baseline or {}).get("technical") or {}) if isinstance(baseline, dict) else {}
-    bd = ((baseline or {}).get("data") or {}) if isinstance(baseline, dict) else {}
-    errors, rid = [], record.get("id")
-    fetched = {normalize_url(u) for u in run.get("fetched_urls", [])}
-    known = {normalize_url(u) for u in bt.get("inspected_urls") or []}
-    for u in t.get("inspected_urls") or []:
-        if normalize_url(u) not in fetched and normalize_url(u) not in known:
-            errors.append(f"technical.inspected_urls entry not in run log: {u}")
-    mine = [e for e in run.get("inspected", []) if e.get("id") == rid]
-    kinds = {e.get("kind") for e in mine}
-    same_method = bool(bt) and bt.get("method") == t.get("method")
-    if t.get("method") == "sample" and "sample" not in kinds and not same_method:
-        errors.append("technical.method is 'sample' but the run log has no tools/sample.py entry for this id")
-    if t.get("method") == "header" and not kinds & {"header", "sample"} and not same_method:
-        errors.append("technical.method is 'header' but the run log has no tools/probe.py entry for this id")
-    same_size = (bool(bt) and bt.get("size_source") == t.get("size_source")
-                 and bd.get("size_bytes") == (record.get("data") or {}).get("size_bytes"))
-    if t.get("size_source") in CONFIRMED_SIZE_SOURCES and not same_size:
-        totals = {e.get("total_bytes") for e in mine if e.get("kind") == "listing" and e.get("size_source") == "file-listing"}
-        size = (record.get("data") or {}).get("size_bytes")
-        if not totals:
-            errors.append("technical.size_source is 'file-listing' but no complete, exact tools/listing.py run is logged for this id")
-        elif size not in totals:
-            errors.append(f"data.size_bytes {size} does not equal the logged file-listing total ({sorted(totals)}); "
-                          "a confirmed size must be the exact listed total")
-    return errors
-
-
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("paths", nargs="*", help="files/dirs to validate (default: datasets/)")
     ap.add_argument("--run-log", help="require every evidence_url to appear in this run log's fetched URLs")
-    ap.add_argument("--baseline", help="the record before this run's edits (tools/publish.py pr-pull saves it); "
-                    "its technical claims, unchanged, were backed by an earlier run's log; "
-                    "its evidence_urls were logged by an earlier run and are not re-checked")
     ap.add_argument("--min-confidence", type=float, default=None,
                     help="fail records below this provenance.confidence (harvest PRs use 0.5)")
     a = ap.parse_args()
@@ -135,14 +83,9 @@ def main():
     # drafts count for uniqueness too, so two drafts of one run can't be the same dataset
     all_paths = list(iter_record_paths([DATASETS_DIR] + ([DRAFTS_DIR] if DRAFTS_DIR.exists() else [])))
     rejected = set(load_rejected())
-    fetched = run = None
-    baseline_urls, base = set(), None
-    if a.baseline:
-        base = load_yaml(a.baseline) or {}
-        baseline_urls = {normalize_url(u) for u in (base.get("provenance") or {}).get("evidence_urls", [])}
+    fetched = None
     if a.run_log:
-        run = json.loads(Path(a.run_log).read_text())
-        fetched = {normalize_url(u) for u in run.get("fetched_urls", [])}
+        fetched = {normalize_url(u) for u in json.loads(Path(a.run_log).read_text()).get("fetched_urls", [])}
 
     problems, warnings = {}, {}
     records = {}
@@ -165,15 +108,12 @@ def main():
             continue
         errs = check_record(p, rec, v)
         if isinstance(rec, dict):
-            loc_errs, loc_warns = check_location(p, rec)
-            errs += loc_errs
-            if loc_warns:
-                warnings.setdefault(p, []).extend(loc_warns)
+            errs += check_location(p, rec)
             if rec.get("id") in rejected:
-                errs.append(f"id {rec['id']!r} was rejected (state/rejected.yaml or rejections branch)")
+                errs.append(f"id {rec['id']!r} was rejected (state/rejected.yaml or a closed PR)")
             for k in identity_keys(rec):
                 if k in rejected:
-                    errs.append(f"{k} was rejected (state/rejected.yaml or rejections branch)")
+                    errs.append(f"{k} was rejected (state/rejected.yaml or a closed PR)")
             conf = (rec.get("provenance") or {}).get("confidence")
             ver = rec.get("verification") or {}
             if isinstance(conf, (int, float)):
@@ -184,9 +124,8 @@ def main():
                 errs.append(f"confidence {conf} < {a.min_confidence}")
             if fetched is not None:
                 for u in (rec.get("provenance") or {}).get("evidence_urls", []):
-                    if normalize_url(u) not in fetched and normalize_url(u) not in baseline_urls:
+                    if normalize_url(u) not in fetched:
                         errs.append(f"evidence url not in run log fetched_urls: {u}")
-                errs += check_inspection_log(rec, run, base)
         if errs:
             problems.setdefault(p, []).extend(errs)
 

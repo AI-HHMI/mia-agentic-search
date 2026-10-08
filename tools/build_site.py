@@ -3,12 +3,12 @@
     python tools/build_site.py [--out site]
 
 Writes <out>/index.html (self-contained) and <out>/catalog.json. Run logs come from main
-plus all fetched claude/* branches, so unmerged harvest runs are visible too.
-The "not merged" table lists open dataset PRs with the reasons auto-merge gives (tools/automerge.py),
-read from the PRs' labels and checks with `gh`; without GitHub access that table is left out.
+plus the fetched state branch (tools/collect_runs.py).
+The "not merged" table lists open dataset PRs with the reasons auto-merge gives (tools/automerge.py), from
+each PR's record (tools/labels.py:labels_for) and its checks via `gh`; without GitHub access that table is left out.
 The gallery at the end shows the datasets downloaded into demo/data/ (tools/demo_gallery.py), with
 Fileglancer links. Where demo/data/ doesn't exist (demo/ is git-ignored, e.g. on GitHub) it uses the copy the
-workstation publishes to claude/state/gallery, and it's left out if there is none.
+workstation publishes to the state branch, and it's left out if there is none.
 """
 import argparse
 import json
@@ -18,7 +18,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.collect_runs import collect  # noqa: E402
-from tools.automerge import HOLD_LABELS, criteria_failures, duplicate_reasons  # noqa: E402
+from tools.automerge import failures  # noqa: E402
+from tools.labels import labels_for  # noqa: E402
 from tools.demo_gallery import gallery, published_gallery  # noqa: E402
 from tools.common import DATASET_BRANCH_PREFIX, ROOT, iter_record_paths, load_yaml, pending_records  # noqa: E402
 
@@ -41,22 +42,15 @@ def unmerged_prs():
     catalog = [load_yaml(p) for p in iter_record_paths()]
     rows = []
     for pr in prs:
-        labels = [lab["name"] for lab in pr["labels"]]
-        reasons = criteria_failures(labels)
+        rec = open_recs.get(pr["headRefName"])
+        labels = labels_for(rec) if rec else []
+        reasons = failures(labels, pr, rec, catalog + list(open_recs.values())) if rec else ["no new record on the branch"]
         checks = [c for c in pr.get("statusCheckRollup") or [] if c.get("name") == "validate"]
         if not checks or any(c.get("conclusion") != "SUCCESS" for c in checks):
             reasons.append("`validate` check has not passed" if checks else "`validate` has not run")
-        if pr["isDraft"]:
-            reasons.append("draft")
-        held = [lab for lab in labels if lab in HOLD_LABELS]
-        if held:
-            reasons.append(f"on hold ({', '.join(held)})")
-        rec = open_recs.get(pr["headRefName"])
-        if rec:
-            reasons += duplicate_reasons(rec, catalog + list(open_recs.values()))
         rows.append({"number": pr["number"], "title": pr["title"], "url": pr["url"], "created_at": pr["createdAt"],
                      "dim": next((lab[4:] for lab in labels if lab.startswith("dim:")), None),
-                     "reasons": reasons or ["meets all criteria; merges on the next auto-merge run"]})
+                     "reasons": reasons or ["meets all criteria; merges once auto-merge is enabled on it"]})
     return sorted(rows, key=lambda r: r["number"])
 
 

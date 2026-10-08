@@ -1,4 +1,4 @@
-"""The download queue and the list of downloaded datasets (state/downloads.json, on claude/state/downloader).
+"""The download queue and the list of downloaded datasets (state/downloads.json, on the state branch).
 
     python tools/download_queue.py next [--root demo] [--max-gb 10]   # the next record to download, as JSON
     python tools/download_queue.py record <id> downloaded --plan P --summary S
@@ -8,8 +8,8 @@
 
 `next` picks, among the records on main that are download-ready (tools/readiness.py, which needs
 $TENSORSWITCH_SRC), the smallest one that isn't downloaded, skipped, or failed twice already. It
-skips records larger than --max-gb (an unattended run can't ask), and stops if the disk under --root
-has less than 3x the dataset's size free. It prints the record path, its size, and the mode:
+skips records larger than --max-gb (an unattended run can't ask) and sample units over 2 GB (the runner
+has no LSF cluster), and stops if the disk under --root has less than 3x the dataset's size free. It prints the record path, its size, and the mode:
 `whole` when the data is one zip whose size is confirmed by a file listing and < 50 GB
 (tools/readiness.py:whole_download_ok), else `sample-unit`.
 
@@ -56,10 +56,8 @@ def record_commit(path):
 
 
 def mode_for(r):
-    url = ((r.get("data") or {}).get("download_url") or "").split("?")[0].removesuffix("/content").lower()
-    samples = ((r.get("technical") or {}).get("sample") or {}).get("urls") or []
-    zipped = url.endswith(".zip") or any("::" in u for u in samples)
-    return "whole" if zipped and whole_download_ok(r) else "sample-unit"
+    """`whole` when TensorSwitch's whole-dataset planner finds a zip to list and the size allows it."""
+    return "whole" if planner()._zip_url(r) and whole_download_ok(r) else "sample-unit"
 
 
 def cmd_next(a):
@@ -79,7 +77,9 @@ def cmd_next(a):
         size = r["data"].get("size_bytes") if mode == "whole" else r["technical"]["sample"].get("size_bytes")
         # unknown size: last in the queue, and only taken if the whole dataset is under --max-gb
         known = size if size is not None else r["data"].get("size_bytes")
-        if known is None or known > a.max_gb * 1024 ** 3:
+        # a sample unit over 2 GB needs the LSF cluster (submit_job), which the runner doesn't use
+        if (known is None or known > a.max_gb * 1024 ** 3
+                or (mode == "sample-unit" and (size or 0) > planner().MCP_LIMIT_BYTES)):
             too_big.append((known or 0, r["id"]))
             continue
         candidates.append((size is None, size or 0, r["id"], str(p.relative_to(ROOT)), mode))

@@ -2,7 +2,6 @@
 
     python tools/miao_layout.py <record> --root demo --tensorswitch ../tensorswitch/src --label-class X [--whole] > plan.json
     pixi run --manifest-path ../tensorswitch/pyproject.toml python tools/miao_run.py plan.json [--keep-source]
-    python tools/miao_run.py plan.json --finalize      # after running a crop's steps with the MCP tools yourself
 
 For each crop in turn: fetch its files, convert, verify_output, then record it in
 <dataset_dir>/manifest.json, fill each label's bbox.size from the converted array, and delete that
@@ -15,7 +14,6 @@ at the end, listing the failures. Prints one JSON line per step and a summary li
 """
 import argparse
 import json
-import os
 import shutil
 import sys
 from pathlib import Path
@@ -67,30 +65,9 @@ def finish(plan, c, keep_source):
             staging.rmdir()
 
 
-def tiff_axes_problem(path):
-    """What TensorSwitch's TIFF reader would name wrongly in this downloaded file, or None. It takes tifffile's
-    series axes as they are when every letter is known (ZYXTCSI): samples per pixel become `s` and the pages of
-    a TIFF without ImageJ/OME/shape metadata `i`, neither a channel nor z. Unknown letters (Q, from tifffile's
-    own shape metadata) make it name the axes from the number of dimensions instead, which is fine."""
-    import tifffile
-    with tifffile.TiffFile(path) as tif:
-        axes = tif.series[0].axes if tif.series else ""
-    if not set(axes) <= set("ZYXTCSI"):
-        return None
-    bad = [f"{ax} ({'samples per pixel' if ax == 'S' else 'pages without ImageJ/OME metadata'})" for ax in "SI" if ax in axes]
-    return f"{Path(path).name}: tifffile axes {axes}, TensorSwitch would name {', '.join(bad)} as an axis " \
-           f"`{'`/`'.join(ax.lower() for ax in 'SI' if ax in axes)}`; needs input_axes" if bad else None
-
-
 def run_crop(ts, plan, c):
     """Run one crop's steps; returns None on success or the reason it failed."""
     for i, step in enumerate(c["steps"], 1):
-        args = step["args"]
-        if (step["tool"] in ("convert", "submit_job") and not args.get("input_axes")
-                and str(args.get("input_path", "")).lower().endswith((".tif", ".tiff"))):
-            problem = tiff_axes_problem(args["input_path"])   # the header probe can't read every zip member
-            if problem:
-                return f"step {i} ({step['tool']}) not run: {problem}"
         result = json.loads(getattr(ts, step["tool"])(**step["args"]))
         status = result.get("overall") if step["tool"] == "verify_output" else result.get("status")
         print(json.dumps({"crop": Path(c["crop"]).name, "step": i, "tool": step["tool"], "status": status,
@@ -109,41 +86,29 @@ def main():
     ap.add_argument("plan")
     ap.add_argument("--keep-source", action="store_true", help="keep each crop's downloads after it passes")
     ap.add_argument("--summary-out", help="also write the summary line to this file")
-    ap.add_argument("--finalize", action="store_true",
-                    help="don't run steps; record every crop whose verification.json says pass, and clean up")
     a = ap.parse_args()
     plan = json.loads(Path(a.plan).read_text())
     if plan.get("stop"):
         sys.exit(f"plan has stop reasons, not running: {plan['stop']}")
     done, skipped, failed = [], [], {}
 
-    if a.finalize:
-        for c in plan["crops"]:
-            if is_done(plan, c):
-                skipped.append(Path(c["crop"]).name)
-            elif verdict_of(c["crop"]) == "pass":
-                finish(plan, c, a.keep_source)
-                done.append(Path(c["crop"]).name)
-            else:
-                failed[Path(c["crop"]).name] = f"verification {verdict_of(c['crop']) or 'missing'}"
-    else:
-        from tensorswitch_v2 import mcp_server as ts   # imported here: needs TensorSwitch's environment
-        for c in plan["crops"]:
-            name = Path(c["crop"]).name
-            if is_done(plan, c):
-                skipped.append(name)
-                continue
-            if any(s["tool"] == "submit_job" for s in c["steps"]):
-                failed[name] = "needs the LSF cluster (over 2 GB): run its steps with the MCP tools (submit_job)"
-                continue
-            if Path(c["crop"]).exists():          # a half-written crop from an interrupted run: start it over
-                shutil.rmtree(c["crop"])
-            reason = run_crop(ts, plan, c)
-            if reason:
-                failed[name] = reason
-            else:
-                finish(plan, c, a.keep_source)
-                done.append(name)
+    from tensorswitch_v2 import mcp_server as ts   # imported here: needs TensorSwitch's environment
+    for c in plan["crops"]:
+        name = Path(c["crop"]).name
+        if is_done(plan, c):
+            skipped.append(name)
+            continue
+        if any(s["tool"] == "submit_job" for s in c["steps"]):
+            failed[name] = "sample over 2 GB: needs the LSF cluster (submit_job), which the runner doesn't use"
+            continue
+        if Path(c["crop"]).exists():          # a half-written crop from an interrupted run: start it over
+            shutil.rmtree(c["crop"])
+        reason = run_crop(ts, plan, c)
+        if reason:
+            failed[name] = reason
+        else:
+            finish(plan, c, a.keep_source)
+            done.append(name)
     summary = json.dumps({"dataset_dir": plan["dataset_dir"], "crops": len(plan["crops"]), "done": done,
                           "already_done": skipped, "failed": failed})
     print(summary)

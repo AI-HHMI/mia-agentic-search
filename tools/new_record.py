@@ -19,7 +19,7 @@ TODO = "TODO"
 def skeleton(rec_id, repository, discovered_by):
     now = utcnow()
     return {
-        "schema_version": "1.1",
+        "schema_version": "1.2",
         "id": rec_id,
         "title": TODO,
         "short_name": TODO,

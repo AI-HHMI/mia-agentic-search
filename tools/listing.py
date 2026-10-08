@@ -1,6 +1,6 @@
 """List every file of a dataset from its host's file API and summarize it as a folder tree.
 
-    python tools/listing.py <url> [<url> ...] [--id RECORD_ID] [--expand-zips] [--max-lines 40] [--json]
+    python tools/listing.py <url> [<url> ...] [--expand-zips] [--max-lines 40] [--json]
 
 Several URLs (e.g. the separate zips a dataset page links to) are listed together; pass all of them,
 since the total only counts as confirmed when the listing covers every file of the dataset.
@@ -14,7 +14,6 @@ Supported <url>s:
 Prints the tree, then a JSON summary line with n_files, total_bytes, complete, exact_sizes and
 `size_source`: `file-listing` only when every file was listed with an exact byte size. Only that
 value may go into technical.size_source as a confirmed size (see CLAUDE.md, enricher section).
-The listing is recorded in the active run log (tools/run_log.py), which the validator checks.
 """
 import argparse
 import collections
@@ -28,9 +27,8 @@ from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import JUNK_PATH, polite_get  # noqa: E402
+from tools.common import JUNK_PATH, human_size, polite_get  # noqa: E402
 from tools.peek_archive import ZipError, remote_size, zip_entries  # noqa: E402
-from tools.run_log import log_inspection  # noqa: E402
 
 
 class Listing:
@@ -310,15 +308,6 @@ def _collapse(paths):
     return ["/".join(p) for p in parts]
 
 
-def human(n):
-    if n is None:
-        return "?"
-    for unit in ("B", "KB", "MB", "GB", "TB"):
-        if n < 1000 or unit == "TB":
-            return f"{n:.0f} {unit}" if unit == "B" else f"{n:.1f} {unit}"
-        n /= 1000
-
-
 _STORE = re.compile(r"^(.*?\.(?:zarr|n5))/", re.I)
 
 
@@ -351,7 +340,7 @@ def tree(files, max_lines):
         s = stats[d]
         mult = f" (×{len(orig_dirs[d])} dirs)" if len(orig_dirs[d]) > 1 else ""
         exts = ", ".join(f".{e} {c}" if len(s["ext"]) > 1 else f".{e}" for e, c in s["ext"].most_common(4))
-        size = human(s["bytes"]) + ("+?" if s["unknown"] else "")
+        size = human_size(s["bytes"], "?") + ("+?" if s["unknown"] else "")
         lines.append(f"{(d or '.') + '/':<40}{mult:<12} {s['n']:>6} files  {size:>10}  {exts}")
     if len(lines) > max_lines:
         lines = lines[:max_lines - 1] + [f"… {len(lines) - max_lines + 1} more directories"]
@@ -363,7 +352,6 @@ def tree(files, max_lines):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("urls", nargs="+", metavar="url")
-    ap.add_argument("--id", help="record id, stored with the run log entry")
     ap.add_argument("--expand-zips", action="store_true", help="also list the members of each .zip (range requests)")
     ap.add_argument("--max-lines", type=int, default=40)
     ap.add_argument("--max-files", type=int, default=50000)
@@ -397,7 +385,7 @@ def main():
 
     total = sum(s or 0 for _, s, _ in out.files)
     confirmed = out.complete and out.exact and bool(out.files)
-    summary = {"source": out.source, "n_files": len(out.files), "total_bytes": total, "total_human": human(total),
+    summary = {"source": out.source, "n_files": len(out.files), "total_bytes": total, "total_human": human_size(total),
                "complete": out.complete, "exact_sizes": out.exact,
                "size_source": "file-listing" if confirmed else "estimated",
                "zip_members": len(out.members), "problems": out.problems}
@@ -421,9 +409,6 @@ def main():
                 for p in by_dir[d][:a.examples]:
                     print(f"  {p}")
     print(json.dumps(summary))
-    for url in a.urls:
-        log_inspection("listing", url, a.id, n_files=len(out.files), total_bytes=total, complete=out.complete,
-                       exact_sizes=out.exact, size_source=summary["size_source"], source=out.source, urls=a.urls)
 
 
 if __name__ == "__main__":

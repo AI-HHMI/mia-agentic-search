@@ -26,22 +26,21 @@ Five [Claude routines](https://claude.ai/code/routines) run in the cloud:
 4. **Merge.** Auto-merge merges PRs that meet the policy; everything else stays open for review.
 
 ## Reviewing PRs
-- **Merge** to accept, **close** to reject (it won't be proposed again).
+- **Merge** to accept, **close** to reject (it won't be proposed again: `load_rejected` reads closed PRs).
 - **Edit the YAML** in the PR to fix a field first; agents never overwrite a field you changed.
 - Add the label **`hold`** to stop auto-merge from merging a PR.
 
 **Labels** (computed by `tools/labels.py`, never set by hand): `dim:` · `org:` · `modality:` · `fmt:` ·
-`dtype:` · `anno:` · `label-enc:` · `license:<SPDX id>` · `size:` · `download-ready` / `download-not-ready`
-(`tools/readiness.py`) · `enriched` · `license-verification-needed` (no license found).
+`anno:` · `license:<SPDX id>` · `size:` · `enriched` · `voxel-size-missing` · `download-ready` /
+`download-not-ready` (`tools/readiness.py`).
 
-**Auto-merge** (`tools/automerge.py`, runs after each labelling and hourly; on while the repo
-variable `AUTO_MERGE` is `true`) merges a PR when all of these hold:
+**Auto-merge** (`tools/automerge.py`; on while the repo variable `AUTO_MERGE` is `true`): after labelling,
+a PR gets GitHub's native auto-merge, which merges it once `validate` passes, when all of these hold:
 - `enriched`, with a dimensionality (2D, 2D+t, 3D or 3D+t);
-- size below 500 GB (not `size:unknown`);
 - a known license (not `license:unknown`);
 - only known formats (no `fmt:other`);
-- `validate` passed, not a draft, no `hold`;
-- not a possible duplicate of a record on `main` or another open PR.
+- not a draft, no `hold`;
+- not a possible duplicate of a record on `main` or another open PR (add **`not-duplicate`** once you've checked).
 
 The dashboard lists every open PR that isn't merged, grouped by reason.
 
@@ -53,15 +52,16 @@ The dashboard lists every open PR that isn't merged, grouped by reason.
 | `CLAUDE.md` | Rules for the agents, including what counts as "usable" |
 | `.claude/skills/` | Agent procedures: `find-datasets`, `enrich-prs`, `maintain-catalog` |
 | `tools/` | Validation, dedup, file inspection, labels, auto-merge, publishing, dashboard |
-| `state/rejected.yaml` | Datasets that must not be proposed again |
+| `state/rejected.yaml` | Datasets that must not be proposed again, besides those of closed PRs |
 
 Branches: `main` (protected catalog) · `claude/dataset/<id>` (one per proposed dataset, deleted when
-its PR closes) · `claude/state/<routine>` (search state and run logs) · `rejections` (closed PRs).
+its PR closes) · `state` (search state, run logs, watchdog result).
 
 ## Monitoring
 - **Dashboard:** catalog by dimensionality (modality and organism), new records per day, why open
   PRs aren't merged, routine health and recent runs. Rebuilt hourly and after every merge.
-- **Slack:** failed runs, the daily digest, and watchdog alerts when a routine goes stale.
+- **Slack:** failed runs, the daily digest, and watchdog alerts when a routine goes stale or keeps
+  failing (posted only when the alerts change; none while the repo variable `PAUSED` is `true`).
 - **Transcripts:** every agent session at claude.ai/code/routines.
 
 ## Setup (done for this repo)
@@ -77,7 +77,6 @@ its PR closes) · `claude/state/<routine>` (search state and run logs) · `rejec
 pip install -r requirements.txt                  # + requirements-inspect.txt for the enricher tools
 python tools/validate.py                         # check the catalog
 python tools/build_site.py                       # build the dashboard into site/
-python tools/automerge.py                        # which open PRs would auto-merge, and why not (no merging)
 claude -p "/find-datasets source=repositories target=1 dry-run"   # test a harvest run (no PRs)
 claude -p "/enrich-prs pr=126 dry-run"                            # test the enricher on one PR (no pushes)
 ```
