@@ -26,18 +26,18 @@ imaging:
   - H&E
 data:
   formats:
-  - png
-  size_bytes: 69900000000
+  - tiff
+  size_bytes: 69889154635
   n_items: 550000
   access: open
-  download_url: null
+  download_url: https://figshare.com/articles/dataset/28931402
   download_method: http
 annotations:
   present: true
   types:
   - classification
   coverage: dense
-  format: One 7z archive per tissue class (class name = label) of 224x224 PNG tiles; clinical data as an xlsx spreadsheet
+  format: One 7z archive per tissue class (folder and file-name suffix = label) of 224x224 RGB tiles (named .png, TIFF-encoded); clinical data as an xlsx spreadsheet
   source: manual
 ml:
   tasks:
@@ -53,11 +53,93 @@ provenance:
   discovered_at: '2026-10-08T18:30:00Z'
   evidence_urls:
   - https://api.figshare.com/v2/articles/28931402
+  - https://api.figshare.com/v2/articles/28939460
+  - https://api.figshare.com/v2/articles/28940609
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13004917/fullTextXML
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-08T18:35:00Z'
-notes: 'The data are split over nine Figshare items, one per tissue class (ADI 28931402, LYM 28936250, DEB 28939016, MUC 28939100, MUS 28939115, NORM 28939151, STR 28939169, TUM 28939460; sizes 6.7-10.3 GB each, all .7z, about 69.9 GB total) plus the clinical xlsx (28940609); all CC BY 4.0 on Figshare (the paper is CC BY-NC-ND 4.0). Archive contents were not listed (7z, cannot be peeked), so annotations_verified is false; the tile size (224x224 PNG), class names and the 550,000 tile count are from the paper. Labels are tile-level tissue classes from pathologist-drawn bounding boxes (the paper calls it pixel-level classification), not segmentation masks. Pixel size is not stated (only 20x magnification). The paper mentions a root folder structure with a CSV named HMU CRC Clinical.csv while Figshare provides an xlsx. No train/test split is provided.'
+  annotations_verified: true
+  last_checked: '2026-10-08T19:17:00Z'
+notes: 'Data split over nine Figshare items, one per tissue class (ADI 28931402, LYM 28936250, DEB 28939016, MUC 28939100, MUS 28939115, NORM 28939151, STR 28939169, TUM 28939460; one .7z each, 6.7-10.3 GB) plus the clinical xlsx (28940609); all CC BY 4.0 on Figshare (paper CC BY-NC-ND 4.0). Labels are tile-level tissue classes from pathologist-drawn regions, not masks. Pixel size not stated (only 20x). The paper names a CSV clinical file; Figshare has an xlsx. No train/test split. enricher: 7z headers read for all 8 archives (557,519 tile names, folder per class) and the first tiles decoded: the .png-named files are LZW TIFFs (224x224x3 uint8), so formats tiff (was png) and annotations_verified true. size_bytes from the Figshare file listing (was 69.9 GB stated).'
+technical:
+  method: sample
+  inspected_at: '2026-10-08T19:17:00Z'
+  inspected_urls:
+  - https://api.figshare.com/v2/articles/28931402
+  - https://ndownloader.figshare.com/files/54236867
+  - https://ndownloader.figshare.com/files/54250163
+  bytes_downloaded: 15805276
+  size_source: file-listing
+  layout:
+    tree: |
+      28931402/ADI.7z        6.7 GB   ADI/<slide>_<x>_<y>_ADI.png    72,006 tiles
+      28936250/LYM.7z        7.5 GB   LYM/..._LYM.png                55,111
+      28939016/DEB.7z        9.3 GB   DEB/..._DEB.png                74,929
+      28939100/MUC.7z        7.8 GB   MUC/..._MUC.png                66,976
+      28939115/MUS.7z        9.4 GB   MUS/..._MUS.png                74,770
+      28939151/NORM.7z       8.6 GB   NORM/..._NORM.png              63,856
+      28939169/STR.7z       10.2 GB   STR/..._STR.png                75,000
+      28939460/TUM.7z       10.3 GB   TUM/..._TUM.png                74,871
+      28940609/HMU-CRC-Clinical.xlsx   63.8 KB
+      (tile counts from file names in the 7z headers; 9 files, 69.9 GB)
+    n_files: 9
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: '*/*_*_*_*.png'
+    format: tiff
+    axes: yxs
+    shape:
+    - 224
+    - 224
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    lossy: false
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Files carry a .png extension but are TIFFs (II*, LZW, RGB photometric) in the decoded 7z streams. The tissue class is the folder name and the file-name suffix (<slide>_<x>_<y>_<CLASS>.png).
+  - role: label
+    path_pattern: '*/*_*_*_*.png'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes:
+    - id: ADI
+      name: adipose tissue
+    - id: DEB
+      name: cellular debris
+    - id: LYM
+      name: lymphocytes
+    - id: MUC
+      name: mucus
+    - id: MUS
+      name: smooth muscle
+    - id: NORM
+      name: normal colon mucosa
+    - id: STR
+      name: cancer-associated stroma
+    - id: TUM
+      name: colorectal adenocarcinoma epithelium
+    alignment: not-applicable
+    alignment_notes: Image-level class encoded in the folder / archive name and the file-name suffix; no label files.
+  notes: 'Listing: Figshare API for the 9 items, 9 files, 69,889,154,635 B, complete. Archive contents: a stdlib-only scratch
+    script read each 7z signature header and its LZMA-encoded header by range (0.5-0.76 MB per archive): 557,519 .png names
+    in one class folder per archive (paper: 550,000). Sample: decoded the first 1-4 MB of the first data folder of ADI.7z and
+    0.4 MB of TUM.7z (LZMA2): the streams are TIFFs (II*), 224x224x3 uint8, LZW, photometric RGB, range 0..255 in the first
+    5 tiles (means 171-203); the stream-to-name mapping was not decoded, but every name in the archives ends in .png. Total
+    15.8 MB read. No single tile can be fetched directly: 7z is solid LZMA2 (not range-addressable like a zip), so sample
+    is null and TensorSwitch cannot use these archives. Class names from the Figshare item titles and the paper. Voxel size
+    not found; checked Figshare API metadata, paper full text (only 20x magnification). Download: each ndownloader.figshare.com
+    file passes download_check (ADI.7z checked: range ok, redirects to S3); one archive per class, no single archive.'
