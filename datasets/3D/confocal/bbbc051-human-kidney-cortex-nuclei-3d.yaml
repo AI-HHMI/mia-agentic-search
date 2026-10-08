@@ -1,0 +1,155 @@
+schema_version: '1.2'
+id: bbbc051-human-kidney-cortex-nuclei-3d
+title: BBBC051 - Human kidney cortex cells (NephNuc 3D DAPI nuclei by cell type)
+short_name: Human kidney 3D DAPI nuclei cell types (confocal)
+description: Confocal DAPI nuclear volumes cropped from 50 um sections of three human kidney cortex specimens, for training
+  cell-type classifiers. About 230,000 nuclei image volumes (32 x 32 x 7 voxels each) were labelled by unsupervised tissue
+  cytometry with marker-intensity clustering and expert validation. Images are distributed per specimen (F33, F44, F59) as
+  zip archives of volumes and projections organised by cell class (proximal tubule S1S2/S2S3, thick ascending limb, distal
+  convoluted tubule, collecting duct/connecting tubule, leukocytes CD45, glomerular and interstitial endothelium, podocytes),
+  with a groundtruthlabels.txt file describing the classes.
+landing_url: https://bbbc.broadinstitute.org/BBBC051
+doi: null
+repository: other
+accession: BBBC051
+authors:
+- Andre Woloshuk
+publications:
+- title: In Situ Classification of Cell Types in Human Kidney Tissue Using 3D Nuclear Staining
+  doi: 10.1002/cyto.a.24274
+  url: https://doi.org/10.1002/cyto.a.24274
+date_published: null
+imaging:
+  modality:
+  - confocal
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 500
+    y: 500
+    z: 1000
+  channels: 1
+  organism:
+  - Homo sapiens
+  sample: Human kidney cortex, 50 um sections of three deceased-donor nephrectomy specimens, DAPI nuclear stain, Leica SP8
+    confocal with 20x NA 0.75 objective
+  labels_stains:
+  - DAPI
+data:
+  formats:
+  - tiff
+  size_bytes: 3146156313
+  n_items: null
+  access: open
+  download_url: https://data.broadinstitute.org/bbbc/BBBC051/Images.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  coverage: dense
+  format: Class label = name of the per-class zip (e.g. F33/TAL.zip) inside each specimen folder; no label image files. groundtruthlabels.txt
+    maps folder names to cell types.
+  source: automatic
+ml:
+  tasks:
+  - classification
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/awoloshuk/NephNet
+license:
+  spdx: CC-BY-3.0
+  url: https://creativecommons.org/licenses/by/3.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-08T16:14:54Z'
+  evidence_urls:
+  - https://bbbc.broadinstitute.org/BBBC051
+  - https://data.broadinstitute.org/bbbc/BBBC051/Images.zip
+  - https://data.broadinstitute.org/bbbc/BBBC051/groundtruthlabels.txt
+  - https://pmc.ncbi.nlm.nih.gov/articles/PMC8382162/
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T18:05:00Z'
+notes: 'Images.zip holds F33/F44/F59 folders with nested per-class zips (S1S2, S2S3, TAL, DCT, CD/CNT, CD45.0-2, CD31glom/int,
+  Nestin); each inner zip has All_3D (nucleus with context), Mask_3D (segmented nucleus on black background) and Mask_2D_Maximum
+  (max projection of Mask_3D) TIFFs plus one CSV per folder. Voxel size 0.5 x 0.5 x 1.0 um and ~230,000 nuclei volumes of
+  32x32x7 from the paper (PMC8382162). Labels come from unsupervised clustering of marker intensities with expert validation.
+  enricher: formats other -> tiff (inner zips opened); size_bytes from file listing.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Images.zip/                              3.1 GB (3,146,156,051 B), 37 members\n  F33/  13 per-class zips + .DS_Store\
+      \  (Nestin, S1S2, CD, S2S3, CD31_inter, TAL, CNT, CD31_glom, CD45.0-2, DCT)\n  F44/  13 per-class zips + .DS_Store \
+      \ (Nestin, CD31int, S1S2, CD, CD31glom, S2S3, TAL, CNT, CD45.0-2, DCT)\n  F59/  11 per-class zips + .DS_Store  (Nestin,\
+      \ CD31int, S1S2, CD31glom, CD_CNT, S2S3, TAL, CD45.0-2)\n  each <class>.zip (2.8-325 MB) contains:\n    <class>/All_3D/object_*.tif\
+      \           7x32x32 uint8 volumes (with context)\n    <class>/Mask_3D/object_*.tif          7x32x32 uint8 (segmented\
+      \ nucleus only)\n    <class>/Mask_2D_Maximum/object_*.tif  32x32 uint8 max projection\n    <class>/<folder>/images_*.csv\
+      \         one per folder, one row per object\ngroundtruthlabels.txt                    262 B, class names"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.broadinstitute.org/bbbc/BBBC051/Images.zip::F59/CD45.1.zip
+    size_bytes: 2848429
+    description: 'Smallest per-class zip (F59 leukocytes CD45.1): 193 nuclei as All_3D, Mask_3D and Mask_2D_Maximum TIFFs
+      (nested zip, so the sample file is itself a zip).'
+  arrays:
+  - role: raw
+    path_pattern: F*/*.zip/*/All_3D/object_*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 7
+    - 32
+    - 32
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 239
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Nucleus-centred crop with surrounding context (paper: ''with context''). Opened F59/CD45.1.zip, F44/CD45.2.zip,
+      F33/CD31_glom.zip in memory; all All_3D/Mask_3D files seen are ImageJ hyperstacks, 7 slices (axes ZYX).'
+  - role: raw
+    path_pattern: F*/*.zip/*/Mask_3D/object_*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 7
+    - 32
+    - 32
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Same object file name as All_3D; only pixels inside the VTEA nuclear segmentation are kept, background
+      0 (paper 2.4/2.6: ''pixels from the segmented nuclei in a black background''). Not a label image.'
+  - role: raw
+    path_pattern: F*/*.zip/*/Mask_2D_Maximum/object_*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 32
+    - 32
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Maximum projection over z of the Mask_3D volume with the same object file name (paper: ''2D maximum
+      project'').'
+  notes: 'Each folder also holds one images_*.csv (one row per object, e.g. 193 rows for 193 objects in F59/CD45.1; an index,
+    a number, then flattened pixel values; columns undocumented), not listed as an array. Class labels are given only by the
+    per-class zip name (no label arrays); groundtruthlabels.txt lists the classes. Images.zip contains nested zips: TensorSwitch
+    can fetch an inner zip as <Images.zip>::F59/CD45.1.zip (download-check usable, ranges OK) but not a TIFF inside it. value_range
+    [0, 239] from 4 All_3D files of F59/CD45.1 only; one Mask_3D file had background 0 and 193 other values (smallest nonzero 13). Object counts
+    per class: F59/CD45.1 193, F44/CD45.2 1222 (All_3D) / 1176 (Mask), F33/CD31_glom 2787 / 2750; other classes not counted
+    (whole zips not opened). Inner zips were read in memory, 56.3 MB downloaded in total. Voxel size 500x500x1000 nm confirmed
+    in paper section 2.3 (''1.0-um z-spacing and 0.5 x 0.5 um pixels''); TIFF headers carry no calibration.'
