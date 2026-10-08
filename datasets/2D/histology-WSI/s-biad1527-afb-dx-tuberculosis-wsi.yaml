@@ -2,12 +2,11 @@ schema_version: '1.2'
 id: s-biad1527-afb-dx-tuberculosis-wsi
 title: 'AFB-Dx: A Digital Pathology Dataset for Tuberculosis Detection and Analysis'
 short_name: AFB-Dx Ziehl-Neelsen tuberculosis WSIs
-description: 421 Ziehl-Neelsen (acid-fast bacilli) stained whole-slide images of human autopsy tissue from
-  the Korea National Forensic Service, scanned at 400x with a Roche VENTANA DP 200 (single focus layer).
-  Slides are sorted into Positive and Negative folders in two groups (Dataset1 - 130 slides reviewed
-  by one pathologist; Dataset2 - 291 slides from commercial laboratories reviewed by two pathologists);
-  labels were kept only where RT-PCR and pathologist diagnoses agreed. Staining and sectioning quality
-  information is also provided.
+description: 421 Ziehl-Neelsen (acid-fast bacilli) stained whole-slide images of human autopsy tissue from the Korea
+  National Forensic Service, scanned at 400x with a Roche VENTANA DP 200 (single focus layer). Slides are sorted
+  into Positive and Negative folders in two groups (Dataset1 - 130 slides reviewed by one pathologist; Dataset2
+  - 291 slides from commercial laboratories reviewed by two pathologists); labels were kept only where RT-PCR and
+  pathologist diagnoses agreed. Staining and sectioning quality information is also provided.
 landing_url: https://www.ebi.ac.uk/biostudies/bioimages/studies/S-BIAD1527
 doi: 10.6019/S-BIAD1527
 repository: BioImageArchive
@@ -23,12 +22,15 @@ imaging:
   - histology-WSI
   - brightfield
   dimensionality: 2D
-  voxel_size_nm: null
+  voxel_size_nm:
+    x: 250
+    y: 250
+    z: null
   channels: 3
   organism:
   - Homo sapiens
-  sample: Formalin-fixed paraffin-embedded autopsy tissue sections (Ziehl-Neelsen stain) from five regional
-    NFS institutions, for detection of Mycobacterium tuberculosis acid-fast bacilli
+  sample: Formalin-fixed paraffin-embedded autopsy tissue sections (Ziehl-Neelsen stain) from five regional NFS
+    institutions, for detection of Mycobacterium tuberculosis acid-fast bacilli
   labels_stains:
   - Ziehl-Neelsen
 data:
@@ -63,15 +65,57 @@ provenance:
   - https://www.ebi.ac.uk/biostudies/bioimages/studies/S-BIAD1527
   - https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD1527
   - https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD1527/info
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/527/S-BIAD1527/Files/Dataset1/Negative/AFB_NEG_S1_039.tif
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/527/S-BIAD1527/Files/Dataset2/positive/AFB_POS_S2_074.tif
   confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T12:50:00Z'
-notes: 'Slide-level labels only (folder names Positive/Negative: 55+128 positive, 75+163 negative per
-  the file list); no bounding boxes or masks were seen. Pixel size not stated on the page (400x on a
-  VENTANA DP 200), so voxel size is left null. No paper is linked from the study page and a title search
-  in Europe PMC found none, so publications is empty. WSIs are very large single TIFFs (about 3-5 GB
-  each); size is the sum of the 421-file list. The study text mentions staining and sectioning quality
-  information but no such file was identified in the file list.'
+  last_checked: '2026-10-08T14:00:00Z'
+notes: 'Slide-level labels only (folder names Positive/Negative: 55+128 positive, 75+163 negative per the file list);
+  no bounding boxes or masks were seen. No paper is linked from the study page and a title search in Europe PMC
+  found none, so publications is empty. WSIs are very large single TIFFs (about 3-5 GB each); size is the sum of
+  the 421-file list. The study text mentions staining and sectioning quality information but no such file was identified
+  in the file list. enricher: voxel size 250x250 nm from the TIFF level-0 XResolution (40000 px/cm, mag=40) in two
+  slides (was null; the page states only 400x).'
+technical:
+  method: header
+  size_source: page-stated
+  layout:
+    tree: "Files/  (S-BIAD1527)\n  AFB images.json, AFB images.tsv      file list\n  Dataset1/Negative/AFB_NEG_S1_NNN.tif\
+      \    75 WSIs  182.8 GB\n  Dataset1/Positive/AFB_POS_S1_NNN.tif    55 WSIs  167.1 GB\n  Dataset2/negative/AFB_NEG_S2_NNN.tif\
+      \   163 WSIs  482.2 GB\n  Dataset2/positive/AFB_POS_S2_NNN.tif   128 WSIs  413.4 GB\n"
+    n_files: 423
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/527/S-BIAD1527/Files/Dataset1/Negative/AFB_NEG_S1_039.tif
+    size_bytes: 473240882
+    description: Smallest WSI (Dataset1/Negative/AFB_NEG_S1_039.tif, 43008x36864 px at level 0); slide label from
+      its folder (negative).
+  arrays:
+  - role: raw
+    path_pattern: Dataset[12]/*/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 43008
+    - 36864
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'VENTANA-style BigTIFF, 11 pages: page 0 Label_Image (3685x1251x3), page 1 Probability_Image
+      (3685x1251, LZW), pages 2-10 the pyramid level=0..8 (mag 40 to 0.156, JPEG q95, 1024 px tiles). Shape and
+      axes are of the level-0 page; RGB colour (photometric 2). Slide-level class = folder name (Positive/Negative);
+      no label files.'
+  notes: 'Listing: HTTP index of Files/ (FTP timed out): 423 files, 421 .tif in 4 folders, 1,245,505,123,981 B from
+    rounded index sizes; data.size_bytes kept from the study file list (1,245,284,982,118 B). Headers: AFB_NEG_S1_039.tif
+    (473,240,882 B) and AFB_POS_S2_074.tif read page by page by range: same 11-page structure; level 0 is 43008x36864x3
+    and 40960x49152x3, uint8, JPEG-compressed tiles; XResolution 40000 px/cm (0.25 um/px) with mag=40, halving per
+    level. tools/probe.py sees only page 0 (the slide-label image) and reports a plain multi-page TIFF; the pages
+    are not z/t/c. sample.py failed on this file (parse error), so no value range. No region annotations: labels
+    are slide-level only. Staining/sectioning quality info mentioned in the study text was not found in the files.'
