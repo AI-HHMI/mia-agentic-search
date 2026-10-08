@@ -1,13 +1,13 @@
 schema_version: '1.2'
 id: s-biad2200-maps-panexm-mitochondria
-title: Scalable automated segmentation of pan-Expansion Microscopy data quantifies mitochondrial proteins and morphology at the nanoscale
+title: Scalable automated segmentation of pan-Expansion Microscopy data quantifies mitochondrial proteins and morphology
+  at the nanoscale
 short_name: pan-ExM mitochondria subcompartments (MAPS)
-description: 'pan-Expansion Microscopy spinning-disk confocal volumes of HeLa cells and mouse kidney sections
-  (control and cisplatin acute kidney injury) used to train and apply MAPS, a 3D U-Net that segments
-  mitochondrial subcompartments (intermembrane space, matrix, cristae). Includes the raw training volumes
-  and 25 manual annotation crops (ITK-SNAP; 15 train / 5 validation / 5 test in the paper), plus raw
-  data and model predictions for HeLa, oligomycin-treated cells, TOM20/MIC60/COX4 labelling and kidney
-  samples (561 TIFF files).'
+description: pan-Expansion Microscopy spinning-disk confocal volumes of HeLa cells and mouse kidney sections (control
+  and cisplatin acute kidney injury) used to train and apply MAPS, a 3D U-Net that segments mitochondrial subcompartments
+  (intermembrane space, matrix, cristae). Includes the raw training volumes and 25 manual annotation crops (ITK-SNAP;
+  15 train / 5 validation / 5 test in the paper), plus raw data and model predictions for HeLa, oligomycin-treated
+  cells, TOM20/MIC60/COX4 labelling and kidney samples (561 TIFF files).
 landing_url: https://www.ebi.ac.uk/biostudies/bioimages/studies/S-BIAD2200
 doi: null
 repository: BioImageArchive
@@ -35,13 +35,16 @@ imaging:
   - expansion
   - spinning-disk
   dimensionality: 3D
-  voxel_size_nm: null
-  channels: 2
+  voxel_size_nm:
+    x: 100.49
+    y: 100.49
+    z: 248.56
+  channels: 3
   organism:
   - Homo sapiens
   - Mus musculus
-  sample: HeLa cells (MitoTracker, anti-TOM20/MIC60/COX4, oligomycin treatment) and mouse kidney sections
-    (control and cisplatin-induced AKI), expanded 13-24x with pan-ExM / pan-ExM-t
+  sample: HeLa cells (MitoTracker, anti-TOM20/MIC60/COX4, oligomycin treatment) and mouse kidney sections (control
+    and cisplatin-induced AKI), expanded 13-24x with pan-ExM / pan-ExM-t
   labels_stains:
   - pan-stain
   - MitoTracker Orange
@@ -81,16 +84,90 @@ provenance:
   - https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD2200
   - https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD2200/files?limit=400
   - https://www.biorxiv.org/content/biorxiv/early/2025/07/30/2025.07.28.667278.source.xml
-  confidence: 0.7
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/200/S-BIAD2200/Files/Training_Raw%20data_Figure1/dataset1.tif
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T12:40:00Z'
-notes: 'Voxel size (and whether it is expansion-corrected) is not stated on the study page or in the preprint
-  text (only objectives and 2048x2048 px views), so it is left null; TIFF headers are for the enricher.
-  Ground truth is 25 small manual crops (256x256 px, 20-35 slices, one central mitochondrion each); most
-  other files are MAPS model predictions and unlabelled raw volumes. The preprint pre-trained on 12 volumes
-  (2048x2048, 71-380 slices) with MitoTracker-derived masks. Size is the sum of the 561-file BioStudies
-  file list. The preprint text carries a CC-BY-NC-ND notice; the study page states CC BY 4.0, which is
-  recorded.'
+  last_checked: '2026-10-08T13:55:00Z'
+notes: 'Ground truth: 25 manual ITK-SNAP crops (256x256 px, 33-38 slices, one central mitochondrion each; 15 train
+  / 5 val / 5 test in the paper, not marked in the files); other folders are MAPS predictions and unlabelled raw
+  volumes. annotations.source mixed: manual = Training_Human annotations_Figure1/, automatic = *Prediction* folders.
+  organisms: Homo sapiens = Training_*, HeLa_*, Drug treatment_*, COXIV/TOM20 folders; Mus musculus = Kidney_* folders.
+  The preprint text carries a CC-BY-NC-ND notice; the study page states CC BY 4.0, which is recorded. enricher:
+  voxel size 100.49 x 100.49 x 248.56 nm from ImageJ TIFF calibration, same in 6 probed files (was null); it is
+  the pixel size in the expanded sample, not corrected for the 13-24x expansion; the paper does not state it. enricher:
+  channels 3 (was 2) from TIFF headers.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "Files/ (BioStudies S-BIAD2200, 585 files incl. 24 filelist .json/.tsv, ~1.0 TB)\n  Training_Raw data_Figure1/\
+      \                       25 .tif   398.9 MB  dataset{1..25}.tif\n  Training_Human annotations_Figure1/    \
+      \          25 .tif    22.7 MB  dataset{N}_annotation.tif\n  HeLa_Data_Figure2/                           \
+      \    30 .tif   141.8 GB  HeLa_N.tif\n  HeLa_Prediction_Figure2/                         30 .tif   200.7 MB\
+      \  HeLa_N_Prediction.tif\n  COXIV_MIC60_Data_Figure3/                         5 .tif    13.3 GB\n  TOM20_COXIV_MIC60_Prediction_Figure3/\
+      \            13 .tif    42.2 MB\n  Drug treatment_Data_Figure4/                     96 .tif   477.6 GB  DMSO_N.tif,\
+      \ ...\n  Drug treatment_Prediction_Figure4/               96 .tif   639.1 MB\n  Kidney_Control Data_Figure5/\
+      \                     47 .tif   194.9 GB\n  Kidney_Control Prediction_Figure5/               47 .tif   993.0\
+      \ MB\n  Kidney_AKI Data_Figure6/                         50 .tif   202.9 GB\n  Kidney_Control AKI Lamellar\
+      \ Cristae Prediction_Figure6/  97 .tif  1.1 GB"
+    n_files: 585
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/200/S-BIAD2200/Files/Training_Raw%20data_Figure1/dataset1.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/200/S-BIAD2200/Files/Training_Human%20annotations_Figure1/dataset1_annotation.tif
+    size_bytes: 16574684
+    description: One training crop (dataset1.tif, 42x3x256x256 uint16) and its manual annotation (dataset1_annotation.tif,
+      38x256x256 uint8); both downloaded and measured this run.
+  arrays:
+  - role: raw
+    path_pattern: Training_Raw data_Figure1/dataset*.tif
+    format: tiff
+    axes: zcyx
+    shape:
+    - 42
+    - 3
+    - 256
+    - 256
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 89
+    - 1125
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: Training_Human annotations_Figure1/dataset*_annotation.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 38
+    - 256
+    - 256
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 4
+    normalization: none
+    encoding: semantic-ids
+    classes: null
+    alignment: cropped
+    alignment_notes: 'Pairing: datasetN.tif <-> datasetN_annotation.tif. Annotations have the raw x/y size (256x256)
+      but 4 fewer z-slices in every pair probed (42/38, 37/33, 41/37); which slices were dropped is not stated.
+      Label 0 = background, 1-4 = the paper''s IMS, matrix, cristae and ambiguous classes, but the id-to-class mapping
+      is not documented, so classes are left null. dataset17_annotation.tif is uint16 (others uint8).'
+  notes: 'BioStudies HTTP index listing (585 files, rounded sizes, 1,033,989,845,817 B); data.size_bytes kept from
+    the exact BioStudies file list (page-stated). Headers probed: Training dataset1/2/17 raw (ImageJ zcyx, uint16,
+    uncompressed, 37-42 z x 3 c x 256 x 256) and their annotations (zyx, deflate uint8; dataset17 uint16 uncompressed),
+    HeLa_1.tif (169x3x2048x2048 uint16) and HeLa_1_Prediction.tif (169x2048x2048 uint8 deflate). Sampled dataset1
+    pair (16.6 MB): raw values 89-1125 (one sample; raw camera counts, inferred), label values {0:2448560,1:20980,2:5769,3:13934,4:1125}.
+    Prediction and full-size data folders are not listed as arrays. No single archive: data.download_url is the
+    FTP folder, files are direct under Files/. Voxel size from TIFF calibration (expanded-sample space); the paper
+    gives expansion factors (HeLa 14.8 +/- 0.5) but no pixel size.'
