@@ -77,11 +77,78 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T18:35:00Z'
+  last_checked: '2026-10-08T19:15:00Z'
 notes: 'Listed the zip (3,735 members: 1,883 JPG, 1,830 annotation TXT in GT_updated, 21 Thumbs.db, ReadMe_new_2021.docx), read
   the ReadMe inside it and one annotation file, the NLM datasheet and the IEEE JBHI paper (which reports 1,819 images and 84,961
   parasites, so it does not match the 1,883 JPGs in the zip exactly). The ReadMe says the data is distributed under "a Creative
   Commons Attribution license" with no version, and asks to attribute NLM and cite the paper, so spdx is custom. Annotation
   stopped once 200 white blood cells were counted, so about 53 images have no annotation file; coverage is therefore
   partial. Pixel size is not given; magnification 100x and 3024 x 4032 px come from the paper. Sibling sets in the same
-  NLM directory (P. vivax thick smears, uninfected thick smears) are separate records.'
+  NLM directory (P. vivax thick smears, uninfected thick smears) are separate records. organisms: both in every image
+  (parasites and human WBCs on one smear). enricher: annotations use the stored (EXIF-unrotated) pixel grid.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      ThickBloodSmears_150.zip                3.92 GB, 3,735 members
+        ReadMe_new_2021.docx                  956 KB
+        TF<patient>/                          150 patient folders
+          <date>_<time>.jpg                   1,883 JPEG (3.98 GB uncompressed sizes), 21 Thumbs.db
+        GT_updated/TF<patient>/
+          <date>_<time>.txt                   1,830 annotation files (7.5 MB)
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.lhncbc.nlm.nih.gov/public/Malaria/Thick_Smears_150/ThickBloodSmears_150.zip::TF100_CS39/20170829_205107.jpg
+    - https://data.lhncbc.nlm.nih.gov/public/Malaria/Thick_Smears_150/ThickBloodSmears_150.zip::GT_updated/TF100_CS39/20170829_205107.txt
+    size_bytes: 2144002
+    description: One thick-smear image of patient TF100_CS39 and its annotation file (25 objects)
+  arrays:
+  - role: raw
+    path_pattern: ThickBloodSmears_150.zip::TF*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 3024
+    - 4032
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: ThickBloodSmears_150.zip::GT_updated/TF*/*.txt
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: points-table
+    classes:
+    - id: Parasite
+      name: Parasite
+    - id: White_Blood_Cell
+      name: White blood cell
+    alignment: same-grid
+    alignment_notes: 'Pairing: GT_updated/<patient>/<image>.txt for <patient>/<image>.jpg (same stem); 53 images have no
+      txt (annotation stopped after 200 WBCs). Coordinates are in the stored pixel array: the JPEGs carry EXIF
+      orientation 6, and the ReadMe says to read images ignoring the orientation flag so that annotations line up. The
+      first line gives n_objects,height,width as 25,4032,3024 (rotated, display frame) while the stored array is
+      3024x4032. Rows: id, class, comment, Circle|Point, 2, x, y[, x_edge, y_edge] (circle centre + circumference point).'
+  notes: 'Exact listing of the zip index (one file, 3,923,792,228 bytes). Probed and sampled one JPEG (TF100_CS39/
+    20170829_205107.jpg, 2.1 MB): 3024x4032x3 uint8 stored, EXIF orientation 6 (portrait, camera SM-G930F), range
+    0-255 with 36% zero pixels, from one sample. Read the ReadMe docx inside the
+    zip and one annotation txt (1,489 B, 25 objects). Voxel size not found; checked: JPEG EXIF (72 dpi, a default),
+    the zip ReadMe, the NLM folder index and the JBHI paper (100x magnification, 3024x4032 px, parasite radius 2-96 px,
+    no pixel size). Direct links are usable (range requests) but data.lhncbc.nlm.nih.gov is not on the TensorSwitch
+    allowlist.'
