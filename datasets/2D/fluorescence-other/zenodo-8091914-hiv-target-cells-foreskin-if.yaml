@@ -2,22 +2,30 @@ schema_version: '1.2'
 id: zenodo-8091914-hiv-target-cells-foreskin-if
 title: ProdgerLab-StarDist-HIV Target Cell Training Set
 short_name: HIV target cells in foreskin (immunofluorescence)
-description: 40 annotated immunofluorescence fields of view (600 x 600 microns) of human foreskin tissue stained for CD3, CD4,
-  CCR5 and nuclei (DAPI), each with raw single-channel images, an all-channel image, ImageJ ROI files and binary images per
-  marker combination, and count spreadsheets. Used to train StarDist models for HIV target cell identification.
+description: 40 annotated immunofluorescence fields of view (600 x 600 microns) of human foreskin tissue stained
+  for CD3, CD4, CCR5 and nuclei (DAPI), each with raw single-channel images, an all-channel image, ImageJ ROI files
+  and binary images per marker combination, and count spreadsheets. Used to train StarDist models for HIV target
+  cell identification.
 landing_url: https://zenodo.org/records/8091914
 doi: 10.5281/zenodo.8091914
 repository: Zenodo
 accession: '8091914'
 authors:
 - Shao, Zhongtian
-publications: []
+publications:
+- title: Comparison between a deep-learning and a pixel-based approach for the automated quantification of HIV target
+    cells in foreskin tissue
+  doi: 10.1038/s41598-024-52613-3
+  url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10806185/fullTextXML
 date_published: '2023-06-28'
 imaging:
   modality:
   - fluorescence-other
   dimensionality: 2D
-  voxel_size_nm: null
+  voxel_size_nm:
+    x: 400.0
+    y: 400.0
+    z: null
   channels: 4
   organism:
   - Homo sapiens
@@ -41,9 +49,9 @@ annotations:
   - instance-segmentation
   - counts
   coverage: dense
-  format: Per field of view (FOV1..FOV40) - BINARY/ TIFFs per marker combination (DAPI, DAPI+CD3, DAPI+CD4+CCR5, ...), ROI FILES/ zips
-    of ImageJ ROIs and a FOV-Counts.xlsx spreadsheet
-  source: unknown
+  format: Per field of view (FOV1..FOV40) - BINARY/ TIFFs per marker combination (DAPI, DAPI+CD3, DAPI+CD4+CCR5,
+    ...), ROI FILES/ zips of ImageJ ROIs and a FOV-Counts.xlsx spreadsheet
+  source: manual
 ml:
   tasks:
   - segmentation
@@ -59,15 +67,97 @@ provenance:
   evidence_urls:
   - https://zenodo.org/api/records/8091914
   - https://zenodo.org/api/records/8091914/files/FOV%20Folders%20Uploaded.zip/content
-  confidence: 0.65
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10806185/fullTextXML
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T04:10:00Z'
-notes: 'Zenodo description: 40 annotated immunofluorescence images (600 x 600 microns) used to train StarDist models for HIV
-  target cells in foreskin tissue section scans. FOV Folders Uploaded.zip listing (876 files): per FOV folder RAW IMAGES
-  (single-channel CCR5, CD3, CD4, DAPI TIFFs plus an all-channel TIFF), BINARY (8 TIFFs per DAPI/marker combination), ROI FILES
-  (zips per combination) and a Counts xlsx. No linked paper on the Zenodo record (a Europe PMC title search found no confirmed
-  match), so pixel size, microscope, who drew the annotations and whether they were manual or corrected predictions are not
-  stated; annotations.source is unknown. Which FOV folders count was derived from the 40 xlsx files in the listing.'
+  last_checked: '2026-10-08T05:55:00Z'
+notes: 'Zenodo: 40 annotated IF images (600 x 600 um) used to train StarDist models for HIV target cells in foreskin
+  tissue section scans. Paper (Shao et al. 2024, Sci Rep; cites zenodo.org/record/8091914): 40 FOVs from Ugandan
+  foreskin tissue, every marker combination traced manually in Labkit, 8 annotation images per FOV. enricher: paper
+  linked (was none); annotations.source manual from paper Methods (was unknown). enricher: voxel size 400 x 400
+  nm from the TIFF calibration (0.4 micron/px), consistent with the paper (600 x 600 um = 1500 x 1500 px) (was null).
+  enricher: BINARY TIFFs are 0/255 masks (one per marker combination); FOV sizes vary (473 x 582 to 1504 x 1504
+  px).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  1 file, 702.7 MB (Zenodo)\n  FOV Folders Uploaded.zip   876 members\n    FOV Folders Uploaded/FOV1\
+      \ .. FOV40/\n      RAW IMAGES/   <FOV>-{DAPI,CD3,CD4,CCR5}.tif (uint16)  + <FOV>-ORIGINAL_ALL CHANNELS.tif\
+      \ (4 ch)\n      BINARY/       8 masks per FOV: DAPI, DAPICD3, DAPICD4, DAPICCR5, DAPICD3CD4, ... (.tif or\
+      \ .tiff)\n      ROI FILES/    ImageJ ROI zips per marker combination\n      <FOV>-Counts.xlsx (or Counts.xlsx)\n\
+      \  naming varies: 'FOV1 DAPI.tif' vs 'FOV15-DAPI.tiff'"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/8091914/files/FOV%20Folders%20Uploaded.zip/content::FOV Folders Uploaded/FOV1/RAW
+      IMAGES/FOV1-ORIGINAL_ALL CHANNELS.tif
+    - https://zenodo.org/api/records/8091914/files/FOV%20Folders%20Uploaded.zip/content::FOV Folders Uploaded/FOV1/BINARY/FOV1
+      DAPI.tif
+    size_bytes: 3082129
+    description: 'FOV1: the 4-channel raw image and its DAPI (all nuclei) binary mask.'
+  arrays:
+  - role: raw
+    path_pattern: FOV Folders Uploaded/FOV*/RAW IMAGES/*ORIGINAL_ALL CHANNELS.tif
+    format: tiff
+    axes: cyx
+    shape:
+    - 4
+    - 473
+    - 582
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range: null
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: ImageJ hyperstack, 4 channels (CD3, CD4, CCR5, DAPI per the single-channel files; channel order
+      not stated). Same FOV as the single-channel TIFFs.
+  - role: raw
+    path_pattern: FOV Folders Uploaded/FOV*/RAW IMAGES/*-[CD]*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 473
+    - 582
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 2167
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: One TIFF per marker (DAPI, CD3, CD4, CCR5).
+  - role: label
+    path_pattern: FOV Folders Uploaded/FOV*/BINARY/*
+    format: tiff
+    axes: yx
+    shape:
+    - 473
+    - 582
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: cells positive for the marker combination in the file name
+    alignment: same-grid
+    alignment_notes: 'Pairing: same FOV folder; file name suffix = marker combination (DAPI = all nuclei, DAPICD3,
+      DAPICD4CCR5, ...). Same shape as the raw images in the sample; no calibration stored in the mask.'
+  notes: 'Listed with tools/listing.py (Zenodo, zip expanded): 1 file, 702,652,594 B, 876 members. Probed 7 members,
+    sampled FOV1-DAPI.tif + BINARY/FOV1 DAPI.tif (332 KB). value_range from one sample; normalization none inferred
+    (uint16, max 2167, 12-bit range). Binary masks have 2 values (0, 255) although the paper says cells got individual
+    labels in Labkit; instance separation is in the ROI zips. ROI zips (ImageJ .roi) and Counts.xlsx are not in
+    arrays. File naming is inconsistent across FOVs (space vs hyphen, .tif vs .tiff, one CCR4 typo).'
