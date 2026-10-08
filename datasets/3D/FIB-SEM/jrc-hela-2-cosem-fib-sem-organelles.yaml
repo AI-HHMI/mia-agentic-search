@@ -1,0 +1,166 @@
+schema_version: '1.2'
+id: jrc-hela-2-cosem-fib-sem-organelles
+title: 'COSEM jrc_hela-2: whole-cell FIB-SEM volume with manual organelle ground-truth crops'
+short_name: HeLa whole-cell organelles (FIB-SEM)
+description: Isotropic-ish FIB-SEM volume (jrc_hela-2, 4 x 4 x 5.24 nm voxels, 12000 x 1600 x 6368 voxels
+  at full resolution) from the Janelia CellMap/COSEM project on the public janelia-cosem-datasets S3 bucket
+  (OpenOrganelle), with about 26 manually annotated ground-truth crops (up to ~60 organelle class layers
+  per crop such as mito, er, golgi, ld, ne, pm, mt), plus ML predictions and segmentations.
+landing_url: https://registry.opendata.aws/janelia-cosem/
+doi: null
+repository: OpenOrganelle
+accession: null
+authors: []
+publications:
+- title: Whole-cell organelle segmentation in volume electron microscopy
+  doi: 10.1038/s41586-021-03977-3
+  url: https://doi.org/10.1038/s41586-021-03977-3
+date_published: null
+imaging:
+  modality:
+  - FIB-SEM
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 4
+    y: 4
+    z: 5.24
+  channels: 1
+  organism:
+  - Homo sapiens
+  sample: HeLa cells (inferred from dataset name jrc_hela-2)
+  labels_stains: []
+data:
+  formats:
+  - zarr
+  - n5
+  - precomputed
+  size_bytes: 125107648000
+  n_items: 1
+  access: open
+  download_url: s3://janelia-cosem-datasets/jrc_hela-2/
+  download_method: s3
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  - instance-segmentation
+  - organelle
+  coverage: partial
+  format: OME-Zarr-style groundtruth/cropN/<class> arrays under jrc_hela-2.zarr/recon-1/labels/groundtruth
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://registry.opendata.aws/janelia-cosem/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-09-29T15:30:39Z'
+  evidence_urls:
+  - https://registry.opendata.aws/janelia-cosem/
+  - https://janelia-cosem-datasets.s3.amazonaws.com/README.md
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22Whole-cell+organelle+segmentation+in+volume+electron+microscopy%22&format=json&resultType=core&pageSize=3
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-07T19:00:38Z'
+notes: 'Verified from the S3 bucket listing: jrc_hela-2.zarr/recon-1/labels/groundtruth contains 26 cropN
+  groups, and crop1 metadata lists the class names; voxel size and dimensions come from n5/zarr attributes.
+  CC-BY-4.0 is stated for the collection on the AWS registry page, not per dataset. Paper full text was
+  not obtainable (Nature paywalled, bioRxiv returned 429, not in Europe PMC), so only the abstract was
+  read: cell type/organism (HeLa, Homo sapiens), sample prep, train/val split and per-crop classes are
+  inferred from the dataset name or not checked. The OpenOrganelle portal and figshare pages returned
+  404/403. size_bytes not determined. The bucket holds many other COSEM/CellMap datasets (jrc_cos7-*,
+  jrc_ctl-id8-*, ...) that could become separate records.
+
+  enricher: format list kept; probed recon-1 em/fibsem-uint8 (zstd OME-Zarr) and groundtruth crops (labels
+  on a 2x finer grid). enricher: size estimated 125.1 GB uncompressed (EM s0 + 26 crop ''all'' arrays;
+  was null)'
+technical:
+  method: sample
+  inspected_urls:
+  - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_hela-2/jrc_hela-2.zarr/recon-1/em/fibsem-uint8
+  - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_hela-2/jrc_hela-2.zarr/recon-1/labels/groundtruth/crop1/mito
+  - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_hela-2/jrc_hela-2.zarr/recon-1/em/fibsem-uint8/s0
+  - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_hela-2/jrc_hela-2.zarr/recon-1/labels/groundtruth/crop1/all/s0
+  - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_hela-2/jrc_hela-2.zarr/recon-1/em/fibsem-uint8/s1
+  - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_hela-2/jrc_hela-2.zarr/recon-1/labels/groundtruth/crop1/all/s1
+  bytes_downloaded: 194400000
+  size_source: estimated
+  layout:
+    tree: "jrc_hela-2/\n  thumbnail.jpg\n  jrc_hela-2.n5/\n  neuroglancer/\n  jrc_hela-2.zarr/recon-1/\n\
+      \    em/fibsem-uint8/            s0..s5 (OME-Zarr multiscale)\n    labels/groundtruth/crop1..  26\
+      \ crop groups, one array per class\n      cropN/all                 all classes in one array\n \
+      \     cropN/<class>             ~60 per-class arrays (mito, er, golgi, ...)\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_hela-2/jrc_hela-2.zarr/recon-1/labels/groundtruth/crop1/all/s0
+    - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_hela-2/jrc_hela-2.zarr/recon-1/em/fibsem-uint8/s0
+    size_bytes: null
+    description: One ground-truth crop (crop1/all, 200x1000x1000 uint8 at s0) plus the EM region under
+      its OME-Zarr translation.
+  arrays:
+  - role: raw
+    path_pattern: jrc_hela-2.zarr/recon-1/em/fibsem-uint8/s*
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 6368
+    - 1600
+    - 12000
+    shape_varies: false
+    dtype: uint8
+    compression: zstd
+    lossy: false
+    chunks:
+    - 128
+    - 128
+    - 128
+    value_range:
+    - 3
+    - 184
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: jrc_hela-2.zarr/recon-1/labels/groundtruth/crop*/all/s*
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 200
+    - 1000
+    - 1000
+    shape_varies: true
+    dtype: uint8
+    compression: zstd
+    lossy: false
+    chunks:
+    - 64
+    - 64
+    - 64
+    encoding: semantic-ids
+    classes: null
+    n_ids_observed: 15
+    alignment: transform-provided
+    alignment_notes: 'Each crop carries OME-Zarr scale + translation in nm (crop1: scale 2.62/2/2 nm z/y/x,
+      translation 3132.21/899/25863 nm); the EM s0 grid is 5.24/4/4 nm, so labels sit on a 2x finer grid
+      and must be placed by the translation.'
+  notes: 'Full S3 listing not attempted (millions of zarr chunk objects); prefixes enumerated with S3
+    ListObjectsV2 delimiter queries: 26 groundtruth crops, crop1 has ~60 class arrays plus "all". Headers
+    via probe.py; samples: central crops of em s0 and s1 (value range [3,184] from the s1 crop, one sample,
+    uint8) and crop1/all s0 and s1 (15 distinct values 1..36, no zeros). crop1 .zattrs lists cellmap.annotation.class_names
+    (ecs, pm, mito_mem, mito_lum, ...), but the id-to-name mapping is not stated there, so classes left
+    null. Only crop1 shape probed; other crops vary. size_bytes unknown. Third pass 2026-10-07: size estimated
+    (uncompressed): raw 1 x 6368x1600x12000 uint8 + label 26 crops (''all'' s0, shapes read from each
+    crop''s .zarray this run, 2,842,048,000 voxels) uint8 = 125,107,648,000 B (125.1 GB). Level s0 only;
+    per-class crop arrays, pyramid levels and the n5 / precomputed copies are not counted; zstd/lz4 chunks
+    download smaller.'
+  inspected_at: '2026-09-30T20:52:31Z'
