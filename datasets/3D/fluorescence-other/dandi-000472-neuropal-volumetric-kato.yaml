@@ -1,0 +1,126 @@
+schema_version: '1.2'
+id: dandi-000472-neuropal-volumetric-kato
+title: NeuroPAL volumetric images
+short_name: C. elegans NeuroPAL volumes with neuron IDs
+description: Ten multichannel NeuroPAL volumetric images of C. elegans from the Kato lab (UCSF), partially labeled with
+  neuron centers and identities, released to give new researchers training data for automatic cell-identification
+  algorithms.
+landing_url: https://dandiarchive.org/dandiset/000472
+doi: null
+repository: DANDI
+accession: '000472'
+authors:
+- Raymond Dunn
+- Daniel Sprague
+- Jackson Borchardt
+- Greg Bubnis
+- Saul Kato
+publications: []
+date_published: '2024-10-09'
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 3D
+  voxel_size_nm: null
+  channels: 6
+  organism:
+  - Caenorhabditis elegans
+  sample: C. elegans NeuroPAL (multicolour neuron-labeling) strain animals, volumetric multichannel images (X, Y, Z, C)
+  labels_stains:
+  - NeuroPAL multicolour neuron labels
+data:
+  formats:
+  - hdf5
+  size_bytes: 18442605394
+  n_items: 10
+  access: open
+  download_url: null
+  download_method: api
+annotations:
+  present: true
+  types:
+  - points
+  - classification
+  coverage: partial
+  format: 'NWB VolumeSegmentation: list of neuron centers and associated IDs (X, Y, Z, weight, ID)'
+  source: unknown
+ml:
+  tasks:
+  - classification
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-08T19:40:00Z'
+  evidence_urls:
+  - https://api.dandiarchive.org/api/assets/91aaf380-3e86-4d3a-9bc6-429db37a74b8/download/
+  - https://api.dandiarchive.org/api/dandisets/000472/versions/draft/info/
+  - https://api.dandiarchive.org/api/dandisets/000472/versions/draft/assets/
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T23:00:00Z'
+notes: 'Checked DANDI API record and asset listing only: 10 NWB files (8 of ~200 MB, 2 of ~8.4 GB), CC-BY-4.0, published
+  2024-10-09. No paper is cited; microscope, voxel size, channel count and annotation procedure are not stated on
+  the record, and the NWB files were not opened. Labels are described as partial. enricher: NWB files are HDF5, so formats hdf5 (was other); 6 raw channels; neuron ROIs with ID labels seen; voxel size in technical.notes. Differs from DANDI 000714 and 000715 (other NeuroPAL sets).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: |
+      sub-<date>-w<NN>-NP1/sub-..._ses-<date>_ophys.nwb   10 files (NWB = HDF5)
+        8 files ~197-216 MB: NeuroPAL structural volume + processed volume + neuron ROIs
+        2 files ~8.4 GB (2022-04-26 w00, w01): also CalciumImageSeries (3000, 1000, 240, 12)
+      inside each: acquisition/NeuroPALImageRaw/data (x, y, z, c) uint16, 6 channels
+                   processing/ProcessedImage/ProcessedImage/data (x, y, z, 4)
+                   processing/NeuroPAL/NeuroPALSegmentation/NeuroPALNeurons/{voxel_mask,ID_labels}
+    n_files: 10
+    listing_complete: true
+  sample:
+    urls:
+    - https://api.dandiarchive.org/api/assets/91aaf380-3e86-4d3a-9bc6-429db37a74b8/download/
+    size_bytes: 197074360
+    description: sub-2021-12-03-w00-NP1 NWB file, NeuroPAL volume 1000x240x41x6 and 172 labelled neuron ROIs
+  arrays:
+  - role: raw
+    path_pattern: sub-*/sub-*_ophys.nwb (acquisition/NeuroPALImageRaw/data)
+    format: hdf5
+    axes: xyzc
+    shape:
+    - 1000
+    - 240
+    - 41
+    - 6
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: NWB order x, y, z, channel (grid_spacing listed x, y, z); 41 or 45 z planes; RGBW_channels gives the channels used for the NeuroPAL colour image.
+  - role: label
+    path_pattern: sub-*/sub-*_ophys.nwb (processing/NeuroPAL/NeuroPALSegmentation/NeuroPALNeurons/voxel_mask)
+    format: hdf5
+    axes: null
+    shape:
+    - 172
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: points-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: Per-ROI voxel lists (x, y, z, weight) in voxel indices of the NeuroPAL volume; ID_labels with ID_labels_index give neuron names.
+  notes: 'Listed the 10 DANDI assets (API, exact sizes, 18,442,605,394 B). Read NWB structure and attributes by range with
+    h5py (about 3 MB, no NWB code run). Raw NeuroPAL data (1000,240,41|45,6) uint16 uncompressed. Voxel size from
+    general/optophysiology/NeuroPALImVol/grid_spacing (unit micrometers): 0.3208,0.3208,0.75 in 9 files and
+    0.3216,0.3216,0.75 in sub-2022-02-12-w01 (its processed volume is 0.3208), so imaging.voxel_size_nm stays null
+    (sizes differ slightly: 320.8 vs 321.6 nm in x/y, z 750 nm). The two 8.4 GB files also hold CalciumImageSeries at
+    0.3208,0.3208,1.5 um. Not sampled; value range unknown. The DANDI download URL redirects to dandiarchive.s3.amazonaws.com.'
