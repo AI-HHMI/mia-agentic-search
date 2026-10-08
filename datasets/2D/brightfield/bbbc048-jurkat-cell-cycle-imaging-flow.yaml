@@ -1,0 +1,116 @@
+schema_version: '1.2'
+id: bbbc048-jurkat-cell-cycle-imaging-flow
+title: BBBC048 - Cell Cycle Jurkat Cells (imaging flow cytometry)
+short_name: Jurkat cell cycle phases (imaging flow cytometry)
+description: 32,266 single-cell images of asynchronously growing, fixed Jurkat cells from an ImageStream imaging flow cytometer
+  (brightfield, darkfield and fluorescence channels, with propidium iodide for DNA content and an MPM2 antibody for mitotic
+  cells). Each cell is labelled with one of seven cell-cycle phases (G1, S, G2, prophase, metaphase, anaphase, telophase)
+  in Ground_truth.lst. Used to train the DeepFlow classifier.
+landing_url: https://bbbc.broadinstitute.org/BBBC048
+doi: null
+repository: other
+accession: BBBC048
+authors:
+- Eulenberg P
+- Köhler N
+- Blasi T
+- Filby A
+- Carpenter AE
+- Rees P
+- Theis FJ
+- Wolf FA
+publications:
+- title: Reconstructing cell cycle and disease progression using deep learning
+  doi: 10.1038/s41467-017-00623-3
+  url: https://doi.org/10.1038/s41467-017-00623-3
+date_published: null
+imaging:
+  modality:
+  - brightfield
+  - fluorescence-other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: null
+  organism:
+  - Homo sapiens
+  sample: Fixed asynchronously growing Jurkat T-lymphocyte cells stained with propidium iodide and anti-MPM2, imaged on an
+    ImageStream imaging flow cytometer
+  labels_stains:
+  - propidium iodide
+  - MPM2
+data:
+  formats:
+  - jpeg
+  size_bytes: 1611429608
+  n_items: 32266
+  access: open
+  download_url: https://data.broadinstitute.org/bbbc/BBBC048/BBBC048v1.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  coverage: dense
+  format: Ground_truth.lst, tab-separated per-cell class index and file path (7 cell-cycle phases)
+  source: mixed
+ml:
+  tasks:
+  - classification
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/theislab/deepflow
+license:
+  spdx: CC-BY-NC-SA-3.0
+  url: https://creativecommons.org/licenses/by-nc-sa/3.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-08T16:14:54Z'
+  evidence_urls:
+  - https://bbbc.broadinstitute.org/BBBC048
+  - https://data.broadinstitute.org/bbbc/BBBC048/BBBC048v1.zip
+  - https://data.broadinstitute.org/bbbc/BBBC048/Ground_truth.lst
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5587733/fullTextXML
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T18:35:00Z'
+notes: 'BBBC048v1.zip (peek_archive) holds 5 tar.gz archives (scRNA, final, 1540408813, predictions, evaluation scripts),
+  CellCycle.zip and CellCycle.mp4; the tar.gz and inner zip were not opened. Ground_truth.lst lists per-cell paths like ./Anaphase/12432_Ch3.ome.jpg,
+  so images are channel-wise JPEG per cell (format taken from those paths). Pixel size, magnification and image dimensions
+  are not stated on the BBBC page or in the paper. Labels combine algorithmic segmentation, morphology analysis of fluorescence
+  channels and manual inspection (paper Methods), hence source mixed. enricher: CellCycle.zip (inside BBBC048v1.zip) indexed:
+  129,064 per-channel JPEGs in 7 phase folders.'
+technical:
+  method: metadata-only
+  size_source: file-listing
+  layout:
+    tree: "BBBC048v1.zip (1,611,429,608 B, 7 members, stored)\n  scRNA.tar.gz 902 MB, final.tar.gz 321 MB, 1540408813.tar.gz\
+      \ 88 MB, predictions.tar.gz 31 MB,\n  CCS_final_evaluation_scripts.tar.gz 74 MB, CellCycle.mp4 15 MB\n  CellCycle.zip\
+      \ 181 MB (129,075 members)/CellCycle/\n    G1/ 57,332 .jpg   S/ 34,464   G2/ 34,404   Prophase/ 2,424   Metaphase/ 272\
+      \   Telophase/ 108   Anaphase/ 60\n    <cell id>_Ch<n>.ome.jpg (one JPEG per cell and channel), *.lst file lists\n"
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: CellCycle/*/*_Ch*.ome.jpg
+    format: jpeg
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One JPEG per cell and ImageStream channel (e.g. 12432_Ch3.ome.jpg, 12432_Ch4.ome.jpg); 129,064 JPEGs
+      = 4 per cell for 32,266 cells. Class = the phase folder name (and Ground_truth.lst).
+  notes: 'Listing: BBBC048v1.zip has 7 stored members (1,611,429,608 B, exact; download-check usable with range requests);
+    the inner CellCycle.zip was indexed by opening it through the outer zip, which made fsspec read about 919 MB (logged;
+    more than intended, because seeking inside the stored member re-read it), so no further files were read for this record.
+    The tar.gz members were not opened. CellCycle/ holds 129,064 JPEGs in phase folders (G1 57,332, S 34,464, G2 34,404, Prophase
+    2,424, Metaphase 272, Telophase 108, Anaphase 60) = 4 channels x 32,266 cells, matching n_items. Image size, dtype and
+    pixel size were not read (no JPEG decoded). Labels are folder names, so no separate label array. No sample unit: the JPEGs
+    sit in a zip nested in a zip, which TensorSwitch cannot address with zip::member. 2D: not covered by the miao layout.'
