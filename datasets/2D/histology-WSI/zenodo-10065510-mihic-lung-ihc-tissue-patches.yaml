@@ -1,10 +1,11 @@
 schema_version: '1.2'
 id: zenodo-10065510-mihic-lung-ihc-tissue-patches
-title: 'MIHIC: A multiplex IHC histopathological image classification dataset for lung cancer immune microenvironment quantification'
+title: 'MIHIC: A multiplex IHC histopathological image classification dataset for lung cancer immune microenvironment
+  quantification'
 short_name: MIHIC lung cancer multiplex IHC tissue patches
-description: 309,698 128 x 128 px patches from lung cancer tissue microarray sections stained with 12 different IHC markers,
-  classified by pathologist-annotated regions into tissue types (alveoli, necrosis, stroma, tumor, other, background), with
-  train, validation and test splits.
+description: 309,698 128 x 128 px patches from lung cancer tissue microarray sections stained with 12 different
+  IHC markers, classified by pathologist-annotated regions into tissue types (alveoli, necrosis, stroma, tumor,
+  other, background), with train, validation and test splits.
 landing_url: https://zenodo.org/records/10065510
 doi: 10.5281/zenodo.10065510
 repository: Zenodo
@@ -19,7 +20,8 @@ authors:
 - Yong Zhang
 - Hongming Xu
 publications:
-- title: 'MIHIC: a multiplex IHC histopathological image classification dataset for lung cancer immune microenvironment quantification'
+- title: 'MIHIC: a multiplex IHC histopathological image classification dataset for lung cancer immune microenvironment
+    quantification'
   doi: 10.3389/fimmu.2024.1334348
   url: https://doi.org/10.3389/fimmu.2024.1334348
 date_published: '2023-11-02'
@@ -61,7 +63,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: PNG patches in dataset/{train,val,test}/<class>/ folders (alveoli, background, Necrosis, Other, Stroma, Tumor)
+  format: PNG patches in dataset/{train,val,test}/<class>/ folders (alveoli, background, Immune cells, Necrosis,
+    Other, Stroma, Tumor)
   source: manual
 ml:
   tasks:
@@ -83,9 +86,50 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T12:41:35Z'
-notes: 'One zip with 309,698 PNG patches (peek_archive full listing; matches the paper count) in train/val/test folders
-  with six class folders; there is no separate folder for the paper''s Immune cells class, so those patches are presumably
-  inside Other (not confirmed). The paper (open access, Methods read) states TMA sections of 188,416 x 110,080 px = 42660.87 x
-  24924.15 um at 40x, which gives 0.2264 um/px; the pixel size is computed from those numbers and assumes the 128 x 128 patches
-  were not rescaled. Pathologists annotated regions in QuPath. Split is by annotated region, 64/16/20 percent train/val/test.'
+  last_checked: '2026-10-08T15:50:10Z'
+notes: 'One zip with 309,698 PNG patches (peek_archive full listing; matches the paper count) in train/val/test
+  folders with seven class folders (enricher: Immune cells has its own folder, 10,840 patches). The paper (open
+  access, Methods read) states TMA sections of 188,416 x 110,080 px = 42660.87 x 24924.15 um at 40x, which gives
+  0.2264 um/px; the pixel size is computed from those numbers and assumes the 128 x 128 patches were not rescaled.
+  Pathologists annotated regions in QuPath. Split is by annotated region, 64/16/20 percent train/val/test.'
+technical:
+  method: sample
+  inspected_at: '2026-10-08T15:50:10Z'
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  1 file, 7,596,524,308 B
+        MIHIC_dataset.zip   309,698 PNG
+          dataset/{train,val,test}/<class>/<core>-<stain>-<i>-<j>.png
+            train: Tumor 91357, Other 37288, Stroma 25023, Necrosis 14468, background 12599, alveoli 7636, Immune cells 6630
+            val:   Tumor 24625, Other 11188, Stroma 5362, background 3149, Necrosis 1857, Immune cells 1817, alveoli 1262
+            test:  Tumor 27993, Other 12937, Necrosis 7694, Stroma 7592, background 3937, alveoli 2891, Immune cells 2393
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/10065510/files/MIHIC_dataset.zip::dataset/train/Stroma/0010-CDK4-19-23.png
+    size_bytes: 25910
+    description: One Stroma patch (CDK4 stain); its class is its folder.
+  arrays:
+  - role: raw
+    path_pattern: dataset/*/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 128
+    - 128
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 87
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Patch-level class from the folder (7 classes); stain in the file name.
+  notes: 'peek_archive: MIHIC_dataset.zip 7,596,524,308 B (the only file; = size_bytes), 309,698 PNGs in 21 split/class
+    folders. sample.py on dataset/train/Stroma/0010-CDK4-19-23.png: 128x128x3 uint8 [87, 255]; one patch. Voxel
+    size: the paper gives TMA sections of 188,416 x 110,080 px = 42660.87 x 24924.15 um at 40x (0.2264 um/px); it
+    does not say the patches keep that scale.'
