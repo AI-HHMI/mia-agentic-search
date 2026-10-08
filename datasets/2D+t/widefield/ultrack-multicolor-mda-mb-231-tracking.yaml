@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: ultrack-multicolor-mda-mb-231-tracking
 title: Ultrack multicolor MDA-MB-231 breast cancer cell time-lapse with curated tracks
 short_name: Multicolor breast cancer cell tracking (widefield)
-description: 'Two-day, 10-minute-interval widefield time-lapse (300 frames of 1440x1920 RGB) of MDA-MB-231 metastatic
-  breast adenocarcinoma cells stably marked with red, green and blue fluorophores (LeGO lentiviral vectors),
-  released with the Ultrack cell tracking paper. A CSV of 413 manually curated cell tracks (with parent track
-  ids for lineages) serves as a gold-standard tracking benchmark.'
+description: Two-day, 10-minute-interval widefield time-lapse (300 frames of 1440x1920 RGB) of MDA-MB-231 metastatic
+  breast adenocarcinoma cells stably marked with red, green and blue fluorophores (LeGO lentiviral vectors), released
+  with the Ultrack cell tracking paper. A CSV of 413 manually curated cell tracks (with parent track ids for lineages)
+  serves as a gold-standard tracking benchmark.
 landing_url: https://public.czbiohub.org/royerlab/ultrack/
 doi: null
 repository: LabWebsite
@@ -26,7 +26,8 @@ imaging:
   channels: 3
   organism:
   - Homo sapiens
-  sample: MDA-MB-231 metastatic breast adenocarcinoma cells on collagen-coated glass-bottom plates, imaged at 10x on a Keyence BZ-X800 every 10 min for 2 days
+  sample: MDA-MB-231 metastatic breast adenocarcinoma cells on collagen-coated glass-bottom plates, imaged at 10x
+    on a Keyence BZ-X800 every 10 min for 2 days
   labels_stains:
   - eGFP
   - mCherry
@@ -34,7 +35,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 2488361461
+  size_bytes: 2489235248
   n_items: 1
   access: open
   download_url: https://public.czbiohub.org/royerlab/ultrack/multi-color-cytoplasm.tif
@@ -44,7 +45,8 @@ annotations:
   types:
   - tracking
   coverage: sparse
-  format: CSV (multi-color-cytoplasm-sparse-tracks.csv; columns track_id, t, y, x, parent_track_id; 37,029 rows, 413 tracks)
+  format: CSV (multi-color-cytoplasm-sparse-tracks.csv; columns track_id, t, y, x, parent_track_id; 37,029 rows,
+    413 tracks)
   source: manual
 ml:
   tasks:
@@ -67,11 +69,67 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-08T05:25:00Z'
-notes: 'No license or terms are stated on the data page, its README or in the paper''s Data availability section
-  (the paper itself is CC-BY 4.0, which is not a data license). Pixel size is not stated on the data page, in the TIFF
+  last_checked: '2026-10-08T09:00:00Z'
+notes: No license or terms are stated on the data page, its README or in the paper's Data availability section (the
+  paper itself is CC-BY 4.0, which is not a data license). Pixel size is not stated on the data page, in the TIFF
   header (ImageJ TIFF without resolution) or in the paper Methods (10x objective only). The tracks CSV has 413 tracks
-  matching the "413 manually curated cell tracks" in the paper; it is a sparse gold standard, not every cell is tracked.
-  The same server also hosts zebrafish neuromast and embryo OME-Zarr volumes and an A549 virtual-staining set; the
-  listed zebrafish_neuromast_tracks.csv returned HTTP 404 on this run, so those were not recorded. The TIFF is stored as RGB
-  (uint8, 300 x 1440 x 1920 x 3).'
+  matching the "413 manually curated cell tracks" in the paper; it is a sparse gold standard, not every cell is
+  tracked. The same server also hosts zebrafish neuromast and embryo OME-Zarr volumes and an A549 virtual-staining
+  set; the listed zebrafish_neuromast_tracks.csv returned HTTP 404 on this run, so those were not recorded. The
+  TIFF is stored as RGB (uint8, 300 x 1440 x 1920 x 3).
+technical:
+  method: header
+  size_source: page-stated
+  layout:
+    tree: "public.czbiohub.org/royerlab/ultrack/   (this record: 2 files)\n  multi-color-cytoplasm.tif         \
+      \     2.49 GB   ImageJ TIFF, 300 frames of 1440 x 1920 RGB\n  multi-color-cytoplasm-sparse-tracks.csv    \
+      \      track_id, t, y, x, parent_track_id\n  (also on the server, not part of this record: a549_virtual_staining.*,\
+      \ zebrafish_embryo.ome.zarr, zebrafish_neuromast.*, unet_weights)"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://public.czbiohub.org/royerlab/ultrack/multi-color-cytoplasm.tif
+    - https://public.czbiohub.org/royerlab/ultrack/multi-color-cytoplasm-sparse-tracks.csv
+    size_bytes: 2489235248
+    description: The whole dataset is one movie and one tracks table; there is no smaller unit.
+  arrays:
+  - role: raw
+    path_pattern: multi-color-cytoplasm.tif
+    format: tiff
+    axes: tyxc
+    shape:
+    - 300
+    - 1440
+    - 1920
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'ImageJ TIFF, frames = 300 (header); the 3 samples per pixel (photometric RGB) are the red,
+      green and blue fluorophore channels (page and paper: LeGO red/green/blue labelling), so the last axis is c.'
+  - role: label
+    path_pattern: multi-color-cytoplasm-sparse-tracks.csv
+    format: csv
+    axes: null
+    shape:
+    - 37029
+    - 5
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: none
+    encoding: tracks-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: Columns track_id, t, y, x, parent_track_id (0 = no parent); t is the frame index, y/x in pixels
+      of the TIFF (first rows y 335, x 435).
+  notes: 'Server index read; TIFF header probed (352 KB read): uint8 [300, 1440, 1920, 3], uncompressed, ImageJ,
+    no resolution; CSV header read. License still not found; checked: data page, README, paper Data availability
+    (as before), server index. Voxel size not found; checked: TIFF header, data page, README, paper Methods (10x
+    objective, Keyence BZ-X800). Size = HTTP Content-Length of the two files (TIFF 2,488,361,461 + CSV 873,787 B;
+    the index page lists no sizes). Host public.czbiohub.org is not on the TensorSwitch allowlist.'
