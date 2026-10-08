@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: hf-pytc-bvem-blood-vessel-segmentation
 title: BvEM - cortical blood vessel segmentation benchmark in volume EM of mouse, macaque and human
 short_name: BvEM cortical blood vessel segmentation (vEM)
-description: Benchmark of three large volume-EM datasets of cortex (adult mouse visual cortex, macaque superior temporal
-  gyrus, human temporal lobe), resampled to near-isotropic 200-300 nm voxels, with proofread 3D blood vessel instance
-  segmentations. Image volumes are derived from MICrONS, the macaque study of Loomba et al. and the H01 human dataset.
+description: Benchmark of three large volume-EM datasets of cortex (adult mouse visual cortex, macaque
+  superior temporal gyrus, human temporal lobe), resampled to near-isotropic 200-300 nm voxels, with proofread
+  3D blood vessel instance segmentations. Image volumes are derived from MICrONS, the macaque study of
+  Loomba et al. and the H01 human dataset.
 landing_url: https://huggingface.co/datasets/pytc/BvEM
 doi: null
 repository: HuggingFace
@@ -36,7 +37,8 @@ imaging:
   - Mus musculus
   - Macaca mulatta
   - Homo sapiens
-  sample: cortex - mouse visual cortex (TEM), macaque superior temporal gyrus (SBEM), human temporal lobe (MultiSEM)
+  sample: cortex - mouse visual cortex (TEM), macaque superior temporal gyrus (SBEM), human temporal lobe
+    (MultiSEM)
   labels_stains: []
 data:
   formats:
@@ -77,10 +79,95 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T03:30:00Z'
-notes: 'HF repo holds 6 HDF5 files (image + vessel ground truth per species), 60.0 GB. Voxel size differs per species
-  (paper Table I, nm, axis order not stated: mouse 320x256x256, macaque 240x176x176, human 264x256x256), so voxel_size_nm
-  is null. Image sizes (voxels): mouse 2495x3571x2495, macaque 450x1271x995, human 661x7752x13500. Mouse and human annotated
-  on every 4th slice. Modality per paper: mouse TEM, macaque SBEM, human MultiSEM (other). MIT is the HF card tag; project
-  page and paper state no data licence (CC BY-NC-ND on arXiv covers the paper). Source volumes (MICrONS, Loomba et al.,
-  H01) may carry their own terms. HDF5 dataset names not inspected. Paper has no DOI (TriSAM preprint, read via arXiv HTML).'
+  last_checked: '2026-10-08T05:00:00Z'
+notes: 'HF repo holds 6 HDF5 files (image + vessel ground truth per species), 60.0 GB. Voxel size differs
+  per species (paper Table I, nm, axis order not stated: mouse 320x256x256, macaque 240x176x176, human
+  264x256x256), so voxel_size_nm is null. Image sizes (voxels): mouse 2495x3571x2495, macaque 450x1271x995,
+  human 661x7752x13500. Mouse and human annotated on every 4th slice. Modality per paper: mouse TEM, macaque
+  SBEM, human MultiSEM (other). MIT is the HF card tag; project page and paper state no data licence (CC
+  BY-NC-ND on arXiv covers the paper). Source volumes (MICrONS, Loomba et al., H01) may carry their own
+  terms. Paper has no DOI (TriSAM preprint, read via arXiv HTML). enricher: macaque HDF5 pair opened (dataset
+  main). organisms: Mus musculus = mouse_*.h5, Macaca mulatta = macaque_*.h5, Homo sapiens = human_*.h5.'
+technical:
+  method: sample
+  inspected_at: '2026-10-08T05:00:00Z'
+  inspected_urls:
+  - https://huggingface.co/api/datasets/pytc/BvEM/tree/main?recursive=1
+  - https://huggingface.co/datasets/pytc/BvEM/resolve/main/macaque_mpi_176-240nm.h5
+  - https://huggingface.co/datasets/pytc/BvEM/resolve/main/macaque_mpi_176-240nm_bv_gt_cc.h5
+  bytes_downloaded: 45000000
+  size_source: file-listing
+  layout:
+    tree: 'README.md, .gitattributes
+
+      mouse_microns-phase2_256-320nm_crop.h5            19,567,570,699 B  image
+
+      mouse_microns-phase2_256-320nm_crop_bv_v4.h5          47,089,102 B  vessel labels
+
+      macaque_mpi_176-240nm.h5                             475,470,015 B  image
+
+      macaque_mpi_176-240nm_bv_gt_cc.h5                      1,568,931 B  vessel labels
+
+      human_h01_256-264nm_crop.h5                       39,888,169,740 B  image
+
+      human_h01_256-1056nm_bv_gt_crop_cc.h5                 63,089,219 B  vessel labels (z step 1056 nm
+      in the name)
+
+      '
+    n_files: 8
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/pytc/BvEM/resolve/main/macaque_mpi_176-240nm.h5
+    - https://huggingface.co/datasets/pytc/BvEM/resolve/main/macaque_mpi_176-240nm_bv_gt_cc.h5
+    size_bytes: 477038946
+    description: The macaque volume (450 x 1271 x 995) and its vessel label volume, the smallest image/label
+      pair.
+  arrays:
+  - role: raw
+    path_pattern: '*nm.h5 (main)'
+    format: hdf5
+    axes: null
+    shape:
+    - 450
+    - 1271
+    - 995
+    shape_varies: true
+    dtype: uint8
+    compression: gzip
+    value_range:
+    - 0
+    - 208
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Macaque image, dataset main, chunks 29 x 80 x 63, no attributes. Glob matches the
+      macaque image file only by name pattern; the mouse and human images end in _crop.h5 (not probed,
+      header reads timed out on the 20-40 GB files).
+  - role: label
+    path_pattern: '*_bv_gt_cc.h5 (main)'
+    format: hdf5
+    axes: null
+    shape:
+    - 450
+    - 1271
+    - 995
+    shape_varies: true
+    dtype: uint8
+    compression: gzip
+    value_range:
+    - 0
+    - 1
+    normalization: unknown
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Macaque labels: same shape as the image, binary {0, 1} in a 225 x 317 x 497 central
+      crop. Human labels are named 256-1056nm against a 256-264nm image (every 4th slice annotated per
+      the record), so they are on a coarser z grid (scaled); mouse labels (_bv_v4) not probed.'
+  notes: 'HF tree: 8 files, 60,042,960,034 B (not gated; card licence mit). Probed the macaque pair: both
+    HDF5 dataset main (450, 1271, 995) uint8 gzip, no attributes. Sampled a central crop of each (sample.py,
+    ~45 MB): image [0, 208], labels {0, 1}. Header probes of the 19.6 GB mouse and 39.9 GB human HDF5
+    files timed out, so their shapes come from the record (paper). File names carry the voxel size per
+    species (y/x-z nm: mouse 256-320, macaque 176-240, human 256-264, human labels 256-1056). Axes are
+    not stated in the files or the paper (record notes), so axes stay null; the HF resolve URLs are direct
+    files (TensorSwitch usable: true).'
