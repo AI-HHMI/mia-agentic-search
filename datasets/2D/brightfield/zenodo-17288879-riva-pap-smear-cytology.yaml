@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-17288879-riva-pap-smear-cytology
 title: 'RIVA: An Image Dataset of Conventional Pap Smear Cytology with Multiple Independent Annotations'
 short_name: RIVA Pap smear cytology cell annotations
-description: 959 conventional Pap smear image patches (1024 x 1024 px, 40x, from 115 patients) with 26,158 expert annotations
-  of 15,949 distinct cells (nucleus coordinates and Bethesda class), 386 patches independently annotated by four cytologists
-  and the rest by one.
+description: 959 conventional Pap smear image patches (1024 x 1024 px, 40x, from 115 patients) with 26,158 expert
+  annotations of 15,949 distinct cells (nucleus coordinates and Bethesda class), 386 patches independently annotated
+  by four cytologists and the rest by one.
 landing_url: https://zenodo.org/records/17288879
 doi: 10.5281/zenodo.17288879
 repository: Zenodo
@@ -42,7 +42,8 @@ imaging:
   channels: null
   organism:
   - Homo sapiens
-  sample: conventional cervical Pap smear slides (Papanicolaou stain) from Hospital Bernardino Rivadavia, Buenos Aires, scanned with a Grundium Ocus 40
+  sample: conventional cervical Pap smear slides (Papanicolaou stain) from Hospital Bernardino Rivadavia, Buenos
+    Aires, scanned with a Grundium Ocus 40
   labels_stains:
   - Papanicolaou
 data:
@@ -59,7 +60,8 @@ annotations:
   - points
   - classification
   coverage: dense
-  format: annotations/annotations.json (cell coordinates and Bethesda categories SCC, HSIL, ASCH, LSIL, ASCUS, INF, ENDO, NILM per annotator); images/*.png
+  format: 'annotations/annotations.json (per image, per annotator: x, y and Bethesda class SCC, HSIL, ASCH, LSIL,
+    ASCUS, INFL, ENDO, NILM); images/*.png'
   source: manual
 ml:
   tasks:
@@ -82,9 +84,87 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T12:41:35Z'
-notes: 'riva_1.0.zip lists 959 PNG images (images/), annotations/annotations.json (4 MB) and annotations/license.txt. The
-  Zenodo metadata says CC-BY-4.0, but the license.txt inside the zip is Creative Commons Attribution-NonCommercial 4.0 and the
-  Scientific Data article is CC BY-NC-ND; the stricter in-archive text is recorded here and the conflict should be
-  reviewed. The Zenodo page and the paper count the multi-annotator subset differently (386 vs about 400 patches). Pixel size
-  0.25 um/px is the scanner manufacturer figure quoted in the paper. Authors and date are from the Zenodo record.'
+  last_checked: '2026-10-08T15:43:00Z'
+notes: riva_1.0.zip lists 959 PNG images (images/), annotations/annotations.json (4 MB) and annotations/license.txt.
+  The Zenodo metadata says CC-BY-4.0, but the license.txt inside the zip is Creative Commons Attribution-NonCommercial
+  4.0 and the Scientific Data article is CC BY-NC-ND; the stricter in-archive text is recorded here and the conflict
+  should be reviewed. The Zenodo page and the paper count the multi-annotator subset differently (386 vs about 400
+  patches). Pixel size 0.25 um/px is the scanner manufacturer figure quoted in the paper. Authors and date are from
+  the Zenodo record.
+technical:
+  method: sample
+  inspected_at: '2026-10-08T15:43:00Z'
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  1 file, 1,410,490,548 B
+        riva_1.0.zip   961 entries
+          images/<class>_<patient>_<n>.png   959 (1024x1024 RGB)
+          annotations/annotations.json      4,027,767 B (keypoints per image per annotator)
+          annotations/license.txt
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/17288879/files/riva_1.0.zip::images/LSIL_45_3.png
+    - https://zenodo.org/records/17288879/files/riva_1.0.zip::annotations/annotations.json
+    size_bytes: 2046817
+    description: One patch and the annotation file that covers all patches.
+  arrays:
+  - role: raw
+    path_pattern: images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1024
+    - 1024
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: annotations/annotations.json
+    format: json
+    axes: null
+    shape:
+    - 26158
+    - 3
+    shape_varies: false
+    dtype: float64
+    compression: deflate
+    value_range:
+    - 0.13
+    - 99.75
+    encoding: points-table
+    classes:
+    - id: NILM
+      name: NILM
+    - id: INFL
+      name: INFL
+    - id: LSIL
+      name: LSIL
+    - id: HSIL
+      name: HSIL
+    - id: SCC
+      name: SCC
+    - id: ENDO
+      name: ENDO
+    - id: ASCH
+      name: ASCH
+    - id: ASCUS
+      name: ASCUS
+    alignment: unknown
+    alignment_notes: Keys are image stems (images/<stem>.png); each holds annotator_<k> lists of {x, y, keypointlabels}.
+      x and y run from 0.13 to 99.75 on 1024 px images, so they look like percent of image width/height, not pixels
+      (not stated in the files read).
+  notes: 'peek_archive: riva_1.0.zip 1,410,490,548 B (the only file; = size_bytes), 959 PNGs + annotations.json
+    + license.txt. annotations.json read in full (4,027,767 B): 959 image keys, 573 with one annotator and 386 with
+    four; 26,158 points: NILM 9457, INFL 8190, LSIL 3048, HSIL 1835, SCC 1586, ENDO 1270, ASCH 416, ASCUS 356 (the
+    record said INF; the file says INFL). sample.py on images/LSIL_45_3.png: 1024x1024x3 uint8 [0, 255]. Values
+    from one patch. Voxel size 250 nm kept from the paper (scanner figure); PNGs carry no calibration.'
