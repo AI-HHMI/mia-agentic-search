@@ -2,10 +2,11 @@ schema_version: '1.2'
 id: hancock-head-neck-cancer-he-wsi
 title: A multimodal dataset for precision oncology in head and neck cancer (HANCOCK)
 short_name: HANCOCK head and neck cancer H&E WSIs (histology)
-description: H&E whole-slide images of primary head and neck tumors (709 slides from 701 patients, 3DHistech P1000 at 0.1213 um/pixel), 396 lymph node
-  sections and 368 immunohistochemistry tissue microarrays (CD3, CD8 and other markers), converted to Aperio SVS, from a Erlangen cohort of 763 patients. Primary
-  tumor slides carry sparse pathologist-supervised tumor-region polygons as GeoJSON; the dataset also bundles clinical, blood, text and survival data and
-  pre-extracted TMA core PNGs and UNI encodings.
+description: H&E whole-slide images of primary head and neck tumors (709 slides from 701 patients, 3DHistech
+  P1000 at 0.1213 um/pixel), 396 lymph node sections and 368 immunohistochemistry tissue microarrays (CD3,
+  CD8 and other markers), converted to Aperio SVS, from a Erlangen cohort of 763 patients. Primary tumor
+  slides carry sparse pathologist-supervised tumor-region polygons as GeoJSON; the dataset also bundles
+  clinical, blood, text and survival data and pre-extracted TMA core PNGs and UNI encodings.
 landing_url: https://hancock.research.fau.eu/
 doi: null
 repository: LabWebsite
@@ -30,7 +31,8 @@ imaging:
   channels: 3
   organism:
   - Homo sapiens
-  sample: FFPE head and neck cancer primary tumor sections, positive lymph nodes (H&E) and tissue microarrays stained for CD3, CD8 and other immune markers
+  sample: FFPE head and neck cancer primary tumor sections, positive lymph nodes (H&E) and tissue microarrays
+    stained for CD3, CD8 and other immune markers
   labels_stains:
   - H&E
   - CD3
@@ -39,7 +41,7 @@ data:
   formats:
   - svs
   - png
-  size_bytes: 4538000000000
+  size_bytes: 3752889985006
   n_items: 1446
   access: open
   download_url: https://hancock.research.fau.eu/download
@@ -76,5 +78,64 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T21:44:47Z'
-notes: 'The download page lists 17 archives: primary tumor SVS slides (709 files, about 2.36 TB), lymph node slides (369 files, 765 GB), TMAs (368 SVS, 1.2 TB), 709 GeoJSON tumor annotations, 12,236 TMA core PNGs, UNI encodings and clinical JSON/CSV/TXT. n_items counts the 1,446 SVS slides; size_bytes sums the listed archive sizes. The download page says use is under CC BY (the paper only licenses the article). Annotations are sparse tumor-region polygons, no cell-level labels. Pixel size 0.1213 um is the primary/TMA scan; lymph nodes are 0.2634 or 0.1945 um. The paper counts 396 lymph node sections, the page lists 369 files. A TCIA mirror is planned, not checked.'
+  last_checked: '2026-10-08T23:12:14Z'
+notes: 'The download page lists 17 archives: primary tumor SVS slides (709 files, about 2.36 TB), lymph
+  node slides (369 files, 765 GB), TMAs (368 SVS, 1.2 TB), 709 GeoJSON tumor annotations, 12,236 TMA core
+  PNGs, UNI encodings and clinical JSON/CSV/TXT. n_items counts the 1,446 SVS slides; size_bytes sums
+  the listed archive sizes. The download page says use is under CC BY (the paper only licenses the article).
+  Annotations are sparse tumor-region polygons, no cell-level labels. Pixel size 0.1213 um is the primary/TMA
+  scan; lymph nodes are 0.2634 or 0.1945 um. The paper counts 396 lymph node sections, the page lists
+  369 files. A TCIA mirror is planned, not checked. enricher: size_bytes exact from listing all 17 archives
+  (3.75 TB; the page sizes summed to 4.54).'
+technical:
+  method: metadata-only
+  size_source: file-listing
+  layout:
+    tree: |
+      17 zips (15 on data.fau.de/public/24/87/322108724/, 2 on hancock.research.fau.eu/public/assets/)   3.75 TB
+        WSI_PrimaryTumor_{Oropharynx_Part1,Oropharynx_Part2,OralCavity,Larynx,Hypopharynx,CUP}.zip/<same>/PrimaryTumor_HE_NNN.svs   709 slides
+        WSI_PrimaryTumor_Annotations.zip/WSI_PrimaryTumor_Annotations/PrimaryTumor_HE_NNN.geojson   709 files  14.4 MB
+        WSI_LymphNode.zip, TMA_TumorCenter.zip, TMA_InvasionFront.zip   .svs
+        TMA_Maps.zip, TMA_CellDensityMeasurements.zip, StructuredData.zip, TextData.zip, DataSplits_DataDictionaries.zip
+        TMA_TumorCenter_Cores.zip (.png), WSI_UNI_encodings.zip (.h5)
+    n_files: 17
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.fau.de/public/24/87/322108724/WSI_PrimaryTumor_CUP.zip::WSI_PrimaryTumor_CUP/PrimaryTumor_HE_484.svs
+    - https://data.fau.de/public/24/87/322108724/WSI_PrimaryTumor_Annotations.zip::WSI_PrimaryTumor_Annotations/PrimaryTumor_HE_484.geojson
+    size_bytes: 1274747211
+    description: The single CUP primary-tumour slide (1.27 GB SVS) and its tumour-region GeoJSON
+  arrays:
+  - role: raw
+    path_pattern: WSI_PrimaryTumor_*.zip/WSI_PrimaryTumor_*/PrimaryTumor_HE_*.svs
+    format: svs
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: SVS members are deflated inside the zips, so the TIFF header could not be read by
+      range.
+  - role: label
+    path_pattern: WSI_PrimaryTumor_Annotations.zip/WSI_PrimaryTumor_Annotations/PrimaryTumor_HE_*.geojson
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: polygons
+    classes:
+    - id: null
+      name: Tumor
+    alignment: unknown
+    alignment_notes: 'PrimaryTumor_HE_NNN.geojson pairs with PrimaryTumor_HE_NNN.svs; QuPath-style FeatureCollection
+      (HE_484: 1 MultiPolygon, classification Tumor, coordinates around x 22000, y 73000, presumably level-0
+      pixels; not verified against the slide).'
+  notes: 'Listed all 17 archives with tools/listing.py (zip indexes; 7,704 + 13,313 members). Not probed:
+    SVS members are deflated in the zips, so headers need the whole member. data.fau.de supports range
+    requests, but it is not on the TensorSwitch allowlist. Lymph-node and TMA SVS have no region annotations.
+    No single archive.'
