@@ -1,8 +1,10 @@
 schema_version: '1.2'
 id: zenodo-7590773-deepd3-dendritic-spines
-title: "DeepD3 datasets - dendritic spine and dendrite segmentation (benchmark, training and validation)"
-short_name: "DeepD3 dendritic spine segmentation (two-photon)"
-description: "Open datasets of the DeepD3 framework for dendritic spine and dendrite segmentation: a two-photon benchmark stack of rat hippocampal CA1 with pixel-precise annotations by three experts and dendrite tracings, plus the multi-expert training and validation datasets as d3set files."
+title: DeepD3 datasets - dendritic spine and dendrite segmentation (benchmark, training and validation)
+short_name: DeepD3 dendritic spine segmentation (two-photon)
+description: 'Open datasets of the DeepD3 framework for dendritic spine and dendrite segmentation: a two-photon
+  benchmark stack of rat hippocampal CA1 with pixel-precise annotations by three experts and dendrite tracings,
+  plus the multi-expert training and validation datasets as d3set files.'
 landing_url: https://zenodo.org/records/7590773
 doi: 10.5281/zenodo.7590773
 repository: Zenodo
@@ -13,7 +15,7 @@ authors:
 - Tobias Bonhoeffer
 - Andreas M Kist
 publications:
-- title: "DeepD3, an open framework for automated quantification of dendritic spines"
+- title: DeepD3, an open framework for automated quantification of dendritic spines
   doi: 10.1371/journal.pcbi.1011774
   url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10903918/fullTextXML
 date_published: '2023-01-31'
@@ -21,14 +23,11 @@ imaging:
   modality:
   - two-photon
   dimensionality: 3D
-  voxel_size_nm:
-    x: 94
-    y: 94
-    z: 500
-  channels: null
+  voxel_size_nm: null
+  channels: 1
   organism:
   - Rattus norvegicus
-  sample: "dendrites and dendritic spines of hippocampal CA1 pyramidal neurons (benchmark stack)"
+  sample: dendrites and dendritic spines of hippocampal CA1 pyramidal neurons (benchmark stack)
   labels_stains: []
 data:
   formats:
@@ -37,7 +36,7 @@ data:
   size_bytes: 236394350
   n_items: null
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/7590773
   download_method: http
 annotations:
   present: true
@@ -45,7 +44,7 @@ annotations:
   - semantic-segmentation
   - points
   coverage: dense
-  format: "pixel masks (*.mask and d3set, HDF5-based), SWC dendrite tracings, CSV spine annotations"
+  format: pixel masks (*.mask and d3set, HDF5-based), SWC dendrite tracings, CSV spine annotations
   source: manual
 ml:
   tasks:
@@ -67,5 +66,126 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T06:00:00Z'
-notes: "Benchmark: two-photon stack from rat hippocampal CA1 (organotypic slice culture), 94 x 94 x 500 nm voxels (record and paper), annotated by three experts pixel-wise as *.mask (HDF5) and dendrites traced as SWC, plus spine centre-of-mass points from seven raters. Training and validation data are d3set files (HDF5) built from 3D stacks of various resolutions, sources, wavelengths and modalities (paper Table 1, not read in detail), so the voxel size given applies to the benchmark only, the number of training stacks is not recorded and the organisms of the training data (the paper mentions rat, mouse and human data) are not listed. The d3set and mask internals were not opened."
+  last_checked: '2026-10-08T08:15:00Z'
+notes: 'Benchmark: two-photon stack of rat hippocampal CA1 (organotypic slice culture), 94 x 94 x 500 nm voxels
+  (Zenodo), spines annotated pixel-wise by three experts (*.mask, HDF5), dendrites traced as SWC, spine centre points
+  in a CSV. enricher: voxel size 94x94x500 nm -> null, because the subsets differ: benchmark 94 x 94 x 500 nm (Zenodo);
+  validation d3set meta Resolution_XY 0.1035 um, Z 0.5 um; training d3set (31 stacks) Resolution_XY 0.0232-0.1245
+  um, Z 0.5 or 1 um. enricher: Segmentation_*.mask arrays are 71 x 1444 x 366 vs the TIFF 71 x 366 x 1444 (y and
+  x swapped).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "./  11 files, 236.4 MB (Zenodo)\n  DeepD3_Benchmark.tif        75.1 MB   uint16 71 x 366 x 1444 (ImageJ)\n\
+      \  Segmentation_{U,V,W}.mask   0.3-0.4 MB   HDF5 'mask' uint8 71 x 1444 x 366, blosc\n  Dendrite_{U,V,W}.swc\
+      \        dendrite tracings (neutube)\n  Annotations_and_Clusters.csv   spine annotations of 7 raters + clusters\n\
+      \  Clustering.ipynb            notebook (not run)\n  DeepD3_Training.d3set       142.5 MB  HDF5: data/{stacks,spines,dendrites}/x0..x30,\
+      \ meta (pandas table)\n  DeepD3_Validation.d3set     17.5 MB   HDF5: data/{stacks,spines,dendrites}/x0 (64\
+      \ x 488 x 468), meta"
+    n_files: 11
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7590773/files/DeepD3_Benchmark.tif
+    - https://zenodo.org/records/7590773/files/Segmentation_U.mask
+    - https://zenodo.org/records/7590773/files/DeepD3_Validation.d3set
+    size_bytes: 92960630
+    description: The benchmark stack with annotator U's spine mask, and the validation d3set (one stack with spine
+      and dendrite masks).
+  arrays:
+  - role: raw
+    path_pattern: DeepD3_Benchmark.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 71
+    - 366
+    - 1444
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range: null
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: ImageJ hyperstack, 71 slices; ImageJ display range 28-3820; no unit stored (voxel size 94 x
+      94 x 500 nm per Zenodo).
+  - role: label
+    path_pattern: Segmentation_[UVW].mask (mask)
+    format: hdf5
+    axes: null
+    shape:
+    - 71
+    - 1444
+    - 366
+    shape_varies: false
+    dtype: uint8
+    compression: blosc
+    value_range: null
+    normalization: none
+    encoding: unknown
+    classes:
+    - id: null
+      name: dendritic spine
+    alignment: unknown
+    alignment_notes: 'One file per annotator U, V, W (Zenodo: pixel-precise spine annotations). Shape matches the
+      benchmark TIFF only with the last two axes swapped; axis order not documented.'
+  - role: raw
+    path_pattern: DeepD3_*.d3set (data/stacks/x0)
+    format: hdf5
+    axes: null
+    shape:
+    - 64
+    - 488
+    - 468
+    shape_varies: true
+    dtype: uint16
+    compression: blosc
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'd3set: one dataset per stack, x0..x30 in Training, x0 in Validation (shape from Validation);
+      per-stack resolution in meta (Resolution_XY, Resolution_Z, um).'
+  - role: label
+    path_pattern: DeepD3_*.d3set (data/spines/x0)
+    format: hdf5
+    axes: null
+    shape:
+    - 64
+    - 488
+    - 468
+    shape_varies: true
+    dtype: uint8
+    compression: blosc
+    value_range: null
+    normalization: none
+    encoding: unknown
+    classes:
+    - id: null
+      name: dendritic spine
+    alignment: same-grid
+    alignment_notes: Same key and shape as data/stacks/x<n>.
+  - role: label
+    path_pattern: DeepD3_*.d3set (data/dendrites/x0)
+    format: hdf5
+    axes: null
+    shape:
+    - 64
+    - 488
+    - 468
+    shape_varies: true
+    dtype: uint8
+    compression: blosc
+    value_range: null
+    normalization: none
+    encoding: unknown
+    classes:
+    - id: null
+      name: dendrite
+    alignment: same-grid
+    alignment_notes: Same key and shape as data/stacks/x<n>.
+  notes: 'Listed with tools/listing.py (Zenodo): 11 files, 236,394,350 B, complete. Probed the TIFF, Segmentation_U.mask
+    and both d3set files (HDF5 over range requests); read the numeric/string blocks of the d3set meta tables (meta/block3_values
+    is a pickled object column and was not read). No pixel values sampled: blosc-compressed HDF5 needs hdf5plugin,
+    not installed, so mask encoding (binary vs probability) is not confirmed. SWC tracings and the CSV are not in
+    arrays. Voxel size: see notes; per-stack values are in the d3set meta.'
