@@ -1,0 +1,96 @@
+schema_version: '1.2'
+id: ufpr-breakhis-breast-histopathology
+title: Breast Cancer Histopathological Database (BreakHis)
+short_name: Breast tumor H&E benign vs malignant (BreakHis)
+description: 7,909 H&E-stained breast tumour histopathology images (700 x 460 px, 8-bit RGB PNG) from 82 patients at four magnifications (40x, 100x, 200x, 400x), labelled benign (adenosis, fibroadenoma, phyllodes tumour, tubular adenoma) or malignant (ductal, lobular, mucinous, papillary carcinoma) by tumour type. A five-fold split structure is provided via a script.
+landing_url: https://web.inf.ufpr.br/vri/databases/breast-cancer-histopathological-database-breakhis/
+doi: null
+repository: LabWebsite
+accession: null
+authors:
+- Spanhol FA
+- Oliveira LS
+- Petitjean C
+- Heutte L
+publications:
+- title: A Dataset for Breast Cancer Histopathological Image Classification
+  doi: 10.1109/TBME.2015.2496264
+  url: https://doi.org/10.1109/TBME.2015.2496264
+date_published: null
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: H&E-stained breast tumour biopsy sections (SOB excisional biopsy) from 82 patients, P&D Laboratory, Parana, Brazil
+  labels_stains:
+  - hematoxylin and eosin
+data:
+  formats:
+  - png
+  size_bytes: 4273561758
+  n_items: 7909
+  access: open
+  download_url: http://www.inf.ufpr.br/vri/databases/BreaKHis_v1.tar.gz
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  coverage: dense
+  format: Class and tumour type encoded in file names (for example SOB_B_TA-14-4659-40-001.png); five-fold split built by mkfold.py
+  source: manual
+ml:
+  tasks:
+  - classification
+  splits_provided: true
+  benchmark: BreakHis five-fold benign/malignant classification
+  baseline_code_url: null
+license:
+  spdx: custom
+  url: https://web.inf.ufpr.br/vri/databases/breast-cancer-histopathological-database-breakhis/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-08T16:14:54Z'
+  evidence_urls:
+  - https://web.inf.ufpr.br/vri/databases/breast-cancer-histopathological-database-breakhis/
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1109%2FTBME.2015.2496264%22&format=json&resultType=core&pageSize=3
+  - http://www.inf.ufpr.br/lesoliveira/download/TBME-00608-2015-R2-preprint.pdf
+  - http://www.inf.ufpr.br/vri/databases/BreaKHis_v1.tar.gz
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T18:25:00Z'
+notes: 'Details from the dataset page and the paper abstract only (the full text is not open access). The page states use for non-commercial research with source acknowledgement (cite the TBME 2016 paper) and a CC BY 4.0 footer, which conflict, hence custom license. The page counts are inconsistent (intro says 9,109 images, table totals 7,909 and benign column sums to 2,507 not 2,480); 7,909 matches the paper abstract. Users are asked to fill in a form after downloading. enricher: archive streamed (PNGs 700x460 RGB confirmed); pixel size per magnification and manual pathologist labels from the TBME preprint.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                         1 file   4.27 GB\n  BreaKHis_v1.tar.gz                       4,273,561,758 B (gzip tar, no index)\n    BreaKHis_v1/histology_slides/breast/\n      benign/SOB/{adenosis,fibroadenoma,phyllodes_tumor,tubular_adenoma}/\n        SOB_B_<TYPE>_<YY>-<SLIDE>/{40X,100X,200X,400X}/SOB_B_<TYPE>-<YY>-<SLIDE>-<MAG>-<SEQ>.png\n      malignant/SOB/{ductal_carcinoma,lobular_carcinoma,mucinous_carcinoma,papillary_carcinoma}/\n        SOB_M_<TYPE>_<YY>-<SLIDE>/{40X,100X,200X,400X}/SOB_M_<TYPE>-...-<MAG>-<SEQ>.png\n      benign/process_db_stat.py   (seen in the stream; not run)\n  (members seen in the first 40 MB of the stream: 79; full member list not obtainable without the whole archive)"
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: BreaKHis_v1.tar.gz/BreaKHis_v1/histology_slides/breast/*/SOB/*/*/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 460
+    - 700
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 18
+    - 255
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 'one RGB PNG per field of view; label = path / filename: tumour class (B/M), tumour type (A, F, PT, TA / DC, LC, MC, PC), slide id and magnification (40/100/200/400). PNG text chunks carry jpeg:colorspace / jpeg:sampling-factor keys (written by ImageMagick).'
+  notes: 'Listing: one archive, BreaKHis_v1.tar.gz, 4,273,561,758 B (listing.py, exact). A tar.gz has no index, so members were read by streaming the first 40 MB (40,042,496 B, then stopped): 79 members seen, in random class order. Four PNGs decoded: RGB 460x700x3 uint8, value range 18 to 255 over the four. Normalization none: preprint says "raw images without normalization nor color standardization", PNG "with no compression" (but deflate is always on in PNG). Voxel size: differs by magnification, so voxel_size_nm stays null. TBME preprint Table I: effective pixel size 0.49 um (40X), 0.20 um (100X), 0.10 um (200X), 0.05 um (400X). Labels: pathologists of the P&D Lab (preprint), so annotations.source manual. Download: the archive is a direct, range-capable link, but www.inf.ufpr.br is not on the TensorSwitch fetch allowlist and members of a tar.gz cannot be fetched one by one, so there is no sample unit. The 5-fold split needs mkfold.py (not run). Readiness: 2D records are not covered by the miao layout yet.'
