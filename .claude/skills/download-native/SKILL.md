@@ -63,7 +63,11 @@ python tools/native.py set <spec> crop-001.zarr 1 label_class=golgi reason="data
 Use the miao#13 vocabulary (`neurite`, `cell`, `nucleus`, `mitochondria`, `synapse`, `vesicle`, `myelin`,
 `blood_vessel`) when it fits, else the record's own short word (`golgi`, `granule`, `membrane`). A path pattern
 that covers several single-class files (`…_{nucleus,mitochondria}_mask.tif`) is not a multi-class label: each
-file gets its own class. If nothing ties the file to one structure, **ask**.
+file gets its own class. If the record's text doesn't settle it, read the dataset's own documentation before
+giving up: list the archive (`python tools/peek_archive.py <zip url>`) and read its README or metadata
+(`python tools/peek_archive.py <zip url> --cat <member>`). Instance labels of several subtypes of one structure
+with no documented value -> subtype mapping (e.g. IDs for endothelial cells *and* pericytes) take the broader
+class (`cell`): say which subtypes they include in the reason. If nothing ties the file to one structure, **ask**.
 
 **A label that really holds several classes** (one file, value 1 = mitochondria, 2 = ER, …): split it into one
 folder per class, if and only if the record (`classes`) or the dataset's documentation gives the value -> class
@@ -71,6 +75,11 @@ mapping. Each class becomes a binary mask with its own label folder, checks and 
 ```bash
 python tools/native.py split <spec> crop-001.zarr 1 1=mitochondria 2=er 3,4=vesicle --reason "README: 1 mito, 2 ER, 3-4 vesicles"
 ```
+**A label with several channels** (one mask per channel) is split per channel the same way, `c0=nucleus c1=cell`.
+The channel -> class assignment needs evidence too. `inspect` prints the file's OME channel names and, per label
+channel, its foreground and how much of it lies inside each other channel. A record that says "nuclear and cell
+segmentation", plus a channel that lies wholly inside the other (`inside: 1.0`) and is smaller, settles which is
+the nucleus. The visual review must then confirm each class.
 - `stop` not empty: report the reasons and end.
 - `notes`: a file that matches no record array needs its role: `set … <index> role=raw|label`.
 - Without `files=` the crop is the record's sample unit (`technical.sample.urls`). With `files=`, each
@@ -119,8 +128,9 @@ Numeric checks (each pass / fail / unverified):
   recomputed block. `voxel_size`: s0 scale equals the record. `grid:*`: label z/y/x equals raw z/y/x.
 - `labels:*`: integer dtype, number of IDs, foreground between 0.05 % and 98 %.
 - `alignment:*`: how well the labels fit the image as stored vs. flipped (z, y, x), rotated 180°, transposed and
-  shifted (≤ 10 %). `fail`: a wrong transform fits clearly better. `unverified`: the image says little, or a
-  wrong transform fits about as well; then the visual review decides.
+  shifted (≤ 10 %), scored against a thin ring around the labels (so unlabelled neighbours in sparse labels
+  don't count). `fail`: a wrong transform fits clearly better. `unverified`: the image says little, or a wrong
+  transform fits about as well (a single centred object looks the same flipped); then the visual review decides.
 
 If a check fails, **don't patch it away**: first re-read the evidence for your axes decisions. If they were
 wrong, fix them with `set` and convert again. If they were right, the crop has failed: stop with this crop and
@@ -172,9 +182,10 @@ python tools/download_queue.py --agent native next --root <root> --max-gb 50  # 
 - Otherwise steps 1–6 for that record, sample unit only, with these changes:
   - **Names:** settle `organism`, `name` and each used label file's class from the record alone, as in step 1
     (`class_hints` plus the record's text; label arrays the crop doesn't use don't matter). A real multi-class label
-    is split when the record or its documentation gives the value -> class mapping. Record `skipped` only when a
-    used label file can't be tied to one structure, or a multi-class label has no documented mapping, and take
-    the next record (skipping doesn't count as the run's dataset).
+    is split when the record or its documentation gives the value -> class mapping; a multi-channel label per
+    channel when the names or the data (containment) settle it. Read the archive's README before skipping. Record
+    `skipped` only when a used label file still can't be tied to one structure, or a multi-class label has no
+    documented mapping, and take the next record (skipping doesn't count as the run's dataset).
   - **Axes:** if the evidence in step 3 doesn't settle an axis, record `skipped` with what was ambiguous.
   - **Review:** `unsure` counts as failed.
 - **Record the outcome**, always, then save the list:

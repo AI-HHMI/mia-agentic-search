@@ -61,6 +61,9 @@ def _tiff_info(path):
                                                    for k, v in (t.imagej_metadata or {}).items()},
                 "ome": bool(t.is_ome), "photometric": _enum(pg.photometric),
                 "samples_per_pixel": int(pg.samplesperpixel), "compression": _enum(pg.compression)}
+        if t.is_ome:                                    # channel names justify a per-channel split
+            import re
+            info["ome_channels"] = re.findall(r'<Channel\b[^>]*?\bName="([^"]*)"', t.ome_metadata or "")
         try:
             xr = pg.tags["XResolution"].value
             if xr and xr[0]:
@@ -198,13 +201,20 @@ def prepare(spec_array, role):
         arr, axes = arr[np.newaxis], "z" + axes
         done.append("added a z axis of size 1")
     target = ("c" if "c" in axes else "") + "zyx"
+    if role == "label" and spec_array.get("channel") is not None:     # one channel of a multi-channel label
+        if "c" not in axes:
+            raise ValueError(f"channel {spec_array['channel']} set, but axes {axes!r} have no c")
+        arr, axes = np.take(arr, spec_array["channel"], axis=axes.index("c")), axes.replace("c", "")
+        target = "zyx"
+        done.append(f"channel {spec_array['channel']} ({spec_array.get('label_class')})")
     if role == "label" and spec_array.get("values"):     # one class of a multi-class label (native.py split)
         arr = np.isin(arr, spec_array["values"]).astype(np.uint8)
         done.append(f"mask of values {spec_array['values']} ({spec_array.get('label_class')})")
     if role == "label":
         if "c" in axes:
             if arr.shape[axes.index("c")] != 1:
-                raise ValueError(f"label with {arr.shape[axes.index('c')]} channels: one array per label set")
+                raise ValueError(f"label with {arr.shape[axes.index('c')]} channels: split it per channel "
+                                 "(native.py split … c0=<class> c1=<class>)")
             arr, axes = np.take(arr, 0, axis=axes.index("c")), axes.replace("c", "")
             target = "zyx"
         if arr.dtype == bool:
