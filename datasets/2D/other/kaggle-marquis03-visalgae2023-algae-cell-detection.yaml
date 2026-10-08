@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: kaggle-marquis03-visalgae2023-algae-cell-detection
 title: High-Throughput Algae Cell Detection
 short_name: VisAlgae 2023 microalgae cell detection
-description: 1,000 frames from microfluidic-platform videos of six microalgae types (Platymonas, Chlorella, Dunaliella salina,
-  Effrenium, Porphyridium, Haematococcus) imaged on an Olympus IX73; 700 training images carry LabelImg bounding boxes
-  in YOLO format, 300 test images are held for the challenge.
+description: 1,000 frames from microfluidic-platform videos of six microalgae types (Platymonas, Chlorella, Dunaliella
+  salina, Effrenium, Porphyridium, Haematococcus) imaged on an Olympus IX73; 700 training images carry LabelImg bounding
+  boxes in YOLO format, 300 test images are held for the challenge.
 landing_url: https://www.kaggle.com/datasets/marquis03/high-throughput-algae-cell-detection
 doi: null
 repository: Kaggle
@@ -25,25 +25,31 @@ imaging:
   - other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
-  organism: []
+  channels: 3
+  organism:
+  - Platymonas
+  - Chlorella
+  - Dunaliella salina
+  - Effrenium
+  - Porphyridium
+  - Haematococcus
   sample: Six microalgae cell types flowing through a high-throughput microfluidic platform (video frames)
   labels_stains: []
 data:
   formats:
-  - other
-  size_bytes: 271880812
+  - jpeg
+  size_bytes: 271960231
   n_items: 1000
   access: open
-  download_url: null
+  download_url: https://www.kaggle.com/api/v1/datasets/download/marquis03/high-throughput-algae-cell-detection
   download_method: other
 annotations:
   present: true
   types:
   - bounding-box
   coverage: dense
-  format: 'YOLO .txt per training image (class x_center y_center w h); classes 0 Platymonas, 1 Chlorella, 2 Dunaliella salina,
-    3 Effrenium, 4 Porphyridium, 5 Haematococcus'
+  format: YOLO .txt per training image (class x_center y_center w h); classes 0 Platymonas, 1 Chlorella, 2 Dunaliella
+    salina, 3 Effrenium, 4 Porphyridium, 5 Haematococcus
   source: manual
 ml:
   tasks:
@@ -66,12 +72,76 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-08T22:45:00Z'
-notes: 'Kaggle API record (Apache 2.0, 272 MB; 700 training and 300 test images, YOLO labels for the training set), the arXiv
-  paper and the challenge GitHub README read. The paper states CC-BY-4.0 for the data (section 3.1.2) while Kaggle lists Apache
-  2.0 and the GitHub repo has no license file seen: licence conflict, Kaggle value used. Paper: manual annotation with LabelImg,
-  Olympus IX73 inverted microscope with an industrial camera, test annotations kept private by the organisers, so only the
-  700 training images are labelled. Frame size, magnification, pixel size, contrast mode (modality recorded as other) and the
-  image file format are not stated; Kaggle file listing not seen. Related but different from catalog record
-  zenodo-21453325 (AlgaeDet-HR).'
+  annotations_verified: true
+  last_checked: '2026-10-08T22:29:18Z'
+notes: 'organisms: the six classes of data.yaml (0 Platymonas, 1 Chlorella, 2 Dunaliella salina, 3 Effrenium, 4 Porphyridium,
+  5 Haematococcus) occur together in the same images; the class id of each YOLO box gives the species. Kaggle lists Apache
+  2.0 while the paper (3.1.2) states CC-BY-4.0 for the data: licence conflict, Kaggle value used. Paper: manual annotation
+  with LabelImg, Olympus IX73 with an industrial camera. The Kaggle archive also holds test/test/labels (300 files),
+  although the paper says test labels were kept private. Pixel size and contrast mode not stated (modality other). enricher:
+  format, channels, n_items, organisms and size from the archive (was unknown).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: |
+      archive.zip (Kaggle bundle)   2002 members, 272.0 MB
+        data.yaml                     6 class names
+        train/train/images/   700  00001.jpg .. 00700.jpg
+        train/train/labels/   700  00001.txt .. (YOLO)
+        test/test/images/     300  00701.jpg ..
+        test/test/labels/     300  00701.txt ..
+        README.md
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://www.kaggle.com/api/v1/datasets/download/marquis03/high-throughput-algae-cell-detection::train/train/images/00001.jpg
+    - https://www.kaggle.com/api/v1/datasets/download/marquis03/high-throughput-algae-cell-detection::train/train/labels/00001.txt
+    size_bytes: null
+    description: One training frame and its YOLO box file.
+  arrays:
+  - role: raw
+    path_pattern: '*/*/images/*.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 608
+    - 1904
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '*/*/labels/*.txt'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: float64
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: Platymonas
+    - id: 1
+      name: Chlorella
+    - id: 2
+      name: Dunaliella salina
+    - id: 3
+      name: Effrenium
+    - id: 4
+      name: Porphyridium
+    - id: 5
+      name: Haematococcus
+    alignment: same-grid
+    alignment_notes: labels/<n>.txt pairs with images/<n>.jpg in the same split; YOLO lines class x_center y_center width
+      height, normalised.
+  notes: 'Kaggle''s download endpoint redirects without login to a signed storage.googleapis.com archive.zip (271,960,231
+    B, range requests), listed with tools/listing.py and peek_archive.py. Probed train/train/images/00001.jpg: RGB uint8
+    608x1904 JPEG. Read data.yaml (nc 6, names), train label 00001.txt (YOLO lines, e.g. ''4 0.2516 0.3479 0.0221 0.0609'')
+    and test label 00701.txt. www.kaggle.com is not on TensorSwitch''s allowlist and the signed URL expires after 3 days.
+    Voxel size not found; checked: JPEG header, data.yaml, README, Kaggle API, paper.'
