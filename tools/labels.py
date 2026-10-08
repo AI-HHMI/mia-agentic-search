@@ -28,7 +28,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.automerge import failures  # noqa: E402
-from tools.common import DATASET_BRANCH_PREFIX, ROOT, git, iter_record_paths, load_yaml, pending_records  # noqa: E402
+from tools.common import (DATASET_BRANCH_PREFIX, ROOT, git, iter_record_paths, load_yaml, pending_records,  # noqa: E402
+                          voxel_size_found)
 
 # prefix -> (colour, description)
 GROUPS = {
@@ -72,8 +73,7 @@ def labels_for(r):
     out.append("size:" + ("unknown" if size is None else next((n for lim, n in SIZE_BUCKETS if size < lim), ">500GB")))
     if r.get("technical"):
         out.append("enriched")
-    vs = im.get("voxel_size_nm") or {}
-    if not (vs.get("x") and vs.get("y") and (vs.get("z") or str(im.get("dimensionality", "")).startswith("2D"))):
+    if not voxel_size_found(im):
         out.append("voxel-size-missing")
     from tools.readiness import readiness
     status = readiness(r)[0]

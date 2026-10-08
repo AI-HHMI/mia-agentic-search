@@ -67,12 +67,12 @@ def main():
     text = "*mia-agentic-search watchdog*\n" + ("\n".join(alerts.values()) or ":white_check_mark: all routines healthy")
     changed = set(alerts) != set(before)
     print(text + ("\n(changed: posting)" if changed else "\n(unchanged: not posting)"))
-    if a.dry_run:
+    if a.dry_run or not changed:  # unchanged: no state commit, no post
         return
     RESULT.parent.mkdir(parents=True, exist_ok=True)
     RESULT.write_text(json.dumps({"checked_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "alerts": alerts}, indent=1) + "\n")
     hook = os.environ.get("SLACK_WEBHOOK_URL")
-    if hook and changed:
+    if hook:
         requests.post(hook, data=json.dumps({"text": text}), headers={"Content-Type": "application/json"}, timeout=30)
 
 

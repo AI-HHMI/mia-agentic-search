@@ -29,8 +29,8 @@ import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import (DATASET_BRANCH_PREFIX, FRONTIER_DIR, ROOT, RUNS_DIR,  # noqa: E402
-                          STATE_BRANCH, STATE_DIR, canonical_path, git, load_yaml, rel)
+from tools.common import (DATASET_BRANCH_PREFIX, ROOT, STATE_BRANCH,  # noqa: E402
+                          STATE_DIR, canonical_path, git, load_yaml, rel)
 from tools.dedup import check  # noqa: E402
 from tools.pr_text import body, title  # noqa: E402
 from tools.run_log import log_event  # noqa: E402

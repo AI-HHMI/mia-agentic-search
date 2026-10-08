@@ -5,7 +5,7 @@
     python tools/readiness.py <file> --json                       # one JSON object per record
 
 The planner comes from --tensorswitch or $TENSORSWITCH_SRC (TensorSwitch src/, unified branch).
-One rule for the `download-ready` / `download-not-ready` labels (tools/labels.py, the auto-merge gate),
+One rule for the `download-ready` / `download-not-ready` labels (tools/labels.py),
 the download queue (tools/download_queue.py), tools/miao_layout.py and the enricher (step 5a).
 What TensorSwitch's record planner checks (technical arrays, sample URLs, untrusted headers without a
 voxel size, TIFF axes, HDF5 dataset names) comes from its plan; this adds what the miao layout needs:
@@ -34,7 +34,7 @@ from urllib.parse import urlsplit
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.common import CONFIRMED_SIZE_SOURCES, ROOT, WHOLE_DOWNLOAD_MAX_BYTES, load_yaml  # noqa: E402
 from tools.probe import SCHEMES, allowed_hosts  # noqa: E402
-from tools.labels import voxel_size_found  # noqa: E402
+from tools.common import voxel_size_found  # noqa: E402
 
 FAMILIES = {
     "em": {"FIB-SEM", "SBF-SEM", "ssTEM", "ssSEM", "TEM", "cryo-EM", "cryo-ET"},

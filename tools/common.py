@@ -344,6 +344,12 @@ def _title_rest_overlap(ta, tb):
     return len(ra & rb) / len(ra | rb) if ra | rb else 1.0
 
 
+def voxel_size_found(im):
+    """imaging.voxel_size_nm has x, y and, unless the data is 2D, z."""
+    vs = im.get("voxel_size_nm") or {}
+    return bool(vs.get("x") and vs.get("y") and (vs.get("z") or str(im.get("dimensionality", "")).startswith("2D")))
+
+
 def similarity_reasons(a, b):
     """Why records a and b are likely the same dataset (re-deposit, version, mirror); [] if not.
 
@@ -356,10 +362,12 @@ def similarity_reasons(a, b):
     da, db = ((r.get("data") or {}).get("download_url") for r in (a, b))
     if da and db and normalize_url(da) == normalize_url(db):
         reasons.append("same download URL")
-    ia, ib = ({k for k in identity_keys(r) if not k.startswith("url:")} for r in (a, b))
-    if ia and ib and not ia & ib:  # each has its own DOI / accession: different unless the download is the same
-        return reasons
     ta, tb = normalize_title(a.get("title")), normalize_title(b.get("title"))
+    ia, ib = ({k for k in identity_keys(r) if not k.startswith("url:")} for r in (a, b))
+    if ia and ib and not ia & ib:  # each has its own DOI / accession: different unless the download is the same,
+        if ta and ta == tb and a.get("repository") == b.get("repository") == "Zenodo":  # or a new Zenodo version
+            reasons.append("same title on Zenodo (another version?)")
+        return reasons
     if not (ta and tb):
         return reasons
     ratio = difflib.SequenceMatcher(None, ta, tb).ratio()

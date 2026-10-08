@@ -165,8 +165,8 @@ Only find and record it.
 
 ## 4a. Voxel size: search until you find it
 `imaging.voxel_size_nm` is what conversion needs most: TensorSwitch never guesses a voxel size, so a
-record without one can't be converted. The PR is labelled `voxel-size-found` or `voxel-size-missing`
-from it (found = `x`, `y` and, for 3D / 3D+t, `z`). If the record's value is missing or incomplete,
+record without one can't be converted. The PR is labelled `voxel-size-missing`
+until it has `x`, `y` and, for 3D / 3D+t, `z`. If the record's value is missing or incomplete,
 **work through every source below before you give up**, and note each one you checked:
 1. **File headers** of each role you probed in 3c (`voxel_size_nm` in the probe output), plus
    metadata sidecars: OME-XML, `.zattrs` / `zarr.json`, N5 `attributes.json`, neuroglancer `info`,
@@ -266,7 +266,7 @@ python tools/estimate_size.py <file> --count 0=80 --count 1=80                  
 - Use the result only when `missing` is empty. Set `data.size_bytes` to `total_bytes` and
   `technical.size_source: estimated`, and add its `technical_notes_line` to `technical.notes` (it says
   how the number was made, and that it's the uncompressed size: compressed files download smaller).
-  The PR then gets its `size:` label and a `size-estimated` flag; a whole-dataset download still needs a listing.
+  The PR then gets its `size:` label; a whole-dataset download still needs a listing.
 - Never replace a `file-listing`, `page-stated` or `paper` size with an estimate (the tool warns).
 - `missing` not empty: keep `size_bytes` null and say in `technical.notes` what's missing (a count, a
   dtype, a shape). In the PR comment, put the result under a `Size estimate` heading either way.
