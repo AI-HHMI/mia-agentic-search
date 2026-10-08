@@ -54,7 +54,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 2698952967
+  size_bytes: 284473740771
   n_items: 239
   access: open
   download_url: https://ndownloader.figshare.com/files/22404945
@@ -65,8 +65,8 @@ annotations:
   - bounding-box
   - classification
   coverage: unknown
-  format: 'JSON per sample folder (13 files): rois per image with rectangle x, y, width, height and a type
-    (FASTMAL_WHITE_CELL, FASTMAL_PARASITE, FASTMAL_WHITE_CELL_CROWD, FASTMAL_PARASITE_CROWD, FASTMAL_BACKGROUND,
+  format: 'JSON per sample folder (13 files): rois per image with rectangle x, y, width, height and a
+    type (FASTMAL_WHITE_CELL, FASTMAL_PARASITE, FASTMAL_WHITE_CELL_CROWD, FASTMAL_PARASITE_CROWD, FASTMAL_BACKGROUND,
     FASTMAL_IGNORE)'
   source: manual
 ml:
@@ -91,11 +91,79 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T06:25:00Z'
-notes: 'The annotated archive FASTMAL_THICK_FILMS.zip (2.70 GB) holds 239 TIFFs (16.6 MB each) and 13 JSON
-  files per peek_archive. The other files in the record (samples_part.tar.gz 153.9 GB and samples_part2.tar.gz
-  127.9 GB, sample-level labels only, plus tbf_samples_parasite_count.csv) are not counted in n_items
-  or size_bytes. Pixel size derived from the page (field 166 x 142 um at 2560 x 2160 px), not stated directly.
-  The paper (Am J Hematol) is not open access: only the abstract was read; Methods were not available.
-  Annotation procedure and split not stated on the Figshare page. Checked: Figshare API record, zip listing,
-  paper abstract.'
+  last_checked: '2026-10-08T07:14:50Z'
+notes: 'FASTMAL_THICK_FILMS.zip (2.70 GB) holds the object-level annotations: 239 TIFFs in 13 sample folders,
+  each with <folder>.json. The other files (samples_part.tar.gz 153.9 GB, samples_part2.tar.gz 127.9 GB
+  with sample-level labels only, tbf_samples_parasite_count.csv) are not counted in n_items. enricher:
+  size_bytes is now the whole record, 284.5 GB from the Figshare file list (was the annotated zip only,
+  2.70 GB). Pixel size is the page''s field size divided by pixels (166 x 142 um at 2560 x 2160 px), not
+  stated directly; TIFF headers carry no calibration. Images are extended-depth-of-field projections of
+  14-plane z-stacks (page). Paper (Am J Hematol) not open access: abstract only. Annotation procedure
+  and split not stated.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  4 files  284.5 GB (Figshare API, exact sizes)\n  FASTMAL_THICK_FILMS.zip  2.70 GB, 252\
+      \ members\n    FASTMAL_THICK_FILMS/<sample id>/FieldPosNNN_EDOF_RGB.tiff  239 files in 13 folders\
+      \ (4-146 per folder), 16.6 MB each\n    FASTMAL_THICK_FILMS/<sample id>/<sample id>.json  13 files\n\
+      \  samples_part.tar.gz   153.9 GB  (not opened)\n  samples_part2.tar.gz  127.9 GB  (not opened)\n\
+      \  tbf_samples_parasite_count.csv  5 KB\n"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/22404945::FASTMAL_THICK_FILMS/465/FieldPos000_EDOF_RGB.tiff
+    - https://ndownloader.figshare.com/files/22404945::FASTMAL_THICK_FILMS/465/465.json
+    size_bytes: null
+    description: One annotated field of sample 465 and that folder's ROI file
+  arrays:
+  - role: raw
+    path_pattern: FASTMAL_THICK_FILMS.zip::FASTMAL_THICK_FILMS/*/FieldPos*_EDOF_RGB.tiff
+    format: tiff
+    axes: yxs
+    shape:
+    - 2160
+    - 2560
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Single-page RGB TIFF (photometric 2), colour samples differ (not grey as RGB).
+  - role: label
+    path_pattern: FASTMAL_THICK_FILMS.zip::FASTMAL_THICK_FILMS/*/*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: FASTMAL:WHITE_CELL
+      name: white cell
+    - id: FASTMAL:PARASITE
+      name: parasite
+    - id: FASTMAL:WHITE_CELL_CROWD
+      name: white cell crowd
+    - id: FASTMAL:PARASITE_CROWD
+      name: parasite crowd
+    - id: FASTMAL:BACKGROUND
+      name: background
+    - id: FASTMAL:IGNORE
+      name: ignore
+    alignment: same-grid
+    alignment_notes: 'One JSON per sample folder: rois[] list per image_name (file in the same folder),
+      each roi a rectangle x, y, width, height in pixels with a type. Type strings use a colon in the
+      file (FASTMAL:WHITE_CELL); the page writes them with underscores.'
+  notes: 'Listing (Figshare API + zip index): 4 files, 284,473,740,771 B exact; zip 252 members (239 TIFF,
+    13 JSON). Probed FieldPos016 of 465: 2160x2560x3 uint8 RGB uncompressed, plain single page. Sampled
+    FieldPos000 of 465 with a scratch script (11.8 MB compressed; tools/sample.py could not open zip members
+    behind the ndownloader URL): range 0-255, mean 155.6, p1 31, p99 200 (one sample). Read 465.json:
+    17 images, 165 WHITE_CELL, 65 PARASITE, 10 IGNORE boxes. The two tar.gz parts (282 GB) were not opened.
+    Voxel size: x 64.8, y 65.7 nm from the page''s field size / pixel count; no header calibration.'
