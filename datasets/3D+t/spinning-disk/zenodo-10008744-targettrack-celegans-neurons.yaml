@@ -3,8 +3,8 @@ id: zenodo-10008744-targettrack-celegans-neurons
 title: Training set of microscopy images for Park et al. Nature Methods 2023 (Targettrack)
 short_name: C. elegans whole-brain neuron tracking (confocal)
 description: Light microscopy recordings of pan-neuronally labelled (GCaMP6s) C. elegans heads with neuron key-point
-  tracking annotations (keypoint-tracking-data-*.h5), plus sample volumetric (3D) neuron tracking data and videos,
-  released with the Targettrack paper on automated neuron tracking in moving and deforming brains.
+  tracking annotations (keypoint-tracking-data-*.h5), plus sample volumetric (3D) neuron tracking data and videos, released
+  with the Targettrack paper on automated neuron tracking in moving and deforming brains.
 landing_url: https://zenodo.org/records/10008744
 doi: 10.5281/zenodo.10008744
 repository: Zenodo
@@ -30,7 +30,7 @@ imaging:
 data:
   formats:
   - hdf5
-  size_bytes: 22739000000
+  size_bytes: 24089089928
   n_items: 8
   access: open
   download_url: null
@@ -41,7 +41,8 @@ annotations:
   - points
   - tracking
   coverage: sparse
-  format: HDF5 (key-point tracks); 3D neuron volumes in an HDF5 sample within the volumetric zip
+  format: 'HDF5 per recording: <t>/frame volumes plus pointdat / points [T, neurons+1, 3] float32 keypoints (NaN where
+    absent) and neuron_presence [T, neurons+1] bool'
   source: proofread
 ml:
   tasks:
@@ -60,16 +61,85 @@ provenance:
   - https://zenodo.org/api/records/10008744
   - https://zenodo.org/api/records/10008744/files
   - https://pmc.ncbi.nlm.nih.gov/articles/PMC13082739/
-  confidence: 0.6
+  - https://zenodo.org/records/10008744
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-08T19:13:36Z'
-notes: 'Files: six keypoint-tracking-data-*.h5 (1.6-5.0 GB each), key-point-tracking-videos.zip (1.2 GB) and
-  volumetric-tracking-data-and-videos.zip (164 MB: two AVI videos and epfl10_CZANet_Final.h5, listed with peek_archive).
-  Contents of the keypoint h5 files were not inspected (names only from the file listing), so image/annotation
-  layout is unverified. Voxel size and image dimensions are not stated on the Zenodo page or in the paper
-  (PMC full text: spinning-disc confocal, Nikon Ti2 + CSUX1FW, 40x/1.3 oil, ~3 volumes/s; xy resolution higher than z).
-  Manual GT 5-25 annotated volumes per recording, tracked with non-rigid point-set registration and proofread;
-  recordings 1,500-3,000 volumes. Size is the sum of listed files. Channel count (2: green/red cameras) from paper.'
+  annotations_verified: true
+  last_checked: '2026-10-08T21:34:36Z'
+notes: 'Files: six keypoint-tracking-data-*.h5 (1.6-5.0 GB each), key-point-tracking-videos.zip (1.2 GB, mp4) and volumetric-tracking-data-and-videos.zip
+  (164 MB: two AVI videos and epfl10_CZANet_Final.h5). Paper (PMC full text, read by the harvester): spinning-disc confocal,
+  Nikon Ti2 + CSUX1FW, 40x/1.3 oil, ~3 volumes/s; manual GT 5-25 annotated volumes per recording, tracked with point-set
+  registration and proofread. Voxel size not stated (HDF5 pixel_scale attribute is relative only: [1, 1, 4]). Channels
+  2 (green/red) from paper and HDF5 attribute C=2. enricher: size is the complete Zenodo listing (was a sum of rounded
+  sizes); annotations verified in the HDF5 (pointdat, neuron_presence).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: |
+      ./                                   8 files  24.1 GB  .h5 6, .zip 2
+        keypoint-tracking-data-137.h5            1.6 GB
+        keypoint-tracking-data-153.h5            1.8 GB
+        keypoint-tracking-data-184.h5            5.0 GB
+        keypoint-tracking-data-184_5GT.h5        5.0 GB
+        keypoint-tracking-data-184_15GT.h5       5.0 GB
+        keypoint-tracking-data-185.h5            4.3 GB
+        key-point-tracking-videos.zip            1.2 GB
+          videos/                     16 files  555.1 MB  .mp4
+          videos/ZM9624heads/         26 files  630.1 MB  .mp4
+        volumetric-tracking-data-and-videos.zip  164 MB
+          Targettrack/                 3 files  182.3 MB  .avi 2, .h5 1 (epfl10_CZANet_Final.h5)
+      keypoint-tracking-data-<n>.h5 (137.h5, probed):
+        <t>/frame  for t = 0..T-1   (T = 1326)
+        pointdat, points, neuron_presence, ci_int, cluster_params/, seg_params/
+    n_files: 8
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/10008744/files/keypoint-tracking-data-137.h5
+    size_bytes: 1615389904
+    description: 'The smallest recording (137): 1326 volumes plus its keypoint tracks in one HDF5 file.'
+  arrays:
+  - role: raw
+    path_pattern: keypoint-tracking-data-*.h5 (0/frame)
+    format: hdf5
+    axes: cxyz
+    shape:
+    - 2
+    - 320
+    - 192
+    - 20
+    shape_varies: null
+    dtype: uint8
+    compression: other
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'One dataset per time point: <t>/frame, t = 0..T-1 (T root attribute; 1326 in 137.h5). Axes from
+      the root attributes C=2, W=320, H=192, D=20.'
+  - role: label
+    path_pattern: keypoint-tracking-data-*.h5 (pointdat)
+    format: hdf5
+    axes: null
+    shape:
+    - 1326
+    - 92
+    - 3
+    shape_varies: true
+    dtype: float32
+    compression: unknown
+    encoding: tracks-table
+    classes: null
+    alignment: unknown
+    alignment_notes: pointdat[t, i] = 3D position of neuron i at time t (N_neurons 91 + 1 slot); neuron_presence[t, i]
+      (bool) marks which are set. Coordinate order and units are not documented.
+  notes: 'Headers read by range requests from keypoint-tracking-data-137.h5 (h5py over tools/probe.py''s RangeFile, ~215
+    MB of index/metadata blocks over two passes; Zenodo HEAD requests hung so probe.py itself failed): 1332 root keys
+    = 1326 time groups ''<t>/frame'' (uint8 [2, 320, 192, 20], lzf, chunks [1, 80, 48, 5]) plus ci_int [91, 1326, 12]
+    float32, neuron_presence [1326, 92] bool, pointdat and points [1326, 92, 3] float32, cluster_params, seg_params.
+    Root attrs: C 2, W 320, H 192, D 20, T 1326, N_neurons 91, pixel_scale [1, 1, 4]. lzf compression is recorded as
+    ''other''. Other recordings not probed; their T and neuron counts differ. data.download_url set null: the dataset
+    is 8 separate files (direct URLs: https://zenodo.org/records/10008744/files/<name>). Voxel size not found; checked:
+    HDF5 attributes (relative pixel_scale only), Zenodo description, paper (harvester''s PMC read; Europe PMC full text
+    not available to this run), volumetric zip listing.'
