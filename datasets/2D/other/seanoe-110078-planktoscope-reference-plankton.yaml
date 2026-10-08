@@ -44,7 +44,7 @@ imaging:
   labels_stains: []
 data:
   formats:
-  - other
+  - jpeg
   size_bytes: 1795033007
   n_items: 169149
   access: open
@@ -77,6 +77,47 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-08T19:15:00Z'
-notes: 'The tar (1.795 GB, reachable with range requests) is gzip-compressed inside so its member list could not be read without downloading it; file names, the 169,149 object count (the page text also says more than 180k identifications) and the 256 classes come from the SEANOE description, so annotations_verified is false. The image format inside the tar is not stated (formats is therefore other). Objects were classified in EcoTaxa (project 15535) and each identification reviewed by at least one human. Pixel size is not stated for this dataset; the PlanktoScope paper gives 0.9 um/px for the platform but with inconsistent figures elsewhere (abstract 2.8 um/px), so it is left null. Imaging modality is not stated for this dataset (hence other). Also part of the planktonzilla-17M aggregate on Hugging Face.'
+  annotations_verified: true
+  last_checked: '2026-10-08T20:42:00Z'
+notes: 'enricher: the tar is a plain tar (not gzip); its first 65 MB were streamed: Planktoscope_reference/ with taxa.csv.gz, inventory.tsv, map.png, features_native.csv.gz and imgs/<taxon>/<object>.jpg, so formats is jpeg (was other) and annotations are verified. Object count (169,149) and 256 classes are from the SEANOE description. Objects were classified in EcoTaxa (project 15535) and each identification reviewed by at least one human. Pixel size is not stated for this dataset; the PlanktoScope paper gives 0.9 um/px for the platform but with inconsistent figures elsewhere (abstract 2.8 um/px), so it is left null. Imaging modality is not stated for this dataset (hence other). Also part of the planktonzilla-17M aggregate on Hugging Face.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      124113.tar (1.795 GB, plain tar; first 65 MB streamed)
+        Planktoscope_reference/
+          taxa.csv.gz              2.4 MB
+          inventory.tsv           31.5 KB
+          map.png                275.1 KB
+          features_native.csv.gz  42.4 MB
+          imgs/<taxon>/<object>.jpg   (e.g. imgs/Salpingella_Tintinnidiidae/10_58_16_846417_0.jpg)
+        (+ macOS ._* and .DS_Store files)
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: 124113.tar/Planktoscope_reference/imgs/*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 117
+    - 476
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Class label = taxon folder under imgs/; taxa.csv.gz gives taxon, lineage and image path per object. Object crops vary in size.
+  notes: 'The dataset is one tar (size 1,795,033,007 B from the server, one file, so size_source file-listing; the tar
+    member list was only read in part). Streamed the first 65 MB with a small requests+tarfile script (logged as inspected): members
+    in order are taxa.csv.gz, inventory.tsv, map.png, features_native.csv.gz, then imgs/<taxon>/ folders. First image
+    Salpingella_Tintinnidiidae/10_58_16_846417_0.jpg (5,525 B) is 117x476x3 uint8 JPEG, values 0-255, mean 237.6 (bright
+    background), channels differ (one sample). sample is null: TensorSwitch cannot pull single members out of a tar,
+    and the host www.seanoe.org is not on its fetch allowlist. Voxel size not found; checked: JPEG header (density 1x1, no
+    calibration), SEANOE page, PlanktoScope paper (platform values inconsistent, 0.9 vs 2.8 um/px, not dataset-specific).'
