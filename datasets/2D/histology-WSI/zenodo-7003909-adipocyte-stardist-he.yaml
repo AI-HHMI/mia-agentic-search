@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-7003909-adipocyte-stardist-he
 title: StarDist Adipocyte Segmentation Training data, Training Notebook and Model
 short_name: Bone marrow adipocytes H&E patches (histology)
-description: 292 H&E image patches of human bone marrow trephine biopsies (from whole slide scanner NDPI images) with manually
-  annotated adipocyte instance masks, in train (263) and test (29) folders, with the StarDist training notebook and model
-  used for MarrowQuant 2.0.
+description: 292 H&E image patches of human bone marrow trephine biopsies (from whole slide scanner NDPI images)
+  with manually annotated adipocyte instance masks, in train (263) and test (29) folders, with the StarDist training
+  notebook and model used for MarrowQuant 2.0.
 landing_url: https://zenodo.org/records/7003909
 doi: 10.5281/zenodo.7003909
 repository: Zenodo
@@ -16,7 +16,8 @@ authors:
 - Weigert, Martin
 - De Leval, Laurence
 publications:
-- title: 'MarrowQuant 2.0: a digital pathology workflow assisting bone marrow evaluation in clinical and experimental hematology'
+- title: 'MarrowQuant 2.0: a digital pathology workflow assisting bone marrow evaluation in clinical and experimental
+    hematology'
   doi: 10.21203/rs.3.rs-1860140/v1
   url: https://doi.org/10.21203/rs.3.rs-1860140/v1
 date_published: '2022-08-17'
@@ -25,7 +26,7 @@ imaging:
   - histology-WSI
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Homo sapiens
   sample: H&E stained human bone marrow trephine biopsy sections
@@ -44,7 +45,8 @@ annotations:
   types:
   - instance-segmentation
   coverage: dense
-  format: Per-image mask TIFFs in train/masks and test/masks; test/labels folder (QC-Results holds quality-control outputs)
+  format: Per-image mask TIFFs in train/masks and test/masks; test/labels folder (QC-Results holds quality-control
+    outputs)
   source: manual
 ml:
   tasks:
@@ -62,15 +64,101 @@ provenance:
   - https://zenodo.org/api/records/7003909
   - https://zenodo.org/api/records/7003909/files/round2_data.zip/content
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.21203%2Frs.3.rs-1860140%2Fv1%22&format=json&resultType=core&pageSize=3
-  confidence: 0.75
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T04:05:00Z'
+  last_checked: '2026-10-08T05:40:00Z'
 notes: 'Zenodo description: 292 image patches, ground truth manually annotated in QuPath, split 263 train / 29 validation
-  (the archive names the 29-image folder test). round2_data.zip listing (655 files): train/images 263 + train/masks 263,
-  test/images 29 + test/masks 29 + test/labels 41 + test/QC-Results 30; image files are TIFF/PNG patches, some derived from
-  .ndpi scanner files. Pixel size and magnification are not stated on the Zenodo page; the paper is a preprint whose full
-  text was not available (abstract only), so staining/scanner details are unconfirmed. Mask pixel encoding (instance IDs vs binary) not inspected. The record also holds a trained model
-  (.pb) and notebooks.'
+  (the archive names the 29-image folder test). round2_data.zip listing (655 files): train/images 263 + train/masks
+  263, test/images 29 + test/masks 29 + test/labels 41 + test/QC-Results 30; image files are TIFF/PNG patches, some
+  derived from .ndpi scanner files. Pixel size and magnification are not stated on the Zenodo page; the paper is
+  a preprint whose full text was not available (abstract only), so staining/scanner details are unconfirmed. The
+  record also holds a trained model (.pb) and notebooks. enricher: masks are uint16 instance IDs (sample: 63 IDs
+  + background). enricher: channels 3 (RGB TIFF). enricher: voxel size left null: TIFF calibration is 1818.5 nm/px
+  in UUID-named patches and 441.5 nm/px in a .ndpi_r5 patch, so subsets differ; no page or paper states it.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  5 files, 207.7 MB (Zenodo)\n  Adipocyte Training.ipynb, Quality Control.ipynb, stardist-val.txt\n\
+      \  rita-round2_downsampled_adipocytes_...aug.pb   (StarDist model)\n  round2_data.zip   182.2 MB, 655 members,\
+      \ 533.8 MB uncompressed\n    data/ground_truth_round_2/\n      train/images/    263 .tif  263.6 MB   RGB H&E\
+      \ patches\n      train/masks/     263 .tif  175.7 MB   instance masks, same names\n      test/images/    \
+      \  29 .tif   31.1 MB\n      test/masks/       29 .tif   20.7 MB\n      test/labels/      41 .tif   32.5 MB\
+      \   int16; 29 share mask names + 12 others (e.g. 454.tif)\n      test/QC-Results/  30 files  10.3 MB   .png\
+      \ 29, .csv 1 (QC outputs)"
+    n_files: 5
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/7003909/files/round2_data.zip/content::data/ground_truth_round_2/train/images/010cdb72-023d-4a75-885c-a49f7332d792_r1.tif
+    - https://zenodo.org/api/records/7003909/files/round2_data.zip/content::data/ground_truth_round_2/train/masks/010cdb72-023d-4a75-885c-a49f7332d792_r1.tif
+    size_bytes: 1311478
+    description: One 512 x 512 RGB training patch and its instance mask.
+  arrays:
+  - role: raw
+    path_pattern: data/ground_truth_round_2/{train,test}/images/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 25
+    - 239
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB H&E (photometric 2, samples not identical). Most patches are 512 x 512 (787 KB); members
+      up to 13.6 MB are larger.
+  - role: label
+    path_pattern: data/ground_truth_round_2/{train,test}/masks/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 63
+    normalization: none
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    - id: null
+      name: adipocyte (one ID per instance)
+    alignment: same-grid
+    alignment_notes: 'Pairing: images/<name>.tif <-> masks/<name>.tif in the same split folder; same 512 x 512 grid
+      as the raw patch in the sample.'
+  - role: other
+    path_pattern: data/ground_truth_round_2/test/labels/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: null
+    dtype: int16
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: unknown
+    classes: null
+    alignment: unknown
+    alignment_notes: '41 files: 29 share names with test/masks, 12 (e.g. 454.tif) do not; not documented (possibly
+      predictions or earlier annotations).'
+  notes: 'Listed with tools/listing.py (Zenodo, zip expanded): 5 files, 207,711,866 B, complete. Probed 6 TIFF members;
+    sampled one raw + mask pair (190 KB). value_range from one sample. Mask encoding from the sample: 64 distinct
+    IDs, 83.6% background: instance IDs (Zenodo: manual annotations in QuPath). Voxel size not set: TIFF ImageJ
+    calibration (unit um) is 1818.5 nm/px in UUID-named and 454.tif patches but 441.5 nm/px in an .ndpi_r5 patch;
+    checked: TIFF headers, Zenodo description, training notebook text, paper (Research Square preprint, full text
+    unavailable). The notebooks and the .pb model are code, not read or run.'
