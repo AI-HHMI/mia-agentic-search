@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: mendeley-pgby6jmtp4-mlmi2024-mosquito-larvae
 title: MLMI-2024 (Mosquito Larvae Microscopic Images)
 short_name: Mosquito larvae species and body parts
-description: 800 microscope images (3,456 x 3,456 px, captured with a 64 MP smartphone camera) of Aedes aegypti and Culex quinquefasciatus
-  larvae, 100 images for each of four views (full body, head, 8th abdominal segment, siphon) per species, organised in species and
-  view folders for species classification.
+description: 800 microscope images (3,456 x 3,456 px, captured with a 64 MP smartphone camera) of Aedes
+  aegypti and Culex quinquefasciatus larvae, 100 images for each of four views (full body, head, 8th abdominal
+  segment, siphon) per species, organised in species and view folders for species classification.
 landing_url: https://data.mendeley.com/datasets/pgby6jmtp4/1
 doi: 10.17632/pgby6jmtp4.1
 repository: other
@@ -23,11 +23,13 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Aedes aegypti
   - Culex quinquefasciatus
-  sample: Larvae fixed in formalin, dehydrated in ethanol, cleared in xylene and mounted on glass; cut into head, 8th abdominal segment, siphon and full body; photographed through a microscope with a 64 MP smartphone camera
+  sample: Larvae fixed in formalin, dehydrated in ethanol, cleared in xylene and mounted on glass; cut
+    into head, 8th abdominal segment, siphon and full body; photographed through a microscope with a 64
+    MP smartphone camera
   labels_stains: []
 data:
   formats:
@@ -42,7 +44,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: Image-level species and body-part label given by the folder (Aedes aegypti / Culex quinquefasciatus, each with full body, head, abdomen and siphon subfolders)
+  format: Image-level species and body-part label given by the folder (Aedes aegypti / Culex quinquefasciatus,
+    each with full body, head, abdomen and siphon subfolders)
   source: manual
 ml:
   tasks:
@@ -65,5 +68,49 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-08T10:40:00Z'
-notes: 'Mendeley API lists 800 .jpg files in 8 folders of exactly 100 each, consistent with the paper (2 species x 4 views x 100); folder names were not retrievable (the folders endpoint is behind a Cloudflare check), so the species/view mapping is from the paper. Magnification and pixel size are not stated in the paper or the Mendeley record, so voxel size is null. Images are unaugmented originals cropped to 3,456 x 3,456 px. Whole-organism preparations imaged through a microscope, not cell-level microscopy. No split provided.'
+  last_checked: '2026-10-08T11:55:00Z'
+notes: 'Mendeley API lists 800 .jpg files in 8 folders of exactly 100 each, consistent with the paper
+  (2 species x 4 views x 100); folder names were not retrievable (the folders endpoint is behind a Cloudflare
+  check), so the species/view mapping is from the paper. Magnification and pixel size are not stated in
+  the paper or the Mendeley record, so voxel size is null. Images are unaugmented originals cropped to
+  3,456 x 3,456 px. Whole-organism preparations imaged through a microscope, not cell-level microscopy.
+  No split provided. enricher: channels 3 (RGB, one sampled image).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "./  800 files, 1,580,189,123 B (Mendeley Data pgby6jmtp4 v1)\n  8 folders x 100 .jpg   (2 species\
+      \ x 4 views per the paper; folder names not exposed by the files API)\n    <YYYYMMDD_HHMMSS>.jpg\
+      \   RGB 3456 x 3456, 0.8-2.6 MB"
+    n_files: 800
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.mendeley.com/public-files/datasets/pgby6jmtp4/files/72bb5e48-428c-43de-b33e-e4030fe5a15c/file_downloaded
+    size_bytes: 814263
+    description: Smallest image (20231212_115809.jpg); its label is its folder.
+  arrays:
+  - role: raw
+    path_pattern: '*/*.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 3456
+    - 3456
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: One RGB smartphone photo through the microscope per file; species and view = folder
+      (folder_id in the API; names not retrievable). Shape matches the stated 3,456 x 3,456 px.
+  notes: 'File list from the Mendeley public API: 800 .jpg in 8 folder_ids of 100 each; sizes sum to 1,580,189,123
+    B = the API size field (tools/listing.py does not read Mendeley, so page-stated). Sampled 20231212_115809.jpg
+    (814,263 B) with curl: RGB uint8 3456 x 3456, 0-255, mean 72, JPEG dpi 72 (camera default, not a calibration);
+    one image only. The repo tools get HTTP 403 from data.mendeley.com while curl is redirected to a presigned
+    S3 URL, so download-check reports the link unusable. normalization none is inferred (camera JPEG).
+    Pixel size not found (paper and record per the harvester; JPEG has only the 72 dpi default).'
