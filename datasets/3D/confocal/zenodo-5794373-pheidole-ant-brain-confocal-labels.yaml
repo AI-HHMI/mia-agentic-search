@@ -1,12 +1,13 @@
 schema_version: '1.2'
 id: zenodo-5794373-pheidole-ant-brain-confocal-labels
-title: Dataset of "Statistical atlases and automatic labelling strategies to accelerate the analysis of social insect brain evolution"
+title: Dataset of "Statistical atlases and automatic labelling strategies to accelerate the analysis of social insect
+  brain evolution"
 short_name: Pheidole ant brain neuropil labels (confocal)
 description: Confocal stacks of synapsin-stained brains from minor workers of four Pheidole ant species (10 P. spadonia
-  brains, 12 brains across four species, and 5 test brains), each with manual labels of eight neuropil compartments
-  (optic lobes, antennal lobes, mushroom body calyces and peduncle, central complex, subesophageal zone, rest of
-  central brain). The test brains carry label sets from three annotators; group-wise templates, consensus labels
-  and automatic labels are also included.
+  brains, 12 brains across four species, and 5 test brains), each with manual labels of eight neuropil compartments (optic
+  lobes, antennal lobes, mushroom body calyces and peduncle, central complex, subesophageal zone, rest of central brain).
+  The test brains carry label sets from three annotators; group-wise templates, consensus labels and automatic labels
+  are also included.
 landing_url: https://zenodo.org/records/5794373
 doi: 10.5281/zenodo.5794373
 repository: Zenodo
@@ -44,14 +45,15 @@ data:
   size_bytes: 1070001646
   n_items: 27
   access: open
-  download_url: https://zenodo.org/api/records/5794373/files/BrainDataset.rar/content
+  download_url: https://zenodo.org/records/5794373/files/BrainDataset.rar
   download_method: http
 annotations:
   present: true
   types:
   - semantic-segmentation
   coverage: dense
-  format: 'NRRD label volumes (8 neuropil compartments) next to the NRRD or TIFF images; templates and automatic labels also in NRRD'
+  format: NRRD label volumes (8 neuropil compartments) next to the NRRD or TIFF images; templates and automatic labels
+    also in NRRD
   source: manual
 ml:
   tasks:
@@ -67,17 +69,84 @@ provenance:
   discovered_at: '2026-10-08T20:20:00Z'
   evidence_urls:
   - https://zenodo.org/api/records/5794373
+  - https://zenodo.org/records/5794373/files/DatasetDescription_R3.pdf
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-08T20:22:00Z'
-notes: 'All values come from the Zenodo record text. The single download is a .rar archive (1.07 GB), which cannot be
-  listed remotely, so file contents, formats and counts were not verified (annotations_verified false); n_items 27 is
-  10 + 12 + 5 images named in the description. Voxel size is the "~0.7 x 0.7 x 5 um/voxel" stated there, with an
-  Olympus Fluoview BX50 and a 20x objective. The paper is named in the description (Arganda et al.) but could not be
-  found in Europe PMC or via title search, so publications is empty and its Methods were not read. Labels were traced
-  manually in Amira in one hemisphere (except CX, SEZ and ROCB) by one expert for the main sets; the test brains have
-  label sets from three annotators. A separate description PDF (DatasetDescription_R3.pdf) is also on the record
-  and was not read.'
+  annotations_verified: true
+  last_checked: '2026-10-08T22:26:40Z'
+notes: 'organisms (per the description PDF table): P. spadonia = Ps*/ folders, P. rhea = Pr*/, P. tepicana = Pt*/, P.
+  obtusospinosa = Po*/; templates under Template_*/. BrainDataset.rar (1.07 GB) lists 106 files (headers read by range):
+  19 brain folders with <brain>.nrrd, <brain>.tif and <brain>_DGG_labels.nrrd, test brains with extra annotator and automatic
+  label sets, and 7 template folders. Voxel size is the ~0.7 x 0.7 x 5 um/voxel the Zenodo text and the PDF state (Olympus
+  Fluoview, 20x); the NRRD header of Po2f-13 gives 0.6917 x 0.6917 x 4.988 um. Labels were traced manually in Amira in
+  one hemisphere (except CX, SEZ and ROCB) by one expert (DGG) for the main sets; the test brains have label sets from
+  three annotators. The paper (Arganda et al.) was not found in Europe PMC, so publications is empty.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  2 files 1.07 GB: BrainDataset.rar, DatasetDescription_R3.pdf
+      BrainDataset.rar/BrainDataset/   106 files, 1.77 GB unpacked (+ desktop.ini)
+        Ps5d-9/ Ps5d-10/ Ps11e-9/ Ps11e-19/ Ps19e-37/ Pr1-10/ Pr1c-6/ Pr5-10/ Pt1-12/ Pt1-15/ Pt1-44/
+        Po2f-13/ Po8e-6/ Po8e-11/     <brain>.nrrd  <brain>.tif  <brain>_DGG_labels.nrrd
+        Ps5d-18/ Ps11e-8/ Ps11e-13/ Ps19e-42/ Ps19e-48/   (test brains) + _APH_labels, _SAC*_labels,
+                               -ConsensusLabelMethod_labels, -MultispeciesMethod_labels, -DirectLabelMethod_*_labels
+        Template_SingleSpecies_10brains/   Template-spadonia-minor.nrrd + _AHP/_DGG/_SAC_labels.nrrd
+        Template_SingleSpecies_9brains_01..05/   template-0N.nrrd + template-0N.labels.nrrd
+        Template_HybridSpecies/   spadonia_rhea_tepicana_obtusospinosa_minor-template(.labels).nrrd
+    n_files: 2
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: BrainDataset/P*/P*[0-9].nrrd
+    format: other
+    axes: zyx
+    shape:
+    - 84
+    - 593
+    - 600
+    shape_varies: true
+    dtype: uint16
+    compression: gzip
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: NRRD (gzip, big-endian), stored uncompressed in the RAR; the same brain is also given as <brain>.tif
+      (RAR-compressed, not probed).
+  - role: label
+    path_pattern: BrainDataset/P*/*_DGG_labels.nrrd
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    encoding: semantic-ids
+    classes:
+    - id: null
+      name: OL
+    - id: null
+      name: AL
+    - id: null
+      name: MB-MC
+    - id: null
+      name: MB-LC
+    - id: null
+      name: MB-P
+    - id: null
+      name: CX
+    - id: null
+      name: SEZ
+    - id: null
+      name: ROCB
+    alignment: unknown
+    alignment_notes: <brain>_DGG_labels.nrrd pairs with <brain>.nrrd in the same folder; label NRRDs are RAR-compressed,
+      so their headers (shape, ids) could not be read. Class names from the description PDF; ids not stated.
+  notes: 'RAR5 block headers walked by range requests (147 headers): files stored (method 0) except .tif and label .nrrd,
+    which are compressed. NRRD header of Po2f-13.nrrd read by range: ''type: uint16, encoding: gzip, endian: big, sizes:
+    600 593 84, space directions: (0.6917,0,0) (0,0.6917,0) (0,0,4.9884), space units: microns''. No pixel values read.
+    NRRD isn''t a schema format, so arrays use format other. sample is null: TensorSwitch can''t pull members out of
+    a RAR. Read DatasetDescription_R3.pdf (contents, 8 classes, annotators, acquisition).'
