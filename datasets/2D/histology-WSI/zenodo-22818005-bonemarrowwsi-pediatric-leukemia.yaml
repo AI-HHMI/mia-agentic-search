@@ -1,10 +1,12 @@
 schema_version: '1.2'
 id: zenodo-22818005-bonemarrowwsi-pediatric-leukemia
-title: 'BoneMarrowWSI-PediatricLeukemia: A Comprehensive Dataset of Bone Marrow Aspirate Smear Whole Slide Images with Expert Annotations and Clinical Data in Pediatric Leukemia'
+title: 'BoneMarrowWSI-PediatricLeukemia: A Comprehensive Dataset of Bone Marrow Aspirate Smear Whole Slide Images with Expert
+  Annotations and Clinical Data in Pediatric Leukemia'
 short_name: Bone marrow smear WSIs, cell boxes (leukemia)
-description: >-
-  Bone marrow aspirate smear whole slide images (May-Gruenwald-Giemsa / Pappenheim stain, 40x, 0.11 um/pixel) from 245 pediatric leukemia cases, converted to DICOM and served by the NCI Imaging Data Commons,
-  with 47,176 expert bounding-box cell annotations in monolayer ROIs (49 consensus cell-type classes; per-session labels included) as DICOM bulk annotations, plus clinical and laboratory data.
+description: Bone marrow aspirate smear whole slide images (May-Gruenwald-Giemsa / Pappenheim stain, 40x, 0.11 um/pixel) from
+  245 pediatric leukemia cases, converted to DICOM and served by the NCI Imaging Data Commons, with 47,176 expert bounding-box
+  cell annotations in monolayer ROIs (49 consensus cell-type classes; per-session labels included) as DICOM bulk annotations,
+  plus clinical and laboratory data.
 landing_url: https://zenodo.org/records/22818005
 doi: 10.5281/zenodo.22818005
 repository: Zenodo
@@ -71,11 +73,64 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-08T11:35:57Z'
-notes: >-
-  The Zenodo record (v25, 2026-10-07) holds only download manifests (.s5cmd for AWS/GCS and a .dcf) for the IDC collection bonemarrowwsi_pediatricleukemia, not the images; download with `idc download <manifest>`
-  (idc-index). The manifest lists 1,279 IDC series (image and annotation series). Earlier versions (10.5281/zenodo.15490664, a 2-slide sample with annotations; 10.5281/zenodo.16995570, v22) held fewer annotations.
-  The record text says annotations are available as DICOM Bulk Annotations series; the annotation series were not opened in this run, hence annotations_verified false. Total size not stated
-  (WSIs are multi-GB each; sample slides in 15490664 range up to 6.8 GB). The paper reports over 40,000 boxes with more than 28,000 high-quality class labels (33-class classification); the record says 47,176 boxes and 49 classes.
-  Case count is 245 on the record vs 246 in the paper. Patient clinical data are in DICOM metadata.
+  annotations_verified: true
+  last_checked: '2026-10-08T12:50:00Z'
+notes: 'The Zenodo record (v25, 2026-10-07) holds only download manifests (.s5cmd for AWS/GCS and a .dcf) for the IDC collection
+  bonemarrowwsi_pediatricleukemia, not the images; download with `idc download <manifest>` (idc-index). The manifest lists
+  1,279 IDC series (image and annotation series). Earlier versions (10.5281/zenodo.15490664, a 2-slide sample with annotations;
+  10.5281/zenodo.16995570, v22) held fewer annotations. The record text says annotations are available as DICOM Bulk Annotations
+  series; Total size not stated (WSIs are multi-GB each; sample slides in 15490664 range up to 6.8 GB). The paper reports
+  over 40,000 boxes with more than 28,000 high-quality class labels (33-class classification); the record says 47,176 boxes
+  and 49 classes. Case count is 245 on the record vs 246 in the paper. Patient clinical data are in DICOM metadata. enricher:
+  one ANN series read (37 RECTANGLE groups) and one WSI header (pixel spacing 0.1107 x 0.1105 um, confirming 110 nm).'
+technical:
+  method: header
+  size_source: unknown
+  layout:
+    tree: "s3://idc-open-data/<crdc_series_uuid>/<instance_uuid>.dcm   (1,279 series in the v25 manifest)\n  image series\
+      \ (SM): 6 instances, e.g. 01423098-.../ : 10.66 GB base level + 794 MB, 86 MB, 5.9 MB,\n                     341 KB,\
+      \ 135 KB (pyramid / thumbnails); 3 series seen: 10.67-11.55 GB each\n  annotation series (ANN): 1 instance, 6-50 KB\n\
+      Zenodo 22818005: *-aws.s5cmd, *-gcs.s5cmd, *-dcf.dcf manifests, Documentation_of_conversion_process.pdf\n"
+    n_files: null
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: '*/*.dcm'
+    format: dicom
+    axes: yxs
+    shape:
+    - 446692
+    - 186095
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: DICOM VL Whole Slide Microscopy (SM) series, tiled 1024x1024 frames (79,534 frames at the base level),
+      YBR_FULL_422, JPEG Baseline; shape is the total pixel matrix of 01423098-.../bd5f6cd0-....dcm.
+  - role: label
+    path_pattern: '*/*.dcm'
+    format: dicom
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: boxes-table
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'DICOM Microscopy Bulk Simple Annotations (ANN), one series per slide referencing its image series (ReferencedSeriesSequence);
+      AnnotationCoordinateType 2D (pixel coordinates of the referenced image), one annotation group per cell class with GraphicType RECTANGLE (e.g. 01920bfa-...: 37 groups, series
+      "Consensus: cell bounding boxes with cell type labels").'
+  notes: 'Data are in IDC (s3://idc-open-data, public); Zenodo has only manifests. Listed 22 of the 1,279 manifest prefixes:
+    image series have 6 instances (10.7-11.6 GB per series), annotation series one 6-50 KB instance. A full listing needs
+    1,279 bucket requests, so size_bytes stays null and no estimate was made (image-series count not stated; uncompressed
+    estimate would be meaningless for JPEG WSIs). Headers read with pydicom (range read): base level 446,692 x 186,095 RGB,
+    1024 px tiles, JPEG, PixelSpacing 0.11072 x 0.11054 um; ANN file read in full (50,210 B). The bucket intermittently returns
+    404 (retries needed). No sample: pairing an ANN series with its image prefix needs the IDC index (SeriesInstanceUID to
+    crdc_series_uuid). Both checked objects pass download-check.'
