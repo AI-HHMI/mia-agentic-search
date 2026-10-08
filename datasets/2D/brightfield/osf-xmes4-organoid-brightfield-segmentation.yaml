@@ -63,7 +63,7 @@ annotations:
   coverage: dense
   format: black-and-white PNG masks paired by file name with images (segmentations/ next to images/);
     OrganoID label TIFFs for the time-lapse screen
-  source: manual
+  source: mixed
 ml:
   tasks:
   - segmentation
@@ -86,12 +86,102 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-08T03:39:27Z'
-notes: 'Single zip Dataset.zip (3.6 GB, 5,395 files) on OSF, listed with peek_archive: OriginalData/{training,validation,testing}/{images,segmentations}
-  (2,000 + 14 + 28 PNG pairs, training pre_augmented/ has 52), MouseOrganoids/{training,validation,testing}
-  (500 + 4 + 4 pairs), GemcitabineScreen/{BF,PI,OrganoIDProcessed} (42 positions, ~40 MB TIFFs each).
-  n_items counts all files. No license is stated for the data: the OSF project has no license field and
-  the paper says the platform is "freely licensed" on GitHub without naming one (GitHub license not readable
-  from this session), so spdx unknown. Pixel size and objective not found in the paper text searched.
-  Gemcitabine-screen labels are model output (OrganoIDProcessed), not manual, so only the OriginalData
-  and MouseOrganoids pairs are manual ground truth.'
+  last_checked: '2026-10-08T04:50:00Z'
+notes: 'Single zip Dataset.zip (3.6 GB, 5,395 files) on OSF. n_items counts all files. No data license:
+  the OSF project has no license field, the paper says the platform is "freely licensed" on GitHub without
+  naming one, and jono-m/OrganoID has no LICENSE file; spdx unknown. organisms: Homo sapiens = OriginalData/,
+  GemcitabineScreen/; Mus musculus = MouseOrganoids/. enricher: annotations.source unknown->mixed: OriginalData
+  and MouseOrganoids masks are manual; GemcitabineScreen/OrganoIDProcessed label TIFFs are OrganoID model
+  output. Pixel size not stated (paper: images contrasted and resized to 512x512 before training).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  Dataset.zip (OSF 69nr8)           1 file   3.6 GB, 5395 members, 7.7 GB unpacked\n  OriginalData/training/images/\
+      \            2000 .png  (augmented 512x512 crops)\n  OriginalData/training/segmentations/     2000\
+      \ .png\n  OriginalData/training/pre_augmented/{images,segmentations}/   52 + 52 .png\n  OriginalData/validation/{images,segmentations}/\
+      \   14 + 14 .png\n  OriginalData/testing/{images,segmentations}/      28 + 28 .png (ACC, C, Lung,\
+      \ PDAC)\n  OriginalData/testing/                              1 .tif\n  MouseOrganoids/training/{images,segmentations}/\
+      \   500 + 500 .png\n  MouseOrganoids/training/pre_augmented/{images,segmentations}/  11 + 11 .png\n\
+      \  MouseOrganoids/{validation,testing}/{images,segmentations}/    4 + 4 each\n  GemcitabineScreen/BF/\
+      \                    42 .tif (~40.6 MB)\n  GemcitabineScreen/PI/                    42 .tif\n  GemcitabineScreen/OrganoIDProcessed/\
+      \     42 _labeled.tif + 42 .gif\n"
+    n_files: 5395
+    listing_complete: true
+  sample:
+    urls:
+    - https://osf.io/download/69nr8/::OriginalData/testing/images/ACC4.png
+    - https://osf.io/download/69nr8/::OriginalData/testing/segmentations/ACC4.png
+    size_bytes: 344014
+    description: Test image ACC4 (adenoid cystic carcinoma organoids, 700x700) and its manual mask.
+  arrays:
+  - role: raw
+    path_pattern: '{OriginalData,MouseOrganoids}/*/images/*.png'
+    format: png
+    axes: yxs
+    shape:
+    - 700
+    - 700
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 97
+    - 204
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Grey images stored as RGB or RGBA (sampled RGB channels identical, so s holds grey
+      copies); training crops are 512x512 RGBA, ACC4 test image is 700x700 RGB.
+  - role: label
+    path_pattern: '{OriginalData,MouseOrganoids}/*/segmentations/*.png'
+    format: png
+    axes: yxs
+    shape:
+    - 700
+    - 700
+    - 4
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same file name in the sibling segmentations/ folder as in images/. Test masks are
+      black/white {0,255} RGBA with identical RGB and alpha 255; augmented training masks have interpolated
+      edge values (255 levels in the sampled crop); MouseOrganoids masks are 1-bit (mode 1). Sampled pairs
+      have equal height and width.
+  - role: raw
+    path_pattern: GemcitabineScreen/{BF,PI}/*.tif
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Brightfield and propidium iodide time-lapse per well position (XY007...). Not readable
+      by probe.py (deflate-compressed zip members).
+  - role: label
+    path_pattern: GemcitabineScreen/OrganoIDProcessed/*_labeled.tif
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    encoding: unknown
+    classes: null
+    alignment: unknown
+    alignment_notes: OrganoID model output (not manual), one per BF position, same stem plus _labeled.
+  notes: 'Listing: peek_archive central directory, 5395 members with exact sizes (listing.py counted the
+    zip as one 3,643,061,617-byte file; the URL has no .zip suffix, so it did not expand it). Probe: training
+    image 512x512x4 uint8 PNG (rgba). Sampled 548,199 bytes of PNG members with read_member + PIL: ACC4
+    image RGB 700x700 values 97-204; ACC4 mask RGBA {0,255}; a training mask has 255 levels (augmentation
+    interpolation); a MouseOrganoids mask is 1-bit. Values from a few samples only. GemcitabineScreen
+    TIFFs could not be probed (deflated members). Voxel size not found; checked: PNG headers, paper full
+    text (PMC9645660: only scale bars of 100 um in figures), OSF node metadata, OrganoID GitHub README.'
