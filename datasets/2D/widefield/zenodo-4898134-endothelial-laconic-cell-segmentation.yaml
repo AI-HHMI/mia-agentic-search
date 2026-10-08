@@ -3,9 +3,9 @@ id: zenodo-4898134-endothelial-laconic-cell-segmentation
 title: Human aortic endothelial cell ground truth dataset
 short_name: Endothelial cell segmentation (widefield)
 description: 434 fields of view of human aortic endothelial cells expressing the lactate sensor Laconic (GFP-channel
-  images) and stained with Hoechst (nuclei, 434 positions), with 434 ground-truth label images (PNG) used to train
-  a U-Net that splits pixels into nucleus, cytoplasm, cell boundary and background. Also ships demo images and
-  the trained network (network.mat).
+  images) and stained with Hoechst (nuclei, 434 positions), with 434 ground-truth label images (PNG) used to train a
+  U-Net that splits pixels into nucleus, cytoplasm, cell boundary and background. Also ships demo images and the trained
+  network (network.mat).
 landing_url: https://zenodo.org/records/4898134
 doi: 10.5281/zenodo.4898134
 repository: Zenodo
@@ -36,7 +36,7 @@ data:
   formats:
   - tiff
   - png
-  size_bytes: 2148562224
+  size_bytes: 3666072941
   n_items: 434
   access: open
   download_url: https://zenodo.org/api/records/4898134/files/ground%20truth_v2.zip/content
@@ -46,7 +46,7 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: png label images (gtruth_uint8/0001.png ...), one per GFP_original/NNNN.tif image
+  format: PNG label images gtruth_uint8/NNNN.png (uint8, 0 background, 1 border, 2 cell, 3 nuclei), one per GFP_original/NNNN.tif
   source: unknown
 ml:
   tasks:
@@ -65,18 +65,89 @@ provenance:
   - https://zenodo.org/api/records/4898134/files/ground%20truth_v2.zip/content
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22Single-cell+lactate+production+rate+as+a+measure+of+glycolysis+in+endothelial+cells%22&format=json&resultType=core&pageSize=3
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8433287/fullTextXML
-  confidence: 0.7
+  - https://raw.githubusercontent.com/wulab-code/STAR_methods/main/code_testing_new.m
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T19:22:00Z'
-notes: 'Zip listing (ground truth_v2.zip, 1738 files): GFP_original/ (434 tif), Hoechst_1/PosN/ (434 positions with
-  DAPI tif), gtruth_uint8/ (434 png) and readme.txt (not readable remotely: deflate64 compression). Paper (STAR Protocols
-  2021, open access via Europe PMC) says the network classifies pixels into nucleus, cytoplasm, cell boundary and
-  background, and that the ground-truth sample set is this deposit; the paper text does not describe how the
-  labels were generated beyond mentioning CellProfiler output on fixed samples, so annotations.source is unknown
-  and the exact class-to-pixel-value encoding is not confirmed. Pixel size not stated on the Zenodo page or in
-  the paper text (microscope: Olympus IX-71 epifluorescence, 10x Plan C Achromat NA 0.25). Modality widefield
-  is inferred from that epifluorescence microscope. Channels: the GFP-channel and Hoechst images per position.
-  Zenodo files also include demo_images.zip (1.5 GB, unlabeled) and network.mat (trained U-Net).'
+  last_checked: '2026-10-08T21:28:46Z'
+notes: 'Zip (ground truth_v2.zip): GFP_original/ 434 tif, Hoechst_1/Pos0..Pos433/ (Hoechst tif + Micro-Manager metadata.txt),
+  gtruth_uint8/ 434 png, readme.txt (''gtruth_uint8 contains the ground truth images with categorical labeling''). Class
+  ids from the authors'' code (classNames background, border, cell, nuclei = 0-3). Paper (STAR Protocols 2021): U-Net
+  semantic segmentation; does not say how the labels were made (troubleshooting mentions checking CellProfiler output
+  on fixed samples), so annotations.source is unknown. Pixel size not stated anywhere (Micro-Manager PixelSizeUm: 0;
+  Olympus IX-71, 10x/0.25, Prime95B camera). Modality widefield inferred from the epifluorescence microscope. Also on
+  Zenodo: demo_images.zip (1.5 GB, unlabeled) and network.mat. enricher: size is the full Zenodo listing (was the GT
+  zip only).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      ./                                   4 files   3.7 GB  .zip 2, .txt 1, .mat 1
+      ground truth_v2.zip/ (2.1 GB, 1738 members)
+        readme.txt
+        GFP_original/                    434 files  1.4 GB  0001..0434.tif
+        Hoechst_1/display_and_comments.txt
+        Hoechst_1/Pos#/  (x434 dirs)     868 files  1.4 GB  img_000000000_DAPI-1 GFP-2 TRITC-3_000.tif + metadata.txt
+        gtruth_uint8/                    434 files 60.6 MB  0001..0434.png
+      demo_images.zip/demo_images/       904 files  2.6 GB  .tif (unlabeled)
+      network.mat                                   28.7 MB
+      FigureED1a injection times.txt
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/4898134/files/ground%20truth_v2.zip::GFP_original/0001.tif
+    - https://zenodo.org/records/4898134/files/ground%20truth_v2.zip::gtruth_uint8/0001.png
+    size_bytes: 3239460
+    description: One GFP (Laconic) image and its 4-class ground-truth PNG.
+  arrays:
+  - role: raw
+    path_pattern: GFP_original/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1200
+    - 1200
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 590
+    - 25967
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: gtruth_uint8/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1200
+    - 1200
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 3
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: border
+    - id: 2
+      name: cell
+    - id: 3
+      name: nuclei
+    alignment: same-grid
+    alignment_notes: gtruth_uint8/NNNN.png pairs with GFP_original/NNNN.tif (same stem); both 1200x1200.
+  notes: 'Sample: GFP_original/0001.tif uint16 1200x1200, range 590-25967 (one sample); gtruth_uint8/0001.png values
+    {0,1,2,3} (counts 766907/121473/484027/67593). Class names/ids from the authors'' MATLAB code. Hoechst_1/PosK images
+    (uint16 1200x1200, ImageJ TIFF) are a second channel; Pos0..Pos433 vs GFP 0001..0434 suggests PosK ↔ K+1 but no doc
+    states it, so they are not listed as an array. Voxel size not found; checked: TIFF headers (ImageJ, no calibration),
+    Micro-Manager metadata.txt (PixelSizeUm 0), Zenodo API/description, readme.txt, paper full text, GitHub code. Zenodo
+    HEAD requests hung, so probes used range GETs only.'
