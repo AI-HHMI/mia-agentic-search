@@ -1,0 +1,126 @@
+schema_version: '1.2'
+id: figshare-25459174-lunghist700-lung-histology
+title: 'LungHist700: A Dataset of Histological Images for Deep Learning in Pulmonary Pathology'
+short_name: Lung H&E histology classes (LungHist700)
+description: 691 H&E-stained lung histology images (1200x1600 px, 20x or 40x) from 45 surgical patients, taken with a
+  microscope camera, labelled as normal lung, adenocarcinoma or squamous cell carcinoma, each tumour type further graded
+  as well, moderately or poorly differentiated (seven classes). An accompanying CSV links each image to its anonymized
+  patient ID.
+landing_url: https://figshare.com/articles/dataset/25459174
+doi: 10.6084/m9.figshare.25459174
+repository: Figshare
+accession: '25459174'
+authors:
+- Jey Diosdado
+- Pau Gilabert
+- Santiago Santi
+- Hector Borrego
+publications:
+- title: 'LungHist700: A dataset of histological images for deep learning in pulmonary pathology'
+  doi: 10.1038/s41597-024-03944-3
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC11455975/
+date_published: '2024-07-08'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: H&E-stained lung tissue (normal, adenocarcinoma, squamous cell carcinoma) from 45 surgical patients, Hospital
+    Clínico de Valladolid
+  labels_stains:
+  - hematoxylin and eosin
+data:
+  formats:
+  - jpeg
+  size_bytes: 670356405
+  n_items: 691
+  access: open
+  download_url: https://ndownloader.figshare.com/files/45206104
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  coverage: dense
+  format: seven-class image labels (per paper; patient-ID CSV alongside)
+  source: manual
+ml:
+  tasks:
+  - classification
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-08T20:22:30Z'
+  evidence_urls:
+  - https://api.figshare.com/v2/articles/25459174
+  - https://api.crossref.org/works/10.1038/s41597-024-03944-3
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11455975/fullTextXML
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: false
+  last_checked: '2026-10-08T21:47:11Z'
+notes: 'Figshare lists one file, LungHist700.rar (670 MB); a RAR cannot be listed with peek_archive, so the JPEG format,
+  691 images and the patient-ID CSV come from the paper (Data Records) and the figshare description. Classes (7): normal,
+  and adenocarcinoma or squamous cell carcinoma each with well, moderately and poorly differentiated grades. Images are
+  camera photos (Leica DM2000 with ICC50 W camera) of selected fields, not whole-slide scans; they come from surgical
+  patients, so normal areas are from cancer patients. Pixel size is not stated on the figshare page or in the paper.
+  The paper trains with an 80/10/10 patient-wise split, but no split is released as files that were seen. Classification
+  labels only, no pixel annotations. enricher: RAR block headers at the start of the archive show data/data.csv and data/images/aca_bd/aca_bd_20x_<n>.jpg
+  (class folder, magnification in the name).'
+technical:
+  method: metadata-only
+  size_source: file-listing
+  layout:
+    tree: |
+      ./                  1 file  670.4 MB  LungHist700.rar
+      LungHist700.rar (first RAR5 block headers only; members are compressed):
+        data/data.csv                        12,208 B (image -> patient ID, per paper)
+        data/images/aca_bd/aca_bd_20x_0.jpg   1,188,815 B
+        data/images/aca_bd/aca_bd_20x_1.jpg   1,188,870 B
+        data/images/aca_bd/aca_bd_20x_10.jpg  ...
+        data/images/<class>/<class>_<20x|40x>_<n>.jpg   691 images in total (paper)
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: data/images/*/*.jpg
+    format: jpeg
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: jpeg
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: data/data.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: Image-level class from the class folder name (data/images/<class>/, e.g. aca_bd); data.csv links
+      each image to its patient ID (paper, Data Records).
+  notes: 'The only file is LungHist700.rar (670,356,405 B, figshare file listing, so size is confirmed). Our tools cannot
+    list or read RAR members. A scratch script read the RAR5 block headers by range requests: first members data/data.csv
+    (12,208 B) and data/images/aca_bd/aca_bd_20x_{0,1,10,12}.jpg (0.9-1.4 MB), all compressed (method 3), so no image
+    header could be probed; a full header walk was stopped (parser lost sync). Paper (Sci Data 2024, Data Records): 691
+    JPEG images of 1200 x 1600 px at 20x or 40x, 7 classes, CSV with patient IDs. Orientation of 1200 x 1600 is not stated,
+    so shape is null. No usable sample: TensorSwitch can''t pull members out of a RAR. Voxel size not found; checked:
+    figshare description, paper full text (magnification only), RAR headers.'
