@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: figshare-7379186-brecahad-breast-histopathology
 title: 'BreCaHAD: A Dataset for Breast Cancer Histopathological Annotation and Diagnosis'
 short_name: Breast cancer H&E mitosis and nuclei points
-description: 162 H&E-stained breast cancer histopathology images (1360 x 1024 px, 8-bit RGB TIFF, 40x) from four malignant tumour types (ductal, lobular, mucinous, tubular carcinoma), with point annotations (centroid x and y relative to the image size, in JSON) for six classes - mitosis, apoptosis, tumor nuclei, non-tumor nuclei, tubule and non-tubule. The archive holds images, ground-truth JSON and display PNGs.
+description: 162 H&E-stained breast cancer histopathology images (1360 x 1024 px, 8-bit RGB TIFF, 40x)
+  from four malignant tumour types (ductal, lobular, mucinous, tubular carcinoma), with point annotations
+  (centroid x and y relative to the image size, in JSON) for six classes - mitosis, apoptosis, tumor nuclei,
+  non-tumor nuclei, tubule and non-tubule. The archive holds images, ground-truth JSON and display PNGs.
 landing_url: https://figshare.com/articles/dataset/BreCaHAD_A_Dataset_for_Breast_Cancer_Histopathological_Annotation_and_Diagnosis/7379186
 doi: 10.6084/m9.figshare.7379186.v3
 repository: Figshare
@@ -28,13 +31,14 @@ imaging:
   channels: 3
   organism:
   - Homo sapiens
-  sample: Archived surgical pathology breast tumour sections (4 um, formalin-fixed paraffin-embedded), Harris hematoxylin and eosin; Zeiss Axiophot with 40x oil objective and Spot Pursuit PR3440 camera
+  sample: Archived surgical pathology breast tumour sections (4 um, formalin-fixed paraffin-embedded),
+    Harris hematoxylin and eosin; Zeiss Axiophot with 40x oil objective and Spot Pursuit PR3440 camera
   labels_stains:
   - hematoxylin and eosin
 data:
   formats:
   - tiff
-  size_bytes: 1030647324
+  size_bytes: 1034977579
   n_items: 162
   access: open
   download_url: https://ndownloader.figshare.com/files/14062469
@@ -45,8 +49,9 @@ annotations:
   - points
   - classification
   coverage: dense
-  format: One JSON file per image with centroid points (x, y in [0, 1]) per class (mitosis, apoptosis, tumor, non_tumor, tubule, non_tubule); display PNGs in groundTruth_display
-  source: unknown
+  format: One JSON file per image with centroid points (x, y in [0, 1]) per class (mitosis, non_mitosis,
+    apoptosis, tumor, non_tumor, tubule, non_tubule); display PNGs in groundTruth_display
+  source: manual
 ml:
   tasks:
   - detection
@@ -64,10 +69,93 @@ provenance:
   - https://api.figshare.com/v2/articles/7379186
   - https://ndownloader.figshare.com/files/14062469
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6373078/fullTextXML
+  - https://figshare.com/articles/dataset/BreCaHAD_A_Dataset_for_Breast_Cancer_Histopathological_Annotation_and_Diagnosis/7379186
   confidence: 0.9
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T18:30:00Z'
-notes: 'Zip listing (peek_archive): 162 TIFF images, 162 annotation JSON files and 162 display PNGs, plus README and LICENSE. Pixel size 0.514 x 0.527 um at 40x and the microscope/camera come from the paper (Data description). The paper text read does not say who placed the annotations or how, so the source is unknown; annotation counts per class are in annotation_details.xlsx, not read. Only malignant cases.'
+  last_checked: '2026-10-08T18:13:14Z'
+notes: 'Zip listing (peek_archive): 162 TIFF images, 162 annotation JSON files and 162 display PNGs, plus
+  README and LICENSE. Pixel size 0.514 x 0.527 um at 40x and the microscope/camera come from the paper
+  (Data description). Paper: images ''annotated or marked by a pathologist''; annotation counts per class
+  are in annotation_details.xlsx, not read. Only malignant cases. enricher: source manual (was unknown,
+  paper text); size = all 5 figshare files. The zip''s LICENSE file is Apache-2.0 while figshare states
+  CC BY 4.0; spdx kept from figshare. Cases 1-6 are uint16 RGB TIFFs, not 8-bit as the paper says.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "original.png, annotated.png, annotation_details.xlsx, data.json (figshare article files)\n\
+      BreCaHAD.zip/\n  LICENSE, README.md\n  images/Case_<n>-<nn>.tif             162 files  689.8 MB\n\
+      \  groundTruth/Case_<n>-<nn>.json       162 files    1.7 MB\n  groundTruth_display/Case_<n>-<nn>.png\
+      \ 162 files  365.2 MB\n"
+    n_files: 5
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/14062469::images/Case_10-01.tif
+    - https://ndownloader.figshare.com/files/14062469::groundTruth/Case_10-01.json
+    size_bytes: 3045313
+    description: One RGB TIFF (Case_10-01) and its point-annotation JSON
+  arrays:
+  - role: raw
+    path_pattern: BreCaHAD.zip::images/Case_*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 1024
+    - 1360
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 21
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Plain single-page RGB TIFF (photometric 2, 3 samples per pixel, axes yxs). dtype
+      differs by case: Case_10-01 is uint8 (range 21-255), Case_1-01 is uint16 (range 1695-65535); by
+      file size (7.3-8.4 MB vs 1.9-3.1 MB) the 51 images of Cases 1-6 are uint16 and the 111 of Cases
+      7-17 uint8.'
+  - role: label
+    path_pattern: BreCaHAD.zip::groundTruth/Case_*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: points-table
+    classes:
+    - id: mitosis
+      name: mitosis
+    - id: non_mitosis
+      name: non-mitosis
+    - id: apoptosis
+      name: apoptosis
+    - id: tumor
+      name: tumor nuclei
+    - id: non_tumor
+      name: non-tumor nuclei
+    - id: tubule
+      name: tubule
+    - id: non_tubule
+      name: non-tubule
+    alignment: same-grid
+    alignment_notes: Same stem as the image (images/Case_10-01.tif <-> groundTruth/Case_10-01.json). Object
+      centroids as x, y in [0, 1], divided by image width and height (README, paper); multiply by 1360
+      and 1024 for pixels. The non_mitosis key appears in the JSON but not in the README's six classes.
+  notes: 'Listed the figshare article (5 files, 1,034,977,579 B exact) and the BreCaHAD.zip central directory
+    (488 members: 162 TIFF, 162 JSON, 162 PNG, README, LICENSE). Probed images/Case_10-01.tif (1024x1360x3
+    uint8 LZW, plain TIFF), images/Case_1-01.tif (1024x1360x3 uint16 LZW) and groundTruth_display/Case_10-01.png
+    (1024x1360x3 uint8). Sampled both TIFFs (10.7 MB): ranges 21-255 and 1695-65535, one sample each;
+    RGB samples not identical. Read groundTruth/Case_10-01.json: class keys mitosis, non_mitosis, apoptosis,
+    tumor, non_tumor, tubule, non_tubule. The raw array''s dtype is uint8 for Cases 7-17 and uint16 for
+    Cases 1-6 (from file sizes, one probe each); the paper says 8-bit. Voxel size 514 x 527 nm stated
+    in the paper. Direct links: the ndownloader zip and its members are usable by TensorSwitch (range
+    requests). annotation_details.xlsx not read (per-class counts). groundTruth_display PNGs are visualizations
+    only, not listed as an array.'
