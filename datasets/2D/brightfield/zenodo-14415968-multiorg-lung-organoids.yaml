@@ -7,7 +7,8 @@ landing_url: https://zenodo.org/records/14415968
 doi: 10.5281/zenodo.14415968
 repository: Zenodo
 accession: '14415968'
-authors: []
+authors:
+- Christina Bukas
 publications:
 - title: 'MultiOrg: A Multi-rater Organoid-detection Dataset'
   doi: 10.48550/arXiv.2410.14612
@@ -21,14 +22,14 @@ imaging:
     x: 1290
     y: 1290
     z: null
-  channels: null
+  channels: 1
   organism:
   - Mus musculus
   sample: Murine lung organoids (alveolar epithelial type II cells with a fibroblast line, some studies also with macrophages), LifeCellImagerObserver.Z1, 5x objective, stitched and max-projected
   labels_stains: []
 data:
   formats:
-  - tiff
+  - ome-tiff
   size_bytes: 17685389849
   n_items: 411
   access: open
@@ -39,7 +40,7 @@ annotations:
   types:
   - bounding-box
   coverage: dense
-  format: One JSON per image (image_N_t0_A.json) mapping object index to four corner points [x, y]; test images carry further label sets
+  format: One JSON per image mapping box id to four corner points (image_N_Annotator_A|B.json in train/, image_N_t0_A|B.json in test/; test0 label set only)
   source: mixed
 ml:
   tasks:
@@ -64,5 +65,73 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T12:26:16Z'
-notes: 'Zenodo record is a redistribution of the Kaggle release (christinabukas/mutliorg) and states CC BY 4.0, but the Croissant metadata inside the archive states CC BY-NC-SA 4.0 and the paper states no dataset license; the more restrictive terms may apply. Zenodo authors field is not named; see paper for authors. Annotation was pseudo-labels from napari-organoid-counter corrected manually by two annotators (hence source mixed). The zip has 411 TIFFs (about 43 MB each, 17.7 GB total) with one JSON of box corners per image; the testA1/testB1 label sets are only available via the Kaggle challenge leaderboard per the paper, so the Zenodo copy holds the train and test0 labels (split folders train/ and test/, subfolders Normal and Macros). Pixel size from paper Methods (1.29 um per pixel).'
+  last_checked: '2026-10-08T16:12:00Z'
+notes: 'Zenodo record is a redistribution of the Kaggle release (christinabukas/mutliorg) and states CC BY 4.0, but the Croissant metadata inside the archive states CC BY-NC-SA 4.0 and the paper states no dataset license; the more restrictive terms may apply. Zenodo creator: Christina Bukas (the uploader); see paper for all authors. Annotation was pseudo-labels from napari-organoid-counter corrected manually by two annotators (hence source mixed). The zip has 411 TIFFs (about 43 MB each, 17.7 GB total) with one JSON of box corners per image; the testA1/testB1 label sets are only available via the Kaggle challenge leaderboard per the paper, so the Zenodo copy holds the train and test0 labels (split folders train/ and test/, subfolders Normal and Macros). Pixel size from paper Methods (1.29 um per pixel). enricher: formats tiff -> ome-tiff, channels 1 (probed uint16 single-channel OME-TIFF); annotation file names corrected.'
+technical:
+  method: sample
+  inspected_at: '2026-10-08T16:12:00Z'
+  inspected_urls:
+  - https://zenodo.org/api/records/14415968
+  - https://zenodo.org/records/14415968/files/multiorg.zip::multiorg/dataset-metadata.json
+  - https://zenodo.org/records/14415968/files/multiorg.zip::multiorg/croissant_mutliorg_metadata.json
+  - https://zenodo.org/records/14415968/files/multiorg.zip::multiorg/train/Normal/Plate_13/image_0/image_0.tiff
+  - https://zenodo.org/records/14415968/files/multiorg.zip::multiorg/train/Normal/Plate_13/image_0/image_0_Annotator_A.json
+  bytes_downloaded: 29232776
+  size_source: file-listing
+  layout:
+    tree: |
+      ./                                    1 file, 17.7 GB
+        multiorg.zip                        833 members
+          multiorg/
+            dataset-metadata.json, croissant_mutliorg_metadata.json
+            train/Macros/Plate_#/image_#/   40 dirs   .tiff + _Annotator_A|B.json   1.7 GB
+            train/Normal/Plate_#/image_#/   316 dirs  .tiff + _Annotator_A|B.json   13.6 GB
+            test/Macros/Plate_#/image_#/    27 dirs   .tiff + _t0_A|B.json          1.2 GB
+            test/Normal/Plate_#/image_#/    28 dirs   .tiff + _t0_A|B.json          1.2 GB
+            (+4 .DS_Store files)
+    n_files: 834
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/14415968/files/multiorg.zip::multiorg/train/Normal/Plate_13/image_0/image_0.tiff
+    - https://zenodo.org/records/14415968/files/multiorg.zip::multiorg/train/Normal/Plate_13/image_0/image_0_Annotator_A.json
+    size_bytes: 29250290
+    description: Smallest training image (train/Normal/Plate_13/image_0, 5720x6384 uint16) and its box JSON (151 boxes, annotator A).
+  arrays:
+  - role: raw
+    path_pattern: multiorg.zip/multiorg/*/*/Plate_*/image_*/image_*.tiff
+    format: ome-tiff
+    axes: yx
+    shape:
+    - 5720
+    - 6384
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 23
+    - 4095
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: multiorg.zip/multiorg/*/*/Plate_*/image_*/image_*_*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    encoding: boxes-table
+    classes:
+    - id: null
+      name: organoid
+    alignment: same-grid
+    alignment_notes: 'The JSON sits next to its TIFF in image_N/ (image_N_Annotator_X.json in train, image_N_t0_X.json in test). Keys are box ids; each box is four corner points [row, col] (Kaggle description: x1 = min row, y1 = min col), in pixels of that TIFF.'
+  notes: 'Listed all 833 zip members with exact sizes (17,685,389,849 bytes). Probed and sampled the smallest image (train/Normal/Plate_13/image_0.tiff): OME-TIFF, BigTIFF, uint16, deflate, one page, 5720x6384 yx; OME physical size 1.29 x 1.29 um (z 100 um, a 2D placeholder), matching the paper and dataset-metadata.json. Values [23, 4095] in that one image, a 12-bit camera range saturated at 4095 (normalization not documented). The image sizes vary (TIFFs are 29-46 MB). Read one box JSON: 151 boxes. Only the test0 label set is in the archive. License conflict: Zenodo says CC BY 4.0, the Croissant/Kaggle metadata in the zip says CC BY-NC-SA 4.0.'
