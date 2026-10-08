@@ -1,6 +1,6 @@
 ---
 name: download-native
-description: Download a catalog record's sample unit (or chosen file sets) and write it into the miao layout (AI-HHMI/miao#13) without TensorSwitch, with tools/native.py. The agent inspects the files and settles their axes and transforms itself, then checks the result numerically (identity, pyramid, grid, label sanity, raw/label alignment against flips, transposes and shifts) and visually (it looks at overlay slices and judges whether the labels sit on the structures). Args are the record (path or id), optionally root=<folder> (default demo-native), name=<short dataset name>, label_class=<class>[,<class>...] (one per label array), organism=<NCBI name>, files=<url1|url2>;<url3|url4> (explicit crops instead of the sample unit), keep-source and dry-run. With `next` instead of a record, it runs unattended on its own downloads list.
+description: Download a catalog record's sample unit (or chosen file sets) and write it into the miao layout (AI-HHMI/miao#13) without TensorSwitch, with tools/native.py. The agent inspects the files and settles their axes, transforms and label classes itself (splitting multi-class labels into one folder per class when the mapping is documented), then checks the result numerically (identity, pyramid, grid, label sanity, raw/label alignment against flips, transposes and shifts) and visually (it looks at overlay slices and judges whether the labels sit on the structures). Args are the record (path or id), optionally root=<folder> (default demo-native), name=<short dataset name>, label_class=<class>[,<class>...] (for the label files the crop uses; N=<class> names record array N), organism=<NCBI name>, files=<url1|url2>;<url3|url4> (explicit crops instead of the sample unit), keep-source and dry-run. With `next` instead of a record, it runs unattended on its own downloads list.
 ---
 
 # download-native
@@ -46,12 +46,30 @@ TensorSwitch: **every array is written in canonical order** (`c, z, y, x` for ra
 channel; `z, y, x` for labels), so raw and labels always share axis order.
 
 ## 1. Plan
-Settle `label_class` (one per label array, in record order; miao#13 vocabulary `neurite`, `cell`, `nucleus`,
-`mitochondria`, `synapse`, `vesicle`, `myelin`, `blood_vessel`, or another short string the record states),
-`organism` (if the record lists several) and `name`. If the record doesn't settle the label class, **ask**.
+Settle `organism` (if the record lists several) and `name`. Label classes are needed only for the label files
+the crops actually use, not for every label array in the record:
 ```bash
-python tools/native.py plan <record.yaml> --root <root> --label-class <class> [--label-class …] --name <name> \
+python tools/native.py plan <record.yaml> --root <root> --name <name> [--label-class <class> | --label-class N=<class> …] \
     [--organism "<NCBI name>"] [--crop-files "<url1>|<url2>" …] --out <root>/staging/<id>-spec.json
+```
+`--label-class nucleus` goes to the used label arrays in record order; `N=nucleus` names record array N. Leave
+it out when unsure: `plan` then lists each label file that still needs a class, with `class_hints` (words of the
+file's path that the record's own text names, e.g. `data_golgi/…/x_label.tif` -> `golgi`). Set it per file:
+```bash
+python tools/native.py set <spec> crop-001.zarr 1 label_class=golgi reason="data_golgi/…/masks; description: 'training sets for Golgi'"
+```
+**How to settle a label class:** it must be the structure the record says is annotated, from the record's text
+(title, description, `annotations.format`, `classes`) **and** consistent with the file (its path, its values).
+Use the miao#13 vocabulary (`neurite`, `cell`, `nucleus`, `mitochondria`, `synapse`, `vesicle`, `myelin`,
+`blood_vessel`) when it fits, else the record's own short word (`golgi`, `granule`, `membrane`). A path pattern
+that covers several single-class files (`…_{nucleus,mitochondria}_mask.tif`) is not a multi-class label: each
+file gets its own class. If nothing ties the file to one structure, **ask**.
+
+**A label that really holds several classes** (one file, value 1 = mitochondria, 2 = ER, …): split it into one
+folder per class, if and only if the record (`classes`) or the dataset's documentation gives the value -> class
+mapping. Each class becomes a binary mask with its own label folder, checks and overlays:
+```bash
+python tools/native.py split <spec> crop-001.zarr 1 1=mitochondria 2=er 3,4=vesicle --reason "README: 1 mito, 2 ER, 3-4 vesicles"
 ```
 - `stop` not empty: report the reasons and end.
 - `notes`: a file that matches no record array needs its role: `set … <index> role=raw|label`.
@@ -152,9 +170,11 @@ python tools/download_queue.py --agent native next --root <root> --max-gb 5  # s
 ```
 - `"next": null`: report that and stop.
 - Otherwise steps 1–6 for that record, sample unit only, with these changes:
-  - **Names:** settle `label_class`, `organism` and `name` from the record alone. If the label class isn't
-    stated clearly (title, `annotations.format`, `classes`), or a label holds several classes, record `skipped`
-    and take the next record (skipping doesn't count as the run's dataset).
+  - **Names:** settle `organism`, `name` and each used label file's class from the record alone, as in step 1
+    (`class_hints` plus the record's text; label arrays the crop doesn't use don't matter). A real multi-class label
+    is split when the record or its documentation gives the value -> class mapping. Record `skipped` only when a
+    used label file can't be tied to one structure, or a multi-class label has no documented mapping, and take
+    the next record (skipping doesn't count as the run's dataset).
   - **Axes:** if the evidence in step 3 doesn't settle an axis, record `skipped` with what was ambiguous.
   - **Review:** `unsure` counts as failed.
 - **Record the outcome**, always, then save the list:

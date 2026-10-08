@@ -198,6 +198,9 @@ def prepare(spec_array, role):
         arr, axes = arr[np.newaxis], "z" + axes
         done.append("added a z axis of size 1")
     target = ("c" if "c" in axes else "") + "zyx"
+    if role == "label" and spec_array.get("values"):     # one class of a multi-class label (native.py split)
+        arr = np.isin(arr, spec_array["values"]).astype(np.uint8)
+        done.append(f"mask of values {spec_array['values']} ({spec_array.get('label_class')})")
     if role == "label":
         if "c" in axes:
             if arr.shape[axes.index("c")] != 1:

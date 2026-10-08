@@ -7,7 +7,8 @@ then check the result numerically and visually. Driven by the /download-native s
     python tools/native.py inspect <spec.json> [--crop C]            # what each staged file says about itself
     python tools/native.py set <spec.json> <crop> <raw|label|key|index> axes=zyx [dataset=…] [reader=…]
                                [dtype=uint16] [orientation=apply|ignore] [transform=flip:y | select:c:0]
-                               [role=raw|label] [clear=transforms] reason="…"
+                               [role=raw|label] [label_class=golgi] [clear=transforms] reason="…"
+    python tools/native.py split <spec.json> <crop> <label index> 1=mitochondria 2=er --reason "…"   # one folder per class
     python tools/native.py convert <spec.json> [--crop C]
     python tools/native.py check <spec.json> [--crop C]              # verify + overlay
     python tools/native.py review <spec.json> <crop> --verdict pass|fail|unsure --reason "…" --saw "…"
@@ -128,6 +129,40 @@ def _staged(staging, spec):
     return str(staging / "source" / unquote(_member(spec)).lstrip("/"))
 
 
+GENERIC_TOKENS = {"data", "train", "training", "val", "valid", "validation", "test", "mask", "masks", "label",
+                  "labels", "image", "images", "raw", "tif", "tiff", "small", "vol", "volume", "seg", "segmentation",
+                  "files", "file", "zip", "gt", "ground", "truth", "full", "annotation", "annotations", "source"}
+
+
+def class_hints(r, url, ra):
+    """Words in the file's path that the record's own text names (title, description, annotations.format,
+    short_name): candidates for its label class, e.g. data_golgi/…/x_label.tif -> golgi. Evidence, not a choice."""
+    text = " ".join(str(x) for x in (r.get("title"), r.get("short_name"), r.get("description"),
+                                     (r.get("annotations") or {}).get("format"), ra.get("classes"))).lower()
+    out = []
+    from urllib.parse import unquote
+    for tok in re.split(r"[^a-z0-9]+", unquote(_member(url)).lower()):
+        if len(tok) < 3 or tok in GENERIC_TOKENS or tok.isdigit() or tok in out:
+            continue
+        stem = tok[:-1] if tok.endswith("s") and len(tok) > 4 else tok
+        if re.search(rf"(?<![\w-]){re.escape(stem)}(s|es)?(?![\w-])", text):   # a word, not part of high_c1
+            out.append(stem if stem in LABEL_CLASSES else tok)
+    return out
+
+
+def set_label_class(e, r, ra, label_class, voxel, today):
+    """Label class -> the entry's miao#13 metadata and folder key ({provenance}-{class}-{info})."""
+    attrs = label_attrs(r, ra, label_class, voxel, today)
+    if e.get("values"):                                   # one class split out of a multi-class label: a mask
+        attrs["segmentation_type"] = "semantic"
+        attrs["review_needed"] = [x for x in attrs["review_needed"] if not x.startswith("segmentation_type")]
+        attrs["notes"] += f"; split out of a multi-class label: values {e['values']}"
+    info = {"instance": "instance", "semantic": "semantic", "point": "points"}.get(attrs["segmentation_type"], "labels")
+    e["label_class"] = label_class
+    e["key"] = f"{attrs['provenance'] or 'unknown'}-{slug(label_class).replace('-', '_')}-{info}"
+    e["attrs"] = attrs
+
+
 def cmd_plan(a):
     r = load_yaml(a.record)
     im = r.get("imaging") or {}
@@ -135,15 +170,20 @@ def cmd_plan(a):
     staging = root / "staging" / r["id"]
     stop = native_reasons(r) if not a.organism else [x for x in native_reasons(r) if "organism" not in x]
     arrays = (r.get("technical") or {}).get("arrays") or []
-    label_index = [i for i, x in enumerate(arrays) if x.get("role") == "label"]
-    if len(a.label_class) != len(label_index):
-        stop.append(f"{len(label_index)} label array(s) but {len(a.label_class)} --label-class given "
-                    f"(take each from the record; vocabulary: {', '.join(LABEL_CLASSES)})")
-    cls_by_index = dict(zip(label_index, a.label_class))
     org = a.organism or (im.get("organism") or ["unknown"])[0]
     name = slug(a.name or default_name(r))
     dataset_dir = root / "data" / f"{family(im.get('modality') or [])}-{ORGANISM_SHORT.get(org) or slug(org)}-{name}"
     file_sets = [s.split("|") for s in a.crop_files] or [list((r.get("technical") or {}).get("sample", {}).get("urls") or [])]
+    # a label class is needed only for the label arrays these crops actually use: "N=class" names record
+    # array N; plain values go, in record order, to the used label arrays not named that way
+    used = sorted({i for fs in file_sets for i in match_arrays(fs, arrays)
+                   if i is not None and arrays[i].get("role") == "label"})
+    named = {int(k): v for k, _, v in (x.partition("=") for x in a.label_class if re.match(r"^\d+=", x))}
+    plain = [x for x in a.label_class if not re.match(r"^\d+=", x)]
+    cls_by_index = {**dict(zip([i for i in used if i not in named], plain)), **named}
+    if len(plain) > len([i for i in used if i not in named]):
+        stop.append(f"{len(plain)} --label-class given for {len(used)} label array(s) used by the crops "
+                    f"(record arrays {used}); use N=class to name an array")
     spec = {"record": r["id"], "record_path": str(Path(a.record)), "scope": "files" if a.crop_files else "sample-unit",
             "dataset_dir": str(dataset_dir), "staging": str(staging), "crops": [], "notes": [], "review": [],
             "stop": stop}
@@ -162,13 +202,16 @@ def cmd_plan(a):
                      "record_axes": ra.get("axes"), "record_shape": ra.get("shape"), "record_dtype": ra.get("dtype"),
                      "reader": None, "dataset": None, "axes": None, "transforms": [], "orientation": "apply"}
                 if ra.get("role") == "label":
-                    attrs = label_attrs(r, ra, cls_by_index[idx], voxel, today)
-                    info = {"instance": "instance", "semantic": "semantic", "point": "points"}.get(
-                        attrs["segmentation_type"], "labels")
-                    e["key"] = f"{attrs['provenance'] or 'unknown'}-{slug(cls_by_index[idx]).replace('-', '_')}-{info}"
-                    e["attrs"] = attrs
-                    spec["review"] += [f"{e['key']}: {x}" for x in attrs["review_needed"]
-                                       if f"{e['key']}: {x}" not in spec["review"]]
+                    e["class_hints"] = class_hints(r, u, ra)
+                    if cls_by_index.get(idx):
+                        set_label_class(e, r, ra, cls_by_index[idx], voxel, today)
+                        spec["review"] += [f"{e['key']}: {x}" for x in e["attrs"]["review_needed"]
+                                           if f"{e['key']}: {x}" not in spec["review"]]
+                    else:
+                        e["label_class"], e["key"] = None, None
+                        spec["notes"].append(f"{crop.name}: {_member(u)} (record array {idx}) needs a label class: "
+                                             f"set {crop.name} <index> label_class=… reason=…; hints from the file "
+                                             f"path and the record text: {e['class_hints'] or 'none'}")
                 if idx is None:
                     spec["notes"].append(f"{crop.name}: {_member(u)} matches no single record array: set its role")
                 entries.append(e)
@@ -325,6 +368,9 @@ def cmd_set(a):
     for k, v in kv.items():
         if k in ("axes", "reader", "dataset", "dtype", "role"):
             e[k] = v or None
+            if k == "role" and v == "label" and not e.get("key"):
+                e.setdefault("label_class", None)
+                e.setdefault("key", None)
         elif k == "orientation":
             if v not in ("apply", "ignore"):
                 sys.exit("orientation=apply|ignore")
@@ -341,15 +387,63 @@ def cmd_set(a):
             e["transforms"].append(t)
         elif k == "clear" and v == "transforms":
             e["transforms"] = []
+        elif k == "label_class":
+            if not reason:
+                sys.exit("label_class needs reason=… (where the record or the file names say what is annotated)")
+            if e["role"] != "label":
+                sys.exit("label_class is for label arrays (set role=label first)")
+            r, ra = _record_array(spec, e)
+            set_label_class(e, r, ra, v, spec["voxel_size_nm"], datetime.date.today().isoformat())
         else:
             sys.exit(f"unknown setting {k!r}")
         changes[k] = v
+    _log(c, e, changes, reason)
+    _save(spec, a.spec)
+    print(json.dumps({"crop": Path(c["crop"]).name, "array": c["arrays"].index(e), **{k: e.get(k) for k in
+                      ("role", "label_class", "key", "axes", "reader", "dataset", "dtype", "orientation",
+                       "values", "transforms")}}))
+
+
+def _record_array(spec, e):
+    r = load_yaml(spec["record_path"])
+    arrays = (r.get("technical") or {}).get("arrays") or []
+    return r, (arrays[e["record_array"]] if e.get("record_array") is not None else {})
+
+
+def _log(c, e, changes, reason):
     c["decisions"].append({"array": c["arrays"].index(e), "changes": changes, "reason": reason,
                            "at": datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%dT%H:%M:%SZ")})
     c["manifest_entry"]["labels"] = [x["key"] for x in c["arrays"] if x["role"] == "label" and x.get("key")]
+
+
+def cmd_split(a):
+    """One multi-class label file -> one label entry per class (a mask of the given values), each written
+    to its own labels/ folder. The value -> class mapping must come from the record or the dataset's docs."""
+    spec = _load(a.spec)
+    c = _crops(spec, a.crop)[0]
+    e = c["arrays"][int(a.index)]
+    if e["role"] != "label":
+        sys.exit(f"array {a.index} is not a label")
+    if not a.reason:
+        sys.exit("split needs --reason (where the value -> class mapping is documented)")
+    groups = {}
+    for m in a.mapping:
+        val, _, cls = m.partition("=")
+        if not cls or not all(x.strip().lstrip("-").isdigit() for x in val.split(",")):
+            sys.exit(f"{m!r}: use VALUE=class or VALUE,VALUE=class")
+        groups.setdefault(cls, []).extend(int(x) for x in val.split(","))
+    r, ra = _record_array(spec, e)
+    pos = c["arrays"].index(e)
+    new = []
+    for cls, vals in groups.items():
+        x = {**{k: v for k, v in e.items() if k not in ("key", "attrs", "label_class")}, "values": sorted(vals)}
+        set_label_class(x, r, ra, cls, spec["voxel_size_nm"], datetime.date.today().isoformat())
+        new.append(x)
+    c["arrays"][pos:pos + 1] = new
+    _log(c, new[0], {"split": {cls: vals for cls, vals in groups.items()}}, a.reason)
     _save(spec, a.spec)
-    print(json.dumps({"crop": Path(c["crop"]).name, "array": c["arrays"].index(e), **{k: e.get(k) for k in
-                      ("role", "axes", "reader", "dataset", "dtype", "orientation", "transforms")}}))
+    print(json.dumps({"crop": Path(c["crop"]).name, "split": [{"index": pos + i, "key": x["key"], "values": x["values"]}
+                                                              for i, x in enumerate(new)]}))
 
 
 # ---------- convert / check ----------
@@ -362,6 +456,10 @@ def cmd_convert(a):
         labels = [e for e in c["arrays"] if e["role"] == "label"]
         if len(raws) != 1 or any(e["role"] not in ("raw", "label") for e in c["arrays"]):
             sys.exit(f"{crop.name}: needs exactly one raw and every array's role set")
+        if missing := [c["arrays"].index(e) for e in labels if not e.get("key")]:
+            sys.exit(f"{crop.name}: label array(s) {missing} have no label class (set … label_class=… reason=…)")
+        if len({e["key"] for e in labels}) != len(labels):
+            sys.exit(f"{crop.name}: two labels would share the folder name {[e['key'] for e in labels]}")
         if crop.exists():
             shutil.rmtree(crop)                     # a crop is always written whole
         report = {"crop": str(crop), "converter": "tools/native.py", "arrays": []}
@@ -475,6 +573,12 @@ def main():
     q.add_argument("crop")
     q.add_argument("array")
     q.add_argument("changes", nargs="+")
+    q = sub.add_parser("split")
+    q.add_argument("spec")
+    q.add_argument("crop")
+    q.add_argument("index", help="the label's index (from inspect)")
+    q.add_argument("mapping", nargs="+", help="VALUE=class or VALUE,VALUE=class, from the record or its docs")
+    q.add_argument("--reason", required=True)
     q = sub.add_parser("review")
     q.add_argument("spec")
     q.add_argument("crop")
@@ -487,7 +591,7 @@ def main():
     q.add_argument("--summary-out")
     a = ap.parse_args()
     {"plan": cmd_plan, "fetch": cmd_fetch, "inspect": cmd_inspect, "set": cmd_set, "convert": cmd_convert,
-     "check": cmd_check, "review": cmd_review, "finalize": cmd_finalize}[a.cmd](a)
+     "check": cmd_check, "split": cmd_split, "review": cmd_review, "finalize": cmd_finalize}[a.cmd](a)
 
 
 if __name__ == "__main__":
