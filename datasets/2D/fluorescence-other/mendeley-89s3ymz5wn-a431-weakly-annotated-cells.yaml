@@ -2,10 +2,9 @@ schema_version: '1.2'
 id: mendeley-89s3ymz5wn-a431-weakly-annotated-cells
 title: Weakly-annotated images of highly clustered A431 cell
 short_name: A431 cells, weak point labels (fluorescence)
-description: '525 fluorescence images (512 x 512) of human squamous-cell carcinoma
-  A431 cells: 500 training images with image-level foreground segmentation and nucleus
-  point locations derived from a nuclei counter-stain, and 25 test images from a different
-  experiment with manually drawn single-cell segmentation masks.'
+description: '525 fluorescence images (512 x 512) of human squamous-cell carcinoma A431 cells: 500 training
+  images with image-level foreground segmentation and nucleus point locations derived from a nuclei counter-stain,
+  and 25 test images from a different experiment with manually drawn single-cell segmentation masks.'
 landing_url: https://data.mendeley.com/datasets/89s3ymz5wn
 doi: 10.17632/89s3ymz5wn.1
 repository: other
@@ -44,8 +43,7 @@ annotations:
   - points
   - semantic-segmentation
   coverage: partial
-  format: TIFF masks (masks_NNNN.tif beside img_NNNN.tif) and train.json with point
-    locations
+  format: TIFF masks (masks_NNNN.tif beside img_NNNN.tif) and train.json with point locations
   source: mixed
 ml:
   tasks:
@@ -71,14 +69,102 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T21:49:04Z'
-notes: 'Single zip (243 MB) listed with peek_archive: train/ 500 img_NNNN.tif + 500
-  masks_NNNN.tif, test/ 25 img + 25 masks, and train.json (1.5 MB, not opened; the
-  arXiv paper says the training point labels came from blob detection on the nuclei
-  counter-stain). Per the paper and Mendeley text the training masks are weak image-level
-  segmentations made with graph-cut software, while the 25 test masks are manual single-cell
-  segmentations from a different experiment, so full instance labels exist only for
-  the test split. Which TIFF masks hold instances vs foreground was not checked in
-  the files. Microscope, objective, bit depth and pixel size not stated on the page
-  or in the arXiv paper; the paper gives 512 x 512 pixel images. Sources checked:
-  Mendeley page, API, zip listing, arXiv 2304.10671 (journal version is TMI 2023).'
+  last_checked: '2026-10-08T23:39:00Z'
+notes: 'Single zip (243 MB) listed with peek_archive: train/ 500 img_NNNN.tif + 500 masks_NNNN.tif, test/
+  25 img + 25 masks, and train.json (1.5 MB, not opened; the arXiv paper says the training point labels
+  came from blob detection on the nuclei counter-stain). Per the paper and Mendeley text the training
+  masks are weak image-level segmentations made with graph-cut software, while the 25 test masks are manual
+  single-cell segmentations from a different experiment, so full instance labels exist only for the test
+  split. enricher: train masks are RGB {0,255} foreground, test masks int16 instance ids (0-305), train.json
+  lists nucleus point locations per image. Microscope, objective, bit depth and pixel size not stated
+  on the page or in the arXiv paper; the paper gives 512 x 512 pixel images. Sources checked: Mendeley
+  page, API, zip listing, arXiv 2304.10671 (journal version is TMI 2023).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "A431 zip (243,004,748 B, 1051 members)\n  train/  img_NNNN.tif (500) + masks_NNNN.tif (500)\n\
+      \  test/   img_NNNN.tif (25) + masks_NNNN.tif (25)\n  train.json   500 entries: img_id, mask_file,\
+      \ locations [[y?, x?], ...]\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://prod-dcd-datasets-public-files-eu-west-1.s3.eu-west-1.amazonaws.com/96d6f730-81f7-4876-85ac-bbab003c5ea9::test/img_0001.tif
+    - https://prod-dcd-datasets-public-files-eu-west-1.s3.eu-west-1.amazonaws.com/96d6f730-81f7-4876-85ac-bbab003c5ea9::test/masks_0001.tif
+    size_bytes: 1049078
+    description: Test image 0001 and its manual instance mask.
+  arrays:
+  - role: raw
+    path_pattern: '{train,test}/img_*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 4222
+    - 34864
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ TIFF, one channel; no calibration (ImageJ unit empty).
+  - role: label
+    path_pattern: train/masks_*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Weak image-level foreground (graph-cut), stored as RGB {0,255}. Same index: <split>/img_NNNN.tif
+      <-> <split>/masks_NNNN.tif (512x512); train.json entries give img_id, mask_file and locations.'
+  - role: label
+    path_pattern: test/masks_*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: int16
+    compression: none
+    value_range:
+    - 0
+    - 305
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Manual single-cell masks. Same index: <split>/img_NNNN.tif <-> <split>/masks_NNNN.tif
+      (512x512); train.json entries give img_id, mask_file and locations.'
+  - role: label
+    path_pattern: train.json
+    format: json
+    axes: null
+    shape:
+    - 500
+    - 3
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: points-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: Per-image nucleus locations (pixel coordinates; order of the two coordinates not
+      stated).
+  notes: 'Listing: Mendeley file API (1 zip, exact size) + zip index (1051 members). Samples (3.9 MB):
+    train img/mask 0000, test img/mask 0001, train.json. Value ranges from these samples. The bucket answered
+    range requests with intermittent HTTP 404s; retries succeeded. Voxel size not found; checked: TIFF
+    headers (ImageJ, unit empty), Mendeley description, arXiv 2304.10671 (harvest).'
