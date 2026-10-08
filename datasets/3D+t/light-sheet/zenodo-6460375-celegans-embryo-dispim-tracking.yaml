@@ -1,11 +1,12 @@
 schema_version: '1.2'
 id: zenodo-6460375-celegans-embryo-dispim-tracking
-title: 3D+time nuclei tracking dataset of diSPIM lightsheet fluorescence microscopy time series of C. elegans embryos
+title: 3D+time nuclei tracking dataset of diSPIM lightsheet fluorescence microscopy time series of C.
+  elegans embryos
 short_name: C. elegans embryo nuclei tracking (diSPIM)
-description: Three fused and deconvolved diSPIM light-sheet time series of C. elegans embryos (350-400 frames,
-  1 min interval, 0.1625 um isotropic voxels), each with curated nuclei tracks and lineage trees (StarryNite,
-  MaMuT XML and CSV) tracked for at least 330 frames, plus a rough 2D foreground mask per sample. Used to
-  develop a weakly-supervised tracking method for whole-embryo C. elegans lineages.
+description: Three fused and deconvolved diSPIM light-sheet time series of C. elegans embryos (350-400
+  frames, 1 min interval, 0.1625 um isotropic voxels), each with curated nuclei tracks and lineage trees
+  (StarryNite, MaMuT XML and CSV) tracked for at least 330 frames, plus a rough 2D foreground mask per
+  sample. Used to develop a weakly-supervised tracking method for whole-embryo C. elegans lineages.
 landing_url: https://zenodo.org/records/6460375
 doi: 10.5281/zenodo.6460375
 repository: Zenodo
@@ -39,7 +40,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 27046236359
+  size_bytes: 27046239801
   n_items: 1150
   access: open
   download_url: https://zenodo.org/api/records/6460375/files/nih_ls.zip/content
@@ -50,8 +51,8 @@ annotations:
   - tracking
   - points
   coverage: dense
-  format: 'per-sample tracks/nuclei StarryNite files (one per frame), *_mamut.xml (MaMuT), CSV copies of the MaMuT
-    tracks, and a rough polygon-shaped 2D binary foreground mask'
+  format: per-sample tracks/nuclei StarryNite files (one per frame), *_mamut.xml (MaMuT), CSV copies of
+    the MaMuT tracks, and a rough polygon-shaped 2D binary foreground mask
   source: proofread
 ml:
   tasks:
@@ -74,12 +75,83 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T06:24:27Z'
-notes: 'nih_ls.zip (27.0 GB, 2237 members) listed with peek_archive: 1150 .tif (one 3D uint8 file per frame, per the
-  README), 1072 extension-less StarryNite nuclei files, 6 MaMuT .xml, 6 .txt, 3 .hdf. n_items counts the TIFF frames.
-  Voxel size, frame rate, sample sizes, tracking procedure (StarryNite + AceTree, manual curation with quality controls)
-  and formats come from the Zenodo README. Tracks are only reliable for the first ~270 frames (embryo twitching later);
-  the README says later frames should be used with caution. The MICCAI 2022 paper (Hirsch et al.) was not found in
-  Europe PMC and was not read; the Nature 2021 paper full text was read via Europe PMC but its Data availability
-  section was not checked for this specific release, and it does not describe the fluorescent label of these three
-  embryos (strain/marker not confirmed, so labels_stains is empty). Number of annotated nuclei not stated.'
+  last_checked: '2026-10-08T06:43:40Z'
+notes: 'nih_ls.zip (27.0 GB, 2237 members) listed with peek_archive: 1150 .tif (one 3D uint8 file per
+  frame, per the README), 1072 extension-less StarryNite nuclei files, 6 MaMuT .xml, 6 .txt, 3 .hdf. n_items
+  counts the TIFF frames. Voxel size, frame rate, sample sizes, tracking procedure (StarryNite + AceTree,
+  manual curation with quality controls) and formats come from the Zenodo README. Tracks are only reliable
+  for the first ~270 frames (embryo twitching later); the README says later frames should be used with
+  caution. The MICCAI 2022 paper (Hirsch et al.) was not found in Europe PMC and was not read; the Nature
+  2021 paper (read via Europe PMC) does not describe the fluorescent label of these three embryos (strain/marker
+  not confirmed, so labels_stains is empty). Number of annotated nuclei not stated. enricher: size_bytes
+  = Zenodo listing (zip + README; was the zip alone).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "README.md\nnih_ls.zip   27,046,236,359 B (2,237 members)\n  nih-ls/nih_diSPIM_deconv_{1,2,3}/\n\
+      \    images/nih_diSPIM_deconv_<s>_t<NNN>.tif     1,150 in total (one 3D uint8 stack per frame) \
+      \ 26.9 GB\n    tracks/tracks_mamut.xml, tracks_polar_bodies*.xml, *.txt (CSV), *.hdf   15 files\
+      \  95.5 MB\n    tracks/nuclei/t<NNN>-nuclei                 1,069 StarryNite files (one per frame)\n\
+      \    tracks/parameters/<sample>-parameters\n2 files, 27,046,239,801 B\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/6460375/files/nih_ls.zip::nih-ls/nih_diSPIM_deconv_1/images/nih_diSPIM_deconv_1_t112.tif
+    - https://zenodo.org/records/6460375/files/nih_ls.zip::nih-ls/nih_diSPIM_deconv_1/tracks/nuclei/t112-nuclei
+    size_bytes: null
+    description: One frame (sample 1, t112, 240x244x410) and its StarryNite nuclei file (112 rows).
+  arrays:
+  - role: raw
+    path_pattern: nih_ls.zip::nih-ls/nih_diSPIM_deconv_*/images/*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 240
+    - 244
+    - 410
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One ImageJ z-stack per time point; frame index in the file name (t<NNN>). Shape differs
+      per sample.
+  - role: label
+    path_pattern: nih_ls.zip::nih-ls/nih_diSPIM_deconv_*/tracks/nuclei/t*-nuclei
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: tracks-table
+    classes: null
+    alignment: unknown
+    alignment_notes: StarryNite nuclei file per frame (frame numbering starts at 1 per README); comma-separated
+      rows with id, valid flag, predecessor/successor, x, y, z, diameter and lineage name (e.g. EMS, ABp);
+      t112-nuclei has 112 rows. Pairs with images/..._t112.tif; coordinate scaling not stated.
+  - role: label
+    path_pattern: nih_ls.zip::nih-ls/nih_diSPIM_deconv_*/tracks/*.xml
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: tracks-table
+    classes: null
+    alignment: unknown
+    alignment_notes: MaMuT XML (frame numbering from 0 per README); CSV copies as .txt in the same folder.
+  notes: 'listing.py (Zenodo, --expand-zips): complete, exact sizes. probe.py: images/nih_diSPIM_deconv_1_t112.tif
+    ImageJ stack, 240 pages of 244x410, uint8, uncompressed, tiff_layout imagej, axes zyx; no calibration
+    in the header (voxel size from the README). sample.py: same file 0..255, mean 4.7, 54 values (one
+    frame). Nuclei file read with peek_archive --cat (112 lines); column meaning inferred from StarryNite
+    rows (lineage names), not documented in the README. The rough 2D foreground mask named in the README
+    was not identified among the members (.hdf files are tiny).'
