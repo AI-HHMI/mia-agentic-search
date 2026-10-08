@@ -1,0 +1,149 @@
+schema_version: '1.2'
+id: figshare-24968940-rat-pulmonary-vessels-he-masks
+title: Microscopy Image Dataset for Deep Learning-Based Quantitative Assessment of Pulmonary Vascular Changes
+short_name: Rat pulmonary vessel H&E with masks (brightfield)
+description: 609 H&E-stained microphotographs of rat pulmonary artery branch vessels (pulmonary hypertension models)
+  with expert-outlined vessel and lumen contours, binary masks and vessel measurements.
+landing_url: https://figshare.com/articles/dataset/24968940
+doi: 10.6084/m9.figshare.24968940.v5
+repository: Figshare
+accession: '24968940'
+authors:
+- Aleksandr Sinitca
+- Asya Lyanova
+- Dmitrii Kaplun
+- Hassan Hassan
+- Alexander Krasichkov
+- Kseniia Sanarova
+- Leonid Shilenko
+- Elizaveta Sidorova
+- Anna Akhmetova
+- Dariya Vaulina
+- Andrei A. Karpov
+publications:
+- title: Microscopy Image Dataset for Deep Learning-Based Quantitative Assessment of Pulmonary Vascular Changes
+  doi: 10.1038/s41597-024-03473-z
+  url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11180164/fullTextXML
+date_published: '2024-04-25'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Rattus norvegicus
+  sample: Lung sections (3-5 um) of male Wistar rats with CTEPH or monocrotaline-induced pulmonary hypertension;
+    Nikon Eclipse Ni-U microscope, x5 to x40
+  labels_stains:
+  - hematoxylin
+  - eosin
+data:
+  formats:
+  - png
+  size_bytes: 6318326806
+  n_items: 609
+  access: open
+  download_url: https://ndownloader.figshare.com/files/45585957
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: PNG binary masks (masks.zip, 609 files), plus expert outline overlays and measurements in BASE_20240410.xlsx
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-08T14:36:09Z'
+  evidence_urls:
+  - https://api.figshare.com/v2/articles/24968940
+  - https://ndownloader.figshare.com/files/45580221
+  - https://ndownloader.figshare.com/files/45585957
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11180164/fullTextXML
+  confidence: 0.85
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T15:01:13Z'
+notes: 'Five files: images.zip (609 PNG, 3.0 GB), masks.zip (609 PNG), blended.zip and ''Images with outline.zip''
+  (overlays), BASE_20240410.xlsx (measurements). Pixel size (paper Data Records): 0.34 um/px for all studies except
+  the CTEPH model, which also has 0.68 um/px; enricher: voxel_size_nm set to null (was 340) because the sub-sets
+  differ and neither the file names nor BASE_20240410.xlsx say which images are 0.68 um/px. Magnification x5-x40;
+  microscope Nikon Eclipse Ni-U. The paper says the baseline code is at gitlab.com/digiratory/biomedimaging/pcv-dataset;
+  no train/val split in the data files. size_bytes is the sum of the five files.'
+technical:
+  method: sample
+  inspected_at: '2026-10-08T15:01:13Z'
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  5 files, 6,318,326,806 B
+        images.zip                3,004,447,676 B   images/<name>.png   609
+        masks.zip                     2,892,578 B   masks/<name>.png    609 (same names as images/)
+        blended.zip               2,761,999,557 B   image/mask overlays
+        Images with outline.zip     548,910,698 B   images with expert outlines
+        BASE_20240410.xlsx               76,297 B   per-vessel measurements (diameters, areas, hypertrophy index)
+    n_files: 5
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/45585957::images/JK03_3004_AA3_7.3.png
+    - https://ndownloader.figshare.com/files/45580221::masks/JK03_3004_AA3_7.3.png
+    size_bytes: 2021155
+    description: The smallest ASCII-named image and its mask (645x1802).
+  arrays:
+  - role: raw
+    path_pattern: images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 645
+    - 1802
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: masks/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 645
+    - 1802
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: masks/<name>.png pairs with images/<name>.png (all 609 names match). Masks are binary {0, 255}
+      stored as RGB with R = G = B (samples identical, so s is grey).
+  notes: 'listing.py on the five figshare files (API file list): 6,318,326,806 B exact (= size_bytes); zip members
+    read with peek_archive: images.zip and masks.zip each hold 609 PNGs with identical names. probe.py: image and
+    mask JK03_3004_AA3_7.3.png are RGB PNG 645x1802x3 uint8; image sizes in images.zip range ~2 to 8.6 MB, so shape
+    varies. Measured (one pair, read by range from the zips, 2,018,627 B): image [0, 255], mean 196; mask values
+    exactly {0, 255}, 12% foreground, R = G = B. Which structure the mask marks (whole vessel or lumen) is not stated
+    in the files read. tools/sample.py could not open the ::member specs because the ndownloader URLs do not end
+    in .zip; read_member from tools/peek_archive.py was used instead. Voxel size: see notes (mixed 0.34 / 0.68 um/px,
+    null).'
