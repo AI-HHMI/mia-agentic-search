@@ -72,7 +72,7 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T20:00:00Z'
+  last_checked: '2026-10-08T21:05:00Z'
 notes: 'The Hugging Face copy (pytc/NucExM, created 2023-05-02, MIT in its card front matter) holds NucExM.zip with four HDF5
   files (vol1_image 857 MB, vol1_label 39 MB, vol2_image 840 MB, vol2_label 35 MB), listed with peek_archive. The IEEE DataPort
   page for the same dataset (DOI 10.21227/48b7-s821, created 2022-08-06, authors, volume size, nucleus counts, 0.325 x
@@ -80,3 +80,60 @@ notes: 'The Hugging Face copy (pytc/NucExM, created 2023-05-02, MIT in its card 
   the HF card says MIT. voxel_size_nm is the stated effective size of 0.046 x 0.046 x 0.357 um after 7x expansion, taken from
   the IEEE page, not from the file headers. No paper is listed on either page, so none is cited. The NucExM_Readme.md
   mentioned on IEEE is not in the HF zip.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      NucExM.zip (1.74 GB; 1.77 GB uncompressed)
+        NucExM/vol1_image.h5  856.7 MB
+        NucExM/vol1_label.h5   38.8 MB
+        NucExM/vol2_image.h5  840.3 MB
+        NucExM/vol2_label.h5   34.7 MB
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/pytc/NucExM/resolve/main/NucExM.zip::NucExM/vol2_image.h5
+    - https://huggingface.co/datasets/pytc/NucExM/resolve/main/NucExM.zip::NucExM/vol2_label.h5
+    size_bytes: 875067551
+    description: Volume 2, image and instance labels (the smallest pair; the image member alone is 840 MB)
+  arrays:
+  - role: raw
+    path_pattern: NucExM.zip/NucExM/vol[12]_image.h5
+    format: hdf5
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: vol<N>_image.h5 pairs with vol<N>_label.h5.
+  - role: label
+    path_pattern: NucExM.zip/NucExM/vol[12]_label.h5 (main)
+    format: hdf5
+    axes: zyx
+    shape:
+    - 255
+    - 2048
+    - 2048
+    shape_varies: false
+    dtype: uint16
+    compression: gzip
+    value_range:
+    - 0
+    - 9074
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same 2048x2048x255 volume as the image per the IEEE DataPort page; label shape matches it.
+  notes: 'Listed the zip (4 HDF5 members, exact sizes). The members are deflate-compressed inside the zip, so tools/probe.py
+    cannot read HDF5 headers by range. Read vol2_label.h5 whole (19.9 MB compressed) with a small fsspec+zipfile+h5py
+    script: one dataset main, (255, 2048, 2048) uint16, gzip, chunks (8, 64, 128), no attributes; values 0-9074, 8,837
+    unique (about 8,800 nuclei, matching the docs), so instance ids. Axes zyx from the shape against the stated
+    2048x2048x255 volume (no axis attributes). The raw vol*_image.h5 members (840-857 MB) exceed the 500 MB sample budget,
+    and a partial decompression of the first 4 MB did not reach the HDF5 object index, so the raw dataset name, dtype and
+    compression are unknown. Voxel size is the record value (IEEE DataPort, effective size after ~7x expansion); the
+    label file carries no resolution attributes.'
