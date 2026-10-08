@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: hf-emulated-inc-cell-seg-overlap-bacteria
 title: Cell segmentation with overlapping cells (phase-contrast bacteria)
 short_name: Overlapping rod bacteria masks (phase-contrast)
-description: 25 phase-contrast images (2056x2056, 16-bit) of rod-shaped bacteria whose cells cross and overlap heavily; the 20
-  training images come with 16-bit instance label masks (top cell wins in overlaps), the 5 test images have no public masks.
+description: 25 phase-contrast images (2056x2056, 16-bit) of rod-shaped bacteria whose cells cross and overlap heavily;
+  the 20 training images come with 16-bit instance label masks (top cell wins in overlaps), the 5 test images have
+  no public masks.
 landing_url: https://huggingface.co/datasets/Emulated-Inc/cell-seg-overlap
 doi: null
 repository: HuggingFace
@@ -17,7 +18,7 @@ imaging:
   - phase-contrast
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism: []
   sample: rod-shaped bacteria with heavy cell crossing and overlap
   labels_stains: []
@@ -59,9 +60,71 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T07:45:42Z'
-notes: 'Hugging Face repo, 48 files, 380 MB: data/train/images + data/train/masks (20 pairs), data/test/images (5, masks withheld),
-  data/manifest.json (per-image cell counts, about 600-1300 cells per image). Headers read for one image and one mask: both uint16,
-  2056x2056, uncompressed, single page. The card does not say whether the images are real micrographs or simulated, which species,
-  microscope, magnification, pixel size, or how the masks were made; the card has no paper, so those are unknown. n_items counts all
-  25 images; only the 20 training images have public masks.'
+  last_checked: '2026-10-08T08:50:00Z'
+notes: 'Hugging Face repo, 48 files, 380 MB: data/train/images + data/train/masks (20 pairs), data/test/images (5,
+  masks withheld), data/manifest.json (per-image cell counts, about 600-1300 cells per image). Headers read for
+  one image and one mask: both uint16, 2056x2056, uncompressed, single page. The card does not say whether the images
+  are real micrographs or simulated, which species, microscope, magnification, pixel size, or how the masks were
+  made; the card has no paper, so those are unknown. n_items counts all 25 images; only the 20 training images have
+  public masks. enricher: channels 1 (single-page uint16 yx TIFFs).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './                    3 files   README.md, .gitattributes, data/manifest.json
+
+      data/train/images/   20 files  169.1 MB  .tif  (train_NNN_overlap_2056x2056.tif)
+
+      data/train/masks/    20 files  169.1 MB  .tif  (same names)
+
+      data/test/images/     5 files   42.3 MB  .tif  (test_NNN_overlap_2056x2056.tif, no masks)
+
+      '
+    n_files: 48
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/Emulated-Inc/cell-seg-overlap/resolve/main/data/train/images/train_000_overlap_2056x2056.tif
+    - https://huggingface.co/datasets/Emulated-Inc/cell-seg-overlap/resolve/main/data/train/masks/train_000_overlap_2056x2056.tif
+    size_bytes: 16909088
+    description: Training image 000 (2056x2056 uint16) and its instance label mask (655 cells)
+  arrays:
+  - role: raw
+    path_pattern: data/*/images/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2056
+    - 2056
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 43305
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Single-page phase-contrast images; manifest.json gives 2056x2056 for all 25.
+  - role: label
+    path_pattern: data/train/masks/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2056
+    - 2056
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 655
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'masks/<name>.tif pairs with images/<name>.tif (card: same filenames). One id per cell, 0 =
+      background; the top cell wins where cells overlap (card). Same 2056x2056 grid.'
+  notes: 'HF listing complete: 48 files, 380,464,937 B. Sample train_000: image uint16 0-43,305, mean 18,310; mask
+    uint16 with 656 distinct values (0-655), matching manifest.json n_cells 655, so encoding instance-ids. One sample.
+    Pixel size, species, microscope and mask provenance not stated on the card (README.md) or manifest.json; no
+    paper or code repo linked; TIFF headers carry no calibration. Single files only, no archive: download_url is
+    the dataset page; direct files are https://huggingface.co/datasets/Emulated-Inc/cell-seg-overlap/resolve/main/data/....'
