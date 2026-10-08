@@ -114,6 +114,8 @@ TIFF_COMPRESSION = {1: "none", 2: "other", 5: "lzw", 6: "jpeg", 7: "jpeg", 8: "d
                     32773: "packbits", 34712: "jpeg2000", 33003: "jpeg2000", 33005: "jpeg2000", 34925: "lzma",
                     50000: "zstd", 34926: "zstd", 50001: "webp", 34927: "webp", 50002: "jpegxl", 52546: "jpegxl"}
 LOSSY = {"jpeg": True, "webp": None, "jpeg2000": None, "jpegxl": None}
+TIFF_ORIENTATION = {1: "top-left", 2: "top-right", 3: "bottom-right", 4: "bottom-left", 5: "left-top",
+                    6: "right-top", 7: "right-bottom", 8: "left-bottom"}
 TIFF_TYPES = {1: "B", 2: "s", 3: "H", 4: "I", 5: "II", 6: "b", 7: "B", 8: "h", 9: "i", 10: "ii", 11: "f", 12: "d",
               16: "Q", 17: "q", 18: "Q"}
 
@@ -181,6 +183,12 @@ def probe_tiff(f, max_pages=100000, request_budget=15):
            "bigtiff": big, "notes": []}
     if _first(tags, 262) == 3:
         res["notes"].append("palette (colour-mapped) image: values are indices, often label IDs")
+    # Orientation (274): 1 = row 0 is the top, column 0 the left. tifffile (and so TensorSwitch) ignores it and
+    # returns rows as stored, so any other value reads the file mirrored or transposed against one without it
+    res["orientation"] = _first(tags, 274, 1)
+    if res["orientation"] != 1:
+        res["notes"].append(f"TIFF Orientation {res['orientation']} ({TIFF_ORIENTATION.get(res['orientation'], '?')}): "
+                            "readers that ignore the tag (tifffile) return it mirrored or transposed")
 
     # page count: walk the IFD chain while it is cheap (IFDs are often contiguous, i.e. in cached blocks)
     pages, req0 = 1, getattr(f, "requests", 0)

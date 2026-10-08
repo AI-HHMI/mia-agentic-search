@@ -144,11 +144,13 @@ def tiff_header(spec):
         return {"error": f"{type(e).__name__}: {e}"}
 
 
-def tiff_axes(r, plan, input_axes):
+def tiff_axes(r, plan, input_axes, check_orientation=True):
     """For each TIFF the plan converts: the axes to pass as input_axes ({input_path: axes}), stop reasons and notes.
     TensorSwitch's TIFF reader names samples per pixel `s` and the pages of a plain multi-page TIFF `i` (neither a
     channel nor z), so until convert accepts input_axes those files are a stop, found from the header. With
-    input_axes the record's axes are passed (`s` as `c`: samples are channels to OME-NGFF)."""
+    input_axes the record's axes are passed (`s` as `c`: samples are channels to OME-NGFF).
+    `check_orientation`: also read the header for the TIFF Orientation tag, which TensorSwitch ignores: a file
+    with one other than top-left would be converted mirrored or transposed against its partner (a stop)."""
     arrays = (r.get("technical") or {}).get("arrays") or []
     given, stops, notes = {}, [], []
     for p in plan["arrays"]:
@@ -157,16 +159,26 @@ def tiff_axes(r, plan, input_axes):
             continue
         spec, rec_axes = p["fetch"]["spec"], a.get("axes")
         name = spec.rsplit("::", 1)[-1].rsplit("/", 1)[-1]
+        h = tiff_header(spec) if check_orientation or not input_axes else {}
+        if check_orientation:
+            if "error" in h or "tiff_layout" not in h:
+                notes.append(f"{name}: TIFF header not read ({h.get('error') or '; '.join(h.get('notes', []))}); "
+                             "orientation unchecked")
+            elif h.get("orientation", 1) != 1:
+                stops.append(f"{name} ({p['role']}): TIFF Orientation {h['orientation']} (row 0 is not the top): "
+                             "TensorSwitch ignores the tag, so it would be converted mirrored or transposed "
+                             "against its partner, and verify_output can't see it (it reads the same way)")
         if input_axes:
             if rec_axes:
                 given[p["convert_args"]["input_path"]] = rec_axes.replace("s", "c")
             continue                           # no axes: already a stop (tiff_axes_needs)
-        h = tiff_header(spec)
         # what tifffile (TensorSwitch's reader) makes of it: samples per pixel -> S, the pages of a TIFF with no
         # ImageJ / OME / tifffile-shape metadata -> I. tifffile-shaped files give Q, which TensorSwitch ignores
         # and replaces by z/y/x from the number of dimensions, so those convert correctly.
         if "error" in h or "tiff_layout" not in h:
-            notes.append(f"{name}: TIFF header not read ({h.get('error') or '; '.join(h.get('notes', []))}); axes unchecked")
+            if not check_orientation:          # else already noted above
+                notes.append(f"{name}: TIFF header not read ({h.get('error') or '; '.join(h.get('notes', []))}); "
+                             "axes unchecked")
             continue
         how = None
         if h["samples_per_pixel"] > 1:
@@ -326,10 +338,11 @@ def main():
         samples.append(("sample-unit", base))
 
     # TIFF axes: probe each crop's TIFFs (or pass the record's axes when TensorSwitch accepts input_axes).
-    # Files with the same layout behave the same, so one stop reason per distinct message is enough.
+    # Files with the same layout behave the same, so one stop reason per distinct message is enough, and the
+    # orientation is read from the first sample's files only (the same writer made the rest).
     axes_by_sample = []
-    for smp_name, sp in samples:
-        given, s_stops, s_notes = tiff_axes(r, sp, in_axes)
+    for i, (smp_name, sp) in enumerate(samples):
+        given, s_stops, s_notes = tiff_axes(r, sp, in_axes, check_orientation=i == 0)
         axes_by_sample.append(given)
         stop += [x for x in s_stops if x not in stop]
         notes += [f"{smp_name}: {x}" for x in s_notes]
