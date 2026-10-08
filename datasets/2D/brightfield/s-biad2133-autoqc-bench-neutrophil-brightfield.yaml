@@ -28,7 +28,10 @@ imaging:
   modality:
   - brightfield
   dimensionality: 2D
-  voxel_size_nm: null
+  voxel_size_nm:
+    x: 641
+    y: 641
+    z: null
   channels: 1
   organism:
   - Homo sapiens
@@ -37,8 +40,8 @@ imaging:
   labels_stains: []
 data:
   formats:
-  - tiff
-  size_bytes: 2876722433
+  - ome-tiff
+  size_bytes: 2878143749
   n_items: 8429
   access: open
   download_url: null
@@ -70,15 +73,126 @@ provenance:
   - https://www.ebi.ac.uk/biostudies/files/S-BIAD2133/file_list_annotations_v02.json
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22AutoQC-Bench+diffusion+model+benchmark+automatic+quality+control+high-throughput+microscopy%22&format=json&resultType=core&pageSize=3
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12594752/fullTextXML
-  confidence: 0.8
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/133/S-BIAD2133/Files/file_list_annotations_v02.tsv
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/133/S-BIAD2133/Files/file_list_v02.tsv
+  confidence: 0.85
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T17:20:00Z'
-notes: 'File lists read in full: 8,381 TIFF frames plus 12 split CSVs (2.88 GB) and 48 mask TIFFs (250 KB).
-  Training frames are unlabelled normal images (anomaly-detection setting); masks cover only the 48 anomalous
-  test frames, so label coverage is partial. Paper Methods: ComplexEye, 4.7x, NA 0.3, field of view 825.8 x
-  512 um per well, one frame per 8 s; pixel size and image dimensions are not stated in the paper, record
-  or file lists, so voxel_size_nm is null. The benchmark paper also uses the LightMyCells challenge data,
-  which is not part of this deposit. No single archive; download_url is null.'
+  last_checked: '2026-10-08T18:56:00Z'
+notes: 'Training frames are unlabelled normal images (anomaly-detection setting); masks cover only the 48 anomalous
+  test frames, so label coverage is partial. Paper Methods: ComplexEye, 4.7x, NA 0.3, one frame per 8 s. The benchmark
+  paper also uses the LightMyCells challenge data, which is not part of this deposit. No single archive; download_url
+  is null (files are served individually from the EBI FTP tree). enricher: voxel size 641 nm from the BioStudies file
+  lists (pixel_dimensions "X,Y = 0.641 um" on all 8,381 images; was null); OME-TIFF headers say 640 nm. enricher: organisms:
+  Homo sapiens = train/ and test/*/human/, Mus musculus = test/*/mouse/ (and test/good_data/mouse/). enricher: size_bytes
+  is the exact sum of the repository file lists plus the 4 file-list files. enricher: formats ome-tiff (probed; was tiff).'
+technical:
+  method: sample
+  inspected_at: '2026-10-08T18:56:00Z'
+  inspected_urls:
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/133/S-BIAD2133/Files/
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/133/S-BIAD2133/Files/train/01_A1_000.tiff
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/133/S-BIAD2133/Files/test/anomalies/air_bubble/human/raw/01_B1_100.tiff
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/133/S-BIAD2133/Files/test/anomalies/air_bubble/human/masks/01_B1_100.tiff
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/133/S-BIAD2133/Files/test/anomalies/artifacts/mouse/raw/artifacts_01.tiff
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/133/S-BIAD2133/Files/test/anomalies/artifacts/mouse/masks/artifacts_01.tiff
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/133/S-BIAD2133/Files/test/good_data/mouse/good_data_001_A.tiff
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/133/S-BIAD2133/Files/test/good_data/human/01_A1_300.tiff
+  bytes_downloaded: 1037245
+  size_source: page-stated
+  layout:
+    tree: |
+      Files/
+        file_list_v02.json/.tsv, file_list_annotations_v02.json/.tsv   4 files  1.4 MB
+        splits/                                    12 .csv   229.8 KB
+        train/                                   8233 .tiff  2.8 GB   (normal human frames, unlabelled)
+        test/good_data/human/                      51 .tiff  17.8 MB
+        test/good_data/mouse/                      49 .tiff  16.7 MB
+        test/anomalies/<class>/<species>/raw/      24 human + 24 mouse .tiff
+        test/anomalies/<class>/<species>/masks/    48 .tiff (same names as raw/)
+          classes: air_bubble (10 human), artifacts (2 human, 6 mouse), contamination (3 human, 7 mouse),
+                   illumination (5 human, 5 mouse), z-shift (3 human, 7 mouse)
+    n_files: 8445
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/133/S-BIAD2133/Files/test/anomalies/air_bubble/human/raw/01_B1_100.tiff
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/133/S-BIAD2133/Files/test/anomalies/air_bubble/human/masks/01_B1_100.tiff
+    size_bytes: 464970
+    description: One anomalous test frame (air bubble, human) and its binary anomaly mask, 800x1280 uint8 OME-TIFF each.
+  arrays:
+  - role: raw
+    path_pattern: train/*.tiff
+    format: ome-tiff
+    axes: yx
+    shape:
+    - 800
+    - 1280
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Normal (anomaly-free) training frames, no labels.
+  - role: raw
+    path_pattern: test/good_data/*/*.tiff
+    format: ome-tiff
+    axes: yx
+    shape:
+    - 800
+    - 1280
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Normal test frames (100), no masks.
+  - role: raw
+    path_pattern: test/anomalies/*/*/raw/*.tiff
+    format: ome-tiff
+    axes: yx
+    shape:
+    - 800
+    - 1280
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 5
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Mouse anomaly frames are 780x1280 (artifacts_01), human 800x1280.
+  - role: label
+    path_pattern: test/anomalies/*/*/masks/*.tiff
+    format: ome-tiff
+    axes: yx
+    shape:
+    - 800
+    - 1280
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: anomaly (class given by the folder - air_bubble, artifacts, contamination, illumination or z-shift)
+    alignment: same-grid
+    alignment_notes: masks/<name>.tiff pairs with raw/<name>.tiff in the same <class>/<species>/ folder (the annotation
+      file list gives each mask's Source image); shapes match (800x1280 human, 780x1280 mouse sample).
+  notes: 'EBI FTP listing timed out; the HTTP index listed 8,445 files (rounded sizes); exact sizes come from the repository
+    file lists (file_list_v02.json 8,393 files 2,876,472,219 B; file_list_annotations_v02.json 48 files 250,214 B) plus
+    4 file-list files (1,421,316 B, Content-Length). Probed 7 headers: all single-page OME-TIFF uint8 deflate, yx, OME
+    calibration 0.64 um. Sampled 2 raw/mask pairs (human air_bubble, mouse artifacts): raw [5, 255] and [12, 255], masks
+    binary {0, 255}; value ranges from these samples only. Pixel size 0.641 um from the file lists (header rounds to 0.64).
+    No zipped archive; files are individual HTTPS links on ftp.ebi.ac.uk.'
