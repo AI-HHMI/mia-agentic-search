@@ -1,0 +1,125 @@
+schema_version: '1.2'
+id: zenodo-7692392-3dl-nucount-3d-nuclei-labels
+title: 3DL_Nucount dataset
+short_name: 3D fluorescence cell labels (Napari, StarDist)
+description: One 63 x 256 x 256 fluorescence microscopy volume with manual 3D object labels made in Napari, used
+  to fine-tune a pretrained StarDist 3D model for cell segmentation.
+landing_url: https://zenodo.org/records/7692392
+doi: 10.5281/zenodo.7692392
+repository: Zenodo
+accession: '7692392'
+authors:
+- Fabrice Daian
+publications: []
+date_published: '2023-03-02'
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 3D
+  voxel_size_nm: null
+  channels: null
+  organism: []
+  sample: null
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 3654268
+  n_items: 1
+  access: open
+  download_url: https://zenodo.org/api/records/7692392/files/nucount_dataset.zip/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: 'labels/Labels [N].tif: 95 int32 63x256x256 volumes, one labelled object per file, next to the image 0.tif'
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-08T12:41:35Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/7692392
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T15:21:11Z'
+notes: 'nucount_dataset.zip (3.7 MB): 0.tif (the 63x256x256 uint8 image volume) and 95 files labels/Labels [N].tif
+  (N 1 to 97, two numbers missing). enricher: each label file is a full 63x256x256 int32 volume holding one object
+  with one id (Labels [1] = id 2, Labels [2] = id 3 in the files sampled), so the 95 files are per-object masks
+  that together give the instances. The Zenodo description is the only source: no paper, microscope, voxel size,
+  organism or stain is stated, so those fields are null/other. Single small volume, the lower bound of the size
+  rule. Annotation was manual in Napari per the description.'
+technical:
+  method: sample
+  inspected_at: '2026-10-08T15:21:11Z'
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  1 file, 3,654,268 B
+        nucount_dataset.zip   96 entries, 11,922,407 B unpacked
+          0.tif                    image volume 63x256x256 uint8
+          labels/Labels [N].tif    95 per-object volumes 63x256x256 int32 (N = 1..97)
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7692392/files/nucount_dataset.zip::0.tif
+    - https://zenodo.org/records/7692392/files/nucount_dataset.zip::labels/Labels [1].tif
+    size_bytes: 3173119
+    description: The image volume and the first per-object label volume.
+  arrays:
+  - role: raw
+    path_pattern: 0.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 63
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: labels/Labels*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 63
+    - 256
+    - 256
+    shape_varies: false
+    dtype: int32
+    compression: deflate
+    value_range:
+    - 0
+    - 3
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Every labels/Labels [N].tif covers the whole 0.tif grid (same shape) and holds one object with
+      its own id (2 in Labels [1], 3 in Labels [2]); merging the 95 files gives the instance map. Overlaps not checked.
+  notes: 'peek_archive: 96 TIFF entries, 3,654,268 B zip (= size_bytes, the only file). probe.py: 0.tif and Labels
+    [1].tif are tifffile-written shaped TIFFs, 63 pages of 256x256, deflate, Description {"shape": [63, 256, 256]},
+    resolution 1/1 with no unit (uncalibrated). axes zyx: the Zenodo description calls it a 3D volume of size 63x256x256,
+    and the 63 pages are its slices. sample.py: raw uint8 [0, 255], mean 50.5, p99 169; Labels [1] {0, 2} (2,761
+    voxels), Labels [2] {0, 3} (7,076 voxels). Values from one sample. Voxel size not found; checked: TIFF tags
+    (1/1, no unit), Zenodo description and metadata (no related identifiers, no paper, no code link).'
