@@ -2,11 +2,11 @@ schema_version: '1.2'
 id: osf-8p7ba-rbc-holograms-phase-pairs
 title: Human red blood cell off-axis holograms paired with reconstructed quantitative phase images
 short_name: RBC hologram-phase pairs (digital holography)
-description: 'Paired dataset of 36,864 off-axis holograms of human red blood cells (Carolina Biological slide) and their
-  reconstructed quantitative phase maps (256x256 px patches cropped from 300 recorded 1920x1200 holograms, augmented
-  by rotations/flips). Zip with folders Holograms/ and Phase/, each split into Training (29,491) and Testing (7,373).
-  Recorded with an off-axis telecentric digital holographic microscope (532 nm, 40x/0.65 NA) and intended for training
-  end-to-end learning-based phase reconstruction.'
+description: Paired dataset of 36,864 off-axis holograms of human red blood cells (Carolina Biological
+  slide) and their reconstructed quantitative phase maps (256x256 px patches cropped from 300 recorded
+  1920x1200 holograms, augmented by rotations/flips). Zip with folders Holograms/ and Phase/, each split
+  into Training (29,491) and Testing (7,373). Recorded with an off-axis telecentric digital holographic
+  microscope (532 nm, 40x/0.65 NA) and intended for training end-to-end learning-based phase reconstruction.
 landing_url: https://osf.io/8p7ba/
 doi: 10.17605/OSF.IO/8P7BA
 repository: OSF
@@ -36,14 +36,15 @@ data:
   size_bytes: 2690275870
   n_items: 73728
   access: open
-  download_url: https://osf.io/8p7ba/
+  download_url: https://osf.io/download/cp2kn/
   download_method: http
 annotations:
   present: true
   types:
   - restoration-pairs
   coverage: dense
-  format: PNG phase maps in Phase/ paired with PNG holograms in Holograms/
+  format: PNG phase maps in Phase/ paired with PNG holograms in Holograms/ (Training/ and Validation/
+    subfolders; name pairing in technical alignment_notes)
   source: automatic
 ml:
   tasks:
@@ -60,15 +61,80 @@ provenance:
   evidence_urls:
   - https://api.osf.io/v2/nodes/8p7ba/
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11068518/fullTextXML
+  - https://api.osf.io/v2/nodes/8p7ba/files/osfstorage/
   confidence: 0.6
 verification:
   url_ok: true
   license_found: false
-  annotations_verified: false
-  last_checked: '2026-10-08T09:50:00Z'
-notes: 'Checked OSF API record, wiki and file listing (single RBCs Holograms.zip, 2.69 GB) and the Data in Brief paper
-  (PMC11068518). No dataset license is stated on OSF (node_license null) or in the paper. The task is hologram-to-phase
-  reconstruction, not segmentation; phase targets were computed with Trujillo''s method, not manually annotated. Zip
-  contents were not listed (OSF storage not range-readable here), so structure comes from the paper. Pixel size not
-  stated for the sample plane (camera pitch 5.86 um, 40x objective), so left null. The paper''s own license applies to the
-  article, not necessarily the data.'
+  annotations_verified: true
+  last_checked: '2026-10-08T10:18:00Z'
+notes: 'Checked OSF API record, wiki and file listing (single RBCs Holograms.zip, 2.69 GB) and the Data
+  in Brief paper (PMC11068518). No dataset license is stated on OSF (node_license null) or in the paper.
+  The task is hologram-to-phase reconstruction; phase targets were computed with Trujillo''s method, not
+  manually annotated. Pixel size not stated for the sample plane (camera pitch 5.86 um, 40x objective),
+  so left null. enricher: zip listed by range requests (73,728 PNGs; split folders are Training/ and Validation/,
+  the paper says Testing); download_url is now the direct OSF file link (was the project page); annotations
+  verified from the listing and a sample.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "RBCs Holograms.zip  2,690,275,870 B (OSF 8p7ba, file cp2kn); 73,728 members, 2,675,191,627\
+      \ B uncompressed\n  Holograms/Training/    29,491 *.png  (Image__2021-01-28__15-49-02_1-1.png, ..._1-10-A.png)\n\
+      \  Holograms/Validation/   7,373 *.png  (Image__2021-01-28__15-49-02_1-12.png)\n  Phase/Training/\
+      \        29,491 *.png  (Image__2021-01-28__15-49-02_1-1.png.png.png, ..._1-1.png-A.png.png)\n  Phase/Validation/\
+      \       7,373 *.png  (Image__2021-01-28__15-49-02_1-12.png)"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://osf.io/download/cp2kn/::Holograms/Validation/Image__2021-01-28__15-49-02_1-12.png
+    - https://osf.io/download/cp2kn/::Phase/Validation/Image__2021-01-28__15-49-02_1-12.png
+    size_bytes: 65473
+    description: one 256x256 validation hologram patch and its reconstructed phase patch
+  arrays:
+  - role: raw
+    path_pattern: Holograms/*/*.png
+    format: png
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: off-axis hologram patches cropped from 1920x1200 recordings, augmented by rotations/flips
+      (paper)
+  - role: target
+    path_pattern: Phase/*/*.png
+    format: png
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: 'pairs by name within the same split: Validation names are identical; in Training
+      a hologram X.png pairs with phase X.png.png.png and X-A.png / X-B.png with X.png-A.png.png / X.png-B.png.png
+      (seen for 1-1 and 1-10; not checked for every file); same shape'
+  notes: 'OSF API lists one file (RBCs Holograms.zip, 2,690,275,870 B); its zip central directory was
+    read by range requests: 73,728 PNG members (Holograms and Phase, 29,491 Training + 7,373 Validation
+    each). tools/listing.py does not support OSF, so the size is the OSF API''s stated file size (page-stated).
+    Probed validation pair 1-12 (PNG grey 256x256 uint8, deflate). Measured 2 pairs (135 KB, own script
+    reusing tools/sample.py''s reader, because sample.py needs a .zip URL): holograms and phase maps all
+    uint8 0-255, phase maps use all 256 values, so the quantitative phase is stored rescaled to 8 bits
+    (scaling not documented, normalization unknown). Value ranges are from these samples. Voxel size not
+    found; checked: PNG headers (no calibration), OSF API, paper full text (only camera pitch 5.86 um
+    and 40x objective, which may not be used to compute it). Modality other: digital holographic microscopy
+    has no schema value.'
