@@ -38,7 +38,6 @@ imaging:
 data:
   formats:
   - png
-  - svs
   size_bytes: 665940000000
   n_items: 1356
   access: open
@@ -67,10 +66,85 @@ provenance:
   - https://www.cancerimagingarchive.net/analysis-result/pan-cancer-nuclei-seg/
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7305328/fullTextXML
   - https://zenodo.org/records/22818207
+  - https://www.cancerimagingarchive.net/wp-content/uploads/Read-Me.docx
+  - https://www.cancerimagingarchive.net/wp-content/uploads/Pan-Cancer-Nuclei-Seg_1365patches_to_TCGA-ID_readme.txt
   confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-08T18:15:00Z'
-notes: 'Two parts. (1) Automatic nucleus polygons for 5,060 TCGA WSIs from 10 cancer types, made with a Mask R-CNN/U-Net pipeline and graded by QC (the WSIs themselves are NOT in the package; download them from TCGA/GDC). (2) Manual segmentation data - 1,356 PNG patches (256x256 at 40x) with H&E image and instance masks, made by correcting Mask R-CNN output (manual set verified against pathologists). n_items counts the 1,356 manual patches. Size 665.94 GB is the main TCIA Aspera package; the file listing was not inspected (Aspera), so annotations_verified is false. TCIA page states CC BY 3.0 for the data (the paper is CC BY 4.0). The TCIA page gives 1,356 and 1,365 for the patch count; the paper says 1,356. A DICOM-converted version of the automatic segmentation (manifests only, IDC) is on Zenodo 10.5281/zenodo.22818207 (CC BY 4.0, v3 published 2026-10-07).'
+  last_checked: '2026-10-08T19:20:00Z'
+notes: 'Two parts. (1) Automatic nucleus polygons for 5,060 TCGA WSIs from 10 cancer types, made with a Mask R-CNN/U-Net pipeline and graded by QC (the WSIs themselves are NOT in the package; download them from TCGA/GDC). (2) Manual segmentation data - 1,356 PNG patches (256x256 at 40x) with H&E image and instance masks, made by correcting Mask R-CNN output. n_items counts the 1,356 manual patches. Size 665.94 GB is the main TCIA Aspera package; the file listing was not inspected (Aspera), so annotations_verified is false. TCIA page states CC BY 3.0 for the data (the paper is CC BY 4.0). The TCIA page gives 1,356 and 1,365 for the patch count; the paper says 1,356. A DICOM-converted version of the automatic segmentation (manifests only, IDC) is on Zenodo 10.5281/zenodo.22818207 (CC BY 4.0, v3 published 2026-10-07). enricher: svs removed from formats (Read-Me: WSIs not redistributed).'
+technical:
+  method: metadata-only
+  size_source: page-stated
+  layout:
+    tree: |
+      TCIA Aspera (Faspex) package, 665.94 GB (page-stated), per TCIA Read-Me.docx:
+        <TYPE>_polygon/<WSI name>.svs.tar.gz   per-WSI polygon CSVs, one per 4000x4000 tile
+          <x>_<y>_4000_4000_<mpp>_1-features.csv  (AreaInPixels, PhysicalSize, Polygon)
+        <TYPE>_meta/                           caMicroscope metadata
+        manual_segmentation_data.tar.gz        1,356 (page: 1,365) patches, 256x256 at 40x
+          <ID>_crop.png                         H&E patch
+          <ID>_labeled_mask_corrected.png       corrected instance mask
+          <ID>_labeled_mask_corrected_rgb.png   visualization
+          <ID>_labeled_mask_common0.png         extra manual masks (27 patches)
+      direct HTTP files on the TCIA page: list_of_verified_wsis.txt, wsi_quality_control_result.txt,
+        random_segmentation_region_checking_result.txt, Read-Me.docx,
+        Pan-Cancer-Nuclei-Seg_1365patches_to_TCGA-ID_readme.txt
+    n_files: null
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: manual_segmentation_data.tar.gz::*_crop.png
+    format: png
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: manual_segmentation_data.tar.gz::*_labeled_mask_corrected.png
+    format: png
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Pairing rule from the package readme, same Patch-ID prefix (<ID>_crop.png ↔ <ID>_labeled_mask_corrected.png).
+      Patches are 256x256 at 40x (0.25 um/px) per the paper; the paper scores only the central 226x226 pixels. Not
+      verified on files.
+  - role: label
+    path_pattern: '*_polygon/*.svs.tar.gz::*-features.csv'
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: polygons
+    classes: null
+    alignment: unknown
+    alignment_notes: Automatic nucleus polygons in WSI pixel coordinates ([x0:y0:x1:y1...], Read-Me); the TCGA WSIs
+      themselves are not in the package and must be fetched from GDC by slide name.
+  notes: 'Metadata only: the data are offered only as a TCIA Aspera/Faspex package (needs IBM Aspera Connect); no
+    file listing could be read, nothing was probed or sampled. Arrays, names and the instance-mask encoding come from
+    the TCIA Read-Me.docx ("Manually corrected Mask R-CNN''s segmentation results"; page: "instance-level segmentation
+    masks") and the patch readme txt; shapes, dtypes and value ranges are open. The 665.94 GB size is page-stated for
+    the whole package (mostly polygon CSVs); the manual patch tarball size is not stated. No direct download: checked
+    the TCIA page links (only small TXT/DOCX files are HTTP), the Faspex package URL (HTML page, host not on the
+    TensorSwitch allowlist), the paper Data Records (TCIA only) and the GitHub README (a Stony Brook Box share of
+    the automatic results, not a direct file). Voxel size: 250 nm (0.25 um/px at 40x) from the paper, for the manual
+    patches; WSI tiles carry their own mpp in the CSV file names (e.g. 0.2525).'
