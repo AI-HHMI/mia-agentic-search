@@ -1,12 +1,13 @@
 schema_version: '1.2'
 id: zenodo-20797635-label-free-neuron-somata-3d
-title: Multi-species label-free 3D neuron soma segmentation dataset (oblique illumination and Dodt gradient contrast)
+title: Multi-species label-free 3D neuron soma segmentation dataset (oblique illumination and Dodt gradient
+  contrast)
 short_name: Label-free 3D neuron somata (oblique/Dodt)
-description: 240 volumetric label-free image stacks of brain tissue from rat, mouse and human acquired with oblique
-  illumination and Dodt gradient contrast microscopy (40 stacks per species-modality combination), with consensus 3D
-  instance masks for neuronal somata (6,479 manually annotated 3D soma instances; 73,081 2D cross-sectional
-  annotations). Each archive includes a train/validation/test split definition. Annotations cover visible somata, not full
-  neuron morphology.
+description: 240 volumetric label-free image stacks of brain tissue from rat, mouse and human acquired
+  with oblique illumination and Dodt gradient contrast microscopy (40 stacks per species-modality combination),
+  with consensus 3D instance masks for neuronal somata (6,479 manually annotated 3D soma instances; 73,081
+  2D cross-sectional annotations). Each archive includes a train/validation/test split definition. Annotations
+  cover visible somata, not full neuron morphology.
 landing_url: https://zenodo.org/records/20797635
 doi: 10.5281/zenodo.20797635
 repository: Zenodo
@@ -71,12 +72,87 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T05:05:00Z'
-notes: 'Six zips (species x modality, 1.0-1.9 GB each) with images/, masks/, split.json (train/val/test, seed 42, test
-  ratio 0.1) and preproc_meta.json. TIFF headers read by range request: images are 8-bit single-channel (e.g.
-  1292 x 964 x 64 planes for human Dodt, 1280 x 960 x 30 for mouse oblique), masks 32-bit with the same shape. The
-  mouse oblique stacks carry ImageJ metadata with z spacing 1.0 um; no xy pixel size was found in the headers, record
-  description, README or GitHub, and the accompanying manuscript has no preprint or DOI yet (Europe PMC title search
-  found nothing), so voxel_size_nm is null. Modality is label-free oblique illumination / Dodt gradient contrast, which
-  has no listed enum value, so other. n_items = 6 x 40 volumes from the record text; zip listings showed 40-41 image
-  members per archive (one extra member). Weights on Hugging Face (Podtyazhki1337/3d-neurons-segmentation).'
+  last_checked: '2026-10-08T04:40:00Z'
+notes: 'Six zips (species x modality, 1.0-1.9 GB each) with images/, masks/, split.json (train/val/test,
+  seed 42, test ratio 0.1) and preproc_meta.json. TIFF headers read by range request: images are 8-bit
+  single-channel (e.g. 1292 x 964 x 64 planes for human Dodt, 1280 x 960 x 30 for mouse oblique), masks
+  32-bit with the same shape. The mouse oblique stacks carry ImageJ metadata with z spacing 1.0 um; no
+  xy pixel size was found in the headers, record description, README or GitHub, and the accompanying manuscript
+  has no preprint or DOI yet, so voxel_size_nm is null. Modality is label-free oblique illumination /
+  Dodt gradient contrast, which has no listed enum value, so other. n_items = 6 x 40 volumes from the
+  record text; zip listings showed 40-41 image members per archive (one extra member). organisms: Homo
+  sapiens = human_neurons_*.zip, Mus musculus = mice_neurons_*.zip, Rattus norvegicus = rat_neurons_*.zip.
+  enricher: annotations verified (sampled mask).'
+technical:
+  method: sample
+  inspected_at: '2026-10-08T04:40:00Z'
+  inspected_urls:
+  - https://zenodo.org/api/records/20797635
+  - https://zenodo.org/api/records/20797635/files/README.md/content
+  - https://zenodo.org/api/records/20797635/files/mice_neurons_oblique.zip/content
+  - https://zenodo.org/api/records/20797635/files/human_neurons_dodt.zip/content
+  bytes_downloaded: 26100000
+  size_source: file-listing
+  layout:
+    tree: "README.md\n{human,mice,rat}_neurons_{dodt,oblique}.zip   (6 zips, 1.0-2.0 GB)\n  <species>_neurons_<contrast>/\n\
+      \    images/*.tif      40 z-stacks (8-bit)\n    masks/*.tif       40 instance masks (uint32, same\
+      \ file names)\n    split.json        train / val / test\n    preproc_meta.json per-image cell_means,\
+      \ padsize, std_cell_size\n"
+    n_files: 7
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/20797635/files/mice_neurons_oblique.zip/content::mice_neurons_oblique/images/20260209_160932.tif
+    - https://zenodo.org/api/records/20797635/files/mice_neurons_oblique.zip/content::mice_neurons_oblique/masks/20260209_160932.tif
+    size_bytes: 37662234
+    description: One mouse oblique-illumination z-stack (30 x 960 x 1280) and its instance mask.
+  arrays:
+  - role: raw
+    path_pattern: '*_neurons_*/images/*.tif'
+    format: tiff
+    axes: zyx
+    shape:
+    - 30
+    - 960
+    - 1280
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 51
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ hyperstack (ZYX, spacing 1.0 um, no xy calibration) in the sampled mouse oblique
+      stack; human Dodt stacks are 64 x 964 x 1292 (mask header).
+  - role: label
+    path_pattern: '*_neurons_*/masks/*.tif'
+    format: tiff
+    axes: zyx
+    shape:
+    - 30
+    - 960
+    - 1280
+    shape_varies: true
+    dtype: uint32
+    compression: deflate
+    value_range:
+    - 0
+    - 26
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same file name as the image in images/ of the same zip; identical shape. The mask
+      TIFF is a plain (tifffile shaped) multi-page file without axis tags; axes zyx taken from its paired
+      image's ImageJ header (same shape).
+  notes: 'Zenodo listing complete (7 files, 8,981,968,963 B; 500 zip members): 6 zips x (40 images + 40
+    masks + split.json + preproc_meta.json). Images are deflated zip members, so they could not be header-probed
+    by range; masks probed (uint32, deflate, 30 x 960 x 1280 mouse oblique, 64 x 964 x 1292 human Dodt).
+    Sampled one mouse oblique pair (26,041,085 B compressed): image uint8 ImageJ ZYX [51, 255]; mask 0..26,
+    20 distinct values (0 + 19 instances). Values from one stack. preproc_meta.json holds cell_means,
+    padsize 64 and std_cell_size [4, 29, 29], no calibration. Voxel size not found; checked: TIFF headers
+    (only z spacing 1.0 um in ImageJ metadata, XResolution 1/1), README, preproc_meta.json, record description;
+    no paper yet (record notes). Modality: oblique illumination and Dodt gradient contrast (transmitted-light,
+    label-free); no listed modality fits, so other stays and the readiness modality reason remains. Zip
+    members are direct Zenodo links (TensorSwitch usable: true).'
