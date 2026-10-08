@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: zenodo-7801430-redtell-rbc-brightfield
 title: Red Blood Cell RedTell Dataset
 short_name: Red blood cell segmentation and shape classes
-description: 'Brightfield (and Fluo-4 fluorescence) microscope images of human red blood cells: 182 control images annotated per cell for segmentation and discocyte-stomatocyte-echinocyte classification,
-  plus 79 sickle-cell, thalassemia and control brightfield/fluorescence image pairs.'
+description: 'Brightfield (and Fluo-4 fluorescence) microscope images of human red blood cells: 182 control
+  images annotated per cell for segmentation and discocyte-stomatocyte-echinocyte classification, plus
+  79 sickle-cell, thalassemia and control brightfield/fluorescence image pairs.'
 landing_url: https://zenodo.org/records/7801430
 doi: 10.5281/zenodo.7801430
 repository: Zenodo
@@ -29,7 +30,8 @@ imaging:
   channels: null
   organism:
   - Homo sapiens
-  sample: unstained human red blood cells from healthy controls, sickle cell disease and thalassemia patients; Fluo-4 channel for calcium
+  sample: unstained human red blood cells from healthy controls, sickle cell disease and thalassemia patients;
+    Fluo-4 channel for calcium
   labels_stains:
   - Fluo-4
 data:
@@ -46,7 +48,8 @@ annotations:
   - instance-segmentation
   - classification
   coverage: dense
-  format: per-image annotation TIFF masks and COCO-style annotation files (dse_data); anemia_data has images only
+  format: per-image instance-ID mask TIFFs (dse_data/annotations) and per-cell binary mask TIFFs named
+    by class (dse_data/coco_annotations); anemia_data has images only
   source: manual
 ml:
   tasks:
@@ -72,8 +75,108 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T05:31:06Z'
-notes: 'dse_data.zip: 182 images, 182 annotation TIFFs and 6,025 files in coco_annotations (one per cell, as the file count suggests). anemia_data.zip: scd 24, thalassemia 18, control 37 brightfield images,
-  each with a matching fluo-4 image (158 TIFFs); no annotation files seen there, so the annotated part is the control dse_data set. Class names (discocyte, stomatocyte, echinocyte sequence) come from the
-  Zenodo text; the COCO category list was not opened. Images taken with an Axiocam on a Zeiss Axiovert 200M with a 100x objective, no staining (paper Methods); pixel size not stated. Only dse_data.zip is
-  given as download_url; the second zip is on the same record. n_items counts brightfield images (182 + 79).'
+  last_checked: '2026-10-08T06:07:37Z'
+notes: 'dse_data.zip: 182 images, 182 annotation TIFFs and 6,025 files in coco_annotations (one per cell,
+  as the file count suggests). anemia_data.zip: scd 24, thalassemia 18, control 37 brightfield images,
+  each with a matching fluo-4 image (158 TIFFs); no annotation files seen there, so the annotated part
+  is the control dse_data set. Class names (discocyte, stomatocyte, echinocyte sequence) come from the
+  Zenodo text; the COCO category list was not opened. Images taken with an Axiocam on a Zeiss Axiovert
+  200M with a 100x objective, no staining (paper Methods); pixel size not stated. Only dse_data.zip is
+  given as download_url; the second zip is on the same record. n_items counts brightfield images (182
+  + 79). enricher: annotations verified in dse_data.zip (instance-ID masks; coco_annotations are per-cell
+  binary masks named <image>_<class><n>_<i>.tif).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "dse_data.zip      44,503,941 B\n  dse_data/images/<n>.tif                         182\n  dse_data/annotations/<n>.tif\
+      \                    182  (instance-ID masks)\n  dse_data/coco_annotations/<n>_<Class><k>_<i>.tif\
+      \ 6,025  (one binary mask per cell)\nanemia_data.zip   22,687,583 B\n  anemia_data/{control,scd,thalassemia}/images/<n>.tif\
+      \  37 / 24 / 18\n  anemia_data/{control,scd,thalassemia}/fluo-4/<n>.tif  37 / 24 / 18\n2 files,\
+      \ 67,191,524 B (6,547 zip members)\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7801430/files/dse_data.zip::dse_data/images/54.tif
+    - https://zenodo.org/records/7801430/files/dse_data.zip::dse_data/annotations/54.tif
+    size_bytes: 227303
+    description: One control brightfield image (572x572) and its instance-ID mask (compressed member sizes).
+  arrays:
+  - role: raw
+    path_pattern: dse_data.zip::dse_data/images/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 572
+    - 572
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 2
+    - 199
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: dse_data.zip::dse_data/annotations/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 572
+    - 572
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 52
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: annotations/<n>.tif pairs with images/<n>.tif (same file name); identical 572x572
+      shape in the sampled pair.
+  - role: label
+    path_pattern: dse_data.zip::dse_data/coco_annotations/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 572
+    - 572
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: One binary mask per cell, <image n>_<class name + sequence>_<cell index>.tif (e.g.
+      100_Discocyte_27.tif, 170_Echinocyte2_6.tif); the class is in the file name, pairs with images/<image
+      n>.tif.
+  - role: raw
+    path_pattern: anemia_data.zip::anemia_data/*/images/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 572
+    - 572
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 9
+    - 89
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Unannotated brightfield images (control, scd, thalassemia); each has a fluo-4/<n>.tif
+      image of the same shape (probed 572x572 uint8).
+  notes: 'listing.py on the Zenodo record with --expand-zips: 2 zips, 67,191,524 B, 6,547 members (complete).
+    Probes: all TIFFs plain single-page uint8 572x572, uncompressed, no calibration. Samples: dse_data
+    images/54.tif 2..199 (one image); annotations/54.tif 0..52, 53 values incl. 0 (instance IDs, one per
+    cell); coco_annotations/100_Discocyte_27.tif {0,255}; anemia scd/images/62.tif 9..89. Value ranges
+    from one file each. coco_annotations is not COCO JSON but per-cell mask TIFFs (2.0 GB unpacked). Pixel
+    size not found: TIFF headers carry no resolution, Zenodo text and the paper Methods (read by the harvest
+    run) give only the 100x objective and camera.'
