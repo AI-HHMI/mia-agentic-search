@@ -1,0 +1,132 @@
+schema_version: '1.2'
+id: zenodo-6560759-lmrg-simulated-nuclei-widefield
+title: LMRG Image Analysis Study - simulated 3D widefield nuclei images with ground truth labels
+short_name: Simulated 3D nuclei with labels (widefield)
+description: 'Simulated 3D widefield fluorescence images of nuclei from the ABRF Light Microscopy Research Group image analysis
+  study: four image volumes, four matching label (ground truth) volumes and a widefield PSF (0.75 NA, 1.0 refractive index,
+  300 nm / 1400 nm).'
+landing_url: https://zenodo.org/records/6560759
+doi: 10.5281/zenodo.6560759
+repository: Zenodo
+accession: '6560759'
+authors:
+- Kristopher Kubow
+- Thomas Pengo
+publications: []
+date_published: '2022-05-18'
+imaging:
+  modality:
+  - widefield
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 123.806
+    y: 123.806
+    z: 200.0
+  channels: 1
+  organism: []
+  sample: Simulated nuclei (synthetic images)
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 173326038
+  n_items: 4
+  access: open
+  download_url: https://zenodo.org/records/6560759
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: Label TIFF volumes (out_*_label.tif), one per image volume
+  source: automatic
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-08T16:08:05Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/6560759
+  - https://zenodo.org/api/records/6560910
+  - https://github.com/ABRFLMRG/image-analysis-study/blob/main/image_generation/hl60_c00_dr10.ini
+  confidence: 0.55
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T17:50:00Z'
+notes: 'Files per Zenodo record: out_{c00,c90}_{dr10,dr90}_image.tif (13.3 MB each), matching *_label.tif (21.5 MB each),
+  PSF_widefield_0.75NA_1.0ri_300nm_1400nm.tif/.ics. Meaning of c00/c90 and dr10/dr90 is not defined on the record; number
+  of nuclei and label encoding are not stated on the record, and the study GitHub README and a literature search found no
+  paper, so they stay unknown. size_bytes is the sum of the listed file sizes (~173 MB). Labels are inferred to come from
+  the simulation (source: automatic). Sibling record 6560910 (simulated confocal FISH in C. elegans) is a separate dataset
+  not covered here. enricher: voxel size 123.806x123.806x200 nm from the image TIFF calibration (ImageJ), z agrees with ''z
+  step = 0.2'' (um) in the study''s hl60 Cytopacq configs (was null); size_bytes from the Zenodo listing.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  10 files  173.3 MB\n  out_{c00,c90}_{dr10,dr90}_image.tif   4 files  13.3 MB each  (uint16 100x258x258)\n \
+      \ out_{c00,c90}_{dr10,dr90}_label.tif   4 files  21.5 MB each  (uint16 161x258x258)\n  PSF_widefield_0.75NA_1.0ri_300nm_1400nm.tif\
+      \ / .ics   PSF (float32 65x256x256)\n"
+    n_files: 10
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/6560759/files/out_c00_dr10_image.tif
+    - https://zenodo.org/records/6560759/files/out_c00_dr10_label.tif
+    size_bytes: 34808847
+    description: One simulated volume (out_c00_dr10_image.tif) and its label volume.
+  arrays:
+  - role: raw
+    path_pattern: out_*_image.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 100
+    - 258
+    - 258
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 7
+    - 118
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ hyperstack, 100 z slices; calibration 0.123806 x 0.123806 x 0.2 um.
+  - role: label
+    path_pattern: out_*_label.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 161
+    - 258
+    - 258
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 5
+    encoding: unknown
+    classes: null
+    alignment: scaled
+    alignment_notes: 'out_X_label.tif pairs with out_X_image.tif. Same 258x258 xy grid, but 161 z slices at 0.123806 um (isotropic,
+      ImageJ calibration) vs 100 slices at 0.2 um in the image: 161 x 0.1238 = 19.9 um vs 100 x 0.2 = 20 um, so the label
+      is on an isotropic grid and needs z rescaling (ratio 0.6211) to match the image.'
+  notes: 'Listing: Zenodo API, 10 files, 173,326,038 B (exact). Probed image, label and PSF TIFFs (ImageJ layout, uncompressed):
+    image uint16 100x258x258 zyx, calibration 123.806x123.806x200 nm; label uint16 161x258x258, 123.806 nm isotropic; PSF
+    float32 65x256x256, 300.03x300.03x1400 nm. Sample (out_c00_dr10 pair, 34.8 MB, measured then deleted): image values 7-118
+    (mean 32.6); label values 0-5, 6 distinct values, so whether they are instance IDs of 5 nuclei or classes is not stated
+    (encoding unknown). Voxel size: image TIFF calibration; the study repo''s hl60_*.ini Cytopacq configs give ''z step =
+    0.2'' (microns), matching z; lateral is consistent with the configs'' camera and magnification settings but not stated
+    there as a pixel size. Meaning of c00/c90 and dr10/dr90 not documented. Organism: synthetic nuclei, none listed.'
