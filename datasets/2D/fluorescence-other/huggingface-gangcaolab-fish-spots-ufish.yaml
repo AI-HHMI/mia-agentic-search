@@ -1,0 +1,143 @@
+schema_version: '1.2'
+id: huggingface-gangcaolab-fish-spots-ufish
+title: FISH_spots - manually verified FISH images and spot coordinates (U-FISH dataset)
+short_name: FISH spot detection images with coordinates
+description: Fluorescence in situ hybridization (FISH) image patches (512x512) with point coordinates
+  of spots, combining real data from five spatial-omics and smFISH sources with simulated data; 2D, 3D
+  and noisy-simulation subsets with train/validation/test metadata. Released with the U-FISH spot detector.
+landing_url: https://huggingface.co/datasets/GangCaoLab/FISH_spots
+doi: 10.57967/hf/6150
+repository: HuggingFace
+accession: GangCaoLab/FISH_spots
+authors: []
+publications:
+- title: 'U-FISH: a fluorescent spot detector for imaging-based spatial-omics analysis and AI-assisted
+    FISH diagnosis'
+  doi: 10.1186/s13059-025-03736-x
+  url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12400573/fullTextXML
+date_published: null
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: FISH spots in spatial-omics and smFISH images (real and simulated)
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 3224313000
+  n_items: 4567
+  access: open
+  download_url: https://huggingface.co/datasets/GangCaoLab/FISH_spots
+  download_method: git-lfs
+annotations:
+  present: true
+  types:
+  - points
+  coverage: dense
+  format: CSV files of spot coordinates, one per image
+  source: mixed
+ml:
+  tasks:
+  - detection
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/UFISH-Team/U-FISH
+license:
+  spdx: MIT
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-08T05:15:00Z'
+  evidence_urls:
+  - https://huggingface.co/api/datasets/GangCaoLab/FISH_spots?blobs=true
+  - https://huggingface.co/datasets/GangCaoLab/FISH_spots/resolve/main/README.md
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12400573/fullTextXML
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T06:45:00Z'
+notes: 'Mix of real experimental images (seqFISH, ExSeq, MERFISH, smFISH, MiP-Seq, cropped to 512x512
+  from public sources) and simulated images (Sim-FISH, DeepSpot) per the paper''s Methods; the 3D and
+  noise subsets are mainly simulated. n_items counts the 4166 2D + 101 3D + 300 noise images. Pixel size
+  and microscope are not stated for the combined set (they differ by source). The README and paper say
+  the spots are manually verified; the README lists ''160,000'' spots while the preprint says 1,638,108,
+  so spot count is not recorded. The README states MIT; some real images come from other public datasets
+  whose own terms were not checked. enricher: 2d/meta.csv flags each image as simulated or real with its
+  source and spot count; 3d images are multi-page 256x256 TIFFs with 3-column coordinates.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  HF GangCaoLab/FISH_spots              13309 files  3.2 GB\n  README.md, .gitattributes,\
+      \ .vscode/settings.json\n  2d/meta.csv                image_path, coordinate_path, simulated, source,\
+      \ num_spots\n  2d/image/       4166 .tif  (512x512 uint16, <source>_<n>.tif)\n  2d/image_raw/  \
+      \ 4166 .tif  (same names, LZW)\n  2d/csv/         4166 .csv  (axis-0, axis-1)\n  3d/meta_{test,valid}.csv\n\
+      \  3d/image/        101 .tif  (multi-page 256x256)   3d/csv/ 101 .csv (axis-0..2)\n  noise/meta.csv,\
+      \ meta_test.csv; noise/image/ 300 .tif; noise/csv/ 300 .csv\n"
+    n_files: 13309
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/GangCaoLab/FISH_spots/resolve/main/2d/image/ExSeq_1.tif
+    - https://huggingface.co/datasets/GangCaoLab/FISH_spots/resolve/main/2d/csv/ExSeq_1.csv
+    size_bytes: null
+    description: One real 2D patch (ExSeq_1, 512x512 uint16) and its spot table (23 spots).
+  arrays:
+  - role: raw
+    path_pattern: '{2d,noise}/image/*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 83
+    - 2012
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One single-page 512x512 TIFF per patch, named <source>_<n>.tif; 2d/image_raw holds
+      LZW copies with the same values in the sampled file.
+  - role: raw
+    path_pattern: 3d/image/*.tif
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Plain multi-page TIFF of 256x256 pages (>= 30 pages in rsfish_1); the page axis is
+      not named in the file. The matching CSV has three coordinate columns (axis-0..2), which suggests
+      z,y,x but is not stated.
+  - role: label
+    path_pattern: '*/csv/*.csv'
+    format: csv
+    axes: null
+    shape:
+    - 23
+    - 2
+    shape_varies: true
+    dtype: float64
+    compression: none
+    encoding: points-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'One CSV per image with the same stem (csv/ExSeq_1.csv <-> image/ExSeq_1.tif; meta.csv
+      gives the pairs). Columns axis-0, axis-1 (axis-2 for 3D): sub-pixel spot centres in array-index
+      order.'
+  notes: 'listing.py (HF API): 13,309 files, 3,224,313,000 bytes, exact. Probes: 2d/image/ExSeq_1.tif
+    512x512 uint16 uncompressed; 2d/image_raw/ExSeq_1.tif same, LZW; 3d/image/rsfish_1.tif plain multi-page
+    256x256 uint16. Samples (728,486 bytes): ExSeq_1 image and image_raw both 83-2012, mean 111.7 (hint:
+    12-bit range); ExSeq_1.csv 23 rows of axis-0, axis-1. One sample only. Voxel size not found; checked:
+    TIFF headers, README, meta.csv; it differs by source (five public datasets plus simulations) per the
+    record notes.'
