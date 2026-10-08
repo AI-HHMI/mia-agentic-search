@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: motchallenge-ctmc-v1-dic-cell-tracking
 title: 'CTMC-v1: Cell Tracking with Mitosis Detection'
 short_name: DIC cell tracking, 14 cell lines (CTMC)
-description: >-
-  86 differential interference contrast (DIC) live-cell videos of 14 cell lines (152,584 frames, 400 x 320 px, 30 fps) with human-annotated bounding boxes grouped into tracks,
-  plus lineage (mitosis) tracks; 47 training and 39 test sequences, ground truth released for the training sequences.
+description: 86 differential interference contrast (DIC) live-cell videos of 14 cell lines (152,584 frames, 400
+  x 320 px, 30 fps) with human-annotated bounding boxes grouped into tracks, plus lineage (mitosis) tracks; 47 training
+  and 39 test sequences, ground truth released for the training sequences.
 landing_url: https://motchallenge.net/data/CTMC-v1
 doi: null
 repository: other
@@ -22,7 +22,7 @@ imaging:
   - DIC
   dimensionality: 2D+t
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism:
   - Mus musculus
   - Rattus norvegicus
@@ -40,7 +40,7 @@ imaging:
 data:
   formats:
   - jpeg
-  size_bytes: 808300000
+  size_bytes: 808270542
   n_items: 86
   access: open
   download_url: https://motchallenge.net/data/CTMCV1.zip
@@ -51,7 +51,8 @@ annotations:
   - tracking
   - bounding-box
   coverage: dense
-  format: 'MOTChallenge text files: gt/gt.txt (boxes per frame with track ids), TRA/man_track.txt (lineage) and seqinfo.ini per sequence, in CTMCV1Labels.zip'
+  format: 'MOTChallenge text files: gt/gt.txt (boxes per frame with track ids), TRA/man_track.txt (lineage) and
+    seqinfo.ini per sequence, in CTMCV1Labels.zip'
   source: manual
 ml:
   tasks:
@@ -77,9 +78,86 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-08T11:58:18Z'
-notes: >-
-  No licence or terms of use on the MOTChallenge page or in the paper; the paper says the videos were collected from Nikon's microscopy website because they are freely available,
-  so redistribution rights are unclear (spdx unknown). Evaluation server is closed; ground truth is released for the 47 training sequences only (test sequences have raw frames only).
-  Zip listing (peek_archive): 152,498 jpg frames plus 94 txt and 86 ini files; labels zip: gt/gt.txt, TRA/man_track.txt and seqinfo.ini per sequence. Pixel size and magnification are not stated.
-  Organism list is inferred from the cell-line descriptions on the page (e.g. Rhesus Monkey Kidney, African Water Mongoose Skin), not stated as taxa. Size is the sum of the two zips (about 804 MB + 3.9 MB). Publication date approximate (CVPRW 2020).
+  last_checked: '2026-10-08T13:50:00Z'
+notes: 'No licence or terms of use on the MOTChallenge page or in the paper; the paper says the videos were collected
+  from Nikon''s microscopy website because they are freely available, so redistribution rights are unclear (spdx
+  unknown). Evaluation server is closed; ground truth is released for the 47 training sequences only (test sequences
+  have raw frames only). Pixel size and magnification are not stated. Organisms inferred from the page''s cell-line
+  descriptions, by folder prefix: Mus musculus = 3T3, CRE-BAG2; Rattus norvegicus = A-10; Homo sapiens = A-549,
+  U2O-S; Atilax paludinosus = APM; Bos taurus = BPAE, MDBK; Chlorocebus aethiops = CV-1; Macaca mulatta = LLC-MK2;
+  Ovis aries = MDOK; Didelphis virginiana = OK; Procyon lotor = PL1Ut; Oryctolagus cuniculus = RK-13. Publication
+  date approximate (CVPRW 2020). enricher: channels 1 (grey frames stored as RGB JPEG; was null); size from zip
+  listing.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "CTMCV1.zip (804,414,366 B; also holds the labels)\n  CTMCV1/\n    train/<line>-run<NN>/   47 sequences\n\
+      \      img1/000001.jpg ...    80,389 JPEG frames\n      gt/gt.txt              boxes per frame with track\
+      \ ids (MOT format)\n      TRA/man_track.txt      lineage: id, start, end, parent\n      seqinfo.ini\n    test/<line>-run<NN>/\
+      \    39 sequences\n      img1/*.jpg             72,109 JPEG frames\n      seqinfo.ini\nCTMCV1Labels.zip (3,856,176\
+      \ B)\n  CTMCV1Labels/train/*/{gt/gt.txt,TRA/man_track.txt,seqinfo.ini}, test/*/seqinfo.ini   same files as\
+      \ in CTMCV1.zip\n"
+    n_files: 152858
+    listing_complete: true
+  sample:
+    urls:
+    - https://motchallenge.net/data/CTMCV1.zip::CTMCV1/train/MDBK-run01/img1/000152.jpg
+    - https://motchallenge.net/data/CTMCV1.zip::CTMCV1/train/MDBK-run01/gt/gt.txt
+    - https://motchallenge.net/data/CTMCV1.zip::CTMCV1/train/MDBK-run01/TRA/man_track.txt
+    size_bytes: 412878
+    description: One frame of the shortest training sequence (MDBK-run01, 368 frames) with its box/track file and
+      lineage file. The full sequence unit is img1/*.jpg of that folder.
+  arrays:
+  - role: raw
+    path_pattern: CTMCV1/*/*/img1/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 320
+    - 400
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'One JPEG per frame (6-digit frame number); the 3 RGB samples were identical in the sampled
+      frame (grey stored as RGB). Paper: 30 s between frames.'
+  - role: label
+    path_pattern: CTMCV1/train/*/gt/gt.txt
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: tracks-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'MOT rows frame,id,x,y,w,h,conf,-1,-1 in frame pixel coordinates (first rows read: 1,1,53,167,52,57,1,-1,-1);
+      pairs with img1/ of the same sequence folder. Paper: empty frames carry a fake 4x4 background box labelled
+      0.'
+  - role: label
+    path_pattern: CTMCV1/train/*/TRA/man_track.txt
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: tracks-table
+    classes: null
+    alignment: unknown
+    alignment_notes: Space-separated lineage rows (track id, first frame, last frame, parent id; e.g. 1 1 368 0),
+      ids matching gt.txt; no spatial data.
+  notes: 'Listing: both zips read by range, 152,858 members, 808,270,542 B in total; CTMCV1.zip already contains
+    every label file of CTMCV1Labels.zip. Probe and sample: frame MDBK-run01/img1/000152.jpg is 320x400x3 uint8
+    JPEG, values 0..255 in this one sample, samples identical (grey). seqinfo.ini: frameRate=30, seqLength=368,
+    400x320. gt.txt and man_track.txt heads read with peek_archive (row counts not taken). Test sequences have no
+    ground truth. Voxel size not found; checked: JPEG header (no calibration), seqinfo.ini, the CTMC-v1 page, the
+    CVPRW 2020 paper (only 320x400 px and Nikon TE2000 DIC). License not found on the archived page or in the paper.
+    Download host motchallenge.net is not on the TensorSwitch allowlist (range requests work).'
