@@ -1,11 +1,12 @@
 schema_version: '1.2'
 id: zenodo-14945967-hela-mitosis-regression-plane
-title: 'Deep regression plane training dataset for the Morpho-Proteomic Atlas of Mitosis: annotated HeLa mitotic cell crops (Zenodo)'
+title: 'Deep regression plane training dataset for the Morpho-Proteomic Atlas of Mitosis: annotated HeLa mitotic cell crops
+  (Zenodo)'
 short_name: HeLa mitotic stage regression plane crops
 description: Single-cell image crops (150x150 px, two channels EGFP-alpha-tubulin and H2B-mCherry) of live-imaged then fixed
-  HeLa Kyoto cells tracked through mitosis, each annotated by experts with a coordinate on a circular regression plane
-  (interphase plus prophase to telophase) that encodes continuous mitotic stage. Release v2 is the split (train/validation/test)
-  and augmented set used to train the paper's regression and classification networks.
+  HeLa Kyoto cells tracked through mitosis, each annotated by experts with a coordinate on a circular regression plane (interphase
+  plus prophase to telophase) that encodes continuous mitotic stage. Release v2 is the split (train/validation/test) and augmented
+  set used to train the paper's regression and classification networks.
 landing_url: https://zenodo.org/records/14945967
 doi: 10.5281/zenodo.14945967
 repository: Zenodo
@@ -30,13 +31,15 @@ imaging:
   channels: 2
   organism:
   - Homo sapiens
-  sample: HeLa Kyoto cells expressing EGFP-alpha-tubulin and H2B-mCherry, imaged live (time-lapse) then fixed, PerkinElmer Operetta 40x and 60x
+  sample: HeLa Kyoto cells expressing EGFP-alpha-tubulin and H2B-mCherry, imaged live (time-lapse) then fixed, PerkinElmer
+    Operetta 40x and 60x
   labels_stains:
   - EGFP-alpha-tubulin
   - H2B-mCherry
 data:
   formats:
-  - other
+  - jpeg
+  - tiff
   size_bytes: 3514422664
   n_items: null
   access: open
@@ -48,7 +51,9 @@ annotations:
   - classification
   - other
   coverage: dense
-  format: Per-cell position on the regression plane (circle of radius about 4500 around (5000, 5000); interphase at 270 degrees, 40 mitotic sections of 8.25 degrees); classification classes derived from the coordinates
+  format: One 1x2 uint16 TIFF per crop in labels/ holding the crop's (x, y) position on the regression plane (circle of radius
+    about 4500 around (5000, 5000); interphase at 270 degrees, 40 mitotic sections of 8.25 degrees); classification classes
+    derived from the coordinates
   source: manual
 ml:
   tasks:
@@ -72,10 +77,67 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-08T15:45:00Z'
-notes: 'Read the Zenodo API record (CC BY 4.0, single 3.5 GB tar.gz) and the bioRxiv preprint full text. Paper: training
-  database of 309 time-lapse mitotic cells (40x and 60x) giving 11,797 150x150 crops, annotated in Advanced Cell Classifier
-  on the regression plane, split by cell trajectory into train/validation/test. The tar.gz cannot be listed remotely, so
-  file format, per-split counts of the v2 release (augmented), and the label file layout were not verified (formats other).
-  Pixel size per magnification is not stated for the crops. ML task: regression of plane coordinates (ml.tasks other).'
+  annotations_verified: true
+  last_checked: '2026-10-08T17:20:00Z'
+notes: 'Read the Zenodo API record (CC BY 4.0, single 3.5 GB tar.gz) and the bioRxiv preprint full text. Paper: training database
+  of 309 time-lapse mitotic cells (40x and 60x) giving 11,797 150x150 crops, annotated in Advanced Cell Classifier on the
+  regression plane, split by cell trajectory into train/validation/test. The tar.gz cannot be listed remotely, so file format,
+  per-split counts of the v2 release (augmented), and the label file layout were not verified (formats other). Pixel size
+  per magnification is not stated for the crops. ML task: regression of plane coordinates (ml.tasks other). enricher: formats
+  jpeg + tiff from the archive (was other); annotations verified in streamed tar members.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "RP-splitteddata.tar.gz (3.5 GB, single file; tar members seen in the first 60 MB of the stream)\nRP-splitteddata/\n\
+      \  2022_v1_zeroPadded_split_with_test/\n    val/images/   *.jpg  224x224 RGB crops (p1_wA1_t<frame>_m<field>_..._id<track>_objID<n>.jpg)\n\
+      \    val/labels/   *.tif  1x2 uint16 regression-plane coordinates, same stem as the image\n    (train/, test/ and the\
+      \ other release folders not reached in the streamed part)\n"
+    n_files: null
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: RP-splitteddata/*/*/images/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 224
+    - 224
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: RP-splitteddata/*/*/labels/*.tif
+    format: tiff
+    axes: null
+    shape:
+    - 1
+    - 2
+    shape_varies: false
+    dtype: uint16
+    compression: packbits
+    value_range:
+    - 670
+    - 9341
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: labels/<stem>.tif pairs with images/<stem>.jpg in the same split folder; each label is not an image but
+      the crop's (x, y) coordinate on the regression plane (centre 5000, 5000).
+  notes: 'The dataset is one 3.5 GB tar.gz (size from the Zenodo API file record). tar.gz cannot be indexed remotely, so I
+    streamed the first 60 MB (two passes of 30 MB, logged) and read member names and 6 members in memory: val/images/*.jpg
+    are 224x224 RGB uint8 JPEGs (zero-padded/resized from the paper''s 150x150 crops; R and G carry signal, B max 15-25, i.e.
+    two channels packed into RGB), val/labels/*.tif are 1x2 uint16 TIFFs (PackBits) with plane coordinates (observed 670-9341).
+    Value ranges are from these few samples. Train/test folder sizes and the per-split counts were not reached. No sample
+    unit: TensorSwitch cannot pull single members out of a tar.gz; the whole archive is a direct link (download-check usable,
+    range requests). Voxel size: not stated for the resized crops; checked the Zenodo record description; the preprint full
+    text could not be fetched this run (bioRxiv blocked, Europe PMC PPR1002479 has no full text), the harvester''s notes say
+    it gives no crop pixel size. 2D data: not covered by the miao layout yet.'
