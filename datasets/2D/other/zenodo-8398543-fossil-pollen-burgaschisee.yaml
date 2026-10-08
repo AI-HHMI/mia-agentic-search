@@ -1,0 +1,149 @@
+schema_version: '1.2'
+id: zenodo-8398543-fossil-pollen-burgaschisee
+title: Five-fold training dataset of fossil pollen images from Burgäschisee used for automated fossil pollen identification
+short_name: Fossil pollen detection & classification images
+description: Light-microscope images of fossil pollen from lake sediment (Burgäschisee) for automated pollen analysis,
+  with a five-fold classification set (nine pollen taxa, a Lycopodium marker class and four non-pollen debris classes),
+  an object-detection set with per-image XML bounding-box annotations, and an evaluation image set.
+landing_url: https://zenodo.org/records/8398543
+doi: 10.5281/zenodo.8398543
+repository: Zenodo
+accession: '8398543'
+authors:
+- von Alllmen, Robin
+- Brugger, Sandra
+- Schleicher, Kai D.
+- Rey, Fabian
+- Gobet, Erika
+- Courtney Mustaphi, Colin J.
+- Tinner, Willy
+- Heiri, Oliver
+publications:
+- title: Method development and application of object detection and classification to Quaternary fossil pollen sequences
+  doi: 10.1016/j.quascirev.2024.108521
+  url: https://doi.org/10.1016/j.quascirev.2024.108521
+date_published: '2023-10-02'
+imaging:
+  modality:
+  - other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism: []
+  sample: Fossil pollen grains and debris prepared from lake sediment (Burgäschisee)
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: 3129325123
+  n_items: 5689
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  - classification
+  coverage: dense
+  format: PNG images with per-image XML bounding-box files in OBJECT_DETECTION/{train,validation}; class-named folders
+    (taxa) in CNN/split_N/{train,validation}
+  source: unknown
+ml:
+  tasks:
+  - detection
+  - classification
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/RobinVonAllmen/FOSSILPOLLEN
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/legalcode
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-08T19:13:36Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/8398543
+  - https://zenodo.org/records/8398543
+  - https://github.com/RobinVonAllmen/FOSSILPOLLEN
+  - https://api.crossref.org/works/10.1016/j.quascirev.2024.108521
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T22:34:15Z'
+notes: 'Three zips (listed with peek_archive): OBJECT_DETECTION (1,524 PNG + 1,524 XML; train 1,234 / validation 290
+  pairs), CNN (five folds, each about 3,020 train + 755 validation class-folder images, 3,775 unique images; class folders
+  by taxon, e.g. APIACEAE, BETULA_SIDE) and EVALUATION (390 PNG in EXPERIMENTS/EXPERIMENT_N/<taxon>/). The paper (Quaternary
+  Science Reviews, 2024) is not open access and was not read; the microscope, magnification, pixel size and staining
+  are therefore unknown (modality other), as are annotator details. The code repository has no explicit license; the
+  Zenodo record is CC-BY-4.0. The n_items count adds unique CNN images, detection images and evaluation images. enricher:
+  detection labels are Pascal VOC XML; images RGB PNG; size from the Zenodo listing.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  3 files 3.1 GB
+      OBJECT_DETECTION.zip (2.51 GB)/OBJECT_DETECTION/
+        train/        2468  <scan>_F<nnnn>__S0_X<x>_Y<y>.png + .xml (1,234 pairs)
+        validation/    580  (290 pairs)
+      CNN.zip (605 MB)/CNN/split_0..4/{train,validation}/<TAXON>/<uuid>.png   (class folders, e.g. APIACEAE, BETULA_SIDE)
+      EVALUATION.zip (14 MB)/EXPERIMENTS/EXPERIMENT_N/<taxon>/*.png   390 png
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/8398543/files/OBJECT_DETECTION.zip::OBJECT_DETECTION/train/AUG10_F0244__S0_X36950_Y2968.png
+    - https://zenodo.org/records/8398543/files/OBJECT_DETECTION.zip::OBJECT_DETECTION/train/AUG10_F0244__S0_X36950_Y2968.xml
+    size_bytes: 1548139
+    description: One detection image and its Pascal VOC box file.
+  arrays:
+  - role: raw
+    path_pattern: OBJECT_DETECTION/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1200
+    - 1200
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: OBJECT_DETECTION/*/*.xml
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: '<name>.xml (Pascal VOC: object name = taxon, bndbox xmin/ymin/xmax/ymax in pixels, size 1200x1200x3)
+      pairs with <name>.png in the same folder.'
+  - role: raw
+    path_pattern: CNN/split_*/*/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 162
+    - 162
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Classification crops; the class is the taxon folder name; five cross-validation splits reuse the
+      same images.
+  notes: 'Probed OBJECT_DETECTION/train/AUG10_F0244__S0_X36950_Y2968.png (RGB uint8 1200x1200, deflate) and read its
+    .xml (650 B; Pascal VOC, one CHENOPODIACEAE box 177,222-286,337, verified=''yes''); probed CNN/split_1/train/APIACEAE/0166006d-….png
+    (RGB uint8 162x162). No pixel values sampled. Three separate zips, so data.download_url is null (files at https://zenodo.org/records/8398543/files/<name>).
+    Voxel size not found; checked: PNG headers, VOC XML, Zenodo description; paper not open access. Organism left empty:
+    the classes are pollen taxa (families/genera), one per class folder.'
