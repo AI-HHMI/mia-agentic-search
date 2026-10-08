@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-14679303-spheroidpicker-2d-spheroids
 title: 2D spheroid dataset (SpheroidPicker)
 short_name: 3D cell-culture spheroid masks (brightfield)
-description: 1,157 brightfield images of cancer-cell spheroids in microwell plates with binary spheroid masks, split into
-  train (717), validation (153) and test (153) sets plus 134 extra images for unseen testing, used for spheroid detection and
-  segmentation in the SpheroidPicker robotic microscope.
+description: 1,157 brightfield images of cancer-cell spheroids in microwell plates with binary spheroid
+  masks, split into train (717), validation (153) and test (153) sets plus 134 extra images for unseen
+  testing, used for spheroid detection and segmentation in the SpheroidPicker robotic microscope.
 landing_url: https://zenodo.org/records/14679303
 doi: 10.5281/zenodo.14679303
 repository: Zenodo
@@ -23,7 +23,7 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: 1
+  channels: 3
   organism: []
   sample: Spheroids (3D cell cultures) in microwell plates
   labels_stains: []
@@ -34,7 +34,7 @@ data:
   size_bytes: 963519585
   n_items: 1157
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/14679303/files/SpheroidPicker_dataset.zip
   download_method: http
 annotations:
   present: true
@@ -42,7 +42,8 @@ annotations:
   - semantic-segmentation
   - instance-segmentation
   coverage: dense
-  format: Mask TIFFs with the same file names as the PNG images, in masks/ next to images/ for train, val, test and Unseen_annotation
+  format: Mask TIFFs with the same file names as the PNG images, in masks/ next to images/ for train,
+    val, test and Unseen_annotation
   source: unknown
 ml:
   tasks:
@@ -66,10 +67,98 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T19:13:36Z'
-notes: 'Zip layout (peek_archive): {train,val,test,Unseen_annotation}/{images,masks}/ with 717/153/153/134 PNG images and same-named mask TIFFs (1,157 pairs, 7.1 GB uncompressed).
-  The 2021 Scientific Reports paper (SpheroidPicker, Grexa et al.) describes an earlier set of 981 brightfield images (1920x1080 RGB, 1,871 annotated
-  objects, 70/15/15 split, annotated in ImageJ by expert biologists) and says annotated data are available on request; this Zenodo record is a later, larger
-  release (1,023 + 134 images) by Grexa, Horvath and Diosdi, and no paper describing exactly this release was found, so the paper link is to the original SpheroidPicker
-  work. Pixel size is not stated for this release (the paper gives 0.775751 um/pixel only for its separate fluorescence images). Organism and annotator details for this release are not stated (organism left empty). Some images
-  appear to come from a different screen (1screening_* file names, ~6 MB PNGs).'
+  last_checked: '2026-10-08T22:34:22Z'
+notes: 'Zip layout (peek_archive): {train,val,test,Unseen_annotation}/{images,masks}/ with 717/153/153/134
+  PNG images and same-named mask TIFFs (1,157 pairs, 7.1 GB uncompressed). The 2021 Scientific Reports
+  paper (SpheroidPicker, Grexa et al.) describes an earlier set of 981 brightfield images (1920x1080 RGB,
+  1,871 annotated objects, 70/15/15 split, annotated in ImageJ by expert biologists) and says annotated
+  data are available on request; this Zenodo record is a later, larger release (1,023 + 134 images) by
+  Grexa, Horvath and Diosdi, and no paper describing exactly this release was found, so the paper link
+  is to the original SpheroidPicker work. Pixel size is not stated for this release (the paper gives 0.775751
+  um/pixel only for its separate fluorescence images). Organism and annotator details for this release
+  are not stated (organism left empty). enricher: channels 3, RGB PNGs (was 1).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      ./                                            1 file    963.5 MB  .zip (7.1 GB uncompressed)
+      SpheroidPicker_dataset.zip/train/images/    717 files   4.06 GB  .png
+      SpheroidPicker_dataset.zip/train/masks/     717 files   32.5 MB  .tiff (same stem)
+      SpheroidPicker_dataset.zip/val/images/      153 files  863.3 MB  .png
+      SpheroidPicker_dataset.zip/val/masks/       153 files    5.2 MB  .tiff
+      SpheroidPicker_dataset.zip/test/images/     153 files  826.8 MB  .png
+      SpheroidPicker_dataset.zip/test/masks/      153 files    5.2 MB  .tiff
+      SpheroidPicker_dataset.zip/Unseen_annotation/images/  134 files  835.1 MB  .png
+      SpheroidPicker_dataset.zip/Unseen_annotation/masks/   134 files  510.1 MB  .tiff (uncompressed)
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/14679303/files/SpheroidPicker_dataset.zip::train/images/20190109_35.png
+    - https://zenodo.org/records/14679303/files/SpheroidPicker_dataset.zip::train/masks/20190109_35.tiff
+    size_bytes: 853798
+    description: One 1920x1080 RGB brightfield image and its spheroid mask
+  arrays:
+  - role: raw
+    path_pattern: SpheroidPicker_dataset.zip/*/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1080
+    - 1920
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Probed train, test and Unseen_annotation images are all 1080x1920 RGB.
+  - role: label
+    path_pattern: SpheroidPicker_dataset.zip/{train,val,test}/masks/*.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 1080
+    - 1920
+    shape_varies: false
+    dtype: uint8
+    compression: packbits
+    value_range:
+    - 0
+    - 1
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: 1
+      name: spheroid
+    alignment: same-grid
+    alignment_notes: <split>/masks/<stem>.tiff pairs with <split>/images/<stem>.png; same yx grid in the
+      sample.
+  - role: label
+    path_pattern: SpheroidPicker_dataset.zip/Unseen_annotation/masks/*.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 1080
+    - 1920
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 2
+    normalization: unknown
+    encoding: unknown
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Same stem as Unseen_annotation/images/*.png. Three sampled masks: all zeros; {0,
+      1: 4910, 2: 518}; {0, 1: 1 pixel}. Values 0-2 could be instance IDs or classes; not documented.'
+  notes: 'Sampled train 20190109_35: RGB uint8 0-255 (mean 207, channels differ), mask {0: 2035822, 1:
+    37778}; test mask 1screening_W5_H13 {0, 1}. Three Unseen_annotation masks sampled (one empty, one
+    with values 1 and 2, one with a single labelled pixel), so those may be sparse or partly empty. Values
+    from samples. Voxel size not found; checked: PNG/TIFF headers, Zenodo API record (no description of
+    pixel size), paper full text (0.775751 um/pixel only for its separate fluorescence images).'
