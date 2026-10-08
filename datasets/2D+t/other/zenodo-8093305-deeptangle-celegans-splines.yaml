@@ -44,7 +44,7 @@ annotations:
   format: 'labels.json in labeled_data.zip: per section (VIDEONAME_FRAMENUMBER_SECTIONID) a list of splines
     with x and y coordinates, for the middle frame 05.png; synthetic_dataset: labels.npy per clip for
     all frames'
-  source: unknown
+  source: mixed
 ml:
   tasks:
   - detection
@@ -62,19 +62,115 @@ provenance:
   - https://zenodo.org/records/8093305
   - https://zenodo.org/api/records/8093305
   - https://arxiv.org/abs/2301.04460
+  - https://www.nature.com/articles/s42003-023-05098-1
   confidence: 0.65
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T06:12:35Z'
-notes: 'Zenodo page and API record read in full (CC BY 4.0 from the API record). Zip indexes read with
-  peek_archive: videos.zip has 11 AVI files (8.0 GB); labeled_data.zip has 178 section folders of 11 PNG
-  frames (frames/<name>/00..10.png), labels.json and plot_data.py; syntehthic_dataset.zip (spelled so
-  on Zenodo) has 900 clip folders with PNG frames and labels.npy. plot_data.py shows labels.json holds
-  splines (x, y lists) for the middle frame. Only the arXiv abstract was readable (Europe PMC does not
-  index the paper), which says training is on synthetic data; so microscope, magnification, pixel size,
-  illumination mode and who drew the labels are not stated on the Zenodo page or the abstract (modality
-  other, annotation source unknown, voxel size null). Files other than PNG are AVI videos and NPY labels,
-  formats lists png only because the schema has no AVI/NPY entry. Labelled real data are an evaluation
-  set of 178 sections (coverage sparse); the 900 synthetic clips are the training set.'
+  last_checked: '2026-10-08T07:11:41Z'
+notes: 'Zenodo page and API read (CC BY 4.0). videos.zip: 11 raw AVIs (8.0 GB). labeled_data.zip: 178
+  sections of 11 PNG frames (256x256 uint8) with labels.json splines for the middle frame 05.png. syntehthic_dataset.zip
+  (spelled so): 900 synthetic clips of 11 PNG frames with labels.npy for all frames. formats lists png
+  only (AVI/NPY not in the enum). Paper (Communications Biology 2023, s42003-023-05098-1, read on nature.com):
+  wide-field videos of swimming C. elegans under approximately uniform illumination; ~200 random regions
+  hand-labeled giving ~1,500 centerlines, used for evaluation only; training uses the synthetic clips.
+  enricher: annotations.source mixed = real sections manual (paper), synthetic labels generated (was unknown).
+  Pixel size not stated (the paper only gives worm width as about 2 px, about 50 um).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  3 files  8.73 GB (Zenodo API, exact sizes)\n  videos.zip  8.0 GB\n    videos/WS0001-D3-<n>x_<date>-0000.avi\
+      \  11 files  0.63-0.99 GB\n  labeled_data.zip  57 MB\n    labeled_data/frames/<video>.avi_<frame>_<section>/00.png\
+      \ .. 10.png  178 folders, 1,958 PNGs\n    labeled_data/labels.json  0.9 MB\n    labeled_data/plot_data.py\n\
+      \  syntehthic_dataset.zip  643 MB\n    syntehthic_dataset/data/<nworms>_<id>/00.png .. 10.png +\
+      \ labels.npy  900 folders\n    syntehthic_dataset/plot_data.py\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/8093305/files/labeled_data.zip::labeled_data/frames/WS0001-D3-13x_2022-02-14-152945-0000.avi_00252_000/05.png
+    - https://zenodo.org/records/8093305/files/labeled_data.zip::labeled_data/labels.json
+    size_bytes: null
+    description: Middle frame of one labelled real section plus labels.json (splines for all 178 sections)
+  arrays:
+  - role: raw
+    path_pattern: labeled_data.zip::labeled_data/frames/*/[0-9][0-9].png
+    format: png
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 107
+    - 198
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Each section folder is an 11-frame clip (00-10.png) cut from a video; only 05.png
+      is labelled.
+  - role: label
+    path_pattern: labeled_data.zip::labeled_data/labels.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes:
+    - id: null
+      name: worm centerline
+    alignment: same-grid
+    alignment_notes: 'Keyed by section folder name; data[name]["splines"] is a list of {x: [...], y: [...]}
+      pixel coordinates in that folder''s 05.png (plot_data.py).'
+  - role: raw
+    path_pattern: syntehthic_dataset.zip::syntehthic_dataset/data/*/[0-9][0-9].png
+    format: png
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Synthetic 11-frame clips; folder name <number of worms>_<id> (5 to 250 worms).
+  - role: label
+    path_pattern: syntehthic_dataset.zip::syntehthic_dataset/data/*/labels.npy
+    format: other
+    axes: null
+    shape:
+    - 11
+    - 5
+    - 42
+    - 2
+    shape_varies: true
+    dtype: float32
+    compression: none
+    encoding: other
+    alignment: same-grid
+    alignment_notes: 'NumPy array (frames, worms, 42 spline points, x/y) in pixel coordinates of the same
+      folder''s PNGs (plot_data.py plots data[5] on 05.png); worm count varies per clip (250_079: 11x250x42x2).
+      Values may fall slightly outside the image (min -17.4, max 286.8).'
+  - role: raw
+    path_pattern: videos.zip::videos/*.avi
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Unlabelled source videos (AVI), not inspected.
+  notes: 'Listing: Zenodo API, 3 files, 8,728,164,590 B exact; zip indexes read (labeled 1,960 members,
+    synthetic 10,801, videos 11). Probed synthetic 005_000/05.png: 256x256 uint8 gray. Sampled labelled
+    frame 05.png (31.9 KB): range 107-198, mean 184 (one sample). labels.npy headers read without pickle
+    (scratch script, npy header + float data): 005_000 (11,5,42,2) float32, 250_079 (11,250,42,2). Read
+    plot_data.py of both parts (not run) for the label layout. Voxel size not found; checked: PNG headers,
+    Zenodo API record, plot_data.py, paper (nature.com full text), deeptangle GitHub README.'
