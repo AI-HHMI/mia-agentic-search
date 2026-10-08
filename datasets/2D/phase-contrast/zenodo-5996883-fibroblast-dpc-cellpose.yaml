@@ -1,0 +1,138 @@
+schema_version: '1.2'
+id: zenodo-5996883-fibroblast-dpc-cellpose
+title: Digital Phase Contrast on Primary Dermal Human Fibroblasts cells
+short_name: Fibroblast cell segmentation (phase contrast)
+description: Paired digital phase contrast (square-rooted) and brightfield images of primary dermal human fibroblasts with
+  manually drawn cell masks, organised as a train/test layout for Cellpose training (train and test folders, 1024x1024 images,
+  Operetta 10x 0.35 NA). Used to train the Cellpose model 10.5281/zenodo.6023317.
+landing_url: https://zenodo.org/records/5996883
+doi: 10.5281/zenodo.5996883
+repository: Zenodo
+accession: '5996883'
+authors: []
+publications: []
+date_published: '2022-02-09'
+imaging:
+  modality:
+  - phase-contrast
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 634
+    y: 634
+    z: null
+  channels: null
+  organism:
+  - Homo sapiens
+  sample: Primary dermal human fibroblasts
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 19796871
+  n_items: 102
+  access: open
+  download_url: https://zenodo.org/records/5996883/files/dataset.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: 16-bit TIFF label masks (*_masks.tif) next to each image
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-08T10:38:46Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/5996883
+  - https://zenodo.org/records/5996883
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T12:20:00Z'
+notes: 'Zenodo record has no authors parsed and no related paper; none cited on the record. Zip lists 102 .tif files (test/
+  and train/; per region: DPC image, _brightfield image, _masks) plus 2 Thumbs.db; so about 34 image/mask triplets. Uncertain
+  objects (dust, fused cells) were intentionally left unannotated. Pixel size 634 nm stated on the record. enricher: the files
+  are 512x512 (headers), not the stated 1024x1024, so the stated 634 nm may be for the unbinned image; kept, confidence lowered.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "dataset.zip (19,796,871 B, no top-level folder)\n  train/   78 .tif (26 regions x DPC, _brightfield, _masks) +\
+      \ Thumbs.db\n  test/    24 .tif (8 regions x DPC, _brightfield, _masks) + Thumbs.db\n  names: img_t1_z<NNN>_c1_r<1-5>.tif,\
+      \ ..._brightfield.tif, ..._masks.tif\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5996883/files/dataset.zip::test/img_t1_z004_c1_r1.tif
+    - https://zenodo.org/records/5996883/files/dataset.zip::test/img_t1_z004_c1_r1_masks.tif
+    size_bytes: 1049395
+    description: One digital phase contrast image and its Cellpose mask (the brightfield partner is test/img_t1_z004_c1_r1_brightfield.tif)
+  arrays:
+  - role: raw
+    path_pattern: dataset.zip::{train,test}/img_t1_z[0-9][0-9][0-9]_c1_r[0-9].tif
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 1166
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Digital phase contrast, square-rooted per the Zenodo description.
+  - role: raw
+    path_pattern: dataset.zip::{train,test}/*_brightfield.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Brightfield partner of each DPC image (same stem + _brightfield); ImageJ display range 37876-48456 in
+      the probed file.
+  - role: label
+    path_pattern: dataset.zip::{train,test}/*_masks.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 12
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same stem + _masks (Cellpose layout); same 512x512 shape as the DPC and brightfield images.
+  notes: 'Exact listing of dataset.zip (104 members: 102 TIFFs, 2 Thumbs.db). Probed the DPC, brightfield and mask of test/img_t1_z004_c1_r1
+    (all uint16 512x512 uncompressed ImageJ TIFFs without calibration). Every TIFF is ~524 KB in the listing, i.e. 512x512
+    uint16, although the Zenodo description says 1024x1024 at 634 nm; whether the files are binned, downsampled or cropped
+    is not stated, so the 634 nm pixel size may not apply to them. Sampled DPC + mask: DPC min 0 max 1166 mean 24 (one sample);
+    mask 13 values 0..12 (instance IDs, Cellpose).'
