@@ -21,20 +21,38 @@ data.size_bytes takes total_bytes with technical.size_source `estimated`, and on
 page or paper gives the size. The result is the uncompressed size; compressed files download smaller.
 """
 import argparse
+import fnmatch
 import json
 import math
+import re
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.common import JUNK_PATH, load_yaml  # noqa: E402
-from tools.convertibility import _matches  # noqa: E402
 
 BYTES = {"bool": 1, "uint8": 1, "int8": 1, "uint16": 2, "int16": 2, "float16": 2, "uint32": 4, "int32": 4,
          "float32": 4, "uint64": 8, "int64": 8, "float64": 8, "complex64": 8}
 CHUNKED = {"zarr", "ome-zarr", "n5", "precomputed"}
 TABLES = {"csv", "json"}
 BETTER_SOURCES = {"file-listing", "page-stated", "paper"}
+HDF5_DATASET = re.compile(r"\s(?:\([^()]+\)|::\s*\S+)\s*$")        # 'a/*.h5 (volumes/raw)', 'a.h5 :: FOV0'
+PLACEHOLDER = re.compile(r"<[^<>]+>|#{2,}|(?<![A-Z])(?:N{2,}|P{2,})(?![A-Za-z])")   # <name>, ###, NNN, mvNN, PP
+
+
+def _expand_braces(pattern):
+    m = re.search(r"\{([^{}]*)\}", pattern)
+    if not m:
+        return [pattern]
+    return [x for alt in m.group(1).split(",") for x in _expand_braces(pattern[:m.start()] + alt + pattern[m.end():])]
+
+
+def _matches(path, pattern):
+    pattern = HDF5_DATASET.sub("", pattern).strip().split("::", 1)[-1]          # 'a.zip::member' patterns
+    name = path.rsplit("/", 1)[-1]
+    globs = [g for part in pattern.split(", ") for g in _expand_braces(PLACEHOLDER.sub("*", part.strip()))]
+    return any(fnmatch.fnmatch(p, g) for glob in globs for p in (path, name)
+               for g in (glob, "*/" + glob, glob.rsplit("/", 1)[-1]))
 
 
 def human(n):
