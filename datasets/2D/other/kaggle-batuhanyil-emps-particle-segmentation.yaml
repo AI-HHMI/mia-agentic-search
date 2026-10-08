@@ -1,0 +1,128 @@
+schema_version: '1.2'
+id: kaggle-batuhanyil-emps-particle-segmentation
+title: EMPS - electron micrographs of nanoparticles with particle instance segmentation maps
+short_name: Nanoparticle EM images with instance maps
+description: 465 scanning and transmission electron micrographs of nanoparticles, mined from published articles, with human-drawn
+  polygon outlines of every particle and the resulting 32-bit instance segmentation maps. The paper splits it into 366 training
+  and 99 test images.
+landing_url: https://www.kaggle.com/datasets/batuhanyil/electron-microscopy-particle-segmentation
+doi: null
+repository: Kaggle
+accession: batuhanyil/electron-microscopy-particle-segmentation
+authors:
+- Yildirim, Batuhan
+- Cole, Jacqueline M.
+publications:
+- title: Bayesian Particle Instance Segmentation for Electron Microscopy Image Quantification
+  doi: 10.1021/acs.jcim.0c01455
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC8041280/
+date_published: '2022-07-31'
+imaging:
+  modality:
+  - other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: nanoparticles of varied materials, shapes and densities in SEM and TEM images taken from 2015-2020 journal figures
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: 119005785
+  n_items: 465
+  access: registration
+  download_url: https://www.kaggle.com/api/v1/datasets/download/batuhanyil/electron-microscopy-particle-segmentation
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: per-image 16-bit PNG instance maps in segmaps/ with the same file name as the image in images/
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/by256/emps
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-08T19:30:00Z'
+  evidence_urls:
+  - https://www.kaggle.com/api/v1/datasets/view/batuhanyil/electron-microscopy-particle-segmentation
+  - https://raw.githubusercontent.com/by256/emps/main/README.md
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8041280/fullTextXML
+  - https://www.kaggle.com/api/v1/datasets/list/batuhanyil/electron-microscopy-particle-segmentation
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-08T20:55:00Z'
+notes: 'Read the Kaggle record (license field "Other (specified in description)", 119 MB, updated 2022-07-31; the description only
+  asks to cite the paper), the GitHub README (the repository LICENSE is MIT, but that file belongs to the code and the README
+  states no data terms) and the J. Chem. Inf. Model. paper (open access via PMC). The 465 images were mined from Elsevier
+  articles from 2015-2020 and annotated with VGG Image Annotator, so reuse terms of the underlying figures are unclear;
+  spdx stays unknown. The paper uses 366 images for training and 99 for testing (split chosen by publication), but no split
+  file was seen, so splits_provided is false. enricher: Kaggle file API lists images/ and segmaps/ (465 PNG each); the download API serves the zip without login; formats png (was other). Pixel size is
+  not given (scale bars were measured separately in the paper pipeline). Both SEM and TEM images are included, so modality
+  is other.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      images/   465 files  116.2 MB  .png  (<10-hex id>.png)
+      segmaps/  465 files    2.8 MB  .png  (same names as images/)
+      (served as one zip, archive.zip 118.5 MB, by the Kaggle download API)
+    n_files: 930
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 515
+    - 512
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 244
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Grayscale micrograph stored as RGB (samples_identical true in the sample); paired with segmaps/ by identical file name.
+  - role: label
+    path_pattern: segmaps/*.png
+    format: png
+    axes: yx
+    shape:
+    - 515
+    - 512
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 4
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same file name and same shape as the image; 0 = background, 1..N = particles.
+  notes: 'Listed the 930 files with the public Kaggle file API (exact sizes, 119,005,785 B total). The download API
+    (www.kaggle.com/api/v1/datasets/download/<ref>) redirects without login to a signed storage.googleapis.com archive.zip
+    (118,475,337 B, range requests work). Sampled 00655d9628 through that signed URL: image 515x512x3 uint8, 0-244,
+    channels identical (grey as RGB); segmap 515x512 uint16 (PNG mode I;16), values 0-4 (5 unique), consistent with
+    instance ids as the paper describes. One sample; image sizes vary (figures mined from papers). sample is null because
+    zip members could not be checked through the redirect (probe: no end-of-central-directory via www.kaggle.com) and
+    the host is not allowlisted. Voxel size not found; checked: PNG headers, Kaggle record, GitHub README, paper (scale
+    bars per figure, no fixed pixel size).'
