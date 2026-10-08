@@ -11,8 +11,8 @@ verify: is the written crop what the source says, and do the labels sit on the i
   labels:*       integer dtype, number of IDs, foreground fraction plausible (0.05 % to 98 %)
   alignment:*    how well the labels fit the image as stored, against the same labels flipped on each axis,
                  rotated by 180°, transposed in y/x, and shifted by up to 10 % per axis. Two scores: `interior`
-                 (difference of mean intensity inside vs outside the labels, in standard deviations: filled
-                 objects such as nuclei) and `boundary` (image gradient on label boundaries vs everywhere:
+                 (difference of mean intensity inside the labels vs a 3-voxel ring around them, in standard
+                 deviations: filled objects such as nuclei; the ring keeps unlabelled neighbours out of it) and `boundary` (image gradient on label boundaries vs everywhere:
                  membranes, neurites). It fails when a wrong transform or shift fits clearly better (gain >= 1.3
                  on that score, and the other score not more than 10 % worse), and is `unverified` when neither
                  score says much or a wrong transform fits about as well (the visual review then decides).
@@ -77,13 +77,32 @@ def _gradient(r):
     return gy + gx
 
 
+SHELL = 3                # voxels (in-plane, at the analysis level): the ring the labels are compared with
+
+
+def _shell(m, k=SHELL):
+    """The ring of voxels within k (y/x) of the labels, outside them."""
+    d = m.copy()
+    for _ in range(k):
+        e = d.copy()
+        e[:, 1:, :] |= d[:, :-1, :]
+        e[:, :-1, :] |= d[:, 1:, :]
+        e[:, :, 1:] |= d[:, :, :-1]
+        e[:, :, :-1] |= d[:, :, 1:]
+        d = e
+    return d & ~m
+
+
 def _scores(r, g, lab):
     m = lab > 0
     fg = m.mean()
     out = {"fg_fraction": float(fg)}
     if 0 < fg < 1:
         sd = float(r.std()) or 1.0
-        out["interior"] = float(abs(r[m].mean() - r[~m].mean()) / sd)
+        # inside vs the ring just around the labels, not all the background: an outline on its structure has an
+        # edge right there, while unlabelled bright neighbours (sparse labels) don't count against it
+        ring = _shell(m)
+        out["interior"] = float(abs(r[m].mean() - r[ring if ring.any() else ~m].mean()) / sd)
         b = _boundaries(lab)
         out["boundary"] = float(g[b].mean() / max(float(g.mean()), 1e-9)) if b.any() else None
     else:

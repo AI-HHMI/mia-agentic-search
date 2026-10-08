@@ -9,6 +9,7 @@ then check the result numerically and visually. Driven by the /download-native s
                                [dtype=uint16] [orientation=apply|ignore] [transform=flip:y | select:c:0]
                                [role=raw|label] [label_class=golgi] [clear=transforms] reason="…"
     python tools/native.py split <spec.json> <crop> <label index> 1=mitochondria 2=er --reason "…"   # one folder per class
+    python tools/native.py split <spec.json> <crop> <label index> c0=nucleus c1=cell --reason "…"     # per channel
     python tools/native.py convert <spec.json> [--crop C]
     python tools/native.py check <spec.json> [--crop C]              # verify + overlay
     python tools/native.py review <spec.json> <crop> --verdict pass|fail|unsure --reason "…" --saw "…"
@@ -157,6 +158,8 @@ def set_label_class(e, r, ra, label_class, voxel, today):
         attrs["segmentation_type"] = "semantic"
         attrs["review_needed"] = [x for x in attrs["review_needed"] if not x.startswith("segmentation_type")]
         attrs["notes"] += f"; split out of a multi-class label: values {e['values']}"
+    if e.get("channel") is not None:
+        attrs["notes"] += f"; channel {e['channel']} of a multi-channel label"
     info = {"instance": "instance", "semantic": "semantic", "point": "points"}.get(attrs["segmentation_type"], "labels")
     e["label_class"] = label_class
     e["key"] = f"{attrs['provenance'] or 'unknown'}-{slug(label_class).replace('-', '_')}-{info}"
@@ -340,6 +343,15 @@ def cmd_inspect(a):
                                     "min": float(sub.min()), "max": float(sub.max())}
                     if np.issubdtype(arr.dtype, np.integer):
                         out["stats"]["distinct_values_in_subsample"] = int(len(np.unique(sub)))
+                    ax = (out["info"].get("axes_in_file") or "").replace("s", "c")
+                    if e["role"] == "label" and "c" in ax and len(ax) == arr.ndim and arr.shape[ax.index("c")] > 1:
+                        # per channel: foreground, and how much of it lies inside each other channel (a nucleus
+                        # mask sits inside its cell mask), so the channel -> class assignment can rest on the data
+                        ch = [np.take(sub, k, axis=ax.index("c")) > 0 for k in range(arr.shape[ax.index("c")])]
+                        out["stats"]["label_channels"] = [
+                            {"channel": k, "fg_fraction": round(float(m.mean()), 4),
+                             "inside": {f"c{j}": round(float((m & o).sum() / max(int(m.sum()), 1)), 3)
+                                        for j, o in enumerate(ch) if j != k}} for k, m in enumerate(ch)]
                     spp = out["info"].get("samples_per_pixel") or 1
                     if spp > 1 and arr.shape[-1] == spp:      # grey stored as RGB: every sample the same?
                         out["stats"]["samples_identical"] = bool(all(np.array_equal(sub[..., 0], sub[..., k])
@@ -429,20 +441,25 @@ def cmd_split(a):
     groups = {}
     for m in a.mapping:
         val, _, cls = m.partition("=")
+        if cls and re.fullmatch(r"c\d+", val):          # one channel of a multi-channel label = one class
+            groups[cls] = {"channel": int(val[1:])}
+            continue
         if not cls or not all(x.strip().lstrip("-").isdigit() for x in val.split(",")):
-            sys.exit(f"{m!r}: use VALUE=class or VALUE,VALUE=class")
-        groups.setdefault(cls, []).extend(int(x) for x in val.split(","))
+            sys.exit(f"{m!r}: use VALUE=class, VALUE,VALUE=class or cN=class (channel N)")
+        groups.setdefault(cls, {"values": []})["values"].extend(int(x) for x in val.split(","))
     r, ra = _record_array(spec, e)
     pos = c["arrays"].index(e)
     new = []
-    for cls, vals in groups.items():
-        x = {**{k: v for k, v in e.items() if k not in ("key", "attrs", "label_class")}, "values": sorted(vals)}
+    for cls, sel in groups.items():
+        x = {**{k: v for k, v in e.items() if k not in ("key", "attrs", "label_class")},
+             **({"values": sorted(sel["values"])} if "values" in sel else sel)}
         set_label_class(x, r, ra, cls, spec["voxel_size_nm"], datetime.date.today().isoformat())
         new.append(x)
     c["arrays"][pos:pos + 1] = new
-    _log(c, new[0], {"split": {cls: vals for cls, vals in groups.items()}}, a.reason)
+    _log(c, new[0], {"split": groups}, a.reason)
     _save(spec, a.spec)
-    print(json.dumps({"crop": Path(c["crop"]).name, "split": [{"index": pos + i, "key": x["key"], "values": x["values"]}
+    print(json.dumps({"crop": Path(c["crop"]).name, "split": [{"index": pos + i, "key": x["key"], "values": x.get("values"),
+                                                               "channel": x.get("channel")}
                                                               for i, x in enumerate(new)]}))
 
 
@@ -577,7 +594,8 @@ def main():
     q.add_argument("spec")
     q.add_argument("crop")
     q.add_argument("index", help="the label's index (from inspect)")
-    q.add_argument("mapping", nargs="+", help="VALUE=class or VALUE,VALUE=class, from the record or its docs")
+    q.add_argument("mapping", nargs="+", help="VALUE=class, VALUE,VALUE=class or cN=class (channel N), from the "
+                                              "record, the file's channel names or the dataset's docs")
     q.add_argument("--reason", required=True)
     q = sub.add_parser("review")
     q.add_argument("spec")
