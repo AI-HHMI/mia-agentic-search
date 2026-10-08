@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: github-mp-idb-malaria-thin-smear
 title: 'MP-IDB: The Malaria Parasite Image Database for Image Processing and Analysis'
 short_name: MP-IDB malaria parasites in blood smears
-description: Blood smear images of four Plasmodium species (falciparum, malariae, ovale, vivax) with parasite
-  life stages (ring, trophozoite, schizont, gametocyte) encoded in file names. Each species folder has
-  img (JPEG images), gt (ground-truth masks provided by expert pathologists) and crops; the falciparum
-  folder also has a CSV of per-parasite boxes with stage labels.
+description: Blood smear images of four Plasmodium species (falciparum, malariae, ovale, vivax) with parasite life
+  stages (ring, trophozoite, schizont, gametocyte) encoded in file names. Each species folder has img (JPEG images),
+  gt (ground-truth masks provided by expert pathologists) and crops; the falciparum folder also has a CSV of per-parasite
+  boxes with stage labels.
 landing_url: https://github.com/andrealoddo/MP-IDB-The-Malaria-Parasite-Image-Database-for-Image-Processing-and-Analysis
 doi: null
 repository: GitHub
@@ -36,7 +36,8 @@ imaging:
 data:
   formats:
   - jpeg
-  size_bytes: null
+  - png
+  size_bytes: 4232632320
   n_items: 210
   access: open
   download_url: null
@@ -48,8 +49,8 @@ annotations:
   - bounding-box
   - classification
   coverage: dense
-  format: Per-image ground-truth masks in gt/ (JPEG); falciparum also has mp-idb-falciparum.csv with filename,
-    parasite_type (ring/tro/schi/game) and box coordinates
+  format: Per-image ground-truth masks in gt/ (JPEG); falciparum also has mp-idb-falciparum.csv with filename, parasite_type
+    (ring/tro/schi/game) and box coordinates
   source: manual
 ml:
   tasks:
@@ -75,13 +76,99 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T14:03:34Z'
-notes: 'Image counts from GitHub folder listings: falciparum 104 images (from the CSV, listing truncated
-  at 100), malariae 37, ovale 29, vivax 40 = 210, all .jpg; gt/ folders hold one file per image (malariae
-  gt listing shows the same 37 names). Falciparum CSV has 1,297 boxes (1,230 ring, 42 trophozoite, 18
-  schizont, 7 gametocyte); the box column order (xmin,xmax,ymin,ymax) looks unusual, check before use.
-  Other species CSV names were not found. Paper is not open access, only the Crossref record and the repository
-  DatasetDescription.pdf were read, so magnification, camera, image size and pixel size are not stated.
-  License MIT is the repository license (README), applied to code and data. Download: clone the GitHub
-  repository (images are plain files, no archive). Stain, thin vs thick smear and colour channels are
-  not stated in the fetched sources; modality brightfield is assumed for blood smear photographs.'
+  last_checked: '2026-10-08T15:28:28Z'
+notes: 'Image counts from GitHub folder listings: falciparum 104 images (from the CSV, listing truncated at 100),
+  malariae 37, ovale 29, vivax 40 = 210, all .jpg; gt/ folders hold one file per image (malariae gt listing shows
+  the same 37 names). Falciparum CSV has 1,297 boxes (1,230 ring, 42 trophozoite, 18 schizont, 7 gametocyte); the
+  box column order (xmin,xmax,ymin,ymax) looks unusual, check before use. Paper is not open access, only the Crossref
+  record and the repository DatasetDescription.pdf were read, so magnification, camera, image size and pixel size
+  are not stated. License MIT is the repository license (README), applied to code and data. Download: clone the
+  GitHub repository (images are plain files, no archive). Stain and smear type not stated; brightfield assumed.
+  organisms: P. falciparum = Falciparum/, P. malariae = Malariae/, P. ovale = Ovale/, P. vivax = Vivax/.'
+technical:
+  method: sample
+  inspected_at: '2026-10-08T15:28:28Z'
+  size_source: estimated
+  layout:
+    tree: |
+      ./  1,789 files (git tree of commit b556bdd)
+        README.md, LICENSE, DatasetDescription.pdf, .gitignore
+        Falciparum/img/*.jpg 104, gt/*.jpg 104, crops/{G,R,S,T}/*.png 1,297
+                   mp-idb-falciparum.csv, mp-idb-falciparum-abspath.csv, scripts/, .ipynb_checkpoints/
+        Malariae/img/*.jpg 37, gt/*.jpg 37
+        Ovale/img/*.jpg 29, gt/*.jpg 29
+        Vivax/img/*.jpg 40, gt/*.jpg 40, crops/ 64
+    n_files: 1789
+    listing_complete: true
+  sample:
+    urls:
+    - https://raw.githubusercontent.com/andrealoddo/MP-IDB-The-Malaria-Parasite-Image-Database-for-Image-Processing-and-Analysis/b556bddaf3a2bf6c6326eb8c615c467da72212ce/Ovale/img/1707180816-0001-G_R.jpg
+    - https://raw.githubusercontent.com/andrealoddo/MP-IDB-The-Malaria-Parasite-Image-Database-for-Image-Processing-and-Analysis/b556bddaf3a2bf6c6326eb8c615c467da72212ce/Ovale/gt/1707180816-0001-G_R.jpg
+    size_bytes: 2985418
+    description: One Ovale image and its ground-truth mask.
+  arrays:
+  - role: raw
+    path_pattern: '*/img/*.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1944
+    - 2592
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 6
+    - 241
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '*/gt/*.jpg'
+    format: jpeg
+    axes: yx
+    shape:
+    - 1944
+    - 2592
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: <species>/gt/<name>.jpg pairs with <species>/img/<name>.jpg; same y x size in the sample. The
+      mask is a greyscale JPEG, so 0/255 edges carry a few compression values (4 distinct values in the sample);
+      threshold before use. Parasite stages are in the file name (G, R, S, T).
+  - role: label
+    path_pattern: Falciparum/mp-idb-falciparum.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: boxes-table
+    classes:
+    - id: ring
+      name: ring
+    - id: tro
+      name: trophozoite
+    - id: schi
+      name: schizont
+    - id: game
+      name: gametocyte
+    alignment: unknown
+    alignment_notes: One row per parasite (filename, parasite_type, box); column order per harvest notes, not re-read.
+  notes: 'Listing: blobless git clone of the repository (commit b556bdd), git ls-tree: 1,789 files; per-file sizes
+    not read (that needs every blob), so size is not confirmed. probe.py and sample.py on Ovale 1707180816-0001-G_R:
+    image JPEG 1944x2592x3 uint8 [6, 241]; gt JPEG 1944x2592 uint8, 99.6% zero, max 255, 4 distinct values (binary
+    mask with JPEG artefacts). Values from one pair. Direct files: raw.githubusercontent.com URLs pinned to the
+    commit; the GitHub archive zip returned HTTP 403 to the download check, so download_url stays null (clone the
+    repo). Voxel size not found; checked: JPEG headers, README, paper (not open access). size estimated (uncompressed):
+    raw 210 x 1944x2592x3 uint8 + label 210 x 1944x2592 uint8 = 4,232,632,320 B (4.2 GB), assuming every image has
+    the sampled size; crops not counted.'
