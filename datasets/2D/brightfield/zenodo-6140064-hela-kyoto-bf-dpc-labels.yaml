@@ -1,0 +1,157 @@
+schema_version: '1.2'
+id: zenodo-6140064-hela-kyoto-bf-dpc-labels
+title: Automatic labelling of HeLa "Kyoto" cells using Deep Learning tools
+short_name: HeLa Kyoto brightfield/DPC nuclei & cell labels
+description: 375 image sets of HeLa "Kyoto" cells (540x540 px) with brightfield and digital phase contrast
+  images, the H2B/tubulin fluorescence channels, and nuclei and cell (cytoplasm) label images generated
+  with StarDist and Cellpose, intended for training label prediction from transmitted-light channels.
+landing_url: https://zenodo.org/records/6140064
+doi: 10.5281/zenodo.6140064
+repository: Zenodo
+accession: '6140064'
+authors:
+- Guiet, Romain
+publications: []
+date_published: '2022-02-25'
+imaging:
+  modality:
+  - brightfield
+  - phase-contrast
+  - fluorescence-other
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 299
+    y: 299
+    z: null
+  channels: null
+  organism:
+  - Homo sapiens
+  sample: HeLa "Kyoto" cells (H2B and tubulin fluorescent markers), time-lapse frames at 5 time points
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 757629801
+  n_items: 375
+  access: open
+  download_url: https://zenodo.org/records/6140064/files/training_dataset.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: 16-bit TIFF label images per image set, suffixes _nuclei.tif (StarDist on H2B) and _cyto.tif
+    (Cellpose on tubulin and H2B), next to _bf, _dpc, _sqrdpc and _fluo images
+  source: automatic
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/legalcode
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-08T19:13:36Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/6140064
+  - https://zenodo.org/records/6140064
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T22:42:34Z'
+notes: 'training_dataset.zip (listed with peek_archive): 2250 TIFFs = 375 image sets x 6 files (_bf, _dpc,
+  _sqrdpc, _fluo, _nuclei, _cyto) in train/ (1500 files) and test/ (750 files) folders Labels are machine
+  generated (StarDist for nuclei, Cellpose for cells) from time points 1, 10, 50, 100, 150 and only visually
+  checked; the record itself says they are not perfect and not a recommended labelling strategy, hence
+  source automatic. Source images: Zenodo 6139958 (HeLa Kyoto cells under the scope, Operetta 20x). Fluorescent
+  channels are meant for label review and should not be used with these labels during training. enricher:
+  voxel size 299 nm: page says 0.299 nm (unit slip), TIFF ImageJ calibration 0.29899 um/px (was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      ./                                  3 files  757.6 MB  .zip 1, .ijm 1, .png 1
+      training_dataset.zip/train/      1500 files    1.0 GB  .tif (250 sets x 6)
+      training_dataset.zip/test/        750 files  511.6 MB  .tif (125 sets x 6)
+        <set>_bf.tif, _dpc.tif, _sqrdpc.tif, _fluo.tif (2 ch), _nuclei.tif, _cyto.tif
+      prepare_trainingDataset_cellpose.ijm, AutoLabelling.png
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/6140064/files/training_dataset.zip::train/20210904_TL2 - R05-C05-F0-001_bf.tif
+    - https://zenodo.org/records/6140064/files/training_dataset.zip::train/20210904_TL2 - R05-C05-F0-001_nuclei.tif
+    - https://zenodo.org/records/6140064/files/training_dataset.zip::train/20210904_TL2 - R05-C05-F0-001_cyto.tif
+    size_bytes: 1753626
+    description: One 540x540 brightfield image with its nuclei and cell label images
+  arrays:
+  - role: raw
+    path_pattern: training_dataset.zip/*/*_{bf,dpc,sqrdpc}.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 540
+    - 540
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 17848
+    - 60531
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Three transmitted-light inputs per set (brightfield, DPC, square-rooted DPC), each
+      a single-page ImageJ TIFF; value range from the bf sample (dpc sample 0-12861).
+  - role: label
+    path_pattern: training_dataset.zip/*/*_nuclei.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 540
+    - 540
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 75
+    normalization: unknown
+    encoding: instance-ids
+    classes:
+    - id: null
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: <set>_nuclei.tif pairs with <set>_bf/_dpc/_sqrdpc.tif (same stem, identical shape);
+      StarDist label image.
+  - role: label
+    path_pattern: training_dataset.zip/*/*_cyto.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 540
+    - 540
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 70
+    normalization: unknown
+    encoding: instance-ids
+    classes:
+    - id: null
+      name: cell
+    alignment: same-grid
+    alignment_notes: <set>_cyto.tif pairs with the transmitted-light images of the same stem; Cellpose
+      label image.
+  notes: 'Sampled train set R05-C05-F0-001: bf uint16 17848-60531, dpc 0-12861; nuclei 76 values (0-75),
+    cyto 71 values (0-70). Values from one sample. _fluo.tif (2-channel cyx uint16, tubulin + H2B) is
+    in every set for label review only; the record says not to train with it, so it is not listed as an
+    array. ImageJ calibration 0.2989881 um/px in all image files (nuclei labels carry none).'
