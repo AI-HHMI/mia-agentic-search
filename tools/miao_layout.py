@@ -15,7 +15,7 @@ Prints one JSON object: the target folders, the ordered MCP steps (fetch_dataset
 verify_output, ready to run as given), the label metadata written with each label, `review` (fields
 left null because the record doesn't settle them) and `stop` (reasons not to run at all). Nothing is
 downloaded or written. The tool never guesses: an organism, modality family or label class it can't
-take from the record or the flags is a `stop`.
+take from the record or the flags is a `stop`, and so is a record tools/readiness.py doesn't find ready.
 """
 import argparse
 import copy
@@ -27,9 +27,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.common import load_yaml  # noqa: E402
-from tools.convertibility import FAMILIES, _planner, family, input_axes_supported, tiff_axes_needs  # noqa: E402
+from tools.readiness import FAMILIES, family, plan_reasons, planner, readiness  # noqa: E402
 
-# NCBI scientific name -> short folder name. Extend as records need it; an organism not listed is a stop.
+# NCBI scientific name -> short folder name; an organism not listed gets a slug of its name.
 ORGANISM_SHORT = {
     "Homo sapiens": "human", "Mus musculus": "mouse", "Rattus norvegicus": "rat",
     "Drosophila melanogaster": "fly", "Caenorhabditis elegans": "worm", "Danio rerio": "zebrafish",
@@ -144,54 +144,30 @@ def tiff_header(spec):
         return {"error": f"{type(e).__name__}: {e}"}
 
 
-def tiff_axes(r, plan, input_axes, check_orientation=True):
-    """For each TIFF the plan converts: the axes to pass as input_axes ({input_path: axes}), stop reasons and notes.
-    TensorSwitch's TIFF reader names samples per pixel `s` and the pages of a plain multi-page TIFF `i` (neither a
-    channel nor z), so until convert accepts input_axes those files are a stop, found from the header. With
-    input_axes the record's axes are passed (`s` as `c`: samples are channels to OME-NGFF).
-    `check_orientation`: also read the header for the TIFF Orientation tag, which TensorSwitch ignores: a file
-    with one other than top-left would be converted mirrored or transposed against its partner (a stop)."""
-    arrays = (r.get("technical") or {}).get("arrays") or []
-    given, stops, notes = {}, [], []
+def tiff_orientation(plan):
+    """(stops, notes): TIFFs whose Orientation tag isn't top-left. TensorSwitch ignores the tag (belongs upstream),
+    so such a file would be converted mirrored or transposed against its partner, and verify_output can't see it."""
+    stops, notes = [], []
     for p in plan["arrays"]:
-        a = arrays[p["index"]] if p["index"] < len(arrays) else {}
-        if not p.get("convertible") or a.get("format") != "tiff" or not p.get("fetch"):
+        if not (p.get("convertible") and p["format"] == "tiff" and p.get("fetch")):
             continue
-        spec, rec_axes = p["fetch"]["spec"], a.get("axes")
-        name = spec.rsplit("::", 1)[-1].rsplit("/", 1)[-1]
-        h = tiff_header(spec) if check_orientation or not input_axes else {}
-        if check_orientation:
-            if "error" in h or "tiff_layout" not in h:
-                notes.append(f"{name}: TIFF header not read ({h.get('error') or '; '.join(h.get('notes', []))}); "
-                             "orientation unchecked")
-            elif h.get("orientation", 1) != 1:
-                stops.append(f"{name} ({p['role']}): TIFF Orientation {h['orientation']} (row 0 is not the top): "
-                             "TensorSwitch ignores the tag, so it would be converted mirrored or transposed "
-                             "against its partner, and verify_output can't see it (it reads the same way)")
-        if input_axes:
-            if rec_axes:
-                given[p["convert_args"]["input_path"]] = rec_axes.replace("s", "c")
-            continue                           # no axes: already a stop (tiff_axes_needs)
-        # what tifffile (TensorSwitch's reader) makes of it: samples per pixel -> S, the pages of a TIFF with no
-        # ImageJ / OME / tifffile-shape metadata -> I. tifffile-shaped files give Q, which TensorSwitch ignores
-        # and replaces by z/y/x from the number of dimensions, so those convert correctly.
+        name = p["fetch"]["spec"].rsplit("::", 1)[-1].rsplit("/", 1)[-1]
+        h = tiff_header(p["fetch"]["spec"])
         if "error" in h or "tiff_layout" not in h:
-            if not check_orientation:          # else already noted above
-                notes.append(f"{name}: TIFF header not read ({h.get('error') or '; '.join(h.get('notes', []))}); "
-                             "axes unchecked")
-            continue
-        how = None
-        if h["samples_per_pixel"] > 1:
-            how = f"{h['samples_per_pixel']} samples per pixel (TensorSwitch names that axis `s`)"
-        elif h["tiff_layout"] == "plain" and (h.get("pages_counted") or 1) > 1:
-            how = f"{h['pages_counted']}+ pages with no ImageJ/OME metadata (TensorSwitch names that axis `i`)"
-        if how:
-            stops.append(f"{name} ({p['role']}, record axes {rec_axes}): {how}, so the output gets no channel/z "
-                         f"scale and verify_output can't match it to the source; needs TensorSwitch's input_axes")
-    return given, stops, notes
+            notes.append(f"{name}: TIFF header not read ({h.get('error') or '; '.join(h.get('notes', []))}); "
+                         "orientation unchecked")
+        elif h.get("orientation", 1) != 1:
+            stops.append(f"{name} ({p['role']}): TIFF Orientation {h['orientation']} (row 0 is not the top), "
+                         "which TensorSwitch ignores")
+    return stops, notes
 
 
-def crop_steps(r, sample, plan, crop, cls_by_index, voxel, today, raw_attrs, input_axes=None):
+def axes_c(axes):
+    """Samples per pixel (`s`, TensorSwitch keeps it as a custom axis) are channels in the miao layout (belongs upstream)."""
+    return axes.replace("s", "c")
+
+
+def crop_steps(r, sample, plan, crop, cls_by_index, voxel, today, raw_attrs):
     """Rewrite one TensorSwitch sample plan into steps writing to `crop` (miao#13 names and metadata)."""
     arrays = (r.get("technical") or {}).get("arrays") or []
     labels, keys = {}, {}
@@ -213,8 +189,6 @@ def crop_steps(r, sample, plan, crop, cls_by_index, voxel, today, raw_attrs, inp
             # and averaging instance IDs would invent IDs that don't exist
             args["auto_multiscale"] = True
             args["downsample_method"] = "mode" if args.get("is_label") else "mean"
-            if (input_axes or {}).get(args.get("input_path")):
-                args["input_axes"] = input_axes[args["input_path"]]   # from technical.arrays[].axes
             if args.get("is_label"):
                 key = keys[args["label_key"]]
                 args["label_key"] = key
@@ -224,16 +198,12 @@ def crop_steps(r, sample, plan, crop, cls_by_index, voxel, today, raw_attrs, inp
                 args["extra_attributes"] = json.dumps(raw_attrs)
         elif step["tool"] == "verify_output":
             args["output_path"] = str(crop)
-            # the same axes and label names convert got, or verify_output can't match source and output axes
-            given = input_axes or {}
-            if given.get(args.get("source_path")):
-                args["input_axes"] = given[args["source_path"]]
-            srcs = dict(item.split("=", 1) for item in args.get("labels", "").split(";") if item)
-            args["labels"] = ";".join(f"{keys.get(k, k)}={v}" for k, v in srcs.items())
-            if args.get("label_input_axes"):
-                args["label_input_axes"] = ";".join(
-                    f"{keys.get(k, k)}={given.get(srcs.get(k)) or v}" for k, v in
-                    (item.split("=", 1) for item in args["label_input_axes"].split(";") if item))
+            # the label names and axes convert got, or verify_output can't match source and output
+            for field, fix in (("labels", str), ("label_input_axes", axes_c)):
+                pairs = (item.split("=", 1) for item in args.get(field, "").split(";") if item)
+                args[field] = ";".join(f"{keys.get(k, k)}={fix(v)}" for k, v in pairs)
+        if args.get("input_axes"):
+            args["input_axes"] = axes_c(args["input_axes"])
         steps.append({"tool": step["tool"], "args": args})
     files = [s["args"]["spec"] for s in steps if s["tool"] == "fetch_dataset"]
     staged = [s["args"]["input_path"] for s in steps if s["tool"] in ("convert", "submit_job")]
@@ -265,51 +235,30 @@ def main():
     ap.add_argument("--whole", action="store_true",
                     help="every file of the dataset (one crop per raw/label pair; needs a zip download, max 50 GB) "
                          "instead of the sample unit")
-    ap.add_argument("--labelled-only", action="store_true", help="--whole: skip samples that have no label")
     ap.add_argument("--out", help="write the plan to this file instead of stdout (its folder is created)")
     a = ap.parse_args()
     r = load_yaml(a.record)
     im = r.get("imaging") or {}
     root = Path(a.root).resolve()
     staging = root / "staging" / r["id"]
-    stop, review, notes = [], [], []
-
-    fams, _ = family(im.get("modality") or [])
-    fam = family(im.get("modality", [])[:1])[0]
-    fam = next(iter(fam)) if len(fam) == 1 else (next(iter(fams)) if len(fams) == 1 else None)
-    if fam is None:
-        stop.append(f"modality family unclear ({im.get('modality')}): fix imaging.modality first")
+    review = []
+    reasons = readiness(r, a.tensorswitch, organism=a.organism)[1]
+    stop = [x for x in reasons if not x.startswith("note:")]
+    notes = [x for x in reasons if x.startswith("note:")]
     orgs = im.get("organism") or []
-    org = a.organism or (orgs[0] if len(orgs) == 1 else None)
-    if org is None:
-        stop.append(f"organism: the record lists {orgs or 'none'}; pass --organism")
-    elif org not in ORGANISM_SHORT:
-        stop.append(f"no short name for organism {org!r}: add it to ORGANISM_SHORT in tools/miao_layout.py")
+    org = a.organism or (orgs[0] if orgs else "unknown")
     if a.whole and len(orgs) > 1:
         stop.append("--whole with several organisms: files can't be assigned to an organism automatically yet")
-    vs = im.get("voxel_size_nm") or {}
-    if not (vs.get("x") and vs.get("y") and vs.get("z")):
-        stop.append("imaging.voxel_size_nm is missing or incomplete")
-    if str(im.get("dimensionality")) != "3D":
-        stop.append(f"dimensionality {im.get('dimensionality')}: only 3D is covered by this layout for now")
-
-    rp = _planner(a.tensorswitch)
     arrays = (r.get("technical") or {}).get("arrays") or []
-    in_axes = input_axes_supported(a.tensorswitch)
-    stop += tiff_axes_needs(arrays, in_axes)
     label_index = [i for i, x in enumerate(arrays) if x.get("role") == "label"]
-    if any(x.get("role") not in ("raw", "label") for x in arrays):
-        stop.append("the record has restoration targets or other roles; miao#13 only defines raw/ and labels/")
     if len(a.label_class) != len(label_index):
         stop.append(f"{len(label_index)} label array(s) but {len(a.label_class)} --label-class given "
                     f"(take each from the record; vocabulary: {', '.join(LABEL_CLASSES)})")
     cls_by_index = dict(zip(label_index, a.label_class))
 
-    # the samples: (name, sample record, TensorSwitch plan) per crop
+    # the samples: (name, TensorSwitch plan) per crop
+    rp = planner(a.tensorswitch)
     samples, unpaired, skipped = [], [], []
-    base = rp.plan_record(r, str(staging))
-    if base.get("status") != "ready":
-        stop.append(f"TensorSwitch planner status {base.get('status')}: {base.get('warnings')}")
     if a.whole and not stop:
         whole = rp.plan_dataset(r, str(staging))
         unpaired, skipped = whole.get("unpaired", []), whole.get("skipped", [])
@@ -321,36 +270,23 @@ def main():
             sub["technical"]["arrays"] = [{k: v for k, v in x.items() if k not in ("shape", "shape_varies")} for x in arrays]
             sub["technical"]["sample"] = {"urls": [f"{zip_url}::{f}" for f in smp["files"]]}
             sp = rp.plan_record(sub, str(staging))
-            has_label = any(p.get("convertible") and p["role"] == "label" for p in sp["arrays"])
-            has_raw = any(p.get("convertible") and p["role"] == "raw" for p in sp["arrays"])
-            if not has_raw:
-                notes.append(f"{smp['name']}: label without raw image, skipped")
-            elif a.labelled_only and not has_label:
-                notes.append(f"{smp['name']}: no label, skipped (--labelled-only)")
-            elif sp["status"] != "ready" and not (sp["status"] == "partial" and all(
-                    p["role"] == "label" and not p.get("files") for p in sp["arrays"] if not p.get("convertible"))):
-                notes.append(f"{smp['name']}: planner status {sp['status']}, skipped: {sp['warnings']}")
+            bad = plan_reasons(rp, sp)[0]
+            if bad:
+                notes.append(f"{smp['name']}: skipped: {bad}")
             else:
                 samples.append((smp["name"], sp))
         if not samples and not stop:
             stop.append("no sample of the dataset could be planned")
     elif not stop:
-        samples.append(("sample-unit", base))
-
-    # TIFF axes: probe each crop's TIFFs (or pass the record's axes when TensorSwitch accepts input_axes).
-    # Files with the same layout behave the same, so one stop reason per distinct message is enough, and the
-    # orientation is read from the first sample's files only (the same writer made the rest).
-    axes_by_sample = []
-    for i, (smp_name, sp) in enumerate(samples):
-        given, s_stops, s_notes = tiff_axes(r, sp, in_axes, check_orientation=i == 0)
-        axes_by_sample.append(given)
-        stop += [x for x in s_stops if x not in stop]
-        notes += [f"{smp_name}: {x}" for x in s_notes]
-        if s_stops:
-            break                       # the layout is shared by the dataset's files: don't probe every one
+        samples.append(("sample-unit", rp.plan_record(r, str(staging))))
+    if samples:     # one writer made every file: the first sample's headers stand for the rest
+        o_stops, o_notes = tiff_orientation(samples[0][1])
+        stop += o_stops
+        notes += o_notes
 
     name = slug(a.name or default_name(r))
-    dataset_dir = root / "data" / f"{fam}-{ORGANISM_SHORT.get(org, 'unknown')}-{name}"
+    org_short = ORGANISM_SHORT.get(org) or slug(org)
+    dataset_dir = root / "data" / f"{family(im.get('modality') or [])}-{org_short}-{name}"
     out = {"record": r["id"], "scope": "dataset" if a.whole else "sample-unit", "dataset_dir": str(dataset_dir),
            "staging": str(staging), "crops": [], "unpaired": unpaired, "skipped": skipped, "notes": notes,
            "review": review, "stop": stop}
@@ -359,13 +295,12 @@ def main():
         return
 
     today = datetime.date.today().isoformat()
-    voxel = {k: vs[k] for k in "xyz"}
+    voxel = {k: im["voxel_size_nm"][k] for k in "xyz"}
     raw_attrs = {"source_record": r["id"], "dataset_doi": r.get("doi"), "license": (r.get("license") or {}).get("spdx"),
                  "publication": ((r.get("publications") or [{}])[0]).get("doi"), "title": r.get("title")}
     file_sets = [[s["args"]["spec"] for s in sp["steps"] if s["tool"] == "fetch_dataset"] for _, sp in samples]
-    for (sample, sp), crop, given in zip(samples, assign_crops(dataset_dir, r["id"], file_sets), axes_by_sample):
-        c = crop_steps(r, sample, sp, crop, cls_by_index, voxel, today, raw_attrs, given)
-        out["crops"].append(c)
+    for (sample, sp), crop in zip(samples, assign_crops(dataset_dir, r["id"], file_sets)):
+        out["crops"].append(crop_steps(r, sample, sp, crop, cls_by_index, voxel, today, raw_attrs))
     for key, attrs in (out["crops"][0]["labels"] if out["crops"] else {}).items():
         review += [f"{key}: {x}" for x in attrs["review_needed"]]
     emit(out, a.out)

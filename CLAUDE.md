@@ -95,8 +95,8 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
 - **Download links:** TensorSwitch fetches files itself, so the enricher also searches hard for direct links it can
   use (skill step 4b: repository file APIs, the full landing page, zip members, the paper, code repos), checked with
   `tools/probe.py --download-check`, for `technical.sample.urls` and, when one direct archive exists, `data.download_url`.
-- **Conversion readiness:** the enricher also runs `tools/convertibility.py` (issues #518 / #519) with TensorSwitch's
-  record planner, and fixes what blocks automatic conversion from evidence: concrete sample files, HDF5 dataset
+- **Conversion readiness:** the enricher also runs `tools/readiness.py` (issues #518 / #519, TensorSwitch's
+  record planner), and fixes what blocks automatic conversion from evidence: concrete sample files, HDF5 dataset
   names, real globs in `path_pattern`, one organism per file set, a clear modality, `annotations.source`, and
   `axes` for every TIFF array (TensorSwitch names RGB samples `s` and unstated page axes `i`; skill step 3c).
 - **Auto-merge** (`tools/automerge.py`) merges PRs whose labels meet a fixed policy (3D / 3D+t PRs only when
@@ -122,11 +122,10 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
 | `python tools/sample.py --id ID --raw S [--label S]` | download a small sample, measure it, delete it (enricher) |
 | `python tools/estimate_size.py <file> --files F \| --count I=N` | size from files × voxels × bytes per voxel, when nothing states it (enricher) |
 | `python tools/labels.py <file>` | the PR labels a record gets |
-| `python tools/convertibility.py [files] [--summary\|--json] [--tensorswitch SRC]` | what blocks automatic conversion (read-only report) |
-| `python tools/readiness.py <file> [--tensorswitch SRC]` | download readiness: ready / not-ready / unknown, with reasons (the auto-merge gate and the download queue) |
+| `python tools/readiness.py [files] [--summary\|--json] [--tensorswitch SRC]` | download readiness: ready / not-ready / unknown, with reasons (the `download-ready` label, the download queue, the enricher) |
 | `python tools/download_queue.py next\|record\|list` | the download queue and the downloads list (`state/downloads.json` on `claude/state/downloader`) |
-| `python tools/miao_layout.py <file> --root R --tensorswitch SRC --label-class C [--name N] [--whole]` | plan a record (sample unit, or every file with `--whole`) into the miao layout (miao#13), one crop per raw/label pair: MCP steps + label metadata, read-only |
-| `python tools/miao_run.py <plan.json> [--finalize]` | run that plan crop by crop with TensorSwitch (resumable; downloads deleted per crop), or record crops the MCP already verified |
+| `python tools/miao_layout.py <file> --root R --tensorswitch SRC --label-class C [--name N] [--whole]` | plan a record (sample unit, or every file with `--whole`) into the miao layout (miao#13), one crop per raw/label pair: steps + label metadata, read-only |
+| `python tools/miao_run.py <plan.json>` | run that plan crop by crop with TensorSwitch (resumable; downloads deleted per crop) |
 | `python tools/place.py <file>` | move records to `datasets/<dimensionality>/<modality>/` |
 | `python tools/publish.py pr-pull <id>` / `pr-update <file>` | enricher: edit the record on an open PR's branch |
 | `python tools/check_links.py [--oldest N] [--write]` | link rot check |
@@ -134,6 +133,6 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
 
 Skills: `/find-datasets source=<repositories|literature|websearch>` (harvest), `/enrich-prs` (technical
 inspection of open PRs), `/maintain-catalog` (daily upkeep), `/download-dataset <record>` (download a ready record's
-sample unit, or the whole dataset, into the miao layout with the TensorSwitch MCP; output to `demo/` for now,
+sample unit, or the whole dataset, into the miao layout with TensorSwitch; output to `demo/` for now,
 git-ignored). `/download-dataset next` is the unattended download agent, run hourly by cron on the workstation
 (`tools/cron/download_next.sh`): one download-ready dataset per run, recorded in the downloads list.

@@ -1,6 +1,6 @@
 ---
 name: enrich-prs
-description: Enricher run. Goes through open dataset PRs that aren't enriched yet and inspects the actual files (folder structure, confirmed size, shapes, dtypes, compression, value ranges, label encoding, raw/label alignment, license), searches hard for the voxel size and for direct download links TensorSwitch can fetch, fixes what blocks automatic conversion (tools/convertibility.py, TensorSwitch planner), writes the results into the PR's record and updates the PR. Labels follow automatically. Optional args are limit=N (max PRs, default 20), pr=<number> (just that PR), shard=K/N (only PRs whose number mod N is K, for parallel runs) and dry-run.
+description: Enricher run. Goes through open dataset PRs that aren't enriched yet and inspects the actual files (folder structure, confirmed size, shapes, dtypes, compression, value ranges, label encoding, raw/label alignment, license), searches hard for the voxel size and for direct download links TensorSwitch can fetch, fixes what blocks automatic conversion (tools/readiness.py, TensorSwitch planner), writes the results into the PR's record and updates the PR. Labels follow automatically. Optional args are limit=N (max PRs, default 20), pr=<number> (just that PR), shard=K/N (only PRs whose number mod N is K, for parallel runs) and dry-run.
 ---
 
 # enrich-prs
@@ -113,8 +113,8 @@ python tools/probe.py <zip url> --glob '*/masks/*.tif' --n 2      # members of a
     really channels are `c`, and z slices stored per pixel (photometric 1 with 50 samples, say) are `z`
     (`yxz`). If an RGB file is one channel per the docs, check with tools/sample.py:
     `samples_identical: true` means grey stored as RGB; write `s` and say so in `alignment_notes`.
-  - Recorded axes not ending in `yx` (samples per pixel) keep the record not download-ready until
-    TensorSwitch accepts `input_axes`; record them correctly anyway, the converter will use them.
+  - TensorSwitch converts a TIFF with the recorded axes as its `input_axes`, so a TIFF array without
+    `axes` isn't converted at all.
 
 **d. Sample.** Download the smallest raw + label pair and measure it. The budget is 500 MB per
 record per run, and the tool enforces it.
@@ -288,30 +288,30 @@ match the evidence (the caps in CLAUDE.md still apply). Set `verification.last_c
 Records are converted to OME-Zarr automatically by TensorSwitch, which reads the record and stops on
 anything it doesn't settle. After steps 3–5, check what still blocks it:
 ```bash
-python tools/convertibility.py <file> --tensorswitch "$TS"     # needs / helpful, plus the planner's verdict
+python tools/readiness.py <file> --tensorswitch "$TS"     # ready / not-ready, with the reasons
 ```
-Fix every **need**, and every **helpful** item you can, from what you inspected or read in this run.
-Rerun until nothing fixable is left.
+Fix every reason you can from what you inspected or read in this run (`access` and `dimensionality`
+are facts, not gaps). Rerun until nothing fixable is left. Also check, without a reason telling you:
+`path_pattern` is one real glob, `annotations.source` and `coverage` are settled, and `data.download_url`
+is a direct archive when the dataset offers one.
 
 | Gap | Fix |
 |---|---|
-| no `technical` / no `arrays` | steps 3a–d |
-| no `sample.urls`, a landing page / folder, or a host not on the allowlist | step 4b |
+| planner: no `technical.arrays` | steps 3a–d |
+| planner: no `sample.urls` / no sample file matched an array, or a host not on the allowlist | step 4b; or correct the `path_pattern` so each sample file matches its array |
 | `data.download_url` a landing page / folder | step 4b (one direct archive or file, if the dataset offers one) |
-| sample file matches no array | correct the `path_pattern` (or the sample) so each sample file matches its array |
-| no voxel size | step 4a |
-| `organism` empty | NCBI name(s) from the page or paper |
+| no voxel size (x, y and z) | step 4a |
+| `organism` lists 0 | NCBI name(s) from the page or paper |
 | several organisms | keep them all; one `notes` line saying which files or folders belong to each (`organisms: Homo sapiens = hela_cell/, Rattus norvegicus = lucchi_pp/`). Each organism becomes its own converted dataset. |
-| `modality` only `other`, `other` next to a clear value, or mixed families | the listed value that applies; if EM and light/X-ray data are mixed, a `notes` line saying which files are which |
-| HDF5 array without a dataset name | append ` (<dataset path>)` from the probe's dataset list, always in this spelling; rewrite ` :: name` to it. One array entry per dataset. |
+| modality family unclear | the listed value that applies; if EM and light/X-ray data are mixed, a `notes` line saying which files are which |
+| HDF5 arrays without a dataset name | append ` (<dataset path>)` from the probe's dataset list, always in this spelling. One array entry per dataset. |
 | `path_pattern` with placeholders (`<name>`, `NNN`, `###`) or a comma list | one real glob (`*`, `?`, `[0-9]`, `{a,b}`) that matches exactly this array's files in the listing; check it against the listing |
 | HDF5 array without `axes` | only when the docs, paper or file attributes state the axis order; otherwise leave `null` and say why in `technical.notes` (the step 3c rule stands) |
 | TIFF array without `axes` | probe a file of that array and follow the step 3c TIFF rules (`tiff_layout`, `samples_per_pixel`); never copy `axes: null` from a plain multi-page TIFF into a guess |
-| TIFF array with axes not ending in `yx` | correct if the probe or docs show otherwise; if right (samples per pixel), keep it. This need stays until TensorSwitch accepts `input_axes`; say so in `technical.notes` |
 | `annotations.source` unknown / mixed | `manual`, `proofread` or `automatic` from the paper's Methods; `mixed` only if it really is, with a `notes` line saying which arrays are which |
 | `annotations.coverage` partial / unknown | a `notes` line on what is annotated: sparse crops, N of M slices, a sub-volume and where |
 
-- **Never invent a value to clear a need.** A need that no source settles stays, with what you checked.
+- **Never invent a value to clear a reason.** A reason that no source settles stays, with what you checked.
 - What #518 lists as *new fields* (`label_class`, file arrangement, raw↔label pairing rule,
   `expansion_factor`, annotation tool) is not in the schema yet. Don't add keys: put the structure
   annotated in `classes` / `alignment_notes`, the pairing rule in `alignment_notes`, the rest in `notes`.
@@ -351,8 +351,7 @@ your changes on top, respecting their edit, and publish again.
 - a heading `Enricher inspection`
 - which files were listed, probed and sampled, with byte counts
 - the key raw tool outputs: the listing's JSON line, and each probe/sample shape, dtype, value range and hints
-- a `Conversion readiness` heading: the `convertibility.py` report before and after your fixes, the
-  TensorSwitch status (`ready` / `partial` / `blocked`) and planner warnings, and each remaining need
+- a `Conversion readiness` heading: the `readiness.py` report before and after your fixes, and each remaining reason
   with why it couldn't be settled
 - a `Download link search` heading: each link and its `--download-check` result (`usable`, size,
   range requests), or every route checked without finding one; hosts that need adding to the allowlist

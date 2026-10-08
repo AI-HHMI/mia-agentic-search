@@ -23,6 +23,7 @@ with the problems when it isn't.
 import argparse
 import fnmatch
 import ftplib
+import functools
 import importlib.util
 import io
 import json
@@ -605,6 +606,7 @@ FALLBACK_HOSTS = (
 )
 
 
+@functools.lru_cache(maxsize=None)
 def allowed_hosts(src=None):
     """TensorSwitch's fetch allowlist (src/ folder, $TENSORSWITCH_SRC, or an installed tensorswitch_v2)."""
     src = src or os.environ.get("TENSORSWITCH_SRC")
