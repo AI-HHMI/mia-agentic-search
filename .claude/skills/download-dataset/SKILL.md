@@ -97,7 +97,7 @@ needs the network; nothing is downloaded.
 - `stop` not empty: report the reasons and end. Never work around one by hand.
 - Show the user the target folder, the number of crops, the label folder names, the total download
   size (`data.size_bytes` with `whole`, else `technical.sample.size_bytes`), what was left out and why,
-  and the `review` list. With `whole` and more than about 10 GB, confirm with the user before you start.
+  and the `review` list. With `whole` and more than about 50 GB, confirm with the user before you start.
 - `dry-run`: stop here.
 
 ## 4. Download, convert, verify
@@ -152,7 +152,7 @@ The cron job sets `$TENSORSWITCH_SRC` and `$TENSORSWITCH_REPO`; use them instead
 `mkdir -p`, `ls`, `du`, `find`, `cat`, and Read / Glob / Grep).
 ```bash
 python tools/publish.py state-pull --routine downloader          # restores state/downloads.json
-python tools/download_queue.py next --root <root> --max-gb 10     # the next download-ready dataset, smallest first
+python tools/download_queue.py next --root <root> --max-gb 50     # the next download-ready dataset, smallest first
 ```
 - `"next": null` means nothing is left. Report that and stop.
 - Otherwise work on that record, steps 2–5 above, with these changes:

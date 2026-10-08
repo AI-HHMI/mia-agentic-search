@@ -166,7 +166,7 @@ Nobody is there to answer, so this mode **never asks**, and it converts **one da
 redirects; write files only with the tools' `--out` / `--summary-out`).
 ```bash
 python tools/publish.py state-pull --routine downloader-native               # restores state/downloads-native.json
-python tools/download_queue.py --agent native next --root <root> --max-gb 5  # smallest dataset not on the list
+python tools/download_queue.py --agent native next --root <root> --max-gb 50  # smallest dataset not on the list
 ```
 - `"next": null`: report that and stop.
 - Otherwise steps 1–6 for that record, sample unit only, with these changes:
