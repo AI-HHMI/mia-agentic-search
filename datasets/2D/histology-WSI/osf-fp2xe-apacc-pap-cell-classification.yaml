@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: osf-fp2xe-apacc-pap-cell-classification
 title: 'APACC: Annotated Pap cell images and smear slices for Cell Classification'
 short_name: APACC Pap smear cell classification (brightfield)
-description: 103,675 cell images (healthy, unhealthy, bothcells, rubbish) extracted from 21,371 smear slices of 107 Pap smears
-  scanned at 20x, classified by cytopathologists, with cell locations on each 2000 x 2000 px slice, 34 whole-slide images and
-  a train/test split by smear.
+description: 103,675 cell images (healthy, unhealthy, bothcells, rubbish) extracted from 21,371 smear slices of 107 Pap
+  smears scanned at 20x, classified by cytopathologists, with cell locations on each 2000 x 2000 px slice, 34 whole-slide
+  images and a train/test split by smear.
 landing_url: https://osf.io/fp2xe
 doi: null
 repository: OSF
@@ -35,11 +35,11 @@ imaging:
   - Papanicolaou
 data:
   formats:
-  - other
+  - png
   size_bytes: null
   n_items: 103675
   access: open
-  download_url: null
+  download_url: https://osf.io/fp2xe/files/osfstorage
   download_method: other
 annotations:
   present: true
@@ -47,7 +47,8 @@ annotations:
   - classification
   - points
   coverage: dense
-  format: 'Cell images sorted into class folders (healthy, unhealthy, bothcells, rubbish) and a text file per smear slice with the location of every annotated cell'
+  format: Cell images sorted into class folders (healthy, unhealthy, bothcells, rubbish) and a text file per smear slice
+    with the location of every annotated cell
   source: manual
 ml:
   tasks:
@@ -69,11 +70,82 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-08T22:15:00Z'
-notes: 'OSF API (public project with folders dataset_sample and dataset_full) and the Scientific Data paper full text read:
-  103,675 cell images (34,721 healthy, 2,942 unhealthy, 62,074 rubbish, 3,884 bothcells) from 21,371 smear slices of 107
-  smears; 20 smears held out as test; folder layout of the full set: cell images by class split train/test, smear slices
-  with a location text file each, and 34 whole-slide images; CC BY 4.0 stated in the paper. The OSF subfolder listing was not
-  seen, so the image file format and total size are not known (formats other, size null); pixel size is not stated.
-  Companion segmentation dataset APACS23 is a separate record.'
+  annotations_verified: true
+  last_checked: '2026-10-08T22:31:54Z'
+notes: 'OSF API (public project with folders dataset_sample and dataset_full) and the Scientific Data paper full text
+  read: 103,675 cell images (34,721 healthy, 2,942 unhealthy, 62,074 rubbish, 3,884 bothcells) from 21,371 smear slices
+  of 107 smears; 20 smears held out as test; folder layout of the full set: cell images by class split train/test, smear
+  slices with a location text file each, and 34 whole-slide images; CC BY 4.0 stated in the paper.  Companion segmentation
+  dataset APACS23 is a separate record. enricher: OSF folders listed: cell images are PNG crops in class folders, smear
+  slices are 1984x1984 PNGs with YOLO-style box files, WSIs are .mrxs + data folders. Total size not stated; pixel size
+  not stated.'
+technical:
+  method: header
+  size_source: unknown
+  layout:
+    tree: |
+      osfstorage/
+        dataset_sample/  cell-images/, smear-slices/
+        dataset_full/
+          cell-images/train/{healthy,unhealthy,rubbish,bothcells,...}/   <slide>_<x>_<y>__<n>__<cx>_<cy>__<date>.png (healthy 28,894; unhealthy 2,366)
+          cell-images/test/{healthy,unhealthy,rubbish,bothcells}/
+          smear-slices/train/images/  17,387 <slide>_<x>_<y>.png     smear-slices/train/labels/  17,387 .txt
+          smear-slices/test/{images,labels}/
+          whole-slide-images-with-most-cells/   68 entries: <slide>.mrxs + <slide>/ (Index.dat, DataNNNN.dat)
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://osf.io/download/6673cade2026e9021823e18d/
+    size_bytes: 218059
+    description: One healthy cell crop (dataset_full/cell-images/train/healthy/21123_17_216000_192000__4__263_1836__2021-05-29.png);
+      its class is the folder name.
+  arrays:
+  - role: raw
+    path_pattern: dataset_full/cell-images/*/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 526
+    - 327
+    - 4
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGBA cell crops; the class (healthy, unhealthy, rubbish, bothcells) is the parent folder.
+  - role: raw
+    path_pattern: dataset_full/smear-slices/*/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1984
+    - 1984
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: dataset_full/smear-slices/*/labels/*.txt
+    format: other
+    axes: null
+    shape:
+    - 7
+    - 5
+    shape_varies: true
+    dtype: float64
+    compression: none
+    encoding: boxes-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: labels/<slice>.txt pairs with images/<slice>.png (same stem); lines 'class x_center y_center width
+      height', normalised (e.g. '3 0.9285 0.8505 0.143 0.299'). Class id mapping not stated in the files.
+  notes: 'OSF API folder walk (top levels only; ~100k files, not listed in full, so no confirmed size). Probed cell-images/train/healthy/21123_17_216000_192000__4__263_1836__2021-05-29.png
+    (RGBA uint8 526x327) and smear-slices/train/images/21123_17_216000_40000.png (RGB uint8 1984x1984). Read smear label
+    25907_16_56000_100000.txt (7 boxes). OSF download links redirect to storage.googleapis.com with range support. No
+    single archive: data.download_url is the OSF storage page. Voxel size not found; checked: PNG headers, OSF metadata,
+    paper (harvester: not stated).'
