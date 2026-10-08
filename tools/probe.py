@@ -1,9 +1,10 @@
 """Read array metadata (shape, axes, dtype, compression, chunks, voxel size) from file headers,
 using HTTP range requests: usually a few KB per file, never the whole file.
 
-    python tools/probe.py <url> [--id RECORD_ID]
-    python tools/probe.py <zip url> --member <path in zip> [--id ID]
-    python tools/probe.py <zip url> --glob '*_gt.tif' [--n 3] [--id ID]
+    python tools/probe.py <url> [<url> ...]
+    python tools/probe.py <zip url> --member <path in zip>
+    python tools/probe.py <zip url> --glob '*_gt.tif' [--n 3]
+    python tools/probe.py --download-check <url> ['<zip url>::<member>' ...] [--tensorswitch SRC]
 
 Formats: TIFF / OME-TIFF / ImageJ TIFF / BigTIFF / SVS, MRC (.mrc .rec .st .map .mrcs), HDF5,
 Zarr v2/v3 and OME-Zarr (incl. its labels/), N5, neuroglancer precomputed (`info`), PNG, JPEG,
@@ -11,12 +12,21 @@ NIfTI (.nii, .nii.gz). Members of a remote .zip are read in place (stored member
 deflated members from their first --max-bytes). CZI / ND2 / LIF need tools/sample.py.
 
 Prints one JSON object per file. Header values are facts about the file; `voxel_size_nm` is only
-reported when the header states it with a unit. Each probe is recorded in the active run log.
+reported when the header states it with a unit.
+
+--download-check: can TensorSwitch's fetch_dataset download this? It takes http(s), ftp and s3 URLs on its
+host allowlist (read from TensorSwitch: --tensorswitch or $TENSORSWITCH_SRC), downloads files (never web
+pages), and pulls one member out of a remote zip by range requests. One ~1 KB range request per URL (plus a
+zip's index for `::` specs); prints final URL, status, size, range support, `host_allowed` and `usable`,
+with the problems when it isn't.
 """
 import argparse
 import fnmatch
+import ftplib
+import importlib.util
 import io
 import json
+import os
 import re
 import struct
 import sys
@@ -28,7 +38,6 @@ from urllib.parse import urlsplit
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.common import JUNK_PATH, polite_get  # noqa: E402
 from tools.peek_archive import read_member, remote_size, zip_entries  # noqa: E402
-from tools.run_log import log_inspection  # noqa: E402
 
 BLOCK = 256 * 1024
 UNIT_NM = {"nm": 1, "nanometer": 1, "µm": 1000, "um": 1000, "micron": 1000, "micrometer": 1000, "\\u00B5m": 1000,
@@ -113,7 +122,6 @@ class BufferFile(io.BytesIO):
 TIFF_COMPRESSION = {1: "none", 2: "other", 5: "lzw", 6: "jpeg", 7: "jpeg", 8: "deflate", 32946: "deflate",
                     32773: "packbits", 34712: "jpeg2000", 33003: "jpeg2000", 33005: "jpeg2000", 34925: "lzma",
                     50000: "zstd", 34926: "zstd", 50001: "webp", 34927: "webp", 50002: "jpegxl", 52546: "jpegxl"}
-LOSSY = {"jpeg": True, "webp": None, "jpeg2000": None, "jpegxl": None}
 TIFF_ORIENTATION = {1: "top-left", 2: "top-right", 3: "bottom-right", 4: "bottom-left", 5: "left-top",
                     6: "right-top", 7: "right-bottom", 8: "left-bottom"}
 TIFF_TYPES = {1: "B", 2: "s", 3: "H", 4: "I", 5: "II", 6: "b", 7: "B", 8: "h", 9: "i", 10: "ii", 11: "f", 12: "d",
@@ -177,7 +185,7 @@ def probe_tiff(f, max_pages=100000, request_budget=15):
     kind = _first(tags, 339, 1)
     comp = TIFF_COMPRESSION.get(_first(tags, 259, 1), "other")
     desc = tags.get(270, "") if isinstance(tags.get(270), str) else ""
-    res = {"format": "tiff", "dtype": _dtype(kind, bits), "compression": comp, "lossy": LOSSY.get(comp, False),
+    res = {"format": "tiff", "dtype": _dtype(kind, bits), "compression": comp,
            "page_shape": [h, w] + ([spp] if spp > 1 else []), "samples_per_pixel": spp, "photometric": _first(tags, 262),
            "tiled": 322 in tags, "chunks": [_first(tags, 323), _first(tags, 322)] if 322 in tags else None,
            "bigtiff": big, "notes": []}
@@ -293,7 +301,7 @@ def probe_mrc(f):
     ispg = struct.unpack(endian + "i", h[88:92])[0]
     nsym = struct.unpack(endian + "i", h[92:96])[0]
     res = {"format": "mrc", "shape": [nz, ny, nx] if nz > 1 else [ny, nx], "axes": ("z" if nz > 1 else "") + "yx",
-           "dtype": MRC_MODES.get(mode, f"mode{mode}"), "compression": "none", "lossy": False,
+           "dtype": MRC_MODES.get(mode, f"mode{mode}"), "compression": "none",
            "header_min_max_mean": [dmin, dmax, dmean], "extended_header_bytes": nsym, "notes": []}
     if mode == 0:
         res["notes"].append("mode 0 is int8 by the MRC2014 standard; some writers store uint8")
@@ -453,7 +461,7 @@ def probe_precomputed(url):
     return {"format": "precomputed", "layer_type": info.get("type"), "dtype": info.get("data_type"),
             "channels": info.get("num_channels"), "shape": s0["size"][::-1] + ([info["num_channels"]] if info.get("num_channels", 1) > 1 else []),
             "axes": "zyx" + ("c" if info.get("num_channels", 1) > 1 else ""), "chunks": s0.get("chunk_sizes", [[None]])[0][::-1],
-            "compression": enc, "lossy": True if enc == "jpeg" else False if enc in ("raw", "compressed_segmentation", "png", "compresso") else None,
+            "compression": enc,
             "voxel_size_nm": {"x": s0["resolution"][0], "y": s0["resolution"][1], "z": s0["resolution"][2]},
             "voxel_offset": s0.get("voxel_offset"), "levels": len(info["scales"]),
             "notes": ["precomputed resolution is in nm by the neuroglancer spec"]}
@@ -465,7 +473,7 @@ def probe_png(f):
     w, ht, depth, ctype = struct.unpack(">IIBB", h[16:26])
     chans = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}.get(ctype, 1)
     res = {"format": "png", "shape": [ht, w] + ([chans] if chans > 1 else []), "axes": "yx" + ("s" if chans > 1 else ""),
-           "dtype": "uint16" if depth == 16 else "bool" if depth == 1 else "uint8", "compression": "deflate", "lossy": False,
+           "dtype": "uint16" if depth == 16 else "bool" if depth == 1 else "uint8", "compression": "deflate",
            "color_type": {0: "gray", 2: "rgb", 3: "palette", 4: "gray+alpha", 6: "rgba"}.get(ctype), "notes": []}
     if ctype == 3:
         res["notes"].append("palette PNG: values are indices, often label IDs")
@@ -484,7 +492,7 @@ def probe_jpeg(f):
         if marker in (0xC0, 0xC1, 0xC2, 0xC3):
             prec, ht, w, comps = struct.unpack(">BHHB", data[i + 4:i + 10])
             return {"format": "jpeg", "shape": [ht, w] + ([comps] if comps > 1 else []), "axes": "yx" + ("s" if comps > 1 else ""),
-                    "dtype": "uint8" if prec == 8 else f"uint{prec}", "compression": "jpeg", "lossy": marker != 0xC3, "notes": []}
+                    "dtype": "uint8" if prec == 8 else f"uint{prec}", "compression": "jpeg", "notes": []}
         i += 2 + seglen
     return {"format": "jpeg", "notes": ["no SOF marker in the first 256 KB"]}
 
@@ -504,7 +512,7 @@ def probe_nifti(f, gz):
     shape = list(dim[1:1 + n])[::-1]
     mult = {1: 1e9, 2: 1e6, 3: 1e3}.get(units)
     res = {"format": "nifti", "shape": shape, "axes": "tzyx"[4 - min(n, 4):] if n <= 4 else None,
-           "dtype": NII_DTYPES.get(dtype, f"code{dtype}"), "compression": "gzip" if gz else "none", "lossy": False, "notes": []}
+           "dtype": NII_DTYPES.get(dtype, f"code{dtype}"), "compression": "gzip" if gz else "none", "notes": []}
     if mult:
         res["voxel_size_nm"] = {"x": round(pix[1] * mult, 4), "y": round(pix[2] * mult, 4), "z": round(pix[3] * mult, 4) if n >= 3 else None}
     return res
@@ -585,39 +593,137 @@ def probe_zip_member(url, entry, max_bytes):
     return res, len(data)
 
 
+SCHEMES = ("http", "https", "ftp", "s3")
+# fallback only: copy of tensorswitch_v2/utils/fetch.py DEFAULT_ALLOWED_HOSTS, used when TensorSwitch can't be loaded
+FALLBACK_HOSTS = (
+    "zenodo.org", "ftp.ebi.ac.uk", "www.ebi.ac.uk", "data.broadinstitute.org",
+    "data.celltrackingchallenge.net", "ndownloader.figshare.com", "figshare.com",
+    "huggingface.co", "github.com", "raw.githubusercontent.com", "s3.amazonaws.com",
+    "datasets.gryf.fi.muni.cz", "rgw.cscs.ch", "files.cryoetdataportal.cziscience.com",
+    "dataverse.harvard.edu", "data.mendeley.com", "datadryad.org", "osf.io",
+    "bossdb-open-data.s3.amazonaws.com", "janelia-cosem-datasets.s3.amazonaws.com",
+)
+
+
+def allowed_hosts(src=None):
+    """TensorSwitch's fetch allowlist (src/ folder, $TENSORSWITCH_SRC, or an installed tensorswitch_v2)."""
+    src = src or os.environ.get("TENSORSWITCH_SRC")
+    try:
+        if src:
+            spec = importlib.util.spec_from_file_location("ts_fetch", Path(src) / "tensorswitch_v2" / "utils" / "fetch.py")
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+        else:
+            from tensorswitch_v2.utils import fetch as mod
+        return tuple(mod.allowed_hosts())
+    except Exception as e:  # noqa: BLE001
+        print(f"note: TensorSwitch allowlist not loaded ({e}); using the fallback copy", file=sys.stderr)
+        return FALLBACK_HOSTS + tuple(h.strip().lower() for h in os.environ.get("TENSORSWITCH_FETCH_HOSTS", "").split(",")
+                                      if h.strip())
+
+
+def download_check(spec, hosts):
+    url, _, member = spec.partition("::")
+    res = {"spec": spec, "url": url, "member": member or None, "usable": False, "problems": []}
+    scheme = urlsplit(url).scheme.lower()
+    if scheme not in SCHEMES:
+        res["problems"].append(f"scheme {scheme or '?'!r} not supported (http, https, ftp, s3)")
+        return res
+    if scheme == "s3":
+        url = http_url(url)
+    host = (urlsplit(url).hostname or "").lower()
+    res["host_allowed"] = any(host == h or host.endswith("." + h) for h in hosts)
+    if not res["host_allowed"]:
+        res["problems"].append(f"host {host} is not on TensorSwitch's fetch allowlist (TENSORSWITCH_FETCH_HOSTS={host} "
+                               "allows it for one run; ask for it to be added)")
+    if scheme == "ftp":
+        try:
+            ftp = ftplib.FTP(host, timeout=60)
+            ftp.login()
+            ftp.voidcmd("TYPE I")
+            res["size_bytes"] = ftp.size(urlsplit(url).path)
+            ftp.quit()
+            res["is_file"] = True
+        except ftplib.all_errors as e:
+            res["problems"].append(f"FTP: {e} (a folder, or the file doesn't exist)")
+            res["is_file"] = False
+        if member:
+            res["problems"].append("zip members can't be read over FTP; use the https:// form of the same path if the host has one")
+    else:
+        try:
+            r = polite_get(url, headers={"Range": "bytes=0-1023"}, stream=True, allow_redirects=True)
+            head = next(r.iter_content(1024), b"")
+            r.close()
+        except Exception as e:  # noqa: BLE001
+            res["problems"].append(f"request failed: {e}")
+            return res
+        ctype = r.headers.get("Content-Type", "")
+        total = r.headers.get("Content-Range", "").rsplit("/", 1)[-1]
+        length = r.headers.get("Content-Length")
+        res.update(final_url=r.url, status=r.status_code, content_type=ctype or None, range_requests=r.status_code == 206,
+                   size_bytes=int(total) if total.isdigit() else int(length) if r.status_code == 200 and length else None,
+                   is_zip=head.startswith(b"PK\x03\x04"))
+        looks_html = "html" in ctype.lower() or head.lstrip()[:15].lower().startswith((b"<!doctype", b"<html"))
+        res["is_file"] = r.status_code in (200, 206) and not looks_html
+        if r.status_code not in (200, 206):
+            res["problems"].append(f"HTTP {r.status_code}")
+        elif looks_html:
+            res["problems"].append("returns a web page, not a file (landing page, folder index or login)")
+        if res["is_file"] and not res["range_requests"]:
+            res["problems"].append("no range requests: only whole-file downloads, no resuming, no zip members")
+        if member and not res.get("is_zip"):
+            res["problems"].append("`::member` given but the URL is not a zip")
+        elif member:
+            try:
+                hit = next((f for f in zip_entries(url)[1] if f["name"] == member), None)
+                if hit is None:
+                    res["problems"].append(f"no member {member!r} in the zip")
+                else:
+                    res["member_size_bytes"] = hit["size"]
+            except Exception as e:  # noqa: BLE001
+                res["problems"].append(f"zip index not readable: {e}")
+    blocking = [p for p in res["problems"] if not p.startswith("no range requests") or member]
+    res["usable"] = bool(res.get("is_file")) and res.get("host_allowed") and not blocking
+    return res
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("url")
-    ap.add_argument("--id", help="record id, stored with the run log entry")
+    ap.add_argument("urls", nargs="+")
     ap.add_argument("--member", help="path of one file inside the zip at <url>")
     ap.add_argument("--glob", help="probe the first --n members of the zip matching this pattern")
     ap.add_argument("--n", type=int, default=3)
     ap.add_argument("--max-bytes", type=int, default=8 * 10**6, help="for deflated zip members: bytes to inflate")
+    ap.add_argument("--download-check", action="store_true", help="check the URLs are direct links TensorSwitch can fetch")
+    ap.add_argument("--tensorswitch", metavar="SRC", help="TensorSwitch src/ folder (default $TENSORSWITCH_SRC)")
     a = ap.parse_args()
 
-    targets = []
-    if a.member or a.glob:
-        _, entries = zip_entries(http_url(a.url))
-        if a.member:
-            targets = [e for e in entries if e["name"] == a.member]
-            if not targets:
-                sys.exit(f"{a.member} not in zip; list it with tools/peek_archive.py")
-        else:
-            targets = [e for e in entries if fnmatch.fnmatch(e["name"], a.glob) and not JUNK_PATH.search(e["name"])][:a.n]
-            if not targets:
-                sys.exit(f"no zip member matches {a.glob}")
+    if a.download_check:
+        hosts = allowed_hosts(a.tensorswitch)
+        for spec in a.urls:
+            print(json.dumps(download_check(spec.strip(), hosts)))
+        return
     failed = False
-    for entry in targets or [None]:
-        try:
-            res, nbytes = probe_zip_member(http_url(a.url), entry, a.max_bytes) if entry else probe_url(a.url)
-        except Exception as e:  # noqa: BLE001
-            res, nbytes, failed = {"format": "unknown", "error": f"{type(e).__name__}: {e}"}, 0, True
-        out = {"url": a.url, **({"member": entry["name"], "member_size": entry["size"]} if entry else {}), **res,
-               "bytes_read": nbytes}
-        print(json.dumps(out, default=str))
-        if "error" not in res:
-            log_inspection("header", a.url, a.id, member=entry["name"] if entry else None, bytes=nbytes,
-                           format=res.get("format"), shape=res.get("shape"), dtype=res.get("dtype"))
+    for url in a.urls:
+        targets = []
+        if a.member or a.glob:
+            _, entries = zip_entries(http_url(url))
+            if a.member:
+                targets = [e for e in entries if e["name"] == a.member]
+                if not targets:
+                    sys.exit(f"{a.member} not in zip; list it with tools/peek_archive.py")
+            else:
+                targets = [e for e in entries if fnmatch.fnmatch(e["name"], a.glob) and not JUNK_PATH.search(e["name"])][:a.n]
+                if not targets:
+                    sys.exit(f"no zip member matches {a.glob}")
+        for entry in targets or [None]:
+            try:
+                res, nbytes = probe_zip_member(http_url(url), entry, a.max_bytes) if entry else probe_url(url)
+            except Exception as e:  # noqa: BLE001
+                res, nbytes, failed = {"format": "unknown", "error": f"{type(e).__name__}: {e}"}, 0, True
+            out = {"url": url, **({"member": entry["name"], "member_size": entry["size"]} if entry else {}), **res,
+                   "bytes_read": nbytes}
+            print(json.dumps(out, default=str))
     sys.exit(1 if failed else 0)
 
 

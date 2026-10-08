@@ -24,7 +24,7 @@ from urllib.parse import urlsplit
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.common import ROOT, load_yaml  # noqa: E402
-from tools.download_check import ALLOWED_HOSTS, SCHEMES  # noqa: E402
+from tools.probe import FALLBACK_HOSTS as ALLOWED_HOSTS, SCHEMES  # noqa: E402
 
 FAMILIES = {
     "em": {"FIB-SEM", "SBF-SEM", "ssTEM", "ssSEM", "TEM", "cryo-EM", "cryo-ET"},

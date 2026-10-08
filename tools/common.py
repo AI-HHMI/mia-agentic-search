@@ -319,3 +319,14 @@ def similarity_reasons(a, b):
 
 def utcnow():
     return dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def human_size(n, unknown="unknown"):
+    """Bytes in decimal units: 1234567 -> '1.2 MB'."""
+    if n is None:
+        return unknown
+    for unit in ("B", "KB", "MB", "GB"):
+        if n < 1000:
+            return f"{n:.0f} B" if unit == "B" else f"{n:.1f} {unit}"
+        n /= 1000
+    return f"{n:.1f} TB"

@@ -13,7 +13,7 @@ humans review them (merge = accept, close = reject).
 2. **Only the schema's fields and enum values.** Don't add keys. If nothing fits, use `other`
    and say what it is in `notes`.
 3. **Every URL in `provenance.evidence_urls` must be logged** with `tools/run_log.py fetched`.
-   CI rejects records citing pages you never logged.
+   `validate.py --run-log` rejects records citing pages you never logged.
 4. **Dedup before writing:** run `python tools/dedup.py --doi ... --repository ... --accession ... --url ... --title ... --paper-doi ... --download-url ...`.
    `duplicate`/`pending`/`rejected` → skip and log it. `possible-duplicate` → open both pages and decide.
 5. **Validate before pushing:** `python tools/validate.py <your files> --run-log <run log> --min-confidence 0.5` must pass.
@@ -81,8 +81,6 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
   record per run (`tools/sample.py`, enforced). Never download a whole dataset.
 - **Untrusted data:** never run code that ships with a dataset, never unpickle, never `pip install` packages
   a dataset names. Samples live in temp dirs and are deleted.
-- **Evidence:** listing / probe / sample record themselves in the run log; `validate.py --run-log` rejects
-  claims (`method`, confirmed size, observed values) that aren't backed by a logged read.
 - **Labels are computed, not added:** `.github/workflows/label.yml` runs `tools/labels.py` on every push:
   `dim:`, `org:`, `modality:`, `fmt:`, `dtype:`, `anno:`, `label-enc:`, `license:<spdx as written>`,
   `size:`, `enriched`,
@@ -93,11 +91,10 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
   `main` whenever records change there, so a voxel size filled in later shows up on them too.
   License labels are the SPDX id verbatim, with no interpretation.
 - **Voxel size:** conversion can't proceed without it, so the enricher searches hard for it (skill step 4a:
-  headers, repository APIs, archive READMEs, the full paper, code repos, upstream datasets), and makes a
-  second pass over PRs enriched before that.
+  headers, repository APIs, archive READMEs, the full paper, code repos, upstream datasets).
 - **Download links:** TensorSwitch fetches files itself, so the enricher also searches hard for direct links it can
   use (skill step 4b: repository file APIs, the full landing page, zip members, the paper, code repos), checked with
-  `tools/download_check.py`, for `technical.sample.urls` and, when one direct archive exists, `data.download_url`.
+  `tools/probe.py --download-check`, for `technical.sample.urls` and, when one direct archive exists, `data.download_url`.
 - **Conversion readiness:** the enricher also runs `tools/convertibility.py` (issues #518 / #519) with TensorSwitch's
   record planner, and fixes what blocks automatic conversion from evidence: concrete sample files, HDF5 dataset
   names, real globs in `path_pattern`, one organism per file set, a clear modality, `annotations.source`, and
@@ -120,12 +117,11 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
 | `python tools/pr_text.py <file> --title\|--body [--run-log F]` | PR title and body for a record (use verbatim) |
 | `python tools/paper.py --doi D \| --pmid P \| --title T` | find a paper and read its full text (Europe PMC / bioRxiv) |
 | `python tools/peek_archive.py <zip url> [--cat member]` | list files inside a remote zip without downloading it, or print a text member |
-| `python tools/listing.py <url> [<url> ...] --id ID` | full file listing → folder tree, exact total size (enricher) |
-| `python tools/probe.py <url> [--glob G] --id ID` | shape / dtype / compression / voxel size from file headers (enricher) |
+| `python tools/listing.py <url> [<url> ...]` | full file listing → folder tree, exact total size (enricher) |
+| `python tools/probe.py <url> [--glob G]` / `--download-check <url\|zip::member>` | shape / dtype / compression / voxel size from file headers; or: is this a direct link TensorSwitch can fetch (one range request) (enricher) |
 | `python tools/sample.py --id ID --raw S [--label S]` | download a small sample, measure it, delete it (enricher) |
 | `python tools/estimate_size.py <file> --files F \| --count I=N` | size from files × voxels × bytes per voxel, when nothing states it (enricher) |
 | `python tools/labels.py <file>` | the PR labels a record gets |
-| `python tools/download_check.py <url\|zip::member> --id ID [--tensorswitch SRC]` | is this a direct link TensorSwitch can fetch (one range request) |
 | `python tools/convertibility.py [files] [--summary\|--json] [--tensorswitch SRC]` | what blocks automatic conversion (read-only report) |
 | `python tools/readiness.py <file> [--tensorswitch SRC]` | download readiness: ready / not-ready / unknown, with reasons (the auto-merge gate and the download queue) |
 | `python tools/download_queue.py next\|record\|list` | the download queue and the downloads list (`state/downloads.json` on `claude/state/downloader`) |

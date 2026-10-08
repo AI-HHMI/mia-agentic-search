@@ -27,7 +27,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import JUNK_PATH, load_yaml  # noqa: E402
+from tools.common import JUNK_PATH, human_size, load_yaml  # noqa: E402
 from tools.convertibility import _matches  # noqa: E402
 
 BYTES = {"bool": 1, "uint8": 1, "int8": 1, "uint16": 2, "int16": 2, "float16": 2, "uint32": 4, "int32": 4,
@@ -35,13 +35,6 @@ BYTES = {"bool": 1, "uint8": 1, "int8": 1, "uint16": 2, "int16": 2, "float16": 2
 CHUNKED = {"zarr", "ome-zarr", "n5", "precomputed"}
 TABLES = {"csv", "json"}
 BETTER_SOURCES = {"file-listing", "page-stated", "paper"}
-
-
-def human(n):
-    for unit, size in (("TB", 10**12), ("GB", 10**9), ("MB", 10**6), ("KB", 10**3)):
-        if n >= size:
-            return f"{n / size:.1f} {unit}"
-    return f"{n} B"
 
 
 def estimate(r, files=None, counts=None):
@@ -93,9 +86,9 @@ def estimate(r, files=None, counts=None):
     if total is not None:
         parts = " + ".join(f"{x['role']} {x['files']} x {'x'.join(map(str, x['shape']))} {x['dtype']}"
                            for x in rows)
-        line = (f"size estimated (uncompressed): {parts} = {total:,} B ({human(total)})"
+        line = (f"size estimated (uncompressed): {parts} = {total:,} B ({human_size(total)})"
                 + ("; shapes vary, so approximate" if any(x["shape_varies"] for x in rows) else "") + ".")
-    return {"id": r.get("id"), "total_bytes": total, "human": human(total) if total is not None else None,
+    return {"id": r.get("id"), "total_bytes": total, "human": human_size(total, None),
             "arrays": rows, "missing": missing, "notes": notes, "technical_notes_line": line}
 
 

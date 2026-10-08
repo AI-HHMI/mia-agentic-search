@@ -11,18 +11,9 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.common import load_yaml, rel  # noqa: E402
+from tools.common import human_size, load_yaml, rel  # noqa: E402
 
 DIM_LABELS = {"2D": "2D images", "3D": "3D volumes", "2D+t": "2D time-lapse", "3D+t": "3D time-lapse"}
-
-
-def human_size(n):
-    if n is None:
-        return "unknown"
-    for unit in ("B", "KB", "MB", "GB", "TB"):
-        if n < 1000 or unit == "TB":
-            return f"{n:.0f} {unit}" if unit == "B" else f"{n:.1f} {unit}"
-        n /= 1000
 
 
 def _join(items, empty="unknown"):
@@ -44,9 +35,7 @@ def _cell(v):
 def technical(t):
     """Markdown for the enricher's `technical` block."""
     arrays = t.get("arrays") or []
-    lines = ["", "### Technical inspection", "",
-             f"Deepest check: **{t['method']}** · {human_size(t.get('bytes_downloaded') or 0)} downloaded · "
-             f"{t['inspected_at'][:10]}", ""]
+    lines = ["", "### Technical inspection", "", f"Deepest check: **{t['method']}**", ""]
     if arrays:
         lines += ["| Role | Files | Axes · shape | dtype | Compression | Values | Labels | Alignment |",
                   "|---|---|---|---|---|---|---|---|"]
@@ -55,7 +44,6 @@ def technical(t):
             axes = f"{a['axes']} · {shape}" if a.get("axes") else f"{shape} (axes not stated)"
             if a.get("shape_varies"):
                 axes += " (varies)"
-            comp = a["compression"] + (" (lossy)" if a.get("lossy") else "")
             vals = [f"{a['value_range'][0]:g}–{a['value_range'][1]:g}" if a.get("value_range") else None,
                     a.get("normalization") if a.get("normalization") not in (None, "unknown") else None]
             labels = []
@@ -63,13 +51,11 @@ def technical(t):
                 labels.append(a["encoding"])
             if a.get("classes"):
                 labels.append(", ".join(f"{c['id']}={c['name']}" for c in a["classes"][:8]))
-            if a.get("n_ids_observed") is not None:
-                labels.append(f"{a['n_ids_observed']} IDs in sample")
             align = a.get("alignment") or "—"
             if a.get("alignment_notes"):
                 align += f": {a['alignment_notes']}"
             lines.append(f"| {a['role']} | `{_cell(a['path_pattern'])}` · {a['format']} | {_cell(axes)} | {a['dtype']} | "
-                         f"{_cell(comp)} | {_cell(' · '.join(v for v in vals if v))} | {_cell(' · '.join(labels))} | {_cell(align)} |")
+                         f"{_cell(a['compression'])} | {_cell(' · '.join(v for v in vals if v))} | {_cell(' · '.join(labels))} | {_cell(align)} |")
     smp = t.get("sample")
     if smp:
         lines += ["", f"🧪 **Quick-test sample** ({human_size(smp.get('size_bytes'))}): "
@@ -141,7 +127,7 @@ def body(r, path, run_log=None, enrich_log=None):
     ]
     if r.get("technical"):
         elog = f" · run log `{rel(enrich_log)}` on branch `claude/state/enricher`" if enrich_log else ""
-        lines.append(f"_Inspected by `enricher` on {r['technical']['inspected_at'][:10]}{elog}. "
+        lines.append(f"_Inspected by `enricher`{elog}. "
                      "Labels are set automatically from the record._")
     return "\n".join(lines)
 
