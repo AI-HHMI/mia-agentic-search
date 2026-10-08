@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: figshare-13624268-starfinity-lha-nuclei-gt
 title: 'Ground-truth cell body segmentation used for Starfinity training: expanded mouse brain tissue DAPI/RNA stain, light-sheet'
 short_name: Mouse brain 3D cell bodies (light-sheet)
-description: Manually annotated 3D cell-body segmentation masks (Paintera) with matching DAPI-stained image volumes of expanded mouse brain tissue (lateral hypothalamus, central amygdala and cortex) imaged on a Zeiss Lightsheet Z.1, used to train the Starfinity 3D segmentation model for EASI-FISH. Images and masks are down-sampled 4x4x2 for training.
+description: Manually annotated 3D cell-body segmentation masks (Paintera) with matching DAPI-stained image volumes of expanded
+  mouse brain tissue (lateral hypothalamus, central amygdala and cortex) imaged on a Zeiss Lightsheet Z.1, used to train the
+  Starfinity 3D segmentation model for EASI-FISH. Images and masks are down-sampled 4x4x2 for training.
 landing_url: https://janelia.figshare.com/articles/dataset/Ground-truth_cell_body_segmentation_used_for_Starfinity_training/13624268
 doi: 10.25378/janelia.13624268.v1
 repository: Figshare
@@ -27,7 +29,8 @@ imaging:
   channels: 1
   organism:
   - Mus musculus
-  sample: Expansion-processed mouse brain sections (lateral hypothalamus, central amygdala, cortex), cytoplasmic RNA stained with DAPI
+  sample: Expansion-processed mouse brain sections (lateral hypothalamus, central amygdala, cortex), cytoplasmic RNA stained
+    with DAPI
   labels_stains:
   - DAPI
 data:
@@ -43,7 +46,7 @@ annotations:
   types:
   - instance-segmentation
   coverage: dense
-  format: 'TIFF label volumes in train/masks (A-F.tif), paired by name with train/images'
+  format: TIFF label volumes in train/masks (A-F.tif), paired by name with train/images
   source: manual
 ml:
   tasks:
@@ -68,5 +71,73 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T11:45:00Z'
-notes: 'Figshare API: train.zip (101 MB) and model.zip (trained model, not data); CC BY 4.0. peek_archive of train.zip: train/images/A-F.tif paired with train/masks/A-F.tif (six volumes; macOS junk and two .smbdelete files ignored). Per the record, Paintera annotation at 0.23 x 0.23 x 0.42 um, then down-sampled 4x4x2 to 0.92 x 0.92 x 0.84 um for training; voxel_size_nm is that stated size in post-expansion units. Not confirmed whether zip volumes are down-sampled (headers not read). Preprint (Cell paper is not open access): Zeiss Lightsheet Z.1, 248 then 827 cells annotated from LHA, CEA and cortex of C57BL6/J mice; DAPI stains cytosolic RNA. No split provided.'
+  last_checked: '2026-10-08T12:45:00Z'
+notes: 'Figshare API: train.zip (101 MB) and model.zip (trained model, not data); CC BY 4.0. peek_archive of train.zip: train/images/A-F.tif
+  paired with train/masks/A-F.tif (six volumes; macOS junk and two .smbdelete files ignored). Per the record, Paintera annotation
+  at 0.23 x 0.23 x 0.42 um, then down-sampled 4x4x2 to 0.92 x 0.92 x 0.84 um for training; voxel_size_nm is that stated size
+  in post-expansion units. Preprint (Cell paper is not open access): Zeiss Lightsheet Z.1, 248 then 827 cells annotated from
+  LHA, CEA and cortex of C57BL6/J mice; DAPI stains cytosolic RNA. No split provided. enricher: zip volumes probed (84x182x175
+  for A), consistent with the stated down-sampled size; ImageJ header labels the 84 pages as channels, recorded as z per the
+  description.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "train.zip  101.0 MB (figshare file 26271091)\n  train/images/{A..F}.tif   6  (355 MB uncompressed)\n  train/masks/{A..F}.tif\
+      \    6  (412 MB uncompressed)\n  (+ .smbdelete* and macOS metadata junk)\nmodel.zip  8.7 MB (Starfinity model: config.json,\
+      \ thresholds.json, weights .h5; not data)\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/26271091::train/images/A.tif
+    - https://ndownloader.figshare.com/files/26271091::train/masks/A.tif
+    size_bytes: 10723124
+    description: Smallest volume pair, A.tif (84x182x175) and its mask
+  arrays:
+  - role: raw
+    path_pattern: train.zip::train/images/[A-F].tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 84
+    - 182
+    - 175
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 2896
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: ImageJ TIFF whose header calls the 84 pages channels (axes cyx); the figshare description says these
+      are volumetric DAPI light-sheet images down-sampled 4x4x2, so the page axis is z. Volume sizes differ (5-52 MB per file).
+  - role: label
+    path_pattern: train.zip::train/masks/[A-F].tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 84
+    - 182
+    - 175
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 767
+    normalization: unknown
+    encoding: instance-ids
+    classes:
+    - id: null
+      name: cell
+    alignment: same-grid
+    alignment_notes: 'Pair rule: same letter in train/images and train/masks; A image and mask have identical shape and byte
+      size. Manual Paintera cell segmentation, down-sampled with the images.'
+  notes: 'Figshare API: train.zip 101,048,448 B and model.zip 8,744,832 B (listing.py exact, total 109,793,280 B incl. the
+    model; data.size_bytes keeps train.zip only). peek_archive: 6 image + 6 mask TIFFs. Probed images/A.tif and masks/A.tif:
+    ImageJ TIFF, 84 pages of 182x175 uint16, uncompressed, no calibration in the header. Sampled A: raw 0..2896 (mean 290,
+    p99 912; 12-bit range, normalization none inferred from an unclipped detector range); mask 0..767 with 67 distinct values
+    (85% background), i.e. instance IDs. Voxel size 920x920x840 nm (post-expansion) from the figshare description; headers
+    carry none.'
