@@ -1,0 +1,155 @@
+schema_version: '1.2'
+id: hf-histai-spider-colorectal-histology-patches
+title: 'SPIDER-colorectal: Supervised Pathology Image-DEscription Repository (colorectal)'
+short_name: SPIDER colorectal histology patches (H&E)
+description: 'Patch-level supervised histology dataset for colorectal from HistAI''s SPIDER initiative:
+  77,182 expert-verified central patches (224x224 px at 20x, H&E) in 13 classes from 1,719 whole-slide
+  images, each with 24 surrounding context patches forming a 1120x1120 region (1,039,150 unique patches
+  in total). Slide-level train/test split (63,989 train / 13,193 test central patches).'
+landing_url: https://huggingface.co/datasets/histai/SPIDER-colorectal
+doi: null
+repository: HuggingFace
+accession: null
+authors:
+- Dmitry Nechaev
+- Alexey Pchelnikov
+- Ekaterina Ivanova
+publications:
+- title: 'SPIDER: A Comprehensive Multi-Organ Supervised Pathology Dataset and Baseline Models'
+  doi: 10.48550/arXiv.2503.02876
+  url: https://arxiv.org/html/2503.02876v2
+date_published: null
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: H&E-stained colorectal tissue from HistAI whole-slide images, 224x224 px patches at 20x with
+    context patches
+  labels_stains:
+  - H&E
+data:
+  formats:
+  - png
+  size_bytes: 88802804043
+  n_items: 77182
+  access: registration
+  download_url: https://huggingface.co/datasets/histai/SPIDER-colorectal
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  coverage: partial
+  format: Patch-level class labels (13 classes) for each central patch in metadata.json, images in images/;
+    distributed as 17 split tar parts (cat spider-colorectal.tar.* | tar -x) with loader scripts
+  source: mixed
+ml:
+  tasks:
+  - classification
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/histai/spider
+license:
+  spdx: CC-BY-NC-4.0
+  url: https://creativecommons.org/licenses/by-nc/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-08T21:14:14Z'
+  evidence_urls:
+  - https://huggingface.co/api/datasets/histai/SPIDER-colorectal?blobs=true
+  - https://huggingface.co/datasets/histai/SPIDER-colorectal/raw/main/README.md
+  - https://arxiv.org/html/2503.02876v2
+  - https://github.com/histai/spider
+  - https://huggingface.co/datasets/histai/SPIDER-colorectal/resolve/main/README.md
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: false
+  last_checked: '2026-10-08T23:40:23Z'
+notes: 'The Hugging Face repo is gated with automatic approval (click-through, login needed), so the archive
+  contents could not be read (the README resolves without login); the file listing shows tar parts (total
+  size from the HF API) plus a loader script, so the png format is taken from the GitHub usage example
+  and is unverified. Counts, class numbers, the 20x patch layout and the annotation procedure (pathologist-drawn
+  regions, similarity-search retrieval, then per-patch pathologist verification, hence mixed) come from
+  the SPIDER paper. The paper says patches come from proprietary HistAI slides; pixel size and scanners
+  are not stated in the paper or GitHub README. License CC-BY-NC-4.0 is from the HF tag and GitHub README
+  (the paper footer shows a different CC variant). enricher: class count 14 -> 13 and class names from
+  the README table. Sibling organ sets (skin, colorectal, thorax, breast) are separate repositories and
+  records.'
+technical:
+  method: metadata-only
+  size_source: file-listing
+  layout:
+    tree: ".gitattributes\nREADME.md\nscripts/spider_dataset.py, scripts/convert_to_imagenet.py\nspider-colorectal.tar.00\
+      \ .. .16   17 parts (16 x 5,368,709,120 B + 2,903,439,360 B)\n  -> after cat | tar -x: images/ \
+      \ metadata.json   (per README)\n"
+    n_files: 21
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: images/*
+    format: png
+    axes: yxs
+    shape:
+    - 224
+    - 224
+    - 3
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 224x224 patches at 20x (README); each central patch has 24 context patches forming
+      1120x1120. Image format per the GitHub usage example, not verified.
+  - role: label
+    path_pattern: metadata.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    encoding: other
+    classes:
+    - id: null
+      name: Adenocarcinoma high grade
+    - id: null
+      name: Adenocarcinoma low grade
+    - id: null
+      name: Adenoma high grade
+    - id: null
+      name: Adenoma low grade
+    - id: null
+      name: Fat
+    - id: null
+      name: Hyperplastic polyp
+    - id: null
+      name: Inflammation
+    - id: null
+      name: Mucus
+    - id: null
+      name: Muscle
+    - id: null
+      name: Necrosis
+    - id: null
+      name: Sessile serrated lesion
+    - id: null
+      name: Stroma healthy
+    - id: null
+      name: Vessels
+    alignment: not-applicable
+    alignment_notes: Patch-level class label per central patch (classification), slide-level train/test
+      split.
+  notes: 'Metadata only: the repository is gated (click-through + login), so every tar part returns HTTP
+    401 and a split tar cannot be range-read anyway. Listing from the HF tree API (21 files, exact sizes,
+    88,802,804,043 B). README (readable without login) gives the layout, 20x magnification, 13 classes
+    with counts (sum 77,182) and CC BY-NC 4.0. Voxel size not found; checked: README, HF API, paper (harvest:
+    not stated). Code in scripts/ not run.'
