@@ -1,0 +1,151 @@
+schema_version: '1.2'
+id: zenodo-7484518-malaria-thick-smear-parasites
+title: Malaria Parasite of Romanowsky-stained thick blood smears.
+short_name: Malaria parasite boxes, thick blood smears
+description: 1,000 Romanowsky-stained thick blood smear images (100x, 100 smears from INS Colombia) with
+  bounding boxes for 6,188 parasites (trophozoites, schizonts, gametocytes) and 12,712 leukocytes, plus
+  per-image background quality labels.
+landing_url: https://zenodo.org/records/7484518
+doi: 10.5281/zenodo.7484518
+repository: Zenodo
+accession: '7484518'
+authors:
+- Carol Martínez
+- Daniel R. Suárez
+- Wendy Fong
+- Jhonathan Sora
+- Cesar Salazar
+- Oscar Martínez
+publications:
+- title: Image-Based Detection and Classification of Malaria Parasites and Leukocytes with Quality Assessment
+    of Romanowsky-Stained Blood Smears
+  doi: 10.3390/s25020390
+  url: https://doi.org/10.3390/s25020390
+date_published: '2022-12-23'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  - Plasmodium
+  sample: Romanowsky-stained thick blood smears from malaria diagnosis (Plasmodium parasites and leukocytes)
+  labels_stains:
+  - Romanowsky
+data:
+  formats:
+  - png
+  size_bytes: 7958138676
+  n_items: 1000
+  access: open
+  download_url: https://zenodo.org/records/7484518
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  - classification
+  coverage: dense
+  format: 'data_base_malaria.csv: per-image bounding boxes (top,left,height,width) for leukocytes and
+    parasites with stage counts and quality flag'
+  source: manual
+ml:
+  tasks:
+  - detection
+  - classification
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-08T05:50:01Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/7484518
+  - https://zenodo.org/records/7484518
+  - https://zenodo.org/records/7484518/files/data_base_malaria.csv
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11769203/fullTextXML
+  - https://zenodo.org/api/records/7484518/files/Database.pdf/content
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T07:05:00Z'
+notes: '1,080 PNGs (2056x2452 RGB) but data_base_malaria.csv has 1,000 rows; the 80 unlisted PNGs are
+  slides L1b, L2b, L3b, L5b, c14, c37, c66 and c90 (10 fields each) and have no annotations. Database.pdf
+  documents the CSV: boxes as top/left/height/width in pixels, parasite type codes, quality g/b; Zeiss
+  Scope A1 at 100x, labelled in Labelbox by certified personnel. Pixel size not stated in the PDF, record
+  or paper. Organisms: Homo sapiens blood with Plasmodium parasites in the same images (species not stated).
+  No single direct archive (Zenodo files-archive returns HTTP 400), so download_url is the record page.
+  enricher: channels 3 from PNG header (was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  1,082 files  7.96 GB (flat)\n  c<slide>_<field>.png   980 files (slides c1..c98, 10 fields\
+      \ each)  ~7.1-8.1 MB\n  L<n>{a,b}_<field>.png  100 files\n  data_base_malaria.csv  1.2 MB  (1,000\
+      \ rows, ; separated)\n  Database.pdf           0.2 MB  (field documentation)\n"
+    n_files: 1082
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/7484518/files/c3_1.png/content
+    - https://zenodo.org/api/records/7484518/files/data_base_malaria.csv/content
+    size_bytes: 8658516
+    description: One annotated field (c3_1.png) plus the annotation CSV for all images
+  arrays:
+  - role: raw
+    path_pattern: '*.png'
+    format: png
+    axes: yxs
+    shape:
+    - 2056
+    - 2452
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 49
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB brightfield fields; 80 of the 1,080 PNGs have no CSV row.
+  - role: label
+    path_pattern: data_base_malaria.csv
+    format: csv
+    axes: null
+    shape:
+    - 1000
+    - 10
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: leukocyte
+      name: leukocyte (locationleukocyte column)
+    - id: t
+      name: trophozoite
+    - id: e
+      name: schizont
+    - id: g
+      name: gametocyte
+    - id: N
+      name: no parasite (placeholder box 0,0,0,0)
+    alignment: same-grid
+    alignment_notes: One row per image, keyed by External_ID = PNG file name; boxes are Python-literal
+      lists of {top,left,height,width} in pixels of that image (locationleukocyte, locationParasite with
+      type). backgroundquality g/b is a per-image class.
+  notes: 'Listing (Zenodo API): 1,082 files, 7,958,138,676 B exact. Probed c94_7.png: 2056x2452x3 uint8
+    PNG. Sampled c3_1.png (7.5 MB): range 49-255, mean 177 (one sample; bright background, normalization
+    unknown). Read the whole CSV (1.2 MB) with a scratch script: 1,000 rows, 783 b / 217 g quality, 12,712
+    leukocyte boxes, 6,188 parasites; type codes t 5,927, g 147, e 111 (+3 with stray spaces), N 298 =
+    images without parasites. Code e = schizont inferred from the PDF counts (Squizonts 114). Database.pdf
+    read for the column meanings. Voxel size not found; checked: PNG header (no pHYs), Zenodo API record,
+    Database.pdf, paper full text (Europe PMC PMC11769203). Direct files: each file at https://zenodo.org/api/records/7484518/files/<name>/content.'
