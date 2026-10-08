@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: s-biad1129-feline-intestine-lymphocytes-he
 title: Artificial intelligence-based quantification of lymphocytes in feline small intestinal biopsies
 short_name: Feline intestine lymphocytes and mucosa (H&E WSI)
-description: 333 H&E whole-slide images (Olympus VSI) of feline small intestinal biopsies, split into training/tuning and test sets, with expert lymphocyte point/instance annotations (cell detection model)
-  and epithelium / lamina propria / lumen segmentation annotations (mucosal compartment model).
+description: 333 H&E whole-slide images (Olympus VSI) of feline small intestinal biopsies, split into training/tuning
+  and test sets, with expert lymphocyte point/instance annotations (cell detection model) and epithelium / lamina
+  propria / lumen segmentation annotations (mucosal compartment model).
 landing_url: https://www.ebi.ac.uk/biostudies/bioimages/studies/S-BIAD1129
 doi: null
 repository: BioImageArchive
@@ -28,7 +29,7 @@ imaging:
 data:
   formats:
   - other
-  size_bytes: null
+  size_bytes: 356890491750
   n_items: 333
   access: open
   download_url: https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/129/S-BIAD1129/Files/AI_FeBx/
@@ -40,7 +41,8 @@ annotations:
   - instance-segmentation
   - semantic-segmentation
   coverage: sparse
-  format: per-slide raw_annotations.json (lymphocyte points and masks; epithelium, lamina propria, lumen masks); one ROI per slide
+  format: per-slide raw_annotations.json (lymphocyte points and masks; epithelium, lamina propria, lumen masks);
+    one ROI per slide
   source: manual
 ml:
   tasks:
@@ -66,8 +68,88 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T05:16:59Z'
-notes: 'Format other = Olympus VSI (not in the schema''s format list); each slide has an overview .vsi plus two stack files; JSON annotation files per slide. 105 test WSIs and 228 training/tuning WSIs counted
-  from the overview rows of the file lists (cell-detection list has 423 annotation files, mucosal-compartment list 311: 248 training, 63 tuning). Annotation is one ROI per slide by one board-certified pathologist,
-  hence coverage sparse. Paper gives scanning as 40x, ''0.17 um2/pixel'' (units ambiguous), so voxel_size_nm is null. Total size not stated; file list has no sizes. Paper reports 383 cases sampled; not
-  all necessarily deposited. Author list not read from the record.'
+  last_checked: '2026-10-08T08:55:00Z'
+notes: 'Format other = Olympus VSI (not in the schema''s format list); each slide has an overview .vsi plus two
+  stack files; JSON annotation files per slide. 105 test WSIs and 228 training/tuning WSIs counted from the overview
+  rows of the file lists (cell-detection list has 423 annotation files, mucosal-compartment list 311: 248 training,
+  63 tuning). Annotation is one ROI per slide by one board-certified pathologist, hence coverage sparse. Paper gives
+  scanning as 40x, ''0.17 um2/pixel'' (units ambiguous), so voxel_size_nm is null. enricher: size 356.9 GB = sum
+  of the sizes in the BIA file-list JSONs (WSIs 286.8 GB, test_analysis 70.0 GB, annotations 0.04 GB). Paper reports
+  383 cases sampled; not all necessarily deposited. Author list not read from the record.'
+technical:
+  method: header
+  size_source: page-stated
+  layout:
+    tree: "Files/AI_FeBx/   (BIA FTP; sizes from the file-list JSONs)\n  trainingTuning_wsis/   228 slides, 196.0\
+      \ GB: <id>.vsi (overview) + _<id>_/stack1/frame_t.ets + _<id>_/stack10001/frame_t.ets\n  test_wsis/      \
+      \       105 slides, 90.8 GB, same layout\n  trainingTuning_annotations/\n    cell_detection_model/trainingTuning_annotations/<id>_raw_annotations.json\
+      \      (422; lymphocyte ellipses)\n    mucosal_compartment_model/{training,tuning}_annotations/<id>_raw_annotations.json\
+      \  (311; region contours)\n  test_analysis/         9261 files, 70.0 GB (.rds, .png, .geojson, .csv: model\
+      \ outputs and grades)\n  *_wsis.{tsv,json}, *_fileList.{tsv,json}   file lists with per-slide metadata (breed,\
+      \ sex, age, diagnosis)"
+    n_files: 10994
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/129/S-BIAD1129/Files/AI_FeBx/trainingTuning_wsis/5ye9.vsi
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/129/S-BIAD1129/Files/AI_FeBx/trainingTuning_wsis/_5ye9_/stack1/frame_t.ets
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/129/S-BIAD1129/Files/AI_FeBx/trainingTuning_wsis/_5ye9_/stack10001/frame_t.ets
+    size_bytes: 1650993217
+    description: One training slide (overview .vsi plus its two .ets image stacks); its annotations are <id>_raw_annotations.json
+      in the two annotation folders.
+  arrays:
+  - role: raw
+    path_pattern: '*_wsis/_*_/stack*/frame_t.ets'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Olympus VSI: <id>.vsi holds metadata, _<id>_/stack1 (177 MB for 5ye9) and stack10001 (1.47
+      GB) hold the image pyramids; not read (no reader for .ets in the allowed tools).'
+  - role: label
+    path_pattern: trainingTuning_annotations/cell_detection_model/*/*_raw_annotations.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: none
+    encoding: points-table
+    classes:
+    - id: Lymphocytes
+      name: Lymphocytes
+    alignment: unknown
+    alignment_notes: 'List of objects with classLabel and ellipse {x, y, rx, ry} in slide coordinates (ag5c: 12
+      entries, x ~194000), keyed to the slide by slideName = <id>; isRemoved flags deleted objects. Coordinate units
+      (level-0 pixels?) not documented.'
+  - role: label
+    path_pattern: trainingTuning_annotations/mucosal_compartment_model/*/*_raw_annotations.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: none
+    encoding: polygons
+    classes:
+    - id: Epithelium
+      name: Epithelium
+    - id: null
+      name: lamina propria, lumen (per record; names not read)
+    alignment: unknown
+    alignment_notes: Objects with classLabel and region {contour {points}, holes} in slide coordinates; training_
+      and tuning_annotations folders.
+  notes: 'Listed from the BIA file-list JSONs (trainingTuning_wsis, test_wsis, both annotation lists, test_analysis):
+    10,994 files, 356,890,491,750 B; tools/listing.py timed out on the FTP tree, so size_source is page-stated.
+    Read 2 annotation JSONs; VSI/ETS headers not probed (no reader). Direct links on ftp.ebi.ac.uk work with range
+    requests. Voxel size not set: the paper states 40x scanning and "0.17 um2/pixel" (ambiguous, see notes); VSI
+    metadata not read.'
