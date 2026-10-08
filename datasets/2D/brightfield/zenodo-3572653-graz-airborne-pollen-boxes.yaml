@@ -1,0 +1,132 @@
+schema_version: '1.2'
+id: zenodo-3572653-graz-airborne-pollen-boxes
+title: Microscopic images of airborne pollen captured in Graz, Austria, with bounding boxes
+short_name: Airborne pollen detection in Graz (brightfield)
+description: Multi-focus-layer microscope images of airborne pollen collected by an automated pollen sensing
+  device in Graz on two days in May 2019, with manually produced bounding-box annotations, fold lists
+  for training and testing, and pretrained detector weights.
+landing_url: https://zenodo.org/records/3572653
+doi: 10.5281/zenodo.3572652
+repository: Zenodo
+accession: '3572653'
+authors: []
+publications:
+- title: Automated and Continuous Pollen Detection with an Affordable Technology
+  doi: null
+  url: http://www.ewsn.org/file-repository/ewsn2020/108_119_cao.pdf
+date_published: '2019-12-12'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: null
+  organism: []
+  sample: airborne pollen grains in glycerine droplets
+  labels_stains: []
+data:
+  formats:
+  - jpeg
+  size_bytes: 1961600806
+  n_items: 9170
+  access: open
+  download_url: https://zenodo.org/api/records/3572653/files/data.zip/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  coverage: dense
+  format: 'YOLO/darknet text per image layer: labels/<HHMMSS-LL>.txt with rows "class cx cy w h" (normalised);
+    classes.names = pollen, maybe; foldN_train/test.txt list layer images'
+  source: manual
+ml:
+  tasks:
+  - detection
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/osaukh/pollenpub
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-08T04:45:00Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/3572653
+  - https://zenodo.org/api/records/3572653/files/data.zip/content
+  - http://www.ewsn.org/file-repository/ewsn2020/108_119_cao.pdf
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: false
+  last_checked: '2026-10-08T07:05:00Z'
+notes: 'Per the Zenodo record the images come from an automated airborne-pollen detection system (Cao
+  et al., EWSN 2020), captured on 23.05.2019 and 26.05.2019, with manually produced bounding boxes. The
+  paper reports 1077 processed samples with 9170 depth layers (matching the 9170 .jpg in data.zip) and
+  9059 annotated pollen grains; 46% of layers contain no pollen; over 15 pollen types occur but the boxes
+  are used for single-class pollen detection. Pixel size not stated on the record or paper (camera: IMX179
+  sensor, max 3264x2448 px). weights.zip holds pretrained detector weights (counted in size_bytes, which
+  is the complete listing). enricher: classes.names has 2 classes (pollen, maybe); 4,976 label files for
+  9,170 layers (layers without pollen have none); 5 folds per day.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  Zenodo 3572653                        2 files  2.0 GB\n  data.zip/data/pollen_20190523/\
+      \   classes.names, fold{0-4}_{train,test}.txt, test.txt\n    layers/   3769 .jpg  (<HHMMSS>-<layer>.jpg,\
+      \ 1600x1200 RGB)\n    labels/   1986 .txt  (same stem as the layer)\n  data.zip/data/pollen_20190526/\
+      \   same layout: layers/ 5401 .jpg, labels/ 2990 .txt\n  weights.zip/weights/             3 files\
+      \ 409 MB (pretrained detector, .pth)\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/3572653/files/data.zip/content::data/pollen_20190523/layers/000104-00.jpg
+    - https://zenodo.org/api/records/3572653/files/data.zip/content::data/pollen_20190523/labels/000104-00.txt
+    size_bytes: null
+    description: One focus layer (1600x1200 RGB JPEG) and its YOLO box file (one pollen box).
+  arrays:
+  - role: raw
+    path_pattern: data/pollen_*/layers/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1200
+    - 1600
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 240
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One JPEG per focus layer, named <sample time HHMMSS>-<layer index>.jpg; layers of
+      one sample share the time stamp.
+  - role: label
+    path_pattern: data/pollen_*/labels/*.txt
+    format: csv
+    axes: null
+    shape:
+    - 1
+    - 5
+    shape_varies: true
+    dtype: float64
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: pollen
+    - id: 1
+      name: maybe
+    alignment: same-grid
+    alignment_notes: 'Same stem as the layer image; space-separated YOLO rows: class, x-centre, y-centre,
+      width, height, normalised to the image size. Layers without pollen have no label file.'
+  notes: 'listing.py (Zenodo record, zips expanded): 2 files, 1,961,600,806 bytes, 14,173 members, exact.
+    Read via read_member (177,305 bytes): classes.names, labels/000104-00.txt ("0 0.3453 0.5154 0.1356
+    0.1658"), layers/000104-00.jpg (RGB 1200x1600, 0-240, channels differ), fold0_test.txt (800 layer
+    paths). One sample only. Voxel size not found; checked: JPEG header, Zenodo record, classes/fold files;
+    paper (EWSN 2020) per the harvest run gives the camera sensor only.'
