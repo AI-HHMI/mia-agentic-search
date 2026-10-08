@@ -1,12 +1,13 @@
 schema_version: '1.2'
 id: zenodo-10476880-cochlear-hair-cells-bbox
-title: 'Large-scale annotated dataset for cochlear hair cell detection and classification: 645 fluorescence images with inner/outer hair cell bounding boxes (Zenodo)'
+title: 'Large-scale annotated dataset for cochlear hair cell detection and classification: 645 fluorescence images
+  with inner/outer hair cell bounding boxes (Zenodo)'
 short_name: Cochlear hair cell detection boxes (fluorescence)
 description: 645 maximum-intensity-projection fluorescence images of cochlear whole mounts (confocal, spinning disk,
   Airyscan/SIM and epifluorescence) from over 20 hearing-research labs, covering mouse, rat, guinea pig, pig, primate
-  and human tissue, with more than 107,000 hair cells annotated as inner (IHC) or outer (OHC) hair cells as Pascal VOC
-  bounding boxes. Includes normal and drug-treated (aminoglycoside, platinum) cochleae; each image has an XML box file
-  and a TXT metadata file.
+  and human tissue, with more than 107,000 hair cells annotated as inner (IHC) or outer (OHC) hair cells as Pascal
+  VOC bounding boxes. Includes normal and drug-treated (aminoglycoside, platinum) cochleae; each image has an XML
+  box file and a TXT metadata file.
 landing_url: https://zenodo.org/records/10476880
 doi: 10.5281/zenodo.10476880
 repository: Zenodo
@@ -26,7 +27,7 @@ imaging:
   - widefield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: 2
+  channels: null
   organism:
   - Mus musculus
   - Rattus norvegicus
@@ -79,9 +80,94 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T15:30:00Z'
-notes: 'Read the Zenodo record (CC BY 4.0), the zip index (571 TIFF + 65 PNG, 645 XML + 645 TXT; matches the paper) and
-  the open-access Scientific Data paper. Sample XML is Pascal VOC with IHC/OHC boxes. Annotation: network candidates
-  corrected by 2+ annotators (hence mixed). Pixel size varies per lab (43-360 nm in the Methods), so voxel_size_nm is
-  null; per-image TXT files not read. Channel count and species list are from the paper; per-image channels not verified.
-  No split provided; GitHub README states no license.'
+  last_checked: '2026-10-08T16:35:00Z'
+notes: 'Zip index: 571 TIFF + 65 PNG, 645 XML + 645 TXT (Stepanyan/ and Landegger/ have 9 XML/TXT without an image).
+  Annotation: network candidates corrected by 2+ annotators (mixed). No split; GitHub README states no license.
+  Pixel size is per image in its TXT (e.g. 70 nm Liberman rat, 180 nm Bird), so voxel_size_nm stays null. organisms:
+  Mus musculus = Confocal/{Ballesteros,Bird,Cunningham,Edge,Genedeva,Indzhykulian,Manor,Ricci,Rutherford,Shrestha,Stepanyan,Tarchini,Velez,Zhao}/
+  + Epifluorescence/Richardson-and-Kros/; Rattus norvegicus = Confocal/Liberman/Rat/; Macaca mulatta = Confocal/Liberman/Primate/;
+  Homo sapiens = Confocal/Liberman/Human/; Sus scrofa = Confocal/Landegger/; Cavia porcellus = Confocal/Walters/
+  (from file names and TXT Species). modality: widefield = Epifluorescence/; spinning-disk = Manor/Spinning Disk/
+  and Bird/ (TXT); rest confocal/Airyscan. enricher: channels null (was 2): TXT files give 2-4 channels per image.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "hcat_data_v0.3.2.zip   4,625,698,744 B (only file)\n  to_zip/hcat-data/\n    .todo.txt.swp\n    Confocal/<lab>[/<subset>]/NNN_<lab>_<species>_confocal.{tif,png,xml,txt}\n\
+      \      Ballesteros/ Bird/ Cunningham/ Edge/ Genedeva/ Indzhykulian/whole_cochlea/ Landegger/\n      Liberman/{Human,Primate,Rat}/\
+      \ (Primate, Rat: .png) Manor/{Airyscan,Spinning Disk}/ Ricci/\n      Rutherford/ Shrestha/ Stepanyan/ Tarchini/base/\
+      \ Velez/ Walters/ Zhao/\n    Epifluorescence/Richardson-and-Kros/   38 tif + xml + txt\n  per image: .tif\
+      \ or .png (raw), .xml (Pascal VOC boxes), .txt (pixel size, channels, species, counts)\n1 file, 1,927 zip\
+      \ members: 571 tif, 65 png, 645 xml, 645 txt, 1 swp\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/10476880/files/hcat_data_v0.3.2.zip::to_zip/hcat-data/Confocal/Liberman/Rat/001_liberman_rat_rat_confocal.png
+    - https://zenodo.org/records/10476880/files/hcat_data_v0.3.2.zip::to_zip/hcat-data/Confocal/Liberman/Rat/001_liberman_rat_rat_confocal.xml
+    - https://zenodo.org/records/10476880/files/hcat_data_v0.3.2.zip::to_zip/hcat-data/Confocal/Liberman/Rat/001_liberman_rat_rat_confocal.txt
+    size_bytes: 384241
+    description: One Liberman rat image (512x1024 RGB PNG) with its Pascal VOC box file and metadata TXT, read from
+      the zip by range.
+  arrays:
+  - role: raw
+    path_pattern: to_zip/hcat-data/**/*.tif
+    format: tiff
+    axes: null
+    shape:
+    - 4
+    - 918
+    - 682
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 99
+    - 29671
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Layout varies by lab: Bird/003 is ImageJ cyx (4 channels, uint16, uncompressed); Liberman/Human/065
+      is a plain RGB yxs uint8 LZW TIFF (964x1605x3). Axes are per file, so null here.'
+  - role: raw
+    path_pattern: to_zip/hcat-data/Confocal/Liberman/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 512
+    - 1024
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: to_zip/hcat-data/**/*.xml
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: boxes-table
+    classes:
+    - id: IHC
+      name: inner hair cell
+    - id: OHC
+      name: outer hair cell
+    alignment: same-grid
+    alignment_notes: Same stem as the image (NNN_<lab>_<species>_confocal.xml next to .tif/.png); Pascal VOC <object><name>IHC|OHC</name><bndbox>xmin/ymin/xmax/ymax
+      in image pixels.
+  notes: 'Complete Zenodo listing with zip members expanded (one zip, exact size). Probed Bird/003 TIFF (ImageJ,
+    4x918x682 uint16, cyx, header 182.3 nm/px vs TXT "180nm"), Liberman/Human/065 TIFF (plain RGB 964x1605x3 uint8,
+    LZW), Liberman/Rat/001 PNG (512x1024x3 uint8). Sampled Rat/001 PNG (0..255, mean 6.9, samples not identical)
+    and Bird/003 TIFF (99..29671); value ranges from single samples. Read Rat/001 XML (one IHC box) and TXT files
+    of Rat/001 and Bird/003: each TXT states Pixel Size (nm), channels/stains, objective, microscope, species, image
+    shape and bit depth. Voxel size varies per image (TXT), so imaging.voxel_size_nm stays null; a converter would
+    need the per-file TXT value. The zip is a direct download (download-check usable, range requests); members work
+    as zip::member specs.'
