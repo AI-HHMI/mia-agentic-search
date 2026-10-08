@@ -4,7 +4,8 @@ title: PlanktonFlow76 - A curated FlowCam dataset for plankton classification
 short_name: Freshwater plankton FlowCam, 76 classes
 description: FlowCAM images of freshwater plankton and particles from multi-year mesocosm experiments (INRAE UMR DECOD, Rennes),
   one object per image (~400 x 400 px, ZooProcess-segmented), manually labelled into 76 taxonomic and non-living classes.
-  Provided as a raw set (~130k JPEGs in one folder per class) and a pre-processed, class-balanced-split set (train/val/test, YOLO-style dataset.yaml).
+  Provided as a raw set (~130k JPEGs in one folder per class) and a pre-processed, class-balanced-split set (train/val/test,
+  YOLO-style dataset.yaml).
 landing_url: https://zenodo.org/records/16840846
 doi: 10.5281/zenodo.16840846
 repository: Zenodo
@@ -26,7 +27,8 @@ imaging:
   voxel_size_nm: null
   channels: null
   organism: []
-  sample: Ethanol-fixed freshwater mesocosm plankton samples imaged on FlowCAM 8110 (microplankton, 50-200 um) and FlowCAM Macro (0.2-2 mm)
+  sample: Ethanol-fixed freshwater mesocosm plankton samples imaged on FlowCAM 8110 (microplankton, 50-200 um) and FlowCAM
+    Macro (0.2-2 mm)
   labels_stains: []
 data:
   formats:
@@ -66,12 +68,53 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T16:40:00Z'
+  last_checked: '2026-10-08T17:38:00Z'
 notes: 'Zip listings (peek_archive): raw_PlanktonFlow76.zip has 129,606 JPEGs (1.78 GB uncompressed) in one folder per class;
-  preprocessed_PlanktonFlow76.zip has 198,569 JPEGs (augmented, train/val/test) plus final_dataset/dataset.yaml listing 76 classes.
-  The paper reports a 70/20/10 stratified split (90,723/25,921/12,961 images) after pre-processing. Total size is the two
-  zip files on Zenodo (1.73 GB + 0.64 GB). Labels were assigned manually in EcoTaxa with single-person validation, so
-  occasional errors are possible (stated on the Zenodo page). Pixel size is not stated on the Zenodo page or in the paper
+  preprocessed_PlanktonFlow76.zip has 198,569 JPEGs (augmented, train/val/test) plus final_dataset/dataset.yaml listing 76
+  classes. The paper reports a 70/20/10 stratified split (90,723/25,921/12,961 images) after pre-processing. Total size is
+  the two zip files on Zenodo (1.73 GB + 0.64 GB). Labels were assigned manually in EcoTaxa with single-person validation,
+  so occasional errors are possible (stated on the Zenodo page). Pixel size is not stated on the Zenodo page or in the paper
   Methods, so voxel_size_nm is null. FlowCAM is an imaging flow cytometer (brightfield-type imaging, not further specified).
   Classes include non-living particles (detritus, bubbles, aggregates). Related FlowCam plankton datasets are already catalogued
   separately (e.g. zenodo-10554845, zenodo-22012197).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "raw_PlanktonFlow76.zip (1.73 GB, 129,606 members)\n  <class name>/   one folder per class (76), e.g. Simocephalus/2mm_2023_08_24_m06_1_75613.jpg\n\
+      preprocessed_PlanktonFlow76.zip (0.64 GB, 198,570 members)\n  final_dataset/dataset.yaml\n  final_dataset/train/<class>/\
+      \   159,687 .jpg (augmented)\n  final_dataset/val/<class>/      25,921 .jpg\n  final_dataset/test/<class>/     12,961\
+      \ .jpg\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/16840846/files/raw_PlanktonFlow76.zip::Simocephalus/2mm_2023_08_24_m06_1_75613.jpg
+    size_bytes: null
+    description: One raw FlowCam particle image of class Simocephalus; the label is the folder name.
+  arrays:
+  - role: raw
+    path_pattern: '*/*.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 253
+    - 248
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Variable-size particle crops (253x248, 276x272, 302x184 in three samples), RGB.
+  notes: 'Labels are image-level classes given by the parent folder name (no label files), so only the raw array is listed.
+    Listing: Zenodo API + both zip indexes ({"n_files": 2, "total_bytes": 2367535854, "complete": true, "zip_members": 328176}).
+    Raw zip: 129,606 JPEGs in one folder per class, no top-level folder. Preprocessed zip: final_dataset/{train,val,test}/<class>/
+    (159,687 / 25,921 / 12,961; train is augmented) plus dataset.yaml. Read three raw JPEGs (61 KB): RGB uint8, sizes vary
+    (253x248, 276x272, 302x184), values 0-255 overall (one sample 44-255). Reading members of the preprocessed zip failed
+    with an SSL EOF from zenodo.org this run. Raw zip and one member pass --download-check (range requests). Voxel size not
+    found: Zenodo page and the harvester''s paper reading state none; JPEG headers carry no calibration. 2D: not covered by
+    the miao layout.'
