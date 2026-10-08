@@ -1,0 +1,135 @@
+schema_version: '1.2'
+id: bbbc004-synthetic-nuclei-clustering
+title: Synthetic nuclei with increasing clustering
+short_name: Synthetic clustered nuclei masks (fluorescence)
+description: Five subsets of 20 synthetic fluorescence images (100 total, SIMCEP simulation), each with exactly
+  300 nuclei and an overlap probability of 0, 0.15, 0.3, 0.45 or 0.6, with binary foreground masks and object counts
+  as ground truth.
+landing_url: https://bbbc.broadinstitute.org/BBBC004
+doi: null
+repository: LabWebsite
+accession: BBBC004
+authors:
+- Pekka Ruusuvuori
+publications: []
+date_published: null
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: Synthetic images generated with the SIMCEP simulation platform for fluorescent cell populations
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 66521716
+  n_items: 100
+  access: open
+  download_url: https://data.broadinstitute.org/bbbc/BBBC004/
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  - counts
+  coverage: dense
+  format: Binary foreground/background TIFF per image (BBBC004_v1_<overlap>_foreground.zip); each image holds exactly
+    300 objects
+  source: automatic
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-NC-SA-3.0
+  url: https://bbbc.broadinstitute.org/BBBC004
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-08T12:26:16Z'
+  evidence_urls:
+  - https://bbbc.broadinstitute.org/BBBC004
+  - https://data.broadinstitute.org/bbbc/BBBC004/BBBC004_v1_000_images.zip
+  - https://data.broadinstitute.org/bbbc/BBBC004/BBBC004_v1_000_foreground.zip
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T15:15:00Z'
+notes: 'Ten zips (five image zips of 20 TIFFs each, about 13 MB, and five foreground zips of 20 TIFFs, about 0.4-0.5
+  MB); enricher: all ten zips listed (100 images + 100 masks, sizes exact). Synthetic images, so the masks are exact
+  simulation ground truth (source automatic). The page does not state pixel size or image dimensions, and no paper
+  was read (it cites Ruusuvuori et al., EUSIPCO 2008, and Lehmussola et al., not read). The page says the Synthetic
+  1 images are CC BY-NC-SA 3.0 by Pekka Ruusuvuori.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  10 zips, 66,521,716 B\n  BBBC004_v1_<000|015|030|045|060>_images.zip      ~13 MB each\n    synthetic_<ovl>_images/<n>GRAY.tif\
+      \            20 per zip (100 total, 91.1 MB uncompressed)\n  BBBC004_v1_<000|015|030|045|060>_foreground.zip\
+      \ ~0.4-0.5 MB each\n    synthetic_<ovl>_foreground/<n>.tif            20 per zip (100 total, 30.6 MB uncompressed)\n"
+    n_files: 10
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.broadinstitute.org/bbbc/BBBC004/BBBC004_v1_000_images.zip::synthetic_000_images/1GRAY.tif
+    - https://data.broadinstitute.org/bbbc/BBBC004/BBBC004_v1_000_foreground.zip::synthetic_000_foreground/1.tif
+    size_bytes: 676783
+    description: Image 1 of the overlap-0 subset and its foreground mask
+  arrays:
+  - role: raw
+    path_pattern: BBBC004_v1_*_images.zip/synthetic_*_images/*GRAY.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 950
+    - 950
+    shape_varies: false
+    dtype: uint8
+    compression: packbits
+    lossy: false
+    chunks: null
+    value_range:
+    - 5
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: BBBC004_v1_*_foreground.zip/synthetic_*_foreground/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 950
+    - 950
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: foreground (nuclei)
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: 'Pairs by number within the same overlap subset: synthetic_<ovl>_images/<n>GRAY.tif with synthetic_<ovl>_foreground/<n>.tif.
+      Masks are stored as 3-sample (RGB) TIFFs; values {0, 255}, and the three samples are not identical in the
+      sample read.'
+  notes: 'All ten zips listed in place (200 members). Probed 1GRAY.tif (plain single-page uint8, PackBits, 950x950,
+    no calibration). Sampled image 1 and its mask (652,880 + 23,903 B): image min 5 / max 255, 251 values (one sample);
+    mask {0: 2,613,621, 255: 93,879} over 950x950x3. Mask header probe failed twice on connection resets, so its
+    compression is unknown. Voxel size: not applicable in a physical sense, synthetic SIMCEP images; the BBBC page
+    states none. Counts ground truth (300 objects per image) is stated on the page, not stored in files.'
