@@ -21,7 +21,7 @@ imaging:
   - other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism: []
   sample: plankton imaged in situ between the surface and about 100 m in the north-western Mediterranean Sea (VISUFRONT cruise),
     objects segmented with a deep segmenter in the apeep software
@@ -62,11 +62,36 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T18:52:00Z'
+  last_checked: '2026-10-08T21:53:00Z'
 notes: Tar size 794,981,376 bytes (Content-Length). The page text gives the imaging period as July 2016 while its temporal
   extent is 2013-07-23 to 2013-07-29; treat the year with caution. Read the
   SEANOE landing page in full. The download is one tar; its first headers show <Name>/imgs/<taxon>/<objid>.png, so images
   are PNG, but the tar was not fully listed. The page states that every identification was reviewed by at least one operator
   but a few mistakes may remain. Pixel size is not stated on the page (measurements are in pixels). No paper is linked on
   the page and none was read. The instrument is not a microscope, so modality is recorded as other. A sibling of the ZooScanNet
-  and ZooCAMNet datasets, but a different instrument and sample set.
+  and ZooCAMNet datasets, but a different instrument and sample set. The enricher set channels to 1 (grayscale PNG).
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      113146.tar (795.0 MB, plain tar; first 1 MB streamed)
+        ISIISNet/imgs/<taxon>/<objid>.png   (e.g. imgs/Acantharea/257067623.png)
+        per the SEANOE page also: taxa.csv.gz, feature tables, inventory.tsv, map.png
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: 113146.tar/ISIISNet/imgs/*/*.png
+    format: png
+    axes: yx
+    shape: [17, 11]
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range: [40, 255]
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Class label = taxon folder under imgs/; taxa.csv.gz (per the page) maps object ids to taxa. Object crops vary in size.
+  notes: 'The dataset is one tar (794,981,376 B from the server, range requests work). Streamed its first 1 MB with a small requests+tarfile script: plain tar starting with ISIISNet/imgs/<taxon>/ folders. First image Acantharea/257067623.png (258 B) is 17x11 uint8 grayscale PNG, values 40-255, mean 205.2 (one sample; objects are small and vary in size). sample is null: TensorSwitch cannot pull single members out of a tar, and www.seanoe.org is not on its fetch allowlist. Voxel size not found; checked: PNG header (no pHYs), SEANOE page (measurements in pixels), ESSD plankton benchmark paper full text (no per-instrument pixel size).'
