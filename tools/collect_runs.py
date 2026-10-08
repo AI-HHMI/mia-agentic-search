@@ -1,7 +1,7 @@
 """Gather run logs from the working tree plus every remote `claude/*` branch.
 
-Harvest run logs live on each routine's PR branch until it is merged, so monitoring
-(dashboard, watchdog) must look at the branches, not just main.
+Run logs live on each routine's state branch (claude/state/<routine>, never merged), so monitoring
+(dashboard, watchdog) reads them there.
 Requires `git fetch origin '+refs/heads/claude/*:refs/remotes/origin/claude/*'` beforehand.
 """
 import json

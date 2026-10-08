@@ -1,11 +1,11 @@
 """Rotating search frontier so each run covers new ground (state/frontier/<routine>.yaml).
 
-    python tools/frontier.py next --routine harvest-repositories [--n 1] [--fresh]
+    python tools/frontier.py next --routine harvest-repositories
     python tools/frontier.py touch --routine harvest-repositories --key "zenodo: FIB-SEM"
     python tools/frontier.py add --routine harvest-websearch --key "..."   # agent-proposed follow-up
 
-`next` prints the least recently searched items (never-searched first). With --fresh it skips
-queries already run in the active run log; an empty list means the frontier is exhausted.
+`next` prints the least recently searched item (never-searched first), skipping queries already run
+in the active run log; an empty list means the frontier is exhausted.
 """
 import argparse
 import json
@@ -23,8 +23,6 @@ def main():
     ap.add_argument("cmd", choices=["next", "touch", "add"])
     ap.add_argument("--routine", required=True)
     ap.add_argument("--key")
-    ap.add_argument("--n", type=int, default=1)
-    ap.add_argument("--fresh", action="store_true", help="skip queries already run in the active run")
     a = ap.parse_args()
 
     path = FRONTIER_DIR / f"{a.routine}.yaml"
@@ -34,9 +32,9 @@ def main():
         items.sort(key=lambda i: i.get("last_searched") or "")
         done = set()
         current = STATE_DIR / ".current_run"
-        if a.fresh and current.exists():
+        if current.exists():
             done = set(json.loads((ROOT / current.read_text().strip()).read_text()).get("queries", []))
-        print(json.dumps([i["key"] for i in items if i["key"] not in done][: a.n]))
+        print(json.dumps([i["key"] for i in items if i["key"] not in done][:1]))
         return
     if not a.key:
         ap.error("--key required")

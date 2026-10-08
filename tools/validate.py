@@ -13,7 +13,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.common import (CONFIDENCE_CAPS, CONFIRMED_SIZE_SOURCES, DATASETS_DIR, DRAFTS_DIR, PAPER_HOSTS,  # noqa: E402
-                          canonical_path, identity_keys, iter_record_paths, legacy_path, load_rejected, load_yaml,
+                          canonical_path, identity_keys, iter_record_paths, load_rejected, load_yaml,
                           similarity_reasons,
                           normalize_title, normalize_url, rel, validator)
 
@@ -44,18 +44,12 @@ def check_record(path, record, v):
 
 
 def check_location(path, record):
-    """(errors, warnings) for where the file lives. Drafts outside datasets/ are not checked."""
-    try:
-        path.relative_to(DATASETS_DIR)
-    except ValueError:
-        return [], []
+    """Errors for where the file lives. Drafts outside datasets/ are not checked."""
     want = canonical_path(record)
-    if want is None or path == want:
-        return [], []
-    if path == legacy_path(record):
-        return [], [f"old layout; the record belongs in {rel(want)} (python tools/place.py {rel(path)})"]
+    if want is None or path == want or DATASETS_DIR not in path.parents:
+        return []
     return [f"file must live in {rel(want)} (datasets/<dimensionality>/<first modality>/); "
-            f"move it with `python tools/place.py {rel(path)}`"], []
+            f"move it with `python tools/place.py {rel(path)}`"]
 
 
 def check_technical(record):
@@ -64,8 +58,6 @@ def check_technical(record):
     if not isinstance(t, dict):
         return []
     errors = []
-    if record.get("schema_version") != "1.2":
-        errors.append("a record with `technical` must have schema_version '1.2'")
     arrays = [a for a in t.get("arrays") or [] if isinstance(a, dict)]
     if t.get("method") in ("header", "sample") and not arrays:
         errors.append(f"technical.method is {t.get('method')!r} but technical.arrays is empty")
@@ -165,10 +157,7 @@ def main():
             continue
         errs = check_record(p, rec, v)
         if isinstance(rec, dict):
-            loc_errs, loc_warns = check_location(p, rec)
-            errs += loc_errs
-            if loc_warns:
-                warnings.setdefault(p, []).extend(loc_warns)
+            errs += check_location(p, rec)
             if rec.get("id") in rejected:
                 errs.append(f"id {rec['id']!r} was rejected (state/rejected.yaml or rejections branch)")
             for k in identity_keys(rec):

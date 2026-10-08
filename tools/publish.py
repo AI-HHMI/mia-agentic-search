@@ -1,8 +1,10 @@
 """Git plumbing for harvest runs, so agents never juggle branches by hand.
 
     python tools/publish.py state-pull --routine R     # restore frontier + run logs from claude/state/R
-    python tools/publish.py dataset <record.yaml>       # push record to its own branch claude/dataset/<id>,
-                                                        # filed at datasets/<dimensionality>/<modality>/<id>.yaml
+    python tools/publish.py dataset <record.yaml> [--run-log F]   # refuse duplicates, push the record to its
+                                                        # own branch claude/dataset/<id> (filed at
+                                                        # datasets/<dimensionality>/<modality>/<id>.yaml),
+                                                        # open its PR and log `event added` in F
     python tools/publish.py state-push --routine R     # save frontier + run logs to claude/state/R
                                                         # (downloader: also state/downloads.json;
                                                         #  gallery: only state/gallery.json, tools/demo_gallery.py)
@@ -28,7 +30,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.common import (DATASET_BRANCH_PREFIX, FRONTIER_DIR, ROOT, RUNS_DIR,  # noqa: E402
                           STATE_BRANCH_PREFIX, STATE_DIR, canonical_path, git, load_yaml, rel)
-from tools.pr_text import title  # noqa: E402
+from tools.dedup import check  # noqa: E402
+from tools.pr_text import body, title  # noqa: E402
+from tools.run_log import log_event  # noqa: E402
 
 
 def run(*args, cwd=ROOT):
@@ -119,7 +123,7 @@ def _state_push(routine):
         git("branch", "-D", f"tmp-state-{routine}")
 
 
-def dataset(record_path):
+def dataset(record_path, run_log=None):
     src = Path(record_path).resolve()
     rec = load_yaml(src)
     branch = DATASET_BRANCH_PREFIX + rec["id"]
@@ -128,7 +132,9 @@ def dataset(record_path):
     target = canonical_path(rec)
     if target is None:
         sys.exit("imaging.dimensionality / imaging.modality are not filled in; can't file the record")
-    run("fetch", "-q", "origin", "main")
+    status, matches = check(rec)  # fetches main + dataset branches now, not at the start of the run
+    if status in ("duplicate", "pending", "rejected"):
+        sys.exit(f"not published: {status} {json.dumps(matches)}; log `run_log.py event duplicate` and skip it")
     tmp = _worktree("origin/main")
     try:
         dest = tmp / target.relative_to(ROOT)
@@ -139,7 +145,15 @@ def dataset(record_path):
         run("push", "-q", "origin", f"HEAD:refs/heads/{branch}", cwd=tmp)
     finally:
         _cleanup(tmp)
-    print(branch)
+    r = subprocess.run(["gh", "pr", "create", "--base", "main", "--head", branch, "--title", title(rec),
+                        "--body-file", "-"], cwd=ROOT, input=body(rec, target, run_log), capture_output=True, text=True)
+    if r.returncode != 0:
+        sys.exit(f"pushed {branch} but `gh pr create` failed; open its PR with tools/pr_text.py's title and body "
+                 f"and log `run_log.py event added` yourself:\n{r.stderr.strip()}")
+    url = r.stdout.strip().splitlines()[-1]
+    if run_log:
+        log_event(Path(run_log), "added", rec["id"], pr_url=url)
+    print(url)
 
 
 ENRICH_DIR = STATE_DIR / ".enrich"
@@ -216,7 +230,9 @@ def main():
     sub = ap.add_subparsers(dest="cmd", required=True)
     for name in ("state-pull", "state-push"):
         sub.add_parser(name).add_argument("--routine", required=True)
-    sub.add_parser("dataset").add_argument("record")
+    ds = sub.add_parser("dataset")
+    ds.add_argument("record")
+    ds.add_argument("--run-log", help="the harvest run log: cited in the PR body, gets the `added` event")
     sub.add_parser("pr-pull").add_argument("id")
     sub.add_parser("pr-update").add_argument("record")
     a = ap.parse_args()
@@ -230,7 +246,7 @@ def main():
         pr_update(a.record)
     else:
         print(f"{rel(Path(a.record).resolve())} -> ", end="", flush=True)
-        dataset(a.record)
+        dataset(a.record, a.run_log)
 
 
 if __name__ == "__main__":
