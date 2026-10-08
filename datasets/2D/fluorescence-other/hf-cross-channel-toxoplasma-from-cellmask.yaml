@@ -1,0 +1,123 @@
+schema_version: '1.2'
+id: hf-cross-channel-toxoplasma-from-cellmask
+title: Cross-channel toxoplasma from cellmask dataset (paired cell-mask images and parasitophorous vacuole instance masks)
+short_name: Toxoplasma vacuole segmentation (fluorescence)
+description: '3030 paired fields: images/ holds the cell-mask input channel and masks_pv/ the matching instance-labelled parasitophorous-vacuole (PV) ground truth (same file stem = same field), regenerated with a promoted Cellpose-SAM model (cpsam_v2_toxo_r5). A train/test split by well is given in fields.csv (2567 train fields with 31637 objects, 463 test fields with 6116 objects). Prepared with spaCR and used to train a Cellpose-SAM model.'
+landing_url: https://huggingface.co/datasets/einarolafsson/cross-channel-toxoplasma-from-cellmask
+doi: null
+repository: HuggingFace
+accession: null
+authors: []
+publications: []
+date_published: '2026-09-18'
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Toxoplasma gondii
+  sample: Toxoplasma screen plates (file names CSA_screen ... plateN_well_field); host cells HFF per the host column of split_by_well.csv
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 14525176532
+  n_items: 3030
+  access: open
+  download_url: https://huggingface.co/datasets/einarolafsson/cross-channel-toxoplasma-from-cellmask
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: TIFF instance label masks in masks_pv/, one per field
+  source: automatic
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/EinarOlafsson/spacr
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-08T09:15:44Z'
+  evidence_urls:
+  - https://huggingface.co/api/datasets/einarolafsson/cross-channel-toxoplasma-from-cellmask
+  - https://huggingface.co/datasets/einarolafsson/cross-channel-toxoplasma-from-cellmask/raw/main/README.md
+  - https://huggingface.co/api/datasets/einarolafsson/cross-channel-toxoplasma-from-cellmask/tree/main/masks_pv
+  - https://huggingface.co/api/datasets/einarolafsson/cross-channel-toxoplasma-from-cellmask/tree/main/images
+  - https://huggingface.co/datasets/einarolafsson/cross-channel-toxoplasma-from-cellmask/resolve/main/split_by_well.csv
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T10:25:00Z'
+notes: 'Checked the dataset card, README, API file listings (3030 files each in images/ and masks_pv/, 14.49 GB and 30.9 MB) and fields.csv. No paper is linked. Pixel size, microscope, stain/channel and host cells are not stated in these sources. The masks are described as regenerated with a trained Cellpose-SAM model, so the labels are model-generated rather than manual (source: automatic). Sibling of the catalogued record hf-cross-channel-nuclei-from-cellmask (same screen/images, nuclei masks instead of PV masks); this record differs in its label target (parasitophorous vacuoles, masks_pv/). enricher: size_bytes from the complete HF listing (was 14523838773); host HFF from split_by_well.csv.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      ./            4 files    1.3 MB  README.md, fields.csv, split_by_well.csv, .gitattributes
+      images/    3030 files   14.5 GB  <screen>__<plate>_<well>_<field>_1.tif (cell-mask channel)
+      masks_pv/  3030 files   30.9 MB  same file names (PV instance masks)
+    n_files: 6064
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/einarolafsson/cross-channel-toxoplasma-from-cellmask/resolve/main/images/CSA_screen__screen_20250124_133156__plate1_A01_8_1.tif
+    - https://huggingface.co/datasets/einarolafsson/cross-channel-toxoplasma-from-cellmask/resolve/main/masks_pv/CSA_screen__screen_20250124_133156__plate1_A01_8_1.tif
+    size_bytes: 5278639
+    description: 'One field (plate1_A01_8_1, train, 62 objects per fields.csv): cell-mask image and its PV instance mask'
+  arrays:
+  - role: raw
+    path_pattern: images/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1998
+    - 1998
+    shape_varies: null
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 9591
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: masks_pv/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1998
+    - 1998
+    shape_varies: null
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 62
+    normalization: unknown
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    - id: null
+      name: parasitophorous vacuole (one ID per instance)
+    alignment: same-grid
+    alignment_notes: images/<stem>.tif pairs with masks_pv/<stem>.tif (same stem = same field, per README); sampled pair has identical shapes.
+  notes: 'HF listing complete (6064 files, 14,525,176,532 B). One pair probed and sampled (plate1_A01_8_1): single-page deflate TIFFs,
+    1998x1998 uint16; raw 0-9591 (mean 885, one sample); mask 0-62 with 63 distinct values (background + 62 IDs), matching n_objects 62
+    in fields.csv, so instance IDs. Shapes of other fields not read (image files are ~4.8 MB each, consistent with the same size).
+    Voxel size not found; checked: TIFF headers (no calibration), dataset README, fields.csv / split_by_well.csv, the model card
+    and training/run_config.json of einarolafsson/toxoplasma-from-cellmask-cpsam; no paper is linked. Direct per-file links are
+    https://huggingface.co/datasets/einarolafsson/cross-channel-toxoplasma-from-cellmask/resolve/main/<path>; there is no single archive.'
