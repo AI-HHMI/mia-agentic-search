@@ -1,0 +1,132 @@
+schema_version: '1.2'
+id: zenodo-13994464-biotisr-3d-factin-sim
+title: 'BioTISR: F-actin (3D)'
+short_name: BioTISR 3D F-actin raw SIM to 3D-SIM pairs
+description: Paired raw 3D-SIM input stacks (two excitation levels) and reconstructed 3D-SIM ground-truth
+  volumes of F-actin for training and evaluating 3D time-lapse super-resolution and SIM-reconstruction
+  networks. Cell_NNN folders each hold RawSIMData_level_01.mrc, RawSIMData_level_02.mrc and SIM_gt.mrc.
+  The 3D F-actin part of the BioTISR dataset, acquired on a home-built Multi-SIM system.
+landing_url: https://zenodo.org/records/13994464
+doi: 10.5281/zenodo.13994464
+repository: Zenodo
+accession: '13994464'
+authors:
+- Qiao, Chang
+publications:
+- title: A neural network for long-term super-resolution imaging of live cells with reliable confidence
+    quantification
+  doi: 10.1038/s41587-025-02553-8
+  url: https://doi.org/10.1038/s41587-025-02553-8
+date_published: '2024-10-13'
+imaging:
+  modality:
+  - super-resolution
+  dimensionality: 3D+t
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: F-actin, 3D-SIM mode of a home-built Multi-SIM system
+  labels_stains: []
+data:
+  formats:
+  - mrc
+  size_bytes: 67106719483
+  n_items: 50
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - restoration-pairs
+  coverage: dense
+  format: SIM_gt.mrc per cell (3D-SIM reconstruction) is the target; RawSIMData_level_01/02.mrc are the
+    inputs
+  source: automatic
+ml:
+  tasks:
+  - super-resolution
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/liushuran2/Bayesian_DPA_TISR
+license:
+  spdx: MIT
+  url: https://opensource.org/licenses/MIT
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-08T21:50:00Z'
+  evidence_urls:
+  - https://zenodo.org/records/13994464
+  - https://zenodo.org/api/records/13994464
+  - https://zenodo.org/api/records/13994464/files/BioTISR_F-actin_3D_1-20.zip/content
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12807867/fullTextXML
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T22:57:40Z'
+notes: 'Three zips (26.2 + 19.5 + 21.4 GB; peek_archive): Cell_001-020, 021-035, 036-050, 150 .mrc as
+  Cell_NNN/{RawSIMData_level_01,RawSIMData_level_02,SIM_gt}.mrc. Unlike catalogued sibling zenodo-13843673
+  (one 22 GB zip, averaged WF inputs, ~52 MB per input for Cell_001) the inputs here are ~786 MB, about
+  15x larger, consistent with un-averaged raw SIM frames; inferred from sizes only (zipped MRC header
+  not readable). Zenodo states MIT; the paper is CC BY-NC-ND. Voxel size, organism and cell line are not
+  stated on the record or in the paper Methods (checked both); parent imaging_conditions.xlsx not read.
+  Parent: 10.5281/zenodo.13924483.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: |
+      ./                                   3 files   67.1 GB  .zip
+      BioTISR_F-actin_3D_1-20.zip          26.2 GB  (38.7 GB uncompressed, 60 .mrc)
+      BioTISR_F-actin_3D_21-35.zip         19.5 GB
+      BioTISR_F-actin_3D_36-50.zip         21.4 GB
+        BioTISR_F-actin_3D_<range>/Cell_NNN/{RawSIMData_level_01,RawSIMData_level_02,SIM_gt}.mrc
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/13994464/files/BioTISR_F-actin_3D_1-20.zip::BioTISR_F-actin_3D_1-20/Cell_004/RawSIMData_level_01.mrc
+    - https://zenodo.org/records/13994464/files/BioTISR_F-actin_3D_1-20.zip::BioTISR_F-actin_3D_1-20/Cell_004/SIM_gt.mrc
+    size_bytes: 964691968
+    description: 'Smallest cell probed (Cell_004): raw SIM stack 1200 x 512 x 512 and its 80 x 1024 x
+      1024 3D-SIM reconstruction'
+  arrays:
+  - role: raw
+    path_pattern: BioTISR_F-actin_3D_*.zip/*/Cell_*/RawSIMData_level_0[12].mrc
+    format: mrc
+    axes: null
+    shape:
+    - 1500
+    - 512
+    - 512
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: MRC mode 6 (uint16); nz = 15 x the GT slice count (Cell_001 1500 vs 100, Cell_004
+      1200 vs 80), i.e. raw SIM frames interleaved with z; the frame order is not documented, so axes
+      stay null. Two excitation levels per cell.
+  - role: target
+    path_pattern: BioTISR_F-actin_3D_*.zip/*/Cell_*/SIM_gt.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 100
+    - 1024
+    - 1024
+    shape_varies: true
+    dtype: float32
+    compression: none
+    normalization: unknown
+    alignment: scaled
+    alignment_notes: SIM_gt.mrc pairs with the RawSIMData_level_0N.mrc in the same Cell_NNN folder; 2x
+      the raw lateral size (1024 vs 512) and header spacing half of the raw (0.0306 vs 0.0612).
+  notes: 'Headers read by inflating the first 64 KB of deflated zip members (no sample: members are 335-944
+    MB). Header spacing fields (cella with mx=my=mz=1): raw 0.0612 x 0.0612 x 0.135, GT 0.0306 x 0.0306
+    x 0.135, no unit stated; as Angstrom they are implausible, as um they would be 61.2/30.6 nm lateral
+    and 135 nm axial, so voxel_size_nm stays null. Voxel size not found in: Zenodo API record, paper full
+    text (PMC12807867, Methods), GitHub README. No single archive (3 zips); listing exact sizes from the
+    Zenodo API.'
