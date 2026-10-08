@@ -45,7 +45,7 @@ data:
   size_bytes: 18811240408
   n_items: 5619
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/14987478
   download_method: http
 annotations:
   present: true
@@ -53,8 +53,9 @@ annotations:
   - classification
   - tracking
   coverage: dense
-  format: 'NumPy .npy files: test/images/<id>.npy paired with test/labels/<id>.npy for each track (same
-    layout assumed for train and test_drugged); labels derived from integrated FUCCI intensities'
+  format: 'NumPy .npy per track: <split>/labels/<id>.npy (float16, 2 x T x 1, normalised log FUCCI Cdt1/Geminin
+    signal per timepoint in [0,1]) paired with <split>/images/<id>.npy (float16, T x 2 x 64 x 64) for
+    train, test and test_drugged'
   source: automatic
 ml:
   tasks:
@@ -77,12 +78,75 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T03:31:56Z'
-notes: 'Files: train.zip (16.6 GB), test.zip (1.2 GB; 358 images/*.npy + 358 labels/*.npy listed with
-  peek_archive), test_drugged.zip (0.46 GB), models.zip (0.55 GB, weights). n_items = 5,188 + 358 + 73
-  tracks from the description; train.zip and test_drugged.zip were not listed. Array shapes, dtype and
-  label encoding (regression vs class) not inspected. Pixel size 0.5979761 um from the description. No
-  companion paper found in Europe PMC/Crossref by title search, so none is listed; the labels come from
-  an automatic pipeline (StarDist + TrackMate + FUCCI intensity normalisation), hence source: automatic.
-  Annotation type is a per-track cell-cycle-state signal, which fits no schema type exactly; classification
-  used.'
+  last_checked: '2026-10-08T05:20:00Z'
+notes: 'Files: train.zip (5,188 tracks), test.zip (358), test_drugged.zip (73), models.zip (4 Lightning
+  .ckpt checkpoints, not data). n_items = 5,619 tracks. Pixel size 0.5979761 um from the Zenodo description.
+  No companion paper found in Europe PMC/Crossref, so none is listed; labels come from an automatic pipeline
+  (StarDist + TrackMate + FUCCI intensity normalisation), hence source: automatic. The label is a per-timepoint
+  continuous cell-cycle signal, which fits no schema type exactly; classification used. enricher: listing
+  and .npy headers confirm images and labels in every split (annotations.format updated with shapes);
+  .npy is not a listed format, so formats stays other.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  Zenodo 14987478                         4 files  18.8 GB  .zip\n  train.zip/train/images/\
+      \                5188 .npy  19.6 GB\n  train.zip/train/labels/                5188 .npy   5.4 MB\n\
+      \  test.zip/test/{images,labels}/          358 + 358 .npy  (1.4 GB)\n  test_drugged.zip/test_drugged/{images,labels}/\
+      \  73 + 73 .npy  (547 MB)\n  models.zip/models/{bf_mamba,bf_mlp,bf_transformer,h2b_transformer}/\
+      \  config.yaml, logs/.../checkpoints/*.ckpt (~148 MB each)\n"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/14987478/files/test_drugged.zip/content::test_drugged/images/0304.581.npy
+    - https://zenodo.org/api/records/14987478/files/test_drugged.zip/content::test_drugged/labels/0304.581.npy
+    size_bytes: 4441404
+    description: 'Smallest drug-treated test track 0304.581: 271 timepoints of 2x64x64 crops and its 2x271x1
+      label array.'
+  arrays:
+  - role: raw
+    path_pattern: '*.zip/*/images/*.npy'
+    format: other
+    axes: null
+    shape:
+    - 271
+    - 2
+    - 64
+    - 64
+    shape_varies: true
+    dtype: float16
+    compression: none
+    value_range:
+    - -9.390625
+    - 9.984375
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One .npy per track (name <id>.npy); first axis is the track length (varies), then
+      2 crops (brightfield and H2B per the description) of 64x64 centred on the nucleus. Axis names are
+      not stored in the file.
+  - role: label
+    path_pattern: '*.zip/*/labels/*.npy'
+    format: other
+    axes: null
+    shape:
+    - 2
+    - 271
+    - 1
+    shape_varies: true
+    dtype: float16
+    compression: none
+    value_range:
+    - 0
+    - 1
+    encoding: other
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same file name in the sibling labels/ folder. Two signals (normalised, log-transformed
+      FUCCI Cdt1 and Geminin intensity per the description) per timepoint; the track length matches the
+      image file (271 in the sample).
+  notes: 'listing.py (Zenodo record, zips expanded): 4 files, 18,811,240,408 bytes, 11,261 members, exact.
+    Sample via read_member + numpy (allow_pickle=False), 4,441,404 bytes: image 0304.581.npy float16 (271,2,64,64),
+    values -9.39 to 9.98, mean ~0 (looks standardised, not stated); label (2,271,1) float16 in [0,1],
+    475 unique values. One sample only. Voxel size x/y 597.98 nm from the Zenodo description (1 pixel
+    = 0.5979761 um), no z for 2D+t.'
