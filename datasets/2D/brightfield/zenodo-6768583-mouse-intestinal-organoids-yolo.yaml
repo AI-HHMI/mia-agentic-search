@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-6768583-mouse-intestinal-organoids-yolo
 title: Annotated mouse intestinal organoid dataset (YOLO format)
 short_name: Mouse intestinal organoid detection (brightfield)
-description: 840 transmitted-light images (EVOS FL, 4x objective) of mouse intestinal organoids with 23,066 manually drawn
-  bounding boxes in YOLO text format for four morphology classes (cystic, early, late organoid, spheroid), split into
-  756 training and 84 validation images.
+description: 840 transmitted-light images (EVOS FL, 4x objective) of mouse intestinal organoids with 23,066
+  manually drawn bounding boxes in YOLO text format for four morphology classes (cystic, early, late organoid,
+  spheroid), split into 756 training and 84 validation images.
 landing_url: https://zenodo.org/records/6768583
 doi: 10.5281/zenodo.6768583
 repository: Zenodo
@@ -25,8 +25,8 @@ imaging:
   channels: 1
   organism:
   - Mus musculus
-  sample: Mouse small-intestinal organoids grown at different densities and culture stages (including fibroblast-conditioned
-    medium and tumorigenic Apc-min organoids per the paper), in Matrigel
+  sample: Mouse small-intestinal organoids grown at different densities and culture stages (including
+    fibroblast-conditioned medium and tumorigenic Apc-min organoids per the paper), in Matrigel
   labels_stains: []
 data:
   formats:
@@ -41,8 +41,8 @@ annotations:
   types:
   - bounding-box
   coverage: dense
-  format: 'YOLO text files (one per image: class x_center y_center w h); classes 0 organoid0, 1 organoid1, 2 organoid3,
-    3 spheroid; data.yaml included'
+  format: 'YOLO text files (one per image: class x_center y_center w h); classes 0 organoid0, 1 organoid1,
+    2 organoid3, 3 spheroid; data.yaml included'
   source: manual
 ml:
   tasks:
@@ -64,9 +64,73 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T05:50:00Z'
-notes: 'peek_archive of OrganoidDataset.zip: 840 .jpeg + 840 .txt (train/val images and labels), data.yaml (nc 4, names
-  organoid0/organoid1/organoid3/spheroid) plus .DS_Store files. Zenodo description: 756 training / 84 validation
-  images. Annotation count (23,066) and the EVOS FL 4x acquisition are in the Zenodo description and paper Methods. Pixel
-  size is not stated on the record or in the paper text read. Class name "organoid3" for late organoids is as in the
-  data files.'
+  last_checked: '2026-10-08T06:25:34Z'
+notes: 'peek_archive of OrganoidDataset.zip: 840 .jpeg + 840 .txt (train/val images and labels), data.yaml
+  (nc 4, names organoid0/organoid1/organoid3/spheroid) plus .DS_Store files. Zenodo description: 756 training
+  / 84 validation images. Annotation count (23,066) and the EVOS FL 4x acquisition are in the Zenodo description
+  and paper Methods. Pixel size is not stated on the record or in the paper text read. Class name "organoid3"
+  for late organoids is as in the data files. enricher: listing and samples confirm 756/84 jpeg + YOLO
+  txt pairs; sampled image is RGB 1280x960 with non-identical channels.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "OrganoidDataset.zip   193,854,481 B (1,686 members)\n  OrganoidDataset/data.yaml          nc\
+      \ 4, names organoid0, organoid1, organoid3, spheroid\n  OrganoidDataset/train/images/Image<n>.jpeg\
+      \   756\n  OrganoidDataset/train/labels/Image<n>.txt    756\n  OrganoidDataset/val/images/Image<n>.jpeg\
+      \      84   18.7 MB\n  OrganoidDataset/val/labels/Image<n>.txt       84\n  (+ .DS_Store files)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/6768583/files/OrganoidDataset.zip::OrganoidDataset/val/images/Image758.jpeg
+    - https://zenodo.org/records/6768583/files/OrganoidDataset.zip::OrganoidDataset/val/labels/Image758.txt
+    size_bytes: null
+    description: One validation image and its YOLO label file (35 boxes).
+  arrays:
+  - role: raw
+    path_pattern: OrganoidDataset.zip::OrganoidDataset/*/images/*.jpeg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 960
+    - 1280
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB JPEG; samples not identical in the sampled image.
+  - role: label
+    path_pattern: OrganoidDataset.zip::OrganoidDataset/*/labels/*.txt
+    format: csv
+    axes: null
+    shape:
+    - 35
+    - 5
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range: null
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: organoid0
+    - id: 1
+      name: organoid1
+    - id: 2
+      name: organoid3
+    - id: 3
+      name: spheroid
+    alignment: same-grid
+    alignment_notes: labels/Image<n>.txt pairs with images/Image<n>.jpeg; space-separated YOLO rows (class
+      x_center y_center width height), coordinates normalised to 0..1 of the image size.
+  notes: 'listing.py (Zenodo, --expand-zips): 1 zip, exact size, 1,686 members. Sample: val/images/Image758.jpeg
+    RGB uint8 960x1280, 0..255 (one image), samples not identical (JPEG colour). val/labels/Image758.txt:
+    35 rows of 5 space-separated values (peek_archive --cat). Class names from data.yaml. Pixel size not
+    found: JPEG has no calibration, the Zenodo text and paper Methods (read by the harvest run) give only
+    EVOS FL with a 4x objective. Not checked whether all images are 1280x960.'
