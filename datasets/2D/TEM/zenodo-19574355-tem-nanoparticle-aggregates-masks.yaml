@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zenodo-19574355-tem-nanoparticle-aggregates-masks
 title: Workshop on Computer Vision for Image Segmentation
 short_name: TEM nanoparticle aggregates with masks
-description: Workshop deposit with notebooks, pretrained U-Net-family models and a training subset (about 30% of the full
-  set) of transmission electron microscopy images of nanoparticle aggregates (Fe, Co, FeCo and FePt samples), with binary
-  mask TIFFs extracted from Photoshop annotation layers. 44 TEM images in the archive, 30 of them with masks. Intended for
-  teaching U-Net segmentation of nanoparticles.
+description: Workshop deposit with notebooks, pretrained U-Net-family models and a training subset (about 30% of the
+  full set) of transmission electron microscopy images of nanoparticle aggregates (Fe, Co, FeCo and FePt samples), with
+  binary mask TIFFs extracted from Photoshop annotation layers. 44 TEM images in the archive, 30 of them with masks.
+  Intended for teaching U-Net segmentation of nanoparticles.
 landing_url: https://zenodo.org/records/19574355
 doi: 10.5281/zenodo.19574355
 repository: Zenodo
@@ -26,7 +26,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 2165557280
+  size_bytes: 12564223902
   n_items: 44
   access: open
   download_url: https://zenodo.org/records/19574355/files/Agregates%20for%20training%20TP.zip
@@ -53,16 +53,80 @@ provenance:
   evidence_urls:
   - https://zenodo.org/api/records/19574355
   - https://github.com/FoxLightman/Computer-vision-workshop
+  - https://zenodo.org/records/19574355
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T21:15:00Z'
+  last_checked: '2026-10-08T21:59:16Z'
 notes: 'Zip listing (peek_archive) of "Agregates for training TP.zip" (2.17 GB, 104 files): five sample folders; Co150V_C_A1_TM22-36
-  has 14 images without masks; Fe300V (11), Fe75V (9), FeCo (5) and FePt (5) have an image TIFF, a PSD with annotation layers
-  and a *_MASK.tiff each (30 masked images). The record also holds six zips of pretrained models (0.5-4.7 GB), notebooks
-  and scripts, not counted in size_bytes. Pixel size is encoded in file names (0.043-0.220 nm per pixel, "[nm]") and varies
-  per image, so voxel_size_nm is null. No paper is cited; microscope and annotation procedure are not described on Zenodo or
-  GitHub. Mask semantics (particle vs background) inferred from the workshop description of binary U-Net segmentation.
-  Only a ~30% subset of the full training data is released. Non-commercial, share-alike license.'
+  has 14 images without masks; Fe300V (11), Fe75V (9), FeCo (5) and FePt (5) have an image TIFF, a PSD with annotation
+  layers and a *_MASK.tiff each (30 masked images). The record also holds zips of pretrained models (0.5-4.7 GB), notebooks
+  and scripts. Pixel size is encoded in file names (0.043-0.220 nm per pixel, "[nm]") and varies per image, so voxel_size_nm
+  is null. No paper is cited; microscope and annotation procedure are not described on Zenodo or GitHub. Mask semantics
+  (particle vs background) inferred from the workshop description of binary U-Net segmentation. Only a ~30% subset of
+  the full training data is released. Non-commercial, share-alike license. enricher: size_bytes is now the whole Zenodo
+  record (14 files).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  14 files 12.6 GB: Agregates for training TP.zip (2.17 GB), 6 model zips, scripts.zip, 4 .ipynb, 2 .txt
+      Agregates for training TP.zip/Agregates for training TP/   104 members, 3.2 GB uncompressed
+        Co150V_C_A1_TM22-36/        14  Frame_120k-pix0.05393[nm]_NN.tiff (no masks)
+        Fe300V+C_C6_TM25-F08/       33  <name>-pix<size>[nm]-NNNN.tiff
+          PSD/                          <name>.psd (annotation layers)
+          PSD/Masks/                    <name>_MASK.tiff
+        Fe75V+C_C7_TM25-F06/        27  same layout
+        FeCo_C_NT2506_B7/           15  same layout
+        FePt_100V_C_B6_TM24-02/     15  same layout
+    n_files: 14
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/19574355/files/Agregates%20for%20training%20TP.zip::Agregates for training TP/Fe300V+C_C6_TM25-F08/Fe_300V_4nm_TM25F08-200000.0V-100000X-pix0.06508[nm]-0017.tiff
+    - https://zenodo.org/records/19574355/files/Agregates%20for%20training%20TP.zip::Agregates for training TP/Fe300V+C_C6_TM25-F08/PSD/Masks/Fe_300V_4nm_TM25F08-200000.0V-100000X-pix0.06508[nm]-0017_MASK.tiff
+    size_bytes: 42709776
+    description: One Fe300V TEM image (0.06508 nm/px) and its mask.
+  arrays:
+  - role: raw
+    path_pattern: Agregates for training TP/*/*.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 2664
+    - 4008
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Pixel size is in each file name (pix<size>[nm]) and varies per image.
+  - role: label
+    path_pattern: Agregates for training TP/*/PSD/Masks/*_MASK.tiff
+    format: tiff
+    axes: yxs
+    shape:
+    - 2664
+    - 4008
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: <folder>/PSD/Masks/<stem>_MASK.tiff pairs with <folder>/<stem>.tiff; same 2664x4008 grid. Masks
+      are RGB TIFFs with values 0/255 whose samples differ (a coloured mask), so a converter must pick or merge the channel.
+  notes: 'Probed and sampled the Fe300V 0017 pair. Image: uint8 2664x4008 greyscale, uncompressed; range 0-255, mean
+    101.5 (one sample). Mask: RGB uint8 2664x4008x3, values {0: 15935867, 255: 80101} over all samples, samples not identical;
+    recorded as binary. 30 masks in total (Co150V has none). Voxel size varies per image (file names 0.043-0.220 nm),
+    so imaging.voxel_size_nm stays null. Organism: none (inorganic nanoparticles).'
