@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: zenodo-15179608-her2-ihc-40x-breast
 title: 'HER2-IHC-40x: High-Resolution Histopathology Image Dataset for HER2 Scoring in Breast Cancer'
 short_name: Breast cancer HER2 IHC patches (40x)
-description: 1024 x 1024 px patches cut from pathologist-annotated tumour regions of 107 HER2-stained breast cancer whole-slide images
-  (40x, 3DHistech Pannoramic DESK), each patch labelled with its HER2 score (0, 1+, 2+, 3+). Two variants are provided, a WSI-level 80/20 split
-  (9,940 patches) and a patch-level 80/20 split (10,997 patches).
+description: 1024 x 1024 px patches cut from pathologist-annotated tumour regions of 107 HER2-stained
+  breast cancer whole-slide images (40x, 3DHistech Pannoramic DESK), each patch labelled with its HER2
+  score (0, 1+, 2+, 3+). Two variants are provided, a WSI-level 80/20 split (9,940 patches) and a patch-level
+  80/20 split (10,997 patches).
 landing_url: https://zenodo.org/records/15179608
 doi: 10.5281/zenodo.15179608
 repository: Zenodo
@@ -26,16 +27,16 @@ imaging:
   - histology-WSI
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Homo sapiens
-  sample: HER2 immunohistochemistry-stained breast cancer tissue sections, 107 slides scanned at 40x with a 3DHistech Pannoramic DESK scanner (RGB 24-bit)
+  sample: HER2 immunohistochemistry-stained breast cancer tissue sections, 107 slides scanned at 40x with
+    a 3DHistech Pannoramic DESK scanner (RGB 24-bit)
   labels_stains:
   - HER2 IHC
 data:
   formats:
   - png
-  - jpeg
   size_bytes: 3163102375
   n_items: 9940
   access: open
@@ -69,5 +70,50 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-08T10:10:00Z'
-notes: 'Two zips (her2-ihc-40x-patch.zip 1.65 GB with Patch-based-dataset/{train,test}_data_patch.zip; her2-ihc-40x-wsi.zip 1.51 GB with WSI-based-dataset/{train,test}_data_wsi.zip), each holding nested zips that cannot be listed remotely, so image format and class folders were not checked directly. The paper says patches are .png in its folder table and .jpg in its data-format row, hence both formats listed. Only patch-level data are public: the paper says the .svs WSIs and ROI .png files are not released, although the Zenodo description lists WSI/ and ROI/ folders. Pixel size not stated (3DHistech scanner at 40x). Patch counts: 9,940 (8,093 train / 1,847 test) for the WSI-level split and 10,997 (8,897 / 2,200) for the patch-level split, both from the same 107 slides, so the two zips overlap. Related datasets in this series: HER2-SISH40x (Kaggle, same group).'
+  last_checked: '2026-10-08T11:30:00Z'
+notes: 'Two zips (her2-ihc-40x-patch.zip 1.65 GB with Patch-based-dataset/{train,test}_data_patch.zip;
+  her2-ihc-40x-wsi.zip 1.51 GB with WSI-based-dataset/{train,test}_data_wsi.zip) with nested zips. The
+  paper says .png in its folder table and .jpg in its data-format row. Only patch-level data are public:
+  the paper says the .svs WSIs and ROI .png files are not released, although the Zenodo description lists
+  WSI/ and ROI/ folders. Pixel size not stated (3DHistech scanner at 40x). Patch counts: 9,940 (8,093
+  train / 1,847 test) for the WSI-level split and 10,997 (8,897 / 2,200) for the patch-level split, both
+  from the same 107 slides, so the two zips overlap. Related datasets in this series: HER2-SISH40x (Kaggle,
+  same group). enricher: formats png only (the listed test zip has only .png; was png, jpeg).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  2 files, 3,163,102,375 B (Zenodo 15179608)\n  her2-ihc-40x-wsi.zip     (stored)\n    WSI-based-dataset/train_data_wsi.zip\
+      \  1,228.8 MB\n    WSI-based-dataset/test_data_wsi.zip     279.5 MB  1,847 .png: class_0 658, class_1+\
+      \ 316, class_2+ 111, class_3+ 762\n  her2-ihc-40x-patch.zip   (stored)\n    Patch-based-dataset/train_data_patch.zip,\
+      \ test_data_patch.zip\n  inner zips: class_<score>/her2-<score>-score_<split>_<n>.png"
+    n_files: 2
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: class_*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1024
+    - 1024
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 27
+    - 255
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: Paths inside the inner zips (e.g. WSI-based-dataset/test_data_wsi.zip). HER2 score
+      = class folder (class_0, class_1+, class_2+, class_3+). Shape from one patch; the record states
+      1024 x 1024 for all.
+  notes: 'Listed with tools/listing.py (Zenodo, outer zips expanded): 2 files, 3,163,102,375 B, 4 inner
+    zips (stored, uncompressed). Listed the inner test_data_wsi.zip with a short script reading it as
+    a byte range of the outer zip (tools.probe.RangeFile, ~1 MB read): 1,847 PNGs in 4 class folders,
+    matching the stated 1,847 WSI-split test patches. Decoded one patch (class_0/her2-0-score_test_09.png,
+    140 KB): RGB uint8 1024 x 1024, min 27, max 255, mean 219; one patch only. Other inner zips not listed.
+    No sample unit: TensorSwitch cannot reach files inside a zip nested in a zip. normalization none is
+    inferred (8-bit scanner RGB).'
