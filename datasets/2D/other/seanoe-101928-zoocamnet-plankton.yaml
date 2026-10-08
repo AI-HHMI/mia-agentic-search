@@ -36,7 +36,7 @@ imaging:
   - other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism: []
   sample: zooplankton, fish eggs and particles sampled in the Bay of Biscay with a CUFES sampler (315 um mesh, 4 m depth) and a
     WP2 net (200 um mesh, 100 m to surface), imaged in flow with the ZooCAM
@@ -78,11 +78,36 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T18:41:00Z'
+  last_checked: '2026-10-08T21:45:00Z'
 notes: 'Read the SEANOE landing page in full. The download is one tar (Content-Length 4,830,119,424); its first headers show
   ZooCamNet/imgs/<taxon>/<objid>.png, so images are PNG, but the tar was not fully listed. The page states that every identification
   was reviewed by at least one operator but a few mistakes may remain. The ESSD benchmark paper (10.5194/essd-18-945-2026)
   is listed on the page as a reference; only its abstract and Crossref record were available (not open access in Europe PMC),
   so Methods were not read. Pixel size is not stated on the page (measurements are in pixels). The ZooCAM is an in-flow imaging
   camera rather than a microscope, so modality is recorded as other. Distinct from the PELGAS ZooCAM dataset (tables only) and
-  from ZooScanNet (a different instrument).'
+  from ZooScanNet (a different instrument). enricher: channels 1 (grayscale PNG).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      113094.tar (4.83 GB, plain tar; first 1 MB streamed)
+        ZooCamNet/imgs/<taxon>/<objid>.png   (e.g. imgs/Acartiidae/227413015.png)
+        per the SEANOE page also: taxa.csv.gz, feature tables, inventory.tsv, map.png
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: 113094.tar/ZooCamNet/imgs/*/*.png
+    format: png
+    axes: yx
+    shape: [37, 104]
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range: [79, 255]
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Class label = taxon folder under imgs/; taxa.csv.gz (per the page) maps object ids to taxa. Object crops vary in size.
+  notes: 'The dataset is one tar (4,830,119,424 B from the server, range requests work). Streamed its first 1 MB with a small requests+tarfile script: plain tar starting with ZooCamNet/imgs/<taxon>/ folders. First image Acartiidae/227413015.png (1,309 B) is 37x104 uint8 grayscale PNG, values 79-255, mean 233.7 (one sample). sample is null: TensorSwitch cannot pull single members out of a tar, and www.seanoe.org is not on its fetch allowlist. Voxel size not found; checked: PNG header (no pHYs), SEANOE page (measurements in pixels), ESSD benchmark paper full text on essd.copernicus.org (no pixel size per instrument).'
