@@ -27,7 +27,7 @@ data:
   formats:
   - jpeg
   - png
-  size_bytes: 139225942
+  size_bytes: 141330049
   n_items: 4591
   access: open
   download_url: https://zenodo.org/records/16895427/files/data.zip?download=1
@@ -56,13 +56,95 @@ provenance:
   evidence_urls:
   - https://zenodo.org/records/16895427
   - https://zenodo.org/api/records/16895427
+  - https://zenodo.org/api/records/16895427/files/carinthia-s_dataset.html/content
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T11:53:47Z'
+  last_checked: '2026-10-08T13:06:03Z'
 notes: >-
   Semiconductor-inspection SEM (no organism, no associated paper found on the record; related item is the original Carinthia dataset, 10.5281/zenodo.10696644, from which this is derived).
   Archive listed with peek_archive: 4,591 jpg in data/images, 4,591 png in data/masks, data/carinthia-s.csv. Pixel size and SEM settings are not stated on the record or in the dataset description
   (description notes a 3-pixel black border on the right side of images and occasional framing squares). Masks are described as expert-validated, which suggests proofreading of automatic masks; the record does not detail how they were produced.
+  enricher: size 141,330,049 B from exact Zenodo file listing (was 139,225,942, zip only); masks verified binary 0/255 in a sample.
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |-
+      data.zip                         139.2 MB (9,183 members)
+        data/carinthia-s.csv           564.7 KB  (image_path;mask_path;filename;label)
+        data/images/<hash>.jpg         4591 files  146.2 MB uncompressed
+        data/masks/<hash>.png          4591 files  6.3 MB uncompressed
+      carinthia-s_dataset.html         2.1 MB  (dataset description)
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/16895427/files/data.zip?download=1::data/images/a4b6fde041af48e0a7b4b72924f6d8c7.jpg
+    - https://zenodo.org/records/16895427/files/data.zip?download=1::data/masks/a4b6fde041af48e0a7b4b72924f6d8c7.png
+    size_bytes: 32991
+    description: One SEM defect image and its binary mask (same file stem)
+  arrays:
+  - role: raw
+    path_pattern: data.zip::data/images/*.jpg
+    format: jpeg
+    axes: yx
+    shape:
+    - 480
+    - 480
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 1
+    - 241
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: data.zip::data/masks/*.png
+    format: png
+    axes: yx
+    shape:
+    - 480
+    - 480
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: defect
+    alignment: same-grid
+    alignment_notes: Mask has the same file stem as the image (images/<hash>.jpg <-> masks/<hash>.png, also listed in carinthia-s.csv); same 480x480 shape.
+  - role: label
+    path_pattern: data.zip::data/carinthia-s.csv
+    format: csv
+    axes: null
+    shape:
+    - 4591
+    - 4
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: Per-image defect class label (1-6; 6 = no visible defect) keyed by image_path / mask_path; semicolon-separated; 4,591 rows per the dataset description.
+  notes: >-
+    Exact listing of the Zenodo record (data.zip 139,225,942 B + carinthia-s_dataset.html 2,104,107 B = 141,330,049 B) and of the zip (4,591 jpg + 4,591 png + csv).
+    Probed 2 images (480x480 grey uint8 JPEG) and 2 masks (480x480 grey uint8 PNG). Sampled one pair (a4b6fde0...): image min 1 max 241 mean 95;
+    mask values {0: 228216, 255: 2184}, binary, same shape. Value ranges are from this one sample; shape_varies not checked beyond 4 files.
+    The bundled description says images have a 3-pixel black border on the right and some show SEM framing squares.
+    Voxel size not found; checked: JPEG/PNG headers (none), Zenodo API (16895427 and upstream Carinthia 10715190 / 10696644), carinthia-s_dataset.html, paper search (none found).
+    Not convertible yet: 2D, no organism (semiconductor wafers, not biological) and modality 'other' (SEM, no generic SEM enum value).
