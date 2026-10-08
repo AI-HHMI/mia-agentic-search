@@ -1,0 +1,124 @@
+schema_version: '1.2'
+id: zenodo-7908914-live-factin-confocal-sted-neurons
+title: Confocal and STED Live F-actin dataset - paired confocal/STED images of SiR-Actin in living neurons
+short_name: Live F-actin confocal/STED pairs in neurons
+description: Paired confocal and STED images of F-actin nanostructures in living cultured hippocampal neurons labelled
+  with the fluorogenic dye SiR-Actin, used to train and test the TA-GAN for confocal-to-STED super-resolution. Folders
+  hold 753 training and 47 validation pairs, 84 initial and 84 final test pairs, and 149 test series acquired with
+  TA-GAN assistance. All images have a 20 nm pixel size.
+landing_url: https://zenodo.org/records/7908914
+doi: 10.5281/zenodo.7908914
+repository: Zenodo
+accession: '7908914'
+authors:
+- Bouchard, Catherine
+- Gagné, Christian
+- Lavoie-Cardinal, Flavie
+publications:
+- title: Resolution Enhancement with a Task-Assisted GAN to Guide Optical Nanoscopy Image Analysis and Acquisition
+  doi: 10.1101/2021.07.19.452964
+  url: https://doi.org/10.1101/2021.07.19.452964
+date_published: '2023-05-08'
+imaging:
+  modality:
+  - super-resolution
+  - confocal
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 20
+    y: 20
+    z: null
+  channels: 1
+  organism:
+  - Rattus norvegicus
+  sample: living dissociated rat hippocampal neurons (DIV 12-16) on PDL-laminin coverslips
+  labels_stains:
+  - SiR-Actin (F-actin)
+data:
+  formats:
+  - tiff
+  size_bytes: 742322836
+  n_items: null
+  access: open
+  download_url: https://zenodo.org/api/records/7908914/files/LiveFActinDataset.zip/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - restoration-pairs
+  coverage: dense
+  format: paired confocal and STED TIFFs (target = real STED image); no segmentation masks in this record
+  source: automatic
+ml:
+  tasks:
+  - super-resolution
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-08T07:20:59Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/7908914
+  - https://zenodo.org/api/records/7908914/files/LiveFActinDataset.zip/content
+  - https://www.biorxiv.org/content/biorxiv/early/2023/03/19/2021.07.19.452964.source.xml
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T08:45:00Z'
+notes: 'LiveFActinDataset.zip listed with tools/peek_archive.py: 4404 files (3804 .tif plus 600 .msr.tif), by folder
+  train 753, valid 47, test_initial 84, test_final 84, test_series 3436 (149 series with input, full_STED and initial_final_confocal
+  subfolders). The paper (bioRxiv 2021.07.19.452964, Methods) says the Live F-actin dataset has 904 paired STED/confocal
+  images (833 train, 71 validation) of variable size with 20 nm pixels, acquired on an Abberior 4-color STED microscope.
+  The target of the pairs is the real STED acquisition, not manual labels. n_items left null because the archive
+  file count mixes pairs, series frames and .msr.tif raw files. enricher: the Zenodo description states 753 train
+  / 47 valid pairs and "All images: 20 nm/pixel", matching the archive.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "LiveFActinDataset.zip   742.3 MB  (4,404 members, 8.84 GB unpacked; no top-level folder)\n  train/  \
+      \                             753 files  926.7 MB  .tif / .msr.tif  (one confocal/STED pair per file)\n  valid/\
+      \                                47 files   66.2 MB  .tif  (paired_*.tif)\n  test_initial/, test_final/  \
+      \          84 + 84 files  1.0 MB each  .tif\n  test_series/<date>_cs<N>_ROI<N>/    149 series\n    input/\
+      \                            2,385 files  7.2 GB  .tif  (3-channel: confocal, padded STED crop, decision map)\n\
+      \    full_STED/                          733 files  366.7 MB  .tif  (initialSTED, finalSTED, fullSTED<k>)\n\
+      \    initial_final_confocal/             318 files  159.1 MB  .tif\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7908914/files/LiveFActinDataset.zip::valid/paired_Actin_live_testcs6_c1_1_ROI5_0.tif
+    size_bytes: 723104
+    description: One validation confocal/STED pair (325x1112 uint16 TIFF, both images in one file)
+  arrays:
+  - role: raw
+    path_pattern: LiveFActinDataset.zip/{train,valid}/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 543
+    - 2028
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 243
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 'Each train/valid TIFF holds one confocal/STED pair as a single 2D page (325x1112, 543x2028,
+      942x1130 seen). Inferred, not documented: the train file splits at the middle column into a confocal half
+      (mean 25.8) and a STED half (mean 3.7, sharper), correlation 0.74. The TA-GAN loader (data/live_train_dataset.py)
+      reads confSTED[0] / confSTED[1] instead, so split by halves only after checking.'
+  notes: 'Zenodo listing complete: 1 zip, 742,322,836 B; zip index 4,404 members (3,804 .tif + 600 .msr.tif). Probe:
+    train and valid members are single-page uint16 uncompressed TIFFs (tiff_layout shaped), sizes vary. Sample:
+    valid/paired_Actin_live_testcs6_c1_1_ROI5_0.tif 0-24 counts, train/2020-09-10_EXP0_CONFSTEDfull2_4.tif 0-243
+    (12-bit hint); normalization none inferred from raw photon counts. Raw and target sit in the same file, so no
+    separate target array is listed; the pairing rule is in alignment_notes. test_series inputs are 3-channel per
+    the Zenodo description, not probed. Voxel size 20 nm from the Zenodo description (unchanged).'
