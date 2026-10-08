@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: zenodo-15705300-nsclc-tumor-microenvironment-patches
 title: 'NSCLC Tumor Microenvironment: Annotated Histopathology Image Dataset'
 short_name: NSCLC tumour immune cell points (histology)
-description: 700 512x512 PNG patches from non-small cell lung cancer whole-slide images, each with an Icy-format XML file holding point annotations of immune cells (CD3, NKp46, Tryptase) and polygon annotations
-  of tumour regions, tumour islets and tiles.
+description: 700 512x512 PNG patches from non-small cell lung cancer whole-slide images, each with an Icy-format
+  XML file holding point annotations of immune cells (CD3, NKp46, Tryptase) and polygon annotations of tumour regions,
+  tumour islets and tiles.
 landing_url: https://zenodo.org/records/15705300
 doi: 10.5281/zenodo.15705300
 repository: Zenodo
@@ -25,7 +26,7 @@ imaging:
     x: 486.19
     y: 486.19
     z: null
-  channels: null
+  channels: 3
   organism:
   - Homo sapiens
   sample: non-small cell lung cancer tissue (tumour microenvironment) patches
@@ -44,7 +45,8 @@ annotations:
   - points
   - other
   coverage: unknown
-  format: 'Icy XML per image: ROI2DPoint for CD3, Nkp46 and Tryptase cells; ROI2DPolygon for Tile, Tumor and Tumor Islet'
+  format: 'Icy XML per image: ROI2DPoint for CD3, Nkp46 and Tryptase cells; ROI2DPolygon for Tile, Tumor and Tumor
+    Islet'
   source: unknown
 ml:
   tasks:
@@ -68,8 +70,79 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T05:19:28Z'
-notes: Zip has 700 PNG patches and 700 Icy XML files. Pixel size 0.486 um read from pixelSizeX/Y in the XML header of two members (units not stated; assumed um as in the Icy format). Annotation classes
-  taken from cytomine.terms in two sample XML files (CD3, Nkp46, Tryptase, Tumor, Tumor Islet, Tile); other files may hold more. Stain/staining method, organism evidence beyond 'NSCLC' (human), and the
-  source paper are not given on the Zenodo page, in the zip, or via Europe PMC title search, so labels_stains is empty. Annotation coverage and source (manual vs automatic) are not stated anywhere, so both
-  are unknown. No train/test split provided.
+  last_checked: '2026-10-08T09:20:00Z'
+notes: 'Zip has 700 PNG patches and 700 Icy XML files. Pixel size 0.486 um read from pixelSizeX/Y in the XML header
+  of two members (units not stated; assumed um as in the Icy format). Annotation classes taken from cytomine.terms
+  in two sample XML files (CD3, Nkp46, Tryptase, Tumor, Tumor Islet, Tile); other files may hold more. Stain/staining
+  method, organism evidence beyond ''NSCLC'' (human), and the source paper are not given on the Zenodo page, in
+  the zip, or via Europe PMC title search, so labels_stains is empty. Annotation coverage and source (manual vs
+  automatic) are not stated anywhere, so both are unknown. No train/test split provided. enricher: 10 of 700 XMLs
+  read: 747 points (CD3 691, Tryptase 44, Nkp46 11, ...) and 48 polygons (Tile, Tumor, Tumor Islet, Stroma, Necrotic,
+  White, Ash); pixelSizeX 0.48619 in all 10.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "./  1 file, 498.4 MB (Zenodo)\n  Data_NSCLC.zip   1400 members, 558.2 MB uncompressed\n    Data_NSCLC/\n\
+      \      Axx_<slide>_<tile>.png   700   512 x 512 RGB\n      Axx_<slide>_<tile>.xml   700   Icy ROI XML (points\
+      \ + polygons, cytomine.terms class names)"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/15705300/files/Data_NSCLC.zip/content::Data_NSCLC/Axx_2704_54622.png
+    - https://zenodo.org/api/records/15705300/files/Data_NSCLC.zip/content::Data_NSCLC/Axx_2704_54622.xml
+    size_bytes: 803221
+    description: One patch and its Icy XML.
+  arrays:
+  - role: raw
+    path_pattern: Data_NSCLC/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB tiles cut from .mrxs slides (XML <name>, e.g. A07_02256.mrxs_2704_54622).
+  - role: label
+    path_pattern: Data_NSCLC/*.xml
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: none
+    encoding: points-table
+    classes:
+    - id: CD3
+      name: CD3
+    - id: Nkp46
+      name: Nkp46
+    - id: Tryptase
+      name: Tryptase
+    - id: Tumor
+      name: Tumor
+    - id: Tumor Islet
+      name: Tumor Islet
+    - id: Stroma
+      name: Stroma
+    - id: Necrotic
+      name: Necrotic
+    - id: Tile
+      name: Tile
+    alignment: same-grid
+    alignment_notes: 'Pairing: same stem .png/.xml. ROI2DPoint positions (cells) and ROI2DPolygon points (regions;
+      Tile = the 0-512 patch frame) in patch pixel coordinates; class in properties/cytomine.terms. Class list from
+      10 sampled XMLs.'
+  notes: 'Listed with tools/listing.py (Zenodo, zip expanded): 1 file, 498,423,868 B, 1400 members. Probed one PNG;
+    parsed 10 XMLs (every 70th). No pixels sampled. Voxel size kept at 486.19 nm (Icy <pixelSizeX> 0.48619 in all
+    10 XMLs read; Icy stores um). The XML labels mix point and polygon ROIs, so encoding points-table covers the
+    cells only; polygons are region outlines.'
