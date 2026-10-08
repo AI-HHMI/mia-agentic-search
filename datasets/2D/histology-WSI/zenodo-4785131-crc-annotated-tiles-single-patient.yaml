@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: zenodo-4785131-crc-annotated-tiles-single-patient
 title: Pathologist's Annotated Image Tiles for Multi-Class Tissue Classification in Colorectal Cancer
 short_name: Colorectal cancer H&E tiles, single patient
-description: 5,984 anonymised 150 x 150 px H&E tiles from one formalin-fixed paraffin-embedded colorectal cancer sample,
-  annotated by a pathologist into tissue-class folders, with an additional Macenko stain-normalised copy of the same tiles.
+description: 5,984 anonymised 150 x 150 px H&E tiles from one formalin-fixed paraffin-embedded colorectal cancer
+  sample, annotated by a pathologist into tissue-class folders, with an additional Macenko stain-normalised copy
+  of the same tiles.
 landing_url: https://zenodo.org/records/4785131
 doi: 10.5281/zenodo.4785131
 repository: Zenodo
@@ -49,7 +50,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: one subfolder per class (No_Norm/01_TUM ... 06_ADI) of PNG tiles; a second zip holds Macenko-normalised copies
+  format: one subfolder per class (No_Norm/01_TUM ... 06_ADI) of PNG tiles; a second zip holds Macenko-normalised
+    copies
   source: manual
 ml:
   tasks:
@@ -72,11 +74,70 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T12:41:35Z'
-notes: 'Two zips (CRC_image_tiles.zip 289 MB, Macenko_normalized_CRC_image_tiles.zip 323 MB), each 5,984 tiles; size_bytes is the
-  sum. CRC_image_tiles.zip was listed with peek_archive: 5,984 PNGs in No_Norm/ class folders 01_TUM (103), 02_MUSC_STROMA (2875),
-  03_LYM (72), 04_DEBRIS_MUCUS (485), 05_NORM (2388), 06_ADI (61); that is six folders although the description says seven
-  classes, and the normalised zip was not listed. n_items counts tiles of one zip. Tile size 150 x 150 px is from the description; pixel
-  size is not stated there and the paper is not open access (abstract empty), so it is null. download_url is null because the record
-  has two zips. A later, larger tile set from the same group (10 patients, 224 x 224 px at 0.5 um/px) is zenodo 7109754, which
-  is a different set of images.'
+  last_checked: '2026-10-08T15:37:47Z'
+notes: 'Two zips (CRC_image_tiles.zip 289 MB, Macenko_normalized_CRC_image_tiles.zip 323 MB), each 5,984 tiles;
+  size_bytes is the sum. Class folders 01_TUM (103), 02_MUSC_STROMA (2875), 03_LYM (72), 04_DEBRIS_MUCUS (485),
+  05_NORM (2388), 06_ADI (61): six folders although the description says seven classes. enricher: the normalised
+  zip has the same six folders and counts (Result_Normalization/, files prefixed norm_). n_items counts tiles of
+  one zip. Tile size 150 x 150 px is from the description; pixel size is not stated and the paper is not open access,
+  so it is null. download_url is null because the record has two zips. A later tile set from the same group (zenodo
+  7109754) is a different set of images.'
+technical:
+  method: sample
+  inspected_at: '2026-10-08T15:37:47Z'
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  2 files, 612,410,972 B (Zenodo API)
+        CRC_image_tiles.zip                      289,086,973 B   No_Norm/<class>/<slide>_<x0>-<y0>-<x1>-<y1>_.png   5,984
+        Macenko_normalized_CRC_image_tiles.zip   323,323,999 B   Result_Normalization/<class>/norm_<same name>.png   5,984
+          classes: 01_TUM 103, 02_MUSC_STROMA 2875, 03_LYM 72, 04_DEBRIS_MUCUS 485, 05_NORM 2388, 06_ADI 61
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/4785131/files/CRC_image_tiles.zip::No_Norm/01_TUM/18_4118_A10_1_13948-62045-14548-62645_.png
+    - https://zenodo.org/records/4785131/files/Macenko_normalized_CRC_image_tiles.zip::Result_Normalization/01_TUM/norm_18_4118_A10_1_13948-62045-14548-62645_.png
+    size_bytes: 107845
+    description: One tumour tile and its Macenko-normalised copy.
+  arrays:
+  - role: raw
+    path_pattern: No_Norm/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 150
+    - 150
+    - 4
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 109
+    - 255
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: RGBA; class from the folder name.
+  - role: other
+    path_pattern: Result_Normalization/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 150
+    - 150
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 18
+    - 255
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: Macenko stain-normalised copy of each raw tile, norm_<name>.png; RGB.
+  notes: 'Zenodo API: 2 files, 612,410,972 B exact (= size_bytes). peek_archive on both zips: 5,984 PNGs each, same
+    class counts. sample.py: No_Norm/01_TUM/18_4118_A10_1_13948-62045-14548-62645_.png RGBA 150x150x4 uint8 [109,
+    255]; its normalised copy RGB 150x150x3 [18, 255]. normalization none for the raw tiles: the description offers
+    the Macenko copy as the normalised version (inferred). The name coordinates span 600 px per 150 px tile, so
+    the tiles look downsampled from the slide, but no magnification or pixel size is stated. Voxel size not found;
+    checked: PNG headers, Zenodo description, paper (not open access).'
