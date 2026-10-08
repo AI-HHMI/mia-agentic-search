@@ -38,7 +38,7 @@ data:
   size_bytes: 8046729391
   n_items: 327680
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/2546921
   download_method: http
 annotations:
   present: true
@@ -63,10 +63,71 @@ provenance:
   - https://zenodo.org/api/records/2546921
   - https://arxiv.org/abs/1806.03962
   - https://arxiv.org/pdf/1806.03962
+  - https://raw.githubusercontent.com/basveeling/pcam/master/README.md
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T18:00:00Z'
-notes: 'Zenodo file list (9 files): gzipped HDF5 x/y arrays and metadata CSVs for train, valid and test (the x arrays total about 8 GB; the h5.gz files were not opened). The paper (arXiv 1806.03962) gives 327,680 patches of 96 x 96 px at 10x with a 75/12.5/12.5 % split and hard-negative mining. Pixel size 972 nm is derived from the paper statement that its 10x Camelyon16 data (4x smaller than the original 0.243 um/px) has 0.972 um per pixel; it is not stated for PCam itself. The Zenodo record lists the MIT license; Camelyon16 source slides come from two centers. Patch labels derive from Camelyon16 pixel-level annotations (how the patch label is computed is not described in the paper text read).'
+  last_checked: '2026-10-08T18:20:00Z'
+notes: 'Zenodo file list (9 files): gzipped HDF5 x/y arrays and metadata CSVs for train, valid and test (the x arrays total about 8 GB; the h5.gz files were not opened). The paper (arXiv 1806.03962) gives 327,680 patches of 96 x 96 px at 10x with a 75/12.5/12.5 % split and hard-negative mining. Pixel size 972 nm is derived from the paper statement that its 10x Camelyon16 data (4x smaller than the original 0.243 um/px) has 0.972 um per pixel; it is not stated for PCam itself. The Zenodo record lists the MIT license; Camelyon16 source slides come from two centers. Patch labels derive from Camelyon16 pixel-level annotations (how the patch label is computed is not described in the paper text read). enricher: HDF5 headers read (x 96x96x3 uint8, y binary uint8); label rule from the pcam GitHub README (positive = tumor in the central 32x32 px). License conflict: Zenodo lists MIT, the README says the data are CC0 (following Camelyon16) and the code MIT; spdx kept as on Zenodo.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "zenodo.org/records/2546921 (9 files, 8,046,729,391 B)\n      \  camelyonpatch_level_2_split_train_x.h5.gz   6,421,353,462 B  (HDF5 'x' 262144x96x96x3 uint8)\n      \  camelyonpatch_level_2_split_train_y.h5.gz          21,378 B  (HDF5 'y')\n      \  camelyonpatch_level_2_split_train_meta.csv     15,047,830 B\n      \  camelyonpatch_level_2_split_valid_x.h5.gz     805,965,320 B  (HDF5 'x' 32768x96x96x3 uint8)\n      \  camelyonpatch_level_2_split_valid_y.h5.gz           3,038 B  (HDF5 'y' 32768x1x1x1 uint8)\n      \  camelyonpatch_level_2_split_valid_meta.csv      1,850,810 B\n      \  camelyonpatch_level_2_split_test_x.h5.gz      800,875,929 B\n      \  camelyonpatch_level_2_split_test_y.h5.gz            3,040 B\n      \  camelyonpatch_level_2_split_test_meta.csv       1,608,584 B\n"
+    n_files: 9
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/2546921/files/camelyonpatch_level_2_split_valid_x.h5.gz/content
+    - https://zenodo.org/api/records/2546921/files/camelyonpatch_level_2_split_valid_y.h5.gz/content
+    size_bytes: 805968358
+    description: The validation split (32,768 patches) and its labels; the test split is the same size. Each
+      file is a gzipped HDF5 file, so no smaller unit exists.
+  arrays:
+  - role: raw
+    path_pattern: camelyonpatch_level_2_split_*_x.h5.gz (x)
+    format: hdf5
+    axes: null
+    shape:
+    - 32768
+    - 96
+    - 96
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One HDF5 dataset 'x' per split holding all patches (first axis = patch index); chunks
+      (32, 96, 96, 3), no HDF5 filter; the whole file is gzip-compressed. Train has 262,144 patches, valid
+      and test 32,768 each (README).
+  - role: label
+    path_pattern: camelyonpatch_level_2_split_*_y.h5.gz (y)
+    format: hdf5
+    axes: null
+    shape:
+    - 32768
+    - 1
+    - 1
+    - 1
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 1
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: no tumor in the central 32x32 px region
+    - id: 1
+      name: at least one tumor pixel in the central 32x32 px region
+    alignment: not-applicable
+    alignment_notes: One label per patch; row k of 'y' labels patch k of 'x' in the same split (same first-axis
+      length). Per-patch slide and coordinates in camelyonpatch_level_2_split_*_meta.csv (columns coord_y,
+      coord_x, tumor_patch, center_tumor_patch, wsi).
+  notes: 'Listing: Zenodo API (9 files, exact sizes). The files are gzip-compressed HDF5, which the probe tools cannot read; a scratch script (stdlib gzip/zlib + h5py, no dataset code) read valid_y.h5.gz in full (3,038 B): dataset y (32768,1,1,1) uint8, values {0,1}, mean 0.4995 (50/50 balance as the README says). For valid_x.h5.gz only the first 2,000,000 B were fetched (range request) and decompressed: dataset x (32768,96,96,3) uint8, chunks (32,96,96,3), no HDF5 filter; its chunk index lies beyond the fetched part, so no pixel values were read (value_range null; the full file is 806 MB, over the 500 MB sample budget). Axes: neither the HDF5 attributes (none) nor the README name the axis order (patch, y, x, RGB is implied by 96x96x3), so axes stay null. The trailing 3 is RGB (README: color images). Labels: README Labeling section. Download: every file has a direct Zenodo link (download-check usable, range requests); no single archive, so data.download_url is the record page. TensorSwitch would also need to gunzip the .h5.gz files. Voxel size 972 nm unchanged (paper: 10x data at 0.972 microns per pixel).'
