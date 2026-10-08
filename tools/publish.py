@@ -48,7 +48,7 @@ def remote_exists(branch):
 
 
 # downloader: tools/download_queue.py · gallery: tools/demo_gallery.py · watchdog: tools/watchdog.py
-OWN_FILE = {"downloader": "downloads.json", "gallery": "gallery.json", "watchdog": "watchdog.json"}
+OWN_FILE = {"downloader": "downloads.json", "downloader-native": "downloads-native.json", "gallery": "gallery.json", "watchdog": "watchdog.json"}
 
 
 def owns(routine, path):
