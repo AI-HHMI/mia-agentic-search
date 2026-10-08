@@ -2,12 +2,11 @@ schema_version: '1.2'
 id: zenodo-4113244-tem-deblurring-minitem
 title: Transmission Electron Microscopy Dataset for Image Deblurring
 short_name: TEM motion-deblurring image pairs (MiniTEM)
-description: Pairs of motion-blurred low-quality and high-quality transmission electron microscopy images
-  of thin-sectioned kidney tissue and of a calibration grid, collected on a MiniTEM (Vironova AB). High-quality
-  frames are 2048 x 2048 px with 50% overlap; motion-blurred frames are 1024 x 1024 px (16-bit TIFF, 15
-  ms exposure, 32 um field of view). Provided as raw sequences (RawData.zip) and as registered train/validation/test
-  splits (TrainTestVal.zip) with five registered low-quality frames per high-quality image (GT and GT_hr
-  folders).
+description: Pairs of motion-blurred low-quality and high-quality transmission electron microscopy images of thin-sectioned
+  kidney tissue and of a calibration grid, collected on a MiniTEM (Vironova AB). High-quality frames are 2048 x
+  2048 px with 50% overlap; motion-blurred frames are 1024 x 1024 px (16-bit TIFF, 15 ms exposure, 32 um field of
+  view). Provided as raw sequences (RawData.zip) and as registered train/validation/test splits (TrainTestVal.zip)
+  with five registered low-quality frames per high-quality image (GT and GT_hr folders).
 landing_url: https://zenodo.org/records/4113244
 doi: 10.5281/zenodo.4113244
 repository: Zenodo
@@ -26,8 +25,8 @@ imaging:
   - TEM
   dimensionality: 2D
   voxel_size_nm:
-    x: 15.6
-    y: 15.6
+    x: 31.25
+    y: 31.25
     z: null
   channels: 1
   organism: []
@@ -46,8 +45,8 @@ annotations:
   types:
   - restoration-pairs
   coverage: dense
-  format: 'Paired TIFFs: Low/<image>/ (5 registered motion-blurred frames) and GT (down-sampled) / GT_hr
-    (full-resolution) high-quality targets, split into Train/Val/Test'
+  format: 'Paired TIFFs: Low/<image>/ (5 registered motion-blurred frames) and GT (down-sampled) / GT_hr (full-resolution)
+    high-quality targets, split into Train/Val/Test'
   source: automatic
 ml:
   tasks:
@@ -71,11 +70,125 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T14:10:00Z'
-notes: 'Pixel size is derived, not stated: the 2048 px high-quality frames cover a 32 um field of view
-  (Zenodo description), giving about 15.6 nm per pixel; the 1024 px low-quality frames use the same
-  field of view. TrainTestVal.zip lists 644 TIFFs (calibration grid 45 and kidney 47 high-quality targets,
-  each with five registered low-quality frames; 653 MB uncompressed); RawData.zip (3.2 GB) was not listed
-  because the remote index read failed. The task is deblurring (restoration), recorded as denoising
-  as the closest schema value. Species of the kidney tissue is not stated in the Zenodo page or paper
-  text read. Size is the sum of the two Zenodo files.'
+  last_checked: '2026-10-08T15:05:00Z'
+notes: 'Pixel size is derived, not stated: every frame covers a 32 um field of view (paper; RawData file names:
+  [w 2048px][FoV 32000 nm]). enricher: voxel size 31.25 nm = 32 um / 1024 px, the grid of the low-quality frames
+  and of GT (was 15.6, which is the GT_hr / 2048 px grid, 15.625 nm). TrainTestVal.zip lists 644 TIFFs (calibration
+  grid 45 and kidney 47 high-quality targets, each with five registered low-quality frames; 653 MB uncompressed);
+  RawData.zip lists 1961 TIFFs (enricher). The task is deblurring (restoration), recorded as denoising as the closest
+  schema value. Species of the kidney tissue is not stated in the Zenodo page or paper text read. Size is the sum
+  of the two Zenodo files.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "TrainTestVal.zip  629,335,440 B (644 TIFFs, 653,123,100 B uncompressed)\n  TrainTestVal/{CalibrationGrid,Kidney}/{Train,Val,Test}/\n\
+      \    GT/<sess>_im<k>.tif              registered high-quality target on the low-quality grid\n    GT_hr/<sess>_im<k>.tif\
+      \           same target at 2x (full resolution)\n    Low/<sess>_im<k>/<sess>_im<k>_<0-4>.tif  5 registered\
+      \ motion-blurred frames\n  CalibrationGrid: GT 35/2/8 (train/val/test), Kidney: GT 38/3/6\nRawData.zip  3,185,624,689\
+      \ B (1961 TIFFs, 4,874,167,565 B uncompressed)\n  RawData/{CalibrationGrid,Kidney}/ImagingSequence{1-4}/\n\
+      \    GT/[...][w 2048px][FoV 32000 nm](x,y,z)(...).16bit.tiff   121 high-quality frames, 2048x2048\n    Low/[...]-<n>-<date>.tiff\
+      \                               1840 fast-stream frames, 1024x1024\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/4113244/files/TrainTestVal.zip/content::TrainTestVal/CalibrationGrid/Test/Low/sess2_im1/sess2_im1_0.tif
+    - https://zenodo.org/api/records/4113244/files/TrainTestVal.zip/content::TrainTestVal/CalibrationGrid/Test/GT/sess2_im1.tif
+    size_bytes: 896702
+    description: 'Calibration-grid test image sess2_im1: one registered blurry frame and its high-quality target
+      (other 4 frames in the same folder)'
+  arrays:
+  - role: raw
+    path_pattern: TrainTestVal/*/*/Low/*/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 244
+    - 998
+    shape_varies: true
+    dtype: uint16
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: target
+    path_pattern: TrainTestVal/*/*/GT/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 244
+    - 998
+    shape_varies: true
+    dtype: uint16
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 20
+    - 21549
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: 'Pairs by name: Low/<s>_im<k>/<s>_im<k>_<0-4>.tif with GT/<s>_im<k>.tif and GT_hr/<s>_im<k>.tif;
+      the 5 frames are registered to the target (paper: ECC maximization).'
+  - role: target
+    path_pattern: TrainTestVal/*/*/GT_hr/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 488
+    - 1996
+    shape_varies: true
+    dtype: uint16
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: scaled
+    alignment_notes: '2x the Low/GT grid (488x1996 vs 244x998 for sess2_im1). Pairs by name: Low/<s>_im<k>/<s>_im<k>_<0-4>.tif
+      with GT/<s>_im<k>.tif and GT_hr/<s>_im<k>.tif; the 5 frames are registered to the target (paper: ECC maximization).'
+  - role: raw
+    path_pattern: RawData/*/ImagingSequence*/Low/*.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint16
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: target
+    path_pattern: RawData/*/ImagingSequence*/GT/*.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: false
+    dtype: uint16
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: unknown
+    alignment_notes: 'Unregistered raw sequences: high-quality tiles overlap 50% and the stream frames are not paired
+      by name (pairing was done manually per the paper).'
+  notes: 'Both Zenodo zips listed in place (central directories). Probed TrainTestVal Low/GT/GT_hr of CalibrationGrid/Test/sess2_im1:
+    plain single-page uint16 LZW TIFFs, no calibration tags. Sampled GT sess2_im1 (462,111 B): 244x998, min 20 /
+    max 21549, 13,372 values, p50 10301 (one sample); the Low frame sample failed twice on Zenodo SSL errors, so
+    its value range is unread. RawData shapes from member sizes (2,097,349 B = 1024x1024x2 + header; 8,388,805 B
+    = 2048x2048x2) and the file names ([w 2048px]); compression there not probed. TrainTestVal crops vary in shape
+    per image. Voxel size: 32 um field of view per frame (paper; RawData names [FoV 32000 nm]) over 1024 px for
+    Low/GT = 31.25 nm, GT_hr 15.625 nm; derived, not stated as a pixel size. download_url stays the record page:
+    two archives (both direct).'
