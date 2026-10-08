@@ -1,0 +1,206 @@
+schema_version: '1.2'
+id: zenodo-13328867-neurofly-neuron-reconstruction
+title: NeuroFly Neuron Reconstruction Dataset
+short_name: NeuroFly neuron skeleton reconstruction (3D)
+description: Expert-proofread single-neuron reconstruction data from whole-brain fluorescence imaging
+  of mouse and macaque brains (labeled 3D image/mask blocks, noisy and test crops, axon/dendrite/arbor
+  tracing databases and one Zarr volume), released with the NeuroFly framework for automatic neuron segmentation,
+  connection and proofreading.
+landing_url: https://zenodo.org/records/13328867
+doi: 10.5281/zenodo.13328867
+repository: Zenodo
+accession: '13328867'
+authors: []
+publications:
+- title: 'NeuroFly: A framework for whole-brain single neuron reconstruction'
+  doi: 10.48550/arXiv.2411.04715
+  url: https://arxiv.org/abs/2411.04715
+date_published: '2024-08-15'
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 1000
+    y: 1000
+    z: 1000
+  channels: 1
+  organism:
+  - Mus musculus
+  - Macaca
+  sample: Whole-brain fluorescence images of neurons (mouse brains; macaque axons), cropped into 3D blocks
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  - zarr
+  size_bytes: 12928850629
+  n_items: 20
+  access: open
+  download_url: https://zenodo.org/records/13328867
+  download_method: http
+annotations:
+  present: true
+  types:
+  - skeleton
+  - semantic-segmentation
+  coverage: partial
+  format: Neuron skeleton annotations in SQLite .db files (z002.db, RM009_*.db, fmost_test.db) plus TIFF
+    skeleton masks (mask_N.tif) paired with image blocks (img_N.tif) in the *_labeled.zip archives
+  source: proofread
+ml:
+  tasks:
+  - segmentation
+  - tracking
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/beanli161514/neurofly
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/legalcode
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-08T19:13:36Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/13328867
+  - https://zenodo.org/records/13328867
+  - https://arxiv.org/abs/2411.04715
+  - https://arxiv.org/html/2411.04715v1
+  - https://raw.githubusercontent.com/beanli161514/neurofly/main/README.md
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T22:15:31Z'
+notes: 'The Zenodo record has no description and lists the creator as Anonymous; the link to the NeuroFly
+  paper comes from the project (arXiv 2411.04715, code github.com/beanli161514/neurofly). 20 files: z002.zarr.zip
+  (8.9 GB), z002/rm009/fmost/mouse *_labeled.zip, several RM009_*.tif volumes with .db annotation databases,
+  fmost_test.tif. mouse_labeled.zip (listed with peek_archive) holds 174 TIFFs: img_N.tif image blocks
+  with mask_N.tif skeleton masks in skels/. The paper (v1 HTML) states 1 um/voxel for its fluorescence
+  images, so the voxel size is that value, not read from these files; Macaque species not stated (genus
+  used). Annotation: skeletons traced by choosing two terminal points and brightest-path search, with
+  proofreading in a napari tool (paper v1). organisms (README table): Macaca = rm009_labeled.zip, RM009_*;
+  Mus musculus = mouse_labeled.zip, z002*, fmost_*. Imaging VISoR, fmost_* fMOST.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      ./                                   20 files   12.9 GB  .db 8, .tif 7, .zip 5
+      {rm009,mouse,z002,fmost}_labeled.zip/*/skels/   img_N.tif + mask_N.tif pairs (z002: + img_N.json)
+        fmost_labeled.zip/fmost_labeled/skels/      64 files  221.6 MB  .tif
+        mouse_labeled.zip/mouse_lzh_labeled/skels/ 160 files  506.7 MB  .tif
+        rm009_labeled.zip/rm009_labeled/skels/      60 files  190.0 MB  .tif
+        z002_labeled.zip/z002_labeled/skels/        90 files  191.7 MB  .tif 60, .json 30
+      {..}_labeled.zip/*/bg/                        42 files    6.4 GB  .tif (unlabelled blocks)
+      RM009_{noisy_1,noisy_2,arbor_1,axons_1,axons_2}.tif + .db, fmost_test.tif + .db, z002_dendrites.tif + .db
+      z002.db
+      z002.zarr.zip/  zarr v2 group: 1um_foreground, 2um_foreground, 4um_foreground, 8um, 16um  (8.9 GB)
+    n_files: 20
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/13328867/files/fmost_labeled.zip::fmost_labeled/skels/img_5.tif
+    - https://zenodo.org/records/13328867/files/fmost_labeled.zip::fmost_labeled/skels/mask_5.tif
+    size_bytes: 6334132
+    description: One 128x128x128 uint16 fMOST image block and its binary skeleton mask
+  arrays:
+  - role: raw
+    path_pattern: '*_labeled.zip/*/skels/img_*.tif'
+    format: tiff
+    axes: zyx
+    shape:
+    - 128
+    - 128
+    - 128
+    shape_varies: null
+    dtype: uint16
+    compression: none
+    value_range:
+    - 132
+    - 1143
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Multi-page TIFF (tifffile shaped metadata, 128 pages of 128x128); README: small
+      volumes are single-channel TIFFs, so the page axis is spatial (z).'
+  - role: label
+    path_pattern: '*_labeled.zip/*/skels/mask_*.tif'
+    format: tiff
+    axes: zyx
+    shape:
+    - 128
+    - 128
+    - 128
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 1
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: 1
+      name: neurite skeleton
+    alignment: same-grid
+    alignment_notes: skels/mask_N.tif pairs with skels/img_N.tif (same N, identical shape in the sample).
+  - role: other
+    path_pattern: '*_labeled.zip/*/bg/*.tif'
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    alignment: not-applicable
+    alignment_notes: bg/ blocks have no mask files; purpose not documented (likely background examples).
+      Deflated members, not probed.
+  - role: raw
+    path_pattern: '{RM009_*,fmost_test,z002_dendrites}.tif'
+    format: tiff
+    axes: null
+    shape:
+    - 1000
+    - 1000
+    - 300
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Shape probed on RM009_axons_1.tif (1000 pages of 1000x300); RM009_noisy_1.tif is
+      [320, 320, 320]. Axis order not stated.
+  - role: label
+    path_pattern: '{RM009_*,fmost_test,z002_dendrites,z002}.db'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    encoding: graph
+    classes: null
+    alignment: unknown
+    alignment_notes: SQLite morphology graphs (tables segments, nodes, edges; README), one per volume
+      of the same stem; z002.db belongs to z002.zarr.zip. Not opened.
+  - role: raw
+    path_pattern: z002.zarr.zip/1um_foreground
+    format: zarr
+    axes: null
+    shape:
+    - 13800
+    - 10000
+    - 14000
+    shape_varies: false
+    dtype: uint16
+    compression: blosc
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Zarr v2 inside a zip; chunks 256^3, blosc zstd. Levels 2um_foreground, 4um_foreground,
+      8um, 16um are downsampled copies.
+  notes: 'Sampled fmost img_5/mask_5: raw uint16 132-1143 (mean 197, 535 values), mask uint8 {0: 2095933,
+    1: 1219}. Values from one sample. axes zyx for the 128^3 skels blocks from the README (single-channel
+    TIFF volumes), header gives no axis names. Voxel size kept at 1 um (record, paper); the zarr level
+    name 1um_foreground agrees. No single archive (20 files), so download_url stays the record page; direct
+    files are https://zenodo.org/records/13328867/files/<name>.'
