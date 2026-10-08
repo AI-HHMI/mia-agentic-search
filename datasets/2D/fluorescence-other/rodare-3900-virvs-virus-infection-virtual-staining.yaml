@@ -2,12 +2,12 @@ schema_version: '1.2'
 id: rodare-3900-virvs-virus-infection-virtual-staining
 title: A Dataset for Virus Infection Reporter Virtual Staining in Fluorescence and Brightfield Microscopy
 short_name: Virus-infection virtual staining (fluorescence)
-description: VIRVS benchmark data. Paired, registered multi-channel high-content images of virus-infected cells for virtual
-  staining, i.e. predicting the viral reporter signal (GFP or anti-NP) from nuclear-stain and/or brightfield input. Five
-  viruses, each with train/val/test splits (0.7:0.2:0.1) stored as x.npy (input) and y.npy (viral signal) - HAdV (A549, 10x,
-  Hoechst + brightfield), VACV (BSC40, 4x, stitched brightfield), and HSV, IAV, RV (fixed end-point screen controls, 4x,
-  nuclear stain). Cellpose nuclei (and for HAdV cell) masks are provided for the test data. The latest record version also
-  adds raw coronavirus (cov_raw.zip) images.
+description: VIRVS benchmark data. Paired, registered multi-channel high-content images of virus-infected cells
+  for virtual staining, i.e. predicting the viral reporter signal (GFP or anti-NP) from nuclear-stain and/or brightfield
+  input. Five viruses, each with train/val/test splits (0.7:0.2:0.1) stored as x.npy (input) and y.npy (viral signal)
+  - HAdV (A549, 10x, Hoechst + brightfield), VACV (BSC40, 4x, stitched brightfield), and HSV, IAV, RV (fixed end-point
+  screen controls, 4x, nuclear stain). Cellpose nuclei (and for HAdV cell) masks are provided for the test data.
+  The latest record version also adds raw coronavirus (cov_raw.zip) images.
 landing_url: https://rodare.hzdr.de/record/3900
 doi: 10.14278/rodare.3900
 repository: other
@@ -33,8 +33,8 @@ imaging:
   organism:
   - Homo sapiens
   - Chlorocebus sabaeus
-  sample: Virus-infected cell monolayers (A549, HeLa Ohio Geneva, BSC40 cells) infected with HAdV, VACV, HSV, IAV or RV; 4x or 10x
-    magnification
+  sample: Virus-infected cell monolayers (A549, HeLa Ohio Geneva, BSC40 cells) infected with HAdV, VACV, HSV, IAV
+    or RV; 4x or 10x magnification
   labels_stains:
   - Hoechst 33342
   - GFP
@@ -43,7 +43,7 @@ data:
   formats:
   - other
   size_bytes: 211813562499
-  n_items: null
+  n_items: 3308
   access: open
   download_url: null
   download_method: http
@@ -70,16 +70,40 @@ provenance:
   - https://rodare.hzdr.de/api/records/3742
   - https://rodare.hzdr.de/api/records/3900
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12120016/fullTextXML
+  - https://rodare.hzdr.de/api/records/3900
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-08T14:10:00Z'
-notes: 'Training signal is the paired viral-reporter image (y.npy) predicted from nuclear/brightfield input (x.npy), plus Cellpose
-  masks (automatic, test split only; none for VACV). Formats: processed data are .npy arrays inside zips, so other; archive
-  member listing was not possible (RODARE does not report a file size for range requests), so annotations_verified is false.
-  Pixel size not stated on the RODARE page or in the paper (only 4x/10x magnification); the raw data come from IDR idr0128/0129/0130
-  (HSV, IAV, RV), the Plaque2.0 and iScience papers (VACV, HAdV). Image counts per split are in the paper Table 1, but the
-  extracted table is garbled, so n_items is null. size_bytes is the sum of the 13 files of version 3900 (raw and processed).
-  Raw sources of HSV/IAV/RV may already be catalogued from IDR, and this record is the processed paired derivative.'
+  last_checked: '2026-10-08T16:05:00Z'
+notes: 'Training signal is the paired viral-reporter image (y.npy) predicted from nuclear/brightfield input (x.npy),
+  plus Cellpose masks (automatic, test split only; none for VACV). Formats: processed data are .npy arrays inside
+  zips, so other; archive member listing was not possible (RODARE does not report a file size for range requests),
+  so annotations_verified is false. Pixel size not stated on the RODARE page or in the paper (only 4x/10x magnification);
+  the raw data come from IDR idr0128/0129/0130 (HSV, IAV, RV), the Plaque2.0 and iScience papers (VACV, HAdV). enricher:
+  n_items 3308 processed images (filename_to_index.zip: HAdV 411/118/59, HSV 672/192/96, IAV 627/179/90, RV 537/154/77,
+  VACV 66/18/12 train/val/test). size_bytes is the sum of the 13 files of version 3900 (raw and processed). Raw
+  sources of HSV/IAV/RV may already be catalogued from IDR, and this record is the processed paired derivative.'
+technical:
+  method: metadata-only
+  size_source: page-stated
+  layout:
+    tree: "RODARE record 3900 (version files, API): 13 zips, 211,813,562,499 B\n  HAdV.zip 23.4 GB, HSV.zip 29.9\
+      \ GB, IAV.zip 25.0 GB, RV.zip 19.8 GB, VACV.zip 34.8 GB   processed splits (x.npy / y.npy per paper)\n  masks.zip\
+      \ 343.8 MB              Cellpose nuclei / cell masks for the test splits\n  filename_to_index.zip 22 KB  \
+      \   <virus>_<split>_filename_to_index.json (15 files): source TIFF name -> array index\n  hadv_raw.zip 10.2\
+      \ GB, hsv_raw.zip 13.7 GB, iav_raw.zip 14.2 GB, rv_raw.zip 13.9 GB,\n  vacv_raw.zip 16.8 GB, cov_raw.zip 9.8\
+      \ GB   raw source images\n"
+    n_files: 13
+    listing_complete: false
+  sample: null
+  arrays: []
+  notes: 'Metadata only: rodare.hzdr.de serves no range requests (a 100-byte range request returned the whole 343,790,833
+    B masks.zip, discarded unread), so zip members cannot be listed or probed and every zip is at least 9.8 GB except
+    masks.zip and filename_to_index.zip. Read filename_to_index.zip (22,445 B) in full: 15 JSON maps from source
+    TIFF names (e.g. 180403-RV-3C_H01.tif) to array indices, 3308 entries. File list and sizes from the RODARE API
+    (exact, all 13 files; listing_complete false because the zip contents are unknown). Voxel size not found; checked:
+    RODARE API record, paper full text (PMC12120016; magnification 4x / 10x only), filename_to_index JSON. No direct
+    download TensorSwitch can use: host not on its allowlist and no range requests (whole-file downloads only).
+    Array shapes, dtypes and the .npy layout remain unverified.'
