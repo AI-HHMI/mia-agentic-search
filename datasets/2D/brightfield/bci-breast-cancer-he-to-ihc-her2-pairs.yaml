@@ -3,8 +3,8 @@ id: bci-breast-cancer-he-to-ihc-her2-pairs
 title: 'BCI: Breast Cancer Immunohistochemical Image Generation through Pyramid Pix2pix'
 short_name: BCI breast cancer H&E to HER2 IHC pairs
 description: 4,870 registered pairs of H&E and HER2 immunohistochemistry image patches (1024 x 1024 px) cut from 51 registered
-  whole-slide image pairs of breast cancer patients, covering HER2 levels 0, 1+, 2+ and 3+ (the level is part of the file name).
-  Built for H&E-to-IHC image translation, with train and test folders.
+  whole-slide image pairs of breast cancer patients, covering HER2 levels 0, 1+, 2+ and 3+ (the level is part of the file
+  name). Built for H&E-to-IHC image translation, with train and test folders.
 landing_url: https://bupt-ai-cz.github.io/BCI
 doi: null
 repository: LabWebsite
@@ -35,19 +35,20 @@ imaging:
   - HER2
 data:
   formats:
-  - png
-  size_bytes: null
-  n_items: 4870
+  - jpeg
+  size_bytes: 2909818553
+  n_items: 4873
   access: open
-  download_url: https://drive.google.com/drive/folders/1jApbId20lX8AY0tIsoX2_2BHBLPoxD4L
-  download_method: other
+  download_url: https://drive.usercontent.google.com/download?id=1jPPh-rxUaj_bCB58F9mfg9hjY7JjVt3O&export=download&confirm=t
+  download_method: http
 annotations:
   present: true
   types:
   - restoration-pairs
   - classification
   coverage: dense
-  format: Registered H&E / IHC patch pairs; HER2 level (0, 1+, 2+, 3+) in the file name
+  format: Registered H&E / IHC patch pairs with the same number in HE/ and IHC/ folders; HER2 level (0, 1+, 2+, 3+) of the
+    source WSI in the file name
   source: automatic
 ml:
   tasks:
@@ -66,16 +67,94 @@ provenance:
   - https://arxiv.org/pdf/2204.11425v1.pdf
   - https://raw.githubusercontent.com/bupt-ai-cz/BCI/main/README.md
   - https://raw.githubusercontent.com/bupt-ai-cz/BCI/main/download_dataset.md
+  - https://drive.google.com/drive/folders/1jApbId20lX8AY0tIsoX2_2BHBLPoxD4L
+  - https://arxiv.org/pdf/2204.11425
   confidence: 0.65
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-08T10:14:40Z'
-notes: 'Scanner Hamamatsu NanoZoomer S60 at 0.46 um per pixel (paper, section 3.1); 1024 x 1024 patches from 51 WSI pairs of
-  319 patients screened. Terms are a custom statement (free for academic and non-academic non-commercial use). The project page
-  says a form (name, email, institution, country) is required while the GitHub download page gives Google Drive and Baidu links
-  directly; the Drive folder was not opened, so the file listing, total size, split sizes and the exact file format (README names
-  PNG files in train/test folders) were not verified. The paper itself says patches from the 51 patients and not pixel-level
-  aligned (aligned at structural level), so pairs are for translation training, not pixel-accurate regression; the paper text
-  PDF was read via pdftotext.'
+  annotations_verified: true
+  last_checked: '2026-10-08T12:00:00Z'
+notes: 'Scanner Hamamatsu NanoZoomer S60 at 0.46 um per pixel (paper, section 3.1); 1024 x 1024 patches from 51 WSI pairs
+  of 319 patients screened. Terms are a custom statement (free for academic and non-academic non-commercial use). The project
+  page says a form (name, email, institution, country) is required while the GitHub download page gives Google Drive and Baidu
+  links directly; The paper itself says patches from the 51 patients and not pixel-level aligned (aligned at structural level),
+  so pairs are for translation training, not pixel-accurate regression; the paper text PDF was read via pdftotext. enricher:
+  Drive folder holds BCI_dataset.zip (2.91 GB, range requests work); 4873 pairs (3896 train / 977 test) per the README inside
+  (was 4870); the .png files are JPEG-encoded, so formats [jpeg] (was png).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "BCI_dataset.zip  (2.91 GB, 9747 members, 2.96 GB uncompressed)\n  BCI_dataset/README.txt\n  BCI_dataset/HE/train/<nnnnn>_train_<HER2>.png\
+      \    3896\n  BCI_dataset/HE/test/<nnnnn>_test_<HER2>.png      977\n  BCI_dataset/IHC/train/<nnnnn>_train_<HER2>.png\
+      \   3896\n  BCI_dataset/IHC/test/<nnnnn>_test_<HER2>.png     977\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://drive.usercontent.google.com/download?id=1jPPh-rxUaj_bCB58F9mfg9hjY7JjVt3O&export=download&confirm=t::BCI_dataset/HE/test/00000_test_1+.png
+    - https://drive.usercontent.google.com/download?id=1jPPh-rxUaj_bCB58F9mfg9hjY7JjVt3O&export=download&confirm=t::BCI_dataset/IHC/test/00000_test_1+.png
+    size_bytes: 601738
+    description: One H&E patch and its registered HER2 IHC patch (test split)
+  arrays:
+  - role: raw
+    path_pattern: BCI_dataset.zip::BCI_dataset/HE/*/*.png
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1024
+    - 1024
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: H&E patch; file extension is .png but the content is JPEG (probe).
+  - role: target
+    path_pattern: BCI_dataset.zip::BCI_dataset/IHC/*/*.png
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1024
+    - 1024
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: 'Pair rule: same file name in HE/<split>/ and IHC/<split>/ (README). Same 1024x1024 shape; registered
+      with elastix at the structural level, not pixel-accurate (paper Sec. 3.2/4).'
+  - role: label
+    path_pattern: BCI_dataset.zip::BCI_dataset/*/*/*.png
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes:
+    - id: '0'
+      name: HER2 0
+    - id: 1+
+      name: HER2 1+
+    - id: 2+
+      name: HER2 2+
+    - id: 3+
+      name: HER2 3+
+    alignment: not-applicable
+    alignment_notes: HER2 level in the file name (<n>_<split>_<level>.png); per the README it is the level of the source WSI,
+      not of the patch.
+  notes: 'Folder listing from the Google Drive page (one file, BCI_dataset.zip); member list read with peek_archive.py (9746
+    PNG-named images + README.txt; exact zip size 2,909,818,553 B). Probed HE/test/00000_test_1+.png (400,102 B) and IHC/test/00000_test_1+.png
+    (201,636 B): both JPEG-compressed 1024x1024x3 uint8 despite the .png extension. tools/sample.py could not read the members
+    (it fails on JPEG data inside .png names), so value ranges were not measured. Download host drive.usercontent.google.com
+    is not on the TensorSwitch allowlist. Voxel size: the paper states the scanner resolution, 0.46 um per pixel (Sec. 3.1),
+    but not whether patches were cut at full resolution, so voxel_size_nm stays null.'
