@@ -1,0 +1,135 @@
+schema_version: '1.2'
+id: zenodo-8416524-deepfocus-sem-focus-astigmatism
+title: DeepFocus SEM images with known working-distance and stigmator aberrations for focus and astigmatism
+  correction
+short_name: SEM defocus and astigmatism series (DeepFocus)
+description: Training, validation and test images for DeepFocus, a network that estimates working distance
+  and stigmator corrections for scanning electron microscopy. Three zips (9.5 GB) hold PNG image pairs
+  and defocus/astigmatism series acquired at known, deliberately introduced aberrations (working distance,
+  stigmator x and y encoded in file names such as series_0_def-13324_astx-466_asty219_pert1000.png) on
+  250 nm sections of zebra finch brain and on tin-on-carbon test specimens, with CSV files of acquisition
+  parameters. All SEM images have 10 nm pixel size.
+landing_url: https://zenodo.org/records/8416524
+doi: 10.5281/zenodo.8416524
+repository: Zenodo
+accession: '8416524'
+authors:
+- Philipp Johannes Schubert
+- Joergen Kornfeld
+publications:
+- title: 'DeepFocus: fast focus and astigmatism correction for electron microscopy'
+  doi: 10.1038/s41467-024-45042-3
+  url: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10830472/
+date_published: '2023-10-09'
+imaging:
+  modality:
+  - other
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 10
+    y: 10
+    z: null
+  channels: 1
+  organism:
+  - Taeniopygia guttata
+  sample: 250 nm sections of zebra finch brain (Hua stain, Spurr's resin) on silicon wafer, plus tin on
+    carbon test specimens
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: 9543386690
+  n_items: 5284
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - other
+  coverage: dense
+  format: Known working distance and stigmator values per image, encoded in file names and CSV files (regression
+    targets, not masks)
+  source: manual
+ml:
+  tasks:
+  - other
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: null
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-08T20:40:24Z'
+  evidence_urls:
+  - https://zenodo.org/records/8416524
+  - https://zenodo.org/records/8416524/files/deepfocus_dataset_0.zip
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10830472/fullTextXML
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T23:07:32Z'
+notes: 'Only deepfocus_dataset_0.zip was listed with peek_archive (2,576 PNG, 23 CSV; folder train_valid/defocus_series/...);
+  datasets 1 and 2 were not listed, so the image count is unknown. The training signal is image-to-parameter
+  regression (focus/stigmator correction) with the introduced aberration as target, not annotated structures.
+  The image modality is SEM, which has no entry in the modality enum (other). Paper states all SEM images
+  have 10 nm pixel size (Zeiss Merlin and UltraPlus setups). The dataset is not a segmentation or restoration
+  set; it is included as a labelled EM image-quality dataset. enricher: the .png files are BMP (8-bit
+  grey; magic BM), so formats other (no bmp in the enum; was png); n_items 5,284 images from the zip listings.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      ./                                    3 files   9.5 GB  .zip
+      deepfocus_dataset_0.zip/deepfocus_dataset/train_valid/defocus_series/N/      23 dirs  2,576 .png + 23 .csv  2.0 GB
+      deepfocus_dataset_1.zip/deepfocus_dataset/train_valid/defocus_series_v2/N/   17 dirs  1,904 .png + 17 .csv  6.0 GB
+      deepfocus_dataset_2.zip/deepfocus_dataset/test/neural_tissue/N/               5 dirs    560 .png + 5 .csv   1.8 GB
+      deepfocus_dataset_2.zip/deepfocus_dataset/test/tin_on_carbon/{0,1}/           2 dirs    244 .png + 2 .csv   0.8 GB
+        series_N_def<wd>_astx<x>_asty<y>_{base,pert<d>}.png, series_N_focused*.png, series_N_summary.csv
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/8416524/files/deepfocus_dataset_0.zip::deepfocus_dataset/train_valid/defocus_series/0/series_0_def-13324_astx-466_asty219_base.png
+    - https://zenodo.org/records/8416524/files/deepfocus_dataset_0.zip::deepfocus_dataset/train_valid/defocus_series/0/series_0_summary.csv
+    size_bytes: null
+    description: One 1024x768 8-bit SEM image of series 0 and the series' parameter table
+  arrays:
+  - role: raw
+    path_pattern: deepfocus_dataset_?.zip/deepfocus_dataset/*/*/*/*.png
+    format: other
+    axes: yx
+    shape:
+    - 768
+    - 1024
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Uncompressed 8-bit BMP files with a .png extension. defocus_series: 1024x768; defocus_series_v2,
+      neural_tissue, tin_on_carbon: 2048x1536 (BMP headers).'
+  - role: label
+    path_pattern: deepfocus_dataset_?.zip/deepfocus_dataset/*/*/*/*_summary.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'Per-series table: fname, wd, astigmx, astigmy, target_wd, target_astigx, target_astigy
+      (regression targets per image, the same values are in the file names).'
+  notes: 'Read 3 members of deepfocus_dataset_0.zip with Pillow (2.4 MB): BMP mode L 768x1024, ranges
+    0-242 / 15-255 / 0-255. Values from samples. Headers of one image in each other folder: BMP 2048x1536x8.
+    Image files carry no calibration; voxel size kept at 10 nm (paper, record).'
