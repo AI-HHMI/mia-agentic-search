@@ -1,6 +1,6 @@
 """The download queue and the list of downloaded datasets (state/downloads.json, on the state branch).
 
-    python tools/download_queue.py next [--root demo] [--max-gb 10]   # the next record to download, as JSON
+    python tools/download_queue.py next [--root demo] [--max-gb 50]   # the next record to download, as JSON
     python tools/download_queue.py record <id> downloaded --plan P --summary S
     python tools/download_queue.py record <id> failed  --reason "..."  [--plan P --summary S]
     python tools/download_queue.py record <id> skipped --reason "..."
@@ -163,7 +163,7 @@ def main():
     sub = ap.add_subparsers(dest="cmd", required=True)
     n = sub.add_parser("next")
     n.add_argument("--root", default="demo")
-    n.add_argument("--max-gb", type=float, default=10.0)
+    n.add_argument("--max-gb", type=float, default=50.0)
     r = sub.add_parser("record")
     r.add_argument("id")
     r.add_argument("status", choices=["downloaded", "failed", "skipped"])

@@ -21,7 +21,7 @@ SOFTWARE = {"name": "mia-agentic-search native converter", "version": "1",
 CHUNK, SHARD = 128, 512
 STOP_SIZE = 256           # no further level once every spatial axis is at most this
 MAX_LEVELS = 8
-MAX_BYTES = 8 * 1024 ** 3  # one array is converted in memory; bigger ones are refused
+MAX_BYTES = 64 * 1024 ** 3  # one array is converted in memory (a few copies at peak): bigger ones are refused
 READERS = ("tiff", "hdf5", "mrc", "nifti", "zarr")
 
 # TIFF Orientation (274) -> how to turn the stored page into the displayed one: (transpose y/x, flip y, flip x),
