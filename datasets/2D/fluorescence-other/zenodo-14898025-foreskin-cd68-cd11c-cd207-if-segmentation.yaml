@@ -1,0 +1,165 @@
+schema_version: '1.2'
+id: zenodo-14898025-foreskin-cd68-cd11c-cd207-if-segmentation
+title: Training Dataset for CD68, CD11c, and CD207 Immune Cell Segmentation
+short_name: Foreskin CD68/CD11c/CD207 immune cells (IF)
+description: 50 immunofluorescence fields of view (600 x 600 um) of inner foreskin tissue stained for CD68, CD11c,
+  CD207 and nuclei (DAPI), with manually counted cell ROIs and binary masks per marker combination, used to train
+  a SplineDist cell segmentation model.
+landing_url: https://zenodo.org/records/14898025
+doi: 10.5281/zenodo.14898025
+repository: Zenodo
+accession: '14898025'
+authors:
+- Prodger Lab
+publications: []
+date_published: '2025-02-20'
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 400
+    y: 400
+    z: null
+  channels: 4
+  organism:
+  - Homo sapiens
+  sample: inner foreskin tissue sections, immunofluorescence for CD68, CD11c, CD207 and nuclei
+  labels_stains:
+  - DAPI
+  - CD68
+  - CD11c
+  - CD207
+data:
+  formats:
+  - tiff
+  size_bytes: 657489232
+  n_items: 50
+  access: open
+  download_url: https://zenodo.org/api/records/14898025/files/Sample%20FOVs-Manual%20Counting.zip/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - points
+  coverage: dense
+  format: per FOV folder 'RAW IMAGES' (single-channel and merged TIFFs), 'BINARY' (binary TIFF masks per marker
+    combination) and 'ROI FILES' (ImageJ ROI zips per marker combination)
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-08T12:41:35Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/14898025
+  - https://zenodo.org/records/14898025/files/Sample%20FOVs-Manual%20Counting.zip
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T15:41:10Z'
+notes: 'One zip (657 MB, 1029 members): 50 FOV folders, each with RAW IMAGES (DAPI, CD68, CD11c, CD207 and a 4-channel
+  ORIGINAL_ALL CHANNELS TIFF), BINARY (7 masks per marker combination) and ROI FILES (ImageJ ROI zips). The description
+  gives 50 images of 600 x 600 um but no microscope or imaging mode, and no paper could be found, so the modality
+  (fluorescence-other) and the annotation protocol are unconfirmed. enricher: voxel size 400 x 400 nm from the ImageJ
+  TIFF calibration (was null); 1500 px x 0.4 um = 600 um matches the stated field of view. Annotation types are
+  inferred from the BINARY masks and ROI files.'
+technical:
+  method: sample
+  inspected_at: '2026-10-08T15:41:10Z'
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  1 file, 657,489,232 B
+        Sample FOVs-Manual Counting.zip   1,029 entries
+          Sample FOVs-Manual Counting/FOV<n>/   50 folders
+            RAW IMAGES/FOV<n>-{DAPI,CD68,CD11c,CD207}.tif      200 single-channel 1500x1500 uint16
+            RAW IMAGES/FOV<n>-ORIGINAL_ALL CHANNELS.tif         50 4-channel 4x1500x1500 uint16
+            BINARY/FOV<n>-DAPI<markers>.tif                    350 masks (7 marker combinations)
+            ROI FILES/<sample>_Training-DAPI_<markers>.zip     331 ImageJ ROI sets, + selectedbox.roi
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/14898025/files/Sample%20FOVs-Manual%20Counting.zip::Sample FOVs-Manual Counting/FOV26/RAW
+      IMAGES/FOV26-ORIGINAL_ALL CHANNELS.tif
+    - https://zenodo.org/records/14898025/files/Sample%20FOVs-Manual%20Counting.zip::Sample FOVs-Manual Counting/FOV26/BINARY/FOV26-DAPICD68.tif
+    size_bytes: 18132149
+    description: FOV26 4-channel image and its DAPI+CD68 mask.
+  arrays:
+  - role: raw
+    path_pattern: '*/RAW IMAGES/*-ORIGINAL_ALL CHANNELS.tif'
+    format: tiff
+    axes: cyx
+    shape:
+    - 4
+    - 1500
+    - 1500
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range: null
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: The same four channels are also given as single-channel TIFFs (FOV<n>-DAPI.tif etc.); channel
+      order not stated.
+  - role: raw
+    path_pattern: '*/RAW IMAGES/*-{DAPI,CD68,CD11c,CD11C,CD207}.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 1500
+    - 1500
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 3955
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '*/BINARY/*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 1500
+    - 1500
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: BINARY/FOV<n>-DAPI<markers>.tif pairs with RAW IMAGES/FOV<n>-*.tif of the same FOV folder;
+      one mask per marker combination (DAPICD68, DAPICD11C, DAPICD207, and the double / triple combinations).
+  - role: other
+    path_pattern: '*/ROI FILES/*.zip'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: deflate
+    value_range: null
+    alignment: unknown
+    alignment_notes: ImageJ ROI sets of the counted cells per marker combination; not read.
+  notes: 'peek_archive: 1,029 entries in the zip (657,489,232 B, the only file; = size_bytes). probe.py: FOV26-DAPI.tif
+    ImageJ TIFF 1500x1500 uint16 uncompressed, calibration 0.4 um/px; ORIGINAL_ALL CHANNELS ImageJ 4x1500x1500 (axes
+    cyx from the ImageJ header), 0.4 um/px; BINARY/FOV26-DAPICD68.tif 1500x1500 uint8. sample.py: DAPI [0, 3955]
+    (12-bit range, so normalization none, inferred); mask {0: 2,246,078, 255: 3,922}, same shape. Values from one
+    FOV. Path patterns checked against the listing (50, 200, 350, 331 files; CD11c is spelled CD11C in 47 folders).'
