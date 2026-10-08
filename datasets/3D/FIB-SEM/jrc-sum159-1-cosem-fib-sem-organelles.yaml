@@ -38,7 +38,7 @@ data:
   - zarr
   - n5
   - precomputed
-  size_bytes: 341913600000
+  size_bytes: 342603920000
   n_items: 1
   access: open
   download_url: s3://janelia-cosem-datasets/jrc_sum159-1/
@@ -77,10 +77,79 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T22:16:01Z'
+  last_checked: '2026-10-08T23:15:57Z'
 notes: 'S3 listing: jrc_sum159-1.zarr/recon-1/labels/groundtruth has 12 crops; em/fibsem-uint8 is uint8
   zstd, scale from its .zattrs. size_bytes = uncompressed s0 voxels (compressed size unknown). COSEM preprint
   full text: blocks manually segmented in HeLa, Jurkat, Macrophage and SUM159 volumes (Amira-Avizo), holdout
   blocks for validation; sample prep per Xu et al. 2020. CC-BY-4.0 is stated for the collection on the
   AWS registry page. Species inferred from the cell line name. Separate volume from sibling jrc-hela-2
-  record; own crops. Per-crop train/val split undocumented.'
+  record; own crops. Per-crop train/val split undocumented. enricher: size_bytes now raw s0 + groundtruth
+  crops s0 (estimated, uncompressed).'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "jrc_sum159-1/\n  thumbnail.jpg\n  jrc_sum159-1.n5/\n  neuroglancer/\n  jrc_sum159-1.zarr/recon-1/\n\
+      \    em/fibsem-uint8/            s0..s6 (OME-Zarr multiscale, zstd)\n    labels/groundtruth/crop*/\
+      \   12 crop groups\n      cropN/all                 all classes in one uint8 array, s0..\n     \
+      \ cropN/<class>             ~64 per-class arrays (mito, er, golgi, ...)\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_sum159-1/jrc_sum159-1.zarr/recon-1/labels/groundtruth/crop22/all/s0
+    - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_sum159-1/jrc_sum159-1.zarr/recon-1/em/fibsem-uint8/s0
+    size_bytes: null
+    description: One ground-truth crop (crop22/all, 200x340x340 uint8 at s0) plus the EM region under
+      its OME-Zarr translation.
+  arrays:
+  - role: raw
+    path_pattern: jrc_sum159-1.zarr/recon-1/em/fibsem-uint8/s*
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 7632
+    - 2800
+    - 16000
+    shape_varies: false
+    dtype: uint8
+    compression: zstd
+    lossy: false
+    chunks:
+    - 128
+    - 128
+    - 128
+    value_range:
+    - 194
+    - 224
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: s0 scale 4.56/4/4 nm (z/y/x), translation 0, 7 levels.
+  - role: label
+    path_pattern: jrc_sum159-1.zarr/recon-1/labels/groundtruth/crop*/all/s*
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 200
+    - 340
+    - 340
+    shape_varies: true
+    dtype: uint8
+    compression: zstd
+    lossy: false
+    encoding: semantic-ids
+    classes: null
+    n_ids_observed: 11
+    alignment: transform-provided
+    alignment_notes: 'Each crop carries OME-Zarr scale + translation in nm (crop22: scale 2.28/2/2 nm
+      z/y/x (2x finer than EM s0), translation 24531.66/1839/16039 nm); labels must be placed by the translation,
+      and some crops sit on a finer grid than the EM.'
+  notes: 'Prefixes enumerated with S3 ListObjectsV2 delimiter queries (millions of chunk objects, so no
+    full listing): 12 groundtruth crops, crop22 has ~64 class arrays plus "all". Headers: em s0 .zarray/.zattrs
+    and every crop''s all/s0 shape. Samples (zarr reads): a 64x128x128 block at the EM s0 centre (values
+    194-224, one sample), a central s3 slice (125-255), and crop22/all s0 (11 distinct ids: 8, 9, 10,
+    11, 14, 15, 16, 17, 30, 35, 36). Class names are in each crop''s per-class arrays; the id-to-name
+    map of "all" is not stated in the files read, so classes null. Size estimated (uncompressed): raw
+    1 x 7632x2800x16000 uint8 = 341,913,600,000 B + labels 12 crops "all" s0 (690,320,000 voxels) uint8
+    = 690,320,000 B; total 342,603,920,000 B. Level s0 only; per-class arrays, pyramid levels, n5 / precomputed
+    copies not counted; zstd chunks download smaller.'
