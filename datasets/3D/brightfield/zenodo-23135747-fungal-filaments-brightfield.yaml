@@ -31,7 +31,7 @@ data:
   - png
   - nd2
   - tiff
-  size_bytes: null
+  size_bytes: 106513183508
   n_items: 21
   access: open
   download_url: https://zenodo.org/records/23135747/files/fungal_brightfield_dataset_v1.0.zip
@@ -62,18 +62,104 @@ provenance:
   evidence_urls:
   - https://zenodo.org/records/23135747
   - https://zenodo.org/api/records/23135747
+  - https://zenodo.org/api/records/23135747/files/README.txt/content
   confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T05:56:09Z'
-notes: 'Read the Zenodo record, API record and README.txt (CC BY 4.0 stated). Zip index of fungal_brightfield_dataset_v1.0.zip
-  read with peek_archive: 1,205 PNG images in images/stackNNN/ and 1,205 label txt files in labels/stackNNN/
-  (each PNG about 10 MB). A label file was printed: oriented boxes as four corner points. Record total
-  about 106.5 GB; the annotated part is the 12.2 GB zip, the 12 time-lapse zips (about 7.6 GB each, raw
-  ND2) have no annotations except one manual segmentation TIFF for the last time point (1.6 GB). The associated
-  paper is not yet published ("will be linked once available"), so no paper was read; no pixel/voxel size,
-  microscope model or annotation procedure is stated on the record (only x20/x4/x10 objectives, 5 um Z-step
-  for the time-lapse). Annotation source therefore unknown; dimensionality 3D reflects Z-stacks stored
-  as slice PNGs. Full ND2 time-lapse is unlabeled and excluded from the training signal.'
+  last_checked: '2026-10-08T07:00:03Z'
+notes: 'Zenodo record, API and README.txt read (CC BY 4.0). Annotated part: fungal_brightfield_dataset_v1.0.zip,
+  21 stacks, 1,205 PNG slices (2928x2928 uint16) each with an oriented-box txt; only annotated slices
+  are included (slice numbers have gaps). Time-lapse: 48 unlabeled ND2 Z-stacks in 12 zips, plus Zstack_run050_manual_segmentation.tif
+  (189x2928x2928 uint8) for the last time point. No paper yet; annotation procedure for the boxes not
+  stated (source unknown), the TIFF is stated as manual. Pixel size not stated anywhere read; only a 5
+  um Z-step for the time-lapse. enricher: size_bytes from complete Zenodo listing (was null); download_url
+  set to the annotated zip.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  15 files  106.5 GB\n  README.txt  3.6 KB\n  fungal_brightfield_dataset_v1.0.zip  12.2 GB\n\
+      \    fungal_brightfield_dataset_v1.0/images/stack000..stack020/imgNNN.png  1,205 files  12.2 GB\
+      \ (20-193 per stack)\n    fungal_brightfield_dataset_v1.0/labels/stack000..stack020/imgNNN.txt \
+      \ 1,205 files  12.3 MB\n  Zstack_run050_manual_segmentation.tif  1.6 GB\n  fungal_timelapse_run005_001-006.zip\
+      \ .. fungal_timelapse_run005_047-050.zip  12 zips  7.5-8.6 GB each\n    Zstack_runNNN.nd2  4 per\
+      \ zip, 48 in total (~2.8 GB each)\n"
+    n_files: 15
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/23135747/files/fungal_brightfield_dataset_v1.0.zip::fungal_brightfield_dataset_v1.0/images/stack001/img059.png
+    - https://zenodo.org/records/23135747/files/fungal_brightfield_dataset_v1.0.zip::fungal_brightfield_dataset_v1.0/labels/stack001/img059.txt
+    size_bytes: null
+    description: One annotated slice (4.3 MB PNG) and its oriented-box label file
+  arrays:
+  - role: raw
+    path_pattern: fungal_brightfield_dataset_v1.0.zip::fungal_brightfield_dataset_v1.0/images/stack*/img*.png
+    format: png
+    axes: yx
+    shape:
+    - 2928
+    - 2928
+    shape_varies: false
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 65535
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One PNG per annotated Z slice; stacks are folders stack000-stack020.
+  - role: label
+    path_pattern: fungal_brightfield_dataset_v1.0.zip::fungal_brightfield_dataset_v1.0/labels/stack*/img*.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: filament
+    alignment: same-grid
+    alignment_notes: 'labels/stackNNN/imgNNN.txt pairs with images/stackNNN/imgNNN.png; one line per filament:
+      class id, four corner points x y normalised to [0,1], trailing 1.000000 (oriented boxes, YOLO-OBB
+      style). Class 0 only in the file read; name filament from README context.'
+  - role: raw
+    path_pattern: fungal_timelapse_run005_*.zip::Zstack_run*.nd2
+    format: nd2
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 48 raw x10 time-lapse Z-stacks (runs 001-050 without 003 and 005), unlabeled except
+      run050.
+  - role: label
+    path_pattern: Zstack_run050_manual_segmentation.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 189
+    - 2928
+    - 2928
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    encoding: unknown
+    alignment: unknown
+    alignment_notes: Manual segmentation of Zstack_run050.nd2 (README). 189 pages; README says it segments
+      that Z-stack, so pages are z. Grid relation to the ND2 not checked (ND2 header unread).
+  notes: 'Listing (Zenodo API + zip index): 15 files, 106,513,183,508 B exact, 2,458 zip members. Probed
+    PNGs from stack001, stack003, stack018: all 2928x2928 uint16 gray. Sampled stack001/img059.png (4.3
+    MB): range 0-65535 but only 232 unique values (p1 17,990, p99 37,779), so likely 8-bit data stored
+    as 16-bit; normalization unknown (one sample). Manual segmentation TIFF probed: 189 pages 2928x2928
+    uint8, uncompressed, tifffile shaped layout; 1.6 GB, not sampled, so its label encoding is unknown.
+    ND2 members not readable by probe.py (2.8 GB each, beyond the sample budget), so their shape, dtype
+    and pixel size are unknown. Voxel size not found; checked: PNG/TIFF headers, Zenodo API record and
+    description, README.txt; no paper or code repository is linked yet. The ND2 metadata probably holds
+    it.'
