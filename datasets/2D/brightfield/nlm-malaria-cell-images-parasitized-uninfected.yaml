@@ -40,7 +40,7 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: 353452851
+  size_bytes: 354881034
   n_items: 27558
   access: open
   download_url: https://data.lhncbc.nlm.nih.gov/public/Malaria/cell_images.zip
@@ -75,12 +75,58 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-08T18:05:00Z'
+  last_checked: '2026-10-08T19:10:00Z'
 notes: 'Listed the NLM directory and the zip (27,560 members: 27,558 PNG and 2 Thumbs.db) and read the NLM downloads page and the
   PeerJ paper (27,558 cells, equal classes, patient-level cross-validation). No licence or terms are stated for the cell images
   on the NLM pages or in the paper (the CC0 link in the paper concerns the article), so spdx is unknown. The labels are
   per-cell parasitized or uninfected, from the expert slide-reader annotation of the smear images; the cell crops themselves
   come from automatic segmentation, and the uninfected class includes artefacts and cells from infected patients'' slides.
   A third-party Zenodo copy (7797018, a zip with the folder duplicated) exists and is not the source. Magnification, camera
-  model and pixel size are not stated. Whole-smear NIH-NLM-ThinBloodSmearsPf images with polygon or point labels are a
-  separate dataset in the same directory and not covered here.'
+  model and pixel size are not stated. NIH-NLM-ThinBloodSmearsPf (whole smears) is a separate dataset. organisms:
+  both in every image (parasites inside human RBCs).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      https://data.lhncbc.nlm.nih.gov/public/Malaria/
+        cell_images.zip                         353.5 MB, 27,560 members
+          cell_images/Parasitized/              13,779 .png (178.6 MB) + Thumbs.db
+          cell_images/Uninfected/               13,779 .png (153.4 MB) + Thumbs.db
+        patientid_cellmapping_parasitized.csv   761 KB
+        patientid_cellmapping_uninfected.csv    667 KB
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.lhncbc.nlm.nih.gov/public/Malaria/cell_images.zip::cell_images/Parasitized/C100P61ThinF_IMG_20150918_144104_cell_162.png
+    - https://data.lhncbc.nlm.nih.gov/public/Malaria/cell_images.zip::cell_images/Uninfected/C100P61ThinF_IMG_20150918_144104_cell_128.png
+    size_bytes: 24982
+    description: One parasitized and one uninfected cell crop (class = parent folder name)
+  arrays:
+  - role: raw
+    path_pattern: cell_images.zip::cell_images/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 148
+    - 142
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 232
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Image-level class is the parent folder name (Parasitized / Uninfected); no label files. Black (0)
+      background outside the segmented cell (25% zeros in the sample).
+  notes: 'Listing of cell_images.zip (zip index) plus the two CSVs via HTTP Content-Length: 354,881,034 bytes exact
+    (size_bytes was the zip alone, 353,452,851). The code zip malaria_cell_classification_code.zip in the same folder
+    is not counted. The CSVs map patient IDs to cell file names, one row per patient (e.g. C100P61ThinF,[''C100P61ThinF_IMG_20150918_144104_cell_162.png'', ...]), for patient-level splits. Probed 3 PNGs: RGB uint8, deflate, shapes 148x142, 208x148, 139x160 (varies per cell). Sampled one
+    parasitized crop (14 KB): range 0-232, from one sample. Thumbs.db files are Windows thumbnails, not data. Voxel
+    size not found; checked: PNG headers (no pHYs reported), NLM folder index, LHC downloads page, PeerJ paper
+    Methods (smartphone on a light microscope, no magnification or pixel size), code readme.txt, and the upstream
+    NIH-NLM-ThinBloodSmearsPf ReadMe.pdf (image size 5312x2988 only). Direct links are usable (range requests) but
+    data.lhncbc.nlm.nih.gov is not on the TensorSwitch allowlist.'
