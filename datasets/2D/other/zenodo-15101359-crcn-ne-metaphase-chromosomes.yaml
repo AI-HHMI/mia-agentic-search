@@ -1,0 +1,132 @@
+schema_version: '1.2'
+id: zenodo-15101359-crcn-ne-metaphase-chromosomes
+title: CRCN-NE Metaphase Dataset
+short_name: Metaphase chromosomes detection (YOLO)
+description: 519 images of metaphase cells from the Regional Center for Nuclear Sciences of the Northeast (CRCN-NE, Brazil)
+  with YOLO-format bounding boxes for the chromosomes in each image, for cytogenetic chromosome detection; a further
+  zip holds images judged too difficult to label.
+landing_url: https://zenodo.org/records/15101359
+doi: 10.5281/zenodo.15101359
+repository: Zenodo
+accession: '15101359'
+authors:
+- Costa Cordeiro, Higor Matheus
+- Cordeiro, Filipe Rolim
+- Farias de Lima, Fabiana
+- Hwang, Suy
+- Melo da Silva, Laís
+publications:
+- title: 'Detecção de Cromossomos em Metáfases: Um Novo Dataset e Estudo de Caso com YOLOv11'
+  doi: null
+  url: https://sol.sbc.org.br/index.php/sbcas_estendido/article/view/35591
+date_published: '2025-03-28'
+imaging:
+  modality:
+  - other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: Metaphase cells (chromosome spreads)
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: 2613508193
+  n_items: 519
+  access: open
+  download_url: https://zenodo.org/api/records/15101359/files/images.zip/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  coverage: dense
+  format: YOLO .txt files (class ID plus normalised x_center, y_center, width, height), one per image, in labels.zip
+  source: unknown
+ml:
+  tasks:
+  - detection
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-08T20:14:39Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/15101359
+  - https://zenodo.org/api/records/15101359/files/images.zip/content
+  - https://zenodo.org/api/records/15101359/files/labels.zip/content
+  - https://sol.sbc.org.br/index.php/sbcas_estendido/article/view/35591
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T21:45:13Z'
+notes: 'Zip listings read with peek_archive: images.zip (519 PNG, ~4 MB each, 2.07 GB), labels.zip (519 YOLO .txt, first
+  label file printed with one box per line), discarded.zip (137 PNG too difficult to label, 538 MB, not part of n_items).
+  Imaging modality, staining, magnification, pixel size and channel count are not stated on the record or the paper abstract
+  page, so modality is other and channels null. The SBC paper PDF was not read in full (abstract page only), so annotators,
+  class definitions beyond class ID and train/test split are unconfirmed. Same group released the CRCN-NE micronucleus
+  dataset (separate record). enricher: size is the complete Zenodo listing incl. discarded.zip (was images.zip only);
+  channels 3 = RGB PNG (samples differ, not grey stored as RGB).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      ./                         3 files   2.6 GB  .zip 3
+      images.zip/images/       519 files   2.1 GB  0.png .. 518.png
+      labels.zip/labels/       519 files   1.9 MB  0.txt .. 518.txt (YOLO)
+      discarded.zip/discarded/ 137 files 537.9 MB  .png (too difficult to label; no labels)
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/15101359/files/images.zip::images/0.png
+    - https://zenodo.org/records/15101359/files/labels.zip::labels/0.txt
+    size_bytes: 4027474
+    description: One metaphase image and its YOLO box file.
+  arrays:
+  - role: raw
+    path_pattern: images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1536
+    - 2048
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 157
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: labels/*.txt
+    format: other
+    axes: null
+    shape:
+    - 47
+    - 5
+    shape_varies: true
+    dtype: float64
+    compression: none
+    encoding: boxes-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'labels/N.txt pairs with images/N.png (same stem). One box per line: class_id x_center y_center
+      width height, normalised to the image size (Zenodo description).'
+  notes: 'Probed images/0.png and 1.png (RGB uint8 1536x2048, deflate). Sampled images/0.png: range 0-157, mean 86.6,
+    samples not identical (one sample). labels/0.txt: 47 boxes, all class 0; class names are not documented on Zenodo.
+    Label .txt files are plain text, recorded as format other. Voxel size not found; checked: PNG headers (no pHYs reported),
+    Zenodo API description, the SBC paper page (connection reset in this run; the harvester read only its abstract).
+    Imaging modality is still unknown (record keeps other).'
