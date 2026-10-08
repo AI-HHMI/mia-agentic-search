@@ -69,9 +69,70 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T03:36:52Z'
+  last_checked: '2026-10-08T05:00:00Z'
 notes: 'Zip "Intestinal Organoid Dataset.zip" (82 MB) listed with peek_archive: 1,754 .jpg files plus
   train_labels.csv and test_labels.csv in train/ and test/ folders. Pixel size not stated in the paper
   Methods or OSF page (images saved as 8-bit TIFF with a scale bar before patching); the released patches
   are JPEG. License MIT is stated in the paper and in the OSF project license field. Second OSF file organoid_inference_graph.zip
-  (665 MB) is a trained model, not data.'
+  (665 MB) is a trained model, not data. enricher: inspected the zip (1,756 members); test_labels.csv
+  has 1,136 boxes on 112 test patches, train_labels.csv (no header) 13,004 boxes on 1,630 train patches,
+  all class "organoid"; pixel size still not found.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  Intestinal Organoid Dataset.zip (OSF y29h7)   1 file  82.0 MB, 1756 members\n  Intestinal\
+      \ Organoid Dataset/train/            1642 .jpg  (Subset_<n>_300x300_<k>.jpg / _450x450_)\n  Intestinal\
+      \ Organoid Dataset/test/              112 .jpg\n  Intestinal Organoid Dataset/train_labels.csv \
+      \  1.3 MB  (no header)\n  Intestinal Organoid Dataset/test_labels.csv    0.1 MB  (header image_path,x1,y1,x2,y2,class_name)\n"
+    n_files: 1756
+    listing_complete: true
+  sample:
+    urls:
+    - https://osf.io/download/y29h7/::Intestinal Organoid Dataset/test/Subset_1_450x450_001.jpg
+    - https://osf.io/download/y29h7/::Intestinal Organoid Dataset/test_labels.csv
+    size_bytes: null
+    description: One 450x450 test patch (53 KB) and the test box table (rows for Subset_1_450x450_001.jpg
+      pair by file name).
+  arrays:
+  - role: raw
+    path_pattern: Intestinal Organoid Dataset/{train,test}/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 450
+    - 450
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 135
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Patches are 300x300 or 450x450 (size in the file name). Sampled patch is grey stored
+      as RGB (identical channels).
+  - role: label
+    path_pattern: Intestinal Organoid Dataset/*_labels.csv
+    format: csv
+    axes: null
+    shape:
+    - 1136
+    - 6
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: organoid
+      name: organoid
+    alignment: same-grid
+    alignment_notes: Columns image_path, x1, y1, x2, y2, class_name; boxes in pixel coordinates of the
+      patch. image_path is an absolute Windows path from the authors' machine (C:/Users/Timothy/...);
+      pair rows with patches by file name. test 1,136 rows (with header), train 13,004 rows (no header).
+  notes: 'Listing: peek_archive central directory, 1756 members with exact sizes; listing.py counts the
+    zip as one 82,015,699-byte file (URL lacks .zip, so not expanded). Probe: test patch 450x450x3 uint8
+    JPEG. Sample via read_member (1,402,120 bytes incl. train_labels.csv): patch values 0-135, channels
+    identical; one sample only. Voxel size not found; checked: JPEG header (no calibration), paper full
+    text (PMC6713702: EVOS FL 4x, images saved with a scale bar, no um/px), OSF node metadata, CSVs.'
