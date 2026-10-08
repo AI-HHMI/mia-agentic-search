@@ -34,10 +34,10 @@ imaging:
 data:
   formats:
   - other
-  size_bytes: 731000000000
+  size_bytes: 741861128919
   n_items: 2539
   access: open
-  download_url: null
+  download_url: https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/168/S-BIAD1168/Files/
   download_method: http
 annotations:
   present: true
@@ -67,12 +67,13 @@ provenance:
   - https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD1168
   - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/168/S-BIAD1168/Files/
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12751090/fullTextXML
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/168/S-BIAD1168/Files/Cervical%20Images.json
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T06:22:06Z'
+  last_checked: '2026-10-08T07:21:27Z'
 notes: 'BioStudies record (license CC BY 4.0, Philips Ultra Fast Scanner, 0.25 um/pixel) and the EMBL-EBI
   file index read; Files/ lists "Cervical Images/" with per slide .isyntax, .geojson, _mask.png and .isyntax_object_Data.csv
   (the .tsv index lists 2,540 isyntax, 2,539 geojson, 2,538 png and 2,540 csv entries; the paper states
@@ -80,5 +81,77 @@ notes: 'BioStudies record (license CC BY 4.0, Philips Ultra Fast Scanner, 0.25 u
   GB in iSyntax, annotation by 4 pathologists plus a trained biomedical scientist, four diagnostic categories
   with subcategories, and a train/validation/test split described in its tables; the split is not stored
   as a file that was checked, so splits_provided is false. iSyntax is not in the schema format list, hence
-  formats other. No single archive: files are fetched individually from the FTP/HTTP directory, so download_url
-  is null. Size is the paper figure. Not read: contents of the GeoJSON or metadata xlsx.'
+  formats other. enricher: size_bytes 741.9 GB from the exact Files index (was the paper figure, 731 GB);
+  download_url is the Files folder (no archive). 595 of 2,539 GeoJSONs are empty, 2,348 are named "<id>
+  .geojson" (space).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Files/  10,162 files  741.9 GB\n  Cervical Images.json / .tsv, Cervical Images_with category\
+      \ data.json / .tsv  (file indexes)\n  Cervical Images/  10,158 files\n    IC-CX-NNNNN-NN.isyntax\
+      \                  2,540  (Philips iSyntax WSI, 7.8 MB-1 GB; 2 are 0 B)\n    IC-CX-NNNNN-NN .geojson\
+      \ / .geojson      2,539  (QuPath polygons; 595 empty)\n    IC-CX-NNNNN-NN_mask.png             \
+      \    2,538  (low-resolution masks, up to 0.3 MB)\n    IC-CX-NNNNN-NN.isyntax_object_Data.csv  2,540\
+      \  (Indica Labs HALO nuclear features)\n    Cervical image anootation categories.xlsx\n"
+    n_files: 10162
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/168/S-BIAD1168/Files/Cervical%20Images/IC-CX-01911-01.isyntax
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/168/S-BIAD1168/Files/Cervical%20Images/IC-CX-01911-01%20.geojson
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/168/S-BIAD1168/Files/Cervical%20Images/IC-CX-01911-01_mask.png
+    size_bytes: 211066425
+    description: 'One annotated slide (IC-CX-01911-01, Low Grade): iSyntax WSI, its GeoJSON polygons and
+      mask PNG'
+  arrays:
+  - role: raw
+    path_pattern: Cervical Images/*.isyntax
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: other
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Philips iSyntax (XML header, then wavelet-compressed tiles; header: PHILIPS UFS
+      Scanner, "Quality=2 | DWT=1 | Compressor=16"). Needs the Philips SDK or a compatible reader.'
+  - role: label
+    path_pattern: Cervical Images/*.geojson
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: polygons
+    alignment: same-grid
+    alignment_notes: QuPath-style FeatureCollection; Polygon coordinates in full-resolution pixel units
+      of the slide of the same id (values around 20,000). Class in properties.classification.name (e.g.
+      Low Grade). Names usually "<id> .geojson" with a space.
+  - role: label
+    path_pattern: Cervical Images/*_mask.png
+    format: png
+    axes: yxs
+    shape:
+    - 1714
+    - 678
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 75
+    encoding: unknown
+    alignment: scaled
+    alignment_notes: Thumbnail-sized RGB mask (1714x678 for 00001, 1190 rows for 01911) with identical
+      samples; values {0,75} in 00001 and 3 values (max 255) in 01911, meaning not documented. Downscaled
+      relative to the WSI by an unstated factor.
+  notes: 'Listing: BioStudies Files index JSON (exact sizes for 10,157 files) plus HEAD sizes for the
+    xlsx and 4 index files: 10,162 files, 741,861,128,919 B. Probed and sampled masks 00001 (8.8 KB) and
+    01911 (14.9 KB); read GeoJSONs 00001 (empty) and 01911 (2 Low Grade polygons); read the first 256
+    KB of 01911.isyntax (XML header only); read the first lines of 00001 object_Data.csv (per-nucleus
+    XMin/XMax/YMin/YMax, cell/nucleus area in um2). Voxel size 0.25 um/pixel from the BioStudies record
+    (unchanged); not found in the first 256 KB of the iSyntax header.'
