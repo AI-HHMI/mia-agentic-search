@@ -42,7 +42,7 @@ imaging:
 data:
   formats:
   - jpeg
-  size_bytes: 118127538
+  size_bytes: 119485464
   n_items: 512
   access: open
   download_url: https://zenodo.org/api/records/21273571/files/AI-TB-ZN_Image_Dataset_v1.0.zip.zip/content
@@ -77,11 +77,50 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T06:33:08Z'
+  last_checked: '2026-10-08T06:51:47Z'
 notes: 'Read the Zenodo page, API record and the data paper PDF in the record (pdftotext): 512 images,
   x100, Olympus BX41 with Infinity Lite camera (smartphone for a subset), labels from routine lab microscopy
   verified by trained lab staff, 358/77/77 split used in the study (not shipped as a file). CC BY 4.0
   on the record. peek_archive: TBPOSITIVE and TBNEGATIVE folders of 256 jpg each. The same file names
   (TB_IMG001.jpg ...) occur in both folders while labels.csv (256 Positive, 256 Negative) lists names
   without folder, so the folder gives the unambiguous label. Image size and pixel size not stated in what
-  was read. The paper has no DOI.'
+  was read. The paper has no DOI. enricher: size_bytes = all 8 record files (was the zip alone); sampled
+  image RGB 1632x1224.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "AI-TB-ZN_Image_Dataset_v1.0.zip.zip   118,127,538 B (513 members)\n  TB IMAGES DATA SET/TBNEGATIVE/TB_IMG<NNN>.jpg\
+      \   256   46.0 MB\n  TB IMAGES DATA SET/TBPOSITIVE/TB_IMG<NNN>.jpg   256   72.6 MB (+ desktop.ini)\n\
+      labels.csv, LICENSE.txt, CITATION.cff, DATASET_PAPER_AI_TB_ZN.pdf and 3 more PDFs\n8 files, 119,485,464\
+      \ B\n"
+    n_files: 8
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/21273571/files/AI-TB-ZN_Image_Dataset_v1.0.zip.zip::TB IMAGES DATA SET/TBPOSITIVE/TB_IMG001.jpg
+    size_bytes: 340982
+    description: One AFB-positive image; the class is its folder.
+  arrays:
+  - role: raw
+    path_pattern: AI-TB-ZN_Image_Dataset_v1.0.zip.zip::TB IMAGES DATA SET/TB*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1224
+    - 1632
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 11
+    - 227
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Class from the folder (TBPOSITIVE / TBNEGATIVE); file names repeat across the two
+      folders.
+  notes: 'listing.py (Zenodo, --expand-zips): 8 files, exact sizes, 513 zip members. sample.py: TBPOSITIVE/TB_IMG001.jpg
+    RGB uint8 1224x1632, 11..227 (one image; the negative sample failed on an SSL EOF and was not retried).
+    Image size may differ for the smartphone subset (not checked). Pixel size not found: JPEG has no calibration,
+    the data paper PDF (read by the harvest run) gives the x100 objective and cameras only.'
