@@ -1,8 +1,9 @@
 schema_version: '1.2'
 id: hf-libreyolo-rf100-stomata-open-close
-title: "RF100 stomata cells: open vs closed stomata detection (Roboflow 100)"
-short_name: "Stomata open/closed detection boxes (RF100)"
-description: "2,105 microscope images of plant stomata with YOLO bounding boxes labelled open or close and train/valid/test splits; the stomata-cells subset of the Roboflow 100 object detection benchmark."
+title: 'RF100 stomata cells: open vs closed stomata detection (Roboflow 100)'
+short_name: Stomata open/closed detection boxes (RF100)
+description: 2,105 microscope images of plant stomata with YOLO bounding boxes labelled open or close and train/valid/test
+  splits; the stomata-cells subset of the Roboflow 100 object detection benchmark.
 landing_url: https://huggingface.co/datasets/LibreYOLO/stomata-cells
 doi: null
 repository: HuggingFace
@@ -17,7 +18,7 @@ imaging:
   voxel_size_nm: null
   channels: null
   organism: []
-  sample: "plant leaf stomata, classes close and open (data.yaml); plant species not stated"
+  sample: plant leaf stomata, classes close and open (data.yaml); plant species not stated
   labels_stains: []
 data:
   formats:
@@ -32,7 +33,7 @@ annotations:
   types:
   - bounding-box
   coverage: unknown
-  format: 'YOLO txt per image (class x_center y_center width height, normalized), train/valid/test labels folders'
+  format: YOLO txt per image (class x_center y_center width height, normalized), train/valid/test labels folders
   source: unknown
 ml:
   tasks:
@@ -57,5 +58,80 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T07:49:41Z'
-notes: "LibreYOLO mirror (2026-01-20) of the Roboflow 100 'microscopic' subset, 4215 files, 121.2 MB. Licence CC BY 4.0 from data.yaml and README.dataset.txt. Original project (Roboflow Universe, creator listed as Anonymous): stomata02. Classes: close, open. Split sizes 1,482 / 414 / 209. Plant species and imaging details are not stated in the files read, so organism is left empty. The microscope, contrast mode, magnification, pixel size and how the boxes were drawn are not stated in the files read, so modality is other and coverage and annotation source are unknown. The images are a Roboflow export ('release-640'); whether they were resized or augmented is not stated."
+  last_checked: '2026-10-08T09:05:00Z'
+notes: 'LibreYOLO mirror (2026-01-20) of the Roboflow 100 ''microscopic'' subset, 4215 files, 121.2 MB. Licence
+  CC BY 4.0 from data.yaml and README.dataset.txt. Original project (Roboflow Universe, creator listed as Anonymous):
+  stomata02. Classes: close, open. Split sizes 1,482 / 414 / 209. Plant species and imaging details are not stated
+  in the files read, so organism is left empty. The microscope, contrast mode, magnification, pixel size and how
+  the boxes were drawn are not stated in the files read, so modality is other and coverage and annotation source
+  are unknown. The images are a Roboflow export (''release-640''); whether they were resized or augmented is not
+  stated.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './             5 files  data.yaml, README.dataset.txt, README.roboflow.txt, README.md, .gitattributes
+
+      train/images/  1482 files  85.1 MB  .jpg  (<name>_jpg.rf.<hash>.jpg)
+
+      train/labels/  1482 files  .txt  (same stem)
+
+      valid/images/  414 files  23.6 MB  .jpg
+
+      valid/labels/  414 files  .txt
+
+      test/images/   209 files  11.9 MB  .jpg
+
+      test/labels/   209 files  .txt
+
+      '
+    n_files: 4215
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/LibreYOLO/stomata-cells/resolve/main/train/images/0-0_20170825-164658_jpg.rf.647aad096ee771fdb08b2e5028b61f28.jpg
+    - https://huggingface.co/datasets/LibreYOLO/stomata-cells/resolve/main/train/labels/0-0_20170825-164658_jpg.rf.647aad096ee771fdb08b2e5028b61f28.txt
+    size_bytes: 55856
+    description: One 640x640 training image and its YOLO label file
+  arrays:
+  - role: raw
+    path_pattern: '*/images/*.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 640
+    - 640
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB JPEG exports (Roboflow release-640, 640x640).
+  - role: label
+    path_pattern: '*/labels/*.txt'
+    format: other
+    axes: null
+    shape:
+    - 7
+    - 5
+    shape_varies: true
+    dtype: float32
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: close
+    - id: 1
+      name: open
+    alignment: same-grid
+    alignment_notes: '<split>/labels/<stem>.txt pairs with <split>/images/<stem>.jpg. One row per box: class x_center
+      y_center width height, normalized to the 640x640 image (YOLO). Class ids from data.yaml names.'
+  notes: 'HF listing complete: 4215 files, 121,216,108 B. Probe: 640x640x3 uint8 JPEG, no calibration. Sample image
+    values 0-255 (one sample). Label file read: 7 row(s) of 5 values (YOLO txt; plain text, so format other; dtype
+    float32 is nominal). data.yaml: nc 2, license CC BY 4.0. Pixel size not found; checked: JPEG header, data.yaml,
+    README.dataset.txt, HF card. Images are Roboflow 640x640 exports, so any original pixel size would not apply
+    without the resize factor. Single files only, no archive: download_url is the dataset page.'
