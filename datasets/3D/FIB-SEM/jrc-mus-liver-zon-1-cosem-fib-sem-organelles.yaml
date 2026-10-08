@@ -35,9 +35,8 @@ imaging:
 data:
   formats:
   - zarr
-  - n5
   - precomputed
-  size_bytes: 25133528456895
+  size_bytes: 25141714456895
   n_items: 1
   access: open
   download_url: s3://janelia-cosem-datasets/jrc_mus-liver-zon-1/
@@ -76,11 +75,81 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T22:16:01Z'
+  last_checked: '2026-10-08T23:15:56Z'
 notes: 'S3 listing: jrc_mus-liver-zon-1.zarr/recon-1/labels/groundtruth has 42 cropN groups; em/fibsem-uint8
   is uint8 with 8 nm scale in its .zattrs. size_bytes = uncompressed s0 voxels. The bucket README says
   groundtruth blocks are labelled voxel-by-voxel by a human annotator; CC-BY-4.0 is stated for the collection
   on the AWS registry page. Species and tissue are inferred from the dataset name; sample prep, annotators
   and per-crop provenance are not documented in the sources read (the COSEM preprint describes cell-culture
   volumes, not these tissue volumes), and the Nature paper is paywalled. Different volume and crops from
-  the other jrc_* records. Train/val split undocumented.'
+  the other jrc_* records. Train/val split undocumented. enricher: size_bytes now raw s0 + groundtruth
+  crops s0 (estimated, uncompressed). enricher: n5 removed from formats (the bucket prefix has only .zarr
+  and neuroglancer/).'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "jrc_mus-liver-zon-1/\n  thumbnail.jpg\n  neuroglancer/\n  jrc_mus-liver-zon-1.zarr/recon-1/\n\
+      \    em/fibsem-uint8/            s0..s14 (OME-Zarr multiscale, zstd)\n    labels/groundtruth/crop*/\
+      \   42 crop groups\n      cropN/all                 all classes in one uint8 array, s0..\n     \
+      \ cropN/<class>             ~66 per-class arrays (mito, er, golgi, ...)\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_mus-liver-zon-1/jrc_mus-liver-zon-1.zarr/recon-1/labels/groundtruth/crop270/all/s0
+    - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_mus-liver-zon-1/jrc_mus-liver-zon-1.zarr/recon-1/em/fibsem-uint8/s0
+    size_bytes: null
+    description: One ground-truth crop (crop270/all, 200x200x200 uint8 at s0) plus the EM region under
+      its OME-Zarr translation.
+  arrays:
+  - role: raw
+    path_pattern: jrc_mus-liver-zon-1.zarr/recon-1/em/fibsem-uint8/s*
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 49645
+    - 21451
+    - 23601
+    shape_varies: false
+    dtype: uint8
+    compression: zstd
+    lossy: false
+    chunks:
+    - 64
+    - 128
+    - 128
+    value_range:
+    - 31
+    - 185
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: s0 scale 8/8/8 nm (z/y/x), translation 0, 15 levels.
+  - role: label
+    path_pattern: jrc_mus-liver-zon-1.zarr/recon-1/labels/groundtruth/crop*/all/s*
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 200
+    - 200
+    - 200
+    shape_varies: true
+    dtype: uint8
+    compression: zstd
+    lossy: false
+    encoding: semantic-ids
+    classes: null
+    n_ids_observed: 12
+    alignment: transform-provided
+    alignment_notes: 'Each crop carries OME-Zarr scale + translation in nm (crop270: scale 8/8/8 nm, translation
+      207912/107984/24616 nm; crop266: scale 4/4/4 nm (2x finer than EM s0)); labels must be placed by
+      the translation, and some crops sit on a finer grid than the EM.'
+  notes: 'Prefixes enumerated with S3 ListObjectsV2 delimiter queries (millions of chunk objects, so no
+    full listing): 42 groundtruth crops, crop270 has ~66 class arrays plus "all". Headers: em s0 .zarray/.zattrs
+    and every crop''s all/s0 shape. Samples (zarr reads): a 64x128x128 block at the EM s0 centre (values
+    31-185, one sample), a central s3 slice (0-214), and crop270/all s0 (12 distinct ids: 3, 4, 5, 8,
+    9, 10, 11, 16, 17, 35, 47, 48). Class names are in each crop''s per-class arrays; the id-to-name map
+    of "all" is not stated in the files read, so classes null. Size estimated (uncompressed): raw 1 x
+    49645x21451x23601 uint8 = 25,133,528,456,895 B + labels 42 crops "all" s0 (8,186,000,000 voxels) uint8
+    = 8,186,000,000 B; total 25,141,714,456,895 B. Level s0 only; per-class arrays, pyramid levels, n5
+    / precomputed copies not counted; zstd chunks download smaller.'
