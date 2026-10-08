@@ -2,10 +2,9 @@ schema_version: '1.2'
 id: figshare-7781777-3dmms-celegans-embryo-membrane
 title: Dataset for MMS
 short_name: C. elegans embryo membrane 3D+t with 3DMMS labels
-description: Time-lapse 3D confocal membrane images of one C. elegans embryo (95 time
-  points, MATLAB .mat stacks), the cell-level 3D segmentation produced by the 3DMMS
-  method for each time point, and a CSV of nucleus information from AceTree lineaging.
-  Released with the 3DMMS membrane segmentation paper.
+description: Time-lapse 3D confocal membrane images of one C. elegans embryo (95 time points, MATLAB .mat
+  stacks), the cell-level 3D segmentation produced by the 3DMMS method for each time point, and a CSV
+  of nucleus information from AceTree lineaging. Released with the 3DMMS membrane segmentation paper.
 landing_url: https://figshare.com/articles/dataset/Dataset_for_MMS/7781777
 doi: 10.6084/m9.figshare.7781777.v1
 repository: Figshare
@@ -28,8 +27,8 @@ imaging:
   channels: 2
   organism:
   - Caenorhabditis elegans
-  sample: C. elegans embryo, membrane and nucleus dual-labelled (mCherry/GFP), imaged
-    on a Leica SP8 confocal at 1.5 min intervals
+  sample: C. elegans embryo, membrane and nucleus dual-labelled (mCherry/GFP), imaged on a Leica SP8 confocal
+    at 1.5 min intervals
   labels_stains:
   - membrane marker
   - nucleus lineaging marker
@@ -39,15 +38,14 @@ data:
   size_bytes: 178969105
   n_items: 95
   access: open
-  download_url: null
+  download_url: https://figshare.com/articles/dataset/Dataset_for_MMS/7781777
   download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
   coverage: dense
-  format: MATLAB .mat segmentation per time point (T001_membSeg.mat ...) and AceTree
-    nucleus CSV
+  format: MATLAB .mat segmentation per time point (T001_membSeg.mat ...) and AceTree nucleus CSV
   source: automatic
 ml:
   tasks:
@@ -73,15 +71,95 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T21:59:01Z'
-notes: 'Figshare files: RawMembraneImage.zip (155 MB, 95 membt###.mat stacks in 170704plc1p2/),
-  FinalResults3DMMS.zip (18 MB, 95 T###_membSeg.mat), CD170704plc1p2.csv (5.5 MB)
-  and ReadMe.txt. The segmentations are the output of the authors'' own algorithm
-  (3DMMS), not hand labels; the manual annotations used for evaluation are in the
-  code repository (github.com/cao13jf/3DMMS_public, per ReadMe) and were not checked
-  here. Paper Methods: Leica SP8, acquired 512x712x70 with voxel 0.09x0.09x0.43 um,
-  deconvolved and resized to 205x285x70 before analysis, so the voxel size of the
-  released .mat stacks is not certain and is left null. .mat arrays were not opened.
-  License MIT is the figshare licence field; no license text URL given. 95 time points
-  here vs 240 acquired. Sources checked: figshare record and API, ReadMe, zip listings,
+  last_checked: '2026-10-08T23:30:12Z'
+notes: 'Figshare files: RawMembraneImage.zip (155 MB, 95 membt###.mat stacks in 170704plc1p2/), FinalResults3DMMS.zip
+  (18 MB, 95 T###_membSeg.mat), CD170704plc1p2.csv (5.5 MB) and ReadMe.txt. The segmentations are the
+  output of the authors'' own algorithm (3DMMS), not hand labels; the manual annotations used for evaluation
+  are in the code repository (github.com/cao13jf/3DMMS_public, per ReadMe) and were not checked here.
+  Paper Methods: Leica SP8, acquired 512x712x70 with voxel 0.09x0.09x0.43 um, deconvolved and resized
+  to 205x285x70 before analysis, so the voxel size of the released .mat stacks is not certain and is left
+  null. enricher: .mat arrays opened (MAT v5): raw 256x356x70 uint8, segmentation 205x285x134 instance
+  ids, so labels are on a resampled grid. License MIT is the figshare licence field; no license text URL
+  given. 95 time points here vs 240 acquired. Sources checked: figshare record and API, ReadMe, zip listings,
   paper full text (Europe PMC).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'ReadMe.txt
+
+      CD170704plc1p2.csv                (AceTree nucleus table)
+
+      RawMembraneImage.zip/170704plc1p2/membt001..095.mat    95 (variable "embryo")
+
+      FinalResults3DMMS.zip/170704plc1p2/T001..095_membSeg.mat 95 (variable "membSeg")
+
+      '
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/14487263::170704plc1p2/membt001.mat
+    - https://ndownloader.figshare.com/files/14487260::170704plc1p2/T001_membSeg.mat
+    size_bytes: 1828596
+    description: 'Time point 1: membrane stack and its 3DMMS segmentation.'
+  arrays:
+  - role: raw
+    path_pattern: 170704plc1p2/membt*.mat
+    format: other
+    axes: yxz
+    shape:
+    - 256
+    - 356
+    - 70
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 250
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: MATLAB v5 .mat, variable "embryo", MATLAB dims 256x356x70 (rows, cols, slices); zlib-compressed
+      elements.
+  - role: label
+    path_pattern: 170704plc1p2/T*_membSeg.mat
+    format: other
+    axes: yxz
+    shape:
+    - 205
+    - 285
+    - 134
+    shape_varies: false
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 335
+    encoding: instance-ids
+    classes: null
+    alignment: scaled
+    alignment_notes: 'Variable "membSeg" (MATLAB class double, stored as uint16), dims 205x285x134 vs
+      raw 256x356x70: per the paper the stacks were resized to 205x285 and the membrane stack resampled
+      to 134 slices (linear interpolation on z) before segmentation. Pair by time point: membtNNN.mat
+      <-> TNNN_membSeg.mat.'
+  - role: label
+    path_pattern: CD170704plc1p2.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: points-table
+    classes: null
+    alignment: unknown
+    alignment_notes: AceTree nucleus positions per time point (not opened).
+  notes: 'Listing: figshare API, 4 files, both zips expanded (190 members), 178,969,105 B exact. Samples
+    (2.1 MB): membt001.mat, T001_membSeg.mat (4 distinct values: 0, a background/embryo id and few cells),
+    T095_membSeg.mat (159 distinct, 0-332), parsed with a short MAT v5 reader (numpy + zlib; scipy not
+    installed). Value ranges from these samples. Labels are 3DMMS output, not manual. Voxel size not found
+    for the released arrays: paper gives 0.09x0.09x0.43 um for the 512x712x70 acquisition, resized to
+    205x285x70, but the raw .mat is 256x356x70; checked .mat headers (no calibration), ReadMe, figshare
+    API, paper full text.'
