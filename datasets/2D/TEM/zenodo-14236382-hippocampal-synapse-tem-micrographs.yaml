@@ -2,10 +2,11 @@ schema_version: '1.2'
 id: zenodo-14236382-hippocampal-synapse-tem-micrographs
 title: Synapses in transmission electron micrographs
 short_name: Hippocampal synapse vesicles (2D TEM)
-description: 13 transmission electron micrographs of Schaffer collateral and mossy fiber synapses in mouse organotypic
-  hippocampal slices (20,000x, 0.592 nm pixel), stored as HDF5 with the raw micrograph. A "test" folder carries
-  IMOD synaptic vesicle instance masks and a mask of the annotated area; a "train_unlabeled" folder holds
-  unlabeled micrographs used for domain adaptation. Re-release of Maus et al. 2020 images for SynapseNet.
+description: 13 transmission electron micrographs of Schaffer collateral and mossy fiber synapses in mouse
+  organotypic hippocampal slices (20,000x, 0.592 nm pixel), stored as HDF5 with the raw micrograph. A
+  "test" folder carries IMOD synaptic vesicle instance masks and a mask of the annotated area; a "train_unlabeled"
+  folder holds unlabeled micrographs used for domain adaptation. Re-release of Maus et al. 2020 images
+  for SynapseNet.
 landing_url: https://zenodo.org/records/14236382
 doi: 10.5281/zenodo.14236382
 repository: Zenodo
@@ -28,7 +29,8 @@ imaging:
   channels: 1
   organism:
   - Mus musculus
-  sample: High-pressure-frozen organotypic hippocampal slices, 60 nm thin sections, Schaffer collateral and mossy fiber synapses
+  sample: High-pressure-frozen organotypic hippocampal slices, 60 nm thin sections, Schaffer collateral
+    and mossy fiber synapses
   labels_stains:
   - uranyl acetate
   - lead citrate
@@ -46,7 +48,8 @@ annotations:
   - instance-segmentation
   - organelle
   coverage: partial
-  format: HDF5 datasets raw, labels/vesicles (instance masks) and labels/mask (annotated area), labels only in the test folder
+  format: HDF5 datasets raw, labels/vesicles (instance masks) and labels/mask (annotated area), labels
+    only in the test folder
   source: manual
 ml:
   tasks:
@@ -69,11 +72,92 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-08T02:18:55Z'
+  annotations_verified: true
+  last_checked: '2026-10-08T04:53:00Z'
 notes: 'Zip listed with peek_archive: 13 HDF5 files (4 in test/, 9 in train_unlabeled/), 379 MB uncompressed.
-  Labelled vesicle masks exist only for the 4 test files per the record description (labels not opened); the 9
-  train_unlabeled images are intended for domain adaptation. Pixel size 0.592 nm from the record (20,000x, LEO
-  912 Omega TEM). Very small: 13 images in total. The record zenodo-14236426 (SynapseNet Training Data) ships the same
-  tem_2d.zip file (same size) although its text describes tomograms; the catalog record zenodo-14330011 covers the
-  tomogram data.'
+  Labelled vesicle masks exist only for the 4 test files per the record description (labels not opened);
+  the 9 train_unlabeled images are intended for domain adaptation. Pixel size 0.592 nm from the record
+  (20,000x, LEO 912 Omega TEM). Very small: 13 images in total. The record zenodo-14236426 (SynapseNet
+  Training Data) ships the same tem_2d.zip file (same size) although its text describes tomograms; the
+  catalog record zenodo-14330011 covers the tomogram data. enricher: labels confirmed in a test file (labels/vesicles
+  uint32 instance IDs, labels/mask uint8).'
+technical:
+  method: sample
+  inspected_at: '2026-10-08T04:53:00Z'
+  inspected_urls:
+  - https://zenodo.org/api/records/14236382
+  - https://zenodo.org/api/records/14236382/files/tem_2d.zip/content
+  bytes_downloaded: 39163034
+  size_source: file-listing
+  layout:
+    tree: "tem_2d.zip (376,139,670 B)\n  test/              4 .h5 (raw + labels/vesicles + labels/mask),\
+      \ 39.6-62.5 MB each\n  train_unlabeled/   9 .h5 (raw only per the record), 13.9-22.3 MB each\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/14236382/files/tem_2d.zip/content::test/MF_05646_C-09175-B_000B.h5
+    size_bytes: 39645408
+    description: Smallest labelled test micrograph (7384 x 7371) with its vesicle instances and annotated-area
+      mask in one HDF5 file.
+  arrays:
+  - role: raw
+    path_pattern: '*/*.h5 (raw)'
+    format: hdf5
+    axes: yx
+    shape:
+    - 7384
+    - 7371
+    shape_varies: true
+    dtype: int8
+    compression: gzip
+    value_range:
+    - -128
+    - 127
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: Single 2D micrograph per file, signed 8-bit filling the whole range in the sample;
+      axes yx (2D array).
+  - role: label
+    path_pattern: test/*.h5 (labels/vesicles)
+    format: hdf5
+    axes: yx
+    shape:
+    - 7384
+    - 7371
+    shape_varies: true
+    dtype: uint32
+    compression: gzip
+    value_range:
+    - 0
+    - 218
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Vesicle instances, same shape as raw in the same file; only the 4 test files have
+      labels.
+  - role: label
+    path_pattern: test/*.h5 (labels/mask)
+    format: hdf5
+    axes: yx
+    shape:
+    - 7384
+    - 7371
+    shape_varies: true
+    dtype: uint8
+    compression: gzip
+    value_range:
+    - 0
+    - 1
+    normalization: unknown
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: Annotated-area mask (1 = region where vesicles were annotated), same grid as raw.
+  notes: 'Zenodo listing complete (1 zip, 376,139,670 B; 13 HDF5 members, deflated). Read the smallest
+    test member whole (39,163,034 B compressed): raw (7384, 7371) int8 [-128, 127], labels/vesicles uint32
+    0..218, labels/mask uint8 {0, 1}, gzip chunks 231 x 231; no HDF5 attributes. Train_unlabeled files
+    not opened (raw only per the record). Values from one file. Zip and member are direct Zenodo links
+    (TensorSwitch usable: true). Pixel size 0.592 nm is the record''s value (Zenodo description); not
+    stored in the files.'
