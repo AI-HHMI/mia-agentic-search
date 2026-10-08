@@ -1,12 +1,13 @@
 schema_version: '1.2'
 id: s-biad1637-spheroid-brightfield-segmentation
-title: 'Brightfield images of treated and untreated FaDu/SAS tumour spheroids with manual spheroid segmentation masks'
+title: Brightfield images of treated and untreated FaDu/SAS tumour spheroids with manual spheroid segmentation
+  masks
 short_name: Tumour spheroid segmentation (brightfield)
-description: 'Brightfield time-series images of head and neck cancer (FaDu, SAS) multicellular tumour spheroids
+description: Brightfield time-series images of head and neck cancer (FaDu, SAS) multicellular tumour spheroids
   after X-ray irradiation and hyperthermia, with binary PNG segmentation masks drawn by biological experts.
   Includes 991 training/validation images and 104 hold-out test images (FaDu, 883/108/104 split), 200
-  clean-spheroid images and an independent extended set of 6,574 FaDu and SAS images with masks from a second
-  annotator. Zeiss Axiovert 200M, 1,300 x 1,030 px at 2.04 um/pixel.'
+  clean-spheroid images and an independent extended set of 6,574 FaDu and SAS images with masks from a
+  second annotator. Zeiss Axiovert 200M, 1,300 x 1,030 px at 2.04 um/pixel.
 landing_url: https://www.ebi.ac.uk/biostudies/BioImages/studies/S-BIAD1637
 doi: 10.6019/S-BIAD1637
 repository: BioImageArchive
@@ -35,7 +36,8 @@ imaging:
   channels: 1
   organism:
   - Homo sapiens
-  sample: FaDu and SAS head and neck squamous cell carcinoma tumour spheroids, untreated or after X-ray and hyperthermia treatment
+  sample: FaDu and SAS head and neck squamous cell carcinoma tumour spheroids, untreated or after X-ray
+    and hyperthermia treatment
   labels_stains: []
 data:
   formats:
@@ -50,7 +52,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: PNG masks in labels/ folders paired by file name with images/ (traing_validation, test, clean_spheroids, extended_data)
+  format: Binary PNG masks (uint8, 0/1) in labels/ folders paired by file name with images/ (data/traing_validation,
+    data/test, data/clean_spheroids, extended_data)
   source: manual
 ml:
   tasks:
@@ -68,15 +71,111 @@ provenance:
   - https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD1637
   - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/637/S-BIAD1637
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12056507/fullTextXML
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/637/S-BIAD1637/Files/extended_data/README.txt
   confidence: 0.85
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T10:15:00Z'
-notes: 'File listing (HTTP index of the BioStudies FTP, sizes rounded): traing_validation 991, test 104, clean_spheroids
-  200 and extended_data 6,574 images, each with a PNG label of the same count; size_bytes is the listing total.
-  Paper (open access, Methods and Data availability read) gives 1,095 FaDu spheroids segmented by expert H1
-  (883/108/104 split), the 6,574-image extended set segmented by a second expert, and 2.04 um/pixel;
-  it states images were converted from 16-bit to 8-bit for training. Label encoding of the masks was not
-  inspected. The PNG masks are assumed binary (spheroid vs background) from the paper description.'
+  last_checked: '2026-10-08T10:30:00Z'
+notes: 'File listing (HTTP index of the BioStudies FTP, sizes rounded): data/traing_validation 991 images
+  / 990 labels, data/test 104/104, data/clean_spheroids 200/200, extended_data 6,574/6,574. Paper (Methods,
+  Data availability): 1,095 FaDu spheroids segmented by expert H1 (883/108/104 split), the extended set
+  by a second expert (H2), 2.04 um/pixel; images converted from 16-bit to 8-bit for training. enricher:
+  masks sampled as binary 0/1 (was assumed); data/ images are 8-bit, extended_data images 16-bit originals
+  (extended_data/README.txt).'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "S-BIAD1637/Files/  15,747 files, ~11.52 GB (HTTP index, rounded sizes)\n  data/\n    traing_validation/images/\
+      \  991 *.png   (8-bit)\n    traing_validation/labels/  990 *.png\n    test/images/             \
+      \  104 *.png   (1_t.png ...)\n    test/labels/               104 *.png\n    clean_spheroids/images/\
+      \    200 *.png\n    clean_spheroids/labels/    200 *.png\n  extended_data/\n    images/   6,574\
+      \ *.png  (16-bit, e.g. FaDu__SM_ID_20190315_FaDu_plate104__07B__01.04.2019.png)\n    labels/   6,574\
+      \ *.png\n    README.txt, plate_chiffre.xlsx\n  extended_data{,_annotation}.{json,tsv}\n  training_validation_test{,_annotation}.{json,tsv}"
+    n_files: 15747
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/637/S-BIAD1637/Files/data/test/images/1_t.png
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/637/S-BIAD1637/Files/data/test/labels/1_t.png
+    size_bytes: 742254
+    description: one hold-out test image (1_t.png) and its binary mask
+  arrays:
+  - role: raw
+    path_pattern: data/*/images/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1030
+    - 1300
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: 'paper: converted from 16-bit to 8-bit for training; sample fills 0-255'
+  - role: label
+    path_pattern: data/*/labels/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1030
+    - 1300
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 1
+    normalization: none
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: same file name in images/ and labels/ of the same split folder; same shape
+  - role: raw
+    path_pattern: extended_data/images/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1030
+    - 1300
+    shape_varies: false
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 350
+    - 1250
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 'README: original resolution and colour depth (16-bit)'
+  - role: label
+    path_pattern: extended_data/labels/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1030
+    - 1300
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 1
+    normalization: none
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'README: annotations in labels/ with the same name (8-bit); same shape'
+  notes: 'Listed Files/ with tools/listing.py (FTP timed out, HTTP index: 15,747 files, 11,523,179,715
+    B with rounded sizes, so size_source estimated, not a confirmed listing). Probed data/test 1_t.png
+    image + label and one extended_data image (all PNG 1030x1300 grey, deflate). Sampled two pairs (2.4
+    MB): data/test 1_t image uint8 0-255, mask 0/1; extended FaDu plate104 07B image uint16 350-1250 (12-bit
+    range), mask 0/1; shapes match. Value ranges are from single samples. data/traing_validation has 991
+    images but 990 labels. No archive is offered: the dataset is per-file on ftp.ebi.ac.uk (direct https
+    links, range requests ok); data.download_url stays the study folder. Voxel size 2040 nm lateral from
+    the paper; z not applicable (2D).'
