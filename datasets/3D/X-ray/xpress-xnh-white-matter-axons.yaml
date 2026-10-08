@@ -1,10 +1,11 @@
 schema_version: '1.2'
 id: xpress-xnh-white-matter-axons
-title: 'XPRESS: X-ray Projectomic Reconstruction, Extracting Segmentation with Skeletons (mouse white-matter axons, XNH)'
+title: 'XPRESS: X-ray Projectomic Reconstruction, Extracting Segmentation with Skeletons (mouse white-matter
+  axons, XNH)'
 short_name: XPRESS mouse white-matter axons (X-ray XNH)
-description: Three 1200^3-voxel (33.3 nm) X-ray nano-holography volumes (training, validation, test) of mouse cortical white
-  matter with manual axon skeleton annotations (1815 axons) and limited voxel-wise labels for the training volume; a
-  grand-challenge benchmark for 3D myelinated axon instance segmentation.
+description: Three 1200^3-voxel (33.3 nm) X-ray nano-holography volumes (training, validation, test) of
+  mouse cortical white matter with manual axon skeleton annotations (1815 axons) and limited voxel-wise
+  labels for the training volume; a grand-challenge benchmark for 3D myelinated axon instance segmentation.
 landing_url: https://xpress.grand-challenge.org
 doi: null
 repository: GrandChallenge
@@ -26,7 +27,7 @@ imaging:
     x: 33.3
     y: 33.3
     z: 33.3
-  channels: null
+  channels: 1
   organism:
   - Mus musculus
   sample: mouse cortical white matter, myelinated axons (X-ray nano-holography)
@@ -45,8 +46,8 @@ annotations:
   - skeleton
   - instance-segmentation
   coverage: partial
-  format: 'manual axon skeletons as NumPy archives (XPRESS_training_skels.npz, XPRESS_validation_skels.npz); limited voxel-wise
-    labels for the training volume as HDF5 (xpress-training-voxel-labels.h5)'
+  format: manual axon skeletons as NumPy archives (XPRESS_training_skels.npz, XPRESS_validation_skels.npz);
+    limited voxel-wise labels for the training volume as HDF5 (xpress-training-voxel-labels.h5)
   source: manual
 ml:
   tasks:
@@ -71,11 +72,83 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-08T07:27:50Z'
-notes: 'Files are GitHub release assets (htem/xpress-challenge-files v1.0): training raw 1,532,488,158 B, training voxel labels 1,919,638 B,
-  validation raw 1,511,816,554 B, test raw 1,457,181,029 B, training/validation skeletons 2,525,185 B / 472,951 B. Test
-  ground truth is not public (scoring by organisers); validation has skeletons but no voxel labels. Per the paper: three
-  1200^3 volumes at 33.3 nm isotropic, skeleton annotation of 1100^3 (training, test) and 700^3 (validation) subvolumes,
-  1815 axons in total; voxel-wise ground truth only for a limited training subset. No data license stated on the challenge
-  page, the repo README or the paper; the page points to the Grand Challenge terms of service only, so license is unknown.
-  HDF5 internals (dataset names, dtype, axes) not inspected (reading headers not done); size_bytes is the sum of the six release assets. Source: arXiv 2302.03819 (ar5iv) and challenge page.'
+  last_checked: '2026-10-08T07:54:31Z'
+notes: 'Files are 6 GitHub release assets (htem/xpress-challenge-files v1.0); size_bytes is their sum.
+  Test ground truth is not public; validation has skeletons but no voxel labels. Paper: three 1200^3 volumes
+  at 33.3 nm isotropic, skeletons in 1100^3 (training, test) and 700^3 (validation) subvolumes, 1815 axons;
+  voxel-wise ground truth only for a limited training subset. No data license on the challenge page, repo
+  README or paper (only the Grand Challenge terms of service), so license is unknown. Source: arXiv 2302.03819
+  and challenge page. enricher: HDF5 read: volumes/raw 1200^3 uint8, volumes/labels 200^3 uint32 at offset
+  16500 nm, resolution attr 33 nm (paper 33.3 kept). The .npz skeleton files are pickled networkx Graphs,
+  not NumPy archives; reading them needs unpickling (untrusted, not done).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "github.com/htem/xpress-challenge-files/releases/download/v1.0/  6 assets, 4,506,403,515 B\n\
+      \  xpress-training-raw.h5            1,532,488,158 B\n  xpress-training-voxel-labels.h5      1,919,638\
+      \ B\n  xpress-validation-raw.h5          1,511,816,554 B\n  xpress-test-raw.h5                1,457,181,029\
+      \ B\n  XPRESS_training_skels.npz             2,525,185 B  (pickled networkx Graph)\n  XPRESS_validation_skels.npz\
+      \             472,951 B  (pickled networkx Graph)\n"
+    n_files: 6
+    listing_complete: true
+  sample:
+    urls:
+    - https://github.com/htem/xpress-challenge-files/releases/download/v1.0/xpress-training-raw.h5
+    - https://github.com/htem/xpress-challenge-files/releases/download/v1.0/xpress-training-voxel-labels.h5
+    size_bytes: 1534407796
+    description: Training volume and its voxel labels (smallest raw/label pair)
+  arrays:
+  - role: raw
+    path_pattern: xpress-*-raw.h5 (volumes/raw)
+    format: hdf5
+    axes: null
+    shape:
+    - 1200
+    - 1200
+    - 1200
+    shape_varies: false
+    dtype: uint8
+    compression: other
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: HDF5 dataset volumes/raw, chunks 38x75x75, LZF; attrs offset [0,0,0], resolution
+      [33,33,33]. Axis order not stated (isotropic volume).
+  - role: label
+    path_pattern: xpress-training-voxel-labels.h5 (volumes/labels)
+    format: hdf5
+    axes: null
+    shape:
+    - 200
+    - 200
+    - 200
+    shape_varies: false
+    dtype: uint32
+    compression: other
+    value_range:
+    - 0
+    - 149452
+    encoding: instance-ids
+    alignment: offset
+    alignment_notes: 'volumes/labels, chunks 25^3, LZF; attrs offset [16500,16500,16500] (nm, = voxel
+      500 at 33 nm) and resolution [33,33,33]: a 200^3 crop inside the training raw volume. 51 axon ids
+      + 0 in the file; 43.75% of voxels labelled.'
+  - role: label
+    path_pattern: XPRESS_*_skels.npz
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    encoding: graph
+    alignment: unknown
+    alignment_notes: Despite the .npz name these are Python pickles of networkx.classes.graph.Graph (first
+      bytes); reading them requires unpickling, which the enricher does not do. Skeleton node coordinates
+      and units not checked.
+  notes: 'Listing: the 6 release assets linked on xpress.grand-challenge.org, each size from a download
+    check (exact), 4,506,403,515 B. Read with a scratch script (fsspec + h5py): training voxel labels
+    in full (1.9 MB): uint32 200^3, 52 unique values incl. 0, max id 149,452; training raw header only:
+    uint8 1200^3. First 64 B of XPRESS_training_skels.npz: pickle protocol 3 of networkx Graph. HDF5 compression
+    is LZF (schema has no lzf value, so other). Voxel size: paper 33.3 nm isotropic; HDF5 resolution attribute
+    33.'
