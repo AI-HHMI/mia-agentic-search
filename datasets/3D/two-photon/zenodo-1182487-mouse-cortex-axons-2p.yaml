@@ -1,0 +1,151 @@
+schema_version: '1.2'
+id: zenodo-1182487-mouse-cortex-axons-2p
+title: Dataset of Axon Segmentation and Centerlines, Acquired using a Two-photon Microscope in the Live
+  Mouse Cortex
+short_name: Mouse cortex axon segmentation (two-photon)
+description: 20 two-photon image stacks of axons in the live mouse cortex (subset of images from Bass
+  et al. 2017) with manual binary axon segmentation masks and manual centerline tracings (SWC); also maximum-projection
+  JPEGs.
+landing_url: https://zenodo.org/records/1182487
+doi: 10.5281/zenodo.1182487
+repository: Zenodo
+accession: '1182487'
+authors: []
+publications:
+- title: Detection of axonal synapses in 3D two-photon images
+  doi: 10.1371/journal.pone.0183309
+  url: https://doi.org/10.1371/journal.pone.0183309
+date_published: null
+imaging:
+  modality:
+  - two-photon
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 147
+    y: 147
+    z: 1000
+  channels: null
+  organism:
+  - Mus musculus
+  sample: axons in live mouse cortex (in vivo)
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 126080403
+  n_items: 20
+  access: open
+  download_url: https://zenodo.org/records/1182487/files/dataset.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  - skeleton
+  coverage: dense
+  format: binary mask TIFF (Labels- binary) and SWC centerline tracings (Labels- tracing)
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  - other
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://creativecommons.org/licenses/by-sa/4.0/
+license:
+  spdx: CC-BY-SA-4.0
+  url: null
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-08T04:38:00Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/1182487
+  - https://zenodo.org/records/1182487/files/dataset.zip
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5584757/fullTextXML
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T06:25:00Z'
+notes: 'Zip (126 MB) lists 20 Images- TIFF stacks, 20 Labels- binary TIFFs, 20 SWC tracings and 20 MAX
+  JPEGs. Voxel size (0.147 um xy, 1 um z) from the Zenodo description and paper Methods. Authors not in
+  the fetched record text. Tasks other = centerline tracing. Zenodo landing page was read via its API
+  record. enricher: the binary masks are 2D (512x512, one per stack) and the sampled SWC has z = 0, so
+  labels are 2D annotations of 3D stacks (24 x 512 x 512 uint16 in 01.tif), not 3D masks; OME-XML in the
+  stack confirms 0.147027 x 0.147027 x 1 um.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  dataset.zip (Zenodo 1182487)        1 file  126.1 MB, 80 members, 308.6 MB unpacked\n \
+      \ Images- TIFF/     20 .tif  (01.tif ... 20.tif, z-stacks)\n  Images- MAX/      20 .jpg  (maximum\
+      \ projections)\n  Labels- binary/   20 .tif  (2D masks, 01.tif ...)\n  Labels- tracing/  20 .swc\
+      \  (Vaa3D centerlines)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/1182487/files/dataset.zip::Images- TIFF/01.tif
+    - https://zenodo.org/records/1182487/files/dataset.zip::Labels- binary/01.tif
+    size_bytes: 12891424
+    description: Stack 01 (24 x 512 x 512 uint16) and its 2D binary axon mask.
+  arrays:
+  - role: raw
+    path_pattern: Images- TIFF/*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 24
+    - 512
+    - 512
+    shape_varies: true
+    dtype: uint16
+    compression: unknown
+    value_range:
+    - 0
+    - 2728
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: ImageJ hyperstack (series axes ZYX, slices=24) with the original Prairie View OME-XML
+      per plane; z count may differ per stack.
+  - role: label
+    path_pattern: Labels- binary/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 255
+      name: axon
+    alignment: unknown
+    alignment_notes: Same file number as the stack (01.tif <-> 01.tif). The mask is 2D with the stack's
+      y,x size, so it is a projection-level annotation, not per z plane (which projection is not stated;
+      Images- MAX holds the max projections).
+  - role: label
+    path_pattern: Labels- tracing/*.swc
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    encoding: graph
+    classes: null
+    alignment: unknown
+    alignment_notes: Vaa3D SWC centerlines (id, type, x, y, z, radius, parent); z = 0 in the rows read
+      from 01.swc, coordinates in pixels.
+  notes: 'listing.py (Zenodo record, zip expanded): 1 file, 126,080,403 bytes, 80 members, exact. probe.py:
+    Labels- binary/01.tif 512x512 uint8 uncompressed imagej; Images- TIFF/01.tif could not be probed (deflated
+    member). Sample via read_member + tifffile (12,891,424 bytes): stack 01 24x512x512 uint16, 0-2728
+    (ImageJ min/max 0/2728), mask {0,255}. normalization none: the OME-XML is the Prairie View acquisition
+    metadata and values sit low in the uint16 range (inferred). OME-XML: PhysicalSizeX/Y 0.147027 um,
+    PhysicalSizeZ 1 um, SizeZ 24. One sample only.'
