@@ -26,8 +26,11 @@ imaging:
   - spinning-disk
   - confocal
   dimensionality: 3D
-  voxel_size_nm: null
-  channels: null
+  voxel_size_nm:
+    x: 330
+    y: 330
+    z: 1000
+  channels: 4
   organism:
   - Caenorhabditis elegans
   sample: L4 C. elegans (NeuroPAL strains OH15495 and OH15500) head ganglion, immobilised in an array microfluidic device
@@ -35,7 +38,7 @@ imaging:
   - NeuroPAL multicolour neuron labels
 data:
   formats:
-  - other
+  - hdf5
   size_bytes: 478075700
   n_items: 9
   access: open
@@ -66,14 +69,70 @@ provenance:
   - https://api.dandiarchive.org/api/dandisets/000714/versions/draft/info/
   - https://api.dandiarchive.org/api/dandisets/000714/versions/draft/assets/
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8032398/fullTextXML
+  - https://api.dandiarchive.org/api/assets/1433e659-efe7-4abc-a3a8-d384e5686e2f/download/
   confidence: 0.7
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-08T19:35:00Z'
+  annotations_verified: true
+  last_checked: '2026-10-08T22:35:00Z'
 notes: 'Checked DANDI API record and asset listing (9 NWB files, 478 MB, CC-BY-4.0) and the eLife paper full text
   (Methods: spinning-disk 40x/1.3 NA or Opterra II swept-field 40x/0.75 NA; z spacing 0.5 or 1 um; NeuroPAL OH15495/OH15500
-  ground truth, identities annotated in Vaa3D). Voxel size per animal is not stated on the record or in the paper Methods;
-  NWB contents were not opened, so annotation files are unverified. NWB is not in the format enum, hence other. Only a
+  ground truth, identities annotated in Vaa3D). enricher: voxel size 0.33x0.33x1.0 um from the grid_spacing of each NWB file (all 9, was null); NWB is HDF5, so formats hdf5 (was other); 4 channels (mNeptune 2.5, CyOFP1, mTagBFP2, TagRFP-T); neuron ROIs with ID labels seen. Only a
   draft version is listed. Differs from DANDI 000715 and 000472 (other NeuroPAL datasets).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      sub-1/sub-1_ophys.nwb .. sub-9/sub-9_ophys.nwb   9 files  49-57 MB each  (NWB = HDF5)
+        acquisition/NeuroPALImageRaw/data           (x, y, z, c) uint16, 4 channels
+        processing/NeuroPAL/NeuroPALSegmentation/NeuroPALNeurons/
+          voxel_mask (x, y, z, weight per ROI), ID_labels (neuron names), id
+        general/optophysiology/NeuroPALImVol/grid_spacing  [0.33, 0.33, 1.0] um
+    n_files: 9
+    listing_complete: true
+  sample:
+    urls:
+    - https://api.dandiarchive.org/api/assets/1433e659-efe7-4abc-a3a8-d384e5686e2f/download/
+    size_bytes: 49172084
+    description: sub-8 NWB file (one animal), NeuroPAL volume 563x388x28x4 and 118 labelled neuron ROIs
+  arrays:
+  - role: raw
+    path_pattern: sub-*/sub-*_ophys.nwb (acquisition/NeuroPALImageRaw/data)
+    format: hdf5
+    axes: xyzc
+    shape:
+    - 563
+    - 388
+    - 28
+    - 4
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 374
+    - 65535
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: NWB stores the volume x, y, z, channel (grid_spacing is listed x, y, z); z depth 28-31 and xy 563x388 or 565x408 across animals.
+  - role: label
+    path_pattern: sub-*/sub-*_ophys.nwb (processing/NeuroPAL/NeuroPALSegmentation/NeuroPALNeurons/voxel_mask)
+    format: hdf5
+    axes: null
+    shape:
+    - 118
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: points-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: Per-ROI voxel lists (x, y, z, weight) in voxel indices of the raw volume; ID_labels with ID_labels_index give each ROI's neuron name. 113-125 ROIs per animal.
+  notes: 'Listed the 9 DANDI assets (API, exact sizes, 478,075,700 B). Downloaded sub-8 (49.2 MB) and read it with h5py:
+    NeuroPALImageRaw/data (563,388,28,4) uint16 uncompressed, values 374-65535 (saturated at the top; one sample); RGBW
+    channel order [0,1,2,3]; NeuroPALNeurons voxel_mask of 118 ROIs (first rows like (239,132,19,1.0)), ID_labels as
+    strings. Read grid_spacing, raw shape and ROI count of the other 8 files by range: all 0.33,0.33,1.0 um; shapes
+    563x388 or 565x408 with 29-31 z planes; 113-125 ROIs. Axes xyzc follow NWB order (grid_spacing x,y,z and voxel_mask
+    x,y,z); the dataset itself has no axis attribute. The DANDI download URL redirects to dandiarchive.s3.amazonaws.com.'
