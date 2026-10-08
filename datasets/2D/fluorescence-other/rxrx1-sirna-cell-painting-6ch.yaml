@@ -33,7 +33,7 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: 49039640485
+  size_bytes: 49092920838
   n_items: 125510
   access: open
   download_url: https://storage.googleapis.com/rxrx/rxrx1/rxrx1-images.zip
@@ -61,16 +61,82 @@ provenance:
   - https://www.rxrx.ai/rxrx1
   - https://storage.googleapis.com/rxrx/rxrx1/rxrx1-images.zip
   - https://storage.googleapis.com/rxrx/rxrx1/rxrx1-metadata.zip
+  - https://storage.googleapis.com/rxrx/rxrx1/rxrx1-dl-embeddings.zip
+  - https://arxiv.org/pdf/2301.05768v1
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T16:43:35Z'
-notes: rxrx1-images.zip (HTTP HEAD 49,039,640,485 B) holds 753,060 PNGs = 125,510 sites x 6 channels, paths rxrx1/images/<cell
+  last_checked: '2026-10-08T18:20:00Z'
+notes: 'rxrx1-images.zip (HTTP HEAD 49,039,640,485 B) holds 753,060 PNGs = 125,510 sites x 6 channels, paths rxrx1/images/<cell
   type-experiment>/Plate<n>/<well>_s<site>_w<channel>.png. rxrx1-metadata.zip holds metadata.csv, README and LICENSE (CC BY-NC-SA
   4.0; non-commercial). The README says 1,138 siRNAs, the web page 1,108 classes; the README is used. Labels are perturbation
   identities (classification of the siRNA), not pixel annotations. Species inferred from the cell-line names (HUVEC, RPE,
   HepG2, U2OS), which the page does not state as human. Pixel size and microscope are not stated on the page or README; images
   are a 512x512 center crop of 2048x2048 originals downsampled 2x per the page. The RxRx1 paper (Taylor et al. 2019, workshop)
-  was not found in Europe PMC, so no publication is listed. Page and README disagree on size (46-47 GB vs ~296 GB originals).
+  was not found in Europe PMC, so no publication is listed. enricher: size = file listing of the 3 offered zips (images, metadata,
+  DL embeddings), 49,092,920,838 B. enricher: voxel size not stated (page, README, arXiv 2301.05768 checked).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "rxrx1-images.zip (49,039,640,485 B, 753,062 members, stored)\n  rxrx1/LICENSE, rxrx1/README.md\n  rxrx1/images/<CELLTYPE>-<NN>/Plate<1-4>/<well>_s<1|2>_w<1-6>.png\n\
+      \    51 experiment folders x 4 plates:\n    HUVEC-## (24 exp)   354,300 PNG  22.0 GB\n    HEPG2-## (11 exp)   162,564\
+      \ PNG  11.5 GB\n    RPE-##   (11 exp)   162,420 PNG   9.9 GB\n    U2OS-##  (5 exp)     73,776 PNG   5.4 GB\nrxrx1-metadata.zip\
+      \ (10.1 MB uncompressed)\n  rxrx1/LICENSE, rxrx1/README.md, rxrx1/metadata.csv\nrxrx1-dl-embeddings.zip (deep-learning\
+      \ embeddings CSV, not images)\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://storage.googleapis.com/rxrx/rxrx1/rxrx1-images.zip::rxrx1/images/HEPG2-08/Plate1/B03_s1_w1.png
+    - https://storage.googleapis.com/rxrx/rxrx1/rxrx1-images.zip::rxrx1/images/HEPG2-08/Plate1/B03_s1_w2.png
+    - https://storage.googleapis.com/rxrx/rxrx1/rxrx1-images.zip::rxrx1/images/HEPG2-08/Plate1/B03_s1_w3.png
+    - https://storage.googleapis.com/rxrx/rxrx1/rxrx1-images.zip::rxrx1/images/HEPG2-08/Plate1/B03_s1_w4.png
+    - https://storage.googleapis.com/rxrx/rxrx1/rxrx1-images.zip::rxrx1/images/HEPG2-08/Plate1/B03_s1_w5.png
+    - https://storage.googleapis.com/rxrx/rxrx1/rxrx1-images.zip::rxrx1/images/HEPG2-08/Plate1/B03_s1_w6.png
+    - https://storage.googleapis.com/rxrx/rxrx1/rxrx1-metadata.zip::rxrx1/metadata.csv
+    size_bytes: 10492068
+    description: The 6 channel PNGs of one site (HEPG2-08, plate 1, well B03, site 1) plus metadata.csv (10,094,584 B) with
+      its siRNA label (zip members).
+  arrays:
+  - role: raw
+    path_pattern: rxrx1/images/*/Plate*/*_s*_w*.png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 127
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One grayscale PNG per channel (w1-w6); the six files <well>_s<site>_w1..w6.png of a site form one 6-channel
+      image (README). Downsampled 2x from 2048x2048 and center-cropped (page, paper).
+  - role: label
+    path_pattern: rxrx1/metadata.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'Per-site classification table (11 columns: site_id, well_id, cell_type, dataset, experiment, plate,
+      well, site, well_type, sirna, sirna_id); site_id <experiment>_<plate>_<well>_<site> maps to images/<experiment>/Plate<plate>/<well>_s<site>_w*.png.
+      sirna_id is the class (integer, 1138 = EMPTY control).'
+  notes: 'Listing: 3 zips the page offers, 49,092,920,838 B total, complete; images zip central directory read once (92 MB):
+    753,060 PNG + LICENSE + README, all stored (no zip compression), 51 experiments. Sample: HEPG2-08/Plate1/B03_s1_w1.png
+    512x512 uint8 mode L, min 0 max 127, mean 3.5, p99 23 (one sample; 8-bit export of 16-bit originals per page/paper, scaling
+    not documented, so normalization unknown). metadata.csv header and first 2,500 rows read (peek limit). Channel-to-stain
+    order (w1..w6) is not stated explicitly; the page lists nucleus, ER, actin, nucleolus, mitochondria, Golgi. Host storage.googleapis.com
+    is not on the TensorSwitch fetch allowlist (range requests work). Labels are a classification table, not pixel arrays,
+    so there is no label array to convert. Voxel size not found: checked rxrx.ai page, README in both zips, PNG files (no
+    calibration), arXiv 2301.05768 full text.'
