@@ -1,0 +1,152 @@
+schema_version: '1.2'
+id: zenodo-14987478-rpe1-fucci-cell-cycle-timelapse
+title: Time-Lapse Microscopy of Cycling RPE1 Cells with Brightfield and H2B Imaging, Annotated with Cell
+  Cycle States from integrated FUCCI Intensities
+short_name: RPE1 cell-cycle state tracks (brightfield/H2B)
+description: Single-cell time-lapse tracks of human FUCCI RPE1 cells imaged every 5 min (72 h, PerkinElmer
+  Operetta, 20x/0.8 NA widefield). Nuclei were segmented with a StarDist model on the H2B channel and
+  tracked with TrackMate; each full cell-cycle (M to M) track is stored as 64x64 crops centred on the
+  nucleus in brightfield and H2B, with per-track label arrays derived from normalised, log-transformed
+  FUCCI (Cdt1/Geminin) intensities. 5,188 training tracks, 358 control test tracks and 73 drug-treated
+  test tracks, plus trained model weights.
+landing_url: https://zenodo.org/records/14987478
+doi: 10.5281/zenodo.14987478
+repository: Zenodo
+accession: null
+authors:
+- Louis-Alexandre Leger
+- Maxine Leonardi
+- Andrea Salati
+- Felix Naef
+- Martin Weigert
+publications: []
+date_published: '2025-03-01'
+imaging:
+  modality:
+  - brightfield
+  - widefield
+  dimensionality: 2D+t
+  voxel_size_nm:
+    x: 597.98
+    y: 597.98
+    z: null
+  channels: 2
+  organism:
+  - Homo sapiens
+  sample: hTERT RPE1 cells with FUCCI reporters (Cdt1-red, Geminin-green) and H2B far-red nuclear marker,
+    live time-lapse, drug-treated and untreated
+  labels_stains:
+  - H2B (far red)
+  - FUCCI Cdt1 (red)
+  - FUCCI Geminin (green)
+data:
+  formats:
+  - other
+  size_bytes: 18811240408
+  n_items: 5619
+  access: open
+  download_url: https://zenodo.org/records/14987478
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  - tracking
+  coverage: dense
+  format: 'NumPy .npy per track: <split>/labels/<id>.npy (float16, 2 x T x 1, normalised log FUCCI Cdt1/Geminin
+    signal per timepoint in [0,1]) paired with <split>/images/<id>.npy (float16, T x 2 x 64 x 64) for
+    train, test and test_drugged'
+  source: automatic
+ml:
+  tasks:
+  - classification
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-08T03:31:56Z'
+  evidence_urls:
+  - https://zenodo.org/records/14987478
+  - https://zenodo.org/api/records/14987478
+  - https://zenodo.org/api/records/14987478/files/test.zip/content
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T05:20:00Z'
+notes: 'Files: train.zip (5,188 tracks), test.zip (358), test_drugged.zip (73), models.zip (4 Lightning
+  .ckpt checkpoints, not data). n_items = 5,619 tracks. Pixel size 0.5979761 um from the Zenodo description.
+  No companion paper found in Europe PMC/Crossref, so none is listed; labels come from an automatic pipeline
+  (StarDist + TrackMate + FUCCI intensity normalisation), hence source: automatic. The label is a per-timepoint
+  continuous cell-cycle signal, which fits no schema type exactly; classification used. enricher: listing
+  and .npy headers confirm images and labels in every split (annotations.format updated with shapes);
+  .npy is not a listed format, so formats stays other.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  Zenodo 14987478                         4 files  18.8 GB  .zip\n  train.zip/train/images/\
+      \                5188 .npy  19.6 GB\n  train.zip/train/labels/                5188 .npy   5.4 MB\n\
+      \  test.zip/test/{images,labels}/          358 + 358 .npy  (1.4 GB)\n  test_drugged.zip/test_drugged/{images,labels}/\
+      \  73 + 73 .npy  (547 MB)\n  models.zip/models/{bf_mamba,bf_mlp,bf_transformer,h2b_transformer}/\
+      \  config.yaml, logs/.../checkpoints/*.ckpt (~148 MB each)\n"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/14987478/files/test_drugged.zip/content::test_drugged/images/0304.581.npy
+    - https://zenodo.org/api/records/14987478/files/test_drugged.zip/content::test_drugged/labels/0304.581.npy
+    size_bytes: 4441404
+    description: 'Smallest drug-treated test track 0304.581: 271 timepoints of 2x64x64 crops and its 2x271x1
+      label array.'
+  arrays:
+  - role: raw
+    path_pattern: '*.zip/*/images/*.npy'
+    format: other
+    axes: null
+    shape:
+    - 271
+    - 2
+    - 64
+    - 64
+    shape_varies: true
+    dtype: float16
+    compression: none
+    value_range:
+    - -9.390625
+    - 9.984375
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One .npy per track (name <id>.npy); first axis is the track length (varies), then
+      2 crops (brightfield and H2B per the description) of 64x64 centred on the nucleus. Axis names are
+      not stored in the file.
+  - role: label
+    path_pattern: '*.zip/*/labels/*.npy'
+    format: other
+    axes: null
+    shape:
+    - 2
+    - 271
+    - 1
+    shape_varies: true
+    dtype: float16
+    compression: none
+    value_range:
+    - 0
+    - 1
+    encoding: other
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same file name in the sibling labels/ folder. Two signals (normalised, log-transformed
+      FUCCI Cdt1 and Geminin intensity per the description) per timepoint; the track length matches the
+      image file (271 in the sample).
+  notes: 'listing.py (Zenodo record, zips expanded): 4 files, 18,811,240,408 bytes, 11,261 members, exact.
+    Sample via read_member + numpy (allow_pickle=False), 4,441,404 bytes: image 0304.581.npy float16 (271,2,64,64),
+    values -9.39 to 9.98, mean ~0 (looks standardised, not stated); label (2,271,1) float16 in [0,1],
+    475 unique values. One sample only. Voxel size x/y 597.98 nm from the Zenodo description (1 pixel
+    = 0.5979761 um), no z for 2D+t.'
