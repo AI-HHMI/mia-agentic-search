@@ -23,10 +23,7 @@ imaging:
   modality:
   - histology-WSI
   dimensionality: 2D
-  voxel_size_nm:
-    x: 500
-    y: 500
-    z: null
+  voxel_size_nm: null
   channels: 3
   organism:
   - Homo sapiens
@@ -46,7 +43,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: Cancer-type label encoded in the folder structure [cancer_type]/[resolution 0-5]/[TCGA barcode]/[region]-[number]-[pixel resolution].jpg
+  format: Cancer-type label encoded in the folder structure [cancer_type]/[resolution 0-5]/[TCGA barcode]/[region]-[number]-[pixel
+    resolution].jpg
   source: manual
 ml:
   tasks:
@@ -64,18 +62,59 @@ provenance:
   - https://zenodo.org/api/records/5889558
   - https://zenodo.org/api/records/5889558/files/Cholangiocarcinoma.zip/content
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1016%2Fj.celrep.2022.110424%22&format=json&resultType=core&pageSize=3
+  - https://zenodo.org/records/5889558/files/LICENSE
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T09:30:00Z'
+  last_checked: '2026-10-08T11:40:00Z'
 notes: 'License is custom: the Zenodo page states CC-BY-NC-SA 4.0 for non-commercial use and asks commercial
-  users to contact the authors; the record metadata id is other-nc; the 314-byte LICENSE file was not
-  read. Paper (Cell Reports 2022) is not open access, so only the abstract was read; details come from
-  the Zenodo description. The per-image label is the cancer type in the folder name, not region-level
-  annotation; patches are tumour regions chosen by two pathologists. Only Cholangiocarcinoma.zip was
-  listed with peek_archive (5,400 JPEGs, folders 0 to 5 for magnification level). Pixel size is given
-  as a range 0.5 to 1.0 um/pixel by level; x/y here is the finest level. Size is the sum reported by
-  the Zenodo search API, not recomputed. A Hugging Face copy (dakomura/tcga-ut) with predefined splits
-  exists; this record is the Zenodo copy. Intermediate-data record 7351798 is derived from it.'
+  users to contact the authors; the record metadata id is other-nc; the LICENSE file says the same. Paper
+  (Cell Reports 2022) is not open access, so only the abstract was read; details come from the Zenodo
+  description. The per-image label is the cancer type in the folder name, not region-level annotation;
+  patches are tumour regions chosen by two pathologists. Only Cholangiocarcinoma.zip was listed with peek_archive
+  (5,400 JPEGs, folders 0 to 5 for magnification level). Pixel size is given as a range 0.5 to 1.0 um/pixel
+  by level; Size is the sum reported by the Zenodo search API, not recomputed. A Hugging Face copy (dakomura/tcga-ut)
+  with predefined splits exists; this record is the Zenodo copy. Intermediate-data record 7351798 is derived
+  from it. enricher: voxel size set null (was 500 nm): levels differ (name suffix 506 at level 0, 1013
+  at level 5).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  33 files, 35,290,269,050 B (Zenodo 5889558)\n  LICENSE (314 B)\n  <Cancer_type>.zip   32\
+      \ zips, 121 MB (Cholangiocarcinoma) and up\n    <Cancer_type>/<level 0-5>/<TCGA slide barcode>/<region>_<n>_<resolution>.jpg\n\
+      \    e.g. Cholangiocarcinoma: 5,400 JPEGs, 900 per level; level 0 suffix _506, level 5 suffix _1013"
+    n_files: 33
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5889558/files/Cholangiocarcinoma.zip::Cholangiocarcinoma/0/TCGA-3X-AAV9-01Z-00-DX1/0_0_506.jpg
+    size_bytes: 18530
+    description: One level-0 patch; the label is the cancer type (zip / top folder).
+  arrays:
+  - role: raw
+    path_pattern: '*/[0-5]/*/*.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: RGB patch; label = cancer type (top folder); level folder 0-5 = magnification; the
+      file-name suffix is the pixel resolution (506 at level 0, 1013 at level 5; the Zenodo text gives
+      0.5-1.0 um/pixel).
+  notes: 'Listed with tools/listing.py (Zenodo): 33 files, 35,290,269,050 B, exact; listed Cholangiocarcinoma.zip
+    with peek_archive (5,400 JPEGs, 900 per level 0-5). Probed and sampled one level-0 patch (18 KB):
+    RGB uint8 256 x 256, 0-255, mean 169; one patch only. normalization none is inferred (8-bit JPEG crops).
+    Read LICENSE: CC BY-NC-SA 4.0 for non-commercial use, contact for commercial use. Voxel size set null:
+    six magnification levels with different pixel sizes in one record.'
