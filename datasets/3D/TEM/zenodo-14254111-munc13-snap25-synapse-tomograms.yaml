@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zenodo-14254111-munc13-snap25-synapse-tomograms
 title: Munc13/SNAP25 Analysis Dataset
 short_name: Munc13/SNAP25 synapse tomograms (TEM)
-description: 101 cropped room-temperature electron tomograms of hippocampal Schaffer collateral synapses from
-  Munc13-1/2 double-knockout and SNAP-25-deficient mouse neurons and matched controls, stored as HDF5 with the raw
-  tomogram, automatic synaptic vesicle segmentation, a manually corrected active-zone segmentation and a presynaptic
-  terminal mask, plus IMOD manual annotations for 20 of the tomograms.
+description: 101 cropped room-temperature electron tomograms of hippocampal Schaffer collateral synapses
+  from Munc13-1/2 double-knockout and SNAP-25-deficient mouse neurons and matched controls, stored as
+  HDF5 with the raw tomogram, automatic synaptic vesicle segmentation, a manually corrected active-zone
+  segmentation and a presynaptic terminal mask, plus IMOD manual annotations for 20 of the tomograms.
 landing_url: https://zenodo.org/records/14254111
 doi: 10.5281/zenodo.14254111
 repository: Zenodo
@@ -31,7 +31,8 @@ imaging:
   channels: 1
   organism:
   - Mus musculus
-  sample: High-pressure-frozen organotypic hippocampal slices, Schaffer collateral synapses, Munc13-1/2 DKO and SNAP-25 KO with matched controls
+  sample: High-pressure-frozen organotypic hippocampal slices, Schaffer collateral synapses, Munc13-1/2
+    DKO and SNAP-25 KO with matched controls
   labels_stains: []
 data:
   formats:
@@ -48,7 +49,8 @@ annotations:
   - semantic-segmentation
   - synapse
   coverage: dense
-  format: HDF5 datasets raw, vesicles, az and mask per tomogram; IMOD .mod files in manual_annotations for 20 tomograms
+  format: HDF5 datasets raw, vesicles, az and mask per tomogram; IMOD .mod files in manual_annotations
+    for 20 tomograms
   source: mixed
 ml:
   tasks:
@@ -70,13 +72,121 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-08T02:18:55Z'
-notes: 'Zip listed with peek_archive: Munc13DKO 46 and SNAP25 55 HDF5 tomograms (_crop.h5) plus 21 IMOD .mod files
-  in manual_annotations (Zenodo says 20 tomograms). HDF5 internals (raw, vesicles, az, mask) come from the record
-  description and were not opened. Vesicle labels are automatic (SynapseNet); active zones are automatic with
-  manual correction; only the manual_annotations subset is fully manual, so source is mixed. Voxel size 1.55 nm is
-  the value the paper gives for the Imig 2014 / Maus 2020 tomograms; these are cropped copies, and isotropy
-  of the crops was not checked. Mouse is the paper''s organism for these slices; the KO genotypes are
-  from the record. No train/test split is provided. Part of the SynapseNet data release (see also
-  zenodo-14330011 and zenodo-14232607 records in this catalog).'
+  annotations_verified: true
+  last_checked: '2026-10-08T04:47:00Z'
+notes: 'Zip listed with peek_archive: Munc13DKO 46 and SNAP25 55 HDF5 tomograms (_crop.h5) plus 21 IMOD
+  .mod files in manual_annotations (Zenodo says 20 tomograms). HDF5 internals (raw, vesicles, az, mask)
+  come from the record description and were not opened. Vesicle labels are automatic (SynapseNet); active
+  zones are automatic with manual correction; only the manual_annotations subset is fully manual, so source
+  is mixed. Voxel size 1.55 nm is the value the paper gives for the Imig 2014 / Maus 2020 tomograms; these
+  are cropped copies, and isotropy of the crops was not checked. Mouse is the paper''s organism for these
+  slices; the KO genotypes are from the record. No train/test split is provided. Part of the SynapseNet
+  data release (see also zenodo-14330011 and zenodo-14232607 records in this catalog). enricher: HDF5
+  internals confirmed (raw int8, vesicles uint64 instance IDs, az int8, mask bool; same zyx grid).'
+technical:
+  method: sample
+  inspected_at: '2026-10-08T04:47:00Z'
+  inspected_urls:
+  - https://zenodo.org/api/records/14254111
+  - https://zenodo.org/api/records/14254111/files/munc_snap_data.zip/content
+  - https://raw.githubusercontent.com/computational-cell-analytics/synapse-net/main/README.md
+  bytes_downloaded: 4310465
+  size_source: file-listing
+  layout:
+    tree: "munc_snap_data.zip (1,165,157,703 B; 122 members)\n  Munc13DKO/                       46 *_crop.h5\
+      \ (522.9 MB)\n  SNAP25/                          55 *_crop.h5 (692.3 MB)\n  manual_annotations/Munc13DKO/\
+      \    11 .mod (IMOD)\n  manual_annotations/SNAP25/       10 .mod (IMOD)\neach .h5: raw, vesicles,\
+      \ az, mask (same shape)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/14254111/files/munc_snap_data.zip/content::SNAP25/H_SNAP25_12.08.12_KO1.1_3_crop.h5
+    size_bytes: 4604418
+    description: Smallest tomogram crop (41 x 446 x 446); raw and all label datasets are inside the one
+      HDF5 file.
+  arrays:
+  - role: raw
+    path_pattern: '*/*_crop.h5 (raw)'
+    format: hdf5
+    axes: zyx
+    shape:
+    - 41
+    - 446
+    - 446
+    shape_varies: true
+    dtype: int8
+    compression: gzip
+    value_range:
+    - -128
+    - 127
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: Signed 8-bit tomogram filling the whole int8 range in the sample. Axes from the SynapseNet
+      README (patch shapes for its hdf5 training data are given in ZYX); the files carry no axis attributes.
+  - role: label
+    path_pattern: '*/*_crop.h5 (vesicles)'
+    format: hdf5
+    axes: zyx
+    shape:
+    - 41
+    - 446
+    - 446
+    shape_varies: true
+    dtype: uint64
+    compression: gzip
+    value_range:
+    - 0
+    - 92
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Synaptic vesicle instances (77 IDs + background in the sample), same shape as raw
+      in the same file.
+  - role: label
+    path_pattern: '*/*_crop.h5 (az)'
+    format: hdf5
+    axes: zyx
+    shape:
+    - 41
+    - 446
+    - 446
+    shape_varies: true
+    dtype: int8
+    compression: gzip
+    value_range:
+    - 0
+    - 1
+    normalization: unknown
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: Active-zone mask, same grid as raw.
+  - role: label
+    path_pattern: '*/*_crop.h5 (mask)'
+    format: hdf5
+    axes: zyx
+    shape:
+    - 41
+    - 446
+    - 446
+    shape_varies: true
+    dtype: bool
+    compression: gzip
+    value_range:
+    - 1
+    - 1
+    normalization: unknown
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: Boolean region mask (all True in the sampled crop), same grid as raw.
+  notes: 'Zenodo listing complete (1 zip, 1,165,157,703 B; 101 HDF5 + 21 IMOD .mod). Header probe of a
+    deflated HDF5 member fails by range, so the smallest member (SNAP25/H_SNAP25_12.08.12_KO1.1_3_crop.h5,
+    4,310,465 B compressed) was read whole: datasets raw int8 [-128, 127], vesicles uint64 0..92 (78 distinct),
+    az int8 {0, 1}, mask bool (all True); all (41, 446, 446), gzip, chunks (6, 56, 112) / (3, 56, 56);
+    no attributes (no resolution). Values from one crop. HDF5 members range from 4.6 to 15.9 MB, so shapes
+    vary. Zip and members are direct Zenodo links (TensorSwitch usable: true). Voxel size 1.55 nm is the
+    record''s value from the paper; not in the HDF5 attributes. IMOD .mod files (manual annotations) not
+    parsed.'
