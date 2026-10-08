@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: ihc4bc-breast-he-to-ihc-status-patches
 title: 'IHC4BC: ImmunoHistoChemistry for Breast Cancer (Ki67, ER, PR and HER2 from H&E)'
 short_name: IHC4BC breast H&E and IHC patch pairs
-description: About 90K filtered pairs of H&E and IHC (H-DAB) patches, 3000 x 3000 px with stride 1500, from about 231-240 whole-slide
-  image pairs of breast biopsies (ER, PR, Ki67 and HER2). Labels are CSV files per image with a reliability mark, the nucleus
-  count and the average DAB value per nucleus (HER2 pairs were labelled by inspection). Built to predict Ki67, ER, PR and HER2
-  status from H&E.
+description: About 90K filtered pairs of H&E and IHC (H-DAB) patches, 3000 x 3000 px with stride 1500, from about 231-240
+  whole-slide image pairs of breast biopsies (ER, PR, Ki67 and HER2). Labels are CSV files per image with a reliability mark,
+  the nucleus count and the average DAB value per nucleus (HER2 pairs were labelled by inspection). Built to predict Ki67,
+  ER, PR and HER2 status from H&E.
 landing_url: https://ihc4bc.github.io
 doi: null
 repository: LabWebsite
@@ -28,7 +28,8 @@ imaging:
   channels: 3
   organism:
   - Homo sapiens
-  sample: Breast biopsies (formalin fixed), H&E and IHC (Ki67, ER, PR, HER2) on consecutive sections, scanned at 40x on an Aperio GT 450
+  sample: Breast biopsies (formalin fixed), H&E and IHC (Ki67, ER, PR, HER2) on consecutive sections, scanned at 40x on an
+    Aperio GT 450
   labels_stains:
   - H&E
   - H-DAB
@@ -67,17 +68,91 @@ provenance:
   evidence_urls:
   - https://ihc4bc.github.io
   - https://arxiv.org/html/2308.01982
+  - https://filedn.com/laHPyhQ5wAHBUyNr64yhV0Q/IHC4BC_Dataset/
+  - https://gitlab.com/ihc4bc-dataset/labels/-/tree/main/
   confidence: 0.65
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-08T10:14:40Z'
-notes: 'Size (about 2 TB on pCloud, about 50 GB compressed on Kaggle) and about 90K pairs are the approximate values on the
-  dataset page; the file listing was not read, so file format PNG comes from the stated image-name pattern. The paper reports 59,
-  60, 60 and 52 WSI pairs (231) for ER, PR, Ki67 and HER2 (discussion says roughly 240); 147,404 pairs were inspected and
-  54,635 discarded. Pairs were registered manually region by region; DAB values come from StarDist plus colour deconvolution with
-  thresholds set by one pathologist, and pairs were inspected by two reviewers, so the source is recorded as mixed.
-  The paper is on arXiv only (no peer-reviewed version found); no separate pixel size is given (40x Aperio GT 450). The license
-  CC BY-NC-SA 4.0 is from the dataset page. Labels may be updated by the maintainers. No train/test split was found. The release
-  date is not stated.'
+  annotations_verified: true
+  last_checked: '2026-10-08T12:15:00Z'
+notes: Size (about 2 TB on pCloud, about 50 GB compressed on Kaggle) and about 90K pairs are the approximate values on the
+  dataset page; file format PNG confirmed by the enricher (zip members). The paper reports 59, 60, 60 and 52 WSI pairs (231)
+  for ER, PR, Ki67 and HER2 (discussion says roughly 240); 147,404 pairs were inspected and 54,635 discarded. Pairs were registered
+  manually region by region; DAB values come from StarDist plus colour deconvolution with thresholds set by one pathologist,
+  and pairs were inspected by two reviewers, so the source is recorded as mixed. The paper is on arXiv only (no peer-reviewed
+  version found); no separate pixel size is given (40x Aperio GT 450). The license CC BY-NC-SA 4.0 is from the dataset page.
+  Labels may be updated by the maintainers. No train/test split was found. The release date is not stated.
+technical:
+  method: header
+  size_source: page-stated
+  layout:
+    tree: "IHC4BC_Dataset/Images/  (pCloud, per-patient zips; 1.70 TB listed)\n  HandE/ER/Patient_<a>_<b>.zip     59   265\
+      \ GB\n  HandE/Her2/Patient_<a>_<b>.zip   52   362 GB\n  HandE/Ki67/Patient_<a>_<b>.zip   60   260 GB\n  HandE/PR/Patient_<a>_<b>.zip\
+      \     60   257 GB\n  IHC/ER/Patient_<a>_<b>.zip       59   193 GB\n  IHC/Ki67/Patient_<a>_<b>.zip     60   191 GB\n\
+      \  IHC/PR/Patient_<a>_<b>.zip       60   175 GB\n    (zip) Subregion_<k>/<a>_<b>_<k>_<i>_<j>.png\ngitlab.com/ihc4bc-dataset/labels:\
+      \ Labels/Labels_{ER,Her2,Ki67,PR}/Patient_<a>_<b>.csv  (232 CSV)\n"
+    n_files: 642
+    listing_complete: false
+  sample:
+    urls:
+    - https://filedn.com/laHPyhQ5wAHBUyNr64yhV0Q/IHC4BC_Dataset/Images/HandE/ER/Patient_26_27011.zip::Subregion_0/26_27011_0_0_2.png
+    - https://filedn.com/laHPyhQ5wAHBUyNr64yhV0Q/IHC4BC_Dataset/Images/IHC/ER/Patient_26_27011.zip::Subregion_0/26_27011_0_0_2.png
+    - https://gitlab.com/ihc4bc-dataset/labels/-/raw/main/Labels/Labels_ER/Patient_26_27011.csv
+    size_bytes: 7441206
+    description: One ER H&E/IHC tile pair from patient 26_27011 and that patient's label CSV
+  arrays:
+  - role: raw
+    path_pattern: HandE/*/*.zip::Subregion_*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 3000
+    - 3000
+    - 4
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: H&E tile, RGBA PNG (probe).
+  - role: target
+    path_pattern: IHC/*/*.zip::Subregion_*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 3000
+    - 3000
+    - 4
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: 'Pair rule: same zip name (patient) under HandE/<stain>/ and IHC/<stain>/ and the same member path. Same
+      3000x3000 shape; consecutive sections registered manually region by region (paper), so only approximately aligned.'
+  - role: label
+    path_pattern: Labels/Labels_*/*.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'One row per tile: file_image (Patient_x/Subregion_k/<name>.png), manual_annot (a = automatic, 0 = set
+      to 0 by annotator), num_nuclei_HandE, then one average DAB value per nucleus (variable column count). Patient_26_27011
+      ER: 24 rows.'
+  notes: 'pCloud folder listing (directLinkData JSON per folder): 7 folders, 410 per-patient zips, exact sizes summing to
+    1,703,631,084,957 B; IHC/Her2 is not on pCloud (HandE/Her2 is), so the listing is not the whole dataset and size_bytes
+    keeps the page-stated ~2 TB. GitLab labels repo: 232 CSV + README. Peeked HandE/ER and IHC/ER Patient_26_27011.zip (24
+    PNG each); probed Subregion_0/26_27011_0_0_2.png in both: 3000x3000x4 uint8 RGBA PNG. Not sampled (tiles 3-10 MB; method
+    header). Hosts filedn.com and gitlab.com are not on the TensorSwitch allowlist. Voxel size not found; checked: dataset
+    page, labels README, record notes from the paper (40x Aperio GT 450, no um/px). No single archive: data.download_url stays
+    the pCloud folder (Kaggle has a compressed copy, ~50 GB).'
