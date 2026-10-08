@@ -1,10 +1,10 @@
 schema_version: '1.2'
 id: zenodo-8188948-odt-sh-sy5y-segmentation
-title: 'Optical diffraction tomography reconstructions of SH-SY5Y cells with 3D cell, nucleoli and lipid-structure masks (Zenodo)'
+title: Optical diffraction tomography reconstructions of SH-SY5Y cells with 3D cell, nucleoli and lipid-structure masks (Zenodo)
 short_name: SH-SY5Y ODT volumes with 3D cell/organelle masks
-description: Four 3D optical diffraction tomography (refractive-index) reconstructions of SH-SY5Y neuroblastoma cells in
-  MATLAB .mat files, each with 3D binary masks of whole cells (Cellpose and ODT-SAS) and, for three volumes, masks of
-  nucleoli and lipid structures made by manual slice-by-slice segmentation and by ODT-SAS.
+description: Four 3D optical diffraction tomography (refractive-index) reconstructions of SH-SY5Y neuroblastoma cells in MATLAB
+  .mat files, each with 3D binary masks of whole cells (Cellpose and ODT-SAS) and, for three volumes, masks of nucleoli and
+  lipid structures made by manual slice-by-slice segmentation and by ODT-SAS.
 landing_url: https://zenodo.org/records/8188948
 doi: 10.5281/zenodo.8188948
 repository: Zenodo
@@ -29,18 +29,19 @@ imaging:
   labels_stains: []
 data:
   formats:
-  - other
+  - hdf5
   size_bytes: 3289892106
   n_items: 4
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/8188948
   download_method: http
 annotations:
   present: true
   types:
   - semantic-segmentation
   coverage: dense
-  format: 3D binary masks stored as variables in the .mat files (maskManual, maskCellpose, maskODTSAS; classes Cell, Nucleoli, LS)
+  format: 3D binary masks stored as variables in the .mat files (maskManual, maskCellpose, maskODTSAS; classes Cell, Nucleoli,
+    LS)
   source: mixed
 ml:
   tasks:
@@ -62,10 +63,71 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-08T16:00:00Z'
-notes: 'Read the Zenodo page and API record (CC BY 4.0; four .mat files, 3.3 GB) and the paper abstract (not open access, no
-  full text). Variable names and mask classes are from the record description; .mat contents were not opened. Pixel size
-  is stored in the files as dx (XY) but its value was not read. Only 3 volumes carry manual organelle masks; cell masks
-  are from Cellpose/ODT-SAS (semi-automatic), hence source mixed. ODT gives quantitative refractive-index volumes, not
-  fluorescence or EM. No direct download URL set because the record page lists four files; modality other = ODT.'
+  annotations_verified: true
+  last_checked: '2026-10-08T17:40:00Z'
+notes: 'Read the Zenodo page and API record (CC BY 4.0; four .mat files, 3.3 GB) and the paper abstract (not open access,
+  no full text). Variable names and mask classes are from the record description; .mat contents were not opened. Pixel size
+  is stored in the files as dx (XY) but its value was not read. Only 3 volumes carry manual organelle masks; cell masks are
+  from Cellpose/ODT-SAS (semi-automatic), hence source mixed. ODT gives quantitative refractive-index volumes, not fluorescence
+  or EM. No direct download URL set because the record page lists four files; modality other = ODT. enricher: formats hdf5
+  (MATLAB v7.3 .mat = HDF5, was other); dx per file 144.9/184.8/148.2/200.0 nm XY (files 1-4, from dx in the files), z not
+  stated, so voxel_size stays null.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "./  4 files  3.3 GB  .mat (MATLAB v7.3 = HDF5)\n  REC_SH-SY5Y_1.mat  1,199,982,876 B  RECON 802^3\n  REC_SH-SY5Y_2.mat\
+      \    826,429,797 B  RECON 736^3\n  REC_SH-SY5Y_3.mat    608,966,288 B  RECON 654^3\n  REC_SH-SY5Y_4.mat    654,513,145\
+      \ B  RECON 680^3 (three packed cells, no maskManual)\n"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/8188948/files/REC_SH-SY5Y_3.mat
+    size_bytes: 608966288
+    description: The smallest file, REC_SH-SY5Y_3.mat, holds one ODT volume (RECON) and all its masks (maskCellpose, maskManual,
+      maskODTSAS).
+  arrays:
+  - role: raw
+    path_pattern: REC_SH-SY5Y_[1-4].mat (RECON)
+    format: hdf5
+    axes: null
+    shape:
+    - 654
+    - 654
+    - 654
+    shape_varies: true
+    dtype: float32
+    compression: gzip
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Refractive-index reconstruction; cubic per file (802, 736, 654, 680 voxels per side).
+  - role: label
+    path_pattern: REC_SH-SY5Y_[1-4].mat (maskCellpose)
+    format: hdf5
+    axes: null
+    shape:
+    - 654
+    - 654
+    - 654
+    shape_varies: true
+    dtype: float64
+    compression: gzip
+    value_range: null
+    encoding: binary
+    classes:
+    - id: null
+      name: Cell
+    alignment: same-grid
+    alignment_notes: Same file and same shape as RECON. MATLAB class logical (stored uint8) in files 1-2, double (float64)
+      in files 3-4. Further masks (Cell, Nucleoli, LS) sit in the MATLAB tables maskManual and maskODTSAS, whose arrays are
+      HDF5 object references under /#refs# (e.g. /#refs#/e, uint8 654^3 in file 3), not named datasets.
+  notes: 'Listing: Zenodo API, 4 files, 3,289,892,106 B (exact). The .mat files are MATLAB v7.3 (HDF5 with 512-byte user block);
+    I opened each remotely with h5py over range requests (headers and a few small variables only). Top-level variables: RECON
+    float32 (gzip, chunks e.g. 654x24x1), maskCellpose, maskManual and maskODTSAS (MATLAB tables), dx, n_imm (1.338), rayXY.
+    Axis order is not stated (MATLAB stores column-major, so the HDF5 order is reversed from MATLAB''s); axes left null. Value
+    ranges not measured (slice read too slow over range requests, aborted). Voxel size: dx (XY sample size in um, per the
+    Zenodo description) = 0.14494, 0.18475, 0.14822, 0.19997 um for files 1-4; differs per file and z is not stated, so imaging.voxel_size_nm
+    stays null. Checked: dx variables, Zenodo description, ODT-SAS README, paper (Europe PMC: no full text; PMC page not readable
+    from this run).'
