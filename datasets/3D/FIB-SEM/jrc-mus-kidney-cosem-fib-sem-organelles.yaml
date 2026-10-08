@@ -35,7 +35,7 @@ data:
   - zarr
   - n5
   - precomputed
-  size_bytes: 2175526685288
+  size_bytes: 2178977685288
   n_items: 1
   access: open
   download_url: s3://janelia-cosem-datasets/jrc_mus-kidney/
@@ -74,11 +74,80 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T22:16:01Z'
+  last_checked: '2026-10-08T23:15:56Z'
 notes: 'S3 listing: jrc_mus-kidney.zarr/recon-1/labels/groundtruth has 33 cropN groups; em/fibsem-uint8
   is uint8 with 8 nm scale in its .zattrs. size_bytes = uncompressed s0 voxels. The bucket README says
   groundtruth blocks are labelled voxel-by-voxel by a human annotator; CC-BY-4.0 is stated for the collection
   on the AWS registry page. Species and tissue are inferred from the dataset name; sample prep, annotators
   and per-crop provenance are not documented in the sources read (the COSEM preprint describes cell-culture
   volumes, not these tissue volumes), and the Nature paper is paywalled. Different volume and crops from
-  the other jrc_* records. Train/val split undocumented.'
+  the other jrc_* records. Train/val split undocumented. enricher: size_bytes now raw s0 + groundtruth
+  crops s0 (estimated, uncompressed).'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "jrc_mus-kidney/\n  thumbnail.jpg\n  jrc_mus-kidney.n5/\n  neuroglancer/\n  jrc_mus-kidney.zarr/recon-1/\n\
+      \    em/fibsem-uint8/            s0..s11 (OME-Zarr multiscale, zstd)\n    labels/groundtruth/crop*/\
+      \   33 crop groups\n      cropN/all                 all classes in one uint8 array, s0..\n     \
+      \ cropN/<class>             ~58 per-class arrays (mito, er, golgi, ...)\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_mus-kidney/jrc_mus-kidney.zarr/recon-1/labels/groundtruth/crop146/all/s0
+    - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_mus-kidney/jrc_mus-kidney.zarr/recon-1/em/fibsem-uint8/s0
+    size_bytes: null
+    description: One ground-truth crop (crop146/all, 200x200x180 uint8 at s0) plus the EM region under
+      its OME-Zarr translation.
+  arrays:
+  - role: raw
+    path_pattern: jrc_mus-kidney.zarr/recon-1/em/fibsem-uint8/s*
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 22199
+    - 7976
+    - 12287
+    shape_varies: false
+    dtype: uint8
+    compression: zstd
+    lossy: false
+    chunks:
+    - 64
+    - 128
+    - 128
+    value_range:
+    - 11
+    - 199
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: s0 scale 8/8/8 nm (z/y/x), translation 0, 12 levels.
+  - role: label
+    path_pattern: jrc_mus-kidney.zarr/recon-1/labels/groundtruth/crop*/all/s*
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 200
+    - 200
+    - 180
+    shape_varies: true
+    dtype: uint8
+    compression: zstd
+    lossy: false
+    encoding: semantic-ids
+    classes: null
+    n_ids_observed: 9
+    alignment: transform-provided
+    alignment_notes: 'Each crop carries OME-Zarr scale + translation in nm (crop146: scale 4/4/4 nm (2x
+      finer than EM s0), translation 90718/25150/40102 nm; crop1026: scale 4 nm); labels must be placed
+      by the translation, and some crops sit on a finer grid than the EM.'
+  notes: 'Prefixes enumerated with S3 ListObjectsV2 delimiter queries (millions of chunk objects, so no
+    full listing): 33 groundtruth crops, crop146 has ~58 class arrays plus "all". Headers: em s0 .zarray/.zattrs
+    and every crop''s all/s0 shape. Samples (zarr reads): a 64x128x128 block at the EM s0 centre (values
+    11-199, one sample), a central s3 slice (0-193), and crop146/all s0 (9 distinct ids: 1, 2, 8, 9, 10,
+    11, 16, 17, 35). Class names are in each crop''s per-class arrays; the id-to-name map of "all" is
+    not stated in the files read, so classes null. Size estimated (uncompressed): raw 1 x 22199x7976x12287
+    uint8 = 2,175,526,685,288 B + labels 33 crops "all" s0 (3,451,000,000 voxels) uint8 = 3,451,000,000
+    B; total 2,178,977,685,288 B. Level s0 only; per-class arrays, pyramid levels, n5 / precomputed copies
+    not counted; zstd chunks download smaller.'
