@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: figshare-31033825-girvanella-boundstone-tiles
 title: High-resolution annotated dataset of Girvanella boundstone microfacies from the Xiannüdong Formation, China
 short_name: Carbonate microfacies slab tiles (Girvanella)
-description: 27,345 PNG tiles (114x114 px, ~0.01 mm/pixel) cut from polarizing-microscope images of seven thin-section slabs
-  of Cambrian calcimicrobial Girvanella crust-cement boundstone, each labelled with one of ten carbonate microfacies classes
-  (e.g. Girvanella boundstone, peloidal packstone, dolomitic mudstone) via a point-counting-based automated annotation
+description: 27,345 PNG tiles (114x114 px, ~0.01 mm/pixel) cut from polarizing-microscope images of seven thin-section
+  slabs of Cambrian calcimicrobial Girvanella crust-cement boundstone, each labelled with one of ten carbonate microfacies
+  classes (e.g. Girvanella boundstone, peloidal packstone, dolomitic mudstone) via a point-counting-based automated annotation
   workflow. Split into training, validation and test subsets, with a CSV of labels.
 landing_url: https://figshare.com/articles/dataset/31033825
 doi: 10.6084/m9.figshare.31033825
@@ -66,16 +66,70 @@ provenance:
   - https://api.figshare.com/v2/articles/31033825
   - https://api.crossref.org/works/10.1038/s41597-026-06958-1
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13083876/fullTextXML
+  - https://ndownloader.figshare.com/files/60892336
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T21:05:00Z'
-notes: 'Figshare lists images.zip (589 MB; 27,349 entries, ~27,345 PNG tiles in dataset_train/val/test with class folders 0-9),
-  labels.zip (labels/dataset_labels.csv) and README.md. Tile counts per class from the paper: dolomitic mudstone 13,591,
-  Girvanella boundstone 6,900, skeletal grainstone 2,171, others 65-1,402 (strongly imbalanced). Split is stratified 80/10/10.
-  This is a geology (non-biological) microscopy dataset; slabs were imaged with a polarizing microscope and digital camera,
-  so modality is other. Pixel size 0.01 mm from the paper text. Labels come from manual annotation masks turned into tile
-  classes by an automated workflow (source=mixed); the paper reports >95% agreement on a 10% check. Paper text lacks the Figshare
-  DOI; it comes from the Crossref reference list.'
+  last_checked: '2026-10-08T22:05:27Z'
+notes: 'Figshare lists images.zip (589 MB; 27,349 entries, ~27,345 PNG tiles in dataset_train/val/test with class folders
+  0-9), labels.zip (labels/dataset_labels.csv) and README.md. Tile counts per class from the paper: dolomitic mudstone
+  13,591, Girvanella boundstone 6,900, skeletal grainstone 2,171, others 65-1,402 (strongly imbalanced). Split is stratified
+  80/10/10. This is a geology (non-biological) microscopy dataset; slabs were imaged with a polarizing microscope and
+  digital camera, so modality is other. Pixel size 0.01 mm from the paper text. Labels come from manual annotation masks
+  turned into tile classes by an automated workflow (source=mixed); the paper reports >95% agreement on a 10% check.
+  Paper text lacks the Figshare DOI; it comes from the Crossref reference list. enricher: README.md says tiles are 114
+  x 114 px; the probed tiles are 104 x 104.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  3 files 589.4 MB: images.zip, labels.zip, README.md
+      images.zip/images/                       ~27,345 png
+        dataset_train/<class 0-9>/<slab>_<nnnnn>.png
+        dataset_val/<class 0-9>/...
+        dataset_test/<class 0-9>/...
+      labels.zip/labels/dataset_labels.csv     1.9 MB  filepath,label,subset
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/60892339::images/dataset_train/9/(edit) Unit 1 1-2(4,1)_12868.png
+    - https://ndownloader.figshare.com/files/60892333::labels/dataset_labels.csv
+    size_bytes: 1887656
+    description: One class-9 tile and the label CSV.
+  arrays:
+  - role: raw
+    path_pattern: images/dataset_*/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 104
+    - 104
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: labels/dataset_labels.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'One row per tile: filepath (relative to images/), label 0-9, subset; the class is also the tile''s
+      folder name.'
+  notes: 'Probed 4 tiles (dataset_train/9 x2, dataset_test/0 x2): RGB uint8 104x104 PNG; README.md states 114 x 114 px,
+    which does not match the files. Label CSV header ''filepath,label,subset'' (1,865,672 B uncompressed). sample.py
+    could not read the tile (no result for a member name with parentheses), so no value range. Class names for ids 0-9
+    are in the paper, not in the files. Voxel size 0.01 mm kept from the paper (record value). Organism: none (geological
+    thin sections).'
