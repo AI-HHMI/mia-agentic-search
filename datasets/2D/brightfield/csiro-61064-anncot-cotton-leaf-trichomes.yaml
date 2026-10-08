@@ -2,8 +2,8 @@ schema_version: '1.2'
 id: csiro-61064-anncot-cotton-leaf-trichomes
 title: 'AnnCoT: Annotated Cotton Trichome dataset'
 short_name: Cotton leaf trichome splines (brightfield)
-description: 1,250 images (2560x1920) of cotton leaf surfaces taken with a hand-held Dino-Lite microscope
-  at about 31x, with every trichome traced as a spline, from 27 genotypes under glasshouse and field conditions.
+description: 1,250 images (2560x1920) of cotton leaf surfaces taken with a hand-held Dino-Lite microscope at about
+  31x, with every trichome traced as a spline, from 27 genotypes under glasshouse and field conditions.
 landing_url: https://data.csiro.au/collection/csiro:61064
 doi: 10.25919/ekzz-r590
 repository: other
@@ -15,12 +15,11 @@ authors:
 - Shiming Liu
 - Warwick Stiller
 publications:
-- title: 'HairNet2: deep learning to quantify cotton leaf hairiness, a complex genetic and environmental
-    trait'
+- title: 'HairNet2: deep learning to quantify cotton leaf hairiness, a complex genetic and environmental trait'
   doi: 10.1186/s13007-024-01149-8
   url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10949638/fullTextXML
-- title: 'HairNet: a deep learning model to score leaf hairiness, a key phenotype for cotton fibre yield,
-    value and insect resistance'
+- title: 'HairNet: a deep learning model to score leaf hairiness, a key phenotype for cotton fibre yield, value
+    and insect resistance'
   doi: 10.1186/s13007-021-00820-8
   url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8767704/fullTextXML
 date_published: '2024-01-25'
@@ -32,8 +31,8 @@ imaging:
   channels: 3
   organism:
   - Gossypium hirsutum
-  sample: Abaxial cotton leaf surfaces (leaf 3 or 4) from 27 genotypes, field and glasshouse, 2019-21;
-    AM73915 Dino-Lite Edge 3.0 hand-held microscope, about 31x magnification
+  sample: Abaxial cotton leaf surfaces (leaf 3 or 4) from 27 genotypes, field and glasshouse, 2019-21; AM73915 Dino-Lite
+    Edge 3.0 hand-held microscope, about 31x magnification
   labels_stains: []
 data:
   formats:
@@ -41,15 +40,16 @@ data:
   size_bytes: 18635024260
   n_items: 1250
   access: open
-  download_url: null
+  download_url: https://data.csiro.au/collection/csiro:61064
   download_method: api
 annotations:
   present: true
   types:
   - other
   coverage: dense
-  format: 'anncot.json (203 MB): trichomes stored as spline curves with control points per image, not
-    pixel masks; visualize_AnnCoT_annotation.zip holds a Python viewer'
+  format: 'anncot.json (202,954,023 B): images[] with metadata (genotype, environment, year, score, image_name)
+    and annotation.items[] of item_type ''spline'' (item_name ''Hair''; B-spline knots t, degree k, control points
+    c normalised to [0,1]), plus groups (''Clump'')'
   source: manual
 ml:
   tasks:
@@ -72,12 +72,71 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T14:58:37Z'
-notes: Hosted on the CSIRO Data Access Portal (repository 'other'). The file API lists 1,250 BMP images
-  (18.6 GB, each about 14.7 MB), anncot.json and visualize_AnnCoT_annotation.zip. Images are BMP, which
-  the schema has no value for, hence formats 'other'; annotations are splines (point lists), so the 'other'
-  annotation type is used; pixel masks can be generated from them. The paper (HairNet2, Table 4) defines
-  train/validation/test splits, but the split assignment is not a separate file in the listing (splits_provided
-  false). Imaging details are from the HairNet paper Methods (image acquisition protocol); pixel size
-  is not stated. CSIRO S3 download links are pre-signed and expire, so download_url is null; use the collection
-  page or the DAP file API.
+  last_checked: '2026-10-08T16:35:00Z'
+notes: 'Hosted on the CSIRO Data Access Portal (repository ''other''). The file API lists 1,250 BMP images (18.6
+  GB, each about 14.7 MB), anncot.json and visualize_AnnCoT_annotation.zip. Images are BMP, which the schema has
+  no value for, hence formats ''other''; annotations are splines (point lists), so the ''other'' annotation type
+  is used; pixel masks can be generated from them. The paper (HairNet2, Table 4) defines train/validation/test splits,
+  but the split assignment is not a separate file in the listing (splits_provided false). Imaging details are from
+  the HairNet paper Methods (image acquisition protocol); pixel size is not stated. CSIRO S3 links are pre-signed
+  and expire; the DAP per-file links (data.csiro.au/dap/ws/v2/collections/62296/data/<file id>) redirect to them.
+  enricher: annotation format read from anncot.json head/tail; download_url set to the collection page (no single
+  archive).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "./                                             1,252 files  18.64 GB  (DAP file API)\n  anncot.json \
+      \                                 203.0 MB  all spline annotations + image metadata\n  visualize_AnnCoT_annotation.zip\
+      \              2.7 KB   Python viewer (not run)\n  images/                                      1,250 files\
+      \  14,745,654 B each  .bmp\n    19-20_N_{FD,GH}_<genotype>_<plant>_<leaf>_<id>.bmp   310\n    20-21_N_{FD,GH}_<genotype>_<plant>_<leaf>_<id>.bmp\
+      \   940"
+    n_files: 1252
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.csiro.au/dap/ws/v2/collections/62296/data/67702898
+    - https://data.csiro.au/dap/ws/v2/collections/62296/data/67703005
+    size_bytes: 217699677
+    description: One image (images/19-20_N_FD_blue_10_3_A00120200108111226.bmp, 2560x1920 RGB) and anncot.json,
+      the single annotation file for all images
+  arrays:
+  - role: raw
+    path_pattern: images/*.bmp
+    format: other
+    axes: yxs
+    shape:
+    - 1920
+    - 2560
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Windows BMP, 24 bit, BI_RGB (uncompressed), 54-byte header, positive height (rows stored bottom-up).
+      Every image file is 14,745,654 B, i.e. the same size.
+  - role: label
+    path_pattern: anncot.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: float64
+    compression: none
+    encoding: other
+    classes:
+    - id: null
+      name: Hair
+    alignment: same-grid
+    alignment_notes: 'One JSON for all images: images[].image_name pairs with images/<image_name>; each ''Hair''
+      item is a spline (knots t, degree k=3, control points c as [x, y] fractions of image width/height), so they
+      need scaling by 2560x1920 and rasterising to make masks.'
+  notes: 'Listing: CSIRO DAP file API, 1,252 files, 18,635,024,260 bytes exact. Header: BMP read by a 54-byte range
+    request (scratch script): 2560x1920, 24 bpp, compression 0, 3780 px/m (the 96-dpi default, not a calibration).
+    probe.py does not read BMP (format ''other''). anncot.json read only by range (first 4 KB and last 4 KB): info,
+    license CC BY-NC-SA 4.0, images[] with spline annotations. No pixel data sampled (BMP not readable by sample.py).
+    Train/val/test assignment is not a field seen in the parts read. Voxel size not found; checked: BMP header (default
+    96 dpi only), DAP API metadata, anncot.json info block, HairNet and HairNet2 full texts (Dino-Lite AM73915 at
+    ~31x, no pixel size). Direct files: the DAP per-file links answer range requests, host data.csiro.au not on
+    the TensorSwitch allowlist.'
