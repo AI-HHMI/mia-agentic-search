@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: hf-mario-dg-brightfield-microscopy-scc-cell-boxes
 title: Brightfield Microscopy SCC Dataset (cell bounding boxes)
 short_name: Brightfield cell bounding boxes (SCC tiles)
-description: 32,043 brightfield microscopy tiles (512x512, sliced from 4K images of microtiter plate wells) with normalized
-  bounding boxes around cells and predefined train/validation/test splits; released for cell detection and unconditional
-  diffusion model training.
+description: 32,043 brightfield microscopy tiles (512x512, sliced from 4K images of microtiter plate wells) with
+  normalized bounding boxes around cells and predefined train/validation/test splits; released for cell detection
+  and unconditional diffusion model training.
 landing_url: https://huggingface.co/datasets/mario-dg/brightfield-microscopy-scc
 doi: null
 repository: HuggingFace
@@ -35,7 +35,8 @@ annotations:
   types:
   - bounding-box
   coverage: unknown
-  format: 'parquet columns objects.bbox (normalized 4-value boxes) and objects.categories (all 0 in the rows seen), plus width, height, well_edge'
+  format: parquet columns objects.bbox (normalized 4-value boxes) and objects.categories (all 0 in the rows seen),
+    plus width, height, well_edge
   source: unknown
 ml:
   tasks:
@@ -58,11 +59,67 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-08T07:43:57Z'
-notes: 'Hugging Face dataset, 19 files, 7.7 GB: 14 train parquet shards + validation + test (27,161 / 3,302 / 1,580 tiles per the card). First rows
-  read via the datasets server: 512x512 tiles, 1-2 boxes per tile, category 0, boxes as four normalized values (coordinate
-  convention not stated), well_edge flag for tiles showing a plate well edge. The card says tiles were sliced from 4K brightfield
-  images and the data were used to train unconditional diffusion and cell detection models; it does not name the cell type or
-  organism, microscope, magnification, pixel size or how the boxes were made, and no license or paper is given (card has no license
-  field), so those are unknown. The meaning of "SCC" is not stated. Parquet is not in the format list, so formats is other.
-  The label column only encodes the split.'
+  last_checked: '2026-10-08T08:35:00Z'
+notes: 'Hugging Face dataset, 19 files, 7.7 GB: 14 train parquet shards + validation + test (27,161 / 3,302 / 1,580
+  tiles per the card). First rows read via the datasets server: 512x512 tiles, 1-2 boxes per tile, category 0, boxes
+  as four normalized values (coordinate convention not stated), well_edge flag for tiles showing a plate well edge.
+  The card says tiles were sliced from 4K brightfield images and the data were used to train unconditional diffusion
+  and cell detection models; it does not name the cell type or organism, microscope, magnification, pixel size or
+  how the boxes were made, and no license or paper is given (card has no license field), so those are unknown. The
+  meaning of "SCC" is not stated. Parquet is not in the format list, so formats is other. The label column only
+  encodes the split.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './           2 files    4.4 KB  README.md, .gitattributes
+
+      data/       17 files   7.7 GB  .parquet  (train-000NN-of-00014, validation-00000-of-00001, test-00000-of-00001)
+
+      '
+    n_files: 19
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/mario-dg/brightfield-microscopy-scc/resolve/main/data/test-00000-of-00001.parquet
+    size_bytes: 379960193
+    description: The test split shard (1,580 tiles with boxes); the smallest file that holds images and labels
+  arrays:
+  - role: raw
+    path_pattern: data/*.parquet
+    format: other
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 4
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 59
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Images are PNG bytes in the parquet column image; width/height columns are 512 in the rows
+      read. The tile seen is grey stored as RGBA (R=G=B, alpha 255).
+  - role: label
+    path_pattern: data/*.parquet
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: float64
+    compression: unknown
+    encoding: boxes-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Same parquet row as the image: objects.bbox = 4 values normalized to the 512x512 tile (order
+      not stated; rows read look like x, y, w, h), objects.categories all 0.'
+  notes: 'HF API listing complete: 19 files, 7,699,275,458 B. datasets-server /info: features image, label (split),
+    width, height, objects{bbox float64, categories int64}, well_edge bool; 27,161 / 3,302 / 1,580 rows. First 3
+    test rows read via /rows: 512x512, one box each, category 0. Image: the first 2 MB of the test parquet hold
+    PNG streams (no JPEG); the one tile decoded (via the datasets-server asset) is a 512x512 RGBA PNG, R=G=B, alpha
+    255, values 59-255. One sample. Parquet is not readable by probe.py or TensorSwitch; images would need extracting
+    from the parquet. License: none on the card or in the API cardData; pixel size, organism and box provenance
+    not stated on the card.'
