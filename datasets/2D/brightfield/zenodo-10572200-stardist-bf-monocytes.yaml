@@ -39,7 +39,7 @@ data:
   formats:
   - tiff
   size_bytes: 329789897
-  n_items: 27
+  n_items: 31
   access: open
   download_url: https://zenodo.org/api/records/10572200/files/StarDist_BF_Monocytes_dataset.zip/content
   download_method: http
@@ -76,10 +76,85 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T19:00:00Z'
+  last_checked: '2026-10-08T19:01:00Z'
 notes: 'Zip index read with peek_archive (80 files, 404.9 MB): 27 Training_sources with 27 Training_targets
   masks, 4 QC source/target pairs, and the StarDist model, logs and QC report. Pixel size 650 nm, image size
   and 16-bit/8-bit types are from the Zenodo description. The preprint Methods say training images were
   manually annotated in Fiji and exported as labelled images; the preprint full text was read. Part of a
   series of cell-detection training sets by the same authors; this one covers monocytes only. The test split
-  is the QC pairs inside the same archive.'
+  is the QC pairs inside the same archive. enricher: n_items 31 (was 27): 27 training + 4 QC image/mask pairs in the zip
+  listing. enricher: TIFF header calibration 0.6496 um/px agrees with the stated 650 nm.'
+technical:
+  method: sample
+  inspected_at: '2026-10-08T19:01:00Z'
+  inspected_urls:
+  - https://zenodo.org/api/records/10572200
+  - https://zenodo.org/api/records/10572200/files/StarDist_BF_Monocytes_dataset.zip/content
+  bytes_downloaded: 1211690
+  size_source: file-listing
+  layout:
+    tree: |
+      StarDist_BF_Monocytes_dataset.zip (329.8 MB)
+        StarDist_BF_Monocytes_dataset_OK/
+          Training_data/Training_sources/                   27 .tif, 56.6 MB
+          Training_data/Training_targets/                   27 .tif, 28.3 MB
+          Quality_control_data/Monocytes_QC_sources/         4 .tif, 8.4 MB
+          Quality_control_data/Monocytes_QC_Targets/         4 .tif, 4.2 MB
+          Stardist_Monocytes_model/                          6 files (.json, .h5, .pdf, TF_SavedModel.zip), 17.3 MB
+          Stardist_Monocytes_model/Quality Control/          5 files (.png, .csv, .pdf)
+          Stardist_Monocytes_model/Quality Control/Prediction/  4 .tif (model predictions)
+          Stardist_Monocytes_model/logs/{images,train,validation}/  3 TensorBoard event files, 272 MB
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/10572200/files/StarDist_BF_Monocytes_dataset.zip/content::StarDist_BF_Monocytes_dataset_OK/Training_data/Training_sources/mon_n1_p3_6500_8750_training_subset-0001.tif
+    - https://zenodo.org/api/records/10572200/files/StarDist_BF_Monocytes_dataset.zip/content::StarDist_BF_Monocytes_dataset_OK/Training_data/Training_targets/mon_n1_p3_6500_8750_training_subset-0001.tif
+    size_bytes: 3141862
+    description: One training image (1022x1024 uint16) and its instance label mask (uint8, same file name).
+  arrays:
+  - role: raw
+    path_pattern: StarDist_BF_Monocytes_dataset_OK/{Training_data/Training_sources,Quality_control_data/Monocytes_QC_sources}/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1022
+    - 1024
+    shape_varies: null
+    dtype: uint16
+    compression: none
+    lossy: false
+    value_range:
+    - 722
+    - 2750
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: StarDist_BF_Monocytes_dataset_OK/{Training_data/Training_targets,Quality_control_data/Monocytes_QC_Targets}/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1022
+    - 1024
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    lossy: false
+    value_range:
+    - 0
+    - 148
+    normalization: none
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Label has the same file name as its image (Training_sources <-> Training_targets, Monocytes_QC_sources <-> Monocytes_QC_Targets); identical 1022x1024 shape in the sample.
+  notes: 'Listing: Zenodo API + zip central directory, 1 file, 329,789,897 B, complete (80 members). Probe: raw ImageJ TIFF
+    uint16 1022x1024, uncompressed, calibration 0.6496 um/px; label ImageJ TIFF uint8 palette (photometric 3), 1022x1024,
+    uncompressed. Sample (one pair, 1.2 MB read): raw 722..2750, mean 1379, p1 1217, p99 1520 (12-bit camera range, no
+    clipping; normalization none inferred); label 0..148, 149 distinct values, 97.2 % background: instance ids, matching
+    the Zenodo/preprint description of manually labelled images. Value ranges are from one sample. Only the first
+    training image was opened; shape_varies not checked. The zip also holds a StarDist model, TensorBoard logs and QC
+    predictions (Stardist_Monocytes_model/), which are not data arrays. sample.py does not treat the Zenodo .../content
+    URL as a zip, so the sample was read through https://zenodo.org/records/10572200/files/StarDist_BF_Monocytes_dataset.zip
+    (same file).'
