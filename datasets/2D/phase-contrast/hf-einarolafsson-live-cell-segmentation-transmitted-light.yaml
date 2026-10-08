@@ -4,7 +4,8 @@ title: Light-microscopy cell segmentation dataset (transmitted light, 14 public 
 short_name: Transmitted-light cell segmentation (phase/DIC/BF)
 description: 11,007 transmitted-light fields (phase contrast, brightfield, DIC, quantitative phase) with uint16 instance masks,
   harmonised from 14 public datasets (LIVECell, DeepSea, Cell Tracking Challenge sets, BBBC009/030, QPI adherent cells, Revvity-25,
-  yeast sets and others) by the spaCR project to fine-tune Cellpose-SAM. Splits (6,778 train / 2,030 valid / 2,199 test) are by acquisition.
+  yeast sets and others) by the spaCR project to fine-tune Cellpose-SAM. Splits (6,778 train / 2,030 valid / 2,199 test) are
+  by acquisition.
 landing_url: https://huggingface.co/datasets/einarolafsson/live-cell-segmentation-dataset
 doi: null
 repository: HuggingFace
@@ -60,11 +61,69 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T17:00:00Z'
+  last_checked: '2026-10-08T17:57:00Z'
 notes: 'Hugging Face API listing: 11,007 images/ and 11,007 masks/ TIFFs plus splits.csv, manifest.csv, SOURCES.md (5.74 GB).
-  A re-compilation of 14 existing datasets, not new imaging: licences are mixed and listed per source in SOURCES.md (CC0, CC BY 4.0,
-  MIT, CC BY-NC 4.0 for LIVECell and Revvity-25, "used with permission" for DeepSea and YeaZ, Cell Tracking Challenge terms), and the
-  card states the whole is non-commercial, so spdx is custom. Several constituents may be catalogued separately (e.g. LIVECell, QPI
-  adherent cells, Cell Tracking Challenge sets); this record is the harmonised union with its own splits. Annotation procedure is
-  not stated on the card (it differs by source). No paper; pixel sizes vary by source and are not stated
-  in the card, so voxel_size_nm is null. License column in SOURCES.md is the basis for the custom label.'
+  A re-compilation of 14 existing datasets, not new imaging: licences are mixed and listed per source in SOURCES.md (CC0,
+  CC BY 4.0, MIT, CC BY-NC 4.0 for LIVECell and Revvity-25, "used with permission" for DeepSea and YeaZ, Cell Tracking Challenge
+  terms), and the card states the whole is non-commercial, so spdx is custom. Several constituents may be catalogued separately
+  (e.g. LIVECell, QPI adherent cells, Cell Tracking Challenge sets); this record is the harmonised union with its own splits.
+  Annotation procedure is not stated on the card (it differs by source). No paper; pixel sizes vary by source and are not
+  stated in the card, so voxel_size_nm is null. License column in SOURCES.md is the basis for the custom label.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  splits.csv, manifest.csv, SOURCES.md, README.md, .gitattributes   (6.9 MB)\nimages/<source>/<source>__<stem>.tif\
+      \   11,007 files  5.58 GB\nmasks/<source>/<source>__<stem>.tif    11,007 files  0.15 GB\n<source> (images, size): livecell_phase\
+      \ 5,239 (1.05 GB), deepsea_phase 3,655 (3.11 GB),\n  qpi_phase_adherent 527 (706 MB), yeast_microstructures_brightfield\
+      \ 493 (95 MB), yeaz_phase 399,\n  yeaz_brightfield 306, revvity_brightfield 110, ctc_bf_musc_brightfield 100, bbbc030_dic\
+      \ 60,\n  ctc_bf_hsc_brightfield 57, ctc_phc_u373 34, ctc_dic_hela 18, bbbc009_dic 5, ctc_phc_psc 4\n"
+    n_files: 22019
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/einarolafsson/live-cell-segmentation-dataset/resolve/main/images/ctc_dic_hela/ctc_dic_hela__01-t002.tif
+    - https://huggingface.co/datasets/einarolafsson/live-cell-segmentation-dataset/resolve/main/masks/ctc_dic_hela/ctc_dic_hela__01-t002.tif
+    size_bytes: 187462
+    description: One DIC HeLa field (from the Cell Tracking Challenge part) and its instance mask.
+  arrays:
+  - role: raw
+    path_pattern: images/*/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 36
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Shape differs by source (512x512 ctc_dic_hela, 520x704 livecell_phase).
+  - role: label
+    path_pattern: masks/*/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 10
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: masks/<source>/<name>.tif pairs with images/<source>/<name>.tif (same file name); same shape in the sampled
+      pair. Card states background 0, cells 1..N.
+  notes: 'Listing: Hugging Face API, 22,019 files, 5,737,422,633 B (exact). Probed three TIFFs (all single-page, deflate,
+    no calibration): ctc_dic_hela image uint8 512x512 and mask uint16 512x512; livecell_phase image uint8 520x704. Sample
+    (ctc_dic_hela__01-t002 pair, 187 KB): image 36-255; mask 0-10 (11 values, instance IDs per the card). Values are from
+    one sample of one source; other sources may differ in dtype and range. Voxel size: not stored in the TIFFs and not given
+    in the card or SOURCES.md; it differs per source dataset. Files on resolve/main pass --download-check (range requests).
+    2D: not covered by the miao layout.'
