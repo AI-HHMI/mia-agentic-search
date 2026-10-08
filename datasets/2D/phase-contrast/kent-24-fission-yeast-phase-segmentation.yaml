@@ -1,0 +1,128 @@
+schema_version: '1.2'
+id: kent-24-fission-yeast-phase-segmentation
+title: Novel segmentation strategies for fully-automated analysis of yeast images
+short_name: Fission yeast phase-contrast with ground truth
+description: Phase-contrast images of fission yeast (Schizosaccharomyces pombe) cells acquired with several cameras and
+  objectives on an Olympus IX71, shipped with MATLAB ground-truth segmentation files, used to develop and test the Outline
+  cell segmentation software (O'Brien et al. 2017).
+landing_url: https://data.kent.ac.uk/24/
+doi: 10.22024/UniKent/01.01/24
+repository: other
+accession: null
+authors:
+- Jennifer O'Brien
+- Sanaul Hoque
+- Daniel P. Mulvihill
+- Konstantinos Sirlantzis
+publications:
+- title: Automated Cell Segmentation of Fission Yeast Phase Images - Segmenting Cells from Light Microscopy Images
+  doi: null
+  url: https://www.scitepress.org/Papers/2017/61491/
+date_published: '2017-11-24'
+imaging:
+  modality:
+  - phase-contrast
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Schizosaccharomyces pombe
+  sample: Live fission yeast cells on lectin-coated coverslips in EMMG medium
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 763026027
+  n_items: 419
+  access: open
+  download_url: https://data.kent.ac.uk/24/4/Phase-Images-with-Ground-Truths.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: unknown
+  format: 'MATLAB v5 GroundTruthStructure.mat per folder: frame(1 x n_images).cell(1 x n_cells).spcv = 2 x K double spline
+    control points of each cell outline'
+  source: unknown
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-ND-3.0
+  url: https://creativecommons.org/licenses/by-nd/3.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-08T20:14:39Z'
+  evidence_urls:
+  - https://data.kent.ac.uk/24/
+  - https://data.kent.ac.uk/24/7/O-Brien_dataset_Readme.txt
+  - https://data.kent.ac.uk/24/4/Phase-Images-with-Ground-Truths.zip
+  - https://www.scitepress.org/Papers/2017/61491/61491.pdf
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T22:10:12Z'
+notes: 'Zip (763,026,027 B) holds four folders: 100x_oil_QuantEMa (70 TIF), 100x_oil_QuantEMb (49), 100x_oil_Zyla (200),
+  60x_air_Zyla (100), each with one GroundTruthStructure.mat. The .mat (read with a stdlib MAT v5 header parser) stores
+  per image a list of cells, each with ''spcv'', a 2 x K array of spline control points: cell outlines, not masks. How
+  the ground truth was made (manual vs software) is not stated. Camera pixels are 16 um (QuantEM) and 6.5 um (Zyla) per
+  the paper; the object-space pixel size is not stated, so voxel size is null. License CC BY-ND 3.0 (no derivatives).
+  Dataset page lists 2014-2017 collection. enricher: annotation type set from the .mat contents (was other); size from
+  the zip listing.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: |
+      Phase-Images-with-Ground-Truths.zip/Phase Images with Ground Truths/   852 members (429 macOS ._ files)
+        100x_oil_QuantEMa/   70 Phase<n>.TIF (512x512)          + GroundTruthStructure.mat
+        100x_oil_QuantEMb/   49 Phase<n>.TIF                    + GroundTruthStructure.mat
+        100x_oil_Zyla/      200 100x_oil_highden_<nnn>_w10. Phase LED2.TIF (1024x1024) + .mat
+        60x_air_Zyla/       100 air_60x_LH_<nnn>_w110. Transmitted LED 5.TIF + .mat
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.kent.ac.uk/24/4/Phase-Images-with-Ground-Truths.zip::Phase Images with Ground Truths/100x_oil_QuantEMa/Phase1.TIF
+    - https://data.kent.ac.uk/24/4/Phase-Images-with-Ground-Truths.zip::Phase Images with Ground Truths/100x_oil_QuantEMa/GroundTruthStructure.mat
+    size_bytes: 565085
+    description: One QuantEM phase image and its folder's ground-truth .mat.
+  arrays:
+  - role: raw
+    path_pattern: Phase Images with Ground Truths/*/*.TIF
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: QuantEM folders 512x512, 100x_oil_Zyla 1024x1024 (probed); 60x_air_Zyla not probed (deflated member).
+  - role: label
+    path_pattern: Phase Images with Ground Truths/*/GroundTruthStructure.mat
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: float64
+    compression: deflate
+    encoding: polygons
+    classes: null
+    alignment: unknown
+    alignment_notes: frame(k) presumably matches the k-th image of the folder (frame has 70 entries for 70 images in
+      QuantEMa); the ordering rule and the coordinate convention of spcv are not documented.
+  notes: 'Probed 100x_oil_QuantEMa/Phase1.TIF (uint16 512x512, uncompressed, MetaMorph-style description: exposure, binning,
+    no spatial calibration) and a 100x_oil_Zyla TIF (uint16 1024x1024). GroundTruthStructure.mat (QuantEMa, 35,833 B):
+    ''MATLAB 5.0 MAT-file, Platform: PCWIN64, Created on: Mon May 22 11:43:05 2017''; variable frame, struct 1x70, field
+    cell; frame(1).cell is 1x4 with field spcv (double 2x22). Parsed with zlib/struct only (no scipy, nothing executed).
+    No pixel values sampled. Host data.kent.ac.uk is not on TensorSwitch''s fetch allowlist. Voxel size not found; checked:
+    TIFF descriptions, dataset page, paper (camera pixel only).'
