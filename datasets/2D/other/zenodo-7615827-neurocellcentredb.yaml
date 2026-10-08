@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: zenodo-7615827-neurocellcentredb
 title: NeuroCellCentreDB
 short_name: Neuroblast cell-centre detection (microscopy)
-description: 293 microscopy images of neuronal neuroblast rat cells on an adhesive chip stimulated with surface acoustic waves,
-  with 14,193 manually annotated cell centres, split into recording-sequence-independent train, validation and test partitions.
+description: 293 microscopy images of neuronal neuroblast rat cells on an adhesive chip stimulated with
+  surface acoustic waves, with 14,193 manually annotated cell centres, split into recording-sequence-independent
+  train, validation and test partitions.
 landing_url: https://zenodo.org/records/7615827
 doi: 10.5281/zenodo.7615827
 repository: Zenodo
@@ -34,7 +35,7 @@ data:
   size_bytes: 542464618
   n_items: 293
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/7615827/files/NeuroCellCentreDB.zip
   download_method: http
 annotations:
   present: true
@@ -64,9 +65,75 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T19:13:36Z'
-notes: 'One zip (NeuroCellCentreDB.zip, listed with peek_archive): 293 TIFFs (~2 MB each) with 293 JSON label files under
-  sequence_independent/data_and_cell_center_annotations/{train,validation,test}/<recording day>/<chip>/. Example JSON: {"scaling": 2, "cell_cores": [[x, y], ...]}.
-  Imaging modality (brightfield / phase contrast / fluorescence), magnification and pixel size are not stated on the Zenodo page, the README in the
-  archive or the baseline code repository, and no accompanying paper was found (the baseline repository README has TODO placeholders for the
-  paper), so modality is other and voxel size null. Cell count 14,193 from the Zenodo description; the annotation procedure and annotators are not described.'
+  last_checked: '2026-10-08T22:29:39Z'
+notes: 'One zip (NeuroCellCentreDB.zip, listed with peek_archive): 293 TIFFs (~2 MB each) with 293 JSON
+  label files under sequence_independent/data_and_cell_center_annotations/{train,validation,test}/<recording
+  day>/<chip>/. Example JSON: {"scaling": 2, "cell_cores": [[x, y], ...]}. Imaging modality (brightfield
+  / phase contrast / fluorescence), magnification and pixel size are not stated on the Zenodo page, the
+  README in the archive or the baseline code repository, and no accompanying paper was found (the baseline
+  repository README has TODO placeholders for the paper), so modality is other and voxel size null. Cell
+  count 14,193 from the Zenodo description; the annotation procedure and annotators are not described.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      ./                                                    1 file   542.5 MB  .zip
+      NeuroCellCentreDB.zip/README.md                       356 B
+      NeuroCellCentreDB.zip/sequence_independent/data_and_cell_center_annotations/
+        train/20190420/Images_Part_1_Adhesion/            160 .tif + 160 .json
+        train/20190420/Images_Part_3_DcAMP/                18 .tif + 18 .json
+        train/20190524/Chip03_15dbm_20perc/                13 .tif + 13 .json
+        val/20190515/Chip02_18dbm_20perc_links_t1/         21 .tif + 21 .json
+        val/20190515/Chip03_15dbm_20perc_links_t1/         20 .tif + 20 .json
+        test/20190511/Chip02_15dbm_30perc_links/           18 .tif + 18 .json
+        test/20190511/Chip03_18dbm_30perc_links/           21 .tif + 21 .json
+        test/20190511/Chip04_Referenz/                     22 .tif + 22 .json
+      (+7 OS metadata files)
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7615827/files/NeuroCellCentreDB.zip::sequence_independent/data_and_cell_center_annotations/train/20190524/Chip03_15dbm_20perc/Chip03-000.tif
+    - https://zenodo.org/records/7615827/files/NeuroCellCentreDB.zip::sequence_independent/data_and_cell_center_annotations/train/20190524/Chip03_15dbm_20perc/Chip03-000.json
+    size_bytes: 3746974
+    description: One 1779x2106 uint8 image and its JSON list of cell centres
+  arrays:
+  - role: raw
+    path_pattern: NeuroCellCentreDB.zip/sequence_independent/data_and_cell_center_annotations/*/*/*/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1779
+    - 2106
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ TIFF, single page, no calibration in the header.
+  - role: label
+    path_pattern: NeuroCellCentreDB.zip/sequence_independent/data_and_cell_center_annotations/*/*/*/*.json
+    format: json
+    axes: null
+    shape:
+    - 17
+    - 2
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: points-table
+    classes:
+    - id: null
+      name: cell centre
+    alignment: unknown
+    alignment_notes: 'Same stem as the image (Chip03-000.tif / Chip03-000.json). JSON {"scaling": 2, "cell_cores":
+      [[x, y], ...]}; the meaning of "scaling" is not documented, so whether the coordinates are in full-resolution
+      pixels is not settled (sample maxima x 1574, y 1140 fit inside the 2106x1779 image).'
+  notes: 'Sampled Chip03-000.tif: uint8 0-255 (mean 110, 239 values); values from one sample. Its JSON
+    has 17 cell centres and scaling 2. Voxel size not found; checked: TIFF/ImageJ header (no calibration),
+    Zenodo API record and in-archive README.md (no imaging details), GitHub README of EIHW/CellCenterDetection,
+    tools/paper.py title search and a web search (no paper found).'
