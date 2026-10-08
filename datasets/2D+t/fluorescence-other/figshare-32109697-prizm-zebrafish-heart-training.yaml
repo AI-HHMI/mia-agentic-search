@@ -1,10 +1,10 @@
 schema_version: '1.2'
 id: figshare-32109697-prizm-zebrafish-heart-training
-title: 'Supporting Data for Kim et al. "PRIZM: deep phenotypic profiling of cardiac structure and function
-  in larval zebrafish"'
+title: 'Supporting Data for Kim et al. "PRIZM: deep phenotypic profiling of cardiac structure and function in larval
+  zebrafish"'
 short_name: Zebrafish heart segmentation, PRIZM (fluorescence)
-description: 'PRIZM resources for larval zebrafish cardiac phenotyping: 5,368 training image/segmentation-mask
-  pairs, a trained DeepLab ONNX model, test time-lapse image sets and per-fish metric tables.'
+description: 'PRIZM resources for larval zebrafish cardiac phenotyping: 5,368 training image/segmentation-mask pairs,
+  a trained DeepLab ONNX model, test time-lapse image sets and per-fish metric tables.'
 landing_url: https://figshare.com/articles/dataset/32109697
 doi: 10.6084/m9.figshare.32109697.v1
 repository: Figshare
@@ -21,8 +21,8 @@ imaging:
   channels: 1
   organism:
   - Danio rerio
-  sample: 'Larval zebrafish hearts in fluorescence time-lapse imaging (drug/toxicant exposure groups:
-    cardioactive, cardiotoxic, contaminant, DMHF)'
+  sample: 'Larval zebrafish hearts in fluorescence time-lapse imaging (drug/toxicant exposure groups: cardioactive,
+    cardiotoxic, contaminant, DMHF)'
   labels_stains: []
 data:
   formats:
@@ -38,7 +38,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: 'training_dataset.zip: 5,368 JPEG frames each with a ''<frame>_Simple Segmentation.png'' mask'
+  format: 'training_dataset.zip: <seq>_t<frame>.jpg frames, each with a ''<seq>_t<frame>_Simple Segmentation.png''
+    mask (uint8 values 0/2/4)'
   source: mixed
 ml:
   tasks:
@@ -61,12 +62,78 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T14:49:02Z'
-notes: Listed training_dataset.zip (10,736 files = 5,368 jpg + 5,368 'Simple Segmentation' png; the name
-  is ilastik's output name, so masks may come from an ilastik pixel classifier rather than purely manual
-  tracing; annotation procedure is not described on the figshare page) and 'Representative image dataset.zip'
-  (8,246 jpg time-lapse frames plus xml/xsl metadata, 0.6 GB). Other files are drug-group zips, per-fish
-  metric xlsx files and the PRIZM-DeepLab ONNX model (176 MB). The accompanying paper could not be found
-  (Europe PMC title search and web search), so pixel size, microscope, magnification, frame rate and the
-  class definitions of the masks are not stated in the sources read. size_bytes is the sum of all 30 files
-  on the record.
+  last_checked: '2026-10-08T16:05:00Z'
+notes: 'Listed training_dataset.zip (10,736 files = 5,368 jpg + 5,368 ''Simple Segmentation'' png; the name is ilastik''s
+  output name, so masks may come from an ilastik pixel classifier rather than purely manual tracing; annotation
+  procedure is not described on the figshare page) and ''Representative image dataset.zip'' (8,246 jpg time-lapse
+  frames plus xml/xsl metadata, 0.6 GB). Other files are drug-group zips, per-fish metric xlsx files and the PRIZM-DeepLab
+  ONNX model (176 MB). The accompanying paper could not be found (Europe PMC title search and web search), so pixel
+  size, microscope, magnification, frame rate and the class definitions of the masks are not stated in the sources
+  read. size_bytes is the sum of all 30 files on the record. enricher: masks sampled (values 0/2/4; class names
+  undocumented); paper still not found.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                        30 files  831.3 MB  (figshare API)\n  training_dataset.zip\
+      \                     29.7 MB  10,736 members, flat\n    <seq>_t<frame>.jpg                  5,368 files \
+      \ 22.5 MB  (527 sequences, e.g. 0001_t002-t011)\n    <seq>_t<frame>_Simple Segmentation.png  5,368 files \
+      \ 6.9 MB\n  Representative image dataset.zip        598.8 MB  8,288 members\n    Series0{06..32}/ (14 series)\
+      \        589 jpg each (*_t000-t588_ch00.jpg, 696x520 RGB)\n    Series*/Metadata/                     28 xml\
+      \ + 14 xsl (Leica LAS X)\n  Cardioactive.zip, Cardiotoxic.zip, Cardiotoxicity.zip, Contaminant.zip,\n  DMHF-protection.zip\
+      \ (x2)                 analysis outputs: xlsx, csv, mat, png/pdf/tif figures\n  PerFishMetrics_*.xlsx    \
+      \                22 files  per-fish metric tables\n  PRIZM-DeepLab_2026-04-21-10-55.onnx.ortfixed.onnx  176.3\
+      \ MB  trained model"
+    n_files: 30
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/64510422::0001_t002.jpg
+    - https://ndownloader.figshare.com/files/64510422::0001_t002_Simple Segmentation.png
+    size_bytes: 6299
+    description: One 300x300 training frame (JPEG, uint8) and its Simple Segmentation mask (PNG, uint8)
+  arrays:
+  - role: raw
+    path_pattern: '[0-9][0-9][0-9][0-9]_t[0-9][0-9][0-9].jpg'
+    format: jpeg
+    axes: yx
+    shape:
+    - 300
+    - 300
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Greyscale JPEG, one file per time point; name is <sequence>_t<frame>.
+  - role: label
+    path_pattern: '*_Simple Segmentation.png'
+    format: png
+    axes: yx
+    shape:
+    - 300
+    - 300
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 4
+    encoding: semantic-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Mask '<seq>_t<frame>_Simple Segmentation.png' pairs with '<seq>_t<frame>.jpg'; sampled pairs
+      have identical shapes. Values 0/2/4 are class ids (ilastik Simple Segmentation naming); which chamber each
+      id is is not documented.
+  notes: 'Listing: figshare API, 30 files, 831,271,224 bytes exact (listing.py could not expand ndownloader zips,
+    members listed with peek_archive). Probe: 0001_t002.jpg 300x300 uint8 greyscale JPEG; its mask 300x300 uint8
+    grey PNG. Sample (2 pairs, 0001_t002 and 0100_t005): raw 0-255, full range used; masks only values {0,2,4} (0001_t002:
+    62435/18436/9129 px). Values from those samples only. Whether training frames are resized or cropped from the
+    696x520 microscope frames is not stated. Voxel size not found for the training frames; checked: figshare API
+    description, zip members (no README), JPEG/PNG headers, paper (not found in Europe PMC). The Representative
+    image set''s Leica XML (Series006) states 696x520 px over 640.39 x 478.22 um, 589 frames in 31.39 s, DMI6000B,
+    20x/0.40 objective, but these are different images from the training frames, so not used. The drug-group zips
+    contain analysis outputs (tables, figures), not images.'
