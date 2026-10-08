@@ -81,7 +81,7 @@ def body(r, path, run_log=None, enrich_log=None):
     routine = pv["discovered_by"]
     src = (r.get("technical") or {}).get("size_source")
     size_src = f" ({SIZE_SOURCE[src]})" if src and da["size_bytes"] is not None else ""
-    log_s = f" · run log `{rel(run_log)}` on branch `claude/state/{routine}`" if run_log else ""
+    log_s = f" · run log `{rel(run_log)}` on branch `state`" if run_log else ""
     pubs = []
     for p in r["publications"]:
         link = f"https://doi.org/{p['doi']}" if p.get("doi") else p.get("url")
@@ -126,7 +126,7 @@ def body(r, path, run_log=None, enrich_log=None):
         f"_Found by `{routine}` on {pv['discovered_at'][:10]}{log_s}._",
     ]
     if r.get("technical"):
-        elog = f" · run log `{rel(enrich_log)}` on branch `claude/state/enricher`" if enrich_log else ""
+        elog = f" · run log `{rel(enrich_log)}` on branch `state`" if enrich_log else ""
         lines.append(f"_Inspected by `enricher`{elog}. "
                      "Labels are set automatically from the record._")
     return "\n".join(lines)

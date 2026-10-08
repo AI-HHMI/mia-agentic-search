@@ -48,10 +48,9 @@ Open or update a PR from `claude/maintainer` with the label `maintenance`, listi
 
 ## 4. Review queue health
 List the open PRs labeled `new-datasets` (with `gh pr list --label new-datasets --json number,title,createdAt,url` or the GitHub tools available).
-Note any PR open longer than 7 days. Then check freshness: run `git fetch origin` and
-`python -m tools.collect_runs`, which reads run logs from `main` and every `claude/state/*` branch.
-Find each routine's latest run.
-Flag any routine whose last run is older than 2× its cadence (repositories 1h, literature 1h, websearch 1h, enricher 1h).
+Note any PR open longer than 7 days. Routine health is the watchdog's job: run `git fetch origin state` and
+read its last result with `git show origin/state:state/watchdog.json` (`checked_at`, `alerts`), and the last 24h
+of runs with `python -m tools.collect_runs` (run logs from `main` and the `state` branch).
 
 ## 5. Daily digest (Slack connector)
 Post a single message to `#mia-harvester`:
@@ -60,11 +59,11 @@ Post a single message to `#mia-harvester`:
 - **Review queue:** number of open `new-datasets` PRs (one dataset each) and the oldest ones' ages. Stale ones get ⚠.
   Also how many are `enriched`, how many are `download-ready`, and how many have `license:unknown`.
 - **Link health:** records checked and how many are broken.
-- **Stale routines:** list them, if any.
+- **Watchdog:** its alerts from `state/watchdog.json`, quoted, with `checked_at` ("all healthy" if none).
 
 Finish, **always, even if the run failed:**
 ```bash
 python tools/run_log.py finish
-python tools/publish.py state-push --routine maintainer    # run log → claude/state/maintainer; skip in dry-run
+python tools/publish.py state-push --routine maintainer    # run log → state branch; skip in dry-run
 ```
 Then write a short summary.

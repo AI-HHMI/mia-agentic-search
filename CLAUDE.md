@@ -21,7 +21,7 @@ humans review them (merge = accept, close = reject).
 7. Never push to `main`. **One dataset per PR:** publish each record with `tools/publish.py dataset`
    (`--run-log F`): it refuses duplicates, pushes branch `claude/dataset/<id>` and opens the PR with the
    `tools/pr_text.py` title and body, verbatim.
-   Search state goes to `claude/state/<routine>` via `tools/publish.py state-push`.
+   Search state goes to the `state` branch (each routine owns its own files there) via `tools/publish.py state-push`.
 8. Slack notifications go to **`#mia-harvester`** via the Slack connector. Don't post to any other channel.
 9. **Run until 10 new datasets are published, max 2 hours.** Harvest runs keep searching, one frontier query
    at a time, until they publish 10 datasets (`target`, default 10) that aren't on `main`, have no open PR and
@@ -123,7 +123,7 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
 | `python tools/estimate_size.py <file> --files F \| --count I=N` | size from files × voxels × bytes per voxel, when nothing states it (enricher) |
 | `python tools/labels.py <file>` | the PR labels a record gets |
 | `python tools/readiness.py [files] [--summary\|--json] [--tensorswitch SRC]` | download readiness: ready / not-ready / unknown, with reasons (the `download-ready` label, the download queue, the enricher) |
-| `python tools/download_queue.py next\|record\|list` | the download queue and the downloads list (`state/downloads.json` on `claude/state/downloader`) |
+| `python tools/download_queue.py next\|record\|list` | the download queue and the downloads list (`state/downloads.json` on the `state` branch) |
 | `python tools/miao_layout.py <file> --root R --tensorswitch SRC --label-class C [--name N] [--whole]` | plan a record (sample unit, or every file with `--whole`) into the miao layout (miao#13), one crop per raw/label pair: steps + label metadata, read-only |
 | `python tools/miao_run.py <plan.json>` | run that plan crop by crop with TensorSwitch (resumable; downloads deleted per crop) |
 | `python tools/place.py <file>` | move records to `datasets/<dimensionality>/<modality>/` |

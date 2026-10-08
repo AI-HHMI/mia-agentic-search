@@ -55,12 +55,13 @@ The dashboard lists every open PR that isn't merged, grouped by reason.
 | `state/rejected.yaml` | Datasets that must not be proposed again, besides those of closed PRs |
 
 Branches: `main` (protected catalog) · `claude/dataset/<id>` (one per proposed dataset, deleted when
-its PR closes) · `claude/state/<routine>` (search state and run logs).
+its PR closes) · `state` (search state, run logs, watchdog result).
 
 ## Monitoring
 - **Dashboard:** catalog by dimensionality (modality and organism), new records per day, why open
   PRs aren't merged, routine health and recent runs. Rebuilt hourly and after every merge.
-- **Slack:** failed runs, the daily digest, and watchdog alerts when a routine goes stale.
+- **Slack:** failed runs, the daily digest, and watchdog alerts when a routine goes stale or keeps
+  failing (posted only when the alerts change; none while the repo variable `PAUSED` is `true`).
 - **Transcripts:** every agent session at claude.ai/code/routines.
 
 ## Setup (done for this repo)

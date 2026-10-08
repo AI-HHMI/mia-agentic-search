@@ -23,7 +23,7 @@ RUN_BUDGET_MIN = 120      # hard upper runtime per agent run
 HARVEST_TARGET = 10       # a harvest run stops after publishing this many new datasets (one PR each)
 SEARCH_CUTOFF_MIN = 110   # stop searching here, leaving time to publish PRs and save state
 DATASET_BRANCH_PREFIX = "claude/dataset/"  # one branch + PR per proposed dataset
-STATE_BRANCH_PREFIX = "claude/state/"      # per-routine frontier + run logs, never reviewed
+STATE_BRANCH = "state"  # orphan: frontiers, run logs, downloads, gallery, watchdog; each routine owns its files
 
 # Enricher: technical inspection of proposed datasets (see .claude/skills/enrich-prs).
 WHOLE_DOWNLOAD_MAX_BYTES = 50 * 10**9      # download queue: whole dataset only below this, and only for a confirmed size

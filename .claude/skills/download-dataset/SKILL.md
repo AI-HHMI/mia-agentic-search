@@ -173,5 +173,5 @@ python tools/download_queue.py next --root <root> --max-gb 10     # the next dow
   ```
   A record that failed twice isn't offered again; `skipped` is permanent until someone removes the entry.
 - Never edit a record, never push to `main`. The only thing pushed is the downloads list, to
-  `claude/state/downloader`.
+  the `state` branch.
 - End with one short line: what was downloaded (crops, size on disk) or why nothing was.
