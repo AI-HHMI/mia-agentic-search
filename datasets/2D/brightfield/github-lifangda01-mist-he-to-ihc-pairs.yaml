@@ -1,0 +1,137 @@
+schema_version: '1.2'
+id: github-lifangda01-mist-he-to-ihc-pairs
+title: 'MIST: Multi-IHC Stain Translation dataset (H&E to HER2, Ki67, ER, PR)'
+short_name: MIST breast cancer H&E to IHC (4 stains)
+description: Aligned H&E and IHC patch pairs (1024 x 1024 px, non-overlapping) for four breast cancer IHC stains - HER2, Ki67,
+  ER and PR - cut from consecutive tissue sections. Training / test pairs per stain are 4,642 / 1,000 (HER2, 64 WSIs), 4,361
+  / 1,000 (Ki67), 4,153 / 1,000 (ER) and 4,139 / 1,000 (PR) (56 WSIs each). Released with the adaptive supervised PatchNCE
+  loss for H&E-to-IHC translation with inconsistent ground-truth pairs.
+landing_url: https://github.com/lifangda01/AdaptiveSupervisedPatchNCE
+doi: null
+repository: GitHub
+accession: lifangda01/AdaptiveSupervisedPatchNCE
+authors:
+- Fangda Li
+- Zhiqiang Hu
+- Wen Chen
+- Avinash Kak
+publications:
+- title: Adaptive Supervised PatchNCE Loss for Learning H&E-to-IHC Stain Translation with Inconsistent Groundtruth Image Pairs
+  doi: 10.48550/arXiv.2303.06193
+  url: https://arxiv.org/abs/2303.06193
+date_published: '2023-03-10'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 466.1
+    y: 466.1
+    z: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: Breast cancer tissue, H&E and IHC (HER2, Ki67, ER, PR) on consecutive sections
+  labels_stains:
+  - H&E
+  - HER2
+  - Ki67
+  - ER
+  - PR
+data:
+  formats:
+  - jpeg
+  size_bytes: 9068185099
+  n_items: 21295
+  access: open
+  download_url: https://drive.google.com/drive/folders/146V99Zv1LzoHFYlXvSDhKmflIL-joo6p
+  download_method: other
+annotations:
+  present: true
+  types:
+  - restoration-pairs
+  coverage: dense
+  format: Aligned H&E / IHC patch pairs per stain (not pixel-exact; consecutive sections)
+  source: automatic
+ml:
+  tasks:
+  - other
+  splits_provided: true
+  benchmark: MIST
+  baseline_code_url: https://github.com/lifangda01/AdaptiveSupervisedPatchNCE
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-08T10:14:40Z'
+  evidence_urls:
+  - https://github.com/lifangda01/AdaptiveSupervisedPatchNCE
+  - https://ar5iv.labs.arxiv.org/html/2303.06193
+  - https://drive.google.com/drive/folders/146V99Zv1LzoHFYlXvSDhKmflIL-joo6p
+  confidence: 0.55
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-08T12:10:00Z'
+notes: 'Counts, patch size and 0.4661 um per pixel (20x) are from the GitHub README; the paper says the dataset is now in
+  the public domain but gives no license terms and no LICENSE text was readable, hence license unknown. The pairs come from
+  consecutive sections so they are only approximately aligned. Scanner, patient count and the dataset release date are not
+  stated (date used is the arXiv posting date). n_items is 17,295 training + 4,000 test pairs. A MICCAI 2023 version of the
+  paper exists; only the arXiv version was read. enricher: Drive folder = 4 zips (HER2, Ki67, ER, PR; 9.07 GB) of 1024x1024
+  JPEGs, so formats [jpeg] (was other). The repo LICENSE (BSD-style) covers the code, not the data.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "HER2.zip  2.47 GB  11284 JPG\nKi67.zip  2.27 GB  10722 JPG\nER.zip    2.18 GB  10306 JPG\nPR.zip    2.16 GB  10278\
+      \ JPG\n  PR/TrainValAB/trainA/<slide>_<i>_<j>.jpg  4139  (H&E)\n  PR/TrainValAB/trainB/<slide>_<i>_<j>.jpg  4139  (IHC)\n\
+      \  PR/TrainValAB/valA/...                    1000\n  PR/TrainValAB/valB/...                    1000\n  (same layout\
+      \ per stain)\n"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://drive.usercontent.google.com/download?id=1BogRKSTD9FwIoEx9f8iQfffJEmVyMu11&export=download&confirm=t::PR/TrainValAB/valA/28M2101987_21_22.jpg
+    - https://drive.usercontent.google.com/download?id=1BogRKSTD9FwIoEx9f8iQfffJEmVyMu11&export=download&confirm=t::PR/TrainValAB/valB/28M2101987_21_22.jpg
+    size_bytes: 410875
+    description: One H&E patch and its PR IHC patch (validation split)
+  arrays:
+  - role: raw
+    path_pattern: '*.zip::*/TrainValAB/*A/*.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1024
+    - 1024
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: H&E patches in trainA/ and valA/.
+  - role: target
+    path_pattern: '*.zip::*/TrainValAB/*B/*.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1024
+    - 1024
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: 'Pair rule: same file name in <split>A/ (H&E) and <split>B/ (IHC) of the same stain zip. Same 1024x1024
+      shape; consecutive sections, so only approximately aligned (README/paper).'
+  notes: 'Drive folder page lists 4 files; direct drive.usercontent.google.com links support range requests, so the zip members
+    were listed (peek_archive) and headers probed. Total 9,068,185,099 B (listing.py,
+    exact). PR.zip: trainA/trainB 4139, valA/valB 1000. Probed PR valA and valB 28M2101987_21_22.jpg: 1024x1024x3 uint8 JPEG.
+    Not sampled (sample.py cannot read members of these Drive links). Voxel size 466.1 nm (0.4661 um/px at 20x) from the GitHub
+    README; record already had it. Host drive.usercontent.google.com is not on the TensorSwitch allowlist. No single archive
+    for the whole dataset (4 zips), so data.download_url stays the Drive folder.'
