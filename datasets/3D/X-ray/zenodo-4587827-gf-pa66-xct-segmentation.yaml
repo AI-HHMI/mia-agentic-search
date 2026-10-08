@@ -2,11 +2,10 @@ schema_version: '1.2'
 id: zenodo-4587827-gf-pa66-xct-segmentation
 title: Glass fiber-reinforced polyamide 66 3D X-ray computed tomography dataset for deep learning segmentation
 short_name: GF-PA66 composite X-ray CT segmentation
-description: 3D X-ray computed tomography volume of a glass fiber-reinforced polyamide 66 (GF-PA66) specimen
-  with a voxel-wise ground-truth segmentation (pa66.raw and pa66.ground_truth.raw, 1300 x 1040 x 1900
-  voxels each), plus a second unlabelled crack-specimen volume (crack.raw) and the U-Net predictions
-  and error volume for a test region. Released for 2D/3D image segmentation with the modular U-Net of
-  Bertoldo et al. (2021).
+description: 3D X-ray computed tomography volume of a glass fiber-reinforced polyamide 66 (GF-PA66) specimen with
+  a voxel-wise ground-truth segmentation (pa66.raw and pa66.ground_truth.raw, 1300 x 1040 x 1900 voxels each), plus
+  a second unlabelled crack-specimen volume (crack.raw) and the U-Net predictions and error volume for a test region.
+  Released for 2D/3D image segmentation with the modular U-Net of Bertoldo et al. (2021).
 landing_url: https://zenodo.org/records/4587827
 doi: 10.5281/zenodo.4587827
 repository: Zenodo
@@ -25,27 +24,30 @@ imaging:
   modality:
   - X-ray
   dimensionality: 3D
-  voxel_size_nm: null
+  voxel_size_nm:
+    x: 1300
+    y: 1300
+    z: 1300
   channels: 1
   organism: []
   sample: Glass fiber-reinforced polyamide 66 (GF-PA66) composite specimen (materials science, not biological)
   labels_stains: []
 data:
   formats:
-  - other
-  size_bytes: 13964000000
+  - hdf5
+  size_bytes: 13950490732
   n_items: 2
   access: open
-  download_url: https://zenodo.org/records/4587827
+  download_url: https://zenodo.org/records/4587827/files/pa66_volumes.h5
   download_method: http
 annotations:
   present: true
   types:
   - semantic-segmentation
   coverage: dense
-  format: pa66.ground_truth.raw, a raw voxel volume with the same 1300x1040x1900 dimensions as pa66.raw
-    (PyHST .raw.info text files give the size)
-  source: unknown
+  format: HDF5 dataset /pa66/ground_truth in pa66_volumes.h5 (uint8 class ids 0 matrix, 1 fiber, 2 porosity), also
+    as headerless pa66.ground_truth.raw in pa66.zip
+  source: proofread
 ml:
   tasks:
   - segmentation
@@ -64,17 +66,101 @@ provenance:
   - https://zenodo.org/records/4587827/files/pa66.zip
   - https://zenodo.org/records/4587827/files/crack.zip
   - https://api.crossref.org/works/10.3389/fmats.2021.761229
-  confidence: 0.6
+  - https://zenodo.org/records/4587827/files/pa66_volumes.xdmf
+  - https://www.frontiersin.org/articles/10.3389/fmats.2021.761229/full
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T12:15:00Z'
-notes: 'Materials-science X-ray CT (composite), not biological; kept as a real X-ray volume with a dense
-  ground-truth segmentation. Formats are headerless PyHST .raw volumes with .raw.info text files (also
-  one HDF5 file pa66_volumes.h5 of 6.95 GB with an XDMF index, not opened). Voxel size, bit depth, class
-  labels and annotation procedure are not stated on the Zenodo page, in the archive info files or in
-  the paper abstract; the paper full text is not open access in Europe PMC and the publisher page returned
-  503, so they are left null/unknown. n_items counts the two labelled/unlabelled volumes pa66 (labelled)
-  and crack (no ground truth, only a model prediction). Size is the sum of the five Zenodo files (pa66.zip
-  2.35 GB, crack.zip 4.62 GB, pa66_test.zip 28 MB, pa66_volumes.h5 6.95 GB). Trained models are in zenodo.4601560.'
+  last_checked: '2026-10-08T13:35:00Z'
+notes: 'Materials-science X-ray CT (composite), not biological. Volumes come both as headerless PyHST .raw files
+  with .raw.info sizes (zips) and in one HDF5 file pa66_volumes.h5 indexed by pa66_volumes.xdmf. Paper split: z-slices
+  1300 train / 128 val / 300 test with 86-slice margins (not separate files). n_items counts pa66 (labelled) and
+  crack (unlabelled, model prediction only). Trained models are in zenodo.4601560. enricher: voxel size 1.3 um isotropic
+  from paper Methods (effective pixel size 1.3 um) and XDMF spacing 1.3 (was null). enricher: classes 0/1/2 = matrix/fiber/porosity
+  and annotation procedure (seeded region growing + manual correction of ring artifacts) from paper Data availability
+  / Methods; source set to proofread (was unknown). enricher: formats [hdf5] (was other; .raw volumes have no listed
+  format), download_url set to the HDF5 file, size from Zenodo file listing.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "./ (Zenodo 4587827, 5 files, 14.0 GB)\n  pa66_volumes.h5          6.95 GB  HDF5: /pa66/data, /pa66/ground_truth,\
+      \ /pa66_test/prediction,\n                                    /pa66_test/error, /crack/crack_data, /crack/crack_prediction\n\
+      \  pa66_volumes.xdmf        XDMF index (shapes, uint8, spacing 1.3)\n  pa66.zip                 2.35 GB: pa66.raw,\
+      \ pa66.ground_truth.raw (+ .raw.info), 2.57 GB each\n  pa66_test.zip            28 MB: pa66.test.prediction.raw,\
+      \ pa66.test.error_volume.raw (+ .raw.info)\n  crack.zip                4.62 GB: crack.raw, crack.prediction.raw\
+      \ (+ .raw.info), 5.83 GB each"
+    n_files: 5
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/4587827/files/pa66_volumes.h5
+    size_bytes: 6951170105
+    description: The single HDF5 file holds the labelled pa66 raw + ground-truth pair (datasets /pa66/data and /pa66/ground_truth);
+      no smaller raw+label unit exists. Not downloaded this run.
+  arrays:
+  - role: raw
+    path_pattern: pa66_volumes.h5 (/pa66/data)
+    format: hdf5
+    axes: zyx
+    shape:
+    - 1900
+    - 1040
+    - 1300
+    shape_varies: false
+    dtype: uint8
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: pa66_volumes.h5 (/pa66/ground_truth)
+    format: hdf5
+    axes: zyx
+    shape:
+    - 1900
+    - 1040
+    - 1300
+    shape_varies: false
+    dtype: uint8
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: matrix
+    - id: 1
+      name: fiber
+    - id: 2
+      name: porosity
+    alignment: same-grid
+    alignment_notes: Same XDMF grid (origin 0, spacing 1.3) and shape as /pa66/data; dense ground truth over all
+      1900 z-slices.
+  - role: raw
+    path_pattern: pa66_volumes.h5 (/crack/crack_data)
+    format: hdf5
+    axes: zyx
+    shape:
+    - 2002
+    - 1845
+    - 1579
+    shape_varies: false
+    dtype: uint8
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  notes: 'Exact Zenodo listing (zip indexes expanded). Shapes, dtype (uint8) and HDF5 dataset paths from pa66_volumes.xdmf;
+    .raw.info files give NUM_X/Y/Z (1300/1040/1900 for pa66, 1579/1845/2002 for crack) and member sizes match 1
+    byte/voxel. Axes zyx: XDMF dimensions list 1900 1040 1300 against NUM_Z/NUM_Y/NUM_X. Raw values are integers
+    0-255 per the paper (Paganin-filtered PyHST2 reconstruction, so normalization unknown). HDF5 header probe of
+    the 6.95 GB file kept failing on intermittent TLS errors from zenodo.org, so compression is unknown (the HDF5
+    file is smaller than the uncompressed volumes, ~17.6 GB, so it is likely compressed). XDMF spacing 1.3 has no
+    unit; the paper states an effective pixel size of 1.3 um. Model outputs in the same file (/crack/crack_prediction,
+    /pa66_test/prediction = last 300 z-slices, /pa66_test/error) are not listed as arrays: they are predictions,
+    not training data.'
