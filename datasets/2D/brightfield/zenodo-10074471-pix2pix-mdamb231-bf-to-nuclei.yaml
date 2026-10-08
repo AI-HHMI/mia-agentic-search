@@ -2,8 +2,8 @@ schema_version: '1.2'
 id: zenodo-10074471-pix2pix-mdamb231-bf-to-nuclei
 title: Pix2pix training dataset for predicting nuclei form brightfield images
 short_name: MDA-MB-231 brightfield to nuclei pairs (pix2pix)
-description: 1,600 live-cell brightfield images of MDA-MB-231 cells paired with 1,600 sir-DNA nuclear fluorescence images
-  (20x, Nikon Ti2-E, time-lapse frames), released as the training source and target for a pix2pix brightfield-to-nuclei
+description: 1,600 live-cell brightfield images of MDA-MB-231 cells paired with 1,600 sir-DNA nuclear fluorescence
+  images (20x, Nikon Ti2-E, time-lapse frames), released as the training source and target for a pix2pix brightfield-to-nuclei
   prediction model.
 landing_url: https://zenodo.org/records/10074471
 doi: 10.5281/zenodo.10074471
@@ -19,21 +19,24 @@ imaging:
   - brightfield
   - widefield
   dimensionality: 2D
-  voxel_size_nm: null
+  voxel_size_nm:
+    x: 649.6
+    y: 649.6
+    z: null
   channels: 1
   organism:
   - Homo sapiens
-  sample: Live MDA-MB-231 cells at 37 C, 5% CO2, nuclei labelled with sir-DNA (Cytoskeleton); 20x Plan Apo Lambda NA 0.75,
-    Hamamatsu Orca Flash4.0 sCMOS, 2x2 binning; 1 frame/min for 2 h or 1 frame/5 min for 17 h
+  sample: Live MDA-MB-231 cells at 37 C, 5% CO2, nuclei labelled with sir-DNA (Cytoskeleton); 20x Plan Apo Lambda
+    NA 0.75, Hamamatsu Orca Flash4.0 sCMOS, 2x2 binning; 1 frame/min for 2 h or 1 frame/5 min for 17 h
   labels_stains:
   - sir-DNA
 data:
   formats:
   - tiff
-  size_bytes: 3174518999
+  size_bytes: 3175615558
   n_items: 1600
   access: open
-  download_url: https://zenodo.org/api/records/10074471/files/Training-source-BF.zip/content
+  download_url: https://zenodo.org/records/10074471
   download_method: http
 annotations:
   present: true
@@ -62,10 +65,60 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T05:40:00Z'
-notes: 'Training signal is image-to-image translation (brightfield input, sir-DNA nuclear fluorescence target), not
-  masks, hence annotation type and task "other". Zenodo API record and peek_archive of both zips: 1,600 TIFFs each
-  (3.35 GB uncompressed each), identical numbering. n_items counts the 1,600 pairs; size_bytes is the sum of the two
-  zips (1,830,678,011 + 1,343,840,989 B) plus example_images.png excluded. Pixel size not stated in the record; no
-  associated paper is listed on the record and Europe PMC/Crossref title search found none, so voxel size and
-  the split are unknown. The 20x time-lapse frames come from a few movies, so frames are correlated.'
+  last_checked: '2026-10-08T09:10:00Z'
+notes: 'Training signal is image-to-image translation (brightfield input, sir-DNA nuclear fluorescence target),
+  not masks, hence annotation type and task "other". Zenodo API record and peek_archive of both zips: 1,600 TIFFs
+  each (3.35 GB uncompressed each), identical numbering. n_items counts the 1,600 pairs; size_bytes is the sum of
+  the two zips (1,830,678,011 + 1,343,840,989 B) plus example_images.png excluded. No associated paper is listed
+  on the record and Europe PMC/Crossref title search found none, so the split is unknown. The 20x
+  time-lapse frames come from a few movies, so frames are correlated. enricher: voxel size 649.6 nm from the ImageJ
+  calibration of both TIFF sets (0.6496 micron/px), consistent with 20x and 2x2 binning on the Orca Flash4.0 (record)
+  (was null). enricher: size_bytes is all 3 files; download_url is the record (two zips).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "./  3 files, 3.18 GB (Zenodo)\n  Training-source-BF.zip      1.83 GB   1.1-training-source-BF-1600/0001.tif\
+      \ .. 1600.tif\n  Training-target-sirDNA.zip  1.34 GB   2.1.1-training-target-nucleus-1600/0001.tif .. 1600.tif\n\
+      \  example_images.png          1.1 MB"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/10074471/files/Training-source-BF.zip/content::1.1-training-source-BF-1600/0001.tif
+    - https://zenodo.org/api/records/10074471/files/Training-target-sirDNA.zip/content::2.1.1-training-target-nucleus-1600/0001.tif
+    size_bytes: 4187062
+    description: Brightfield frame 0001 and its sir-DNA target.
+  arrays:
+  - role: raw
+    path_pattern: 1.1-training-source-BF-1600/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1022
+    - 1024
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range: null
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: Brightfield; ImageJ calibration 0.6496 micron/px; display range 60-4095 (12-bit camera range).
+  - role: target
+    path_pattern: 2.1.1-training-target-nucleus-1600/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1022
+    - 1024
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range: null
+    normalization: none
+    alignment: same-grid
+    alignment_notes: sir-DNA nuclear fluorescence; pairs with the brightfield file of the same number; same shape
+      and calibration.
+  notes: 'Listed with tools/listing.py (Zenodo): 3 files, 3,175,615,558 B; zip members from the harvester''s peek
+    (1600 TIFFs each). Probed member 0001.tif of both zips. normalization none inferred (uint16 in the 12-bit range).
+    No pixels sampled.'
