@@ -36,7 +36,7 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: 477696173627
+  size_bytes: 479179932799
   n_items: 305520
   access: open
   download_url: https://storage.googleapis.com/rxrx/RxRx19a/RxRx19a-images.zip
@@ -71,11 +71,60 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T16:51:23Z'
-notes: RxRx19a-images.zip (HTTP HEAD 477,696,173,627 B) holds 1,527,600 PNGs = 305,520 sites x 5 channels (the page says 5
-  stains; the Mito channel of RxRx1/2 is absent), paths RxRx19a/images/<cell type-experiment>/Plate<n>/<well>_s<site>_w<channel>.png;
+  last_checked: '2026-10-08T18:20:00Z'
+notes: 'RxRx19a-images.zip (HTTP HEAD 477,696,173,627 B) holds 1,527,600 PNGs = 305,520 sites x 5 channels (the page says
+  5 stains; the Mito channel of RxRx1/2 is absent), paths RxRx19a/images/<cell type-experiment>/Plate<n>/<well>_s<site>_w<channel>.png;
   RxRx19a-metadata.zip holds metadata.csv (46 MB), README and a CC BY 4.0 LICENSE. Labels are disease condition and compound
   identities, not pixel annotations; no split column in the README schema. Species follow the cell-line names (Vero is African
   green monkey, Chlorocebus sabaeus, per the page). Pixel size not stated; PNGs are 8-bit 1024x1024 downsampled from 2048x2048
-  16-bit originals (page). The README also cites an April 2020 preprint (10.1101/2020.04.21.054387) on the SARS-CoV-2 screen,
-  which could not be fetched in this run (paper tool timed out); only the Cuccarese et al. preprint was read.
+  16-bit originals (page). organisms: Homo sapiens = images/HRCE-*/, Chlorocebus sabaeus = images/VERO-*/. enricher: size_bytes
+  = listing of all 3 zips (was images zip only). enricher: the April 2020 preprint (10.1101/2020.04.21.054387) cited by the
+  README was read; it states no pixel size either.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "RxRx19a-images.zip/RxRx19a/                  2 files  16 KB  README.md, LICENSE\n  images/HRCE-1/Plate{1..26}/\
+      \                26 dirs  696,800 files  217.1 GB  .png\n  images/HRCE-2/Plate{1..27}/                27 dirs  723,600\
+      \ files  218.2 GB  .png\n  images/VERO-1/Plate{1,2}/                  53,600 files  21.3 GB  .png\n  images/VERO-2/Plate{1,2}/\
+      \                  53,600 files  20.7 GB  .png\n    <well>_s<site 1-4>_w<channel 1-5>.png\nRxRx19a-metadata.zip/RxRx19a/\
+      \                README.md, LICENSE, metadata.csv (46.3 MB)\nRxRx19a-DL-embeddings.zip/RxRx19a/           README.md,\
+      \ LICENSE, embeddings csv (3.4 GB)\n(same PNGs also as single objects under gs://rxrx/RxRx19a/images/)"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://storage.googleapis.com/rxrx/RxRx19a/images/HRCE-1/Plate1/AA02_s1_w1.png
+    - https://storage.googleapis.com/rxrx/RxRx19a/images/HRCE-1/Plate1/AA02_s1_w2.png
+    - https://storage.googleapis.com/rxrx/RxRx19a/images/HRCE-1/Plate1/AA02_s1_w3.png
+    - https://storage.googleapis.com/rxrx/RxRx19a/images/HRCE-1/Plate1/AA02_s1_w4.png
+    - https://storage.googleapis.com/rxrx/RxRx19a/images/HRCE-1/Plate1/AA02_s1_w5.png
+    size_bytes: 1721841
+    description: One site (HRCE-1 Plate1 well AA02 site 1), all five channel PNGs w1-w5, from the public bucket; its labels
+      are the metadata.csv row for site HRCE-1_1_AA02_1.
+  arrays:
+  - role: raw
+    path_pattern: RxRx19a/images/*/Plate*/*_s[1-4]_w[1-5].png
+    format: png
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One greyscale PNG per channel; the five files <well>_s<site>_w1..w5.png of a site form one 5-channel
+      image (README). Mapping of w1-w5 to the five stains is not stated in the README or on the page.
+  notes: 'Labels are per-well metadata (disease_condition mock/irradiated/viral, treatment, treatment_conc, SMILES) in metadata.csv,
+    keyed by site_id; no label images. value_range [0, 255] over the 5 channel PNGs of one site (per channel: w1 0-131, w2
+    7-255, w3 2-255, w4 3-255, w5 4-209). PNGs are 8-bit, downsampled from 2048x2048 16-bit originals (page), so the page
+    says the intensities were changed but not how; normalization unknown. Direct files: each PNG is a public object at https://storage.googleapis.com/rxrx/RxRx19a/images/<exp>/Plate<n>/<file>
+    (bucket listing), and download_url is the one images zip. storage.googleapis.com is not on TensorSwitch''s fetch allowlist.
+    The bucket also has a prefix images/HCRE-1/Plate1/ that is not in the zip. Voxel size not found; checked: PNG headers
+    (no pHYs calibration), rxrx.ai page, README in metadata zip, both preprints (2020.04.21.054387, 2020.08.02.233064; Methods
+    give only a 20X objective on an ImageXpress Micro Confocal in widefield mode), rxrx-datasets GitHub README.'
