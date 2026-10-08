@@ -13,6 +13,10 @@ has no LSF cluster), and stops if the disk under --root has less than 3x the dat
 `whole` when the data is one zip whose size is confirmed by a file listing and < 50 GB
 (tools/readiness.py:whole_download_ok), else `sample-unit`.
 
+With `--agent native` (before the subcommand) it works on the native agent's list,
+state/downloads-native.json, and `next` takes the records tools/native.py:native_reasons accepts (no
+TensorSwitch planner), always as the sample unit.
+
 `record` writes the outcome. A `downloaded` entry holds the dataset folder, the crops from its
 manifest.json, the size on disk, the scope, the date, and the record's git commit, so a later
 change to the record can be told apart. Restore the list first with
@@ -30,7 +34,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.common import ROOT, STATE_DIR, iter_record_paths, load_yaml  # noqa: E402
 from tools.readiness import planner, readiness, whole_download_ok  # noqa: E402
 
-LIST = STATE_DIR / "downloads.json"
+LISTS = {"tensorswitch": STATE_DIR / "downloads.json",        # /download-dataset (TensorSwitch)
+         "native": STATE_DIR / "downloads-native.json"}         # /download-native (tools/native.py)
+LIST = LISTS["tensorswitch"]
 MAX_FAILURES = 2
 
 
@@ -60,8 +66,15 @@ def mode_for(r):
     return "whole" if planner()._zip_url(r) and whole_download_ok(r) else "sample-unit"
 
 
+def native_candidate(r):
+    """For the native agent: (ready, mode, size). Its own rules (tools/native.py:native_reasons), sample unit only."""
+    from tools.native import native_reasons
+    return not native_reasons(r), "sample-unit", ((r.get("technical") or {}).get("sample") or {}).get("size_bytes")
+
+
 def cmd_next(a):
-    if planner() is None:
+    native = a.agent == "native"
+    if not native and planner() is None:
         sys.exit("TENSORSWITCH_SRC is not set (or the planner didn't load); readiness can't be checked")
     d = load()
     done = set(d["downloaded"]) | set(d["skipped"])
@@ -71,15 +84,20 @@ def cmd_next(a):
         r = load_yaml(p)
         if r.get("id") in done | failed or str((r.get("imaging") or {}).get("dimensionality")) != "3D":
             continue
-        if readiness(r)[0] != "ready":
-            continue
-        mode = mode_for(r)
-        size = r["data"].get("size_bytes") if mode == "whole" else r["technical"]["sample"].get("size_bytes")
+        if native:
+            ok, mode, size = native_candidate(r)
+            if not ok:
+                continue
+        else:
+            if readiness(r)[0] != "ready":
+                continue
+            mode = mode_for(r)
+            size = r["data"].get("size_bytes") if mode == "whole" else r["technical"]["sample"].get("size_bytes")
         # unknown size: last in the queue, and only taken if the whole dataset is under --max-gb
         known = size if size is not None else r["data"].get("size_bytes")
         # a sample unit over 2 GB needs the LSF cluster (submit_job), which the runner doesn't use
         if (known is None or known > a.max_gb * 1024 ** 3
-                or (mode == "sample-unit" and (size or 0) > planner().MCP_LIMIT_BYTES)):
+                or (not native and mode == "sample-unit" and (size or 0) > planner().MCP_LIMIT_BYTES)):
             too_big.append((known or 0, r["id"]))
             continue
         candidates.append((size is None, size or 0, r["id"], str(p.relative_to(ROOT)), mode))
@@ -140,6 +158,8 @@ def cmd_list(a):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--agent", choices=sorted(LISTS), default="tensorswitch",
+                    help="whose downloads list: tensorswitch (state/downloads.json) or native (downloads-native.json)")
     sub = ap.add_subparsers(dest="cmd", required=True)
     n = sub.add_parser("next")
     n.add_argument("--root", default="demo")
@@ -152,6 +172,8 @@ def main():
     r.add_argument("--reason")
     sub.add_parser("list")
     a = ap.parse_args()
+    global LIST
+    LIST = LISTS[a.agent]
     if a.cmd == "record" and a.status != "downloaded" and not a.reason:
         sys.exit(f"{a.status} needs --reason")
     {"next": cmd_next, "record": cmd_record, "list": cmd_list}[a.cmd](a)

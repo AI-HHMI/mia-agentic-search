@@ -123,9 +123,10 @@ shape, dtype, compression, value range, normalization, label encoding and raw↔
 | `python tools/estimate_size.py <file> --files F \| --count I=N` | size from files × voxels × bytes per voxel, when nothing states it (enricher) |
 | `python tools/labels.py <file>` | the PR labels a record gets |
 | `python tools/readiness.py [files] [--summary\|--json] [--tensorswitch SRC]` | download readiness: ready / not-ready / unknown, with reasons (the `download-ready` label, the download queue, the enricher) |
-| `python tools/download_queue.py next\|record\|list` | the download queue and the downloads list (`state/downloads.json` on the `state` branch) |
+| `python tools/download_queue.py [--agent native] next\|record\|list` | the download queue and the downloads list (`state/downloads.json` on the `state` branch; `--agent native`: `downloads-native.json`) |
 | `python tools/miao_layout.py <file> --root R --tensorswitch SRC --label-class C [--name N] [--whole]` | plan a record (sample unit, or every file with `--whole`) into the miao layout (miao#13), one crop per raw/label pair: steps + label metadata, read-only |
 | `python tools/miao_run.py <plan.json>` | run that plan crop by crop with TensorSwitch (resumable; downloads deleted per crop) |
+| `python tools/native.py plan\|fetch\|inspect\|set\|convert\|check\|review\|finalize` | native download agent: the same miao layout without TensorSwitch; the agent settles axes/transforms, `check` runs the numeric tests and draws overlays, `review` records its visual verdict |
 | `python tools/place.py <file>` | move records to `datasets/<dimensionality>/<modality>/` |
 | `python tools/publish.py pr-pull <id>` / `pr-update <file>` | enricher: edit the record on an open PR's branch |
 | `python tools/check_links.py [--oldest N] [--write]` | link rot check |
@@ -136,3 +137,7 @@ inspection of open PRs), `/maintain-catalog` (daily upkeep), `/download-dataset 
 sample unit, or the whole dataset, into the miao layout with TensorSwitch; output to `demo/` for now,
 git-ignored). `/download-dataset next` is the unattended download agent, run hourly by cron on the workstation
 (`tools/cron/download_next.sh`): one download-ready dataset per run, recorded in the downloads list.
+`/download-native <record>` is a second download agent that converts with plain Python (`tools/native.py`, output to
+`demo-native/`), and records a crop only after numeric checks (identity, pyramid, grid, raw/label alignment against
+flips, transposes and shifts) and a visual review of overlay slices both pass. `/download-native next` is its unattended
+mode (`tools/cron/download_native_next.sh`, own list `state/downloads-native.json`).
