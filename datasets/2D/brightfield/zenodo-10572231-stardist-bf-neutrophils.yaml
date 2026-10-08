@@ -71,15 +71,86 @@ provenance:
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1101%2F2024.09.30.615654%22&format=json&resultType=core&pageSize=3
   - https://api.biorxiv.org/details/biorxiv/10.1101/2024.09.30.615654
   - https://www.biorxiv.org/content/biorxiv/early/2024/10/01/2024.09.30.615654.source.xml
-  confidence: 0.85
+  confidence: 0.9
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T19:00:00Z'
+  last_checked: '2026-10-08T19:10:00Z'
 notes: 'Zip index read with peek_archive (99 files, 499.7 MB): 36 Training_sources with 36 Training_targets
   masks, 4 QC source/target pairs, and the StarDist model, logs and QC report. Pixel size 650 nm, image size
   and 16-bit/8-bit types are from the Zenodo description. The preprint Methods say training images were
   manually annotated in Fiji and exported as labelled images; the preprint full text was read. Part of a
   series of cell-detection training sets by the same authors; this one covers neutrophils only. The test split
-  is the QC pairs inside the same archive.'
+  is the QC pairs inside the same archive. enricher: TIFF headers store 649.6 nm/px, consistent with the stated 650 nm.'
+technical:
+  method: sample
+  inspected_at: '2026-10-08T19:10:00Z'
+  inspected_urls:
+  - https://zenodo.org/api/records/10572231
+  - https://zenodo.org/api/records/10572231/files/StarDist_BF_Neutrophils_dataset.zip/content
+  bytes_downloaded: 1185650
+  size_source: file-listing
+  layout:
+    tree: |
+      StarDist_BF_Neutrophils_dataset.zip (407.5 MB, 99 members)
+        StarDist_BF_Neutrophils_dataset_OK/
+          Training_data/Training_sources/                  36 .tif  75.4 MB
+          Training_data/Training_targets/                  36 .tif  37.7 MB
+          Quality_control_data/Neutrophils_QC_Sources/      4 .tif   8.4 MB
+          Quality_control_data/Neutrophils_QC_targets/      4 .tif   4.2 MB
+          Stardist_Neutrophils_model/                       6 files (.h5, .json, .pdf, .zip)
+          Stardist_Neutrophils_model/Quality Control/       6 files + Prediction/ 4 .tif
+          Stardist_Neutrophils_model/logs/                  3 TensorBoard event files (339 MB)
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/10572231/files/StarDist_BF_Neutrophils_dataset.zip/content::StarDist_BF_Neutrophils_dataset_OK/Quality_control_data/Neutrophils_QC_Sources/neu_n1_p2_3500-5750_training_subset-00010.tif
+    - https://zenodo.org/api/records/10572231/files/StarDist_BF_Neutrophils_dataset.zip/content::StarDist_BF_Neutrophils_dataset_OK/Quality_control_data/Neutrophils_QC_targets/neu_n1_p2_3500-5750_training_subset-00010.tif
+    size_bytes: 3143267
+    description: One QC image (1022x1024 uint16 brightfield) and its instance label mask, read as zip members.
+  arrays:
+  - role: raw
+    path_pattern: StarDist_BF_Neutrophils_dataset.zip::StarDist_BF_Neutrophils_dataset_OK/{Training_data/Training_sources,Quality_control_data/Neutrophils_QC_Sources}/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1022
+    - 1024
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 605
+    - 2399
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: ImageJ TIFF, calibration 0.6496 um/px.
+  - role: label
+    path_pattern: StarDist_BF_Neutrophils_dataset.zip::StarDist_BF_Neutrophils_dataset_OK/{Training_data/Training_targets,Quality_control_data/Neutrophils_QC_targets}/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1022
+    - 1024
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 102
+    normalization: unknown
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    alignment: same-grid
+    alignment_notes: Training_targets/<name>.tif pairs with Training_sources/<name>.tif (and QC_targets with QC_Sources),
+      same file names; shapes match. Palette (photometric 3) TIFF whose indices are the instance IDs.
+  notes: 'Zenodo file listing with exact size (one zip, 407,545,078 B), members listed by range requests (99). Probed 2 training
+    sources, 2 targets, 2 QC sources: all single-page uncompressed TIFF, 1022x1024 (yx); sources uint16 ImageJ with 0.6496139
+    um/px calibration (the description states 650 nm), targets uint8 palette images. Sampled QC pair 00010: raw [605, 2399]
+    (hint 12-bit detector range, normalization none inferred), label 103 distinct values 0..102 (instance IDs, one per neutrophil;
+    StarDist training targets). Values from one sample. Model weights, logs and QC predictions in the zip are not training data.'
+
