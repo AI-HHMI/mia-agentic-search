@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: zenodo-7109754-crc-histology-tiles-bari
 title: Colorectal Cancer Histology Image Tiles for Tissue Multi-class Classification
 short_name: Colorectal cancer H&E tissue-class tiles
-description: 15,856 anonymised 224 x 224 px H&E tiles from 10 FFPE colorectal cancer samples, annotated by a pathologist into
-  six tissue classes (tumor, muscle/stroma, lymphocytes, debris/mucus, normal mucosa, adipose), taken at 0.5 um/px.
+description: 15,856 anonymised 224 x 224 px H&E tiles from 10 FFPE colorectal cancer samples, annotated by a pathologist
+  into six tissue classes (tumor, muscle/stroma, lymphocytes, debris/mucus, normal mucosa, adipose), taken at 0.5
+  um/px.
 landing_url: https://zenodo.org/records/7109754
 doi: 10.5281/zenodo.7109754
 repository: Zenodo
@@ -21,7 +22,8 @@ authors:
 - Simona De Summa
 - Vitoantonio Bevilacqua
 publications:
-- title: The role of unpaired image-to-image translation for stain color normalization in colorectal cancer histology classification
+- title: The role of unpaired image-to-image translation for stain color normalization in colorectal cancer histology
+    classification
   doi: 10.1016/j.cmpb.2023.107511
   url: https://doi.org/10.1016/j.cmpb.2023.107511
 date_published: '2022-09-24'
@@ -42,6 +44,7 @@ imaging:
 data:
   formats:
   - png
+  - jpeg
   size_bytes: 743271638
   n_items: 15856
   access: open
@@ -74,10 +77,51 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T12:41:35Z'
+  last_checked: '2026-10-08T15:53:34Z'
 notes: 'One zip, 15,856 PNG tiles listed with peek_archive: 3394 TUM, 3327 MUSC_STROMA, 1142 LYM, 3253 DEBRIS_MUCUS,
-  2172 NORM, 2568 ADI. Tile size 224 x 224 px at 0.5 um/px and the pathologist annotation are stated on the Zenodo page; the
-  linked paper is not open access (abstract only), so scanner and staining details are not confirmed. Class folder names are
-  abbreviations; the expansions in the description are inferred from them. The same group has an earlier tile dataset
-  (zenodo 4785131, not in the catalog at the time of writing); this record is a different tile set from 10 samples. No
-  train/test split is provided in the archive.'
+  2172 NORM, 2568 ADI. Tile size 224 x 224 px at 0.5 um/px and the pathologist annotation are stated on the Zenodo
+  page; the linked paper is not open access (abstract only), so scanner and staining details are not confirmed.
+  Class folder names are abbreviations; the expansions in the description are inferred from them. The same group
+  has an earlier tile dataset (zenodo 4785131, not in the catalog at the time of writing); this record is a different
+  tile set from 10 samples. No train/test split is provided in the archive. enricher: data.formats png + jpeg: most
+  .png files hold JPEG data (one file per class checked).'
+technical:
+  method: sample
+  inspected_at: '2026-10-08T15:53:34Z'
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  1 file, 743,271,638 B
+        CRC_Tiles_IRCCS_ISTITUTO_TUMORI_BARI.zip   15,856 entries
+          CRC_Tiles_IRCCS_ISTITUTO_TUMORI_BARI/<class>/CRC_<class>_<n>.png
+            01_TUM 3394, 02_MUSC_STROMA 3327, 03_LYM 1142, 04_DEBRIS_MUCUS 3253, 05_NORM 2172, 06_ADI 2568
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7109754/files/CRC_Tiles_IRCCS_ISTITUTO_TUMORI_BARI.zip::CRC_Tiles_IRCCS_ISTITUTO_TUMORI_BARI/01_TUM/CRC_TUM_1928.png
+    size_bytes: 29042
+    description: One tumour tile; its class is its folder.
+  arrays:
+  - role: raw
+    path_pattern: CRC_Tiles_IRCCS_ISTITUTO_TUMORI_BARI/*/*.png
+    format: jpeg
+    axes: yxs
+    shape:
+    - 224
+    - 224
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 74
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Tile-level class from the folder. Files are named .png, but the sampled TUM, MUSC_STROMA, LYM,
+      DEBRIS_MUCUS and NORM files are JPEG (JFIF) data; the sampled ADI file is a real PNG.
+  notes: 'peek_archive: one zip, 743,271,638 B (= size_bytes), 15,856 tiles, counts as in notes. probe.py on 01_TUM/CRC_TUM_1928.png:
+    JPEG data, 224x224x3. First bytes of one random file per class: FF D8 FF E0 (JPEG) in 5 classes, 89 PNG in 06_ADI.
+    sample.py on CRC_TUM_1928.png: 224x224x3 uint8 [74, 255]; one tile. Voxel size 0.5 um/px kept from the Zenodo
+    description; files carry no calibration.'
