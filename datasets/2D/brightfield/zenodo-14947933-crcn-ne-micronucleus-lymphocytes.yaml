@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: zenodo-14947933-crcn-ne-micronucleus-lymphocytes
 title: CRCN-NE Micronucleus DataSet
 short_name: Micronuclei in binucleated lymphocytes (YOLO)
-description: 889 colour microscope images of binucleated lymphocytes (Leica microscope) from the Biological Dosimetry Laboratory of CRCN-NE (Recife, Brazil), with YOLO-format bounding-box labels for binucleated cells (BN), binucleated cells with micronuclei (BNMN) and micronuclei (MN); 543 images contain only BN cells and 346 contain BNMN cells.
+description: 889 colour microscope images of binucleated lymphocytes (Leica microscope) from the Biological Dosimetry
+  Laboratory of CRCN-NE (Recife, Brazil), with YOLO-format bounding-box labels for binucleated cells (BN), binucleated
+  cells with micronuclei (BNMN) and micronuclei (MN); 543 images contain only BN cells and 346 contain BNMN cells.
 landing_url: https://zenodo.org/records/14947933
 doi: 10.5281/zenodo.14947933
 repository: Zenodo
@@ -61,10 +63,75 @@ provenance:
   - https://zenodo.org/api/records/14947933/files/Images.zip/content
   - https://zenodo.org/api/records/14947933/files/Labels.zip/content
   - https://sol.sbc.org.br/index.php/sbcas_estendido/article/view/35589
+  - https://zenodo.org/records/14947933
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T22:25:00Z'
-notes: 'Two zips listed with peek_archive: Images.zip (889 .tif, 5.3 GB) and Labels.zip (889 .txt YOLO files). Colour images, Leica microscope, class mapping and BN/BNMN counts are from the Zenodo description; channels=3 and brightfield are inferred from "coloured" images and not stated explicitly, and staining, magnification and pixel size are not given. The paper (SBC 2025) was read only as the abstract page; its PDF exceeded the fetch size limit, so annotation tool/annotators, split and acquisition details are unconfirmed (source unknown, splits_provided false). Record has no splits.'
+  last_checked: '2026-10-08T21:49:33Z'
+notes: 'Two zips listed with peek_archive: Images.zip (889 .tif, 5.3 GB) and Labels.zip (889 .txt YOLO files). Colour
+  images, Leica microscope, class mapping and BN/BNMN counts are from the Zenodo description; channels=3 and brightfield
+  are inferred from "coloured" images and not stated explicitly, and staining, magnification and pixel size are not given.
+  The paper (SBC 2025) was read only as the abstract page; its PDF exceeded the fetch size limit, so annotation tool/annotators,
+  split and acquisition details are unconfirmed (source unknown, splits_provided false). Record has no splits. enricher:
+  RGB confirmed in the TIFF headers (photometric RGB, samples differ in a sample).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      ./                     2 files   5.3 GB  .zip 2
+      Images.zip/Images/  889 files   8.4 GB uncompressed  BN<n>.tif (543), BNMN<n>.tif (346)
+      Labels.zip/Labels/  889 files 115.5 KB  BN<n>.txt, BNMN<n>.txt (YOLO)
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/14947933/files/Images.zip::Images/BN53.tif
+    - https://zenodo.org/records/14947933/files/Labels.zip::Labels/BN53.txt
+    size_bytes: 9437571
+    description: One binucleated-cell image and its YOLO box file.
+  arrays:
+  - role: raw
+    path_pattern: Images/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 1536
+    - 2048
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 225
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB colour (photometric 2, 3 samples per pixel; samples not identical in the sample).
+  - role: label
+    path_pattern: Labels/*.txt
+    format: other
+    axes: null
+    shape:
+    - 1
+    - 5
+    shape_varies: true
+    dtype: float64
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: BN
+    - id: 1
+      name: BNMN
+    - id: 2
+      name: MN
+    alignment: same-grid
+    alignment_notes: 'Labels/<name>.txt pairs with Images/<name>.tif (same stem; one image is ''BN627 .tif'' with a trailing
+      space). YOLO lines: class x_center y_center width height, normalised.'
+  notes: 'Probed Images/BN53.tif and BN54.tif (plain TIFF, RGB uint8 1536x2048, uncompressed); every image member is
+    9,437,492 B, so all share that shape. Sampled BN53.tif: range 0-225, mean 91.1 (one sample). Labels/BN53.txt holds
+    one box of class 0. Class names from the Zenodo description. Voxel size not found; checked: TIFF headers (no calibration),
+    Zenodo description, paper (SBC 2025; only the abstract page was readable to the harvester).'
