@@ -4,8 +4,8 @@ title: Deep Learning-Inferred Multiplex ImmunoFluorescence for Immunohistochemic
 short_name: DeepLIIF IHC and mpIF co-registered tiles
 description: 1,264 co-registered sets (512 x 512) of Ki67 IHC with multiplex immunofluorescence (hematoxylin, DAPI, Lap2beta,
   marker) and a cell segmentation mask, from lung and bladder tissue scanned on a ZEISS Axioscan; 575 training, 91 validation
-  and 598 test sets. Each PNG stitches the panels side by side (IHC, Hematoxylin, mpIF DAPI, mpIF Lap2, mpIF Marker, Seg). A
-  second breast cancer subset (BC-DeepLIIF) with its own training and validation zips is in the same record, with models.
+  and 598 test sets. Each PNG stitches the panels side by side (IHC, Hematoxylin, mpIF DAPI, mpIF Lap2, mpIF Marker, Seg).
+  A second breast cancer subset (BC-DeepLIIF) with its own training and validation zips is in the same record, with models.
 landing_url: https://zenodo.org/records/4751737
 doi: 10.5281/zenodo.4751737
 repository: Zenodo
@@ -33,7 +33,8 @@ imaging:
   channels: 3
   organism:
   - Homo sapiens
-  sample: Lung and bladder tissue sections, Ki67 IHC co-registered with multiplex immunofluorescence of the same slide (breast cancer subset also included)
+  sample: Lung and bladder tissue sections, Ki67 IHC co-registered with multiplex immunofluorescence of the same slide (breast
+    cancer subset also included)
   labels_stains:
   - Ki67
   - Hematoxylin
@@ -43,7 +44,7 @@ data:
   formats:
   - png
   size_bytes: 2997303046
-  n_items: 1264
+  n_items: 1715
   access: open
   download_url: https://zenodo.org/api/records/4751737/files/DeepLIIF_Training_Set.zip/content
   download_method: http
@@ -77,15 +78,87 @@ provenance:
   - https://api.biorxiv.org/details/biorxiv/10.1101/2021.05.01.442219
   - https://www.biorxiv.org/content/biorxiv/early/2021/10/08/2021.05.01.442219.source.xml
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1038%2Fs42256-022-00471-x%22&format=json&resultType=core&pageSize=3
+  - https://zenodo.org/api/records/4751737
+  - https://raw.githubusercontent.com/nadeemlab/DeepLIIF/main/README.md
   confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T10:14:40Z'
+  last_checked: '2026-10-08T12:05:00Z'
 notes: 'Panel layout, counts (575 / 91 / 598) and scanner (ZEISS Axioscan) are from the DeepLIIF README and the bioRxiv preprint
   (the journal version is not open access). Preprint: internal test images are 512 x 512 at 40x, bladder and lung carcinoma;
   mpIF co-registered to IHC by affine transforms; masks of Ki67 positive and negative cells made with the ImPartial interactive
   framework from mpIF DAPI plus a few annotations (source mixed). Zips listed with peek_archive (PNG only). Pixel size not
   stated. size_bytes sums the five data zips; model zips and the ImageJ jar in the record are excluded. A breast carcinoma
-  subset (BC-DeepLIIF) is in the same record.'
+  subset (BC-DeepLIIF) is in the same record. enricher: n_items 1715 = all PNGs in the five data zips incl. BC-DeepLIIF (was
+  1264, lung/bladder only).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'DeepLIIF_Training_Set.zip    1.01 GB  575 PNG (incl. *.50/.70/.90.png variants)
+
+      DeepLIIF_Validation_Set.zip  161 MB    91 PNG
+
+      DeepLIIF_Testing_Set.zip     1.01 GB  598 PNG (Bladder_*/Lung_*)
+
+      BC-DeepLIIF_Training_Set.zip 696 MB   385 PNG
+
+      BC-DeepLIIF_Validation_Set.zip 115 MB  66 PNG
+
+      Evaluation_Excel_Files.zip   1.1 MB   CSV scoring tables
+
+      DeepLIIF_BC_Model.zip / DeepLIIF_Latest_Model.zip / DeepLIIF_ImageJ.jar  (models, not data)
+
+      '
+    n_files: 9
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/4751737/files/DeepLIIF_Testing_Set.zip::DeepLIIF_Testing_Set/Bladder_38000_38000_0_2.png
+    size_bytes: 1758813
+    description: One stitched 3072x512 image set (IHC input, Hematoxylin, mpIF DAPI, Lap2, marker, segmentation)
+  arrays:
+  - role: raw
+    path_pattern: '*_Set.zip::*_Set/*.png'
+    format: png
+    axes: yxs
+    shape:
+    - 512
+    - 3072
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Each PNG is six 512x512 RGB panels stitched horizontally (DeepLIIF README): IHC (input, x 0-511), Hematoxylin,
+      mpIF DAPI, mpIF Lap2, mpIF marker (Ki67) targets, then the segmentation mask (x 2560-3071).'
+  - role: label
+    path_pattern: '*_Set.zip::*_Set/*.png'
+    format: png
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    encoding: unknown
+    classes: null
+    alignment: same-grid
+    alignment_notes: Segmentation panel = last 512 px of each stitched PNG; panels 2-5 are restoration targets on the same
+      512x512 grid as the IHC panel (co-registered by affine transform per the preprint).
+  notes: 'Zenodo API listing (9 files, 7,712,510,147 B incl. 4.7 GB of models); size_bytes 2,997,303,046 is the exact sum
+    of the five data zips. Zip members listed with peek_archive (575/91/598/385/66 PNG). Probed Testing Bladder_38000_38000_0_2.png
+    and BC-Validation 7.png, 7_0.png, 7_1.png: all 512x3072x3 uint8 PNG (deflate). Sampled BC-Validation 7.png (1.84 MB):
+    min 0, max 255, mean 73.5, 26% zeros (one sample, all panels together). Segmentation panel colour coding not documented
+    in what I read, so encoding unknown. Voxel size not found; checked: Zenodo description, DeepLIIF README, record notes
+    from the preprint (40x, no um/px).'
