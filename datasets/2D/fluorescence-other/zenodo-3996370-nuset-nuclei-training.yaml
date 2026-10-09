@@ -75,7 +75,7 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T21:00:59Z'
+  last_checked: '2026-10-10T00:35:00Z'
 notes: 'Overlaps with the catalogued BBBC038 / DSB2018 record: most images are the 543 fluorescent DSB2018 training images
   with manually corrected masks, plus 25 MCF10A confocal images, flipped/rotated copies and synthetic images (all per the
   paper Methods); the zip itself only lists two folders of 3,408 PNGs each (images, masks), so the exact real/synthetic/augmented
@@ -83,3 +83,70 @@ notes: 'Overlaps with the catalogued BBBC038 / DSB2018 record: most images are t
   Pixel size is not stated for the images on the dataset page, in the zip listing or in the paper Methods, so voxel_size_nm
   is null. n_items is the number of image/mask pairs (6,816 PNG files in total). Zenodo page also holds trained model weights
   (two ckpt files), not catalogued here.'
+technical:
+  method: sample
+  inspected_at: '2026-10-10T00:35:00Z'
+  inspected_urls:
+  - https://zenodo.org/api/records/3996370
+  - https://zenodo.org/records/3996370/files/NuSeT_training_data.zip::cell_nuclei_train_f_only/724b6b7044522f6d5ea35b55f8fa71d0a45a28687be2b7cac3149943ab816eec_tr.png
+  - https://zenodo.org/records/3996370/files/NuSeT_training_data.zip::cell_nuclei_train_label_f_only/724b6b7044522f6d5ea35b55f8fa71d0a45a28687be2b7cac3149943ab816eec_lr.png
+  bytes_downloaded: 92334
+  size_source: file-listing
+  layout:
+    tree: "3996370/\n  NuSeT_training_data.zip (229 MB)\n    cell_nuclei_train_f_only/        3,408 .png images  <name>_t.png,\
+      \ _tr.png, _tf.png\n    cell_nuclei_train_label_f_only/  3,408 .png masks   <name>_l.png, _lr.png, _lf.png\n  whole_norm.ckpt.data-00000-of-00001,\
+      \ foreground.ckpt.data-00000-of-00001   model weights (415 MB each, not data)"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/3996370/files/NuSeT_training_data.zip::cell_nuclei_train_f_only/724b6b7044522f6d5ea35b55f8fa71d0a45a28687be2b7cac3149943ab816eec_tr.png
+    - https://zenodo.org/records/3996370/files/NuSeT_training_data.zip::cell_nuclei_train_label_f_only/724b6b7044522f6d5ea35b55f8fa71d0a45a28687be2b7cac3149943ab816eec_lr.png
+    size_bytes: 92334
+    description: One DSB2018-derived image (_tr) and its binary mask (_lr).
+  arrays:
+  - role: raw
+    path_pattern: cell_nuclei_train_f_only/*.png
+    format: png
+    axes: yx
+    shape:
+    - 432
+    - 544
+    shape_varies: true
+    dtype: uint8
+    compression: png
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 96
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Grayscale (mode L); each source image appears as _t, _tr and _tf variants (the paper describes flipped/rotated
+      copies).
+  - role: label
+    path_pattern: cell_nuclei_train_label_f_only/*.png
+    format: png
+    axes: yx
+    shape:
+    - 432
+    - 544
+    shape_varies: true
+    dtype: uint8
+    compression: png
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 255
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: 'Pairing: image <name>_t / _tr / _tf.png <-> mask <name>_l / _lr / _lf.png (t -> l in the suffix); same
+      shape in the sampled pair.'
+  notes: 'Zenodo listing with zip members: 3 files (zip 229,301,587 B plus two 415 MB checkpoint files that are model weights;
+    size_bytes is the zip alone, exact). 6,816 PNGs in two folders. Sampled one pair: image L 432 x 544 uint8 [0, 96]; mask
+    {0, 255} (90% background). Values from one pair. Shapes vary across DSB2018 images (not all checked). No calibration in
+    PNGs; pixel size not stated (harvester checked page, zip and paper). 2D, so not in the miao layout yet.'
