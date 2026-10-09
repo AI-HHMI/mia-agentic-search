@@ -1,0 +1,174 @@
+schema_version: '1.2'
+id: rodare-3742-virvs-virus-infection-virtual-staining
+title: A Dataset for Virus Infection Reporter Virtual Staining in Fluorescence and Brightfield Microscopy (VIRVS)
+short_name: Virus-infected cells virtual staining (widefield)
+description: Paired brightfield / nuclear-stain inputs (x) and virus-reporter fluorescence targets (y) for five viruses (HAdV,
+  HSV-1, VACV, IAV, RV) in four cell types, stored as train/val/test npy arrays, plus Cellpose nuclei (and HAdV cell) masks
+  for the test splits. Released with the VIRVS virtual-staining benchmark.
+landing_url: https://rodare.hzdr.de/record/3742
+doi: 10.14278/rodare.3742
+repository: other
+accession: '3742'
+authors:
+- Maria Wyrzykowska
+- Gabriel della Maggiora
+- Nikita Deshpande
+- Ashkan Mokarian
+- Artur Yakimovich
+publications:
+- title: A Benchmark for Virus Infection Reporter Virtual Staining in Fluorescence and Brightfield Microscopy
+  doi: 10.1038/s41597-025-05194-3
+  url: https://doi.org/10.1038/s41597-025-05194-3
+date_published: '2024-08-30'
+imaging:
+  modality:
+  - widefield
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: null
+  organism:
+  - Homo sapiens
+  - Chlorocebus sabaeus
+  sample: High-content imaging of virus-infected cell monolayers (A549, HeLa Ohio Geneva, BSC40); HAdV and VACV from time-lapses
+    (selected timesteps), HSV, IAV and RV from fixed end-point DMSO-control wells at 4x
+  labels_stains:
+  - Hoechst 33342
+  - GFP virus reporter
+data:
+  formats:
+  - tiff
+  size_bytes: 202054985492
+  n_items: null
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - other
+  - instance-segmentation
+  coverage: dense
+  format: Paired arrays x.npy (nuclear/brightfield input) and y.npy (virus reporter target) per train/val/test split; masks.zip
+    holds Cellpose cyto3 predicted nuclei masks (nuc.npy) for test splits, plus cell.npy for HAdV
+  source: automatic
+ml:
+  tasks:
+  - other
+  splits_provided: true
+  benchmark: VIRVS
+  baseline_code_url: https://github.com/casus/virvs
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-09T10:15:17Z'
+  evidence_urls:
+  - https://rodare.hzdr.de/api/records/3742
+  - https://rodare.hzdr.de/record/3742
+  - https://rodare.hzdr.de/record/3742/files/masks.zip
+  - https://rodare.hzdr.de/record/3742/files/HSV.zip
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22A+Benchmark+for+Virus+Infection+Reporter+Virtual+Staining+in+Fluorescence+and+Brightfield+Microscopy%22&format=json&resultType=core&pageSize=3
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12120016/fullTextXML
+  confidence: 0.72
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-09T13:10:00Z'
+notes: 'Rodare record, 12 zips, 202 GB: per-virus processed npy zips, *_raw zips, masks.zip, filename_to_index.zip. peek_archive:
+  HSV.zip holds only {train,val,test}/{x,y}.npy; masks.zip holds test nuc.npy (HADV, IAV, RV, HSV) and HADV cell.npy. Training
+  signal is the paired input/target (virtual staining); masks are automatic Cellpose cyto3 outputs on test splits only. Pixel
+  size not stated on the record or paper text read, so null; n_items null (arrays of many tiles). HSV/IAV/RV raw images are
+  also in IDR (idr0130/0128/0129). enricher: formats [tiff] (was [other]): the five *_raw zips hold uint16 TIFFs; the processed
+  npy arrays have no schema format, and other may not stand next to a known one.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "HAdV.zip 23.4 GB  HADV_npy/{train,val,test}/{x,y}.npy (+1 npy per split)\nHSV.zip 29.9 GB  IAV.zip 25.0 GB  RV.zip\
+      \ 19.8 GB  VACV.zip 34.8 GB\n                 <V>_npy/{train,val,test}/{x,y}.npy\nhadv_raw.zip 10.2 GB  HADV/raw/  1,764\
+      \ .tif\nhsv_raw.zip 13.7 GB   HSV/raw/   1,920 .TIF (<plate>_<well>_w<n>.TIF)\niav_raw.zip 14.2 GB   IAV/raw/   2,176\
+      \ .tif\nrv_raw.zip 13.9 GB    RV/raw/    2,176 .tif\nvacv_raw.zip 16.8 GB  VACV/raw/<plate>_<well>/  288 .tif (w1/w3\
+      \ per timepoint)\nmasks.zip 344 MB      masks_copy/{HADV,HSV,IAV,RV}/test/nuc.npy, HADV/test/cell.npy, one inner .zip\n\
+      filename_to_index.zip 22 KB  15 <virus>_<split>_filename_to_index.json\n"
+    n_files: 12
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: '*.zip::*_npy/*/x.npy'
+    format: other
+    axes: null
+    shape:
+    - 96
+    - 2160
+    - 2160
+    - 1
+    shape_varies: true
+    dtype: float64
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Input stack per split (HSV test: 96 x 2160 x 2160 x 1; HAdV test: 59 x 2048 x 2048 x 2, i.e. two input
+      channels). Axes not stated; the shape reads as (tile, y, x[, channel]) and the tile index (filename_to_index json maps
+      files to indices). Axes left null: the first dimension is a tile index, not t/c/z.'
+  - role: target
+    path_pattern: '*.zip::*_npy/*/y.npy'
+    format: other
+    axes: null
+    shape:
+    - 96
+    - 2160
+    - 2160
+    - 1
+    shape_varies: true
+    dtype: float64
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: Virus-reporter target with the same n, y, x as x.npy (HSV test 96 x 2160 x 2160 x 1; HAdV test 59 x 2048
+      x 2048 x 1).
+  - role: label
+    path_pattern: masks.zip::masks_copy/*/test/*.npy
+    format: other
+    axes: null
+    shape:
+    - 96
+    - 2160
+    - 2160
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    value_range: null
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: nuc.npy per virus test split (HSV 96 x 2160 x 2160) and HADV cell.npy (59 x 2048 x 2048), Cellpose cyto3
+      outputs per the record; same n, y, x as the test x.npy.
+  - role: raw
+    path_pattern: '*_raw.zip::*/raw/**/*.[tT][iI][fF]'
+    format: tiff
+    axes: yx
+    shape:
+    - 2160
+    - 2160
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Raw single-channel TIFF per well / site / channel (w1, w2, ...); HSV 2160 x 2160, HAdV 2048 x 2048. Which
+      wavelength is which is not stated in the files.
+  notes: 'Complete listing with zip indexes (tools/listing.py on the record/3742/files/<zip> URLs, which support ranges):
+    {"n_files": 12, "total_bytes": 202054985492, "size_source": "file-listing", "zip_members": 8378}. npy headers read by
+    inflating the first KB of each member (no data loaded): HSV test x/y <f8 (96,2160,2160,1), HSV train x (672,2160,2160,1),
+    HAdV test x (59,2048,2048,2), y (59,2048,2048,1); masks HSV nuc <u2 (96,2160,2160), HADV cell <u2 (59,2048,2048). Raw
+    TIFF headers: HSV 190618-Za-4x_A01_w1/w2.TIF 2160x2160 uint16 uncompressed; HAdV 2048x2048 uint16; no calibration. No
+    values sampled (an accidental full GET of masks.zip on the api/files URL, which ignores Range, used 344 MB of the budget;
+    logged). Host rodare.hzdr.de is not on the TensorSwitch allowlist, so no sample unit. Voxel size not found: TIFF headers,
+    Rodare API record; the paper text was read by the harvester without a pixel size.'
