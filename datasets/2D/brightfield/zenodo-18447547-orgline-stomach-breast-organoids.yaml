@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: zenodo-18447547-orgline-stomach-breast-organoids
 title: OrgLine Stomach and Breast Data
 short_name: Stomach and breast organoids (brightfield)
-description: In-house brightfield images of patient-derived stomach cancer organoids (467 images, three patients; Hollow, Solid and
-  Apoptotic classes) and breast cancer organoids (357 images; Organoid and Apoptotic classes), as JPEG tiles with COCO JSON annotations
-  and PNG files, split 8:1:1 into train, validation and test. Companion data of the OrgLine organoid morphometry pipeline.
+description: In-house brightfield images of patient-derived stomach cancer organoids (467 images, three
+  patients; Hollow, Solid and Apoptotic classes) and breast cancer organoids (357 images; Organoid and
+  Apoptotic classes), as JPEG tiles with COCO JSON annotations and PNG files, split 8:1:1 into train,
+  validation and test. Companion data of the OrgLine organoid morphometry pipeline.
 landing_url: https://zenodo.org/records/18447547
 doi: 10.5281/zenodo.18447547
 repository: Zenodo
@@ -24,17 +25,18 @@ imaging:
   channels: null
   organism:
   - Homo sapiens
-  sample: Patient-derived stomach cancer organoids (three patients) and breast cancer organoids (three patients, passages 2-5) in
-    Matrigel in 24-well plates; breast images originally 8-bit TIFF at 11696 x 10368 px
+  sample: Patient-derived stomach cancer organoids (three patients) and breast cancer organoids (three
+    patients, passages 2-5) in Matrigel in 24-well plates; breast images originally 8-bit TIFF at 11696
+    x 10368 px
   labels_stains: []
 data:
   formats:
   - jpeg
   - png
-  size_bytes: 2099600000
+  size_bytes: 2099578348
   n_items: 824
   access: open
-  download_url: https://zenodo.org/records/18447547/files/data.zip?download=1
+  download_url: https://zenodo.org/api/records/18447547/files/data.zip/content
   download_method: http
 annotations:
   present: true
@@ -42,7 +44,9 @@ annotations:
   - bounding-box
   - instance-segmentation
   coverage: dense
-  format: COCO JSON (breast/coco.json and others, 3 files) plus 328 PNG files; classes Hollow, Solid, Apoptotic (stomach) and Organoid, Apoptotic (breast)
+  format: 'COCO JSON per organ (stomach/coco.json: 467 images, 978 polygon instances, categories 0 Apoptotic,
+    1 Hollow, 2 Solid organoid; breast/coco.json 48 MB). All images (JPEG and PNG) are raw; there are
+    no mask files.'
   source: manual
 ml:
   tasks:
@@ -67,10 +71,100 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T11:15:00Z'
-notes: 'Found via the 2026 Cell Reports Methods paper (Europe PMC full text read: Datasets, Annotation workflow, Data availability). Differs
-  from the catalog record zenodo-16355179-orgline-organoid-benchmark, which aggregates public organoid datasets (intestine, lung, brain, PDAC,
-  colon): this record is the authors'' own in-house stomach and breast data only. data.zip was listed with peek_archive (827 files: 496 JPEG,
-  328 PNG, 3 JSON; the first entries are under breast/). Image counts are from the paper (467 stomach, 357 breast; 824 in total), not counted
-  in the zip. Which files hold masks versus images was not checked, so the instance-segmentation label is based on the paper (OrgLine uses
-  detector-guided SAM prompts). Pixel size is not stated; the tiles are crops of large originals.'
+  last_checked: '2026-10-09T14:10:00Z'
+notes: 'Found via the 2026 Cell Reports Methods paper (Breast and Stomach annotated fully manually). Differs
+  from zenodo-16355179-orgline-organoid-benchmark (public organoid datasets aggregated); this is the in-house
+  stomach and breast data. Image counts 467 stomach, 357 breast (zip listing agrees). enricher: zip has
+  827 members: breast/images 328 PNG + 29 JPG, stomach/images 467 JPG, breast/coco.json, stomach/coco.json,
+  stomach/data.json; the PNGs are images, not masks (was unclear). Instance segmentation confirmed: stomach
+  COCO has polygon segmentations. Pixel size not stated (checked Zenodo API, paper full text, OrgLine
+  README). download_url set to the Zenodo API file link.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "./  1 file  2.1 GB  (data.zip)\ndata.zip/\n  breast/coco.json                    48.2 MB  COCO\n\
+      \  breast/images/      357 files      499.2 MB  .png 328, .jpg 29\n  stomach/coco.json         \
+      \           1.5 MB  COCO\n  stomach/data.json                    1.5 MB\n  stomach/images/     467\
+      \ files        1.6 GB  .jpg (2448x2048)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/18447547/files/data.zip/content::stomach/images/w(8)_P0_20220622_1.jpg
+    - https://zenodo.org/api/records/18447547/files/data.zip/content::stomach/coco.json
+    size_bytes: 4425986
+    description: Smallest stomach JPEG (2.9 MB) plus the stomach COCO file (1.5 MB) holding its polygons,
+      as zip members.
+  arrays:
+  - role: raw
+    path_pattern: data.zip::stomach/images/*.jpg
+    format: jpeg
+    axes: null
+    shape:
+    - 2048
+    - 2448
+    shape_varies: false
+    dtype: unknown
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Width x height 2448x2048 for all 467 images per stomach/coco.json; channel count
+      not read (headers could not be fetched).
+  - role: label
+    path_pattern: data.zip::stomach/coco.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: Apoptotic organoid
+    - id: 1
+      name: Hollow organoid
+    - id: 2
+      name: Solid organoid
+    alignment: same-grid
+    alignment_notes: COCO images[].file_name = images/<name>.jpg; bbox and polygon segmentation in image
+      pixels (978 instances; 417 Hollow, 321 Solid, 240 Apoptotic).
+  - role: raw
+    path_pattern: data.zip::breast/images/*
+    format: png
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 328 PNG (0.7-1.8 MB) and 29 JPG tiles; the paper says crops of 11696x10368 8-bit
+      TIFF originals.
+  - role: label
+    path_pattern: data.zip::breast/coco.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: boxes-table
+    classes:
+    - id: null
+      name: Organoid
+    - id: null
+      name: Apoptotic
+    alignment: same-grid
+    alignment_notes: COCO file for breast/images (48 MB, not read); class names from the paper.
+  notes: 'Listing: Zenodo API + zip central directory, 1 file, 2,099,578,348 B (exact), 827 members. Zenodo
+    range requests mostly failed (HTTP 502/504, SSL EOF) in this run, so image headers could not be read;
+    stomach/coco.json (1,496,855 B) was read in full: 467 images all 2448x2048, 978 annotations with bbox
+    + polygon segmentation, categories 0 Apoptotic, 1 Hollow, 2 Solid organoid. breast/coco.json (48 MB)
+    not read. JPEG axes/channels left null (not probed). Voxel size not found; checked: Zenodo API metadata,
+    paper full text (Europe PMC: Methods, Datasets), OrgLine GitHub README.'
