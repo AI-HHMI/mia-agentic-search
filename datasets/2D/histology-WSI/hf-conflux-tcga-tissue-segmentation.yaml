@@ -40,8 +40,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: 'PNG mask per slide in masks/, same name and size as images/<slide>.png; pixel value 0 for no tissue, 255
-    for tissue'
+  format: PNG mask per slide in masks/, same name and size as images/<slide>.png; pixel value 0 for no tissue, 255
+    for tissue
   source: manual
 ml:
   tasks:
@@ -63,9 +63,70 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T00:01:00Z'
+  last_checked: '2026-10-09T04:25:00Z'
 notes: 'Hugging Face API record (488 files: 242 images, 242 masks, README, train-slides.txt, test-slides.txt; total
-  986 MB) and dataset card read. Images are slide-level thumbnails at 10 um per pixel, so single cells are not
-  resolved; the task is tissue-versus-background segmentation. The card states the masks are manual pixel-level
-  annotations, slides come from TCGA (public data). No paper, authors or image dimensions are given on the card.
-  download_url is null because the data is individual files in a Hugging Face repository.'
+  986 MB) and dataset card read. Images are slide-level thumbnails at 10 um per pixel, so single cells are not resolved;
+  the task is tissue-versus-background segmentation. The card states the masks are manual pixel-level annotations,
+  slides come from TCGA (public data). No paper, authors or image dimensions are given on the card. download_url
+  is null because the data is individual files in a Hugging Face repository.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "conflux-xyz/tcga-tissue-segmentation/  488 files, 986.2 MB\n  images/   242 .png  982.7 MB  <TCGA slide\
+      \ name>.png, RGB thumbnail at 10 MPP\n  masks/    242 .png    3.5 MB  same names, 0 = no tissue, 255 = tissue\n\
+      \  train-slides.txt, test-slides.txt   slide names per split (194 / 48)\n  README.md, .gitattributes\n"
+    n_files: 488
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/conflux-xyz/tcga-tissue-segmentation/resolve/main/images/BLGSP-71-06-00076-01A-01-S2-HE.png
+    - https://huggingface.co/datasets/conflux-xyz/tcga-tissue-segmentation/resolve/main/masks/BLGSP-71-06-00076-01A-01-S2-HE.png
+    size_bytes: 1825430
+    description: One slide thumbnail and its tissue mask.
+  arrays:
+  - role: raw
+    path_pattern: images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 776
+    - 2416
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    value_range:
+    - 9
+    - 250
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Whole-slide thumbnails, size varies per slide.
+  - role: label
+    path_pattern: masks/*.png
+    format: png
+    axes: yx
+    shape:
+    - 776
+    - 2416
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 0
+      name: no tissue
+    - id: 255
+      name: tissue
+    alignment: same-grid
+    alignment_notes: masks/<name>.png labels images/<name>.png pixel for pixel (card; shapes match in the sample).
+  notes: 'HF listing: 488 files, 986,236,567 B (= size_bytes, confirmed). Probed and sampled BLGSP-71-06-00076-01A-01-S2-HE:
+    image 776x2416x3 uint8, 9-250, mean 217 (one sample; normalization unknown); mask 776x2416 uint8 with values
+    {0, 255} (binary, as the card states). Pixel size 10 um from the card ("downsampled to 10 microns per pixel").
+    Split lists train-slides.txt / test-slides.txt read. Files are direct HF resolve URLs (usable, range requests);
+    no single archive, so download_url stays the repo page.'
