@@ -2,9 +2,8 @@ schema_version: '1.2'
 id: zenodo-15594999-astrocyte-vpa-nuclei-3d
 title: Valproic acid-induced changes of 4D nuclear morphology in astrocyte cells
 short_name: Astrocyte DAPI nuclei 3D with masks (confocal)
-description: Deconvolved 3D confocal volumes (1024x1024xZ sub-volumes) of DAPI-stained primary human astrocytes,
-  untreated or treated with valproic acid, at days 3, 5 and 7, with 832 3D nuclear instance masks (512 control,
-  320 VPA).
+description: Deconvolved 3D confocal volumes (1024x1024xZ sub-volumes) of DAPI-stained primary human astrocytes, untreated
+  or treated with valproic acid, at days 3, 5 and 7, with 832 3D nuclear instance masks (512 control, 320 VPA).
 landing_url: https://zenodo.org/records/15594999
 doi: 10.5281/zenodo.15594999
 repository: Zenodo
@@ -34,15 +33,15 @@ imaging:
   channels: 1
   organism:
   - Homo sapiens
-  sample: primary human hippocampal astrocytes (ScienCell) cultured with DMSO (NHA) or 1.5 mM valproic acid, imaged
-    at days 3, 5 and 7
+  sample: primary human hippocampal astrocytes (ScienCell) cultured with DMSO (NHA) or 1.5 mM valproic acid, imaged at days
+    3, 5 and 7
   labels_stains:
   - DAPI
 data:
   formats:
   - tiff
   size_bytes: 37564774481
-  n_items: 832
+  n_items: 216
   access: open
   download_url: https://zenodo.org/records/15594999
   download_method: http
@@ -51,7 +50,8 @@ annotations:
   types:
   - instance-segmentation
   coverage: dense
-  format: per-condition tar.gz archives (*_masks.tar.gz) of 16-bit 3D TIFFs, one unique index per nucleus
+  format: per-condition tar.gz archives (<cond>_day<N>_masks.tar.gz) with one uint8 3D TIFF per image sub-volume (<name>_mask.tif,
+    one ID per nucleus) plus a 2D PNG of the same name
   source: automatic
 ml:
   tasks:
@@ -70,16 +70,78 @@ provenance:
   - https://zenodo.org/api/records/15594999
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8684733/fullTextXML
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1091%2Fmbc.E20-08-0502%22&format=json&resultType=core&pageSize=3
-  confidence: 0.55
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-09T01:08:12Z'
-notes: 'From the Zenodo record and the paper Methods (open access, Europe PMC). Twelve tar.gz archives (6 deconvolved
-  image sets of 3 to 9 GB and 6 small mask sets; 37.6 GB in total); the archives cannot be listed remotely, so file
-  names and counts inside them are unverified and annotations_verified is false. n_items is the mask count from
-  the record (512 NHA + 320 VPA). Masks are automatic: Farsight 3D nuclear segmentation on deconvolved images, followed
-  by hole filling, removal of edge-touching or merged objects and visual inspection; there is no manual annotation.
-  Zeiss LSM 710, 63x 1.4 NA; voxel size not found in the Methods or the record, so it is null. Time points are separate
-  samples (days 3, 5, 7), so treated as 3D.'
+  annotations_verified: true
+  last_checked: '2026-10-09T03:50:00Z'
+notes: 'Masks are automatic: Farsight 3D nuclear segmentation on deconvolved images, then hole filling, removal of edge-touching
+  or merged objects and visual inspection (paper Methods); no manual annotation. Zeiss LSM 710, 63x 1.4 NA. Time points are
+  separate samples (days 3, 5, 7), so treated as 3D. Voxel size differs between subsets, so voxel_size_nm stays null: vpa_day5
+  .meta (Zeiss) ScalingX/Y 8.786e-8 m, Z 3.2465e-7 m = 87.9 x 87.9 x 324.7 nm; file names encode 88x88x325 for nha_day3, nha_day7,
+  vpa_day3, vpa_day5, vpa_day7 and 80x80x325 for nha_day5. enricher: n_items 832 -> 216 mask volumes in the archives (the
+  record''s 512 + 320 count nuclei); annotations verified.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                                       12 files     37.6 GB  .tar.gz\n  <nha|vpa>_day<3|5|7>_deconv.tar.gz\
+      \  (x6)  3.1-9.0 GB   <cond>_day<N>_deconv/<set>_c0_gNNN.tif (40x1024x1024 float32) + <set>.meta\n  <nha|vpa>_day<3|5|7>_masks.tar.gz\
+      \   (x6)  3.4-8.3 MB   <cond>_day<N>_masks/<set>_c0_gNNN_mask.tif + _mask.png\nmask volumes per archive: nha_day3 36,\
+      \ nha_day5 45, nha_day7 35, vpa_day3 36, vpa_day5 21, vpa_day7 43 (= 216)"
+    n_files: 12
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/15594999/files/vpa_day5_masks.tar.gz/content
+    - https://zenodo.org/api/records/15594999/files/vpa_day5_deconv.tar.gz/content
+    size_bytes: 3124259941
+    description: 'Smallest condition (VPA day 5): its mask archive (21 volumes) and image archive; tar.gz members cannot be
+      fetched one by one'
+  arrays:
+  - role: raw
+    path_pattern: '*_deconv.tar.gz/*_deconv/*_c0_g[0-9][0-9][0-9].tif'
+    format: tiff
+    axes: zyx
+    shape:
+    - 40
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: float32
+    compression: none
+    value_range:
+    - 20.743288
+    - 3015.1743
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Lucy-Richardson deconvolved DAPI sub-volumes (Zx1024x1024 per the record); ImageJ hyperstack, images=40
+      slices=40. A Zeiss .meta sidecar per tile set holds the acquisition metadata.
+  - role: label
+    path_pattern: '*_masks.tar.gz/*_masks/*_mask.tif'
+    format: tiff
+    axes: zyx
+    shape:
+    - 40
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 5
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: <cond>_day<N>_deconv/<set>_c0_gNNN.tif pairs with <cond>_day<N>_masks/<set>_c0_gNNN_mask.tif
+      (40 pages, same 1024x1024 grid). Plain multi-page TIFF; one page per raw z-slice. Few nuclei per volume (3-5 IDs observed).
+      The _mask.png files (2D, not inspected) are probably projections.'
+  notes: 'Listing: tools/listing.py on the Zenodo record: 12 tar.gz, 37,564,774,481 B (file-listing, complete). tar.gz has
+    no index: all 6 mask archives were read whole (36.4 MB) and listed; image archives were streamed from the start (vpa_day5:
+    first 40 MB; others 1.5 MB). Sample (values from one volume / first page): vpa_day5 ..._g004.tif float32 40x1024x1024
+    uncompressed, page 0 20.7-3015.2 (ImageJ min/max); masks _g005 and _g014 uint8 40x1024x1024, 0-5 and 0-3. Voxel size:
+    Zeiss .meta of vpa_day5 (87.86 x 87.86 x 324.65 nm); subsets differ by file name (80 nm lateral in nha_day5), so not set;
+    paper Methods state none. Download: the tar.gz archives pass --download-check, but TensorSwitch cannot pull single members
+    out of a tar.gz, so the sample is a whole condition (3.1 GB).'
