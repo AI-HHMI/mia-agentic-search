@@ -2,11 +2,11 @@ schema_version: '1.2'
 id: deepcell-dynamicnuclearnet-nuclear-tracking
 title: DynamicNuclearNet
 short_name: DynamicNuclearNet nuclei tracking (widefield)
-description: DynamicNuclearNet is a training dataset of fluorescent live-cell nuclei movies with per-frame nuclear segmentation
-  masks and lineage tracks including divisions. The paper reports 647,322 nuclear segmentations in 16,501 trajectories
-  with 2,621 division events across five mammalian cell lines (NIH-3T3, HeLa-S3, HEK293, RAW 264.7, PC-3) plus the Cell Tracking
-  Challenge Fluo-N2DL-HeLa movies. It has a tracking subset (X, y, lineages) and a segmentation subset (X, y, source metadata),
-  loaded through the DeepCell API.
+description: DynamicNuclearNet is a training dataset of fluorescent live-cell nuclei movies with per-frame nuclear
+  segmentation masks and lineage tracks including divisions. The paper reports 647,322 nuclear segmentations in
+  16,501 trajectories with 2,621 division events across five mammalian cell lines (NIH-3T3, HeLa-S3, HEK293, RAW
+  264.7, PC-3) plus the Cell Tracking Challenge Fluo-N2DL-HeLa movies. It has a tracking subset (X, y, lineages)
+  and a segmentation subset (X, y, source metadata), loaded through the DeepCell API.
 landing_url: https://deepcell.readthedocs.io/en/latest/data-gallery/dynamicnuclearnet.html
 doi: null
 repository: other
@@ -38,8 +38,8 @@ imaging:
   organism:
   - Homo sapiens
   - Mus musculus
-  sample: Live cells with fluorescent histone H2B nuclear labels (H2B-iRFP670, H2B-mClover, H2B-mCherry), imaged every 5-6 min
-    on Nikon Ti-E/Ti2 fluorescence microscopes with 20x (40x for RAW 264.7) objectives
+  sample: Live cells with fluorescent histone H2B nuclear labels (H2B-iRFP670, H2B-mClover, H2B-mCherry), imaged
+    every 5-6 min on Nikon Ti-E/Ti2 fluorescence microscopes with 20x (40x for RAW 264.7) objectives
   labels_stains:
   - H2B-iRFP670
   - H2B-mClover
@@ -58,7 +58,8 @@ annotations:
   - instance-segmentation
   - tracking
   coverage: dense
-  format: 'Arrays of raw images (X), label masks (y) and lineage records (cell id, frames present, parent-daughter division links)'
+  format: Arrays of raw images (X), label masks (y) and lineage records (cell id, frames present, parent-daughter
+    division links)
   source: proofread
 ml:
   tasks:
@@ -84,12 +85,73 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-08T22:30:00Z'
-notes: 'Access is through deepcell.datasets with a DeepCell API key (registration), version 1.0; no public file listing or
-  download URL was found, so file formats, total size and file counts are not verified (formats other: the DeepCell loader
-  returns arrays). License: the docs say a modified Apache license for non-commercial academic use only, linked to the LICENSE
-  file in deepcell-tf, whose fetched text is the standard Apache 2.0 header; the dataset terms are recorded as custom. Paper
-  Data Availability says the dataset is available through deepcell.datasets for non-commercial use. Pixel size 0.65 um from the
-  paper Methods: all data were rescaled to 0.65 um per pixel before training. Annotations were corrected by human annotators
-  with a human-in-the-loop model, each movie reviewed by an expert (source proofread). The segmentation subset is 2D frames; the
-  tracking subset is 2D+t movies. Species: the paper names HeLa-S3, HEK293, PC-3 (human) and NIH-3T3, RAW 264.7 (mouse).'
+  last_checked: '2026-10-09T00:39:26Z'
+notes: 'Access is through deepcell.datasets with a DeepCell API key (registration), version 1.0; no public file
+  listing or download URL was found, so file formats, total size and file counts are not verified (formats other:
+  the DeepCell loader returns arrays). License: the docs say a modified Apache license for non-commercial academic
+  use only, linked to the LICENSE file in deepcell-tf, whose fetched text is the standard Apache 2.0 header; the
+  dataset terms are recorded as custom. Paper Data Availability says the dataset is available through deepcell.datasets
+  for non-commercial use. Pixel size 0.65 um from the paper Methods: all data were rescaled to 0.65 um per pixel
+  before training. Annotations were corrected by human annotators with a human-in-the-loop model, each movie reviewed
+  by an expert (source proofread). The segmentation subset is 2D frames; the tracking subset is 2D+t movies. Species:
+  the paper names HeLa-S3, HEK293, PC-3 (human) and NIH-3T3, RAW 264.7 (mouse).'
+technical:
+  method: header
+  size_source: unknown
+  layout:
+    tree: "DeepCell API (users.deepcell.org, API key required):\n  data/dynamic-nuclear-net/DynamicNuclearNet-segmentation-v1_0.zip,\
+      \ -Segmentation-v1_1.zip\n    <split>.npz (train/val/test: X, y), data-source.npz (source metadata)\n  data/dynamic-nuclear-net/DynamicNuclearNet-tracking-v1_0.zip,\
+      \ -tracking-v1_1.zip\n    <split>.npz (X, y, lineages)\nPublic demo (no key): s3 deepcell-data/dynamic-nuclear-net-sample/sample-movie.npz\
+      \ (3,501,454 B)\n  X.npy (10, 540, 540, 1) uint16, y.npy (10, 540, 540, 1) int32"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://deepcell-data.s3.us-west-1.amazonaws.com/dynamic-nuclear-net-sample/sample-movie.npz
+    size_bytes: 3501454
+    description: The public 10-frame demo movie DeepCell ships as DynamicNuclearNetSample (X raw, y labels in one
+      npz); the full dataset needs a DeepCell API key.
+  arrays:
+  - role: raw
+    path_pattern: '*.npz (X)'
+    format: other
+    axes: tyxc
+    shape:
+    - 10
+    - 540
+    - 540
+    - 1
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: NumPy npz member X.npy; axes from the DeepCell convention (batch/frames, y, x, channel) and
+      the sample header shape; shape from the public demo movie only.
+  - role: label
+    path_pattern: '*.npz (y)'
+    format: other
+    axes: tyxc
+    shape:
+    - 10
+    - 540
+    - 540
+    - 1
+    shape_varies: true
+    dtype: int32
+    compression: deflate
+    value_range: null
+    normalization: none
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: npz member y.npy, same shape as X in the demo movie; per-frame nuclear instance masks (paper).
+      Tracking zips add lineages (parent/daughter links) per the deepcell loader.
+  notes: 'Header-level on the public demo only: the DynamicNuclearNet zips are fetched by deepcell.datasets from
+    users.deepcell.org with an API key (registration), so they were not listed or opened. File names and md5 hashes
+    (v1.0 and v1.1, segmentation and tracking) come from deepcell-tf deepcell/datasets/dynamic_nuclear_net.py. The
+    demo sample-movie.npz was downloaded (3,501,454 B) and only the .npy headers were read (no unpickling, no array
+    loading): X.npy (10,540,540,1) uint16, y.npy (10,540,540,1) int32. Whether the demo is a crop of the training
+    data is not stated. Size unknown: no listing and no stated size. The S3 host deepcell-data.s3.us-west-1.amazonaws.com
+    is not on the TensorSwitch allowlist; .npz is not a format TensorSwitch reads.'
