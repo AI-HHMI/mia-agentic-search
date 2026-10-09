@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zenodo-14039591-grandqc-artifact-test-tiles
 title: Test Dataset from Weng Z. et al. Nat Communications 2024 (GrandQC)
 short_name: H&E slide artifact segmentation tiles (GrandQC)
-description: Tiles from 318 H&E whole-slide images (78 breast, 80 colon, 80 kidney, 80 prostate; 40x Leica GT450 scans
-  with artifacts deliberately introduced) with manual pixel masks for seven slide-quality classes (tissue, fold, dark spot
-  and foreign object, pen marker, edge and air bubble, out of focus, background). Provided at three resolutions (1.0, 1.5
-  and 2.0 um/px) as JPEG tiles with PNG masks.
+description: Tiles from 318 H&E whole-slide images (78 breast, 80 colon, 80 kidney, 80 prostate; 40x Leica GT450 scans with
+  artifacts deliberately introduced) with manual pixel masks for seven slide-quality classes (tissue, fold, dark spot and
+  foreign object, pen marker, edge and air bubble, out of focus, background). Provided at three resolutions (1.0, 1.5 and
+  2.0 um/px) as JPEG tiles with PNG masks.
 landing_url: https://zenodo.org/records/14039591
 doi: 10.5281/zenodo.14039591
 repository: Zenodo
@@ -21,22 +21,20 @@ imaging:
   modality:
   - histology-WSI
   dimensionality: 2D
-  voxel_size_nm:
-    x: 1000
-    y: 1000
-    z: null
+  voxel_size_nm: null
   channels: 3
   organism:
   - Homo sapiens
   sample: H&E-stained human breast, colon, kidney and prostate sections (318 slides, 80 cases) with real artifacts deliberately
-    produced (folds, threads, air bubbles, glue-drop out-of-focus areas, fingerprints and dust, pen marks); Leica GT450 at 40x
+    produced (folds, threads, air bubbles, glue-drop out-of-focus areas, fingerprints and dust, pen marks); Leica GT450 at
+    40x
   labels_stains:
   - H&E
 data:
   formats:
   - jpeg
   - png
-  size_bytes: 5355000000
+  size_bytes: 5355335680
   n_items: 318
   access: open
   download_url: https://zenodo.org/records/14039591/files/MPP10.tar?download=1
@@ -64,14 +62,93 @@ provenance:
   - https://zenodo.org/api/records/14039591
   - https://zenodo.org/api/records/14039591/files/MPP20.tar/content
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11649692/fullTextXML
+  - https://raw.githubusercontent.com/cpath-ukk/grandqc/main/README.md
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T09:55:00Z'
+  last_checked: '2026-10-09T12:02:00Z'
 notes: 'Test set of the GrandQC paper (Methods read in Europe PMC full text: 318 slides, 80 cases, Leica GT450 at 40x, artifacts
-  produced on purpose, out-of-focus areas annotated manually). Three tar archives hold tiles at 1.0, 1.5 and 2.0 um/px; voxel size
-  here is the 1.0 um/px archive. Only the first tar headers of MPP20.tar were read (layout MPP20/organ/case/ALL/, JPEG tiles, PNG
-  masks); tile counts and mask folder names were not verified. Training data and the slides are not in this record. Size is the sum
-  of the three tars.'
+  produced on purpose, out-of-focus areas annotated manually). Training data and the slides are not in this record. enricher:
+  voxel size set to null (was 1000 x 1000): the three archives are the same tiles at three stated resolutions, MPP10.tar 1000
+  nm/px, MPP15.tar 1500 nm/px, MPP20.tar 2000 nm/px (Zenodo description), so no single value applies. enricher: size 5,355,335,680
+  B from the Zenodo file listing (was 5,355,000,000). enricher: tiles are 512x512 RGB JPEG with palette PNG class masks (sampled
+  from MPP20.tar).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "MPP10.tar  3,074,181,120 B  (1.0 um/px tiles)\nMPP15.tar  1,353,113,600 B  (1.5 um/px tiles)\nMPP20.tar    928,040,960\
+      \ B  (2.0 um/px tiles)\n  MPP20/<Organ: Breast|Colon|Kidney|Prostate>/<case uuid>_<id>/ALL/\n    <case> [d=7.59601,x=...,y=...,w=3889,h=3889].jpg\
+      \   (image tile)\n    <case> [d=7.59601,x=...,y=...,w=3889,h=3889].png   (class mask)\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/14039591/files/MPP20.tar/content
+    size_bytes: 928040960
+    description: Smallest archive (2.0 um/px tiles of all 318 slides). Tar members can't be fetched individually by TensorSwitch
+      (zip only), so the smallest self-contained unit is the whole MPP20.tar.
+  arrays:
+  - role: raw
+    path_pattern: MPP*.tar::MPP*/*/*/ALL/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 55
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB image tiles exported per slide; the file name carries the downsample d and the level-0 region [x,
+      y, w, h] (QuPath-style tile names).
+  - role: label
+    path_pattern: MPP*.tar::MPP*/*/*/ALL/*.png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 3
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: non-annotated (ignore)
+    - id: 1
+      name: tissue
+    - id: 2
+      name: fold
+    - id: 3
+      name: dark spot and foreign object
+    - id: 4
+      name: pen marker
+    - id: 5
+      name: edge and air bubble
+    - id: 6
+      name: out of focus
+    - id: 7
+      name: background
+    alignment: same-grid
+    alignment_notes: Mask and image tile share the file name apart from the extension (.png vs .jpg), i.e. the same level-0
+      region and downsample; 512x512 in both. Pairing by name inferred from the naming; the first tar members read were not
+      a matching pair.
+  notes: 'Complete Zenodo listing: 3 tar archives, 5,355,335,680 B (tools/listing.py, size_source file-listing). Tar has no
+    index, so tile counts per archive are unknown (walking every header by range request is not feasible); only the first
+    140 KB of MPP20.tar were read (one range request): 4 directory entries, then tiles of Prostate case 5fe08b37..._102333.
+    Measured with PIL: two .jpg tiles 512x512x3 uint8 RGB, ranges [55,255] and [68,255]; two .png masks palette mode (P) 512x512
+    uint8, values {1} and {0,1,3}. Value ranges are from these few tiles. Class ids: Zenodo lists 0 = non-annotated (ignore)
+    and the seven classes in this order; the GrandQC README gives the same coding for the model output (tissue 1, fold 2,
+    dark spot/foreign object 3, pen 4, air bubble/edge 5, out of focus 6, background 7). d=7.59601 with w=3889 gives 512 px
+    tiles at 2.0 um/px. Size estimate not needed (listing). Voxel size: per archive only (1.0 / 1.5 / 2.0 um/px).'
