@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zenodo-22751764-beetle-breast-cancer-he
 title: 'BEETLE: A multicentric dataset for training and benchmarking breast cancer segmentation in H&E slides'
 short_name: Breast cancer H&E tissue segmentation (WSI)
-description: 587 development H&E whole-slide images of breast cancer biopsies and resections (seven scanners, three
-  clinical centers plus two public datasets) with pixel-level masks for four tissue classes (invasive epithelium,
-  non-invasive epithelium, necrosis, other), plus an external evaluation set of 54 WSIs with 170 ROI tiles whose
-  annotations are sequestered on Grand Challenge.
+description: 587 development H&E whole-slide images of breast cancer biopsies and resections (seven scanners, three clinical
+  centers plus two public datasets) with pixel-level masks for four tissue classes (invasive epithelium, non-invasive epithelium,
+  necrosis, other), plus an external evaluation set of 54 WSIs with 170 ROI tiles whose annotations are sequestered on Grand
+  Challenge.
 landing_url: https://zenodo.org/records/22751764
 doi: 10.5281/zenodo.22751764
 repository: Zenodo
@@ -28,7 +28,7 @@ imaging:
   - histology-WSI
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Homo sapiens
   sample: Breast cancer biopsies and resections (all molecular subtypes and histological grades), H&E stained
@@ -37,18 +37,20 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 151014700000
+  - png
+  size_bytes: 150886865913
   n_items: 587
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/22751764
   download_method: http
 annotations:
   present: true
   types:
   - semantic-segmentation
-  coverage: dense
-  format: Per-WSI TIFF label masks (annotations/masks), with matching XML and JSON annotation files; the external
-    evaluation set's masks are not public
+  coverage: partial
+  format: Per-WSI uint8 TIFF masks (annotations/masks, 0 = unannotated, 1 other, 2 non-invasive epithelium, 3 invasive epithelium,
+    4 necrosis per label_map.json) plus the same annotations as ASAP XML and JSON polygons; evaluation ROI labels are not
+    public
   source: mixed
 ml:
   tasks:
@@ -67,16 +69,129 @@ provenance:
   - https://zenodo.org/records/22751764/files/annotations.zip
   - https://zenodo.org/records/22751764/files/images.zip
   - https://arxiv.org/abs/2510.02037
+  - https://zenodo.org/records/22751764/files/data_overview.csv
+  - https://arxiv.org/html/2510.02037
   confidence: 0.85
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T07:10:00Z'
-notes: 'Sources: Zenodo API record, zip indexes (tools/peek_archive.py) and the arXiv abstract. Zenodo files: images.zip
-  (147.2 GB; 433 WSI .tif plus 170 ROI .png), annotations.zip (1.8 GB; 423 mask .tif, 423 .xml, 424 .json), model.zip
-  (1.9 GB), data_overview.csv (per-WSI source, scanner, split, validation fold and annotation_provenance, e.g. model-assisted).
-  Annotation source is mixed because the overview lists several annotation strategies. Pixel size not stated on the
-  Zenodo page or arXiv abstract (full paper text not retrievable via tools/paper.py); may be in the WSI TIFF headers.
-  n_items is the 587 development WSIs stated on the page; the zip holds 433 WSI tifs, so the count differs. The 170 evaluation
-  ROI masks are withheld. size_bytes is the sum of the four Zenodo files. Direct download is one file per zip.'
+  last_checked: '2026-10-09T08:05:00Z'
+notes: 'Zenodo files: images.zip (147.2 GB: 396 development + 54 evaluation WSI TIFFs, 170 evaluation ROI PNGs), annotations.zip
+  (1.8 GB: 587 masks/XML/JSON), model.zip (nnU-Net weights), data_overview.csv (source, scanner, split, fold, annotation_provenance).
+  191 development masks (147 TCGA, 26 RUMC, 18 JB) have no WSI in images.zip (wsi_path empty in data_overview.csv; TCGA/TIGER
+  slides come from the public datasets). Annotation source mixed: 386 manual, 178 remapped from BCSS/TIGER, rest model- or
+  HoVerNet-assisted (annotation_provenance column). enricher: coverage partial (masks label annotated regions only, 0 = unannotated);
+  formats + png (evaluation ROIs); channels 3 (RGB); size from file listing. enricher: voxel size left null: TIFF headers
+  differ by scanner (0.457-0.505 um/px), paper says ~0.5 um/px.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                     4 files    150.9 GB  .zip 3, .csv 1\n  data_overview.csv               \
+      \     per-WSI source, scanner, split, fold, annotation provenance\nzip contents:\nannotations.zip/annotations/     \
+      \      label_map.json\nannotations.zip/annotations/jsons/     587 files     86.9 MB  .json\nannotations.zip/annotations/masks/\
+      \     587 files    473.6 MB  .tif\nannotations.zip/annotations/xmls/      587 files      1.3 GB  .xml\nimages.zip/images/development/wsis/\
+      \    396 files    129.5 GB  .tif\nimages.zip/images/evaluation/rois/     170 files      1.1 GB  .png\nimages.zip/images/evaluation/wsis/\
+      \      54 files     16.6 GB  .tif\nmodel.zip/model/nnUNetTrainer_.../     plans/dataset json + fold_0..4 checkpoint_best.pth\
+      \ (1.9 GB)"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/22751764/files/images.zip::images/development/wsis/patient229_wsi1.tif
+    - https://zenodo.org/records/22751764/files/annotations.zip::annotations/masks/patient229_wsi1.tif
+    size_bytes: 12077330
+    description: One development WSI (smallest, 11.9 MB) and its label mask
+  arrays:
+  - role: raw
+    path_pattern: images.zip/images/*/wsis/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 16405
+    - 11951
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 37
+    - 255
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: Tiled BigTIFF pyramid (6 levels, each half the previous); tifffile reads it as one series YXS. JPEG in
+      YCbCr (photometric 6), decoded to RGB. Shape is level 0 of patient229_wsi1; sizes vary per slide (up to ~40k x 67k px
+      seen in mask headers).
+  - role: raw
+    path_pattern: images.zip/images/evaluation/rois/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 2048
+    - 2048
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 170 evaluation ROI tiles (RGB); their labels are withheld on Grand Challenge.
+  - role: label
+    path_pattern: annotations.zip/annotations/masks/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 16405
+    - 11951
+    shape_varies: true
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 3
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: unannotated
+    - id: 1
+      name: other
+    - id: 2
+      name: non-invasive epithelium
+    - id: 3
+      name: invasive epithelium
+    - id: 4
+      name: necrosis
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: data_overview.csv maps wsi_path to annotation_mask_path (images/development/wsis/<name>.tif
+      <-> annotations/masks/<name>.tif). Same level-0 grid and same 6-level pyramid as the WSI (sample: 16405x11951 both).
+      191 masks have no WSI in the archive. Classes from annotations/label_map.json.'
+  - role: label
+    path_pattern: annotations.zip/annotations/jsons/*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: polygons
+    classes:
+    - id: 1
+      name: other
+    - id: 2
+      name: non-invasive epithelium
+    - id: 3
+      name: invasive epithelium
+    - id: 4
+      name: necrosis
+    alignment: same-grid
+    alignment_notes: List of polygons with level-0 pixel coordinates and label {name, value}; same annotations are also in
+      annotations/xmls/*.xml (ASAP).
+  notes: 'Listing: tools/listing.py on the Zenodo API record with --expand-zips: 4 files, 150,886,865,913 B (file-listing,
+    complete), 2391 zip members. Probed + sampled one pair (patient229_wsi1; values from that sample only): WSI level 0 16405x11951x3
+    uint8 JPEG, 37-255; mask 16405x11951 uint8 LZW, values {0,1,2,3}, 98.6% unannotated. normalization ''none'' for WSIs inferred
+    (scanner RGB, white background ~243). Voxel size: TIFF resolution tags (cm units) give 505 nm/px (patient229, patient151),
+    497 nm (a TCGA slide), 457 nm (JB 100B, Hamamatsu); arXiv full text: all clinical images converted to TIFF at 0.5 um/pixel.
+    Not one shared value, so voxel_size_nm stays null. Download: zip members pass --download-check (zenodo.org/records/.../files/<zip>::<member>);
+    no single archive for the whole dataset (3 zips + csv), so download_url is the landing page. Use the records/<id>/files/<name>.zip
+    URL form: tools/sample.py needs the .zip suffix.'
