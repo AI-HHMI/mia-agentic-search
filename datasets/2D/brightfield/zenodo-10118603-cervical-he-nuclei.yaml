@@ -1,0 +1,171 @@
+schema_version: '1.2'
+id: zenodo-10118603-cervical-he-nuclei
+title: cervical_data_set - H&E stained cervical images for nuclei segmentation
+short_name: Cervical H&E nuclei segmentation (histology)
+description: H&E stained cervical dataset for nuclei segmentation with 501 training and 205 test images (512x512 px RGB PNG
+  patches) and corresponding label masks annotated by cytologists (more than 9000 annotations).
+landing_url: https://zenodo.org/records/10118603
+doi: 10.5281/zenodo.10118603
+repository: Zenodo
+accession: '10118603'
+authors:
+- Quan, Tingwei
+publications: []
+date_published: '2023-11-01'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism: []
+  sample: cervical tissue (H&E stained)
+  labels_stains:
+  - H&E
+data:
+  formats:
+  - png
+  size_bytes: 288433797
+  n_items: 706
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: PNG mask per image (img/ and mask/ folders)
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/legalcode
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-09T03:38:47Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/10118603
+  - https://zenodo.org/api/records/10118603/files/cervical_train.zip/content
+  - https://zenodo.org/api/records/10118603/files/cervical_test.zip/content
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-09T06:00:00Z'
+notes: 'cervical_train.zip: 501 images in img/ and 501 binary masks in mask/; cervical_test.zip: 205 images in cervical_raw/img/,
+  205 labels in cervical_gt/label/ and 205 colour renderings in cervical_gt/visible/. File names end in _700_700 but sampled
+  images are 512x512. Organism, magnification, pixel size, scanner and annotation protocol are not stated on the Zenodo record;
+  no related paper found (Europe PMC title search, web search). enricher: channels 3 (RGB) from sample (was null); description
+  corrected from 700x700 to 512x512 px (sampled files).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './                                                 2 files    288.4 MB  .zip
+
+      zip contents:
+
+      cervical_train.zip/cervical_train/img/                  501 files    204.2 MB  .png
+
+      cervical_train.zip/cervical_train/mask/                 501 files      1.1 MB  .png
+
+      cervical_test.zip/cervical_test/cervical_raw/img/       205 files     82.3 MB  .png
+
+      cervical_test.zip/cervical_test/cervical_gt/label/      205 files    548.9 KB  .png
+
+      cervical_test.zip/cervical_test/cervical_gt/visible/    205 files    513.8 KB  .png'
+    n_files: 1617
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/10118603/files/cervical_train.zip::cervical_train/img/0.519533_mass133_3_0.6540_93520_98000_700_700.png
+    - https://zenodo.org/records/10118603/files/cervical_train.zip::cervical_train/mask/0.519533_mass133_3_0.6540_93520_98000_700_700.png
+    size_bytes: 422262
+    description: one training image and its binary nuclei mask (same file name in img/ and mask/)
+  arrays:
+  - role: raw
+    path_pattern: cervical_train.zip/cervical_train/img/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 252
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Training images, RGB H&E patches.
+  - role: label
+    path_pattern: cervical_train.zip/cervical_train/mask/*.png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 1
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: cervical_train/img/<name>.png pairs with cervical_train/mask/<name>.png (same 512x512
+      grid). Values {0,1}, presumably 1 = nucleus.'
+  - role: raw
+    path_pattern: cervical_test.zip/cervical_test/cervical_raw/img/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 8
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Test images, RGB H&E patches.
+  - role: label
+    path_pattern: cervical_test.zip/cervical_test/cervical_gt/label/*.png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 7
+    encoding: unknown
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: cervical_raw/img/<name>.png pairs with cervical_gt/label/<name>.png (same grid). Unlike
+      the binary training masks, test labels hold contiguous values 0..N with N varying per image (5 and 7 in two samples),
+      which looks like per-nucleus instance IDs, but the record does not say. cervical_gt/visible/ holds RGB renderings (values
+      0/85/170/255), for viewing only.'
+  notes: 'Listing: tools/listing.py on the Zenodo record with --expand-zips: 2 zips, 1617 members, 288,433,797 bytes (file-listing,
+    complete). Samples (value ranges from single files only): train img 512x512x3 uint8 0-252; train mask 512x512 uint8 {0,1}
+    (two files checked); test img 512x512x3 uint8 8-255; test label 512x512 uint8 0-5 and 0-7 in two files; visible/ RGB 0/85/170/255.
+    File names contain _700_700 but every sampled image is 512x512. Pixel size not found; checked: PNG headers, Zenodo API
+    record (description only, no related identifiers), Europe PMC title search, web search for a paper. Organism not stated
+    (H&E cervical tissue, likely human but unstated). No single archive for the whole dataset: two direct zips (cervical_train.zip,
+    cervical_test.zip), both usable with range requests.'
