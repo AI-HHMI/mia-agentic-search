@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: mendeley-w8vxx8yz55-derma-paseg-skin-layers
 title: DERMA-PASeg
 short_name: Skin layer segmentation (unstained WSI)
-description: 32 unstained skin whole slide images, each paired with a chemically stained (PAS) slide and a virtually stained (dual contrastive
-  GAN) version, with masks for five classes - dermis, epidermis, keratin, dermal-epidermal junction and background.
+description: 32 unstained skin whole slide images, each paired with a chemically stained (PAS) slide and
+  a virtually stained (dual contrastive GAN) version, with masks for five classes - dermis, epidermis,
+  keratin, dermal-epidermal junction and background.
 landing_url: https://data.mendeley.com/datasets/w8vxx8yz55/1
 doi: 10.17632/w8vxx8yz55.1
 repository: other
@@ -21,9 +22,10 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism: []
-  sample: Skin tissue sections (unstained, chemically stained and virtually stained versions of the same slides)
+  sample: Skin tissue sections (unstained, chemically stained and virtually stained versions of the same
+    slides)
   labels_stains:
   - PAS
 data:
@@ -40,12 +42,12 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: mask images (PNG), five classes
+  format: RGB colour-coded PNG masks (5 colours), one per slide, same file stem as the unstained JPEG
   source: unknown
 ml:
   tasks:
   - segmentation
-  splits_provided: false
+  splits_provided: true
   benchmark: null
   baseline_code_url: null
 license:
@@ -57,10 +59,128 @@ provenance:
   evidence_urls:
   - https://data.mendeley.com/datasets/w8vxx8yz55/1
   - https://data.mendeley.com/public-api/datasets/w8vxx8yz55
-  confidence: 0.65
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-09T05:14:34Z'
-notes: 'Facts from the Mendeley page and public API record: 128 files (96 jpg, 32 png; 905 MB) matching the described folders (unstained, chemically stained, virtually stained, masks); mask files not individually confirmed. No paper is linked on the record and none could be tied to it by search (a dual contrastive learning virtual staining paper exists but its link to this dataset is unconfirmed), so none was read. Species, pixel size, scanner, magnification and annotator are not stated. Virtually stained images are GAN-generated; the mask classes are from the record description.'
+  annotations_verified: true
+  last_checked: '2026-10-09T06:20:00Z'
+notes: 'Facts from the Mendeley page and public API record (files and folders endpoints): 128 files, 905,067,043
+  B, in DERMA-PASeg/{Unstained,C Stained,V Stained,Masks}/{Train,Test} (24 train + 8 test slides each).
+  enricher: mask WC23-00664-A1.png sampled (RGB, 5 colours, same 3000x7000 grid as the unstained JPEG);
+  annotations_verified true; splits_provided true (Train/Test folders). The colour-to-class mapping is
+  not documented. No paper is linked on the record and none could be tied to it by search, so none was
+  read. Species, pixel size, scanner, magnification and annotator are not stated. Virtually stained images
+  are GAN-generated; the mask classes are from the record description.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: 'DERMA-PASeg/                         128 files  905.1 MB  (Mendeley API listing, exact sizes)
+
+      DERMA-PASeg/Unstained/Train/          24 files  248.7 MB  .jpg  <slide>.jpg
+
+      DERMA-PASeg/Unstained/Test/            8 files  130.8 MB  .jpg
+
+      DERMA-PASeg/C Stained/Train/          24 files  213.4 MB  .jpg  <slide>-PAS.jpg
+
+      DERMA-PASeg/C Stained/Test/            8 files   86.4 MB  .jpg
+
+      DERMA-PASeg/V Stained/Train/          24 files  139.8 MB  .jpg  <slide>.blended_final.jpg | .blended_test.jpg
+
+      DERMA-PASeg/V Stained/Test/            8 files   72.6 MB  .jpg
+
+      DERMA-PASeg/Masks/Train/              24 files    9.6 MB  .png  <slide>.png
+
+      DERMA-PASeg/Masks/Test/                8 files    3.7 MB  .png'
+    n_files: 128
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.mendeley.com/public-files/datasets/w8vxx8yz55/files/52a260bd-2a8f-4d2c-9f64-6610819e7f8c/file_downloaded
+    - https://data.mendeley.com/public-files/datasets/w8vxx8yz55/files/a252b032-de34-4065-83dd-be44134b3872/file_downloaded
+    size_bytes: 4317427
+    description: 'Test slide WC23-00664-A1: unstained JPEG and its colour-coded layer mask'
+  arrays:
+  - role: raw
+    path_pattern: DERMA-PASeg/Unstained/*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 3000
+    - 7000
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Unstained brightfield slide image, RGB (samples differ). JFIF density 72 dpi (a default,
+      not a calibration).
+  - role: raw
+    path_pattern: DERMA-PASeg/C Stained/*/*-PAS.jpg
+    format: jpeg
+    axes: yxs
+    shape: null
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    normalization: unknown
+    alignment: unknown
+    alignment_notes: Chemically (PAS) stained version of the same slide, <slide>-PAS.jpg; not sampled,
+      so its registration to the unstained image is unconfirmed. dtype from the JPEG content type.
+  - role: raw
+    path_pattern: DERMA-PASeg/V Stained/*/*.blended_*.jpg
+    format: jpeg
+    axes: yxs
+    shape: null
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    normalization: unknown
+    alignment: unknown
+    alignment_notes: GAN-generated virtually stained image per slide (<slide>.blended_final.jpg or .blended_test.jpg);
+      not sampled.
+  - role: label
+    path_pattern: DERMA-PASeg/Masks/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 3000
+    - 7000
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: rgb-colors
+    classes:
+    - id: null
+      name: dermis
+    - id: null
+      name: epidermis
+    - id: null
+      name: keratin
+    - id: null
+      name: dermal-epidermal junction
+    - id: null
+      name: background
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: Masks/<split>/<slide>.png pairs with Unstained/<split>/<slide>.jpg
+      (same 3000x7000 grid in the sample). Colours in the sample (px): (0,0,0) 12,132,701; (190,255,0)
+      3,631,930; (112,48,160) 3,328,381; (224,224,224) 1,402,947; (255,172,255) 504,041. Class names from
+      the record description; which colour is which class is not documented (black is presumably background).'
+  notes: 'Listing from the Mendeley public API (/public-api/datasets/w8vxx8yz55 files and /folders/1);
+    tools/listing.py does not read Mendeley. Sampled the smallest test slide (WC23-00664-A1): mask via
+    tools/sample.py (125,616 B) and both files with curl (4,317,427 B); value_range values are from that
+    one sample. Mendeley file_downloaded URLs redirect (302) to short-lived S3 object URLs for curl but
+    return HTTP 403 (Cloudflare) to Python requests, so probe.py --download-check marks them not usable;
+    the S3 redirect targets 404 after a while. voxel size not found; checked: JPEG header (72 dpi default),
+    Mendeley API description, Europe PMC / Crossref search for a linked paper (none links this dataset;
+    the group''s VISGAB, ViT-Stain and skin segmentation papers do not mention it). No single archive
+    is listed.'
