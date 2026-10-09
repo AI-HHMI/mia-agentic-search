@@ -23,7 +23,7 @@ imaging:
   - other
   dimensionality: 3D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism:
   - Danio rerio
   sample: Zebrafish larvae brain, calcium (neural activity) imaging
@@ -31,8 +31,9 @@ imaging:
 data:
   formats:
   - tiff
+  - hdf5
   size_bytes: 410982471349
-  n_items: null
+  n_items: 45204
   access: open
   download_url: https://ftp.ebi.ac.uk/biostudies/fire/S-BSST/633/S-BSST633/Files/
   download_method: http
@@ -41,9 +42,9 @@ annotations:
   types:
   - restoration-pairs
   coverage: dense
-  format: 'Per acquisition folder: lf_raw/NNNNN.tif and lf_rectified/NNNNN.tif light-field frames, spim_slice light-sheet
-    target (brain_fixed_pos.zip listed: 1201 TIFFs, 3 txt)'
-  source: unknown
+  format: 'Per acquisition folder: lf_raw/NNNNN.tif and lf_rectified/NNNNN.tif single light-field frames (TIFF), spim_slice/NNNNN.tif
+    light-sheet stacks that are HDF5 files despite the .tif name (dataset Data, planes x 2048 x 2060 uint16)'
+  source: automatic
 ml:
   tasks:
   - reconstruction
@@ -66,9 +67,83 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-09T09:41:48Z'
-notes: 'No license stated on the BioStudies record (code repo is MIT; data license not given). Paper is not open access (only
-  abstract read via Europe PMC); voxel size not on the record. size_bytes is the sum of the 2 zips (brain_fixed_pos 5.3 GB,
-  brain_slide_through 405.7 GB). brain_fixed_pos.zip listed with peek_archive (1201 TIFF, lf_raw frames 4.8 MB each); brain_slide_through.zip
-  not listed. Pairs are light-field input vs. concurrently acquired light-sheet plane. modality other = light-field. Sister
-  datasets from the same paper: S-BSST604 (medaka heart), S-BSST622 (beads).'
+  last_checked: '2026-10-09T11:40:00Z'
+notes: 'No license stated on the BioStudies record or in the archives (code repo is MIT; data license not given). Paper is not
+  open access (abstract only). size_bytes is the sum of the 2 zips (brain_fixed_pos 5.3 GB, brain_slide_through 405.7 GB).
+  Pairs are light-field frames vs. concurrently acquired light-sheet planes (acquired, not annotated: source automatic). modality
+  other = light-field. Sister datasets: S-BSST604 (medaka heart), S-BSST622 (beads). enricher: formats + hdf5 (spim_slice/*.tif
+  are HDF5 files); n_items = 45204 light-field frames (600 fixed-plane + 44604 slide-through); channels 1 (every file
+  is single-channel grayscale); source automatic (was unknown).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: |-
+      ./                                                             2 files  410.98 GB  .zip
+      brain_fixed_pos.zip/11_2__2020-03-11_07.30.39__SinglePlane_-310/
+        lf_raw/                       601 files  2.9 GB  .tif 600, origin.txt
+        lf_rectified/                 601 files  2.6 GB  .tif 600, origin.txt
+        spim_slice/                     2 files  5.1 GB  00000.tif (HDF5, 600 planes), origin.txt
+      brain_slide_through.zip/11_2__2020-03-11_<time>__SwipeThrough_<z0>_<z1>_nimages_<n>/ (x20 dirs)
+        lf_raw/                     44624 files  214.3 GB  .tif 44604, .txt 20
+        lf_rectified/               44624 files  193.1 GB  .tif 44604, .txt 20
+        spim_slice/                   344 files  376.4 GB  .tif 324 (HDF5), .txt 20
+      (member sizes are uncompressed; the zips are deflate-compressed)
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BSST/633/S-BSST633/Files/brain_slide_through.zip::11_2__2020-03-11_08.19.37__SwipeThrough_-390_-270_nimages_121/lf_raw/00000.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BSST/633/S-BSST633/Files/brain_slide_through.zip::11_2__2020-03-11_08.19.37__SwipeThrough_-390_-270_nimages_121/lf_rectified/00000.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BSST/633/S-BSST633/Files/brain_slide_through.zip::11_2__2020-03-11_08.19.37__SwipeThrough_-390_-270_nimages_121/spim_slice/00000.tif
+    size_bytes: 1030118280
+    description: First raw and rectified light-field frame of the smallest slide-through acquisition (121 frames) and its one
+      light-sheet stack (HDF5, 121 x 2048 x 2060 uint16; ~1.0 GB uncompressed).
+  arrays:
+  - role: raw
+    path_pattern: '*.zip/11_2__*/lf_raw/[0-9][0-9][0-9][0-9][0-9].tif'
+    format: tiff
+    axes: yx
+    shape: [1401, 1701]
+    shape_varies: false
+    dtype: uint16
+    compression: packbits
+    value_range: [60, 2863]
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One raw light-field camera frame (Cam_Right) per file, single page.
+  - role: raw
+    path_pattern: '*.zip/11_2__*/lf_rectified/[0-9][0-9][0-9][0-9][0-9].tif'
+    format: tiff
+    axes: yx
+    shape: [1330, 1615]
+    shape_varies: false
+    dtype: uint16
+    compression: packbits
+    value_range: [1493, 65535]
+    normalization: unknown
+    alignment: unknown
+    alignment_notes: Rectified version of the lf_raw frame with the same file name (origin.txt points to RC_rectified/Cam_Right_*_rectified.tif);
+      cropped/resampled grid (1330 x 1615 vs 1401 x 1701), transform not provided. Values reach 65535, so it is rescaled in some way.
+  - role: target
+    path_pattern: '*.zip/11_2__*/spim_slice/[0-9][0-9][0-9][0-9][0-9].tif (Data)'
+    format: hdf5
+    axes: null
+    shape: [121, 2048, 2060]
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range: [0, 274]
+    normalization: unknown
+    alignment: unknown
+    alignment_notes: 'HDF5 files named .tif (origin.txt: Cam_Left_*.h5). Data is (n planes, 2048, 2060), chunks (1, 2048, 2060), plus
+      a Thumb dataset (n, 512, 515). n = the folder''s nimages (121 or 241); fixed-plane file has 600 planes over time. Every folder
+      holds exactly n lf_raw frames per spim_slice file, consistent with frame k pairing with file k // n, plane k % n (inferred
+      from counts, not documented). The light-sheet camera grid differs from the light-field grids; no transform in the files.'
+  notes: 'Listing: both zips via HTTP index + zip central directories (90796 members); exact sizes are the zips'' Content-Length.
+    Probed lf_raw/lf_rectified headers; sampled lf_raw/00000.tif + lf_rectified/00000.tif (6.5 MB) and one spim_slice HDF5 member
+    (327.7 MB compressed; stream-decompressed to temp, read with h5py, deleted). value_range of spim is from its middle plane only;
+    others from one frame. HDF5 axes not stated: the attrs give Stack elements z -390..-270 with n 121 (sweep) but element_size_um
+    is [nan nan -0.] and camera ''pixel size'' 0. Voxel size not found; checked: TIFF headers, HDF5 attrs, BioStudies API, origin.txt,
+    paper (not OA; Nature page paywalled), GitHub repo (only a developer note ''xy: ls: 6.5/22.2=.29'', ''121um in 1um steps'',
+    not used: informal, unitless derivation). Direct whole download: two zips (no single archive); data.download_url stays the folder.'
