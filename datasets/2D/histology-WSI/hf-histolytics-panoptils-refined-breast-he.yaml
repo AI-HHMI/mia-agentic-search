@@ -4,8 +4,8 @@ title: PanopTILs refined (panoptils_refined)
 short_name: PanopTILs refined breast H&E panoptic masks
 description: 1,349 H&E image regions (1024 x 1024 px at 0.25 um per pixel) from TCGA invasive breast cancer cases,
   each with a nuclei instance mask, a nuclei class mask and a tissue region mask, refined from the PanopTILs dataset
-  (itself built from BCSS and NuCLS). 360 cases with incomplete annotations were dropped and tissue masks were
-  algorithmically post-processed. Images and masks are PNG bytes inside one Parquet file.
+  (itself built from BCSS and NuCLS). 360 cases with incomplete annotations were dropped and tissue masks were algorithmically
+  post-processed. Images and masks are PNG bytes inside one Parquet file.
 landing_url: https://huggingface.co/datasets/histolytics-hub/panoptils_refined
 doi: null
 repository: HuggingFace
@@ -34,7 +34,7 @@ imaging:
 data:
   formats:
   - other
-  size_bytes: 2824643624
+  size_bytes: 2825438113
   n_items: 1349
   access: open
   download_url: https://huggingface.co/datasets/histolytics-hub/panoptils_refined/resolve/main/panoptils_refined.parquet
@@ -70,12 +70,132 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T23:58:00Z'
+  last_checked: '2026-10-09T04:20:00Z'
 notes: 'Hugging Face API record (one 2.8 GB parquet file, CC0-1.0) and dataset card read; the card quotes the PanopTILs
   page for 1024 x 1024 ROIs at 0.25 um per pixel. Paper full text is not open access, so only the abstract was read
-  (bioRxiv/medRxiv preprint of MuTILs/PanopTILs). Tissue regions come from manual BCSS/NuCLS-derived annotation and
-  nuclei labels are bootstrapped, then refined by the Hugging Face uploader, so source is mixed; the parquet cannot
-  be listed as an image format, so formats is other (images and masks are PNG bytes inside). No authors are listed on
-  the card. The card says the original fold splits are not viable after curation and suggests grouped splits by slide
-  or hospital. Derived from, and different in content from, NuCLS (nucls-breast-cancer-nuclei-he) already in the
-  catalog: it adds BCSS tissue regions and PanopTILs ROIs.'
+  (bioRxiv/medRxiv preprint of MuTILs/PanopTILs). Tissue regions come from manual BCSS/NuCLS-derived annotation
+  and nuclei labels are bootstrapped, then refined by the Hugging Face uploader, so source is mixed; the parquet
+  cannot be listed as an image format, so formats is other (images and masks are PNG bytes inside). No authors are
+  listed on the card. The card says the original fold splits are not viable after curation and suggests grouped
+  splits by slide or hospital. Derived from, and different in content from, NuCLS (nucls-breast-cancer-nuclei-he)
+  already in the catalog: it adds BCSS tissue regions and PanopTILs ROIs. enricher: size from the HF file listing;
+  row 0 decoded via the datasets-server API.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "histolytics-hub/panoptils_refined/  4 files, 2.8 GB\n  panoptils_refined.parquet   2.8 GB   1349 rows;\
+      \ columns slide_name, hospital, sample (string), image, inst, type, sem (PNG bytes)\n  README.md\n  panoptils_example.png\n\
+      \  .gitattributes\n"
+    n_files: 4
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: panoptils_refined.parquet (image)
+    format: other
+    shape_varies: false
+    compression: png
+    lossy: false
+    axes: yxs
+    shape:
+    - 1024
+    - 1024
+    - 3
+    dtype: uint8
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: H&E RGB ROI, PNG bytes in parquet column image; sample column encodes slide, ROI bounds and
+      MPP-0.2500.
+  - role: label
+    path_pattern: panoptils_refined.parquet (inst)
+    format: other
+    shape_varies: false
+    compression: png
+    lossy: false
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    dtype: uint16
+    value_range:
+    - 0
+    - 568
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Nuclei instance mask, same row as the image; 568 ids in row 0, 0 = background.
+  - role: label
+    path_pattern: panoptils_refined.parquet (type)
+    format: other
+    shape_varies: false
+    compression: png
+    lossy: false
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    dtype: uint8
+    value_range:
+    - 0
+    - 6
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: neoplastic
+    - id: 2
+      name: stromal
+    - id: 3
+      name: inflammatory
+    - id: 4
+      name: epithelial
+    - id: 5
+      name: other
+    - id: 6
+      name: unknown
+    alignment: same-grid
+    alignment_notes: Nuclei class mask (ids per the dataset card).
+  - role: label
+    path_pattern: panoptils_refined.parquet (sem)
+    format: other
+    shape_varies: false
+    compression: png
+    lossy: false
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    dtype: uint8
+    value_range:
+    - 0
+    - 4
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: tumor
+    - id: 2
+      name: stroma
+    - id: 3
+      name: epithelium
+    - id: 4
+      name: junk/debris
+    - id: 5
+      name: blood
+    - id: 6
+      name: other
+    alignment: same-grid
+    alignment_notes: Tissue region mask (ids per the dataset card).
+  notes: 'HF listing: 4 files, 2,825,438,113 B (= size_bytes, confirmed); the parquet is 2,824,643,624 B, a direct
+    link with range requests (usable). probe.py cannot read parquet; the schema (7 columns, 1349 rows in 2 row groups
+    of 1073 and 276) is from the HF datasets-server /info API, and row 0 (2.8 MB JSON from /rows) was decoded with
+    Pillow: image 1024x1024x3 uint8 0-255; inst 1024x1024 uint16 0-568 (569 values); type uint8 values {0,1,2,3,6};
+    sem uint8 values {0,1,2,4}. Values are from one row. No per-file sample unit (one parquet), so sample is null.
+    Pixel size 250 nm from the card (quoting PanopTILs: 0.25 MPP) and the MPP-0.2500 tag in the sample column. TensorSwitch
+    has no parquet reader, so this record cannot be converted as is.'
