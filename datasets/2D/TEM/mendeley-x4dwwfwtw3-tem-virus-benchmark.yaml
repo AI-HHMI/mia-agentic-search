@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: mendeley-x4dwwfwtw3-tem-virus-benchmark
 title: TEM virus dataset
 short_name: Virus particles, 22 classes (TEM)
-description: 1,245 transmission electron microscopy images of 22 virus classes (negative stain, phosphotungstic acid) from two microscopes, with each virus particle annotated by its approximate centre point or, for clustered or elongated viruses, a centreline. Provided as raw images and 256x256 px patches around annotated points, with a proposed train/validation/test split.
+description: 1,245 transmission electron microscopy images of 22 virus classes (negative stain, phosphotungstic
+  acid) from two microscopes, with each virus particle annotated by its approximate centre point or, for clustered
+  or elongated viruses, a centreline. Provided as raw images and 256x256 px patches around annotated points, with
+  a proposed train/validation/test split.
 landing_url: https://data.mendeley.com/datasets/x4dwwfwtw3
 doi: 10.17632/x4dwwfwtw3.3
 repository: other
@@ -22,24 +25,27 @@ imaging:
   voxel_size_nm: null
   channels: 1
   organism: []
-  sample: Purified virus preparations (22 classes) in PBS on carbon-coated grids, negatively stained with phosphotungstic acid
+  sample: Purified virus preparations (22 classes) in PBS on carbon-coated grids, negatively stained with phosphotungstic
+    acid
   labels_stains:
   - phosphotungstic acid
 data:
   formats:
-  - other
-  size_bytes: null
+  - tiff
+  size_bytes: 8016417881
   n_items: 1245
   access: open
-  download_url: null
-  download_method: other
+  download_url: https://data.mendeley.com/datasets/x4dwwfwtw3
+  download_method: http
 annotations:
   present: true
   types:
   - points
   - classification
   coverage: dense
-  format: Coordinates (particle centre points or centrelines) in one text file per image; 256x256 patches also provided
+  format: 'Per raw image: particle_positions/<n>_particlepositions.txt (semicolon-separated x;y pixel coordinates,
+    one block per particle after a "particleposition" line: one point or a centreline) and tags/<n>.tif_tags.csv
+    (microscope tags incl. Xscale/Yscale nm per pixel); class = folder name; 256x256 1 nm patches in class folders'
   source: manual
 ml:
   tasks:
@@ -58,10 +64,86 @@ provenance:
   - https://data.mendeley.com/datasets/x4dwwfwtw3
   - https://data.mendeley.com/public-api/datasets/x4dwwfwtw3/files?folder_id=root&version=1
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1016%2Fj.cmpb.2021.106318%22&format=json&resultType=core&pageSize=3
-  confidence: 0.55
+  - https://data.mendeley.com/public-api/datasets/x4dwwfwtw3
+  - https://data.mendeley.com/public-api/datasets/x4dwwfwtw3/folders/3
+  confidence: 0.65
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-09T08:20:00Z'
-notes: 'Mendeley page (v3, CC BY 4.0) describes 1245 images (1376x1032 or 2048x2048 px, pixel sizes 0.26-5.57 nm depending on microscope/magnification: LEO+Morada and Tecnai 10+MegaView III), 9-129 images per class. The Mendeley public file API lists only dataset_code.zip (6 KB) for the version, while the page offers Download All; the image files could not be listed, so image file format and total size are unknown (formats: other) and no direct download URL is recorded. Pixel size varies per image so voxel_size_nm is null. Paper is not open access (abstract read from Europe PMC); it states a representative train/val/test split is proposed. Overall data layout was not verified.'
+  annotations_verified: true
+  last_checked: '2026-10-09T08:40:00Z'
+notes: 'Mendeley v3 (CC BY 4.0): 1245 raw TEM images, 22 virus classes, 1376x1032 or 2048x2048 px, pixel sizes 0.26-5.57
+  nm varying per image, so voxel_size_nm is null; each image''s tags/*.tif_tags.csv gives Xscale/Yscale (nm/px,
+  as used by the authors'' MATLAB code), and the 256x256 patches are resampled to 1 nm/px. Paper not open access;
+  it proposes the train/val/test split. enricher: file list from the Mendeley public API (25,891 files, 8,016,417,881
+  B; folders context_virus_RAW and context_virus_1nm_256x256); formats tiff (was other); size from the API (was
+  null); annotations verified (point/centreline txt per raw image). No single archive is offered, so download_url
+  is the landing page (was null). organism left empty: virus classes are named only by folder abbreviations (CCHF,
+  TBE, LCM, Rift Valley...), not NCBI names.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "x4dwwfwtw3 v3 (Mendeley API: 25,891 files, 8,016,417,881 B)\n  context_virus_RAW/                   \
+      \  1245 .tif raw, 3.33 GB\n    {train,validation,test}/<22 classes>/<n>.tif          745 / 248 / 252\n   \
+      \   particle_positions/<n>_particlepositions.txt       1245 .txt\n      tags/<n>.tif_tags.csv            \
+      \                  1245 .csv\n  context_virus_1nm_256x256/              23,400 .tif, 4.68 GB\n    dataset\
+      \ code.zip                     6 MATLAB .m files, 5 KB\n    augmented_train/<15 classes>/*.tif    10,304\n\
+      \    {train,validation,test}/<class>/*.tif   5,740 / 2,249 / 1,900 (+ _EXCLUDED/<class>/ for 8 classes)\n\
+      \    .../<class>/crop_outlines/*_original.tif   RGB overview images with patch outlines\n"
+    n_files: 25891
+    listing_complete: true
+  sample:
+    urls:
+    - https://prod-dcd-datasets-public-files-eu-west-1.s3.eu-west-1.amazonaws.com/b405ed36-df47-433e-a2b6-7957db2cbcdb
+    - https://prod-dcd-datasets-public-files-eu-west-1.s3.eu-west-1.amazonaws.com/f6b55c74-5a84-45f4-ae9b-dd28ed218934
+    - https://prod-dcd-datasets-public-files-eu-west-1.s3.eu-west-1.amazonaws.com/cd52975d-86c5-48c1-9231-24ae3a0b1b1d
+    size_bytes: 1424382
+    description: context_virus_RAW/train/CCHF/1070.tif (1376x1032) with its particle_positions txt and tags csv;
+      S3 object URLs that data.mendeley.com public-files links redirect to
+  arrays:
+  - role: raw
+    path_pattern: context_virus_RAW/*/*/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1032
+    - 1376
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 1376x1032 or 2048x2048 px (page); 1070.tif is 1376x1032 from a MegaView III per its tags csv;
+      per-image pixel size in tags csv.
+  - role: label
+    path_pattern: context_virus_RAW/*/*/particle_positions/*_particlepositions.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: points-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairs by stem: <n>.tif -> particle_positions/<n>_particlepositions.txt. Text file: "image
+      size" then W;H, then per particle a "particleposition" line followed by one x;y point (isolated particle)
+      or several (centreline), in raw-image pixels. Virus class = class folder name (22 classes).'
+  notes: 'File list from the Mendeley public API dataset record (every file with size and download link) plus /folders/3
+    for folder names; tools/listing.py has no Mendeley handler, so size_source is page-stated (API size field =
+    sum of file sizes). Probed by range: raw 1070.tif 1032x1376 uint8 uncompressed plain TIFF, raw 6628.tif 2048x2048
+    uint8, patch 256x256 uint8 packbits, crop_outlines RGB 519x692x3. Sampled raw 1070.tif (1,424,039 B): 0-255,
+    mean 170; value_range from one sample. Read 1070 particle_positions txt and tags csv (Xscale 0.723, Magnification
+    105000, MegaView III). Voxel size varies per image (page: 0.26-5.57 nm; tags csv per image), so imaging.voxel_size_nm
+    stays null; patches are 1 nm/px. Downloads: data.mendeley.com/public-files/.../file_downloaded links 302 to
+    unsigned S3 objects (prod-dcd-datasets-public-files-eu-west-1.s3.eu-west-1.amazonaws.com/<uuid>); the Mendeley
+    links return HTTP 403 to Python clients (curl works), the S3 objects support ranges but that host is not on
+    the TensorSwitch allowlist. Object URLs carry no file name. No single archive. Not listed as arrays (miao has
+    only raw/labels): tags/*.tif_tags.csv (per-image key;value tags with decimal commas: Xscale, Yscale, Magnification,
+    CameraModel) and the 23,400 derived 256x256 uint8 packbits patches (1 nm/px, class = folder; augmented_train
+    = flipped/rotated copies).'
