@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: zenodo-7890874-breast-cytology-histology-ihc
 title: Cytological and histological images of breast cancer
 short_name: Breast cytology and H&E/IHC histology images
-description: 73 cytology photomicrographs (3264x2448 px, x40) in four diagnosis folders and 68 histology images (2048x1536 px) of breast tissue sections, grouped per case as one H&E image plus immunohistochemical images for ER, PR, Ki-67 and HER2/neu, with the diagnosis given in the folder names.
+description: 73 cytology photomicrographs (3264x2448 px, x40) in four diagnosis folders and 68 histology images
+  (2048x1536 px) of breast tissue sections, grouped per case as one H&E image plus immunohistochemical images for
+  ER, PR, Ki-67 and HER2/neu, with the diagnosis given in the folder names.
 landing_url: https://zenodo.org/records/7890874
 doi: 10.5281/zenodo.7890874
 repository: Zenodo
@@ -34,14 +36,16 @@ data:
   size_bytes: 411769827
   n_items: 141
   access: open
-  download_url: https://zenodo.org/api/records/7890874/files/histological_images.zip/content
+  download_url: https://zenodo.org/records/7890874/files/histological_images.zip
   download_method: http
 annotations:
   present: true
   types:
   - classification
   coverage: dense
-  format: diagnosis is encoded in folder names (cytology - 001_cystic mastopathy, 002_non-proliferative fibrous mastopathy, 003_non-proliferative mastopathy, 004_melanoma; histology - invasive duct carcinoma or invasive carcinoma per case)
+  format: diagnosis is encoded in folder names (cytology - 001_cystic mastopathy, 002_non-proliferative fibrous
+    mastopathy, 003_non-proliferative mastopathy, 004_melanoma; histology - invasive duct carcinoma or invasive
+    carcinoma per case)
   source: unknown
 ml:
   tasks:
@@ -64,5 +68,90 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T23:45:00Z'
-notes: 'Two zips listed with peek_archive: cytological_images.zip (73 JPEG in 4 diagnosis folders: 12, 31, 14, 16) and histological_images.zip (68 JPEG, 63 in invasive duct carcinoma and 5 in invasive carcinoma folders, one H&E image plus IHC images per case). Labels are only the diagnosis in folder names (no masks or boxes), the histology set has essentially one diagnosis, and a folder named melanoma appears in the breast cytology set (kept as written). The record has no linked paper, so none was read; annotators and acquisition equipment are not stated, and pixel size is unknown. download_url points to the larger histology zip; the cytology zip is https://zenodo.org/api/records/7890874/files/cytological_images.zip/content. Channels=3 assumed for colour JPEGs. A different record by the same authors (Zenodo 21487212, H&E and IHC masks) is in the catalog.'
+  last_checked: '2026-10-09T00:19:08Z'
+notes: 'Two zips listed with peek_archive: cytological_images.zip (73 JPEG in 4 diagnosis folders: 12, 31, 14, 16)
+  and histological_images.zip (68 JPEG, 63 in invasive duct carcinoma and 5 in invasive carcinoma folders, one H&E
+  image plus IHC images per case). Labels are only the diagnosis in folder names (no masks or boxes), the histology
+  set has essentially one diagnosis, and a folder named melanoma appears in the breast cytology set (kept as written).
+  The record has no linked paper, so none was read; annotators and acquisition equipment are not stated, and pixel
+  size is unknown. download_url points to the larger histology zip; the cytology zip is https://zenodo.org/api/records/7890874/files/cytological_images.zip/content.
+  Channels=3 assumed for colour JPEGs. A different record by the same authors (Zenodo 21487212, H&E and IHC masks)
+  is in the catalog. enricher: histology images sampled at 4096x3286, not the stated 2048x1536.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "cytological_images.zip  (38,015,256 B; 73 JPEG)\n  cytological_images/001_cystic mastopathy_x40/    \
+      \             12  TS_<dd>_<mm>_<hh>_<mm>_<ss>.jpg\n  cytological_images/002_non-proliferative fibrous mastopathy_x40/\
+      \ 31\n  cytological_images/003_non-proliferative mastopathy_x40/       14\n  cytological_images/004_melanoma_x40/\
+      \                           16\nhistological_images.zip  (373,751,571 B; 68 JPEG)\n  histological_images/<NNN>\
+      \ Invasive [duct] carcinoma/\n    <n>_histology.jpg                 H&E (11 in total)\n    ER/, PR/, KI67/,\
+      \ HER2NEU/<n>.jpg  IHC (57 in total)\n2 files, 141 zip members, 411,766,827 B"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7890874/files/cytological_images.zip::cytological_images/001_cystic mastopathy_x40/TS_05_08_16_39_29.jpg
+    size_bytes: 521603
+    description: One cytology image (class = folder name); there are no label files.
+  arrays:
+  - role: raw
+    path_pattern: cytological_images.zip::cytological_images/*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 2448
+    - 3264
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 172
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Cytology photomicrographs (x40 lens per the record); class = parent folder name.
+  - role: raw
+    path_pattern: histological_images.zip::histological_images/*/*_histology.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 3286
+    - 4096
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 50
+    - 231
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: H&E image per case (<n>_histology.jpg). The sample is 4096x3286, not the 2048x1536 the Zenodo
+      description states.
+  - role: raw
+    path_pattern: histological_images.zip::histological_images/*/{ER,PR,KI67,HER2NEU}/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 3286
+    - 4096
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 5
+    - 242
+    normalization: unknown
+    alignment: unknown
+    alignment_notes: IHC images in ER/, PR/, KI67/, HER2NEU/ subfolders of each case; whether they show the same
+      field as the H&E image is not stated.
+  notes: 'Listing: both Zenodo zips (central directories, exact sizes). Sampled with sample.py: cytology 001_cystic
+    mastopathy_x40/TS_05_08_16_39_29.jpg (501,422 B: RGB uint8 2448x3264, 0-172), histology 005 Invasive duct carcinoma/1_histology.jpg
+    (9,198,232 B: RGB uint8 3286x4096, 50-231) and its ER/1.jpg (9,097,216 B: 3286x4096, 5-242). Value ranges from
+    one sample each. There are no label files: the only annotation is the diagnosis in folder names. Voxel size
+    not found; checked: JPEG samples (no calibration read by sample.py), Zenodo API record (description says x40
+    lens for cytology, no pixel size; no related identifiers or paper). Zenodo returned intermittent TLS EOF errors;
+    retries succeeded.'
