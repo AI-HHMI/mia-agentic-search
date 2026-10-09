@@ -1,11 +1,11 @@
 schema_version: '1.2'
 id: zenodo-17608881-fjord-benthic-foraminifera
-title: 'Deep learning accurately identifies fjord benthic foraminifera: 3,003 stereomicroscope images with 22,138 annotated
-  individuals (YOLOv7 and COCO)'
+title: 'Deep learning accurately identifies fjord benthic foraminifera: 3,003 stereomicroscope images
+  with 22,138 annotated individuals (YOLOv7 and COCO)'
 short_name: Fjord foraminifera polygons (stereomicroscope)
-description: Stereomicroscope images of picked benthic foraminifera and sediment from four Skagerrak fjords (Sweden) with
-  manually drawn polygon annotations of 22,138 individuals in 29 species, exported from Roboflow in YOLOv7-PyTorch and COCO
-  formats with train/validation/test splits.
+description: Stereomicroscope images of picked benthic foraminifera and sediment from four Skagerrak fjords
+  (Sweden) with manually drawn polygon annotations of 22,138 individuals in 29 species, exported from
+  Roboflow in YOLOv7-PyTorch and COCO formats with train/validation/test splits.
 landing_url: https://zenodo.org/records/17608881
 doi: 10.5281/zenodo.17608881
 repository: Zenodo
@@ -37,17 +37,19 @@ imaging:
 data:
   formats:
   - jpeg
-  size_bytes: 3303518995
+  size_bytes: 3307705419
   n_items: 3003
   access: open
-  download_url: null
+  download_url: https://zenodo.org/api/records/17608881/files/Forams-detect.v5i.coco.zip/content
   download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
   coverage: dense
-  format: COCO JSON (train/valid/test .coco.json) and YOLOv7-PyTorch labels, polygons per individual, 29 species classes
+  format: COCO JSON per split ({train,valid,test}/_annotations.coco.json; polygon segmentation + bbox,
+    26 species categories under supercategory Forams) and YOLOv7-PyTorch txt labels ({split}/labels/*.txt)
+    in a second zip
   source: manual
 ml:
   tasks:
@@ -72,11 +74,87 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T13:15:00Z'
-notes: 'Two zips (Roboflow v5 exports): Forams-detect.v5i.coco.zip (7,094 files incl. 3 .coco.json and JPG images; Roboflow
-  README says 7,089 images, so the exports include augmented copies) and Forams-detect.v5i.yolov7pytorch.zip, each about 1.65
-  GB, plus a code notebook. The 3,003 original images (paper abstract; section 2.1 of the paper says 3,095) were imaged as
-  TIFF 1600x1200 on a Nikon SMZ-10 stereomicroscope with DeltaPix DP450 camera at 30x, optical resolution about 4.16 um/pixel;
-  the Zenodo files are JPEG exports. Split 70/20/10 per the paper. Annotation polygons are described in the paper; the COCO
-  json contents were not opened. The modality ''brightfield'' is the closest enum for a stereomicroscope. Sibling foraminifera
-  records in the catalog are different datasets.'
+  last_checked: '2026-10-09T14:22:00Z'
+notes: 'Two zips (Roboflow v5 exports): Forams-detect.v5i.coco.zip (7,094 files incl. 3 .coco.json and
+  JPG images; Roboflow README says 7,089 images, so the exports include augmented copies) and Forams-detect.v5i.yolov7pytorch.zip,
+  each about 1.65 GB, plus a code notebook. The 3,003 original images (paper abstract; section 2.1 of
+  the paper says 3,095) were imaged as TIFF 1600x1200 on a Nikon SMZ-10 stereomicroscope with DeltaPix
+  DP450 camera at 30x, optical resolution about 4.16 um/pixel; the Zenodo files are JPEG exports. Split
+  70/20/10 per the paper. Annotation polygons are described in the paper; the COCO json contents were
+  not opened. The modality ''brightfield'' is the closest enum for a stereomicroscope. Sibling foraminifera
+  records in the catalog are different datasets. enricher: Roboflow README says 7,089 images, only auto-orientation,
+  no augmentation; images 1600x1200 (COCO), i.e. not resized, so 4.16 um/px applies. data.yaml lists 26
+  classes (not 29).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "./  3 files  3.3 GB  (2 zips, code.ipynb)\nForams-detect.v5i.coco.zip/\n  README.dataset.txt,\
+      \ README.roboflow.txt\n  train/  5885 .jpg + _annotations.coco.json  1.4 GB\n  valid/   866 .jpg\
+      \ + _annotations.coco.json  208.2 MB\n  test/    338 .jpg + _annotations.coco.json  87.8 MB\nForams-detect.v5i.yolov7pytorch.zip/\n\
+      \  README.dataset.txt, README.roboflow.txt, data.yaml\n  {train,valid,test}/images/  .jpg (same\
+      \ images)\n  {train,valid,test}/labels/  .txt (YOLO polygons)\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/17608881/files/Forams-detect.v5i.coco.zip/content::test/G117-22A-5-6-cm-0_JPG_jpg.rf.01095b69e04b662b9c14fd2dad55d710.jpg
+    - https://zenodo.org/api/records/17608881/files/Forams-detect.v5i.coco.zip/content::test/_annotations.coco.json
+    size_bytes: null
+    description: One test-split JPEG and the test COCO file (672 KB) holding its polygons, as members
+      of the COCO zip.
+  arrays:
+  - role: raw
+    path_pattern: Forams-detect.v5i.coco.zip::*/*.jpg
+    format: jpeg
+    axes: null
+    shape:
+    - 1200
+    - 1600
+    shape_varies: false
+    dtype: unknown
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: All 338 test images are 1600x1200 (COCO width/height); channel count not read from
+      headers.
+  - role: label
+    path_pattern: Forams-detect.v5i.coco.zip::*/_annotations.coco.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: Forams (supercategory)
+    - id: null
+      name: 26 foraminifera taxa (ids 1-26, e.g. 1 Adercotryma glomerata; full list in data.yaml)
+    alignment: same-grid
+    alignment_notes: COCO file per split; images[].file_name is the JPEG in the same folder; bbox + one
+      polygon per instance in image pixels.
+  - role: label
+    path_pattern: Forams-detect.v5i.yolov7pytorch.zip::*/labels/*.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: unknown
+    classes: []
+    alignment: same-grid
+    alignment_notes: YOLOv7 txt label per image (same stem as {split}/images/*.jpg in that zip); class
+      names in data.yaml.
+  notes: 'Listing: Zenodo API + zip central directories, 3 files, 3,307,705,419 B (exact), 21,275 zip
+    members. Read README.roboflow.txt and data.yaml (yolov7 zip) and test/_annotations.coco.json (671,652
+    B, in full): 338 images all 1600x1200, 2,490 annotations each with bbox and one polygon, 27 categories
+    (0 Forams supercategory + 26 taxa). JPEG headers could not be probed (Zenodo range requests failing
+    intermittently: HTTP 504, SSL EOF), so dtype/channels not read. Voxel size 4.16 um/px from the paper
+    (record value kept); images are not resized per the Roboflow README and COCO sizes match the 1600x1200
+    originals.'
