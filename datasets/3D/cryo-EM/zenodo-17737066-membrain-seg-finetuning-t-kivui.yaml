@@ -2,8 +2,8 @@ schema_version: '1.2'
 id: zenodo-17737066-membrain-seg-finetuning-t-kivui
 title: MemBrain-seg fine-tuning dataset
 short_name: T. kivui membrane segmentation patches (cryo-ET)
-description: Ten 160x160x160 cryo-ET tomogram patches of Thermoanaerobacter kivui (voxel size rescaled to 10 A) with
-  matching membrane label patches, provided as training and validation sets for fine-tuning MemBrain-seg.
+description: Ten 160x160x160 cryo-ET tomogram patches of Thermoanaerobacter kivui (voxel size rescaled to 10 A) with matching
+  membrane label patches, provided as training and validation sets for fine-tuning MemBrain-seg.
 landing_url: https://zenodo.org/records/17737066
 doi: 10.5281/zenodo.17737066
 repository: Zenodo
@@ -34,8 +34,8 @@ imaging:
   labels_stains: []
 data:
   formats:
-  - other
-  size_bytes: 151700000
+  - nifti
+  size_bytes: 151576892
   n_items: 10
   access: open
   download_url: https://zenodo.org/records/17737066/files/MemBrain_seg_finetuning_data.zip
@@ -45,7 +45,7 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: NIfTI label patches (.nii.gz) in labelsTr and labelsVal
+  format: 'NIfTI label patches (.nii.gz, int8: 0 = no membrane, 1 = membrane, 2 = ignore) in labelsTr and labelsVal'
   source: unknown
 ml:
   tasks:
@@ -63,15 +63,85 @@ provenance:
   - https://zenodo.org/records/17737066
   - https://zenodo.org/records/17737066/files/MemBrain_seg_finetuning_data.zip
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22MemBrain+v2%3A+an+end-to-end+tool+for+the+analysis+of+membranes+in+cryo-electron+tomography%22&format=json&resultType=core&pageSize=3
+  - https://zenodo.org/api/records/17737066
+  - https://raw.githubusercontent.com/teamtomo/membrain-seg/main/docs/Usage/Annotations.md
+  - https://github.com/teamtomo/membrain-seg/blob/main/src/membrain_seg/segmentation/networks/unet.py
   confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T15:24:43Z'
-notes: 'Archive listing (peek_archive): 20 .nii.gz patches (imagesTr 8 + imagesVal 2, labelsTr 8 + labelsVal 2, about 15 MB per
-  image) plus dataset_description.txt, which states 160^3 patches extracted at 7.92 A and rescaled to 10 A (voxel_size_nm is
-  the rescaled 1 nm). Only 10 patches from a few tomograms (file names 6, 12, 16_2, 21 suggest four tomograms; count not
-  stated). The MemBrain v2 paper (Nature Methods 2026) is not open access and the bioRxiv preprint was rate limited (429)
-  in this run, so only the abstract was read: how these labels were made and the microscope/acquisition details are
-  unverified, so annotation source is unknown. NIfTI is not in the schema format list, so formats is other.'
+  last_checked: '2026-10-09T16:10:00Z'
+notes: '20 .nii.gz patches (imagesTr 8 + imagesVal 2, labelsTr 8 + labelsVal 2) plus dataset_description.txt: 160^3 patches
+  extracted at 7.92 A and rescaled to 10 A, so voxel_size_nm is the rescaled 1 nm. File names (6, 12, 16_2, 21) suggest four
+  tomograms; count not stated. Paper full text unreachable (bioRxiv 429, Europe PMC 500, Nature Methods not OA), so how these
+  labels were made is unverified: annotations.source stays unknown. The MemBrain-seg docs describe fine-tuning patches as
+  manually corrected model predictions with an ignore label, not confirmed for this deposit. Labels mark every voxel, but
+  about half are label 2 (ignore, excluded from training). enricher: formats nifti (was other); size_bytes from Zenodo file
+  listing (was 151700000).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  1 file 151.6 MB: MemBrain_seg_finetuning_data.zip\nMemBrain_seg_finetuning_data.zip/MemBrain_seg_finetuning_data/\
+      \  dataset_description.txt (491 B)\n  data_dir/imagesTr/   8 files 120.9 MB .nii.gz ({6,12,16_2,21}_patch<n>.nii.gz)\n\
+      \  data_dir/imagesVal/  2 files  30.3 MB .nii.gz (16_2_patch2, 16_2_patch3)\n  data_dir/labelsTr/   8 files 407.1 KB\
+      \ .nii.gz (same names as imagesTr)\n  data_dir/labelsVal/  2 files 103.5 KB .nii.gz (same names as imagesVal)"
+    n_files: 21
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/17737066/files/MemBrain_seg_finetuning_data.zip::MemBrain_seg_finetuning_data/data_dir/imagesVal/16_2_patch2.nii.gz
+    - https://zenodo.org/records/17737066/files/MemBrain_seg_finetuning_data.zip::MemBrain_seg_finetuning_data/data_dir/labelsVal/16_2_patch2.nii.gz
+    size_bytes: 15186279
+    description: one 160^3 validation patch (16_2_patch2) and its membrane label
+  arrays:
+  - role: raw
+    path_pattern: MemBrain_seg_finetuning_data.zip/MemBrain_seg_finetuning_data/data_dir/images{Tr,Val}/*.nii.gz
+    format: nifti
+    axes: zyx
+    shape:
+    - 160
+    - 160
+    - 160
+    shape_varies: false
+    dtype: float32
+    compression: gzip
+    value_range:
+    - -2.2089
+    - 1.4978
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: MemBrain_seg_finetuning_data.zip/MemBrain_seg_finetuning_data/data_dir/labels{Tr,Val}/*.nii.gz
+    format: nifti
+    axes: zyx
+    shape:
+    - 160
+    - 160
+    - 160
+    shape_varies: false
+    dtype: int8
+    compression: gzip
+    value_range:
+    - 0
+    - 2
+    normalization: none
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: no membrane
+    - id: 1
+      name: membrane
+    - id: 2
+      name: ignore
+    alignment: same-grid
+    alignment_notes: labelsTr/X.nii.gz pairs with imagesTr/X.nii.gz (labelsVal with imagesVal, same file name), as the MemBrain-seg
+      training docs require; identical 160^3 shapes in the sample.
+  notes: 'Listed the Zenodo record and its zip (21 members, exact sizes). Probed one raw and one label member (headers); sampled
+    the pair 16_2_patch2 (15.2 MB). value_range is from that one sample. Raw is float32 with mean -0.04 and std 0.27: not
+    rescaled to [0, 1] nor standardized, and no doc says how it was normalized, so normalization unknown. Labels hold {0,1,2};
+    the membrane/no membrane/ignore classes are named in the MemBrain-seg Annotations docs and the code uses ignore_label=2
+    (0 = no membrane by elimination). NIfTI header zooms are 1.0 (mm default) and were ignored; voxel size 10 A from dataset_description.txt
+    and the Zenodo description. Axes are the probe''s reading of the NIfTI header.'
