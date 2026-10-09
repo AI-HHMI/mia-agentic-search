@@ -45,7 +45,7 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: null
+  size_bytes: 1652654099
   n_items: 634459
   access: open
   download_url: null
@@ -80,9 +80,90 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T20:25:00Z'
-notes: Read the SEANOE page in full; ranged-read the start of UVP6Net_imgs.tar (gzip tar of imgs/<taxon>/<objid>.png). Data
+  last_checked: '2026-10-09T21:15:00Z'
+notes: 'Read the SEANOE page in full; ranged-read the start of UVP6Net_imgs.tar (gzip tar of imgs/<taxon>/<objid>.png). Data
   is split over three tars (119451/119452/119453.tar under https://www.seanoe.org/data/00908/101948/data/), so download_url
   is null and total size is not summed. Pixel size 73 um is the UVP6 pixel size from the sensor paper (full text read), object-space;
   the dataset page does not state it. UVP6 is an in-situ imaging sensor, so modality is other. Identifications were reviewed
   by one operator; a few errors may remain. ESSD benchmark paper only partly read. Distinct from ZooCAMNet and ZooScanNet.
+  enricher: size from file listing (was null).'
+technical:
+  method: sample
+  inspected_at: '2026-10-09T21:15:00Z'
+  inspected_urls:
+  - https://www.seanoe.org/data/00908/101948/data/119450.png
+  - https://www.seanoe.org/data/00908/101948/data/119451.tar
+  - https://www.seanoe.org/data/00908/101948/data/119452.tar
+  - https://www.seanoe.org/data/00908/101948/data/119453.tar
+  bytes_downloaded: 787456
+  size_source: file-listing
+  layout:
+    tree: "data/\n  119450.png   map.png (166 KB)\n  119451.tar   plain tar, 446 MB: UVP6Net/features_native.csv.gz (107 MB),\
+      \ UVP6Net/features_skimage.csv.gz, ... (taxa.csv.gz, inventory.tsv per page)\n  119452.tar   gzip tar (UVP6Net_imgs),\
+      \ 586 MB: imgs/<taxon>/<objid>.png (110 taxa)\n  119453.tar   gzip tar (UVPEC_imgs), 620 MB: imgs/<taxon>__<taxon id>/<objid>.png\
+      \ (20 classes)"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://www.seanoe.org/data/00908/101948/data/119452.tar
+    - https://www.seanoe.org/data/00908/101948/data/119451.tar
+    size_bytes: 1032007278
+    description: 'No smaller unit: images (119452.tar) and their labels (taxa.csv.gz inside 119451.tar) are only offered as
+      whole tar archives; gzip tar members cannot be fetched individually.'
+  arrays:
+  - role: raw
+    path_pattern: imgs/*/*.png
+    format: png
+    axes: yx
+    shape: null
+    shape_varies: true
+    dtype: uint8
+    compression: png
+    lossy: false
+    chunks: null
+    value_range:
+    - 43
+    - 253
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'UVP6Net_imgs (119452.tar): one grayscale (mode L) PNG crop per object, size varies with the object (e.g.
+      112x215 px); dark objects on a white background in the sample.'
+  - role: raw
+    path_pattern: imgs/*__*/*.png
+    format: png
+    axes: yx
+    shape: null
+    shape_varies: true
+    dtype: uint8
+    compression: png
+    lossy: false
+    chunks: null
+    value_range:
+    - 1
+    - 222
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'UVPEC_imgs (119453.tar): 20-class subset, grayscale PNG crops on a black background (page says .jpg;
+      the files read are .png).'
+  - role: label
+    path_pattern: UVP6Net/taxa.csv.gz
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: gzip
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: other
+    classes: null
+    alignment: unknown
+    alignment_notes: 'Per-object table (objid, taxon, train/val/test set, image path) per the dataset page; images pair with
+      rows by objid (= PNG file stem). The folder name is also the class label. Not read: it sits behind 446 MB of tar.'
+  notes: 'Listed the 4 files (exact sizes, 1.65 GB). Read tar headers by range request (256 KiB each): 119451 is a plain tar
+    starting UVP6Net/features_native.csv.gz then features_skimage.csv.gz; 119452 and 119453 are gzip tars of imgs/<taxon>/<objid>.png.
+    Decoded one PNG from each (8-bit grayscale; value ranges from one image each). Gzip tar members are not addressable, so
+    TensorSwitch cannot pull single files; www.seanoe.org is not on its fetch allowlist. 2D data and organism list empty (mixed
+    plankton), so not convertible yet. Voxel size 73 um from the UVP6 sensor paper (harvester).'
