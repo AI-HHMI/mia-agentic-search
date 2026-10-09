@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: figshare-25954813-hmu-gc-he-30k-gastric-tme
 title: 'HMU-GC-HE-30K: Gastric Cancer Histopathology Tissue Image Dataset (GCHTID)'
 short_name: Gastric cancer H&E tissue-class patches
-description: 31,096 non-overlapping 224 x 224 px H&E patches from 300 gastric cancer whole-slide images (Harbin Medical University
-  Cancer Hospital, 20x Aperio AT2 scans), sorted into folders by tumour-microenvironment tissue class (adipose, debris, lymphocytes,
-  mucus, smooth muscle, normal mucosa, stroma, tumour and background) and annotated by pathologists. Released with a clinical
-  data spreadsheet and validated with ViT and EfficientNet classifiers.
+description: 31,096 non-overlapping 224 x 224 px H&E patches from 300 gastric cancer whole-slide images (Harbin Medical University Cancer
+  Hospital, 20x Aperio AT2 scans), sorted into folders by tumour-microenvironment tissue class (adipose, debris, lymphocytes, mucus,
+  smooth muscle, normal mucosa, stroma and tumour) and annotated by pathologists. Released with a clinical data spreadsheet and validated
+  with ViT and EfficientNet classifiers.
 landing_url: https://figshare.com/articles/dataset/Gastric_Cancer_Histopathology_Tissue_Image_Dataset_GCHTID_/25954813
 doi: 10.6084/m9.figshare.25954813
 repository: Figshare
@@ -36,13 +36,14 @@ imaging:
   channels: 3
   organism:
   - Homo sapiens
-  sample: H&E-stained formalin-fixed paraffin-embedded gastric cancer slides (300 patients), Harbin Medical University Cancer Hospital, 2013-2015
+  sample: H&E-stained formalin-fixed paraffin-embedded gastric cancer slides (300 patients), Harbin Medical University Cancer Hospital,
+    2013-2015
   labels_stains:
   - Hematoxylin and eosin
 data:
   formats:
   - png
-  size_bytes: 3251341572
+  size_bytes: 3251364835
   n_items: 31096
   access: open
   download_url: https://ndownloader.figshare.com/files/46765759
@@ -52,7 +53,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: One image-level tissue-class label per patch, given by its class folder (all_image/<class>/<class>_<n>.png)
+  format: One image-level tissue-class label per patch, given by its class folder (all_image/<CLASS>/<CLASS>_<n>.png; ADI, DEB, LYM,
+    MUC, MUS, NOR, STR, TUM)
   source: manual
 ml:
   tasks:
@@ -75,10 +77,48 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T11:10:00Z'
-notes: 'HMU-GC-HE-30K.zip (3.25 GB) listed with peek_archive: 31,096 PNG files in all_image/<class>/ folders; HMU-GC-Clinical.csv
-  is a separate Figshare file. The paper describes eight annotated TME tissue classes and a three-pathologist labelling and
-  review workflow; the Figshare description names nine labels (it adds background) and says candidate patches were first predicted
-  with a model trained on a colorectal dataset before pathologists selected slides and labelled, so the source is stated as manual
-  per the paper. Slides were scanned at 20x; pixel size is not stated. The paper text mentions .svs slides but the zip holds only
-  patches. Train/test splits are not provided (the paper describes 20 % test and 10-fold cross-validation).'
+  last_checked: '2026-10-09T11:00:00Z'
+notes: 'HMU-GC-HE-30K.zip (3.25 GB): 31,096 PNG files in all_image/<class>/ folders; HMU-GC-Clinical.csv is a separate Figshare file.
+  The paper describes eight annotated TME tissue classes and a three-pathologist labelling and review workflow; the Figshare description
+  names nine labels (it adds background) and says candidate patches were first predicted with a model trained on a colorectal dataset
+  before pathologists selected slides and labelled, so the source is stated as manual per the paper. Slides were scanned at 20x; pixel
+  size is not stated. Train/test splits are not provided (the paper describes 20 % test and 10-fold cross-validation). enricher: zip
+  listing shows 8 class folders x 3887 patches, no background folder (description corrected); size_bytes = both Figshare files (was
+  the zip only); PNGs are RGBA.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "./                          2 files   3.3 GB\n  HMU-GC-HE-30K.zip         3,251,341,572 B  (31,096 .png)\n    all_image/\n\
+      \      ADI/   3887 files   284.5 MB   ADI_<n>.png\n      DEB/   3887 files   438.4 MB\n      LYM/   3887 files   469.1 MB\n  \
+      \    MUC/   3887 files   351.8 MB\n      MUS/   3887 files   405.6 MB\n      NOR/   3887 files   414.3 MB\n      STR/   3887 files\
+      \   440.3 MB\n      TUM/   3887 files   442.3 MB\n  HMU-GC-Clinical.csv       23,263 B\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/46765759::all_image/TUM/TUM_1.png
+    size_bytes: 121698
+    description: One tumour patch (224 x 224 RGBA PNG); the label is the folder name.
+  arrays:
+  - role: raw
+    path_pattern: HMU-GC-HE-30K.zip/all_image/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 224
+    - 224
+    - 4
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Image-level labels: the class is the parent folder (ADI, DEB, LYM, MUC, MUS, NOR, STR, TUM); no mask files. PNG
+      colour type RGBA (4 samples).'
+  notes: 'Listing: Figshare API + zip central directory (listing.py --expand-zips): 2 files, 3,251,364,835 B exact, 31,096 PNG members,
+    8 folders x 3887. Headers probed: ADI_1, DEB_1, LYM_1 (76-125 KB each): PNG 224 x 224, RGBA, uint8, deflate. sample.py failed on
+    the PNG member (tool error, it tried to open it as HDF5), so no value range. Voxel size not found: paper Methods give only "Aperio
+    AT2 ... 20x" (no um/pixel), Figshare description none, PNG headers carry no physical size. Download: the zip is one direct file
+    (ndownloader to signed S3), members usable by range.'
