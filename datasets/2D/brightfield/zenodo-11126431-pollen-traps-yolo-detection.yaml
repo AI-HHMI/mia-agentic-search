@@ -1,0 +1,145 @@
+schema_version: '1.2'
+id: zenodo-11126431-pollen-traps-yolo-detection
+title: Dataset from "A user-friendly method to get automated pollen analysis from environmental samples".
+  New Phytologist.
+short_name: Pollen grain detection in trap slides (light)
+description: 4,098 light-microscopy fields of view (214 x 214 um each) from 16 slides of annual pollen-trap
+  samples of a Mediterranean vegetation monitoring site, with manually drawn YOLO bounding boxes around
+  pollen grains and Lycopodium markers under seven annotation schemes, plus the trained YOLOv5 weights.
+landing_url: https://zenodo.org/records/11126431
+doi: 10.5281/zenodo.11126431
+repository: Zenodo
+accession: '11126431'
+authors:
+- Betty Gimenez
+publications:
+- title: A user-friendly method to get automated pollen analysis from environmental samples
+  doi: 10.1111/nph.19857
+  url: https://doi.org/10.1111/nph.19857
+date_published: '2024-05-07'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: Pollen-trap samples mounted on slides, containing c. 40 Mediterranean plant taxa, debris and
+    Lycopodium spores (Pic Saint Loup, Hérault, France)
+  labels_stains: []
+data:
+  formats:
+  - jpeg
+  size_bytes: 6086321262
+  n_items: 4098
+  access: open
+  download_url: https://zenodo.org/records/11126431
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  coverage: dense
+  format: YOLO txt files (label, x, y, width, height), one per image with at least one box, in 7 annotation
+    folders (all-0taxon, all-5taxa, 1taxon_<taxon> for five taxa)
+  source: manual
+ml:
+  tasks:
+  - detection
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-09T23:40:00Z'
+  evidence_urls:
+  - https://zenodo.org/records/11126431
+  - https://zenodo.org/records/11126431/files/README.txt
+  - https://zenodo.org/records/11126431/files/ANNOTATIONS.zip
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1111%2Fnph.19857%22&format=json&resultType=core&pageSize=3
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-09T23:11:56Z'
+notes: 'README (read in full): 4,098 fields of view from 16 slides, 6 sites, 3 years; images annotated
+  with labelImg; annotation schemes all-0taxon (3 labels), all-5taxa (8 labels) and 1taxon for Pinaceae,
+  Buxus, Poaceae, Quercus, Oleaceae. peek_archive: IMAGES.zip 4,098 JPG (5.6 GB), ANNOTATIONS.zip 13,578
+  txt files. Also in the record: YOLOv5_trainedmodels_lastweights.zip (460 MB). The paper is not open
+  access (Europe PMC abstract only), so microscope, magnification and image pixel dimensions are not known:
+  voxel_size_nm null, only the 214 um field of view is stated in the README. Modality brightfield is inferred
+  from "light microscopy" in the README. Organism is empty (a mix of taxa plus debris). The paper describes
+  5-fold cross-validation, but the record has no split files. enricher: channels 1 (sampled JPEG is greyscale,
+  mode L; was 3); size_bytes all 4 files (file-listing); download_url now the record page (images and
+  annotations are separate zips).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './   4 files  6.1 GB  IMAGES.zip, ANNOTATIONS.zip, YOLOv5_trainedmodels_lastweights.zip, README.txt
+
+      IMAGES.zip/IMAGES/                         4098 files  5.7 GB  .jpg  <slide>_<year><A>_zone<n>_<fov>.jpg,
+      2042x2038 grey
+
+      ANNOTATIONS.zip/ANNOTATIONS/all_0taxon/    3491 files  .txt (YOLO, 3 labels)
+
+      ANNOTATIONS.zip/ANNOTATIONS/all_5taxa/     3491 files  .txt (YOLO, 8 labels)
+
+      ANNOTATIONS.zip/ANNOTATIONS/1taxon_{buxus,oleaceae,pinaceae,poaceae,quercus}/  942-1775 files each
+      .txt
+
+      YOLOv5_trainedmodels_lastweights.zip/YOLOv5_trainedmodels_lastweights/   35 files 506.3 MB .pt (model
+      weights, not data)'
+    n_files: 17714
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/11126431/files/IMAGES.zip::IMAGES/MAU2_2020A_zone1_58.jpg
+    - https://zenodo.org/records/11126431/files/ANNOTATIONS.zip::ANNOTATIONS/all_5taxa/MAU2_2020A_zone1_58.txt
+    size_bytes: 1172531
+    description: One field of view and its all-5taxa YOLO box file
+  arrays:
+  - role: raw
+    path_pattern: IMAGES.zip/IMAGES/*.jpg
+    format: jpeg
+    axes: yx
+    shape:
+    - 2042
+    - 2038
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 3
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Greyscale JPEG (mode L) fields of view, 214 x 214 um each per README.
+  - role: label
+    path_pattern: ANNOTATIONS.zip/ANNOTATIONS/*/*.txt
+    format: other
+    axes: null
+    shape:
+    - 2
+    - 5
+    shape_varies: true
+    dtype: float32
+    compression: none
+    encoding: boxes-table
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'Pairing rule: ANNOTATIONS/<scheme>/<stem>.txt pairs with IMAGES/<stem>.jpg; no file
+      = no box in that image. YOLO lines "class x_center y_center width height", coordinates normalised
+      to [0, 1]. Seven schemes (all_0taxon 3 labels, all_5taxa 8 labels, 1taxon_<taxon>); the README names
+      the labels but not their numeric ids, so classes is null.'
+  notes: 'Listing: listing.py --expand-zips (4 files, 6,086,321,262 B exact, 17,711 zip members). Probed
+    and sampled IMAGES/MAU2_2020A_zone1_58.jpg (1,172,458 B): 2042x2038 uint8 grey, 3-255, p50 172 (from
+    this one image). Read all_5taxa/MAU2_2020A_zone1_58.txt with peek_archive --cat: 2 boxes (classes
+    4 and 0). Voxel size not set: the README states only the field of view (214 x 214 um per image) and
+    the image is 2042 x 2038 px, which would give about 105 nm/px, but no source states the pixel size
+    and the image is not square, so it was not computed. Paper not open access. Not download-ready: 2D,
+    no organism (mixed taxa).'
