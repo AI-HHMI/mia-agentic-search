@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zenodo-22243033-sem-superalloy-microstructure
 title: SEM micrographs for human-in-the-loop segmentation and classification
 short_name: Refractory superalloy microstructure SEM images
-description: Back-scattered SEM micrographs of Ru-containing BCC-B2 refractory superalloys. 58 micrographs
-  (3072 x 2040 px, 16-bit grayscale PNG) are classified by microstructure into dendritic (28), dual-phase (11)
-  and single-phase (19), with a CSV of per-image labels and an initialisation/test split. Two further sets
-  (1 micrograph and 16 tiles of 510 x 768 px) are provided for segmentation case studies without masks.
+description: Back-scattered SEM micrographs of Ru-containing BCC-B2 refractory superalloys. 58 micrographs (3072 x 2040 px,
+  16-bit grayscale PNG) are classified by microstructure into dendritic (28), dual-phase (11) and single-phase (19), with
+  a CSV of per-image labels and an initialisation/test split. Two further sets (1 micrograph and 16 tiles of 510 x 768 px)
+  are provided for segmentation case studies without masks.
 landing_url: https://zenodo.org/records/22243033
 doi: 10.5281/zenodo.22243033
 repository: Zenodo
@@ -29,17 +29,18 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: 540800000
+  size_bytes: 540778460
   n_items: 75
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/22243033
   download_method: http
 annotations:
   present: true
   types:
   - classification
   coverage: dense
-  format: classification_ground_truth_mapping.csv (filename, split, level_1, level_2, level_3); folders Dendritic, DualPhase, SinglePhase
+  format: classification_ground_truth_mapping.csv (filename, split, level_1, level_2, level_3); folders Dendritic, DualPhase,
+    SinglePhase
   source: unknown
 ml:
   tasks:
@@ -57,10 +58,95 @@ provenance:
   - https://zenodo.org/records/22243033
   - https://zenodo.org/records/22243033/files/README.md?download=1
   - https://zenodo.org/records/22243033/files/classification_ground_truth_mapping.csv?download=1
+  - https://zenodo.org/api/records/22243033
+  - https://raw.githubusercontent.com/PaulsonLab/hitl-sem/main/README.md
   confidence: 0.55
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T10:55:00Z'
-notes: 'Materials-science SEM images, not biological samples; modality recorded as other because the schema has no plain SEM value (file names carry CBS; the record does not name the detector). The record lists classification_images.zip (58 micrographs), segmentation_case1_images.zip (1 micrograph), segmentation_case2_images.zip (16 tiles) and the label CSV; n_items counts 58 + 1 + 16. Only the classification images carry labels; the segmentation sets have no masks on the record (the paper they accompany, Human-in-the-Loop Microscopy Image Analysis using Vision Foundation Models, could not be found on arXiv or Europe PMC, so no paper was read). Pixel size, microscope, and annotator are not stated. The record page gives inconsistent sizes (493 vs 516.6 MB for the classification zip); size_bytes is the stated 540.8 MB total. Images derive from Kube et al. 2024 (Acta Materialia 265, 119628).'
+  last_checked: '2026-10-09T08:25:00Z'
+notes: 'Materials-science SEM (back-scattered, file names carry CBS), not biological: modality other (no bulk-SEM value in
+  the schema), organism empty. Files: classification_images.zip (58 PNGs in Dendritic/DualPhase/SinglePhase), segmentation_case1_images.zip
+  (1 PNG), segmentation_case2_images.zip (16 tiles), label CSV; n_items 58 + 1 + 16. Only the classification images carry
+  labels on Zenodo; box annotations for the segmentation case studies are in the GitHub repo (annotations/), not in this record.
+  Accompanying paper not found (Europe PMC, arXiv); images derive from Kube et al. 2024 (Acta Materialia 265, 119628; not
+  open access). Pixel size, microscope and annotator not stated. enricher: size_bytes from the Zenodo file listing (was the
+  page-stated 540.8 MB).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                    6 files    540.8 MB  .zip 3, .txt 1, .md 1, .csv 1\n  README.md, SHA256SUMS.txt,\
+      \ classification_ground_truth_mapping.csv (filename, split, level_1..3)\nzip contents:\nclassification_images.zip/Dendritic/\
+      \     28 files    259.3 MB  .png\nclassification_images.zip/DualPhase/     11 files     91.4 MB  .png\nclassification_images.zip/SinglePhase/\
+      \   19 files    165.9 MB  .png\nsegmentation_case1_images.zip/            1 files     12.3 MB  .png\nsegmentation_case2_images.zip/\
+      \           16 files     11.9 MB  .png  (img_00..img_15)"
+    n_files: 6
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/22243033/files/classification_images.zip::SinglePhase/20230418_C6.06.03_1900C10h,1300C200h_CBS_004.png
+    - https://zenodo.org/records/22243033/files/classification_ground_truth_mapping.csv
+    size_bytes: 4955321
+    description: One classification micrograph (smallest, SinglePhase) and the label CSV
+  arrays:
+  - role: raw
+    path_pattern: classification_images.zip/*/*.png
+    format: png
+    axes: yx
+    shape:
+    - 2040
+    - 3072
+    shape_varies: false
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 4883
+    - 56283
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 58 grayscale 16-bit PNGs, 3072 x 2040 px (README); class = parent folder.
+  - role: raw
+    path_pattern: segmentation_case*_images.zip/*.png
+    format: png
+    axes: yx
+    shape:
+    - 510
+    - 768
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Unlabelled on Zenodo: case 1 is one 2040 x 3072 micrograph, case 2 is 16 tiles of 510 x 768 px (shape
+      shown).'
+  - role: label
+    path_pattern: classification_ground_truth_mapping.csv
+    format: csv
+    axes: null
+    shape:
+    - 58
+    - 5
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes:
+    - id: Dendritic
+      name: Dendritic
+    - id: DualPhase
+      name: DualPhase
+    - id: SinglePhase
+      name: SinglePhase
+    alignment: not-applicable
+    alignment_notes: 'Image-level classification table: filename, split (22 init / 36 test), level_1 class (28 Dendritic,
+      19 SinglePhase, 11 DualPhase); level_2 and level_3 are all None. Pairs by file name with classification_images.zip/<level_1>/<filename>.'
+  notes: 'Listing: tools/listing.py on the Zenodo API record with --expand-zips: 6 files, 540,778,460 B (file-listing, complete),
+    75 zip members. Probed one PNG per zip (all uint16 grayscale, deflate). Sampled the smallest classification PNG (value
+    range from that one sample): 2040x3072 uint16, 4883-56283, only 201 distinct values (looks like 8-bit data stored as 16-bit;
+    not documented), so normalization unknown. Voxel size not found; checked: PNG headers (no calibration), Zenodo API description
+    and README, GitHub repo README and code (PaulsonLab/hitl-sem), source paper Kube et al. 2024 (not open access), accompanying
+    paper (not found on Europe PMC or arXiv). Download: zip members and the CSV pass --download-check; no single archive for
+    the whole dataset, so download_url is the landing page. Not convertible to the miao layout: 2D, no organism (materials
+    sample), no modality family for other.'
