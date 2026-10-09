@@ -1,0 +1,151 @@
+schema_version: '1.2'
+id: zenodo-23250454-flounder-retina-nuclei-confocal
+title: 'Cell-segmentation-2025: code, trained models, and annotated confocal images for CPU-only segmentation
+  of nuclei in retinal wholemounts'
+short_name: Flounder retina DAPI nuclei (confocal)
+description: 50 manually annotated confocal fields (1024 x 1024 px, 0.104 um/px, 8-bit TIFF) of DAPI-stained
+  retinal wholemounts of the dark flounder Pseudopleuronectes obscurus, with binary instance-separable
+  nucleus masks (6,602 nuclei, 43-386 per field) and a train / validation / test split by scan region.
+  The record also holds 1,049 unannotated application fields (JPEG), per-object measurement tables, code
+  and trained models.
+landing_url: https://zenodo.org/records/23250454
+doi: 10.5281/zenodo.23250454
+repository: Zenodo
+accession: null
+authors:
+- Ivan Usatov
+- Igor Pushchin
+publications: []
+date_published: '2026-10-09'
+imaging:
+  modality:
+  - confocal
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 104
+    y: 104
+    z: null
+  channels: 1
+  organism:
+  - Pseudopleuronectes obscurus
+  sample: DAPI-stained retinal wholemounts (ganglion cell layer) from two adult dark flounders; confocal
+    stacks projected onto the wholemount plane (average intensity)
+  labels_stains:
+  - DAPI
+data:
+  formats:
+  - tiff
+  size_bytes: 918987195
+  n_items: 50
+  access: open
+  download_url: https://zenodo.org/api/records/23250454/files/data_annotated_fields.zip/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: binary TIFF masks, one per image, nuclei separated by 3-4 px gaps so each is a connected component;
+    splits.csv gives subset and nucleus count per field
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://zenodo.org/api/records/23250454/files/Cell-segmentation-2025_v2.0.0.zip/content
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-09T22:54:16Z'
+  evidence_urls:
+  - https://zenodo.org/records/23250454
+  - https://zenodo.org/api/records/23250454
+  - https://zenodo.org/api/records/23250454/files/README.md/content
+  - https://zenodo.org/api/records/23250454/files/data_annotated_fields.zip/content
+  confidence: 0.9
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-09T23:21:44Z'
+notes: 'Details from the Zenodo record and its README (microscope Zeiss LSM 700, 20x/1.0, 0.104 um/px,
+  8-bit LZW TIFF, split by tiled field: 32 train / 11 validation / 7 test fields) and the zip listing
+  (50 images + 50 masks + splits.csv). The accompanying article is stated as submitted to Cytometry Part
+  A and has no DOI yet, so publications is empty. The README states 50 annotated fields with 6,602 nuclei,
+  while the abstract mentions 43 annotated fields with 5,436 nuclei (an earlier version). Code is MIT,
+  model weights AGPL-3.0, data CC BY 4.0. The record also contains 1,049 unannotated JPEG fields (data_application_images.zip).
+  enricher: size_bytes now all 5 files (file-listing; annotated zip alone 129 MB).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './   5 files  919.0 MB  .zip 4, README.md
+
+      data_annotated_fields.zip/data/train/splits.csv         field,vlf,subset,n_nuclei (50 rows)
+
+      data_annotated_fields.zip/data/train/images/   50 files 101.6 MB .tif  VLF<n>_<well>.tif, 1024x1024
+      uint8
+
+      data_annotated_fields.zip/data/train/masks/    50 files  58.1 MB .tif  same names, binary
+
+      data_application_images.zip/data/predict/images/   1049 files 758.5 MB .jpeg (unannotated)
+
+      data_tables.zip/data/tables/                     4 files  32.0 MB .csv 3, .txt 1 (per-object measurements)
+
+      Cell-segmentation-2025_v2.0.0.zip/Cell-segmentation-2025/   code, models (.pt, .onnx), results'
+    n_files: 1240
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/23250454/files/data_annotated_fields.zip::data/train/images/VLF1_A03.tif
+    - https://zenodo.org/records/23250454/files/data_annotated_fields.zip::data/train/masks/VLF1_A03.tif
+    size_bytes: 3356116
+    description: 'Annotated field VLF1_A03 (training subset): DAPI projection and its nucleus mask'
+  arrays:
+  - role: raw
+    path_pattern: data_annotated_fields.zip/data/train/images/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 89
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Average-intensity projections of confocal stacks (README), single-channel ImageJ
+      TIFF without calibration.
+  - role: label
+    path_pattern: data_annotated_fields.zip/data/train/masks/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 255
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: masks/<field>.tif pairs with images/<field>.tif. Binary {0, 255};
+      per the README each nucleus is a separate 8-connected component (touching nuclei separated by 3-4
+      px gaps), so instances come from connected-component labelling. Split per field in splits.csv (training
+      / validation / test by VLF).'
+  notes: 'Listing: listing.py --expand-zips (5 files, 918,987,195 B exact, 1,237 zip members). Probed
+    and sampled VLF1_A03 image + mask: 1024x1024 uint8 LZW ImageJ TIFFs, no calibration; raw 89-255 (p50
+    168, p99 255, saturated), mask {0: 865,019, 255: 183,557}; values from this one pair. Read splits.csv
+    with peek_archive --cat. Voxel size 104 nm unchanged: README states 1024 x 1024 px fields of 106.5
+    x 106.5 um, 0.104 um per pixel. Not download-ready: 2D.'
