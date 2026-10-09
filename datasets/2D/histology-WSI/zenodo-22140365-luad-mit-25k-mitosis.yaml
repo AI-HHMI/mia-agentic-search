@@ -1,0 +1,140 @@
+schema_version: '1.2'
+id: zenodo-22140365-luad-mit-25k-mitosis
+title: LUAD-MIT-25K
+short_name: Lung adenocarcinoma mitosis points (H&E)
+description: Multi-center H&E dataset for mitotic figure detection in lung adenocarcinoma. 2,291 image
+  patches (256 x 256 px, rescaled to 0.25 um/px, 40x equivalent) cut from 305 whole-slide images from
+  three medical centers, with point annotations for 3,231 mitotic figures and 21,835 tumor nuclei, double-reviewed
+  by pathologists. Patient-level train, internal test and external validation splits.
+landing_url: https://zenodo.org/records/22140365
+doi: 10.5281/zenodo.22140365
+repository: Zenodo
+accession: null
+authors:
+- Zongfu Cao
+publications: []
+date_published: '2026-08-28'
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 250
+    y: 250
+    z: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: H&E-stained lung adenocarcinoma tissue, patches from 305 whole-slide images from three centers
+  labels_stains:
+  - hematoxylin and eosin
+data:
+  formats:
+  - png
+  size_bytes: 288231424
+  n_items: 2291
+  access: open
+  download_url: https://zenodo.org/api/records/22140365/files/LUAD-MIT-25K.tar/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - points
+  - classification
+  coverage: dense
+  format: per-patch JSON files (same name as the PNG) with slide metadata and point coordinates (x, y)
+    labelled mitosis or tumor_nucleus; slide-level metadata.csv (tab-separated)
+  source: manual
+ml:
+  tasks:
+  - detection
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/legalcode
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-09T22:54:16Z'
+  evidence_urls:
+  - https://zenodo.org/records/22140365
+  - https://zenodo.org/api/records/22140365
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-09T23:18:03Z'
+notes: 'Everything comes from the Zenodo record description; the data is a single 288 MB .tar . The record
+  states 2,291 patches in train_patches, test_patches and external_patches folders with paired PNG and
+  JSON files. No related paper is listed on the record and no scanner or staining details are given beyond
+  the 0.25 um/px normalization, so the number of patients is not stated either. Pixel size of 0.25 um
+  comes from the stated target resolution. enricher: tar streamed and listed (2,291 PNG + 2,291 JSON),
+  JSON point labels seen, annotations_verified true; split folders train/test/external, splits_provided
+  true.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './   1 file  288.2 MB  LUAD-MIT-25K.tar (uncompressed tar, 4,584 members, 284,639,419 B of
+      file data)
+
+      LUAD-MIT-25K/metadata.csv                     305 slides (comma-separated, not tab as the description
+      says)
+
+      LUAD-MIT-25K/<README .md>
+
+      LUAD-MIT-25K/patches/train_patches/      1718 PNG + 1718 JSON  210.7 MB
+
+      LUAD-MIT-25K/patches/test_patches/        384 PNG +  384 JSON   47.5 MB
+
+      LUAD-MIT-25K/patches/external_patches/    189 PNG +  189 JSON   26.4 MB
+
+      names: <slide_id>_<n>_T1_win<window>_tile_<x>_<y>.png|.json'
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: LUAD-MIT-25K.tar::LUAD-MIT-25K/patches/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: H&E RGB patches resampled to 0.25 um/px (target_mpp) from native 0.23-0.48 um/px
+      (native_mpp per slide in metadata.csv).
+  - role: label
+    path_pattern: LUAD-MIT-25K.tar::LUAD-MIT-25K/patches/*/*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: float64
+    compression: none
+    encoding: points-table
+    classes:
+    - id: mitosis
+      name: mitotic figure
+    - id: tumor_nucleus
+      name: tumor nucleus
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: <name>.json pairs with <name>.png in the same split folder. annotations[].coordinates
+      are (x, y) floats within the 256x256 patch; slide_metadata holds split, slide_id, native/target
+      mpp, coord_scale, tile_x/tile_y.'
+  notes: 'Listing: listing.py (1 file, 288,231,424 B exact). A tar cannot be listed by range here, so
+    a scratch tarfile script streamed the whole tar once (288 MB, inside the sample budget) and listed
+    every member: 2,291 PNG, 2,291 JSON, metadata.csv, one .md. A 4 MB head read gave three PNGs: 256x256
+    RGB uint8, values 0/1-255 (from these only). sample is null: TensorSwitch cannot pull single members
+    out of a tar; the tar itself is direct (download_url). Voxel size 250 nm unchanged (description: patches
+    normalized to 0.25 um/pixel; JSON target_mpp 0.25).'
