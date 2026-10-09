@@ -1,0 +1,189 @@
+schema_version: '1.2'
+id: zapbench-zebrafish-whole-brain-lightsheet
+title: ZAPBench - larval zebrafish whole-brain light-sheet activity volumes with neuron segmentation
+short_name: Zebrafish whole-brain activity (light-sheet)
+description: Whole-brain calcium-imaging (GCaMP) light-sheet recording of a larval zebrafish, 2048x1328x72 voxels
+  over 7,879 timepoints (406 x 406 nm x 4 um xy-z, 0.914 s per volume), released as Zarr v3 with motion-aligned
+  and dF/F volumes, a higher-z-resolution anatomy volume, about 2,000 manually annotated neurons (training/eval
+  subvolumes) and a flood-filling-network voxel-level segmentation of about 70,000 neurons. Built as the ZAPBench
+  neural activity forecasting benchmark with per-condition train/validation/test splits.
+landing_url: https://zapbench-release.storage.googleapis.com/landing.html
+doi: null
+repository: other
+accession: null
+authors:
+- Jan-Matthis Lueckmann
+- Alexander Immer
+- Michal Januszewski
+- Viren Jain
+- Misha Ahrens
+- Alex Bo-Yuan Chen
+publications:
+- title: 'ZAPBench: A Benchmark for Whole-Brain Activity Prediction in Zebrafish'
+  doi: null
+  url: https://arxiv.org/abs/2503.02618
+date_published: null
+imaging:
+  modality:
+  - light-sheet
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 406
+    y: 406
+    z: 4000
+  channels: 1
+  organism:
+  - Danio rerio
+  sample: Head-fixed, paralysed larval zebrafish (pan-neuronal GCaMP) viewing visual stimuli in a virtual-reality
+    setup
+  labels_stains: []
+data:
+  formats:
+  - zarr
+  size_bytes: 3087639641088
+  n_items: null
+  access: open
+  download_url: https://storage.googleapis.com/zapbench-release/volumes/20240930/
+  download_method: other
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: partial
+  format: Zarr v3 uint64 label volume (segmentation) and annotations/subvolume_N and eval_subvolume_N manual neuron
+    annotation volumes
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  - other
+  splits_provided: true
+  benchmark: ZAPBench
+  baseline_code_url: https://github.com/google-research/zapbench
+license:
+  spdx: CC-BY-4.0
+  url: https://zapbench-release.storage.googleapis.com/volumes/README.html
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-09T07:44:38Z'
+  evidence_urls:
+  - https://zapbench-release.storage.googleapis.com/landing.html
+  - https://zapbench-release.storage.googleapis.com/volumes/README.html
+  - https://github.com/google-research/zapbench
+  - https://arxiv.org/pdf/2503.02618
+  - https://storage.googleapis.com/storage/v1/b/zapbench-release/o?prefix=volumes/20240930/
+  - https://storage.googleapis.com/zapbench-release/volumes/20240930/raw/zarr.json
+  - https://storage.googleapis.com/zapbench-release/volumes/20240930/annotations/subvolume_1/labels/rechunked/zarr.json
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-09T08:45:00Z'
+notes: 'Hosted on a public GCS bucket (gs://zapbench-release/volumes/20240930/), hence repository other. Zarr v3
+  arrays: raw uint16 xyzt 2048x1328x72x7879 at 406 nm x 406 nm x 4 um x 0.9141 s; segmentation uint64 on the same
+  xyz grid; anatomy 2048x1328x288 at 1 um z; aligned, df_over_f, mask, traces. License CC-BY 4.0 per the README.
+  Paper: about 2,000 neurons manually annotated (CellMap, Janelia) to train a flood-filling-network segmentation
+  of about 70,000 neurons. source mixed: annotations/subvolume_1-3 and eval_subvolume_1-8 labels are manual, segmentation/
+  is automatic (FFN). enricher: voxel_size_nm is the raw/segmentation grid; the annotation subvolumes are 406 x
+  406 x 1000 nm (their zarr.json dimension_units). enricher: channels 1 (single-channel raw zarr). Paper read as
+  the arXiv PDF; no DOI found.'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "volumes/\n  README.md, README.html, LICENSE\n  20240930/  (zarr v3 arrays, one folder each)\n    raw/\
+      \                 uint16 xyzt 2048x1328x72x7879\n    aligned/, aligned_multiscale/\n    df_over_f/, df_over_f_xt_chunked/,\
+      \ df_over_f_xyz_chunked/\n    anatomy/             uint16 xyzt 2048x1328x288x10 (1 um z)\n    anatomy_clahe/,\
+      \ anatomy_clahe_ds/, anatomy_clahe_ffn/, anatomy_red/, ... (+ multiscale variants)\n    segmentation/    \
+      \    uint64 xyz 2048x1328x72\n    segmentation_xy/, segmentation_xy_multiscale/\n    mask/               \
+      \ uint16 xyz 2048x1328x288\n    annotations/\n      subvolume_1..3/       anatomy/clahe, labels/{raw,rechunked,filtered},\
+      \ seeds/{pos,neg}\n      eval_subvolume_1..8/  anatomy/clahe, labels/{raw,rechunked,filtered,predicted/...}\n\
+      \    traces/, traces.zip (1.98 GB), traces_fluroglancer/, traces_rastermap_sorted/\n    flow_fields/, correlation_matrix/,\
+      \ position_embedding/\n    stimuli_features/, stimuli_raw/, stimulus_evoked_response/"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://storage.googleapis.com/zapbench-release/volumes/20240930/annotations/subvolume_1/anatomy/clahe/
+    - https://storage.googleapis.com/zapbench-release/volumes/20240930/annotations/subvolume_1/labels/rechunked/
+    size_bytes: 28800000
+    description: 'manual training subvolume 1: CLAHE anatomy crop (100x100x288 uint16) and its neuron instance labels
+      on the same grid (406 x 406 x 1000 nm); uncompressed sizes'
+  arrays:
+  - role: raw
+    path_pattern: 20240930/raw
+    format: zarr
+    axes: xyzt
+    shape:
+    - 2048
+    - 1328
+    - 72
+    - 7879
+    shape_varies: false
+    dtype: uint16
+    compression: blosc
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: functional activity volume, 406 nm x 406 nm x 4000 nm x 0.9141 s (zarr.json dimension_units);
+      chunks 512x512x1x1, blosc zstd
+  - role: label
+    path_pattern: 20240930/segmentation
+    format: zarr
+    axes: xyz
+    shape:
+    - 2048
+    - 1328
+    - 72
+    shape_varies: false
+    dtype: uint64
+    compression: none
+    encoding: instance-ids
+    alignment: same-grid
+    alignment_notes: automatic FFN neuron segmentation on the raw volume's xyz grid (406 x 406 x 4000 nm); no t
+      axis (one segmentation for all timepoints)
+  - role: raw
+    path_pattern: 20240930/annotations/*/anatomy/clahe
+    format: zarr
+    axes: xyz
+    shape:
+    - 100
+    - 100
+    - 288
+    shape_varies: true
+    dtype: uint16
+    compression: blosc
+    value_range:
+    - 182
+    - 63506
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'CLAHE-processed anatomy crops at 406 x 406 x 1000 nm: subvolume_1-3 are 100x100x288 (training),
+      eval_subvolume_1-8 are 50x50x288'
+  - role: label
+    path_pattern: 20240930/annotations/*/labels/rechunked
+    format: zarr
+    axes: xyz
+    shape:
+    - 100
+    - 100
+    - 288
+    shape_varies: true
+    dtype: uint64
+    compression: blosc
+    encoding: instance-ids
+    alignment: same-grid
+    alignment_notes: manual neuron instance labels, same shape and units as anatomy/clahe of the same subvolume
+      (pair by subvolume folder). labels/raw holds the original annotation at 2x (203 x 203 x 500 nm, e.g. 200x200x602);
+      labels/filtered equals rechunked in the two subvolumes sampled
+  notes: 'Listing: GCS JSON API (folder prefixes, every zarr.json under annotations/); not a full object listing
+    (raw alone has ~6.8 M chunks), so size is estimated. Sampled whole: subvolume_1 anatomy/clahe uint16 100x100x288
+    range 182-63506 (mean 9848); labels/rechunked uint64 593 ids, 87 % background, 240 of 288 z slices labelled;
+    eval_subvolume_1: 50x50x288, range 311-62413, 112 ids, 115 z slices labelled (custom zarr script, ~65 MB uncompressed).
+    value range from these samples only; the folder name says CLAHE (contrast-limited adaptive histogram equalization)
+    but no doc states the processing, so normalization unknown. The anatomy subvolumes are 406 x 406 x 1000 nm while
+    imaging.voxel_size_nm (406 x 406 x 4000) is the raw/segmentation grid: take scale from each zarr.json. Direct
+    access: zarr stores on storage.googleapis.com (not on the TensorSwitch allowlist); gsutil also works. size estimated
+    (uncompressed): raw 1 x 2048x1328x72x7879 uint16 + label 1 x 2048x1328x72 uint64 + raw 11 x 100x100x288 uint16
+    + label 11 x 100x100x288 uint64 = 3,087,639,641,088 B (3.1 TB); shapes vary, so approximate; other arrays in
+    the bucket (aligned, df_over_f, anatomy, ...) not counted.'
