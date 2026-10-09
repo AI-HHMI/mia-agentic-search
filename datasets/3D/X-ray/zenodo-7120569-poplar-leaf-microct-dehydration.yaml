@@ -11,7 +11,7 @@ doi: 10.5281/zenodo.7120569
 repository: Zenodo
 accession: '7120569'
 authors:
-- "Guillaume Th\xE9roux-Rancourt"
+- Guillaume Théroux-Rancourt
 - Klara Voggeneder
 - Danny Tholen
 publications: []
@@ -24,7 +24,7 @@ imaging:
     x: 162.5
     y: 162.5
     z: 162.5
-  channels: null
+  channels: 1
   organism:
   - Populus maximowiczii x Populus nigra
   sample: detached leaf strip (0.4 x 1.5 cm) of hybrid poplar 'Max3' scanned while dehydrating
@@ -60,16 +60,124 @@ provenance:
   - https://zenodo.org/api/records/7120569
   - https://zenodo.org/api/records/7120569/files/DEHYDRATION_small_Leaf4_time_1_PAGANIN-8bit_AOI.tif.zip/content
   - https://zenodo.org/api/records/7120569/files/Labeled_slices_positions.txt/content
+  - https://zenodo.org/records/7120569/files/Labeled_slices_positions.txt
   confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T18:11:25Z'
-notes: 'Counts: 10 reconstruction stacks (5 time points x GRID/PAGANIN, zipped TIFF, ~1.7 GB each unzipped) plus 15 labelled-slice
-  stacks (5 time points x 3 orientations). Voxel size 0.1625 um comes from the Zenodo description (reconstruction, field of
-  view ~416x416x312 um); file header of a labelled stack carries no calibration. Labelled stacks are uint8, e.g. 20 slices
-  of 1152x1350, but the class values and class names were not documented on the record or checked, so the label encoding is
-  unknown. Only selected slices per stack are labelled (hence sparse). No paper describing this specific dataset was found
-  with tools/paper.py; the authors'' related method paper (Digitally deconstructing leaves, 10.1002/aps3.11380) covers a different
-  dataset and was not cited here.'
+  last_checked: '2026-10-09T20:45:00Z'
+notes: 'Counts: 10 reconstruction stacks (5 time points x GRID/PAGANIN, zipped TIFF, ~1.55 GB each unzipped) plus 15 labelled-slice
+  stacks (5 time points x 3 orientations). Voxel size 0.1625 um from the Zenodo description; the reconstruction TIFF header
+  agrees (ImageJ spacing=0.1625, unit um). Labelled stacks are uint8 with values {0,100,152,170,202,255} in a sample; class
+  names are not documented on the record, so classes are unknown. Only selected slices are labelled (positions in Labeled_slices_positions.txt,
+  1-based). No paper describing this dataset was found; the authors'' method paper (10.1002/aps3.11380) covers a different
+  dataset.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./   28 files  10.2 GB\n  DEHYDRATION_small_Leaf4_time_{1..5}_GRID-8bit_AOI.tif.zip      5 files  6.5 GB  (one\
+      \ 1.55 GB TIFF each)\n  DEHYDRATION_small_Leaf4_time_{1..5}_PAGANIN-8bit_AOI.tif.zip   5 files  3.4 GB  (one 1.55 GB\
+      \ TIFF each)\n  DEHYDRATION_small_Leaf4_time_{1..5}_LABELLED_{CROSS,LONGI,PARADERMAL}_<range>.tif  15 files  316 MB\n\
+      \  Labeled_slices_positions.txt, Labeled_Sections_order_time{1,2}.png"
+    n_files: 28
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7120569/files/DEHYDRATION_small_Leaf4_time_5_PAGANIN-8bit_AOI.tif.zip::DEHYDRATION_small_Leaf4_time_5_PAGANIN-8bit_AOI.tif
+    - https://zenodo.org/records/7120569/files/DEHYDRATION_small_Leaf4_time_5_LABELLED_CROSS_0100to1100by100.tif
+    size_bytes: 605401491
+    description: Time point 5 phase-contrast (Paganin) reconstruction (the smallest zip) and its cross-sectional labelled
+      slices
+  arrays:
+  - role: raw
+    path_pattern: DEHYDRATION_small_Leaf4_time_[1-5]_PAGANIN-8bit_AOI.tif.zip/DEHYDRATION_small_Leaf4_time_[1-5]_PAGANIN-8bit_AOI.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 1028
+    - 1119
+    - 1350
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Phase-contrast (Paganin) reconstruction, ImageJ stack (images=1028, slices=1028, spacing 0.1625 um, 6.1538
+      px/um); one TIFF per zip.
+  - role: raw
+    path_pattern: DEHYDRATION_small_Leaf4_time_[1-5]_GRID-8bit_AOI.tif.zip/DEHYDRATION_small_Leaf4_time_[1-5]_GRID-8bit_AOI.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 1028
+    - 1119
+    - 1350
+    shape_varies: null
+    dtype: uint8
+    compression: unknown
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: Absorption (gridrec) reconstruction of the same scans, cropped to the same ROI (record); shape assumed
+      from the uncompressed member sizes (~1.55 GB each), not header-probed.
+  - role: label
+    path_pattern: DEHYDRATION_small_Leaf4_time_[1-5]_LABELLED_CROSS_*.tif
+    format: tiff
+    axes: zyx
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    encoding: semantic-ids
+    classes: null
+    alignment: cropped
+    shape:
+    - 11
+    - 1028
+    - 1350
+    value_range:
+    - 0
+    - 255
+    alignment_notes: 'Cross-sectional slices: each page is 1028x1350 = the raw (z, x) plane at one y position (by shape);
+      positions per time point in Labeled_slices_positions.txt (1-based, e.g. time 1: 101, 151, ... 1051). Values {0,100,152,170,202,255}
+      in time_5 (one sample); class names not documented.'
+  - role: label
+    path_pattern: DEHYDRATION_small_Leaf4_time_[1-5]_LABELLED_PARADERMAL_*.tif
+    format: tiff
+    axes: zyx
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    encoding: semantic-ids
+    classes: null
+    alignment: cropped
+    shape:
+    - 13
+    - 1119
+    - 1350
+    alignment_notes: 'Paradermal slices: each page 1119x1350 = a raw (y, x) slice at one z position (by shape); positions
+      in Labeled_slices_positions.txt.'
+  - role: label
+    path_pattern: DEHYDRATION_small_Leaf4_time_[1-5]_LABELLED_LONGI_*.tif
+    format: tiff
+    axes: zyx
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    encoding: semantic-ids
+    classes: null
+    alignment: cropped
+    shape:
+    - 13
+    - 1028
+    - 1119
+    alignment_notes: 'Longitudinal slices: each page 1028x1119 = the raw (z, y) plane at one x position (by shape); positions
+      in Labeled_slices_positions.txt.'
+  notes: 'Listing: tools/listing.py on the Zenodo record: 28 files, 10,232,261,204 bytes (file-listing, complete). Raw header:
+    probe.py cannot read inside the deflated zip member, so an ad hoc script decompressed the first 2 MB of time_5 PAGANIN
+    (logged) and parsed IFD0: 1350x1119, 8 bit, ImageJ "images=1028 slices=1028 unit=um spacing=0.1625", X/YResolution 6.153846
+    px/um. Labels probed (time 5): CROSS 11x1028x1350, PARADERMAL 13x1119x1350, LONGI 13x1028x1119, ImageJ uint8, uncompressed;
+    sampled CROSS: values {0: 4,368,455, 100: 695,702, 152: 1,575,271, 170: 14,449, 202: 5,826,616, 255: 2,785,307}. Each
+    label stack holds selected planes of the raw grid in one orientation (mapping by shape; slice positions in Labeled_slices_positions.txt),
+    so labels are not a same-grid volume. Value ranges from one sample only. Class names not found (record, positions file);
+    the Labeled_Sections_order PNGs were not read.'
