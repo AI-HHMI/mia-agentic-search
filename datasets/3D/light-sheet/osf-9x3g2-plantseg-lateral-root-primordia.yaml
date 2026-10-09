@@ -1,0 +1,155 @@
+schema_version: '1.2'
+id: osf-9x3g2-plantseg-lateral-root-primordia
+title: Arabidopsis lateral root primordia light-sheet time-lapse crops with ground-truth cell instance
+  segmentation (PlantSeg training data, OSF)
+short_name: Arabidopsis lateral root 3D cells (light-sheet)
+description: Light-sheet volumes of developing Arabidopsis thaliana lateral root primordia, cropped from
+  three time-lapse movies, each stored as an HDF5 file with manually curated 3D cell instance labels.
+  Released as training and validation data for the PlantSeg cell-segmentation pipeline.
+landing_url: https://osf.io/9x3g2/
+doi: null
+repository: OSF
+accession: null
+authors:
+- Adrian Wolny
+- Lorenzo Cerrone
+- Athul Vijayan
+- Rachele Tofanelli
+- Amaya Vilches Barro
+- Marion Louveaux
+- Christian Wenzl
+- Alexis Maizel
+- Anna Kreshuk
+publications:
+- title: Accurate and versatile 3D segmentation of plant tissues at cellular resolution
+  doi: 10.7554/eLife.57613
+  url: null
+date_published: null
+imaging:
+  modality:
+  - light-sheet
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 162.5
+    y: 162.5
+    z: 250
+  channels: 1
+  organism:
+  - Arabidopsis thaliana
+  sample: Live lateral root primordia imaged every 30 min; crops of individual time points from three
+    movies
+  labels_stains: []
+data:
+  formats:
+  - hdf5
+  size_bytes: 1599485063
+  n_items: 21
+  access: open
+  download_url: https://osf.io/9x3g2/files/osfstorage
+  download_method: api
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: HDF5 files named Movie<N>_<timepoint>_crop_gt.h5 (3D cell labels)
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/hci-unihd/plant-seg
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-09T08:19:23Z'
+  evidence_urls:
+  - https://api.osf.io/v2/nodes/9x3g2/
+  - https://api.osf.io/v2/nodes/9x3g2/files/osfstorage/
+  - https://api.osf.io/v2/nodes/uzq3w/
+  - https://api.osf.io/v2/wikis/t9gzp/content/
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7447435/fullTextXML
+  - https://api.osf.io/v2/nodes/2rszy/children/
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-09T09:20:40Z'
+notes: OSF node 9x3g2 is the 'train' component of LateralRootPrimordia (2rszy) under the paper's deposit
+  uzq3w; its siblings are 'val' (vs6gb, 2 files, 127 MB), 'test' (tn4xj, 4 files, 359 MB) and 'nuclei'
+  (thxzn). 21 train + 2 val + 4 test = the paper's 27 ground-truth LRP images, so this record covers the
+  21 training crops. Each HDF5 holds 'raw' (uint8) and 'label' (uint16 cell ids). Voxel size from the
+  paper (0.1625 x 0.1625 x 0.250 um, the movies' acquisition); the files carry no calibration attributes.
+  No license on any OSF node (9x3g2, 2rszy, uzq3w); the paper is CC BY 4.0, which may not cover the data.
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: './  (OSF node 9x3g2 ''train'', osfstorage)   21 files  1.6 GB  .h5
+
+      Movie1_t000NN_crop_gt.h5   12 files   33-87 MB
+
+      Movie2_T000NN_crop_gt.h5    7 files   89-115 MB
+
+      Movie3_T000NN_crop_gt.h5    2 files   22 MB
+
+      each file: datasets ''raw'' (uint8) and ''label'' (uint16), same shape, gzip-chunked
+
+      siblings in parent 2rszy: val/ (vs6gb, 2 files), test/ (tn4xj, 4 files), nuclei/ (thxzn)'
+    n_files: 21
+    listing_complete: true
+  sample:
+    urls:
+    - https://osf.io/download/6gu8h/
+    size_bytes: 22319128
+    description: 'Movie3_T00002_crop_gt.h5, the smallest crop: raw and label datasets in one HDF5 file'
+  arrays:
+  - role: raw
+    path_pattern: Movie*_crop_gt.h5 (raw)
+    format: hdf5
+    axes: null
+    shape:
+    - 190
+    - 360
+    - 1170
+    shape_varies: true
+    dtype: uint8
+    compression: gzip
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Light-sheet membrane channel, a crop of one time point of one of three movies.
+  - role: label
+    path_pattern: Movie*_crop_gt.h5 (label)
+    format: hdf5
+    axes: null
+    shape:
+    - 190
+    - 360
+    - 1170
+    shape_varies: true
+    dtype: uint16
+    compression: gzip
+    value_range:
+    - 1
+    - 406
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Same file and same full shape as ''raw'' (190x360x1170 in Movie3_T00002). Sample
+      crop: 19 distinct ids up to 406, no zeros; the smallest id (1) covers the most voxels, likely background,
+      not documented.'
+  notes: 'Listing: OSF API files of node 9x3g2 (21 files, exact sizes, sum 1,599,485,063 B); tools/listing.py
+    does not read OSF, so size_source is page-stated. Probe of Movie3_T00002_crop_gt.h5: datasets label
+    uint16 and raw uint8, [190, 360, 1170], gzip, no attributes. Sample (sample.py, 15.7 MB read): central
+    crops of raw and label; value ranges from that one sample. Shapes differ per file (crops). Axes not
+    stated by the files, paper or README; the paper gives movie sizes as x*y*z (e.g. 2048*1050*486), consistent
+    with zyx here but not stated, so axes stay null. Download: each file is a direct osf.io/download/<id>/
+    link (sample checked usable, ranges OK); no single archive for the node. Voxel size kept from the
+    paper (no header calibration found).'
