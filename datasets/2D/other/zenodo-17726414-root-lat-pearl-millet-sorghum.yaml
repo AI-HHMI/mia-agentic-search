@@ -1,10 +1,12 @@
 schema_version: '1.2'
 id: zenodo-17726414-root-lat-pearl-millet-sorghum
-title: Dataset for Root Segmentation Beyond Species Boundaries - A Generalizable Framework for Anatomical Analysis
+title: Dataset for Root Segmentation Beyond Species Boundaries - A Generalizable Framework for Anatomical
+  Analysis
 short_name: Pearl millet and sorghum root anatomy (LAT)
-description: Laser ablation tomography (LAT) cross-section images of pearl millet and sorghum roots (4096x3000 RGB) with expert
-  segmentation masks, organised for binary tissue/background segmentation (pearl millet) and multi-class tissue segmentation
-  (pearl millet and sorghum), with training and validation splits for pearl millet only, sorghum only and combined.
+description: Laser ablation tomography (LAT) cross-section images of pearl millet and sorghum roots (4096x3000
+  RGB) with expert segmentation masks, organised for binary tissue/background segmentation (pearl millet)
+  and multi-class tissue segmentation (pearl millet and sorghum), with training and validation splits
+  for pearl millet only, sorghum only and combined.
 landing_url: https://zenodo.org/records/17726414
 doi: 10.5281/zenodo.17726414
 repository: Zenodo
@@ -33,7 +35,8 @@ imaging:
   organism:
   - Pennisetum glaucum
   - Sorghum bicolor
-  sample: Critical-point-dried crop roots; laser ablation tomography exposes internal root anatomy for serial UV-laser imaging
+  sample: Critical-point-dried crop roots; laser ablation tomography exposes internal root anatomy for
+    serial UV-laser imaging
   labels_stains: []
 data:
   formats:
@@ -48,7 +51,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: PNG images with ground-truth masks (binary/ and multiclass/ folders); 125 NumPy .npy files in the archive
+  format: PNG images with ground-truth masks (binary/ and multiclass/ folders); 125 NumPy .npy files in
+    the archive
   source: proofread
 ml:
   tasks:
@@ -72,9 +76,133 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T10:35:00Z'
-notes: 'Found via the 2026 Plant Phenomics paper (Europe PMC full text read: Methods and Data availability). Paper counts: 177 binary
-  masks and 85 multi-class masks for pearl millet plus 40 sorghum images (302 in total); the zip holds 497 PNG and 125 NPY files
-  (listed with peek_archive), so the exact image and mask counts per folder were not verified. Masks were produced with the semi-automatic
-  CellSet tool and corrected by experts. LAT is a laser-based serial imaging technique with no enum value, so modality is other.
-  Pixel size is not stated in the paper text or Zenodo record. Image counts per split not checked.'
+  last_checked: '2026-10-09T12:17:36Z'
+notes: 'Found via the 2026 Plant Phenomics paper (Europe PMC full text read: Methods and Data availability):
+  177 binary-mask and 85 multi-class pearl millet images plus 40 sorghum images (302). Masks were produced
+  with the semi-automatic CellSet tool and corrected by experts. LAT is a laser-based serial imaging technique
+  with no enum value, so modality is other. Pixel size is not stated in the paper text, Zenodo record
+  or file headers. organisms: Pennisetum glaucum = binary/ and the multiclass/ files listed in train_millet.txt
+  / test_millet.txt; Sorghum bicolor = the multiclass/ files listed in train_sorghum.txt / test_sorghum.txt.
+  enricher: zip listed (177 binary images, 195 binary masks, 125 multiclass images, 125 .npy masks, 6
+  split lists); files probed and sampled (see technical).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "plant_data.zip  (2,131,186,514 B; 629 members)\n  plant_data/\n    train_{millet,sorghum,joint}.txt,\
+      \ test_{millet,sorghum,joint}.txt   split lists (file names)\n    binary/images/<n>.png       177\
+      \  RGB LAT images (pearl millet), 0..176\n    binary/masks/<n>.png        195  tissue/background\
+      \ masks (RGB-stored binary)\n    multiclass/images/<n>.png   125  RGB LAT images (pearl millet +\
+      \ sorghum)\n    multiclass/masks/<n>.npy    125  int64 tissue-class maps\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/17726414/files/plant_data.zip::plant_data/binary/images/0.png
+    - https://zenodo.org/records/17726414/files/plant_data.zip::plant_data/binary/masks/0.png
+    size_bytes: 5186923
+    description: One binary-set LAT image and its tissue mask (zip members, uncompressed sizes).
+  arrays:
+  - role: raw
+    path_pattern: plant_data.zip::plant_data/binary/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 2074
+    - 2089
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Binary set (pearl millet); image sizes vary between files.
+  - role: label
+    path_pattern: plant_data.zip::plant_data/binary/masks/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 2074
+    - 2089
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: root tissue
+    alignment: same-grid
+    alignment_notes: 'binary/images/<n>.png pairs with binary/masks/<n>.png (same name; 0.png pair same
+      shape). Mask is grey stored as RGB (sampled: the 3 samples are identical), so axes yxs. 18 masks
+      (156-186 range) have no image of the same name.'
+  - role: raw
+    path_pattern: plant_data.zip::plant_data/multiclass/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 3000
+    - 3753
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Multi-class set (pearl millet and sorghum); probed only.
+  - role: label
+    path_pattern: plant_data.zip::plant_data/multiclass/masks/*.npy
+    format: other
+    axes: yx
+    shape:
+    - 3000
+    - 3753
+    shape_varies: true
+    dtype: int64
+    compression: none
+    value_range:
+    - 0
+    - 8
+    normalization: none
+    encoding: semantic-ids
+    classes:
+    - id: null
+      name: background
+    - id: null
+      name: cortex
+    - id: null
+      name: metaxylem
+    - id: null
+      name: stele tissue
+    - id: null
+      name: aerenchyma
+    - id: null
+      name: vascular bundle
+    - id: null
+      name: sclerenchyma
+    - id: null
+      name: epidermis
+    - id: null
+      name: endodermis
+    alignment: same-grid
+    alignment_notes: multiclass/images/<n>.png pairs with multiclass/masks/<n>.npy (same stem); 0.npy
+      is 3000x3753 like 0.png. NumPy .npy (no pickle). The paper names 9 classes (ids 0-8) but not which
+      id is which.
+  notes: 'Listing: Zenodo API (1 zip, 2,131,186,514 B) plus the zip central directory (629 members, exact
+    sizes). Probed: binary/images/0.png RGB uint8 2074x2089; binary/masks/0.png RGB uint8 2074x2089; multiclass/images/0.png
+    RGB uint8 3000x3753. Sampled: binary pair (5.2 MB): image 0..255 (mean 47); mask {0,255}, the 3 RGB
+    samples identical. multiclass/masks/0.npy (794 KB compressed) read with numpy (allow_pickle=False):
+    int64 3000x3753, values {0,1,2,3,5,6,7,8}. Value ranges are from these single files. Split lists:
+    train/test millet 55/30, sorghum 25/15, joint 80/45 (multiclass set). Voxel size not found; checked:
+    PNG headers, Zenodo API, paper full text (Europe PMC), GitHub README. Download: plant_data.zip direct,
+    range requests work (zip::member usable). Modality left other: LAT is not an enum value; readiness
+    needs em/lm/xray/exm.'
