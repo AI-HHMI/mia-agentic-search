@@ -70,11 +70,79 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T21:05:00Z'
-notes: 'Read the DANDI API record and asset listing (21 NWB files: 19 of about 250-277 MB, 2 of about 13.8 GB; 46.25 GB; CC-BY-4.0)
-  and, by range request, the structure of one file (sub-20221106-21-00-09): acquisition/NeuroPALImageRaw/data (1000, 240,
-  48, 6) uint16 uncompressed, grid_spacing 0.3208, 0.3208, 0.75 um, with ID_labels and voxel_mask for the neuron ROIs; other
-  files may differ slightly. Experiment description in the file: optogenetic stimulation of single neurons. No paper is cited
-  on the DANDI record (wormid.org lists it as unpublished Kato lab data), so no paper could be read and the imaging system
-  and labelling procedure are not documented; the microscope type is not stated, so modality is fluorescence-other. Same lab
-  and layout as DANDI 000472 and 001623 (not duplicates; different files).'
+  last_checked: '2026-10-09T22:05:00Z'
+notes: 'Read the DANDI API record and asset listing (21 NWB files: 8 of 254-277 MB, 9 of 845-922 MB, 2 of 4.3 GB, 2 of 13.8
+  GB; 46.25 GB; CC-BY-4.0) and, by range request, the structure of one file (sub-20221106-21-00-09): acquisition/NeuroPALImageRaw/data
+  (1000, 240, 48, 6) uint16 uncompressed, grid_spacing 0.3208, 0.3208, 0.75 um, with ID_labels and voxel_mask for the neuron
+  ROIs; other files may differ slightly. Experiment description in the file: optogenetic stimulation of single neurons. No
+  paper is cited on the DANDI record (wormid.org lists it as unpublished Kato lab data), so no paper could be read and the
+  imaging system and labelling procedure are not documented; the microscope type is not stated, so modality is fluorescence-other.
+  Same lab and layout as DANDI 000472 and 001623 (not duplicates; different files).'
+technical:
+  method: sample
+  inspected_at: '2026-10-09T22:05:00Z'
+  inspected_urls:
+  - https://api.dandiarchive.org/api/dandisets/000565/versions/draft/assets/?page_size=100
+  - https://dandiarchive.s3.amazonaws.com/blobs/f0e/135/f0e135e1-1ddf-4e63-9260-bbe9d23e48d3
+  bytes_downloaded: 150000000
+  size_source: file-listing
+  layout:
+    tree: "000565/  (DANDI, 21 NWB files: 8 of 254-277 MB, 9 of 845-922 MB, 2 of 4.3 GB, 2 of 13.8 GB)\n  sub-<date>-<hh-mm-ss>/\n\
+      \    sub-<date>-<hh-mm-ss>_ses-<datetime>_ophys.nwb\n      acquisition/NeuroPALImageRaw/data           (1000, 240, 48,\
+      \ 6) uint16, x y z channel\n      acquisition/NeuroPALImageRaw/imaging_volume  grid_spacing, channel order\n      processing/NeuroPAL/NeuroPALSegmentation/NeuroPALNeurons\
+      \  voxel_mask (x, y, z, weight), ID_labels\n      processing/NeuroPAL/ProcessedImage/ProcessedImage/data   (240, 5,\
+      \ 48, 1000) uint16\n      (larger files also hold calcium imaging)"
+    n_files: 21
+    listing_complete: true
+  sample:
+    urls:
+    - https://dandiarchive.s3.amazonaws.com/blobs/f0e/135/f0e135e1-1ddf-4e63-9260-bbe9d23e48d3
+    size_bytes: 253712472
+    description: 'Smallest NWB (sub-20221106-21-00-09): one NeuroPAL volume with its neuron centres and IDs.'
+  arrays:
+  - role: raw
+    path_pattern: '*/*.nwb (acquisition/NeuroPALImageRaw/data)'
+    format: hdf5
+    axes: xyzc
+    shape:
+    - 1000
+    - 240
+    - 48
+    - 6
+    shape_varies: null
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 26
+    - 4095
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: Axis order from the file's embedded ndx-multichannel-volume 0.1.12 spec (MultiChannelVolume data dims
+      x, y, z, channel). Channels in order mTagBFP2, CyOFP1, GFP-GCaMP, mNeptune 2.5, Tag RFP-T, mNeptune 2.5-far red. grid_spacing
+      0.3208, 0.3208, 0.75 micrometers.
+  - role: label
+    path_pattern: '*/*.nwb (processing/NeuroPAL/NeuroPALSegmentation/NeuroPALNeurons)'
+    format: hdf5
+    axes: null
+    shape:
+    - 116
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: points-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'PlaneSegmentation: one voxel_mask entry (x, y, z, weight 1) per neuron centre, in voxel indices of NeuroPALImageRaw
+      (max x 764, y 176, z 37 within 1000 x 240 x 48); ID_labels ragged via ID_labels_index (neuron names, many empty).'
+  notes: 'DANDI API lists 21 NWB files with exact sizes (46,250,221,065 B). Read the smallest (253.7 MB) with h5py over range
+    requests (~150 MB, incl. the full NeuroPAL volume): data (1000, 240, 48, 6) uint16 uncompressed, [26, 4095] (12-bit range,
+    whole volume of one file; normalization none inferred). 116 neuron centres, ID_labels partly filled. Voxel size in the
+    header (NeuroPALImVol grid_spacing 0.3208, 0.3208, 0.75 micrometers) matches the record. Larger files also carry calcium
+    imaging, not inspected. Also in each file: processing/NeuroPAL/ProcessedImage (240, 5, 48, 1000) uint16, undocumented,
+    not listed as an array. The S3 blob URL is direct and usable, but DANDI blob names carry no .nwb extension, so the TensorSwitch
+    planner cannot match it to an hdf5 array.'
