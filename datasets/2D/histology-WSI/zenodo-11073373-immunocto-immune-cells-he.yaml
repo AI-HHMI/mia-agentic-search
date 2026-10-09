@@ -1,0 +1,164 @@
+schema_version: '1.2'
+id: zenodo-11073373-immunocto-immune-cells-he
+title: 'Immunocto: a massive immune cell database auto-generated for histopathology'
+short_name: Immunocto immune cell patches (H&E)
+description: 6,848,454 single-cell 64x64 px H&E patches at 40x from colorectal cancer sections of 40 patients,
+  each with a binary nucleus mask and a label (2,282,818 immune cells in four subtypes - CD4 T, CD8 T,
+  B cells, macrophages - and 4,565,636 other cells), generated automatically with Segment Anything and
+  labels derived from co-registered Orion multiplex immunofluorescence.
+landing_url: https://zenodo.org/records/11073373
+doi: 10.5281/zenodo.11073373
+repository: Zenodo
+accession: '11073373'
+authors:
+- Collins Fekete, Charles-Antoine
+- Simard, Mikaël
+- Shen, Zhuoyan
+publications:
+- title: 'Immunocto: a massive immune cell database auto-generated for histopathology'
+  doi: 10.1016/j.media.2025.103905
+  url: https://arxiv.org/abs/2406.02618
+date_published: '2024-04-26'
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 325
+    y: 325
+    z: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: H&E-stained colorectal cancer tissue sections from 40 patients, co-registered with 18-channel
+    Orion multiplex immunofluorescence, 40x
+  labels_stains:
+  - H&E
+data:
+  formats:
+  - png
+  size_bytes: 48346513642
+  n_items: 6848454
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - classification
+  coverage: dense
+  format: per-patient tar.gz (CRCnn/HE/<class>_<cx>_<cy>.png patches and masks) plus curated_ImmunoctoV1_refinement2.csv
+    listing patient, class, cell centre and mask file
+  source: automatic
+ml:
+  tasks:
+  - classification
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-NC-ND-4.0
+  url: https://creativecommons.org/licenses/by-nc-nd/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-09T23:40:00Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/11073373
+  - https://arxiv.org/abs/2406.02618
+  - https://arxiv.org/html/2406.02618v1
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-09T23:00:05Z'
+notes: 'Read the Zenodo API record (41 files, 48.3 GB: 40 per-patient tar.gz and a curated CSV) and the
+  arXiv paper (HTML version; the published Medical Image Analysis version is not open access). Ranged-read
+  the start of CRC07.tar.gz: it holds CRC07/HE/<class>_<x>_<y>.png patches (about 6 KB each); the mask
+  folder and CSV columns (patient, class, cx, cy, mask) were seen in the CSV only, so mask files were
+  not directly listed (enricher: mask/ PNGs now seen in CRC05.tar.gz, annotations_verified true). Masks
+  are generated automatically with Segment Anything and labels by a classifier on immunofluorescence-derived
+  labels (>95% softmax), not manually verified in the final version V1; a first iteration was manually
+  reviewed by three non-pathologist authors. Pixel size 0.325 um from the paper. The paper reports one
+  patient held out for evaluation but no formal split files.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./   41 files  48.3 GB  .tar.gz 40 (CRC01..CRC40, 258 MB - 3.96 GB), .csv 1 (curated_ImmunoctoV1_refinement2.csv,\
+      \ 310,516,995 B)\nCRC<nn>.tar.gz contents (order as streamed from CRC05.tar.gz):\n  CRC<nn>/HE/<class>_<cx>_<cy>.png\
+      \     H&E patches, 64x64 RGB (CRC05: 40,635 files)\n  CRC<nn>/mask/<class>_<cx>_<cy>.png   cell\
+      \ masks, 64x64 binary, same names as HE/\nclasses in names and CSV: cd4, cd8, bcell, macrophage,\
+      \ other"
+    n_files: 41
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: CRC*.tar.gz::CRC*/HE/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 64
+    - 64
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 70
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: H&E patch centred on one cell; cx, cy in the name are the cell centre in the whole
+      slide (pixels).
+  - role: label
+    path_pattern: CRC*.tar.gz::CRC*/mask/*.png
+    format: png
+    axes: yx
+    shape:
+    - 64
+    - 64
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: CRC<nn>/mask/<name>.png pairs with CRC<nn>/HE/<name>.png (same file
+      name, same 64x64 grid). Mask of the centre cell (Segment Anything per the paper); the class is the
+      name prefix.'
+  - role: label
+    path_pattern: curated_ImmunoctoV1_refinement2.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: points-table
+    classes:
+    - id: cd4
+      name: cd4
+    - id: cd8
+      name: cd8
+    - id: bcell
+      name: bcell
+    - id: macrophage
+      name: macrophage
+    - id: other
+      name: other
+    alignment: not-applicable
+    alignment_notes: Columns patient,class,cx,cy,mask; mask is the patch/mask file name inside CRC<patient>.tar.gz.
+  notes: 'Listing: listing.py on the Zenodo record (41 files, 48,346,513,642 B exact); tar.gz members
+    cannot be listed by range. A scratch tarfile script streamed CRC05.tar.gz (smallest, 258,244,408 B):
+    1 MB head gave 159 HE patches, all 64x64 RGB uint8, values 70-255; streaming 251.9 MB compressed reached
+    CRC05/mask/ after 40,635 HE files, and 12 masks were all 64x64 uint8 L with values {0, 255}. Value
+    ranges from these files only. Classes seen in CRC05 names: other 1626, macrophage 472, cd4 202, cd8
+    87, bcell 26 of the first 2,413. sample is null: each patient is one tar.gz and TensorSwitch cannot
+    pull single tar.gz members. Voxel size 325 nm from the paper (unchanged); PNGs carry no pHYs.'
