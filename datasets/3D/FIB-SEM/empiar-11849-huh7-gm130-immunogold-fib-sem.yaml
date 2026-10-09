@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: empiar-11849-huh7-gm130-immunogold-fib-sem
 title: FIB-SEM dataset showing localization of a Golgi matrix protein GM130 in human hepatocellular carcinoma cell (Huh-7)
 short_name: Huh-7 immunogold GM130 segmentation (FIB-SEM)
-description: One FIB-SEM volume of 564 slices (4 x 4 x 8 nm voxels) of an immunogold-labelled Huh-7 human hepatoma cell
-  (anti-GM130, OTO-stained), with a matching stack of 564 label images segmenting the immunogold particles. The labels
-  were produced in DeepMIB, trained on 54 images.
+description: One FIB-SEM volume of 564 slices (4 x 4 x 8 nm voxels) of an immunogold-labelled Huh-7 human hepatoma cell (anti-GM130,
+  OTO-stained), with a matching stack of 564 label images segmenting the immunogold particles. The labels were produced in
+  DeepMIB, trained on 54 images.
 landing_url: https://www.ebi.ac.uk/empiar/EMPIAR-11849/
 doi: 10.6019/EMPIAR-11849
 repository: EMPIAR
@@ -25,8 +25,7 @@ imaging:
   channels: null
   organism:
   - Homo sapiens
-  sample: Huh-7 human hepatoma-derived cells immunostained against Golgi matrix protein GM130 and stained with the OTO
-    method
+  sample: Huh-7 human hepatoma-derived cells immunostained against Golgi matrix protein GM130 and stained with the OTO method
   labels_stains:
   - ferrocyanide-reduced osmium
   - thiocarbohydrazide
@@ -34,7 +33,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: null
+  size_bytes: 5151342504
   n_items: 564
   access: open
   download_url: https://ftp.ebi.ac.uk/empiar/world_availability/11849/data/
@@ -45,7 +44,7 @@ annotations:
   - semantic-segmentation
   coverage: dense
   format: One TIFF label image per slice in data/Labels (Labels_R01_immuno_signal_NNN.tif, 564 files) segmenting gold particles
-  source: unknown
+  source: automatic
 ml:
   tasks:
   - segmentation
@@ -69,9 +68,73 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T11:36:26Z'
-notes: Labels are described as a DeepMIB segmentation model output (trained on 54 images) of the gold particles; whether it
-  was manually proofread is not stated, so annotations.source is unknown. Citation listed on EMPIAR is unpublished (no DOI),
-  so no paper was available to read. Size is not stated by the entry beyond 1.1 GB for the entry as a whole; size_bytes left
-  null. Related EMPIAR-11746 (U-2 OS cell, same lab) is a different dataset. Voxel size 4 x 4 x 8 nm from the entry description
-  (pixel size 40 A).
+  last_checked: '2026-10-09T12:15:00Z'
+notes: 'Labels are a DeepMIB segmentation of the gold particles (trained on 54 images), per the EMPIAR segmentation description;
+  proofreading is not mentioned. Citation listed on EMPIAR is unpublished (no DOI), so no paper was available to read. Related
+  EMPIAR-11746 (U-2 OS cell, same lab) is a different dataset. Voxel size 4 x 4 x 8 nm from the entry description (pixel size
+  40 A). enricher: annotations.source automatic (EMPIAR: "Segmentation was done in DeepMIB using 54 images as a training set";
+  was unknown). enricher: size_bytes 5,151,342,504 B estimated from shapes (uncompressed; LZW files download as ~1.2 GB).'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: '11849.xml                                   5.7 KB
+
+      data/Images/  564 files  1.2 GB  Huh7_GM130_OTO_001.tif ... _564.tif
+
+      data/Labels/  564 files  18.2 MB Labels_R01_immuno_signal_001.tif ... _564.tif
+
+      '
+    n_files: 1129
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/empiar/world_availability/11849/data/Images/Huh7_GM130_OTO_001.tif
+    - https://ftp.ebi.ac.uk/empiar/world_availability/11849/data/Labels/Labels_R01_immuno_signal_001.tif
+    size_bytes: 1277004
+    description: Slice 001 of the image stack and its label slice (one z plane each).
+  arrays:
+  - role: raw
+    path_pattern: data/Images/Huh7_GM130_OTO_*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1397
+    - 3269
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One single-page TIFF per z slice (564 slices, numbered 001-564); the volume is the files stacked in name
+      order along z. MIB header notes crop and drift-correction alignment were applied before export.
+  - role: label
+    path_pattern: data/Labels/Labels_R01_immuno_signal_*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1397
+    - 3269
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 1
+    encoding: binary
+    classes:
+    - id: 1
+      name: immunogold particle
+    alignment: same-grid
+    alignment_notes: Labels_R01_immuno_signal_NNN.tif pairs with Huh7_GM130_OTO_NNN.tif (same slice number); identical shapes
+      and the same MIB BoundingBox/crop history in both headers.
+  notes: 'EMPIAR HTTP index listed (FTP timed out): 1,129 files, ~1.22 GB with rounded sizes, so not a confirmed size. size
+    estimated (uncompressed): raw 564 x 1397x3269 uint8 + label 564 x 1397x3269 uint8 = 5,151,342,504 B (5.2 GB). Probed Images/..._001.tif
+    and Labels/..._001.tif: plain single-page TIFF, 1397x3269 uint8, LZW, MIB header (BoundingBox, crop, drift correction).
+    Sampled slice 282 pair (1.73 MB + 32 KB): raw [0,255], mean 209, p0.1 = 3 (saturated only at 255, so normalization unknown);
+    label values {0,1}, 0.12% foreground. Value ranges are from one slice. TensorSwitch planner: per-slice TIFF stacks are
+    read as 2D, so the record is not download-ready until the planner can stack a folder. No single archive: data.download_url
+    stays the folder; direct files are listed under data/Images and data/Labels.'
