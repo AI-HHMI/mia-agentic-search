@@ -1,11 +1,9 @@
 schema_version: '1.2'
 id: zenodo-6025935-vesselexpress-lsfm-vasculature
-title: 'VesselExpress: raw, segmented and skeletonized 3D light-sheet volumes of mouse
-  organ blood vasculature'
+title: 'VesselExpress: raw, segmented and skeletonized 3D light-sheet volumes of mouse organ blood vasculature'
 short_name: Mouse organ blood vessels (light-sheet)
-description: Raw 3D light-sheet fluorescence microscopy volumes of FITC-albumin labelled
-  blood vessels in cleared mouse organs (brain, and other organs), together with the
-  binary vessel segmentations and skeleton/graph images produced by the VesselExpress
+description: Raw 3D light-sheet fluorescence microscopy volumes of FITC-albumin labelled blood vessels in cleared mouse organs
+  (brain, and other organs), together with the binary vessel segmentations and skeleton/graph images produced by the VesselExpress
   pipeline, plus the pipeline configuration files.
 landing_url: https://zenodo.org/records/6025935
 doi: 10.5281/zenodo.6025935
@@ -17,8 +15,7 @@ authors:
 - Squire A.
 - Mosig A.
 publications:
-- title: Rapid and fully automated blood vasculature analysis in 3D light-sheet image
-    volumes of different organs
+- title: Rapid and fully automated blood vasculature analysis in 3D light-sheet image volumes of different organs
   doi: 10.1016/j.crmeth.2023.100436
   url: https://doi.org/10.1016/j.crmeth.2023.100436
 date_published: '2022-05-15'
@@ -26,19 +23,21 @@ imaging:
   modality:
   - light-sheet
   dimensionality: 3D
-  voxel_size_nm: null
-  channels: null
+  voxel_size_nm:
+    x: 1015.625
+    y: 1015.625
+    z: 2000
+  channels: 1
   organism:
   - Mus musculus
-  sample: Cleared mouse organs (brain and other organs) with vessels filled with FITC-albumin
-    gelatin hydrogel
+  sample: Cleared mouse organs (brain and other organs) with vessels filled with FITC-albumin gelatin hydrogel
   labels_stains:
   - FITC-albumin
 data:
   formats:
   - tiff
-  size_bytes: 41305700000
-  n_items: 454
+  size_bytes: 41305652969
+  n_items: 152
   access: open
   download_url: https://zenodo.org/records/6025935/files/VesselExpress_Data.zip
   download_method: http
@@ -48,8 +47,7 @@ annotations:
   - semantic-segmentation
   - skeleton
   coverage: dense
-  format: TIFF binary masks (Binary_*.tiff) and skeleton graph images (Graph_*.tiff);
-    pipeline config in JSON
+  format: TIFF binary masks (Binary_*.tiff) and skeleton graph images (Graph_*.tiff); pipeline config in JSON
   source: automatic
 ml:
   tasks:
@@ -67,17 +65,103 @@ provenance:
   - https://zenodo.org/records/6025935
   - https://zenodo.org/records/6025935/files/VesselExpress_Data.zip
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10088239/fullTextXML
-  confidence: 0.6
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T01:43:21Z'
-notes: 'Segmentation and skeleton masks are automatic outputs of the VesselExpress
-  pipeline (Allen Cell Segmenter-style thresholding + Frangi filter), not manual annotations,
-  so they are weak labels. Zip listing (tools/peek_archive.py): 473 files, 339 .tiff
-  (Binary_/Graph_ outputs) and 115 .tif (raw) plus 19 JSON configs, organised per
-  ROI size (e.g. Figure2C_E/VEA_0.25mm^3/{Raw,Binary,Graph}); total ~124 GB uncompressed.
-  Voxel size differs per volume and is stored in the brain_config.json files (one
-  inspected: z 2.0 um, x/y 1.015625 um); not set here because it was not checked for
-  every volume. No train/val/test split.'
+  last_checked: '2026-10-09T03:35:00Z'
+notes: 'Segmentation and skeleton masks are automatic outputs of the VesselExpress pipeline (thresholding + Frangi filter),
+  not manual annotations, so they are weak labels. Zip: 473 members = 152 raw volumes (Raw/*.tif|.tiff), 151 of them with
+  Binary_/Graph_ outputs of the same name and 19 config JSONs, per experiment folder (Figure2C_E/VE<A-G>_<ROI size>, Figure3/<brain
+  region>, Figure4/<organ>); ~124 GB uncompressed. Organs per Figure4 folder: bladder, brain, ear, heart, liver, muscle, spinal
+  cord, tongue (all Mus musculus). No train/val/test split. enricher: voxel size 1015.625 x 1015.625 x 2000 nm (z,y,x ''2.0,1.015625,1.015625''
+  in every readable config JSON; paper: pixel_dimensions ''voxel size in um'', z step 2 um), was null; n_items 454 -> 152
+  raw volumes; channels 1.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                                        1 files     41.3 GB  .zip\nzip contents:\nVesselExpress_Data.zip/\n\
+      \  Figure2C_E/VE<A-G>_<0.25-4.12>mm^3/Raw/      (x7 dirs)   4 .tif + brain_config.json each   0.25-16 GB per dir\n \
+      \ Figure2C_E/VE<A-G>_<..>mm^3/Binary/          (x7 dirs)   4 .tiff each (Binary_<raw name>.tiff)\n  Figure2C_E/VE<A-G>_<..>mm^3/Graph/\
+      \           (x7 dirs)   4 .tiff each (Graph_<raw name>.tiff)\n  Figure3/{Cortex,Hippocampus,Midbrain,Striatum}/Raw/\
+      \    20/14/14/22 .tif + brain_config.json\n  Figure3/{...}/Binary/, Graph/                           same counts, .tiff\n\
+      \  Figure4/{Bladder,Brain,Ear,Heart,Liver,Muscle,Spinalcord,Tongue}/Raw/   .tif|.tiff + <organ>_config.json\n  Figure4/{...}/Binary/,\
+      \ Graph/\n  473 members: 115 .tif + 339 .tiff (raw, Binary_, Graph_) + 19 .json"
+    n_files: 473
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/6025935/files/VesselExpress_Data.zip::Figure4/Bladder/Raw/B1_210913_details vessels_13-22-1_1-100.tif
+    - https://zenodo.org/records/6025935/files/VesselExpress_Data.zip::Figure4/Bladder/Binary/Binary_B1_210913_details vessels_13-22-1_1-100.tiff
+    - https://zenodo.org/records/6025935/files/VesselExpress_Data.zip::Figure4/Bladder/Graph/Graph_B1_210913_details vessels_13-22-1_1-100.tiff
+    size_bytes: 36064280
+    description: Bladder volume B1 (slices 1-100, 100x300x300) with its binary vessel mask and skeleton image
+  arrays:
+  - role: raw
+    path_pattern: VesselExpress_Data.zip/*/*/Raw/*.tif*
+    format: tiff
+    axes: zyx
+    shape:
+    - 100
+    - 300
+    - 300
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 4093
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: FITC-albumin vessel signal, one channel; ImageJ z-stack (tifffile axes ZYX). Volumes range from 18 MB
+      (bladder) to ~4 GB (VEG ROIs).
+  - role: label
+    path_pattern: VesselExpress_Data.zip/*/*/Binary/Binary_*.tiff
+    format: tiff
+    axes: zyx
+    shape:
+    - 100
+    - 300
+    - 300
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 255
+      name: blood vessel
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: <dir>/Raw/<name>.tif pairs with <dir>/Binary/Binary_<name>.tiff (same shape in the sample).
+      Plain multi-page TIFF: one page per raw z-slice.'
+  - role: label
+    path_pattern: VesselExpress_Data.zip/*/*/Graph/Graph_*.tiff
+    format: tiff
+    axes: zyx
+    shape:
+    - 100
+    - 300
+    - 300
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 255
+      name: vessel centerline (skeleton)
+    alignment: same-grid
+    alignment_notes: 'Same pairing with Graph_<name>.tiff: skeleton of the binary mask (0.1% foreground in the sample).'
+  notes: 'Listing: tools/listing.py on the Zenodo record with --expand-zips: 1 file, 41,305,652,969 B (file-listing, complete),
+    473 zip members. Sampled the bladder triple (8.9 MB downloaded, values from that one sample): raw 100x300x300 uint16,
+    0-4093 (12-bit range, p99 376), ImageJ ZYX; Binary 100x300x300 uint8 {0,255}, 2.4% foreground; Graph uint8 {0,255}, 0.1%.
+    TIFF compression ''none'' inferred: member sizes equal width x height x depth x bytes (18,030,852 B for 18,000,000 B of
+    voxels); probe.py could not read the deflated members'' headers. normalization ''none'' inferred from the 12-bit range.
+    Voxel size from config JSONs (18 of 19 read; VEC_1.03mm^3 failed with network errors) and paper Table (pixel_dimensions
+    ''z,y,x'' in um). Download: the zip and its members pass --download-check (range requests).'
