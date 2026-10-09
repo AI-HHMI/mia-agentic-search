@@ -2,10 +2,8 @@ schema_version: '1.2'
 id: zenodo-7714497-celegans-microfluidic-yolo-boxes
 title: Deep Learning for Microfluidic Assisted Caenorhabditis elegans Multi-parameter Identification Using YOLOv7
 short_name: C. elegans in microfluidic chips, WT/GFP boxes
-description: >-
-  Frames of C. elegans in microfluidic sorting chips taken from published videos, with LabelImg bounding boxes
-  (Pascal VOC XML) for wild-type and GFP-expressing worms (2,426 WT and 1,505 GFP boxes in the paper), used to train
-  YOLOv7.
+description: Frames of C. elegans in microfluidic sorting chips taken from published videos, with LabelImg bounding boxes
+  (Pascal VOC XML) for wild-type and GFP-expressing worms (2,426 WT and 1,505 GFP boxes in the paper), used to train YOLOv7.
 landing_url: https://zenodo.org/records/7714497
 doi: 10.5281/zenodo.7714497
 repository: Zenodo
@@ -32,7 +30,7 @@ imaging:
   - fluorescence-other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Caenorhabditis elegans
   sample: worms in microfluidic sorting chips, frames from published videos
@@ -41,17 +39,19 @@ imaging:
 data:
   formats:
   - jpeg
+  - png
   size_bytes: 51877719
   n_items: 423
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/7714497
   download_method: http
 annotations:
   present: true
   types:
   - bounding-box
   coverage: dense
-  format: Pascal VOC XML files from LabelImg, one per JPEG, classes WT and GFP
+  format: Pascal VOC XML (LabelImg) per image, same stem; object names 'WT-channel' and 'GFP-channel'; <filename> inside points
+    to the original .png names
   source: manual
 ml:
   tasks:
@@ -73,11 +73,81 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T00:15:34Z'
-notes: >-
-  The Zenodo file list has 846 files, 423 JPEG images each with a VOC XML (so a subset of the images described: the
-  Zenodo text mentions 3,373 and 3,931 images while the paper counts 3,931 annotated worms in boxes). The paper divides
-  the boxes into training, testing, validation and external validation sets, but the Zenodo files do not include a split
-  folder. Frames come from about 20 earlier published microfluidic videos with different imaging conditions
-  (paper Methods), so the pixel size, microscope and exact modality vary and are not stated; brightfield and
-  fluorescence are inferred from the WT and GFP classes. Redistribution terms of the source videos were not checked.
+  last_checked: '2026-10-09T03:55:00Z'
+notes: 'The Zenodo file list has 846 files, 423 JPEG images each with a VOC XML (so a subset of the images described: the
+  Zenodo text mentions 3,373 and 3,931 images while the paper counts 3,931 annotated worms in boxes). The paper divides the
+  boxes into training, testing, validation and external validation sets, but the Zenodo files do not include a split folder.
+  Frames come from about 20 earlier published microfluidic videos with different imaging conditions (paper Methods), so the
+  pixel size, microscope and exact modality vary and are not stated; brightfield and fluorescence are inferred from the WT
+  and GFP classes. Redistribution terms of the source videos were not checked. enricher: formats + png (the 1000*.jpg files
+  and one other are PNG data with a .jpg name), channels 3 (RGB frames), download_url -> record page (846 loose files).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                                      846 files     51.9 MB  .xml 423, .jpg 423\n  1000NNN.MMM.jpg\
+      \ + .xml   (321 pairs, video ids 1000000-1000038; PNG data, 1280x720 RGB)\n  2_NNN.jpg + .xml         (101 pairs; JPEG\
+      \ data, 512x384 RGB)\n  c652aa73d1f3827c5510ba38d886681.jpg + .xml (1 pair; PNG data)"
+    n_files: 846
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7714497/files/2_601.jpg
+    - https://zenodo.org/records/7714497/files/2_601.xml
+    size_bytes: 6789
+    description: One 512x384 frame and its VOC boxes (3 GFP-channel worms)
+  arrays:
+  - role: raw
+    path_pattern: 2_*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 384
+    - 512
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Frames from published microfluidic videos (paper); real JPEG data.
+  - role: raw
+    path_pattern: '[1c]*.jpg'
+    format: png
+    axes: yxs
+    shape:
+    - 720
+    - 1280
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Named .jpg but PNG data (magic bytes and header); 1280x720 RGB, colour channels differ in the sample.
+  - role: label
+    path_pattern: '*.xml'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: WT-channel
+      name: wild-type worm in channel
+    - id: GFP-channel
+      name: GFP worm in channel
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: <stem>.jpg pairs with <stem>.xml; <size> in the XML matches the image (1280x720 or 512x384);
+      boxes in pixel coordinates (xmin, ymin, xmax, ymax). Class names from 15 XMLs read.'
+  notes: 'Listing: tools/listing.py on the Zenodo record: 846 files, 51,877,719 B (file-listing, complete). Probed 1000001.025.jpg
+    (PNG data, 1280x720x3 uint8) and 2_601.jpg (JPEG, 512x384x3); magic bytes of 4 more files: 1000*.jpg and c652*.jpg are
+    PNG, 2_*.jpg JPEG. Sampled 1000001.025.jpg (RGB, 0-255, one sample). Read 15 VOC XMLs: classes GFP-channel and WT-channel
+    only; image sizes 512x384 (11) and 1280x720 (4). Voxel size not found; checked: image headers, XML, Zenodo record; frames
+    come from ~20 earlier videos with different imaging conditions (paper Methods, per harvester), so no single pixel size.
+    Download: single files pass --download-check; no archive (846 loose files).'
