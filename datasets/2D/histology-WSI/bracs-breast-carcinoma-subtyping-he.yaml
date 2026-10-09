@@ -1,0 +1,139 @@
+schema_version: '1.2'
+id: bracs-breast-carcinoma-subtyping-he
+title: 'BRACS: A Dataset for BReAst Carcinoma Subtyping in H&E Histology Images'
+short_name: BRACS breast lesion subtyping (histology)
+description: 547 H&E whole-slide images from 189 patients (Aperio AT2, 40x) and 4,539 labelled regions of interest
+  cropped from 387 of them, annotated by consensus of three pathologists into seven lesion subtypes (normal, pathological
+  benign, UDH, FEA, ADH, DCIS, invasive carcinoma) and, per WSI, into benign, atypical and malignant. Provided as
+  SVS slides, PNG ROIs and QuPath annotation files, with predefined patient-disjoint train, validation and test
+  splits.
+landing_url: https://www.bracs.icar.cnr.it
+doi: null
+repository: LabWebsite
+accession: null
+authors:
+- Nadia Brancati
+- Anna Maria Anniciello
+- Pushpak Pati
+- Daniel Riccio
+- Giosue Scognamiglio
+- Guillaume Jaume
+- Giuseppe De Pietro
+- Maurizio Di Bonito
+- Antonio Foncubierta
+- Gerardo Botti
+- Maria Gabrani
+- Florinda Feroce
+- Maria Frucci
+publications:
+- title: 'BRACS: A Dataset for BReAst Carcinoma Subtyping in H&E Histology Images'
+  doi: 10.1093/database/baac093
+  url: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9575967/
+date_published: null
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 250
+    y: 250
+    z: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: H&E-stained breast tissue slides (normal, benign, atypical and malignant lesions) scanned with an Aperio
+    AT2 scanner at 40x
+  labels_stains:
+  - H&E
+data:
+  formats:
+  - svs
+  - png
+  size_bytes: null
+  n_items: 5086
+  access: registration
+  download_url: https://www.bracs.icar.cnr.it
+  download_method: ftp
+annotations:
+  present: true
+  types:
+  - classification
+  coverage: partial
+  format: ROI PNG images labelled by lesion subtype in the file name, WSI labels in folders and a summary xlsx,
+    and QuPath .qpdata files marking the ROIs inside each WSI
+  source: manual
+ml:
+  tasks:
+  - classification
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC0-1.0
+  url: https://creativecommons.org/publicdomain/zero/1.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-08T21:14:14Z'
+  evidence_urls:
+  - https://www.bracs.icar.cnr.it
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9575967/fullTextXML
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22BRACS%3A+A+Dataset+for+BReAst+Carcinoma+Subtyping+in+H%26E+Histology+Images%22&format=json&resultType=core&pageSize=3
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: false
+  last_checked: '2026-10-09T01:06:58Z'
+notes: 'Download needs registering on the BRACS website and agreeing to the terms of use (CC0 per the paper), then
+  FTP access; the download and rules pages were not fetched, only the home page and the open-access paper (Database
+  2022), so the file listing, total size and current terms are unverified and annotations_verified is false. The
+  paper describes the folder layout: Whole Slide Image Set (train/validation/test, then benign/atypical/malignant
+  and subtype folders, SVS), Region of Interest Set (PNG, e.g. BRACS_1238_PB_32.png), QuPath annotation files and
+  a summary xlsx. ROI labels are classification (7 classes), not pixel masks. Pixel size 0.25 um is read from the
+  paper text, where the scanner sentence is partly garbled by formula markup. The home page and paper give 547 WSIs
+  and 4,539 ROIs (n_items is their sum); some versions of the paper report 4,391 ROIs. date_published is not stated
+  for the dataset itself.'
+technical:
+  method: metadata-only
+  size_source: unknown
+  layout:
+    tree: "BRACS (FTP after registration; layout from the site's Details page and the paper)\n  Whole Slide Image\
+      \ Set/\n    <Training|Validation|Testing>/Group_BT/Type_{N,PB,UDH}/*.svs\n                               \
+      \  /Group_AT/Type_{FEA,ADH}/*.svs\n                                 /Group_MT/Type_{DCIS,IC}/*.svs\n    .xlsx\
+      \ with WSI label, patient ID and set\n  Region of Interest Set/   PNG RoIs, e.g. BRACS_1238_PB_32.png (subtype\
+      \ in the name)\n  QuPath annotation files (.qpdata) marking the RoIs in each WSI"
+    n_files: null
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: Whole Slide Image Set/*/Group_*/Type_*/*.svs
+    format: svs
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Aperio AT2 40x WSIs (paper); class = Type_ folder.
+  - role: raw
+    path_pattern: Region of Interest Set/**/*.png
+    format: png
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RoI crops; subtype code in the file name (BRACS_<wsi>_<subtype>_<n>.png).
+  notes: 'Metadata-only: data are served by FTP only after registration on the BRACS site, so no file was listed,
+    probed or sampled. The site Download page has no public content (WordPress API returns nothing for it); the
+    Details page gives the WSI folder structure (Training/Validation/Testing, Group_BT/AT/MT, Type_* subfolders,
+    an .xlsx of labels); the Rules page requires correct registration details and citing the Database 2022 paper,
+    and states no licence itself (the CC0 in the record comes from the paper). Size unknown: no listing and no stated
+    size; an estimate would need per-WSI shapes. Voxel size 0.25 um/pixel is from the paper (Aperio AT2, 40x), not
+    re-checked in files.'
