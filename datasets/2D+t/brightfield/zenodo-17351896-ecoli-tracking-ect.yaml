@@ -1,0 +1,206 @@
+schema_version: '1.2'
+id: zenodo-17351896-ecoli-tracking-ect
+title: 'E. coli Tracking (ECT) Dataset: Time-lapse Microscopy and Segmentation Analysis'
+short_name: E. coli microcolony masks and tracks (time-lapse)
+description: Time-lapse brightfield microscopy of dense E. coli microcolonies in LB and M9 media with manually annotated segmentation
+  masks (576-frame mixed training set, held-out test frames, 180 annotated elongated-morphology frames), Omnipose masks and
+  CSV/Parquet lineage tracks, for benchmarking bacterial segmentation and tracking.
+landing_url: https://zenodo.org/records/17351896
+doi: 10.5281/zenodo.17351896
+repository: Zenodo
+accession: '17351896'
+authors:
+- Lucas Reed
+publications: []
+date_published: '2025-10-14'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D+t
+  voxel_size_nm:
+    x: 65.0
+    y: 65.0
+    z: null
+  channels: 1
+  organism:
+  - Escherichia coli
+  sample: Dense E. coli microcolonies grown in LB and M9 media; filamentous cells in an elongated-morphology LB series
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 4649024025
+  n_items: null
+  access: open
+  download_url: https://zenodo.org/records/17351896/files/data.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - tracking
+  coverage: partial
+  format: Integer-label TIFF masks (0 = background, >0 = cell ID); tracks as CSV/Parquet with track_id, t, parent, x, y, area,
+    width, length
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  - tracking
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-09T03:06:06Z'
+  evidence_urls:
+  - https://zenodo.org/records/17351896
+  - https://zenodo.org/api/records/17351896
+  - https://zenodo.org/records/17351896/files/data.zip
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-09T05:25:00Z'
+notes: Single 4.6 GB data.zip (6,834 files, 17 GB uncompressed; README inside lists the layout). Training set of 576 frames
+  and blind test subset of 118 frames; ground truth is manual (ground_truth.tif, annotated_masks/ 146 files, elongated_morphology/annotated/frames
+  166 files), while the time-lapse masks and tracks are Omnipose outputs (masks) and derived tracking tables, not stated as
+  manually verified. Coverage is therefore partial. Zenodo keywords say phase-contrast but the README calls the raw images
+  brightfield. Strain, microscope and a thesis citation are not given; no paper found on the record (code at github.com/LucasGeno/ECT,
+  not fetched). Frame interval 0.5 min; pixel size 0.065 µm.
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "data.zip (4.6 GB, 6834 members, ~17 GB uncompressed) / data copy/\n  README.md\n  training_data/   {LB,M9}_frame_NNN.tif\
+      \ + _masks.tif + _flows.tif   576 frames (288 LB, 288 M9)\n  processed/precomputed/test_set/            118 frames (45\
+      \ LB, 73 M9)\n  processed/precomputed/annotated_masks/     146 *_masks.tif (manual)\n  processed/precomputed/segmentation_results/pred_*/masks/\
+      \   7 model predictions\n  processed/rf_watershed_converted_masks/    932 tif\n  timelapse_data/LB_data/   original_images.tif\
+      \ (361 frames), masks.tif (Omnipose), ground_truth.tif,\n                            LB_ROI1_JVH.csv (tracks), napari/*.parquet\n\
+      \  timelapse_data/M9_data/   bf_frames.tif, stacked_masks.tif, BF_diff_frames/ (601), POS1_ROI1/masks/ (601),\n    \
+      \                        M9_JVH.csv, napari/\n  elongated_morphology/raw/{brightfield,fluorescence}_frames/   166 frames\
+      \ each\n  elongated_morphology/annotated/frames/     166 manual masks\n  elongated_morphology/predictions/*/masks/ \
+      \ 6 models\n  examples/, models/\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/17351896/files/data.zip::data copy/training_data/LB_frame_275.tif
+    - https://zenodo.org/records/17351896/files/data.zip::data copy/training_data/LB_frame_275_masks.tif
+    size_bytes: 5968264
+    description: One LB training frame and its mask (zip members, about 3 MB each).
+  arrays:
+  - role: raw
+    path_pattern: data copy/training_data/*_frame_[0-9][0-9][0-9].tif
+    format: tiff
+    axes: yx
+    shape:
+    - 841
+    - 887
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range:
+    - -23857
+    - 16690
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Training frames, one 2D TIFF per frame: LB 841x887, M9 432x471 (probed M9_frame_194). Values are signed
+      (sample -23857..16690, median 45): background-subtracted, not raw counts; not documented.'
+  - role: label
+    path_pattern: data copy/training_data/*_frame_[0-9][0-9][0-9]_masks.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 841
+    - 887
+    shape_varies: true
+    dtype: uint32
+    compression: none
+    value_range:
+    - 0
+    - 515
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing: <medium>_frame_NNN.tif <-> <medium>_frame_NNN_masks.tif (also _flows.tif, Cellpose/Omnipose
+      flow files, not labels). README: integer labels, 0 = background, >0 = cell ID; sample has 110 cells.'
+  - role: raw
+    path_pattern: data copy/elongated_morphology/raw/brightfield_frames/frame_*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 759
+    - 1035
+    shape_varies: false
+    dtype: float32
+    compression: lzw
+    value_range:
+    - -21208
+    - 15595
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 166 brightfield frames of filamentous cells (0.5 min interval, 0.065 um/px, README).
+  - role: label
+    path_pattern: data copy/elongated_morphology/annotated/frames/frame_*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 759
+    - 1035
+    shape_varies: false
+    dtype: uint16
+    compression: lzw
+    value_range:
+    - 0
+    - 4
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Manual masks (README), same name as the brightfield frame (frame_NNN.tif); same 759x1035 grid. Sample:
+      4 cells.'
+  - role: raw
+    path_pattern: data copy/timelapse_data/LB_data/original_images.tif
+    format: tiff
+    axes: tyx
+    shape:
+    - 361
+    - 841
+    - 887
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: LB time-lapse stack, shape (time, height, width) = (361, 841, 887) per README; header not readable remotely
+      (deflated 1.1 GB member).
+  - role: label
+    path_pattern: data copy/timelapse_data/LB_data/ground_truth.tif
+    format: tiff
+    axes: tyx
+    shape:
+    - 361
+    - 841
+    - 887
+    shape_varies: false
+    dtype: uint32
+    compression: deflate
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Manual ground truth for the LB time-lapse (README); probed shape [361, 841, 887] matches original_images.tif.
+      Omnipose masks (masks.tif, automatic) and tracks (LB_ROI1_JVH.csv: track_id, t, area, parent, x, y, width, length) sit
+      next to it.'
+  notes: 'Exact Zenodo listing with the zip index expanded (1 file, 4,649,024,025 B = size_bytes; 6,834 members). README read
+    (data copy/README.md). Probed: training LB_frame_275.tif (841x887 float32), its _masks.tif (uint32), M9_frame_194.tif
+    (432x471 float32), elongated frame_073 raw (759x1035 float32 LZW) and annotation (uint16 LZW), LB ground_truth.tif (361x841x887
+    uint32 deflate); original_images.tif and masks.tif headers not readable remotely. Sampled LB_frame_275 pair (110 cell
+    IDs, max 515) and elongated frame_073 pair (4 cells); value ranges from one sample each. Training masks counted as manual
+    per the record; the README does not say how training_data masks were made. No calibration in the TIFF headers; voxel size
+    65 nm from README ("Pixel size: 0.065 um/px"). Zip and members are direct Zenodo links (usable, range requests); zenodo.org
+    dropped several TLS connections during this run (retried).'
