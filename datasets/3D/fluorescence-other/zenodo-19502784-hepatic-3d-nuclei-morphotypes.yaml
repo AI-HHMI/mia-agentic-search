@@ -12,7 +12,11 @@ repository: Zenodo
 accession: '19502784'
 authors:
 - Hernan Andres Morales-Navarrete
-publications: []
+publications:
+- title: Cross-domain transfer of frozen 3DINO representations for marker-sparing classification of hepatic 3D nuclear
+    morphotypes
+  doi: 10.21203/rs.3.rs-11238308/v1
+  url: https://www.researchsquare.com/article/rs-11238308/v1
 date_published: '2026-10-01'
 imaging:
   modality:
@@ -42,8 +46,8 @@ annotations:
   - instance-segmentation
   - classification
   coverage: dense
-  format: 'raw_data.zip: images/, labels/ (3D nuclear instance ids) and class/ (class code per nucleus, 1-5) as
-    TIFF volumes, one per animal'
+  format: 'raw_data.zip: images/, labels/ (uint16 nuclear instance ids, 0 = background) and class/ (uint16 class
+    code per voxel, 0 = background, 1-5) as TIFF volumes, one per animal, same filename stem'
   source: unknown
 ml:
   tasks:
@@ -62,18 +66,117 @@ provenance:
   - https://zenodo.org/records/19502784
   - https://zenodo.org/api/records/19502784
   - https://github.com/BioDecodingLab/3D-HepaticNuclei-Classifier
-  confidence: 0.65
+  - https://zenodo.org/api/records/19502784/files/README.txt/content
+  - https://raw.githubusercontent.com/BioDecodingLab/3D-HepaticNuclei-Classifier/main/README.md
+  - https://raw.githubusercontent.com/BioDecodingLab/3D-HepaticNuclei-Classifier/main/config/class_names.json
+  - https://www.researchsquare.com/article/rs-11238308/v1
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22Cross-domain+transfer+of+frozen+3DINO+representations+for+marker-sparing+classification+of+hepatic+3D+nuclear+morphotypes%22&format=json&resultType=core&pageSize=3
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T01:05:34Z'
-notes: 'Zenodo README and file listing: raw_data.zip (4.8 GB, 15 TIFFs of about 1 to 1.2 GB each: images/, labels/,
-  class/ for 5 volumes); preprocessed_data.zip holds single-nucleus patches (112^3) and masks with train/val/test
-  assignments for leave-one-animal-out CV; the other archives are features, models and statistics. 14,385 nuclei
-  in five classes; class labels are marker-assisted reference morphotypes. GitHub README: isotropic 0.3 um voxels,
-  one volume per animal, data from Universidad de Concepcion. Microscope, how the instance labels were made, array
-  shape and dtype are not stated (probe of the zip member failed), so source is unknown and modality is fluorescence-other.
-  No paper is linked (the GitHub README cites only the 3DINO model paper). Related to catalogued zenodo-18517324
-  (NucVerse3D, same lab, mouse liver at 0.3 um) but a different set: these are whole volumes of about 1 GB each
-  with cell-type class volumes. size_bytes is the whole Zenodo record.'
+  last_checked: '2026-10-09T01:16:42Z'
+notes: 'Zenodo README and listing: raw_data.zip holds images/, labels/, class/ (5 TIFF volumes each, one per animal);
+  preprocessed_data.zip holds 14,385 single-nucleus patches (112^3) and masks with train/val/test splits for leave-one-animal-out
+  CV; other archives are features, models and statistics. Class labels are marker-assisted reference morphotypes.
+  GitHub README: isotropic 0.3 um voxels, data from Universidad de Concepcion. Microscope and how the instance labels
+  were made are not stated (preprint full text not openly readable), so source is unknown and modality is fluorescence-other.
+  Related to zenodo-18517324 (NucVerse3D, same lab) but a different set. size_bytes is the whole Zenodo record.
+  enricher: added the Research Square preprint (was none); voxel size confirmed from GitHub README (TIFF headers
+  are uncalibrated).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  README.txt, raw_data.zip, preprocessed_data.zip, features.zip, classical.rar, resnet.zip, statistics.zip,\
+      \ representations.zip  (8 files, 12.5 GB)\nraw_data.zip/raw_data/raw_data/\n  images/   1.tif .. 5.tif   5\
+      \ files  5.5 GB  (DAPI volumes)\n  labels/   1.tif .. 5.tif   5 files  5.5 GB  (nuclear instance ids)\n  class/\
+      \    1.tif .. 5.tif   5 files  5.5 GB  (class code 1-5 per voxel)\npreprocessed_data.zip/preprocessed/\n \
+      \ *.csv, manifest .json      5 files  10.4 MB\n  inspection/                15 files 266.9 KB\n  patches/img_#/label_#/img_#__nucleus_<n>.tif\
+      \  (x25 dirs) 14385 files 3.3 GB\n  masks/img_#/label_#/img_#__nucleus_<n>.tif    (x25 dirs) 14385 files 484.9\
+      \ MB\nfeatures.zip/features/  dino/, handcrafted/ (.npz, .csv)  73 files  3.2 GB\nresnet.zip/resnet/  test_img_#/candidate_#/\
+      \ (.pt checkpoints), test/, validation/  208 files  1.3 GB\nstatistics.zip/statistics/  171 files  11.8 MB\n\
+      representations.zip/representations/  69 files  27.7 MB\nclassical.rar  (not expanded; fitted classical models,\
+      \ 2.1 GB)"
+    n_files: 8
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/19502784/files/raw_data.zip::raw_data/raw_data/images/2.tif
+    - https://zenodo.org/records/19502784/files/raw_data.zip::raw_data/raw_data/labels/2.tif
+    - https://zenodo.org/records/19502784/files/raw_data.zip::raw_data/raw_data/class/2.tif
+    size_bytes: 2909386183
+    description: 'Smallest volume (animal 2, 332 x 874 x 1671): DAPI image, nuclear instance labels and class map,
+      all members of raw_data.zip (uncompressed sizes; about 867 MB compressed).'
+  arrays:
+  - role: raw
+    path_pattern: raw_data/raw_data/images/*.tif
+    format: tiff
+    axes: zyx
+    shape: &id001
+    - 332
+    - 874
+    - 1671
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 65534
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: raw_data/raw_data/labels/*.tif
+    format: tiff
+    axes: zyx
+    shape: *id001
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 3938
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 3938
+    alignment: same-grid
+    alignment_notes: labels/<n>.tif pairs with images/<n>.tif (same stem, same shape, per the GitHub README and
+      the sample of volume 2).
+  - role: label
+    path_pattern: raw_data/raw_data/class/*.tif
+    format: tiff
+    axes: zyx
+    shape: *id001
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 5
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background / unlabelled
+    - id: 1
+      name: Hepatocyte
+    - id: 2
+      name: Stellate cell
+    - id: 3
+      name: Kupffer cell
+    - id: 4
+      name: Endothelial cell
+    - id: 5
+      name: Other cell
+    alignment: same-grid
+    alignment_notes: class/<n>.tif pairs with images/<n>.tif and labels/<n>.tif (same stem, same shape); its foreground
+      equals the instance-label foreground in volume 2 (zero fraction 0.911866 vs 0.911867).
+  notes: 'Listing: tools/listing.py of the Zenodo record with zip expansion (8 files, 29,326 zip members, 12,457,668,846
+    B, complete). Raw: images/2.tif is an ImageJ TIFF (ImageJ=1.54p, slices=332, big-endian, uncompressed, no resolution
+    tags), so axes zyx; read from its header and first 4 pages by range request, value_range [0, 65534] is from
+    those 4 pages only. labels/2.tif and class/2.tif were sampled whole (tifffile-written plain multi-page TIFFs,
+    shape [332, 874, 1671], uint16; axes zyx as they match the raw ImageJ z-stack). Member sizes of the 5 volumes
+    differ (0.97 to 1.22 GB), so shape varies. Class codes from config/class_names.json in the GitHub repo. preprocessed_data.zip
+    patches/masks (112^3 single-nucleus TIFFs) were not probed. Open: how the instance labels were made and the
+    microscope (preprint full text not openly readable).'
