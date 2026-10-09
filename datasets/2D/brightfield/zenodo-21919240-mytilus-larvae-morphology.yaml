@@ -1,0 +1,162 @@
+schema_version: '1.2'
+id: zenodo-21919240-mytilus-larvae-morphology
+title: Mytilus edulis larvae microscopy image dataset and fine-tuned classification model
+short_name: Mytilus edulis larvae masks (brightfield)
+description: 595 brightfield microscopy images of Mytilus edulis larvae with one segmentation mask per image (885 larvae)
+  and single-larva patches of which 680 are labelled normal or abnormal development, plus a DenseNet121 morphology classifier.
+landing_url: https://zenodo.org/records/21919240
+doi: 10.5281/zenodo.21919240
+repository: Zenodo
+accession: '21919240'
+authors:
+- Samuel Bradley
+- Giovanni Schiesaro
+- Henry Webel
+- Marcel Skumantz
+- Olga Novillo Sanjuan
+- Alexandra Panagou
+- Rafael Lucena Marín
+- Emil Damgaard Jensen
+- Antonio Di Pietro
+- Carlos G. Acevedo Rocha
+publications:
+- title: 'Mycol: A user-friendly app for automating analysis of microscopy images'
+  doi: 10.64898/2026.06.02.729113
+  url: https://doi.org/10.64898/2026.06.02.729113
+date_published: '2026-08-13'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Mytilus edulis
+  sample: Pooled gametes co-incubated 72 h, larvae fixed in 4% formalin
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  - png
+  size_bytes: 265451066
+  n_items: 595
+  access: open
+  download_url: https://zenodo.org/records/21919240
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - classification
+  coverage: dense
+  format: One TIFF mask image per image (masks.zip); single-larva PNG patches named with normal/abnormal label; cell_metrics.csv
+  source: proofread
+ml:
+  tasks:
+  - segmentation
+  - classification
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-09T03:00:07Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/21919240
+  - https://zenodo.org/records/21919240/files/images.zip
+  - https://zenodo.org/records/21919240/files/masks.zip
+  - https://zenodo.org/records/21919240/files/patches.zip
+  - https://www.biorxiv.org/content/10.64898/2026.06.02.729113v1.full
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.64898%2F2026.06.02.729113%22&format=json&resultType=core&pageSize=3
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-09T05:12:00Z'
+notes: 'Zeiss Axioscope 7, Axiocam 305 colour camera, 10x objective (Mycol preprint Methods); channels 3 assumed from ''colour
+  camera'' only. Masks: Cellpose cyto3 without fine-tuning, outputs reviewed and corrected where needed (preprint). Normal/abnormal
+  labels follow D-shape stage criteria; the preprint''s Results (228 normal/452 abnormal) and Methods (452/228) disagree,
+  while the Zenodo record says 452 normal / 228 abnormal. Pixel size and image dimensions not stated. The record is v2 of
+  a concept whose first version (zenodo 20488331) the preprint cites. No splits provided as files. enricher: source proofread
+  (masks: Cellpose cyto3, reviewed and corrected, preprint; was mixed); patch names give 452 normal / 228 abnormal / 205 unlabelled;
+  download_url is the record page (three zips).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "record 21919240 (5 files, 265.5 MB)\n  images.zip   230.8 MB  images/<experiment>_<well>_Snap-<n>.tif        595\
+      \ images\n  masks.zip      0.9 MB  masks/<experiment>_<well>_Snap-<n>_masks.tif  595 masks, one per image\n  patches.zip\
+      \    4.6 MB  patches/<image name>_id<k>_<label>.png         885 single-larva patches\n                         (normal\
+      \ 452, abnormal 228, No_label 205)\n  cell_metrics.csv, densenet_model.pth\n"
+    n_files: 5
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/21919240/files/images.zip::images/experiment1_A1_Snap-1647.tif
+    - https://zenodo.org/records/21919240/files/masks.zip::masks/experiment1_A1_Snap-1647_masks.tif
+    size_bytes: 913948
+    description: One brightfield colour image and its instance mask (zip members).
+  arrays:
+  - role: raw
+    path_pattern: images/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 212
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Single-page RGB TIFFs (photometric 2) from a colour camera; the samples differ (true colour).
+  - role: label
+    path_pattern: masks/*_masks.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: null
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 2
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing: images/<name>.tif <-> masks/<name>_masks.tif (all 595 pair up). Same 512x512 grid. Cellpose
+      masks: 0 = background, 1..N one ID per larva (sample: 2 larvae of ~700 px).'
+  - role: label
+    path_pattern: patches/*.png
+    format: png
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: uint8
+    compression: png
+    encoding: other
+    classes:
+    - id: normal
+      name: normal development
+    - id: abnormal
+      name: abnormal development
+    - id: No_label
+      name: not labelled
+    alignment: cropped
+    alignment_notes: Single-larva crops named <image name>_id<mask id>_<class>.png; class in the file name, crop position
+      not stored. Not probed.
+  notes: 'Exact Zenodo listing with zip indexes expanded (5 files, 265,451,066 B = size_bytes). Probed and sampled experiment1_A1_Snap-1647.tif
+    (512x512x3 uint8 deflate, RGB, values 0-212, one sample) and its mask (512x512 uint16, IDs 0-2). Patch classes counted
+    from the 885 file names. Voxel size not found; checked: TIFF headers, Zenodo API record, preprint full text (Zeiss Axioscope
+    7, Axiocam 305 colour camera, 10x objective; no pixel size). All zips and members are direct Zenodo links (usable, range
+    requests).'
