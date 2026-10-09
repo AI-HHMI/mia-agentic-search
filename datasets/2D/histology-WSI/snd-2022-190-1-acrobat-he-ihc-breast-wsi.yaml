@@ -2,10 +2,11 @@ schema_version: '1.2'
 id: snd-2022-190-1-acrobat-he-ihc-breast-wsi
 title: 'ACROBAT: A Multi-Stain Breast Cancer Histological Whole-Slide-Image Data Set'
 short_name: ACROBAT paired H&E/IHC breast WSIs (histology)
-description: 4,212 whole-slide images from 1,153 breast cancer patients (routine diagnostics, Hamamatsu scanners), each
-  patient with one H&E slide and one to four IHC slides (ER, PGR, HER2, KI67), as pyramidal TIFFs from 10x (about 0.92 um/pixel) down.
-  Built for the MICCAI 2022 ACROBAT whole-slide registration challenge, with a split of 750 training, 100 validation and 303
-  test cases; the paper describes over 35,000 landmark pairs for validation and test pairs and suggests stain transfer and virtual staining as further uses.
+description: 4,212 whole-slide images from 1,153 breast cancer patients (routine diagnostics, Hamamatsu scanners),
+  each patient with one H&E slide and one to four IHC slides (ER, PGR, HER2, KI67), as pyramidal TIFFs from 10x
+  (about 0.92 um/pixel) down. Built for the MICCAI 2022 ACROBAT whole-slide registration challenge, with a split
+  of 750 training, 100 validation and 303 test cases; the paper describes over 35,000 landmark pairs for validation
+  and test pairs and suggests stain transfer and virtual staining as further uses.
 landing_url: https://researchdata.se/en/catalogue/dataset/2022-190-1
 doi: 10.48723/w728-p041
 repository: other
@@ -23,8 +24,8 @@ imaging:
   - histology-WSI
   dimensionality: 2D
   voxel_size_nm:
-    x: 920
-    y: 920
+    x: 907.338
+    y: 907.338
     z: null
   channels: 3
   organism:
@@ -39,10 +40,10 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 448590000000
+  size_bytes: 481681541059
   n_items: 4212
   access: open
-  download_url: https://api.researchdata.se/dataset/2022-190-1/1/file/
+  download_url: https://researchdata.se/en/catalogue/dataset/2022-190-1
   download_method: http
 annotations:
   present: false
@@ -67,15 +68,62 @@ provenance:
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10449765/fullTextXML
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22ACROBAT+--+a+multi-stain+breast+cancer+histological+whole-slide-image+data+set+from+routine+diagnostics+for+computational+pathology%22&format=json&resultType=core&pageSize=3
   - https://github.com/rantalainenGroup/ACROBAT
+  - https://api.researchdata.se/dataset/2022-190-1/1/file/data/valid.zip
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-08T23:40:00Z'
-notes: 'The SND record lists seven image ZIPs (5 train, 1 validation, 1 test, 448.6 GB in total from the listed sizes) plus a metadata CSV, ZIP file lists and
-  checksums; no landmark files are in that listing. The paper says landmarks (35,760 pairs) exist only for validation and test image pairs and none for training data,
-  but where those landmark files are published was not found on the SND page, the paper or the GitHub repo (which holds protocols and code), so annotations.present is false
-  here. The usable training signal is the paired multi-stain WSIs themselves (registration, stain transfer, virtual staining, as the paper suggests), and the training split is
-  the bulk of the data. ZIP contents were not listed (the archives are tens of GB; format taken from the paper and SND record). Pixel size 0.92 um is the 10x level stated in
-  the paper (originals were scanned at about 0.23 um/pixel but are not distributed). The SND record asks to be notified of publications, which is not mandatory.'
+  last_checked: '2026-10-09T01:00:08Z'
+notes: 'The SND record lists seven image ZIPs (5 train, 1 validation, 1 test) plus a metadata CSV, ZIP file lists
+  and checksums; no landmark files are in that listing. The paper says landmarks (35,760 pairs) exist only for validation
+  and test image pairs and none for training data, but where those landmark files are published was not found on
+  the SND page, the paper or the GitHub repo (which holds protocols and code), so annotations.present is false here.
+  The usable training signal is the paired multi-stain WSIs themselves (registration, stain transfer, virtual staining,
+  as the paper suggests), and the training split is the bulk of the data. ZIP contents listed by the enricher. Pixel
+  size: 0.9073 um from the TIFF header (paper: ca. 0.92 um at 10x; originals were scanned at about 0.23 um/pixel
+  but are not distributed). enricher: voxel 920 -> 907.338 nm (TIFF MPP), size from the full listing.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "SND 2022-190-1 v1 (api.researchdata.se/dataset/2022-190-1/1/file/...; redirects to ki.open.care.snd.se)\n\
+      \  data/train_part1.zip ... train_part5.zip   train/<case>_<stain>_train.tif\n  data/valid.zip (23,401,027,210\
+      \ B)           valid/<case>_<stain>_val.tif   200 WSIs\n  data/test.zip                               test/<case>_<stain>_test.tif\n\
+      \  stain = HE, ER, PGR, HER2, KI67; 4,212 pyramidal TIFFs in total\n  documentation/df_acrobat_meta.csv, df_acrobat_meta_readme.txt,\
+      \ <zip>_zip_listing.txt, zipfiles_sha1_checksums.txt\n7 zips + 2 metadata files listed: 481,681,541,059 B"
+    n_files: 9
+    listing_complete: true
+  sample:
+    urls:
+    - https://api.researchdata.se/dataset/2022-190-1/1/file/data/valid.zip::valid/61_HE_val.tif
+    size_bytes: 35382806
+    description: Smallest WSI in valid.zip (case 61, H&E); its IHC partners are the other valid/61_*_val.tif files.
+  arrays:
+  - role: raw
+    path_pattern: '*.zip::*/*_*_*.tif'
+    format: tiff
+    axes: yxs
+    shape:
+    - 22400
+    - 30720
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 2
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Aperio-style pyramidal TIFF: three pages (full, 1/2, 1/4), 256x256 JPEG tiles, YCbCr. Description
+      "Aperio ACROBAT Tiff |AppMag = 10|MPP = 0.9073380968583419" in both files read. H&E and IHC slides of a case
+      are separate, unregistered files (registration is the task).'
+  notes: 'Listing: the 7 data zips (central directories, 4,212 TIFF members) and 2 metadata files, exact sizes:
+    481,681,541,059 B (the record had 448.6 GB, i.e. GiB). The zip-listing/checksum txt files were not included.
+    Read with an ad hoc tifffile script (members are deflated with the IFD at the end, so the whole member was fetched):
+    valid/61_HE_val.tif (35.4 MB: 22400x30720x3 uint8, pages 1/2 and 1/4, JPEG tiles 256, values 2-255 over the
+    full level) and valid/39_HER2_val.tif (50.6 MB: 19712x36864x3, same MPP). Voxel size: header MPP 0.90734 um
+    at AppMag 10, vs "ca. 0.92 um/pixel" in the paper; the header value is exact and the paper approximate, so 907.338
+    nm is used. download_url is the landing page: the file API root returned HTTP 400 and the dataset is 7 zips.
+    Host api.researchdata.se (-> ki.open.care.snd.se) is not on the TensorSwitch allowlist.'
