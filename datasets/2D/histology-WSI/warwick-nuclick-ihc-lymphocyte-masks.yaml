@@ -1,0 +1,174 @@
+schema_version: '1.2'
+id: warwick-nuclick-ihc-lymphocyte-masks
+title: NuClick dataset - lymphocyte segmentation in immunohistochemistry (IHC) images
+short_name: IHC lymphocyte segmentation masks (NuClick)
+description: 871 IHC image patches (671 train / 200 validation) with lymphocyte segmentation masks (NumPy and PNG)
+  and ASAP-compatible XML polygons plus pyramid TIFF images, released with the NuClick interactive segmentation
+  paper.
+landing_url: https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick/
+doi: null
+repository: LabWebsite
+accession: null
+authors:
+- Navid Alemi Koohbanani
+- Mostafa Jahanifar
+- Neda Zamani Tajadin
+- Nasir Rajpoot
+publications:
+- title: 'NuClick: A Deep Learning Framework for Interactive Segmentation of Microscopic Images'
+  doi: 10.1016/j.media.2020.101771
+  url: https://doi.org/10.1016/j.media.2020.101771
+date_published: null
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 240
+    y: 240
+    z: null
+  channels: null
+  organism: []
+  sample: Immunohistochemistry-stained tissue with lymphocytes
+  labels_stains:
+  - CD3
+  - CD8
+data:
+  formats:
+  - png
+  - tiff
+  size_bytes: 458872711
+  n_items: 871
+  access: open
+  download_url: https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick/ihc_nuclick.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: uint32 instance-ID masks as .npy (256x256) in IHC/masks/{Train,Validation}/ROI_*.npy, paired by name with
+    PNG images in IHC/images/; ASAP XML polygons (group Inflam) plus 3-page tiled TIFF images in IHC_xml_asap/
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-01T12:20:39Z'
+  evidence_urls:
+  - https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick/
+  - https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick/ihc_nuclick.zip
+  - https://arxiv.org/abs/2005.14511
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1016%2Fj.media.2020.101771%22&format=json&resultType=core&pageSize=3
+  - https://lyon19.grand-challenge.org/Data/
+  - https://arxiv.org/pdf/2005.14511
+  confidence: 0.55
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-07T05:30:00Z'
+notes: 'Counts from the zip listing: IHC/images Train 671 and Validation 200 PNGs, matching masks (871 .npy), 871
+  tiled .tif images and 871 ASAP .xml files in IHC_xml_asap. No licence is stated on the dataset page, only a request
+  to cite the NuClick paper, so licence is unknown. Annotation source is mixed because the page says labels were
+  produced with the NuClick interactive framework. The WBC blood smear set released alongside is a separate record.
+  enricher: masks opened (uint32 instance IDs, .npy; npy has no data.formats value, so formats stay png + tiff);
+  annotations.format updated. enricher: voxel size 240x240 nm from upstream LYON19 (Data page: WSIs at 0.24 um/px,
+  ROIs saved at full resolution; was null); arXiv NuClick says the patches are 256x256 crops of LYON19 ROIs (breast,
+  colon, prostate; CD3/CD8), and the 871 patches map to 438 of its 441 ROI ids. Resampling is not stated. Organism
+  not stated in either source.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick/ihc_nuclick.zip
+  bytes_downloaded: 963330
+  size_source: file-listing
+  layout:
+    tree: "ihc_nuclick.zip/IHC_nuclick/\n  IHC/images/Train/ROI_<n>_<k>.png        671   69.7 MB\n  IHC/images/Validation/ROI_<n>_<k>.png\
+      \   200   23.5 MB\n  IHC/masks/Train/ROI_<n>_<k>.npy         671  176.0 MB\n  IHC/masks/Validation/ROI_<n>_<k>.npy\
+      \    200   52.5 MB\n  IHC_xml_asap/Train/ROI_<n>_<k>.{tif,xml}       671 + 671  368.0 MB\n  IHC_xml_asap/Validation/ROI_<n>_<k>.{tif,xml}\
+      \  200 + 200  109.8 MB\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick/ihc_nuclick.zip::IHC_nuclick/IHC/images/Validation/ROI_338_2.png
+    - https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick/ihc_nuclick.zip::IHC_nuclick/IHC/masks/Validation/ROI_338_2.npy
+    size_bytes: 388184
+    description: One 256x256 validation patch (PNG) and its uint32 instance mask (.npy) with 13 lymphocytes (zip
+      members).
+  arrays:
+  - role: raw
+    path_pattern: IHC_nuclick/IHC/images/{Train,Validation}/ROI_*_*.png
+    format: png
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: IHC_nuclick/IHC/masks/{Train,Validation}/ROI_*_*.npy
+    format: other
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: null
+    dtype: uint32
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 13
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 14
+    alignment: same-grid
+    alignment_notes: Mask ROI_<n>_<k>.npy has the same stem as image ROI_<n>_<k>.png and the same 256x256 grid.
+  - role: label
+    path_pattern: IHC_nuclick/IHC_xml_asap/{Train,Validation}/ROI_*_*.xml
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: polygons
+    classes: null
+    n_ids_observed: null
+    alignment: unknown
+    alignment_notes: ASAP XML (Annotation Type="Spline", PartOfGroup="Inflam") next to a .tif of the same stem;
+      coordinates not checked against the masks.
+  notes: 'Zip central directory: 3,484 members, 458,872,711 B, complete. Probes: ROI_100_1.png uint8 RGB 256x256;
+    IHC_xml_asap ROI_100_1.tif 3 pages of 256x256x3 uint8, tiled 112x112, uncompressed (pyramid or z/t/c not stated).
+    Masks are NumPy .npy (not PNG as the description says), read with np.load(allow_pickle=False): ROI_100_1.npy
+    uint32 256x256, all zero (no lymphocyte in this patch although its ASAP XML contains at least one spline annotation);
+    Validation ROI_338_2.npy 0..13, 14 distinct values (consecutive instance IDs). Image ROI_100_1.png 40..255,
+    mean 228. tools/sample.py does not read .npy and was reset by the server once, so members were read with a short
+    script. Second pass 2026-10-07: re-listed (same) and re-read pair ROI_338_2 by zip range with a short script
+    (PIL / np.load allow_pickle=False; 963,330 B fetched): image uint8 RGB 0..255, mask uint32 0..13 (14 values).
+    Sample switched to this pair because ROI_100_1 has an empty mask. path_pattern now real globs with the IHC_nuclick/
+    prefix. Zip and members support range requests, but warwick.ac.uk is not on the TensorSwitch allowlist.'
+  inspected_at: '2026-10-07T05:30:00Z'
