@@ -4,9 +4,9 @@ title: A human blastocyst dataset including clinical annotations to benchmark de
   vitro fertilization
 short_name: Human blastocyst Gardner grades (brightfield)
 description: 2,344 PNG images of human day-5 blastocysts photographed through an inverted microscope at 400x, each
-  graded for expansion, inner cell mass and trophectoderm quality by a Gardner-expert (silver standard for the
-  training set). A 300-image test set carries gold-standard grades from an international consortium of embryologists
-  with agreement scores, and a subset of 752 transferred blastocysts has clinical outcome annotations.
+  graded for expansion, inner cell mass and trophectoderm quality by a Gardner-expert (silver standard for the training
+  set). A 300-image test set carries gold-standard grades from an international consortium of embryologists with
+  agreement scores, and a subset of 752 transferred blastocysts has clinical outcome annotations.
 landing_url: https://figshare.com/articles/dataset/A_human_blastocyst_dataset_including_clinical_annotations_to_benchmark_deep_learning_architectures_for_in_vitro_fertilization/20123153
 doi: 10.6084/m9.figshare.20123153
 repository: Figshare
@@ -39,7 +39,7 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Homo sapiens
   sample: human blastocysts on day 5 post insemination from IVF and ICSI cycles, imaged with an Olympus IX50 microscope
@@ -82,10 +82,66 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T00:32:00Z'
-notes: 'Figshare API record (one 624 MB zip, version 3, CC BY 4.0) and the zip listing (peek_archive: 2,344 PNGs in
-  Images/, 4 CSV, 1 XLSX, 1 Python evaluation script) and the Scientific Data full text (Methods, Data Records) read.
-  Images are static photographs taken for documentation (Olympus IX50, 400x, Octax EyeWare), not stage-labelled
-  time-lapse frames. Training annotations are a silver standard from one Gardner-expert; the 300-image test set is
-  the consortium gold standard. Pixel size is not stated. n_items counts images; clinical annotations cover the 752
-  blastocysts selected for fresh transfer.'
+  last_checked: '2026-10-09T04:45:00Z'
+notes: 'Figshare API record (one 624 MB zip, version 3, CC BY 4.0) and the zip listing (peek_archive: 2,344 PNGs
+  in Images/, 4 CSV, 1 XLSX, 1 Python evaluation script) and the Scientific Data full text (Methods, Data Records)
+  read. Images are static photographs taken for documentation (Olympus IX50, 400x, Octax EyeWare), not stage-labelled
+  time-lapse frames. Training annotations are a silver standard from one Gardner-expert; the 300-image test set
+  is the consortium gold standard. Pixel size is not stated. n_items counts images; clinical annotations cover the
+  752 blastocysts selected for fresh transfer. enricher: channels 3 (RGB PNG per header; was null).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "figshare-20123153/  1 file Blastocyst_Dataset.zip, 624.2 MB (2350 members)\n  Images/               \
+      \                   2344 .png  <embryo>_<image>.png, e.g. 0001_01.png\n  Gardner_train_silver.csv        \
+      \         Image;EXP_silver;ICM_silver;TE_silver\n  Gardner_test_gold_onlyGardnerScores.csv  Image;EXP_gold;ICM_gold;TE_gold\
+      \ (300 test images)\n  Gardner_test_gold.xlsx                   gold standard with agreement scores\n  Clincial_annotations.csv\
+      \                 clinical outcomes (752 transferred blastocysts)\n  prediction_xception.csv, evaluate_prediction_results.py\
+      \ (not run)\n"
+    n_files: 2350
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/39348899::Images/0001_01.png
+    - https://ndownloader.figshare.com/files/39348899::Gardner_train_silver.csv
+    size_bytes: 299652
+    description: One blastocyst image and the training grade table that labels it by file name.
+  arrays:
+  - role: raw
+    path_pattern: Blastocyst_Dataset.zip::Images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 384
+    - 512
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB PNG photographs (Olympus IX50, 400x); 2 images probed, both 384x512x3.
+  - role: label
+    path_pattern: Blastocyst_Dataset.zip::Gardner_*.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'Semicolon-separated tables, one row per image name: expansion grade (1-5) and ICM / TE grades;
+      train = silver standard, test = gold standard.'
+  notes: 'Listing: one figshare file, 624,187,378 B (= size_bytes, confirmed), a zip of 2350 members (2344 PNG,
+    4 CSV, 1 XLSX, 1 .py not run). Probed Images/0001_01.png and 0001_02.png (384x512x3 uint8 RGB, deflate). Read
+    the heads of Gardner_train_silver.csv and Gardner_test_gold_onlyGardnerScores.csv (ICM/TE grades are coded as
+    numbers, e.g. 0/1/2, in the CSV). sample.py could not open the zip member because the figshare URL has no .zip
+    extension (it tried HDF5), so no values were measured. Download URL redirects to the figshare S3 bucket (usable,
+    range requests). Voxel size not found; checked: PNG header (no pHYs), figshare API record, Scientific Data Methods
+    (Olympus IX50 at 400x, no um/px).'
