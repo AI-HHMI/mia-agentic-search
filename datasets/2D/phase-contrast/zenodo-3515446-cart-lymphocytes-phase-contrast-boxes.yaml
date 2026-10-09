@@ -71,10 +71,80 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T14:30:00Z'
+  last_checked: '2026-10-09T13:05:00Z'
 notes: 'Zip index (396 files): train/{phase_contrast,GFP_calibrated,mCherry_calibrated} 36 TIFF each; test/{phase_contrast,GFP_calibrated,mCherry_calibrated}
-  72 PNG each; test/labels 72 Pascal VOC XML (one test XML read: 256x256, bounding boxes class ''Dead''). No label files for
-  the train split were seen in the archive. The Zenodo description is only ''Train and test data''; the paper''s full text
-  was not accessible (IEEE, abstract per web search says ground truth comes from the fluorescent markers by simple image processing,
-  so labels are automatic). Class list, pixel size, microscope and magnification not verified. Only the paper''s landing page
-  and DOI redirect were read.'
+  72 PNG each; test/labels 72 Pascal VOC XML (one test XML read). No label files for the train split were seen in the archive.
+  The Zenodo description is only ''Train and test data''; the paper''s full text was not accessible (IEEE, abstract per web
+  search says ground truth comes from the fluorescent markers by simple image processing, so labels are automatic). Class
+  list, pixel size, microscope and magnification not verified. Only the paper''s landing page and DOI redirect were read.
+  enricher: a second test XML (VID193_A6_4_02d20h00m) has 111 boxes of classes RAJI and Dead.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "lymphocytes.zip  212,198,245 B, 719 members (incl. __MACOSX/ metadata)\n  zenodo/train/{phase_contrast,GFP_calibrated,mCherry_calibrated}/\
+      \  36 .tif each (VID193_<well>_<site>_<DDdHHhMMm>.tif)\n  zenodo/test/{phase_contrast,GFP_calibrated,mCherry_calibrated}/\
+      \   72 .png each\n  zenodo/test/labels/{VID193_A5_4,VID193_A6_4}/                       36 .xml each (Pascal VOC)\n"
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: lymphocytes.zip::zenodo/train/phase_contrast/*.tif
+    format: tiff
+    axes: null
+    shape:
+    - 2
+    - 1040
+    - 1408
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range:
+    - 1
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Train frames, 2-page TIFF (PIL n_frames 2) of 1040x1408; what the second page is (channel, time or a
+      copy) is not stated, so axes are null. GFP_calibrated and mCherry_calibrated hold the matching fluorescence frames.
+  - role: raw
+    path_pattern: lymphocytes.zip::zenodo/test/phase_contrast/*.png
+    format: png
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 1
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Test crops 256x256 (wells A5_4 and A6_4, 36 time points each); GFP/mCherry crops alongside.
+  - role: label
+    path_pattern: lymphocytes.zip::zenodo/test/labels/*/*.xml
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: boxes-table
+    classes:
+    - id: RAJI
+      name: Raji target cell
+    - id: Dead
+      name: dead cell
+    alignment: same-grid
+    alignment_notes: Pascal VOC per test frame, labels/<video>/<frame>.xml pairs with test/phase_contrast/<frame>.png; <size>
+      256x256 matches. Classes seen in two files; no train labels in the archive.
+  notes: 'Zip central directory read from the last 128 KB (curl; Python requests to zenodo.org failed with SSL errors this
+    run, so listing.py/probe.py could not run): 36 train TIFF and 72 test PNG per channel folder, 72 test XML, plus __MACOSX
+    metadata. Archive size from the Zenodo record (page-stated). Read with curl ranges (1.3 MB): test VID193_A6_4_02d20h00m.png
+    L 256x256 uint8 [1,255] mean 128.0; its XML 111 boxes (RAJI, Dead); train VID193_A1_1_02d10h00m.tif 2 pages of 1040x1408
+    uint8 [1,255] mean 128.0, uncompressed, no resolution tag. Value ranges from single files. Voxel size not found: TIFF/PNG
+    headers, Zenodo description ("Train and test data"); paper full text not accessible. No sample unit: member links could
+    not be checked with probe.py --download-check this run.'
