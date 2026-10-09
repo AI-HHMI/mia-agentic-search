@@ -1,0 +1,155 @@
+schema_version: '1.2'
+id: zenodo-10523421-all-idb1-blood-cell-segmentation
+title: 'ALL-IDB1 Multi Class Segmentation Dataset: whole-slide blood cell images with RBC, WBC and platelet masks (Zenodo)'
+short_name: Blood smear RBC, WBC, platelet masks (brightfield)
+description: 84 training and 22 test whole-slide blood smear images (JPG) from ALL-IDB1 with corresponding multi-class ground-truth
+  mask PNGs for red blood cells, white blood cells and platelets, plus pre-cut 22,488 train and 7,056 test image/label patches.
+landing_url: https://zenodo.org/records/10523421
+doi: 10.5281/zenodo.10523421
+repository: Zenodo
+accession: '10523421'
+authors:
+- Zeki Kuş
+- Berna Kiraz
+- Musa Aydın
+- Alper Kiraz
+publications:
+- title: Robust Method for Semantic Segmentation of Whole-Slide Blood Cell Microscopic Images
+  doi: 10.1155/2020/4015323
+  url: null
+date_published: '2024-01-17'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: Peripheral blood smears of healthy individuals and acute lymphoblastic leukemia patients (ALL-IDB1)
+  labels_stains: []
+data:
+  formats:
+  - jpeg
+  - png
+  size_bytes: 695445183
+  n_items: 106
+  access: open
+  download_url: https://zenodo.org/api/records/10523421/files/ALL_IDB1_Multi_Class_Segmentation.zip/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: labels_train/ and labels_test/ PNG masks named like the images (Im099.png), plus labels_*_patches/ PNG patches
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-09T11:35:00Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/10523421
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22Robust+Method+for+Semantic+Segmentation+of+Whole-Slide+Blood+Cell+Microscopic+Images%22&format=json&resultType=core&pageSize=3
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7201460/fullTextXML
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-09T11:55:00Z'
+notes: 'Zip index (59,300 files): images_train 84 JPG, images_test 22 JPG, labels_train 84 PNG, labels_test 22 PNG, plus images/labels_train_patches
+  (22,488 each) and _test_patches (7,056 each) PNGs. Zenodo says 106 whole-slide images; the paper (Shahzad et al. 2020) describes
+  108 ALL-IDB1 images (2592x1944 from healthy, 1712x1368 from ALL patients, 300-500x magnification microscopes) with masks for
+  RBC, WBC, platelet and combined; the extra two images not explained. Masks were designed manually per the paper. Pixel size
+  not stated. Images derive from ALL-IDB1 (Labati et al.), whose own terms were not checked; the Zenodo record is labelled CC-BY-4.0.
+  enricher: labels are RGB colour masks (black background, pure green / red / blue classes); the colour-to-class mapping is not
+  documented.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |-
+      ./                                                        1 files    695.4 MB  .zip
+      ALL_IDB1_Multi_Class_Segmentation.zip/
+        images_test/                                           22 files     34.0 MB  .jpg
+        images_test_patches/                                 7056 files    130.0 MB  .png
+        images_train/                                          84 files    100.1 MB  .jpg
+        images_train_patches/                               22488 files    392.9 MB  .png
+        labels_test/                                           22 files      3.3 MB  .png
+        labels_test_patches/                                 7056 files      5.4 MB  .png
+        labels_train/                                          84 files     10.7 MB  .png
+        labels_train_patches/                               22488 files     17.7 MB  .png
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/10523421/files/ALL_IDB1_Multi_Class_Segmentation.zip/content::images_train/Im017.jpg
+    - https://zenodo.org/api/records/10523421/files/ALL_IDB1_Multi_Class_Segmentation.zip/content::labels_train/Im017.png
+    size_bytes: 509694
+    description: One whole-slide training image (1368 x 1712 RGB JPEG) and its RGB colour mask.
+  arrays:
+  - role: raw
+    path_pattern: ALL_IDB1_Multi_Class_Segmentation.zip/images_{train,test}/Im[0-9][0-9][0-9].jpg
+    format: jpeg
+    axes: yxs
+    shape: [1368, 1712, 3]
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range: [0, 255]
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Whole-slide blood smear images; the paper gives 2592x1944 (healthy) and 1712x1368 (ALL) sizes.
+  - role: label
+    path_pattern: ALL_IDB1_Multi_Class_Segmentation.zip/labels_{train,test}/Im[0-9][0-9][0-9].png
+    format: png
+    axes: yxs
+    shape: [1368, 1712, 3]
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range: [0, 255]
+    encoding: rgb-colors
+    classes:
+    - id: '[0, 0, 0]'
+      name: background
+    alignment: same-grid
+    alignment_notes: Same stem as the image (images_train/Im017.jpg <-> labels_train/Im017.png), same shape. Im017 mask has 4 colours
+      (black 1,691,592 px, green 604,884, red 41,790, blue 3,750). The paper names the classes RBC, WBC and platelet (IDs 1, 2, 3
+      in its preprocessing) but not which colour is which.
+  - role: raw
+    path_pattern: ALL_IDB1_Multi_Class_Segmentation.zip/images_{train,test}_patches/*.png
+    format: png
+    axes: yxs
+    shape: [128, 128, 3]
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Pre-cut 128 x 128 patches (22,488 train, 7,056 test), numbered file names.
+  - role: label
+    path_pattern: ALL_IDB1_Multi_Class_Segmentation.zip/labels_{train,test}_patches/*.png
+    format: png
+    axes: yxs
+    shape: [128, 128, 3]
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    encoding: rgb-colors
+    alignment: same-grid
+    alignment_notes: Same file name as the image patch (images_train_patches/19.png <-> labels_train_patches/19.png); patch 19 mask
+      has 2 colours (black, green).
+  notes: 'Listing from the Zenodo API plus the zip central directory (59,300 members); size is the one zip, exact. Probed
+    labels_train/Im017.png and both patch PNGs (headers); sampled images_train/Im017.jpg and labels_train/Im017.png (510 KB, via
+    range reads of the zip) and counted mask colours; value_range from that one pair. Pixel size not found; checked: Zenodo record,
+    JPEG/PNG headers, paper full text (only 300-500x magnification), so voxel_size_nm stays null. RGB samples are stored as s.'
