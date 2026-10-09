@@ -1,0 +1,157 @@
+schema_version: '1.2'
+id: tudatalib-3799-yeast-cells-in-microstructures
+title: Yeast Cells in Microstructures Dataset
+short_name: Yeast cells in microfluidic traps (brightfield)
+description: 493 brightfield images (128x128 crops, each centred on a trap microstructure pair) of Saccharomyces
+  cerevisiae cells in microfluidic traps from time-lapse experiments, with manual pixel-wise instance annotations
+  of cells and traps, bounding boxes, and a train/val/test split (296/49/148).
+landing_url: https://christophreich1996.github.io/yeast_in_microstructures_dataset/
+doi: null
+repository: other
+accession: null
+authors:
+- Reich, Christoph
+- Prangemeier, Tim
+- Francani, André O.
+- Koeppl, Heinz
+publications:
+- title: An Instance Segmentation Dataset of Yeast Cells in Microstructures
+  doi: 10.1109/EMBC40787.2023.10340268
+  url: https://arxiv.org/abs/2304.07597
+date_published: null
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Saccharomyces cerevisiae
+  sample: Living yeast cells trapped in microfluidic chip microstructures (regular and L-shaped traps)
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: null
+  n_items: 493
+  access: open
+  download_url: https://tudatalib.ulb.tu-darmstadt.de/bitstream/handle/tudatalib/3799/yeast_cell_in_microstructures_dataset.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - bounding-box
+  coverage: dense
+  format: PyTorch .pt tensors per sample in inputs/, instances/ (N x 128 x 128), classes/ (trap=0, cell=1) and bounding_boxes/
+    folders
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  - detection
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/ChristophReich1996/Yeast-in-Microstructures-Dataset
+license:
+  spdx: MIT
+  url: https://christophreich1996.github.io/yeast_in_microstructures_dataset/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-08T20:14:39Z'
+  evidence_urls:
+  - https://christophreich1996.github.io/yeast_in_microstructures_dataset/
+  - https://github.com/ChristophReich1996/Yeast-in-Microstructures-Dataset
+  - https://arxiv.org/pdf/2304.07597
+  - https://arxiv.org/abs/2304.07597
+  - https://raw.githubusercontent.com/ChristophReich1996/Yeast-in-Microstructures-Dataset/master/README.md
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: false
+  last_checked: '2026-10-09T01:08:19Z'
+notes: 'Hosted at TUdatalib (handle tudatalib/3799), which was behind a bot challenge, so the file listing, size
+  and DOI were not read from it; the download URL is the wget link from the GitHub README and the zip was not listed
+  (annotations_verified false). Format: README says each sample is a .pt PyTorch tensor file, which has no format
+  enum, so other. Counts, splits (296/49/148), manual annotation and 128x128 crops are from the paper (EMBC 2023,
+  arXiv 2304.07597); the README example shows 256x256 and relative xcycwh boxes, an unexplained discrepancy. MIT
+  license is stated on the project page. Pixel size and microscope not stated in the paper text read. enricher:
+  license.url = project page (states MIT). Same TUdatalib item 3799 as open PRs #141, #505, #738; keep one.'
+technical:
+  method: metadata-only
+  inspected_at: '2026-10-09T01:08:19Z'
+  inspected_urls:
+  - https://tudatalib.ulb.tu-darmstadt.de/bitstream/handle/tudatalib/3799/yeast_cell_in_microstructures_dataset.zip
+  - https://tudatalib.ulb.tu-darmstadt.de/handle/tudatalib/3799
+  bytes_downloaded: 0
+  size_source: unknown
+  layout:
+    tree: "(from the GitHub README Dataformat section, not from a listing)\n{train,val,test}/\n  inputs/       \
+      \   one .pt per sample, image [128, 128]\n  instances/       one .pt per sample, instance masks [N, 128, 128]\n\
+      \  classes/         one .pt per sample, class per instance [N]\n  bounding_boxes/  one .pt per sample, boxes\
+      \ [N, 4] (x0 y0 x1 y1)\n"
+    n_files: null
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: '{train,val,test}/inputs/*.pt'
+    format: other
+    axes: yx
+    shape:
+    - 128
+    - 128
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '{train,val,test}/instances/*.pt'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: none
+    encoding: one-hot
+    classes:
+    - id: 0
+      name: trap
+    - id: 1
+      name: cell
+    alignment: same-grid
+    alignment_notes: Per README, every sample has one .pt file of the same name in inputs/, instances/, classes/
+      and bounding_boxes/. instances is [N, 128, 128] (one mask per instance, non-overlapping per paper) on the
+      input grid; the class of instance i is classes[i] (trap=0, cell=1, README).
+  - role: label
+    path_pattern: '{train,val,test}/bounding_boxes/*.pt'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: none
+    encoding: boxes-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: '[N, 4] boxes, x0 y0 x1 y1 in pixels of the 128x128 input (README Dataformat; the README code
+      example prints xcycwh relative, i.e. after the loader converts them).'
+  notes: 'Not inspected: TUdatalib still blocks this run (2026-10-09): bitstream zip HTTP 403 (no size, no range
+    requests), handle page and DSpace 6 REST serve an Anubis bot challenge, OAI-PMH 403, DSpace 7 API 404; probe
+    --download-check on the zip: usable false (HTTP 403; host tudatalib.ulb.tu-darmstadt.de not on the TensorSwitch
+    allowlist). Layout, shapes and class ids are from the GitHub README; instances are per-instance mask stacks
+    [N,H,W], not an ID image. The .pt files can only be read with torch.load (pickle), which the enricher never
+    runs, so dtype, compression and value ranges need a human check. Voxel size not found; checked: project page,
+    GitHub README, loader code (yim_dataset/data/dataset.py: no pixel size), arXiv full text (only scale bars 1
+    mm / 10 um; 128x128 crops extracted from higher-resolution raw data), Europe PMC (no open full text), DataCite
+    (no dataset DOI found); TUdatalib metadata unreachable. No size: no listing, dtypes unknown, so no estimate.
+    Duplicate of open PRs #141, #505, #738 (same item). Open: listing, size, dtypes, sample urls once TUdatalib
+    is reachable.'
