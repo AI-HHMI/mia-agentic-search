@@ -1,0 +1,175 @@
+schema_version: '1.2'
+id: nist-mds2-2155-concrete-sem-damage
+title: 2D Segmentation of Concrete Samples for Training AI Models
+short_name: Concrete SEM damage segmentation (SEM)
+description: 1,360 scanning electron microscopy fields of view (FOVs) from one concrete core (sample M3, day 180)
+  showing alkali-silica reaction damage, as PNG tiles. Masks come in three tiers - 12 FOVs with manual pixel-level
+  masks of 9 contextual classes, 106 FOVs with damage-assisted masks, and 1,360 FOVs with context-assisted masks
+  - for the classes paste damage, aggregate damage, air voids and no damage. NIST also hosts a web tool for scoring
+  predicted masks.
+landing_url: https://isg.nist.gov/deepzoomweb/data/concreteScoring
+doi: 10.18434/M32155
+repository: other
+accession: mds2-2155
+authors:
+- Peter Bajcsy
+- Sandra Feldman
+- Michael Majurski
+- Kevin Snyder
+- Mary Brady
+publications:
+- title: Approaches to training multiclass semantic image segmentation of damage in concrete
+  doi: 10.1111/jmi.12906
+  url: https://pubmed.ncbi.nlm.nih.gov/32406521/
+date_published: null
+imaging:
+  modality:
+  - other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: Scanning electron microscopy images of concrete core samples with alkali-silica reaction (ASR) degradation
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: 712219395
+  n_items: 1360
+  access: open
+  download_url: https://isg.nist.gov/deepzoomweb/concreteDownload/rawFOV.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: RGB colour PNG masks, same name stem as the raw FOV (contextMaskGT/annot_<FOV>.png, damageMask/<FOV>[.ome_damage].png)
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/usnistgov/WIPP-unet-train-plugin
+license:
+  spdx: custom
+  url: https://www.nist.gov/open/license
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-08T21:14:14Z'
+  evidence_urls:
+  - https://isg.nist.gov/deepzoomweb/data/concreteScoring
+  - https://data.nist.gov/rmm/records?@id=ark:/88434/mds2-2155
+  - https://isg.nist.gov/deepzoomweb/concreteDownload/rawFOV.zip
+  - https://isg.nist.gov/deepzoomweb/concreteDownload/damageContextAssistedMask.zip
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1111%2Fjmi.12906%22&format=json&resultType=core&pageSize=3
+  - https://pmc.ncbi.nlm.nih.gov/articles/PMC7849179/
+  - https://isg.nist.gov/deepzoomweb/concreteDownload/rawFOV.zip
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-09T00:29:52Z'
+notes: 'Four zips on the NIST page (rawFOV 690 MB, contextManualMaskGT, damageAssistedManualMask, damageContextAssistedMask),
+  listed with peek_archive: 1,360 raw .ome.png, 12 manual context masks, 106 damage-assisted masks, 1,360 context-assisted
+  masks. SEM is not a schema modality, so modality is other. enricher: paper (PMC7849179 author manuscript): backscattered
+  SEM, FEI Quanta 600, 15 kV, 200X; FOVs 1024x768 at 1.47 um, but the files are 950x712, so voxel size stays null.
+  No split stated. The raw images come from one core only; the page says a CSV of manual labels selects 1,323 accurate
+  FOVs. Publication date is not stated (NIST record modified 2019-11-18). License is the NIST open license link
+  in the NIST record. enricher: size_bytes is now the exact total of the four zips (was 971.2 MB uncompressed);
+  download_url = rawFOV.zip (masks are 3 more zips).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'rawFOV.zip (689,864,349 B)               rawFOV/Sample__<row>_<col>_.ome.png        1,360 FOVs
+
+      contextManualMaskGT.zip (351,592 B)       contextMaskGT/annot_Sample__<r>_<c>_.png      12 manual 9-class
+      masks
+
+      damageAssistedManualMask.zip (~2 MB)      damageMask/Sample__<r>_<c>_.png              106 damage-assisted
+      masks
+
+      damageContextAssistedMask.zip (20,808,474 B) damageMask/Sample__<r>_<c>_.ome_damage.png 1,360 context-assisted
+      masks
+
+      4 zips, 2,840 members, 712,219,395 B'
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://isg.nist.gov/deepzoomweb/concreteDownload/rawFOV.zip::rawFOV/Sample__11_22_.ome.png
+    - https://isg.nist.gov/deepzoomweb/concreteDownload/contextManualMaskGT.zip::contextMaskGT/annot_Sample__11_22_.png
+    - https://isg.nist.gov/deepzoomweb/concreteDownload/damageContextAssistedMask.zip::damageMask/Sample__11_22_.ome_damage.png
+    size_bytes: 2729482
+    description: 'FOV Sample__11_22_ (one of the 12 with a manual 9-class mask): raw, manual context mask and context-assisted
+      damage mask (zip members).'
+  arrays:
+  - role: raw
+    path_pattern: rawFOV.zip::rawFOV/*.ome.png
+    format: png
+    axes: yx
+    shape:
+    - 712
+    - 950
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 8-bit palette PNG with a grey palette (backscattered SEM). PNG dpi tag 25400 (= 1 px/um), a
+      default-like value that disagrees with the paper, so not used.
+  - role: label
+    path_pattern: contextManualMaskGT.zip::contextMaskGT/annot_*.png
+    format: png
+    axes: yxs
+    shape:
+    - 712
+    - 950
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: rgb-colors
+    classes: null
+    alignment: same-grid
+    alignment_notes: annot_<FOV>.png pairs with rawFOV/<FOV>.ome.png; 6 colours in the 11_22 sample. The paper names
+      9 contextual classes (paste, air void, quartzite, feldspar, augite, iron oxide, dissolution, volcanic glass,
+      damage cracks); the colour legend is only in a figure, so colours are not mapped.
+  - role: label
+    path_pattern: damage*Mask.zip::damageMask/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 712
+    - 950
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: rgb-colors
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'damageMask/<FOV>.ome_damage.png (context-assisted, all 1,360) or <FOV>.png (damage-assisted,
+      106) pairs with the raw FOV. Sample colours (0,0,0), (0,200,200), (200,0,100), (255,200,0): 4 damage classes
+      per the paper (air void, aggregate damage, paste damage, background); mapping not documented in text.'
+  notes: 'Listing: the 4 zips linked on the NIST page (central directories, exact sizes). Sampled (sample.py + ad
+    hoc PIL script, zip members): rawFOV/Sample__11_22_.ome.png (679,065 B: P-mode grey palette, 712x950, 0-255,
+    hint possibly contrast-stretched), contextMaskGT/annot_Sample__11_22_.png (2,033,244 B: RGB, 6 colours), damageMask/Sample__11_22_.ome_damage.png
+    (17,173 B: RGB, 4 colours), damageAssistedManualMask damageMask/Sample__13_39_.png (RGB, 3 colours). Values
+    from these samples only. Voxel size not found as a usable value: the paper gives 1.47 um pixel spacing for 1024x768
+    FOVs (1.505 mm x 1.1 mm), but the files are 950x712 (both axes x0.928), and whether they were cropped or resampled
+    is not stated; PNG dpi tag (1 px/um) treated as a default. isg.nist.gov is not on the TensorSwitch allowlist.'
