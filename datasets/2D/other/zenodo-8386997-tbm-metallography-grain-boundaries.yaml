@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-8386997-tbm-metallography-grain-boundaries
 title: 'Texture Boundary in Metallography (TBM): metallographic image crops with expert grain-boundary labels'
 short_name: Metallography grain boundary labels (TBM)
-description: 320 cropped 128x128 pixel squares of metallographic scans (approximately 1.2 mm x 0.8 mm fields) with expert
-  manual labels of grain boundaries as ground truth for texture boundary detection, provided as PNG inputs, expert label images
-  in three renderings (expert_label, expert_inv_label, expert_inv_label_thin) and the 32 full metallographic images for reference.
+description: 320 cropped 128x128 pixel squares of metallographic scans (approximately 1.2 mm x 0.8 mm fields) with expert manual labels
+  of grain boundaries as ground truth for texture boundary detection, provided as PNG inputs, expert label images in three renderings
+  (expert_label, expert_inv_label, expert_inv_label_thin) and the 32 full metallographic images for reference.
 landing_url: https://zenodo.org/records/8386997
 doi: 10.5281/zenodo.8386997
 repository: Zenodo
@@ -18,13 +18,14 @@ imaging:
   - other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism: []
   sample: Metallographic (metal microstructure) scans; the exact material and optical setup are not stated
   labels_stains: []
 data:
   formats:
   - png
+  - jpeg
   size_bytes: 92766034
   n_items: 320
   access: open
@@ -53,16 +54,131 @@ provenance:
   evidence_urls:
   - https://zenodo.org/records/8386997
   - https://zenodo.org/records/8386997/files/TBM.zip
-  confidence: 0.6
+  - https://zenodo.org/api/records/8386997
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T21:12:23Z'
-notes: 'Metallography (grain structure of a metal), not biological; included because it is optical/electron-style microscopy
-  imagery with expert dense labels. Zip listing (peek_archive): input_image 320 PNG, expert_label 320 PNG, expert_inv_label
-  320 PNG, expert_inv_label_thin 320 JPG, full_metallographic_images_for_reference 32 PNG, plus README.md, which states 128x128
-  crops of scans of about 1.2 mm x 0.8 mm tagged by a materials-science expert. The imaging technique (optical or other),
-  pixel size, material, and number of source scans are not stated on the dataset page, README or file listing; no paper is
-  linked and authors are given as Anonymous, so no publication is listed. Modality is therefore other, channels and voxel_size_nm
-  are null. Annotation type is boundary lines (texture boundary detection), recorded as other.'
+  last_checked: '2026-10-09T23:45:00Z'
+notes: 'Metallography (grain structure of a metal), not biological; included because it is optical/electron-style microscopy imagery
+  with expert dense labels. Zip listing (peek_archive): input_image 320 PNG, expert_label 320 PNG, expert_inv_label 320 PNG, expert_inv_label_thin
+  320 JPG, full_metallographic_images_for_reference 32 PNG, plus README.md, which states 128x128 crops of scans of about 1.2 mm x 0.8
+  mm tagged by a materials-science expert. The imaging technique (optical or other), pixel size, material, and number of source scans
+  are not stated on the dataset page, README or file listing; no paper is linked and authors are given as Anonymous, so no publication
+  is listed. Modality is therefore other, channels and voxel_size_nm are null. Annotation type is boundary lines (texture boundary detection),
+  recorded as other. enricher: formats png + jpeg (expert_inv_label_thin is JPEG; was png only); channels 3 (input crops are RGB with
+  differing samples; was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |-
+      TBM.zip/TBM/
+        README.md                                    960 B
+        input_image/                     320 files  10.1 MB  .png  (<scan>-<y0>-<y1>-<x0>-<x1>.png)
+        expert_label/                    320 files   4.5 MB  .png
+        expert_inv_label/                320 files   6.5 MB  .png
+        expert_inv_label_thin/           320 files   2.7 MB  .jpg
+        full_metallographic_images_for_reference/  32 files  70.6 MB  .png
+    n_files: 1314
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/8386997/files/TBM.zip::TBM/input_image/21-0-256-0-0.png
+    - https://zenodo.org/records/8386997/files/TBM.zip::TBM/expert_label/21-0-256-0-0.png
+    size_bytes: 49274
+    description: one 128x128 RGB input crop and its expert grain-boundary label
+  arrays:
+  - role: raw
+    path_pattern: input_image/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 128
+    - 128
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 2
+    - 212
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: expert_label/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 128
+    - 128
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: other
+    alignment: same-grid
+    alignment_notes: 'same file name as the input crop; grey boundary map stored as RGB (samples_identical: true), white (255) background
+      with dark boundary lines and anti-aliased grey edges (256 values)'
+  - role: label
+    path_pattern: expert_inv_label/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 128
+    - 128
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: other
+    alignment: same-grid
+    alignment_notes: 'inverted rendering of expert_label (black background, bright boundaries), grey stored as RGB (samples_identical:
+      true)'
+  - role: label
+    path_pattern: expert_inv_label_thin/*.jpg
+    format: jpeg
+    axes: yx
+    shape:
+    - 128
+    - 128
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: other
+    alignment: same-grid
+    alignment_notes: 'thinned inverted boundary lines, single-channel JPEG (lossy: 15 values in one sample, mostly 0 plus JPEG noise
+      near lines)'
+  - role: other
+    path_pattern: full_metallographic_images_for_reference/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 896
+    - 1320
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    alignment: unknown
+    alignment_notes: '32 full scans the crops come from (README: about 1.2 mm x 0.8 mm each); crop offsets appear to be in the crop
+      file names but are not documented'
+  notes: 'Listed the Zenodo record with --expand-zips (1314 zip members). Probed crop 21-0-256-0-0 in all four crop folders and full
+    image 14.png. Sampled input/expert_label and expert_inv_label/expert_inv_label_thin of that crop (a few KB each): input RGB 2-212
+    (mean 102, samples differ, so real colour); labels are grey boundary maps, not binary. value_range from one sample per array. Voxel
+    size not stated; checked: PNG headers (no physical size), Zenodo API record, README.md (only: scans of approximately 1.2 mm x 0.8
+    mm), no paper or code linked (authors Anonymous). Imaging technique not stated. download_url is the one direct zip (92.8 MB).'
