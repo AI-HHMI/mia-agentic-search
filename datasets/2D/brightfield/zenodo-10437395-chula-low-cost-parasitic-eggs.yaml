@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: zenodo-10437395-chula-low-cost-parasitic-eggs
 title: Low-Cost Microscopic Images for Parasitic Egg Detection
 short_name: Parasitic eggs, USB microscope (brightfield)
-description: Microscope images of four parasitic egg types (Ascaris lumbricoides, Hymenolepis diminuta, Fasciolopsis buski, Taenia spp.) from Chulalongkorn University, captured at 10x with a low-cost USB microscope (640x480 px) and labelled by experts. In the zip the images are sorted into one folder per egg class, with a class-index CSV.
+description: Microscope images of four parasitic egg types (Ascaris lumbricoides, Hymenolepis diminuta, Fasciolopsis
+  buski, Taenia spp.) from Chulalongkorn University, captured at 10x with a low-cost USB microscope (640x480 px)
+  and labelled by experts. In the zip the images are sorted into one folder per egg class, with a class-index CSV.
 landing_url: https://zenodo.org/records/10437395
 doi: null
 repository: Zenodo
@@ -23,9 +25,14 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
-  organism: []
-  sample: Parasitic worm eggs from stool samples (Ascaris lumbricoides, Hymenolepis diminuta, Fasciolopsis buski, Taenia spp.)
+  channels: 3
+  organism:
+  - Ascaris lumbricoides
+  - Hymenolepis diminuta
+  - Fasciolopsis buski
+  - Taenia
+  sample: Parasitic worm eggs from stool samples (Ascaris lumbricoides, Hymenolepis diminuta, Fasciolopsis buski,
+    Taenia spp.)
   labels_stains: []
 data:
   formats:
@@ -38,12 +45,15 @@ data:
 annotations:
   present: true
   types:
+  - bounding-box
   - classification
   coverage: dense
-  format: Folder per egg class (4 classes) plus model_class.csv mapping class index to name
+  format: 'model_label.csv: one row per egg box (img_name, class_id, xmin, xmax, ymin, ymax in pixels); model_class.csv
+    maps class_id 0-3 to name; images also sorted into one folder per egg class'
   source: manual
 ml:
   tasks:
+  - detection
   - classification
   splits_provided: false
   benchmark: null
@@ -59,10 +69,87 @@ provenance:
   - https://zenodo.org/api/records/10437395
   - https://zenodo.org/records/10437395/files/Chula_parasitic_egg_detection.zip
   - https://arxiv.org/pdf/2107.00968
-  confidence: 0.55
+  confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T07:40:00Z'
-notes: 'Record text says 162 images (Ascaris 67, H. diminuta 27, F. buski 32, Taenia 36) but the zip lists 2287 JPGs (H. diminuta 915, Ascaris 849, Taenia 423, F. buski 100), so the zip likely contains crops or augmented copies; counts unreconciled. The arXiv preprint (2107.00968) confirms 640x480 px, 10x USB microscope, 162 images labelled by experts, and 100x100 px egg/background patch labelling for training; it does not state whether box annotations are released, and the zip contents were not matched to the 162 images. Pixel size not stated. Zenodo lists a 10.1007 DOI as the record DOI field; the Zenodo DOI itself was not seen, so doi is null.'
+  last_checked: '2026-10-09T08:20:00Z'
+notes: 'Zenodo text: 162 images (AL 67, HD 27, FB 32, Tn 36), 640x480 px, 10x, labelled by experts. The zip holds
+  2287 JPGs (HD 915, AL 849, Tn 423, FB 100), apparently more images or crops than described; counts unreconciled.
+  Pixel size not stated (Zenodo, arXiv 2107.00968). Zenodo''s DOI field holds the paper DOI, so doi is null. enricher:
+  model_label.csv in the zip has 3897 pixel bounding boxes (class_id 0-3); 2214 of the 2287 JPGs have rows, 1652
+  rows name images not in the zip, 153 rows have xmax<xmin or ymax<ymin. Added bounding-box and detection (were
+  classification only). organisms: one per folder: Ascaris lumbricoides = ''Ascaris lumbricoides/'', Hymenolepis
+  diminuta = ''Hymenolepis diminuta/'', Fasciolopsis buski = ''large egg (Fascilopsis buski)/'', Taenia = ''Taenia
+  spp_/'' (was empty). channels 3 = RGB JPEG (was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Chula_parasitic_egg_detection.zip  94,039,179 B, 2289 members\n  USB microscope/\n    model_class.csv\
+      \                       96 B\n    model_label.csv                  131,449 B\n    Ascaris lumbricoides/  \
+      \         849 .jpg   31.0 MB\n    Hymenolepis diminuta/           915 .jpg   42.6 MB\n    Taenia spp_/   \
+      \                 423 .jpg   13.2 MB\n    large egg (Fascilopsis buski)/  100 .jpg    6.6 MB\n"
+    n_files: 2289
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/10437395/files/Chula_parasitic_egg_detection.zip::USB microscope/Ascaris lumbricoides/AL19_7.jpg
+    - https://zenodo.org/records/10437395/files/Chula_parasitic_egg_detection.zip::USB microscope/model_label.csv
+    - https://zenodo.org/records/10437395/files/Chula_parasitic_egg_detection.zip::USB microscope/model_class.csv
+    size_bytes: 172828
+    description: one Ascaris image (AL19_7.jpg, one box in model_label.csv) plus the box table and class map
+  arrays:
+  - role: raw
+    path_pattern: Chula_parasitic_egg_detection.zip::USB microscope/*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 480
+    - 640
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 248
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: Chula_parasitic_egg_detection.zip::USB microscope/model_label.csv
+    format: csv
+    axes: null
+    shape:
+    - 3897
+    - 7
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: Ascaris lumbricoides
+    - id: 1
+      name: Hymenolepis diminuta
+    - id: 2
+      name: large egg (Fascilopsis buski)
+    - id: 3
+      name: Taenia spp_
+    alignment: same-grid
+    alignment_notes: Rows are keyed by img_name (file basename, unique across class folders); xmin/xmax/ymin/ymax
+      are pixel coordinates in the 640x480 image (max x 640, max y 480). Column order is xmin, xmax, ymin, ymax,
+      not xmin, ymin. 153 rows have xmax<xmin or ymax<ymin; 1652 rows refer to images not in the zip; 73 zip images
+      have no row. Class ids from model_class.csv; the class folder also gives the image-level label.
+  notes: 'Complete listing of the one Zenodo zip (2289 members, exact sizes). JPEG headers probed in 3 class folders
+    (Ascaris, Taenia, F. buski; Hymenolepis probe failed on a transient Zenodo TLS error): all 480x640x3 uint8,
+    matching the stated 640x480. One image sampled (AL19_7.jpg, 41,283 B): values 0-248, mean 201, RGB samples not
+    identical; value_range is from one sample. model_label.csv read in full via peek_archive (131,449 B): 3897 rows,
+    columns index,img_name,class_id,xmin,xmax,ymin,ymax; per class 1022/868/966/1041. The arXiv paper converts to
+    greyscale and enhances contrast before training; the released JPEGs are colour, so they appear unprocessed (not
+    stated). Voxel size not found; checked: JPEG headers (no calibration), Zenodo API record, zip CSVs, arXiv 2107.00968
+    full text, SN Comput Sci DOI (no Europe PMC full text). Download: the Zenodo zip and its members are usable
+    direct links (range requests).'
