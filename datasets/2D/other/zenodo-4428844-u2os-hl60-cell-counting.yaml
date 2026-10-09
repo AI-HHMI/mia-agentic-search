@@ -1,11 +1,9 @@
 schema_version: '1.2'
 id: zenodo-4428844-u2os-hl60-cell-counting
-title: Microscope images of human cancer cell lines (U2OS and HL-60) with per-image
-  cell counts
+title: Microscope images of human cancer cell lines (U2OS and HL-60) with per-image cell counts
 short_name: U2OS and HL-60 cell counting images
-description: 165 labelled microscope images of human osteosarcoma (U2OS) and leukemia
-  (HL-60) cell lines for cell counting (133 training, 32 test). The cell count is
-  encoded in each TIFF file name (cell line . condition . count .tiff).
+description: 165 labelled microscope images of human osteosarcoma (U2OS) and leukemia (HL-60) cell lines for cell counting
+  (133 training, 32 test). The cell count is encoded in each TIFF file name (cell line . condition . count .tiff).
 landing_url: https://zenodo.org/records/4428844
 doi: 10.5281/zenodo.4428844
 repository: Zenodo
@@ -17,8 +15,7 @@ authors:
 - Weglarz-Tomczak, Ewelina
 - Tomczak, Jakub M.
 publications:
-- title: Deep Learning and Transfer Learning for Automatic Cell Counting in Microscope
-    Images of Human Cancer Cell Lines
+- title: Deep Learning and Transfer Learning for Automatic Cell Counting in Microscope Images of Human Cancer Cell Lines
   doi: 10.3390/app11114912
   url: https://doi.org/10.3390/app11114912
 date_published: '2021-01-08'
@@ -27,7 +24,7 @@ imaging:
   - other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism:
   - Homo sapiens
   sample: Cultured human cancer cell lines U2OS (osteosarcoma) and HL-60 (leukemia)
@@ -69,11 +66,49 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T02:42:50Z'
-notes: 'Labels are per-image cell counts only (no masks or points). Zip listing (peek_archive):
-  166 files, 10.1 MB compressed, 81.6 MB uncompressed, TIFFs named <cell line>.<condition>.<count>.tiff;
-  the Zenodo description counts 165 labelled images (133 training, 32 test) and mentions
-  training and test folders. Imaging modality, magnification, pixel size, image dimensions
-  and who counted the cells are not stated on the Zenodo record or in the paper abstract;
-  the paper full text is not open access (Europe PMC) and the MDPI page returned 403,
-  so Methods were not read. Modality is therefore set to other.'
+  last_checked: '2026-10-09T03:10:00Z'
+notes: 'Labels are per-image cell counts only (no masks or points). Zip listing (peek_archive): 166 files, 10.1 MB compressed,
+  81.6 MB uncompressed, TIFFs named <cell line>.<condition>.<count>.tiff; the Zenodo description counts 165 labelled images
+  (133 training, 32 test) and mentions training and test folders. Imaging modality, magnification, pixel size, image dimensions
+  and who counted the cells are not stated on the Zenodo record or in the paper abstract; the paper full text is not open
+  access (Europe PMC) and the MDPI page returned 403, so Methods were not read. Modality is therefore set to other. enricher:
+  channels 1 (single-sample grey TIFFs).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                                        1 files     10.1 MB  .zip\nzip contents:\ncell-counter-data_U2OS_HL-60.zip/cell-counter-data_U2OS_HL-60/\n\
+      \  test/                                                    32 files     15.8 MB  .tiff\n  train/                  \
+      \                                133 files     65.8 MB  .tiff\n  (+1 OS metadata file not shown)\nfile names: <cell\
+      \ line>.<condition>.<count>.tiff, e.g. U2OS.C5.117.tiff, HL60.C4-2.2.tiff"
+    n_files: 167
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/4428844/files/cell-counter-data_U2OS_HL-60.zip::cell-counter-data_U2OS_HL-60/test/U2OS.C5.117.tiff
+    size_bytes: 494724
+    description: One test image (U2OS, condition C5, 117 cells); the label is the count in the file name
+  arrays:
+  - role: raw
+    path_pattern: cell-counter-data_U2OS_HL-60.zip/cell-counter-data_U2OS_HL-60/*/*.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 700
+    - 700
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range:
+    - 2
+    - 15
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Labels are not stored as files: the cell count is the last dot-separated field of each file name (Zenodo
+      description). All member files are ~0.5 MB, consistent with 700x700 uint8 throughout (two probed).'
+  notes: 'Listing: tools/listing.py on the Zenodo record with --expand-zips: 1 file, 10,119,477 B (file-listing, complete),
+    166 zip members (165 TIFF + .DS_Store). Probed U2OS.C5.117.tiff: plain single-page TIFF 700x700 uint8, uncompressed, no
+    calibration. Samples (values from two images): U2OS.C5.117 4-15 (mean 10.0), HL60.C1.63 2-15 (mean 6.0): very low dynamic
+    range within uint8, which suggests a rescaled export, but the docs don''t say (normalization unknown). Voxel size not
+    found; checked: TIFF headers, Zenodo record, paper (Europe PMC has metadata only; MDPI full text returned HTTP 403). Imaging
+    modality still unstated. Download: the zip and its members pass --download-check (range requests ok).'
