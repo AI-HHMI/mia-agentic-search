@@ -1,0 +1,141 @@
+schema_version: '1.2'
+id: zenodo-15039035-adnp15-neuritic-plaques-at8
+title: 'ADNP-15: Neuritic plaque segmentation dataset in human brain whole slide images (AT8)'
+short_name: Neuritic plaques AT8 brain patches (ADNP-15)
+description: 256x256 patches from AT8 (phospho-tau) immunostained frontal cortex whole-slide images of 15 Alzheimer's
+  disease brain donors (Neuro-CEB brain bank, Hamamatsu NanoZoomer scans), with neuritic plaque masks from expert
+  manual annotation of about 4,000 plaques. 25,224 patches in total, shipped raw and in four stain-normalized versions
+  (Reinhard, Macenko, Vahadane, HTK) plus Fourier-enhanced variants, split by donor (12 train, 3 test).
+landing_url: https://zenodo.org/records/15039035
+doi: 10.5281/zenodo.15039035
+repository: Zenodo
+accession: '15039035'
+authors:
+- Chenxi Zhao
+publications:
+- title: 'ADNP-15: An Open-Source Histopathological Dataset for Neuritic Plaque Segmentation in Human Brain Whole
+    Slide Images with Frequency Domain Image Enhancement for Stain Normalization'
+  doi: 10.48550/arXiv.2505.05041
+  url: https://arxiv.org/abs/2505.05041
+date_published: '2025-03-17'
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: AT8-immunostained frontal cortex sections from 15 Alzheimer's disease patients (French Neuro-CEB brain
+    bank)
+  labels_stains:
+  - AT8 (phospho-tau)
+data:
+  formats:
+  - png
+  size_bytes: 46822430611
+  n_items: 25224
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: sparse
+  format: PNG masks per patch (origin/<subject>/masks); source annotations in XML
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/chenxizhao666/Chenxi_Zhao_AD_pathology_slides_segmentation-3/
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-08T20:22:30Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/15039035
+  - https://arxiv.org/abs/2505.05041
+  - https://arxiv.org/pdf/2505.05041
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-09T00:13:08Z'
+notes: 'Zenodo holds one split ZIP64 archive in 9 byte-split parts (...-3aa to -3ai, 46.8 GB; all parts must be
+  concatenated). The central directory read from the last part lists PNG patches under origin/<subject>/{patches,masks,HTK,macenko,reinhard,vahadane}
+  and Fourier-enhanced variants; The 25,224 patches, the donor-level 12/3 train/test split and the ~4,000 annotated
+  plaques come from the paper and Zenodo description. Pixel size and scan magnification are not stated in the paper
+  or on Zenodo. ROI-based translation augmentation is already applied in the augmented folders. The Zenodo record
+  has no direct per-file URLs usable as one download, hence download_url is null. enricher: full central directory
+  read: 25,224 patches + masks over 15 subjects; masks binary {0,255}.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Chenxi_Zhao_AD_pathology_slides_segmentation-3aa ... -3ai   9 byte-split parts of one ZIP64\n  (8 x 5,368,709,120\
+      \ B + 3,872,757,651 B = 46,822,430,611 B; concatenate before unzipping)\n  302,901 entries, 46,770,222,119\
+      \ B uncompressed (PNG, stored ~uncompressed)\n  origin/<subject 1-15>/\n    patches/patch_<NNNN>[_c<k>].png\
+      \          25,224 RGBA 256x256 (5,013 without _c suffix)\n    masks/mask_<NNNN>[_c<k>].png             25,224\
+      \ binary masks\n    HTK|macenko|reinhard|vahadane/normalized_patch_<NNNN>[_c<k>].png   25,224 each\n  Fourier/<subject>/\n\
+      \    Patches|HTK|Macenko|Reinhard|Vahadane/... 25,224 each (Fourier-enhanced)\n    masks/...             \
+      \                   25,224"
+    n_files: 9
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: origin/*/patches/patch_*.png
+    format: png
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 4
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: RGBA PNG patches cut from AT8 WSIs; _c<k> suffixes are the ROI-translation augmentations of
+      patch <NNNN>. Stain-normalized copies (HTK, macenko, reinhard, vahadane) and Fourier-enhanced copies under
+      Fourier/ share the same names.
+  - role: label
+    path_pattern: origin/*/masks/mask_*.png
+    format: png
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: neuritic plaque
+    alignment: same-grid
+    alignment_notes: patches/patch_<NNNN>[_c<k>].png pairs with masks/mask_<NNNN>[_c<k>].png in the same subject
+      folder; both 256x256 in the sample.
+  notes: 'The 9 Zenodo parts are one byte-split ZIP64: an ad hoc reader treated them as one range-readable file
+    and read the full central directory (302,901 entries, exact sizes; ~51 MB of directory read) and three members:
+    origin/1/patches/patch_0000.png (201,986 B: RGBA uint8 256x256x4, 0-255), origin/1/masks/mask_0000.png (586
+    B: L uint8, values {0,255}, 97% zeros) and Fourier/1/HTK/normalized_patch_0000.png (219,732 B, RGBA). Values
+    from these samples only; normalization none for origin/patches is inferred from the separate stain-normalized
+    folders. No member can be fetched as <url>::<member> because offsets span the concatenated parts, so technical.sample
+    is null and data.download_url stays null (9 parts). Voxel size not found; checked: Zenodo API description (NanoZoomer,
+    256x256 patches, no magnification), arXiv 2505.05041 full text (pdftotext: no pixel size or magnification).'
