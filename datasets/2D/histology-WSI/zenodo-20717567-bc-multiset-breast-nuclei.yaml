@@ -1,12 +1,13 @@
 schema_version: '1.2'
 id: zenodo-20717567-bc-multiset-breast-nuclei
-title: 'BC-MultiSet: A Multi-Task Dataset for Nucleus Segmentation, Classification, and Receptor Status Prediction
-  in Invasive Breast Carcinoma'
+title: 'BC-MultiSet: A Multi-Task Dataset for Nucleus Segmentation, Classification, and Receptor Status
+  Prediction in Invasive Breast Carcinoma'
 short_name: Breast carcinoma H&E nuclei (BC-MultiSet)
-description: 5,586 H&E-stained image patches (256 x 256 px, 40x) from whole-slide images of 50 invasive breast carcinoma
-  patients, with per-nucleus polygon annotations for three classes (tumor, fibroblast, inflammatory cells), 109,180 nuclei
-  in total, labelled by two pathologists and reconciled by consensus. Organized into four cross-validation folds,
-  with patient-level clinical and molecular data (ER, PR, HER2, subtype, Ki67, TILs, grade, age).
+description: 5,586 H&E-stained image patches (256 x 256 px, 40x) from whole-slide images of 50 invasive
+  breast carcinoma patients, with per-nucleus polygon annotations for three classes (tumor, fibroblast,
+  inflammatory cells), 109,180 nuclei in total, labelled by two pathologists and reconciled by consensus.
+  Organized into four cross-validation folds, with patient-level clinical and molecular data (ER, PR,
+  HER2, subtype, Ki67, TILs, grade, age).
 landing_url: https://zenodo.org/records/20717567
 doi: 10.5281/zenodo.20717567
 repository: Zenodo
@@ -44,8 +45,8 @@ annotations:
   - instance-segmentation
   - classification
   coverage: dense
-  format: per-patch NumPy .npy files holding nucleus polygon annotations with class (tumor / inflammatory / fibroblast);
-    types.csv per fold; patient-level clinical spreadsheet (xlsx)
+  format: per-patch NumPy .npy files holding nucleus polygon annotations with class (tumor / inflammatory
+    / fibroblast); types.csv per fold; patient-level clinical spreadsheet (xlsx)
   source: manual
 ml:
   tasks:
@@ -68,9 +69,70 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T23:10:00Z'
-notes: 'Checked the Zenodo record (full description, file listing) and the zip contents with peek_archive (11,188 files:
-  5,591 .png images and 5,591 .npy label files, folds 1-4; the description states 5,586 patches, the listing shows 5 more
-  files). No related paper is listed on the record, and a title search found none, so pixel size, scanner and staining protocol
-  are not stated anywhere checked; voxel_size_nm is null. The .npy polygon format was not opened. Splits are four cross-validation
-  folds.'
+  last_checked: '2026-10-09T23:25:13Z'
+notes: 'Checked the Zenodo record (full description, file listing) and the zip contents with peek_archive
+  (11,188 files: 5,591 .png images and 5,591 .npy label files, folds 1-4; the description states 5,586
+  patches, the listing shows 5 more files). No related paper is listed on the record, and a title search
+  found none, so pixel size, scanner and staining protocol are not stated anywhere checked; voxel_size_nm
+  is null. enricher: the .npy labels are pickled object arrays (header: shape (), dtype object), not opened;
+  class_weights.txt lists 4 pixel classes. Splits are four cross-validation folds.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: './   1 file  684.6 MB  BC-MultiSet-50.zip
+
+      BC-MultiSet-50.zip/BC-MultiSet-50/BC-MultiSet.xlsx, class_weights.txt
+
+      BC-MultiSet-50.zip/BC-MultiSet-50/fold{1..4}/types.csv          img,type (tissue type per patch)
+
+      BC-MultiSet-50.zip/BC-MultiSet-50/fold{1..4}/images/   5591 files 668.9 MB .png  <slide>_Crop_<n>_y<Y>_x<X>.png,
+      256x256 RGB
+
+      BC-MultiSet-50.zip/BC-MultiSet-50/fold{1..4}/labels/   5591 files   2.9 GB .npy  same stems (pickled
+      object arrays)'
+    n_files: 11188
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/20717567/files/BC-MultiSet-50.zip::BC-MultiSet-50/fold1/images/15866_Crop_10_y0_x0.png
+    - https://zenodo.org/records/20717567/files/BC-MultiSet-50.zip::BC-MultiSet-50/fold1/labels/15866_Crop_10_y0_x0.npy
+    size_bytes: 653635
+    description: One fold-1 patch and its label file
+  arrays:
+  - role: raw
+    path_pattern: BC-MultiSet-50.zip/BC-MultiSet-50/fold[1-4]/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: H&E RGB patches; y/x in the name are the offset in the crop (192 px stride in the
+      names seen).
+  - role: label
+    path_pattern: BC-MultiSet-50.zip/BC-MultiSet-50/fold[1-4]/labels/*.npy
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    encoding: unknown
+    classes: null
+    alignment: unknown
+    alignment_notes: 'Pairing rule: labels/<stem>.npy pairs with images/<stem>.png in the same fold. NPY
+      header says shape (), dtype object: a pickled Python object (likely a dict of maps), which the enricher
+      does not unpickle. class_weights.txt reports 4 pixel classes (0: ~84%, 1: ~13%, 2: ~1.4%, 3: ~1%)
+      without names.'
+  notes: 'Listing: listing.py --expand-zips (1 file, 684,588,642 B exact, 11,188 members). Probed fold1/images/15866_Crop_10_y0_x0.png
+    (256x256x3 uint8). Read the .npy header of the paired label (zipfile + numpy.lib.format.read_array_header,
+    no unpickling): object dtype, so label contents could not be inspected safely; np.load(allow_pickle=False)
+    refuses it. Read class_weights.txt and fold1/types.csv with peek_archive --cat. Voxel size not found;
+    checked: PNG header, Zenodo description, class_weights.txt; no paper. Not download-ready: 2D; labels
+    would need a non-pickle export.'
