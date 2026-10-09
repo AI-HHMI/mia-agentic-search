@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: github-deponker-bbbc041seg-blood-cell-masks
 title: 'BBBC041Seg: segmentation masks for blood cells in P. vivax malaria blood smears'
 short_name: Malaria blood smear cell masks (brightfield)
-description: 1,328 brightfield images of Giemsa-stained blood smears (the BBBC041v1 images) with pixel-level ground-truth masks for uninfected cells (red blood cells, leukocytes) and infected cells (gametocytes, rings, trophozoites, schizonts), about 93,500 labelled objects. Released with the paper's benchmark of U-Net variants and classical segmentation methods.
+description: 1,328 brightfield images of Giemsa-stained blood smears (the BBBC041v1 images) with pixel-level ground-truth
+  masks for uninfected cells (red blood cells, leukocytes) and infected cells (gametocytes, rings, trophozoites, schizonts),
+  about 93,500 labelled objects. Released with the paper's benchmark of U-Net variants and classical segmentation methods.
 landing_url: https://github.com/Deponker/Blood-cell-segmentation-dataset
 doi: null
 repository: other
@@ -36,18 +38,19 @@ imaging:
   - Giemsa
 data:
   formats:
-  - other
-  size_bytes: null
+  - png
+  - jpeg
+  size_bytes: 2302833298
   n_items: 1328
   access: open
-  download_url: null
-  download_method: other
+  download_url: https://drive.usercontent.google.com/download?id=1nG-ra6BPAZSTsdYCvedzCo-JLD7jdH71&export=download&confirm=t
+  download_method: http
 annotations:
   present: true
   types:
-  - instance-segmentation
+  - semantic-segmentation
   coverage: dense
-  format: pixel-level ground-truth mask per image (1,328 masks); Dataset Ninja converts them to Supervisely format
+  format: binary foreground mask per image (PNG, RGB-stored, values 0/255), same file name as the image in Mask/
   source: unknown
 ml:
   tasks:
@@ -65,10 +68,77 @@ provenance:
   - https://raw.githubusercontent.com/Deponker/Blood-cell-segmentation-dataset/main/README.md
   - https://datasetninja.com/blood-cell-segmentation
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1016%2Fj.tice.2021.101653%22&format=json&resultType=core&pageSize=3
-  confidence: 0.5
+  - https://raw.githubusercontent.com/Deponker/Blood-cell-segmentation/main/README.md
+  - https://bbbc.broadinstitute.org/BBBC041
+  confidence: 0.6
 verification:
   url_ok: true
   license_found: false
-  annotations_verified: false
-  last_checked: '2026-10-09T13:10:00Z'
-notes: 'The repository README links one Google Drive file (1,328 original images plus 1,328 ground-truth masks, 2,656 files); the Drive file was not opened, so file format (formats is other) and size are unverified. No license file exists in the GitHub repo (LICENSE and LICENSE.md return 404). Dataset Ninja lists MIT for the dataset, but that is a third-party statement; the underlying BBBC041v1 images are CC BY-NC-SA 3.0 by Jane Hung (see catalog record bbbc041-malaria-pvivax-blood-smears), so the effective terms are unclear and the license is left unknown. Split 1,169 train / 159 test is from Dataset Ninja. Annotation procedure is not described in the README or the paper abstract; the paper full text is not open access and was not read. Differs from the BBBC041 record: same images, but pixel-level masks instead of bounding boxes.'
+  annotations_verified: true
+  last_checked: '2026-10-09T15:50:00Z'
+notes: 'Google Drive file ''Final data.zip'' (2.30 GB; direct link with confirm=t supports range requests): Original/ 1,209
+  PNG + 119 JPG images, Mask/ 1,328 PNG masks, paired by file name (UUID stem). enricher: masks are binary foreground (0/255)
+  in both sampled pairs, so types changed instance-segmentation -> semantic-segmentation; no per-class labels in the masks.
+  No license for the dataset repo (LICENSE 404); the code repo README says ''Distributed under the MIT License'' for the code
+  only; Dataset Ninja lists MIT (third party); BBBC041v1 images are CC BY-NC-SA 3.0. License kept unknown. Split 1,169 / 159
+  from Dataset Ninja; no split folders in the zip. Paper is not open access; annotation procedure not read. Same images as
+  bbbc041-malaria-pvivax-blood-smears but pixel masks.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Final data.zip (2.30 GB, 2,656 members)\n  Final data/Final data/New folder/Original/   1,209 .png (2.23 GB) +\
+      \ 119 .jpg (29 MB)  RGB images\n  Final data/Final data/New folder/Mask/       1,328 .png (52.9 MB)  binary masks, same\
+      \ stem as the image"
+    n_files: 2656
+    listing_complete: true
+  sample:
+    urls:
+    - https://drive.usercontent.google.com/download?id=1nG-ra6BPAZSTsdYCvedzCo-JLD7jdH71&export=download&confirm=t::Final
+      data/Final data/New folder/Original/002f20ad-2ace-499c-9335-c9080bc3e6b5.png
+    - https://drive.usercontent.google.com/download?id=1nG-ra6BPAZSTsdYCvedzCo-JLD7jdH71&export=download&confirm=t::Final
+      data/Final data/New folder/Mask/002f20ad-2ace-499c-9335-c9080bc3e6b5.png
+    size_bytes: null
+    description: one 1600x1200 RGB smear image and its binary mask
+  arrays:
+  - role: raw
+    path_pattern: Final data/Final data/New folder/Original/*.{png,jpg}
+    format: png
+    axes: yxs
+    shape:
+    - 1200
+    - 1600
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 119 of 1,328 images are JPEG (e.g. 010961af...jpg, 1944x1383); sizes vary (1600x1200, 1944x1383 seen)
+  - role: label
+    path_pattern: Final data/Final data/New folder/Mask/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1200
+    - 1600
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: Mask/<stem>.png pairs with Original/<stem>.png or .jpg; shapes matched in both sampled pairs. Masks are
+      greyscale stored as RGB (all 3 channels identical, values {0,255}).
+  notes: 'Listing from the zip central directory of the Drive file (peek_archive): 2,656 members, 2,311.1 MB uncompressed;
+    zip 2,302,833,298 bytes. Sampled 2 pairs by range (1.59 MB): 002f20ad (PNG 1200x1600x3 uint8, 0-255) + mask (2 values
+    0/255, channels identical); 010961af (JPG 1383x1944x3, 25-170) + mask (0/255). Value ranges from these samples. Pixel
+    size: not found; checked image metadata (mask PNG says 72 dpi, a default), dataset README, code README, BBBC041 page,
+    paper abstract (full text closed).'
