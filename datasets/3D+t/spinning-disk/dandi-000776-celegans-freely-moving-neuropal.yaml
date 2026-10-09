@@ -32,7 +32,10 @@ imaging:
   - spinning-disk
   - confocal
   dimensionality: 3D+t
-  voxel_size_nm: null
+  voxel_size_nm:
+    x: 540
+    y: 540
+    z: 540
   channels: null
   organism:
   - Caenorhabditis elegans
@@ -55,6 +58,7 @@ annotations:
   types:
   - points
   - classification
+  - instance-segmentation
   coverage: partial
   format: 'NWB files: PlaneSegmentation ROI locations with neuron IDs and labeled activity traces'
   source: unknown
@@ -81,12 +85,134 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-09T20:50:00Z'
-notes: Read the DANDI API record (38 NWB files of about 27 GB each, 1.01 TB, CC-BY-4.0) and its asset listing, and the Cell
-  paper via PMC (Methods read in its first 100k characters). Lateral pixel size is not stated in the paper text read, the
-  DANDI record or the Zenodo record; the NWB files were not opened. Only the z spacing (0.54 um) is stated, in the paper,
-  so voxel_size_nm stays null. The paper does not clearly say how neuron identities were assigned beyond NeuroPAL colour and
-  position (segmentation used a 3D U-Net, ANTSUN pipeline), so annotation source is unknown and annotations_verified is false.
-  Related Zenodo 10.5281/zenodo.8150515 holds only model weights and analysis outputs, not images. Different from DANDI 000714,
-  000472 and the Zenodo NeuroPAL atlas (other NeuroPAL sets).
+  annotations_verified: true
+  last_checked: '2026-10-09T21:50:00Z'
+notes: 'Read the DANDI API record (38 NWB files of about 27 GB each, 1.01 TB, CC-BY-4.0) and its asset listing, and the Cell
+  paper via PMC. The paper states only the z spacing (0.54 um). It does not clearly say how neuron identities were assigned
+  beyond NeuroPAL colour and position (segmentation used a 3D U-Net, ANTSUN pipeline), so annotation source is unknown. Related
+  Zenodo 10.5281/zenodo.8150515 holds only model weights and analysis outputs. Different from DANDI 000714, 000472 and the
+  Zenodo NeuroPAL atlas. enricher: voxel size 0.54 um isotropic from NWB ImagingPlane grid_spacing (was null; z matches the
+  paper). enricher: NeuroPAL instance mask (image_mask) seen, types + instance-segmentation, annotations_verified true.'
+technical:
+  method: sample
+  inspected_at: '2026-10-09T21:50:00Z'
+  inspected_urls:
+  - https://api.dandiarchive.org/api/dandisets/000776/versions/draft/assets/?page_size=100
+  - https://dandiarchive.s3.amazonaws.com/blobs/95f/212/95f21214-371d-4207-9f09-4d6f40e15182
+  - https://pmc.ncbi.nlm.nih.gov/articles/PMC10836760/
+  bytes_downloaded: 80000000
+  size_source: file-listing
+  layout:
+    tree: "000776/  (DANDI, 38 NWB files, 26.3-27.0 GB each)\n  sub-<date>-<n>-SWF702/\n    sub-<date>-<n>-SWF702_ses-<date>_behavior+image+ophys.nwb\n\
+      \      acquisition/CalciumImageSeries/data     (1599, 322, 212, 80, 2) uint16 gzip\n      acquisition/NeuroPALImageRaw/data\
+      \       (287, 97, 57, 3) uint64 gzip\n      processing/NeuroPAL/NeuroPALSegmentation/NeuronSegmentationROIs/image_mask\
+      \  (1, 287, 97, 57) uint16\n      processing/NeuroPAL/NeuroPALSegmentation/NeuroPALNeurons  ID_labels, ROI_IDs, voxel_mask\
+      \ (98)\n      processing/CalciumActivity/CalciumSeriesSegmentation/Aligned_neuron_coordinates  ID_labels, voxel_mask\
+      \ (134)\n      processing/CalciumActivity/SignalCalciumImResponseSeries  (1600, 134) traces\n      processing/Behavior/*\
+      \  velocity, head_curvature, pumping, ..."
+    n_files: 38
+    listing_complete: true
+  sample:
+    urls:
+    - https://dandiarchive.s3.amazonaws.com/blobs/95f/212/95f21214-371d-4207-9f09-4d6f40e15182
+    size_bytes: 26939654811
+    description: One NWB file (sub-2022-06-14-13-SWF702), which holds raw volumes and labels together; no smaller unit exists
+      (smallest file 26.3 GB).
+  arrays:
+  - role: raw
+    path_pattern: '*/*.nwb (acquisition/CalciumImageSeries/data)'
+    format: hdf5
+    axes: txyzc
+    shape:
+    - 1599
+    - 322
+    - 212
+    - 80
+    - 2
+    shape_varies: true
+    dtype: uint16
+    compression: gzip
+    lossy: false
+    chunks:
+    - 2
+    - 41
+    - 27
+    - 20
+    - 1
+    value_range:
+    - 101
+    - 785
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: NWB ImageSeries order (frame, x, y, z) plus 2 channels; grid_spacing 0.54 um x 0.54 x 0.54 (ImagingPlane
+      CalciumImVol). Frame count differs per file.
+  - role: raw
+    path_pattern: '*/*.nwb (acquisition/NeuroPALImageRaw/data)'
+    format: hdf5
+    axes: null
+    shape:
+    - 287
+    - 97
+    - 57
+    - 3
+    shape_varies: true
+    dtype: uint64
+    compression: gzip
+    lossy: false
+    chunks:
+    - 36
+    - 13
+    - 15
+    - 1
+    value_range:
+    - 3
+    - 65
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: NeuroPAL multicolour volume, grid_spacing 0.54 um isotropic (ImagingPlane NeuroPALImVol); axis order
+      not stated in the file (likely x, y, z, c like the mask).
+  - role: label
+    path_pattern: '*/*.nwb (processing/NeuroPAL/NeuroPALSegmentation/NeuronSegmentationROIs/image_mask)'
+    format: hdf5
+    axes: null
+    shape:
+    - 1
+    - 287
+    - 97
+    - 57
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 206
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Neuron instance mask, 206 IDs + background 0, same spatial shape as NeuroPALImageRaw (287, 97, 57). NeuroPALNeurons
+      (98 rows) maps ROI_IDs to neuron names (ID_labels, some empty).
+  - role: label
+    path_pattern: '*/*.nwb (processing/CalciumActivity/CalciumSeriesSegmentation/Aligned_neuron_coordinates)'
+    format: hdf5
+    axes: null
+    shape:
+    - 134
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: points-table
+    classes: null
+    alignment: unknown
+    alignment_notes: 134 neuron ROIs with voxel_mask (x, y, z, weight) and ID_labels, for the calcium volumes; whether coordinates
+      refer to every frame or a registered frame is not stated.
+  notes: DANDI API lists 38 NWB files, exact sizes, 1,011,743,300,552 B. probe.py timed out on the 26.9 GB NWB, so read it
+    with h5py over fsspec range requests (metadata, NeuroPAL image_mask in full, small slabs of both images; ~80 MB upper
+    bound). Values from small slabs only. One file inspected; shapes vary per file (frame counts). Voxel size from ImagingPlane
+    grid_spacing [0.54, 0.54, 0.54] um; the paper (PMC) states only z spacing 0.54 um, 3x3 binning, 322 x 210 ROI. No file
+    under ~26 GB, so the sample is a whole NWB. Direct S3 blob URLs work; api.dandiarchive.org download redirects are not
+    on the TensorSwitch allowlist.
