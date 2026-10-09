@@ -3,9 +3,9 @@ id: zenodo-6390798-human-embryo-time-lapse-phases
 title: Human embryo time-lapse video dataset
 short_name: Human embryo development phases (time-lapse)
 description: 704 EmbryoScope time-lapse videos of developing human embryos, each recorded at 7 focal planes
-  (about 2.4 million images), with an embryologist's timing annotations of 16 cellular events from polar body
-  appearance to blastocyst hatching, plus CSV files giving the start and end frame of each of the development
-  phases. 500 x 500 px grayscale JPEG frames; the central focal plane (F0) is the main archive.
+  (about 2.4 million images), with an embryologist's timing annotations of 16 cellular events from polar
+  body appearance to blastocyst hatching, plus CSV files giving the start and end frame of each of the
+  development phases. 500 x 500 px grayscale JPEG frames; the central focal plane (F0) is the main archive.
 landing_url: https://zenodo.org/records/6390798
 doi: 10.5281/zenodo.6390798
 repository: Zenodo
@@ -32,8 +32,8 @@ imaging:
   channels: 1
   organism:
   - Homo sapiens
-  sample: human preimplantation embryos from ICSI cycles at Nantes University Hospital, cultured in an EmbryoScope
-    time-lapse incubator (Hoffman modulation contrast, 635 nm LED)
+  sample: human preimplantation embryos from ICSI cycles at Nantes University Hospital, cultured in an
+    EmbryoScope time-lapse incubator (Hoffman modulation contrast, 635 nm LED)
   labels_stains: []
 data:
   formats:
@@ -41,15 +41,15 @@ data:
   size_bytes: 62781934384
   n_items: 704
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/6390798
   download_method: http
 annotations:
   present: true
   types:
   - classification
   coverage: dense
-  format: per-video CSV (<video>_phases.csv) with phase name, start frame and end frame; frame labels derived
-    from embryologist event timings
+  format: per-video CSV (<video>_phases.csv) with phase name, start frame and end frame; frame labels
+    derived from embryologist event timings
   source: manual
 ml:
   tasks:
@@ -71,12 +71,69 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T23:52:00Z'
-notes: 'Zenodo API record (8 tar.gz files, total 62.8 GB, includes embryo_dataset.tar.gz = central plane F0,
-  embryo_dataset_annotations.tar.gz = 704 CSVs, and six tar.gz for other focal planes F-45 ... F45 inferred from
-  file names) and the Data in Brief paper full text read. n_items counts videos; the paper gives about 2.4 million
-  frames. Annotation: one embryologist per video with internal quality control; frame labels are derived from event
-  timings. tar.gz archives cannot be listed remotely, so folder layout is from the paper. Pixel size and
-  magnification are not stated, so voxel_size_nm is null. Hoffman modulation contrast is not in the modality list,
-  so modality is other. No train/test split is provided. Zenodo licence is CC-BY-NC-SA-4.0 (non-commercial); download_url
-  left null because the data is eight separate archives.'
+  last_checked: '2026-10-09T02:49:34Z'
+notes: 'Zenodo API record (8 tar.gz files, total 62.8 GB, includes embryo_dataset.tar.gz = central plane
+  F0, embryo_dataset_annotations.tar.gz = 704 CSVs, and six tar.gz for other focal planes F-45 ... F45
+  inferred from file names) and the Data in Brief paper full text read. n_items counts videos; the paper
+  gives about 2.4 million frames. Annotation: one embryologist per video with internal quality control;
+  frame labels are derived from event timings. enricher: frame JPEGs 500x500 grey; CSV rows phase,start,end.
+  Pixel size and magnification are not stated, so voxel_size_nm is null. Hoffman modulation contrast is
+  not in the modality list, so modality is other. No train/test split is provided. Zenodo licence is CC-BY-NC-SA-4.0
+  (non-commercial);'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/api/records/6390798/files/embryo_dataset.tar.gz/content
+  - https://zenodo.org/api/records/6390798/files/embryo_dataset_annotations.tar.gz/content
+  bytes_downloaded: 3053267
+  size_source: file-listing
+  layout:
+    tree: "record 6390798  8 files, 62.8 GB (.tar.gz)\n  embryo_dataset.tar.gz          12.1 GB  central\
+      \ focal plane\n    embryo_dataset/<video>/D<date>_S<slide>_I<id>_WELL<n>_RUN<frame>.jpeg\n  embryo_dataset_F-45/-30/-15/15/30/45.tar.gz\
+      \   7.3-9.3 GB each, other focal planes\n  embryo_dataset_annotations.tar.gz   53 KB\n    embryo_dataset_annotations/<video>_phases.csv\
+      \   704 files: phase,start,end\n"
+    n_files: 8
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: embryo_dataset*.tar.gz::embryo_dataset*/*/*.jpeg
+    format: jpeg
+    axes: yx
+    shape:
+    - 500
+    - 500
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    lossy: true
+    value_range:
+    - 0
+    - 222
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One greyscale JPEG per frame, frame index = RUN<n> in the file name, one folder per
+      video (e.g. RI382-2/). JPEG DPI 300 is a default, not a calibration.
+  - role: label
+    path_pattern: embryo_dataset_annotations.tar.gz::embryo_dataset_annotations/*_phases.csv
+    format: csv
+    axes: null
+    shape:
+    - 11
+    - 3
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: No header; rows phase,first frame,last frame (e.g. tPB2,12,21 ... tEB,306,355 in
+      ME378-4); <video>_phases.csv labels folder <video>/ frames by RUN index.
+  notes: 'Zenodo listing complete (8 tar.gz, 62,781,934,384 B = size_bytes). tar.gz cannot be listed by
+    range, so the first 3 MB of embryo_dataset.tar.gz were streamed and decompressed: folder RI382-2/
+    with D..._RUN<n>.jpeg frames; one frame decoded: 500x500 greyscale uint8 (0-222, one sample). The
+    whole annotations archive (53 KB) was read: one <video>_phases.csv per video with phase,start,end
+    rows. No direct per-file links exist (only the 8 archives) and TensorSwitch cannot pull members out
+    of a .tar.gz, so sample is null. Voxel size not found; checked: JPEG header (DPI 300 default), Zenodo
+    record, harvester reading of the Data in Brief paper.'
