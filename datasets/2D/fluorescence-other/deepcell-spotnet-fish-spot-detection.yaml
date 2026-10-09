@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: deepcell-spotnet-fish-spot-detection
 title: SpotNet
 short_name: SpotNet FISH spot detection (fluorescence)
-description: SpotNet is the DeepCell training dataset for fluorescent spot detection (Polaris spot detector). Per the Polaris paper
-  it holds 1,000 images of 128x128 px - 400 seqFISH images of cultured cells, 400 published MERFISH tissue images and 200 published
-  SunTag nascent-protein images - rescaled to 110 nm pixels, each with spot coordinate annotations (y) next to the raw images (X).
-  Loaded through the DeepCell API with a key.
+description: SpotNet is the DeepCell training dataset for fluorescent spot detection (Polaris spot detector). Per
+  the Polaris paper it holds 1,000 images of 128x128 px - 400 seqFISH images of cultured cells, 400 published MERFISH
+  tissue images and 200 published SunTag nascent-protein images - rescaled to 110 nm pixels, each with spot coordinate
+  annotations (y) next to the raw images (X). Loaded through the DeepCell API with a key.
 landing_url: https://deepcell.readthedocs.io/en/latest/data-gallery/spotnet.html
 doi: null
 repository: other
@@ -23,7 +23,8 @@ authors:
 - Yisong Yue
 - David Van Valen
 publications:
-- title: Accurate single-molecule spot detection for image-based spatial transcriptomics with weakly supervised deep learning
+- title: Accurate single-molecule spot detection for image-based spatial transcriptomics with weakly supervised
+    deep learning
   doi: 10.1016/j.cels.2024.04.006
   url: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10508757/
 date_published: null
@@ -37,13 +38,14 @@ imaging:
     z: null
   channels: 1
   organism: []
-  sample: Single-molecule FISH (seqFISH, MERFISH) and SunTag-labelled nascent protein spots in cell culture and tissue samples
+  sample: Single-molecule FISH (seqFISH, MERFISH) and SunTag-labelled nascent protein spots in cell culture and
+    tissue samples
   labels_stains: []
 data:
   formats:
   - other
   size_bytes: null
-  n_items: 1000
+  n_items: 1038
   access: registration
   download_url: https://deepcell.readthedocs.io/en/latest/data-gallery/spotnet.html
   download_method: api
@@ -52,7 +54,7 @@ annotations:
   types:
   - points
   coverage: dense
-  format: 'Spot coordinate arrays (y) paired with raw image arrays (X), loaded with deepcell.datasets.SpotNet'
+  format: Spot coordinate arrays (y) paired with raw image arrays (X), loaded with deepcell.datasets.SpotNet
   source: automatic
 ml:
   tasks:
@@ -76,11 +78,64 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-08T23:10:00Z'
-notes: 'Access is through deepcell.datasets (SpotNet version 1.1 in the docs example) with a DeepCell API key; no public file listing or direct download
-  was found, so formats, size and splits beyond the val split in the example are unverified. The docs state a modified Apache license for non-commercial
-  academic use only, linked to the deepcell-tf LICENSE (recorded as custom). Counts, 110 nm pixel size and the annotation method come from the Polaris
-  preprint Methods (PMC10508757): spot labels are a consensus of several tuned classical spot-detection algorithms combined by a generative model
-  (weak supervision, hence automatic), not hand-drawn. The paper Data availability says data and annotations are available for academic use at the DeepCell
-  data gallery. The 1,000 images include previously published MERFISH and SunTag images; organism is not stated per image set. Counts are from the preprint and
-  may differ from the current dataset version.'
+  last_checked: '2026-10-09T00:51:34Z'
+notes: 'Access is through deepcell.datasets (SpotNet version 1.1 in the docs example) with a DeepCell API key; no
+  public file listing or direct download was found, so formats and size are unverified. The docs state a modified
+  Apache license for non-commercial academic use only, linked to the deepcell-tf LICENSE (recorded as custom). Counts,
+  110 nm pixel size and the annotation method come from the Polaris preprint Methods (PMC10508757): spot labels
+  are a consensus of several tuned classical spot-detection algorithms combined by a generative model (weak supervision,
+  hence automatic), not hand-drawn. The paper Data availability says data and annotations are available for academic
+  use at the DeepCell data gallery. The 1,000 images include previously published MERFISH and SunTag images; organism
+  is not stated per image set. enricher: n_items 1000 -> 1038 (v1.1 split sizes in the deepcell-tf loader).'
+technical:
+  method: metadata-only
+  size_source: unknown
+  layout:
+    tree: "DeepCell API (users.deepcell.org, API key required):\n  data/spotnet/SpotNet-v1_0.zip, data/spotnet/SpotNet-v1_1.zip\
+      \ (default v1.1)\n    train / val / test splits of X (raw) and y (spot coordinates)\n    v1.1: train 849,\
+      \ val 95, test 94 images of 128x128 px (deepcell-tf docstring)\nPublic example (no key, not training data):\
+      \ s3 deepcell-data/spot_detection/SpotNetExampleData-v1_0.zip\n  (20.6 MB: MERFISH_example.npz, MERFISH_output.csv,\
+      \ MERFISH_codebook.csv, seqFISH_example.tif, README.md)"
+    n_files: null
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: SpotNet-v1_1.zip (X)
+    format: other
+    axes: null
+    shape:
+    - 128
+    - 128
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: '128x128 px images (deepcell-tf docstring; paper: rescaled to 110 nm pixels). Array layout
+      inside the zip not seen.'
+  - role: label
+    path_pattern: SpotNet-v1_1.zip (y)
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: none
+    encoding: points-table
+    classes:
+    - id: null
+      name: spot
+    alignment: same-grid
+    alignment_notes: 'Spot coordinates per image (paper: consensus of classical detectors combined by a generative
+      model).'
+  notes: 'Metadata-only: the SpotNet zips are fetched by deepcell.datasets from users.deepcell.org with an API key
+    (registration), so they were not listed or opened. File names, md5 hashes and split sizes (v1.1: 849 / 95 /
+    94 images of 128x128 px) come from the deepcell-tf loader source deepcell/datasets/spot_net.py; n_items set
+    to their sum, 1,038 (the preprint says 1,000). The only public file, SpotNetExampleData-v1_0.zip, was listed
+    with peek_archive: it holds MERFISH/seqFISH example inputs and decoding outputs for the Polaris tutorial, not
+    SpotNet training pairs, so it is not used as a sample. Size unknown: no listing, no stated size; an estimate
+    would need dtypes and file counts. Voxel size 110 nm is from the paper (images rescaled to 110 nm pixels).'
