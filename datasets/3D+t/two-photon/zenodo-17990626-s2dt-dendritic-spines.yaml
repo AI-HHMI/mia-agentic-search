@@ -1,0 +1,159 @@
+schema_version: '1.2'
+id: zenodo-17990626-s2dt-dendritic-spines
+title: S2D+T dataset - Spine detection in 2D, time-tracking, and morphology estimation
+short_name: Dendritic spine boxes and tracks (two-photon)
+description: Chronic in vivo two-photon image volumes of dendrites in mouse auditory cortex (GFP-M mice), stored as PNG layers
+  per field of view and time point, with 2D bounding boxes of dendritic spines, spine IDs tracking each spine across four
+  time points, 2D spine locations and manually estimated spine size and length.
+landing_url: https://zenodo.org/records/17990626
+doi: 10.5281/zenodo.17990626
+repository: Zenodo
+accession: '17990626'
+authors:
+- Pamela Osuna Vargas
+- Altuğ Kamacıoğlu
+- Simon Rumpel
+- Matthias Kaschube
+publications:
+- title: 'SynapFlow: A Modular Framework Towards Large-Scale Analysis of Dendritic Spines'
+  doi: 10.48550/arXiv.2509.18926
+  url: https://arxiv.org/abs/2509.18926
+date_published: '2025-12-19'
+imaging:
+  modality:
+  - two-photon
+  dimensionality: 3D+t
+  voxel_size_nm:
+    x: 107.5
+    y: 107.5
+    z: 500.0
+  channels: 1
+  organism:
+  - Mus musculus
+  sample: Auditory cortex dendrites of GFP-M transgenic mice imaged in vivo at four time points (t, +2 h, +3 days, +3 days
+    2 h)
+  labels_stains:
+  - GFP
+data:
+  formats:
+  - png
+  size_bytes: 8759066592
+  n_items: 14566
+  access: open
+  download_url: https://zenodo.org/records/17990626/files/S2D+T.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  - tracking
+  - points
+  coverage: dense
+  format: CSV files with 2D bounding boxes and spine IDs per field of view and time point; morph_csvs/ with manually estimated
+    spine size and spine-to-dendrite length
+  source: manual
+ml:
+  tasks:
+  - detection
+  - tracking
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-09T03:11:50Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/17990626
+  - https://zenodo.org/records/17990626/files/S2D+T.zip
+  - https://arxiv.org/abs/2509.18926
+  - https://arxiv.org/html/2509.18926v1
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-09T05:45:00Z'
+notes: 'Single 8.76 GB S2D+T.zip: 14,566 PNG layers (named fovNNN_tpK_layerLLL.png, 15.3 GB uncompressed) and 360 CSV files,
+  including morph_csvs/. Per the SynapFlow paper (arXiv HTML), voxel size is about 0.1075 x 0.1075 x 0.5 um, slices 512x512,
+  four time points; the paper reports 1,450 ground-truth tracks for S2D+T and labels only the most representative 2D instance
+  per 3D spine, drawn as a polygon over head and neck, with size and length estimated manually. Annotators, tool, microscope
+  and objective are not named; the paper says data are released on GitHub (Zenodo not mentioned) and states no data licence
+  (CC-BY-4.0 comes from the Zenodo record; the paper itself is CC BY-NC-ND). The paper''s full PDF could not be read as text;
+  the HTML version was used. Individual annotation CSV names/columns were not listed. Split not described. enricher: PNG slices
+  are 1024x1024, not the 512x512 the paper states for 0.1075 um pixels; voxel size kept, unverified for these files.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "S2D+T.zip (8.76 GB, 14,938 members, 15.3 GB uncompressed) / S2D+T/\n  images/fovNNN_tpK_layerLLL.png      14,566\
+      \ PNG slices: 45 FOVs x 4 time points = 180 stacks,\n                                     31-197 layers per stack, 1024x1024\
+      \ uint8\n  time-tracked_csvs/fovNNN_tpK.csv    180: id,filename,xmin,ymin,xmax,ymax\n  morph_csvs/fovNNN_tpK.csv   \
+      \        180: filename,xmin,ymin,xmax,ymax,size,head_to_junction_distance\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/17990626/files/S2D%2BT.zip::S2D+T/images/fov020_tp1_layer008.png
+    - https://zenodo.org/records/17990626/files/S2D%2BT.zip::S2D+T/time-tracked_csvs/fov020_tp1.csv
+    size_bytes: 1050144
+    description: One 2D slice and the spine table of its stack (fov020, time point 1); a whole stack is the 31-197 layer PNGs
+      of one fovNNN_tpK.
+  arrays:
+  - role: raw
+    path_pattern: S2D+T/images/fov*_tp*_layer*.png
+    format: png
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 152
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'One PNG per z slice: a volume is fovNNN_tpK_layer000..LLL (z = layer index), time point K = 1-4 (t,
+      +2 h, +3 d, +3 d 2 h per the paper).'
+  - role: label
+    path_pattern: S2D+T/time-tracked_csvs/*.csv
+    format: csv
+    axes: null
+    shape:
+    - 31
+    - 6
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: tracks-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'One table per FOV and time point: id (spine identity across the four time points), filename (the PNG
+      layer holding the representative 2D instance), xmin/ymin/xmax/ymax in pixels of that 1024x1024 slice (values up to 680
+      in fov020_tp1, so the boxes refer to the 1024 px grid).'
+  - role: label
+    path_pattern: S2D+T/morph_csvs/*.csv
+    format: csv
+    axes: null
+    shape:
+    - 32
+    - 7
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same boxes (float coordinates) plus manually estimated size and head_to_junction_distance (units not
+      stated).
+  notes: 'Exact Zenodo listing with the zip index expanded (1 file, 8,759,066,592 B = size_bytes). Counted 14,566 PNG layers
+    in 180 stacks (45 FOVs x 4 time points), 31-197 layers each. Sampled fov020_tp1_layer008.png: 1024x1024 uint8, values
+    0-152 (one sample). Read fov020_tp1 tables in both CSV folders (31 and 32 rows). Voxel size 107.5x107.5x500 nm from arXiv
+    2509.18926 Section 2.2 ("approximately 0.1075 x 0.1075 x 0.5 um ... each image slice has a size of 512 x 512 pixels");
+    the released slices are 1024x1024, so x/y may be half that if the slices were upsampled; not settled (checked: PNG header,
+    Zenodo API record, paper HTML). Zip and members are direct Zenodo links (usable, range requests); zenodo.org returned
+    intermittent HTTP 504s on range requests to this file during the run; the %2B-encoded URL is used for the sample.'
