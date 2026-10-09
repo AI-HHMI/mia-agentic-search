@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-5030552-orbit-kidney-glomeruli-wsi
 title: 'Orbit Image Analysis: glomeruli segmentation WSI dataset (mouse and rat kidney)'
 short_name: Kidney glomeruli annotations (H&E, PAS, IHC WSI)
-description: 88 pyramidal tiled-TIFF whole slide images of mouse and rat kidney (H&DAB, FastRed, PAS and three H&E
-  variants) with 21,037 manually drawn glomeruli annotations stored in an Orbit SQLite database; split into a
-  58-image training set and a 32-image test set.
+description: 88 pyramidal tiled-TIFF whole slide images of mouse and rat kidney (H&DAB, FastRed, PAS and three H&E variants)
+  with 21,037 manually drawn glomeruli annotations stored in an Orbit SQLite database; split into a 58-image training set
+  and a 32-image test set.
 landing_url: https://zenodo.org/records/5030552
 doi: 10.5061/dryad.fqz612jpc
 repository: Zenodo
@@ -23,7 +23,7 @@ imaging:
   - histology-WSI
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Mus musculus
   - Rattus norvegicus
@@ -39,15 +39,15 @@ data:
   size_bytes: 42608028529
   n_items: 88
   access: open
-  download_url: https://zenodo.org/api/records/5030552/files/glomeruli.zip/content
+  download_url: https://zenodo.org/records/5030552/files/glomeruli.zip
   download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
   coverage: dense
-  format: orbit.db, an SQLite database with manually drawn glomeruli outlines for all images (21,037 annotations),
-    keyed by image md5 hash
+  format: orbit.db, an SQLite database with manually drawn glomeruli outlines for all images (21,037 annotations), keyed by
+    image md5 hash
   source: manual
 ml:
   tasks:
@@ -65,14 +65,83 @@ provenance:
   - https://zenodo.org/api/records/5030552
   - https://zenodo.org/api/records/5030552/files/glomeruli.zip/content
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7028292/fullTextXML
+  - https://zenodo.org/records/5030552/files/glomeruli.zip
+  - https://datadryad.org/api/v2/datasets/doi%3A10.5061%2Fdryad.fqz612jpc
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T19:45:00Z'
-notes: 'The Zenodo record (a Dryad mirror) holds one 42.6 GB zip: 88 .tiff slides in test/ and train/ folders (peek_archive),
-  orbit.db (46.8 MB) and readme.txt, which states CC0. Paper (PLOS Comput Biol 2020) says 92 slides / ~21,000 annotations
-  were used for the model; the record says 88 images and 21,037 annotations. Pixel size and scanner are not stated
-  on the record, readme or paper text read, so voxel size is null. Annotations are only readable through Orbit
-  or by querying the SQLite database; the schema of orbit.db was not inspected. The paper points to the GPLv3 Orbit software (orbit.bio) and a glomeruli model, but no code page was fetched, so baseline_code_url is null.'
+  last_checked: '2026-10-09T20:35:00Z'
+notes: 'Zenodo record (Dryad mirror) holds one 42.6 GB zip: 88 .tiff slides (test/ 32, train/ 56; readme says 58/32), orbit.db
+  and readme.txt, which states CC0. Paper: 92 slides / ~21,000 annotations used for the model; readme: 88 images, 21,037 annotations.
+  Pixel size not stated in readme, Zenodo/Dryad metadata or paper, so voxel size is null. Annotations are Orbit objects in
+  SQLite, readable only through Orbit. organisms: Mus musculus = FastRed Mouse and H&E Mouse G1-G3 slides; Rattus norvegicus
+  = H&DAB Rat G1-G3 and PAS Rat slides (slide ids per group in readme.txt). enricher: download_url changed to the direct zip;
+  channels 3 (RGB) from sample (was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './                       1 files  42.6 GB  .zip
+
+      zip contents:
+
+      glomeruli.zip/           2 files  46.8 MB  orbit.db (SQLite annotations), readme.txt
+
+      glomeruli.zip/test/     32 files  16.3 GB  .tiff (<slide id>.tiff)
+
+      glomeruli.zip/train/    56 files  28.9 GB  .tiff (<slide id>.tiff)'
+    n_files: 90
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5030552/files/glomeruli.zip::test/6533682.tiff
+    - https://zenodo.org/records/5030552/files/glomeruli.zip::orbit.db
+    size_bytes: 218357004
+    description: Smallest slide (test/6533682.tiff, FastRed mouse, 171.6 MB) plus orbit.db, which holds the annotations of
+      every slide
+  arrays:
+  - role: raw
+    path_pattern: glomeruli.zip/*/*.tiff
+    format: tiff
+    axes: yxs
+    shape:
+    - 14080
+    - 26880
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Pyramidal tiled TIFF, JPEG-compressed (readme); shape is the full-resolution level of the sampled slide.
+      RGB brightfield (3 samples differ).
+  - role: label
+    path_pattern: glomeruli.zip/orbit.db
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    encoding: polygons
+    classes:
+    - id: null
+      name: glomerulus
+    alignment: unknown
+    alignment_notes: 'SQLite database: RAW_DATA_FILE (88 rows: FILENAME <slide id>.tiff, MD5) and RAW_ANNOTATION (21,037 rows,
+      RAW_DATA_FILE_ID, DESCRIPTION, DATA blob). Pairing rule: RAW_ANNOTATION.RAW_DATA_FILE_ID -> RAW_DATA_FILE.FILENAME;
+      all 88 slides have annotations. DATA blobs are Java-serialized Orbit shape objects (magic aced0005), so the outline
+      coordinates were not decoded (never deserialize dataset objects); their coordinate frame (full-resolution pixels presumably,
+      not documented) is unverified.'
+  notes: 'Listing: tools/listing.py on the zip with --expand-zips, 90 members, 42,608,028,529 bytes (file-listing, complete).
+    Sample: test/6533682.tiff via sample.py (162.1 MB compressed member), 14080x26880x3 uint8 (axes YXS from tifffile), range
+    0-255 in that one sample, p1 60, p50 234, p99 243. orbit.db (11.7 MB compressed) read read-only with sqlite3: table schema
+    and row counts only. TIFF resolution tags not read: the member is deflated, so header probing needs the whole member and
+    a second download timed out. voxel size not found; checked: readme.txt, Zenodo API, Dryad API (usageNotes/methods), paper
+    full text (Europe PMC); TIFF resolution tags still open. Labels need conversion from Orbit''s Java objects into masks
+    (e.g. by Orbit itself) before automatic conversion.'
