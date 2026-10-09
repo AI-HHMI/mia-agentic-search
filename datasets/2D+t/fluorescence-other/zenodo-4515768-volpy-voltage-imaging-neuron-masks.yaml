@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: zenodo-4515768-volpy-voltage-imaging-neuron-masks
 title: VolPy corpus of 24 voltage imaging movies with manual neuron segmentation masks
 short_name: Voltage imaging movies with neuron masks
-description: 'Corpus of 24 motion-corrected voltage imaging movies (TIFF) from mouse cortex layer 1 (9), zebrafish tegmentum (3) and mouse hippocampus (12), each with manual neuron ROIs (ImageJ Cell Magic Wand, _ROI.zip) combined from three annotators, plus summary images and masks in the format used to train Mask R-CNN and three sessions with simultaneous electrophysiology. Accompanies the VolPy analysis pipeline. About 60.9 GB in 7 files.'
+description: Corpus of 24 motion-corrected voltage imaging movies (TIFF) from mouse cortex layer 1 (9), zebrafish
+  tegmentum (3) and mouse hippocampus (12), each with manual neuron ROIs (ImageJ Cell Magic Wand, _ROI.zip) combined
+  from three annotators, plus summary images and masks in the format used to train Mask R-CNN and three sessions
+  with simultaneous electrophysiology. Accompanies the VolPy analysis pipeline. About 60.9 GB in 7 files.
 landing_url: https://zenodo.org/records/4515768
 doi: 10.5281/zenodo.4515768
 repository: Zenodo
@@ -34,7 +37,8 @@ imaging:
   organism:
   - Mus musculus
   - Danio rerio
-  sample: Voltage-indicator expressing neurons in mouse cortex layer 1, mouse hippocampus and zebrafish tegmental area (data from Abdelfattah et al. 2019 and Adam et al. 2019)
+  sample: Voltage-indicator expressing neurons in mouse cortex layer 1, mouse hippocampus and zebrafish tegmental
+    area (data from Abdelfattah et al. 2019 and Adam et al. 2019)
   labels_stains: []
 data:
   formats:
@@ -73,5 +77,88 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T22:00:00Z'
-notes: 'Readme.txt read in full and summary_images_and_masks.zip listed with peek_archive (24 summary-image / mask .npz pairs); the large voltage_*.zip archives were not listed. The preprint-era paper (PLOS Comput Biol 2021, open access) describes ground truth from three independent labelers on mean and correlation images. Pixel size, frame rate and exact modality are not stated on the Zenodo page, Readme or the paper passages read, so voxel_size_nm is null and modality is the generic fluorescence-other. The movies come from Abdelfattah et al. 2019 (L1, TEG) and Adam et al. 2019 (HPC).'
+  last_checked: '2026-10-09T00:46:05Z'
+notes: 'Readme.txt read in full and summary_images_and_masks.zip listed with peek_archive (24 summary-image / mask
+  .npz pairs); the voltage_*.zip archives were listed by the enricher (one .tif + _ROI.zip per movie). The preprint-era
+  paper (PLOS Comput Biol 2021, open access) describes ground truth from three independent labelers on mean and
+  correlation images. Pixel size, frame rate and exact modality are not stated on the Zenodo page, Readme or the
+  paper passages read, so voxel_size_nm is null and modality is the generic fluorescence-other. The movies come
+  from Abdelfattah et al. 2019 (L1, TEG) and Adam et al. 2019 (HPC). organisms: Mus musculus = voltage_L1.zip, voltage_HPC.zip;
+  Danio rerio = voltage_TEG.zip (Readme).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "Zenodo 4515768, 7 files, 60,886,810,199 B\n  Readme.txt, S1_Data.xlsx\n  voltage_L1.zip   (9 x L1.<a>.<b>/)\
+      \   <name>.tif (5,248,800,200 B each) + <name>_ROI.zip\n  voltage_HPC.zip  (12 x HPC.<a>.<b>/, 17,553,800,410\
+      \ B)  <name>.tif (0.9-2.6 GB) + <name>_ROI.zip\n  voltage_TEG.zip  (3 x TEG.<a>.<b>/)  <name>.tif (3.7-5.9\
+      \ GB) + <name>_ROI.zip\n  voltage_ephys.zip  L1_1/Session1.tif + .mat; TEG_1, TEG_2/registered.tif + ephys/frame_timing/imaging_signal\
+      \ .npy\n  summary_images_and_masks.zip  <name>.npz (img) + <name>_mask.npz, 24 pairs\n106 zip members"
+    n_files: 7
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/4515768/files/voltage_HPC.zip::HPC.38.03/HPC.38.03.tif
+    - https://zenodo.org/records/4515768/files/voltage_HPC.zip::HPC.38.03/HPC.38.03_ROI.zip
+    size_bytes: 907041543
+    description: Smallest movie HPC.38.03 (20000x128x88 float32) and its ImageJ ROI zip (zip members, deflated).
+  arrays:
+  - role: raw
+    path_pattern: voltage_{L1,HPC,TEG}.zip::*/*.tif
+    format: tiff
+    axes: tyx
+    shape:
+    - 20000
+    - 128
+    - 88
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'BigTIFF written by tifffile, ImageDescription {"shape": [T, Y, X]}: HPC.38.03 [20000,128,88],
+      L1.00.00 [20000,512,128], TEG.01.02 [10000,364,320]. One page per frame, so pages are t (motion-corrected
+      movie per the Readme). Resolution tags 1.0 (no calibration).'
+  - role: label
+    path_pattern: voltage_{L1,HPC,TEG}.zip::*/*_ROI.zip
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: deflate
+    value_range: null
+    normalization: none
+    encoding: polygons
+    classes:
+    - id: null
+      name: neuron
+    alignment: same-grid
+    alignment_notes: '<name>_ROI.zip next to <name>.tif: ImageJ ROI set (Cell Magic Wand contours, consensus of
+      three annotators), read with caiman nf_read_roi_zip(name, dims) with dims = movie height, width (Readme).
+      HPC.38.03_ROI.zip is 1,343 B. Not opened.'
+  - role: other
+    path_pattern: summary_images_and_masks.zip::*.npz
+    format: other
+    axes: yxc
+    shape:
+    - 128
+    - 128
+    - 3
+    shape_varies: true
+    dtype: float32
+    compression: deflate
+    value_range: null
+    normalization: standardized
+    alignment: unknown
+    alignment_notes: '<name>.npz holds img.npy (HPC.38.03: 128x128x3 float32; the movie is 128x88, so padded or
+      resized); <name>_mask.npz holds mask.npy as an object array (pickled), so it must not be loaded unattended.
+      Paper: summary images are mean and correlation images, each mean-subtracted and divided by std.'
+  notes: 'Listing: Zenodo API with all zips expanded (exact sizes; nested _ROI.zip and .npz not expanded). Headers:
+    read the first 256 KB of the deflated tif members of HPC.38.03, L1.00.00 and TEG.01.02 with an ad hoc BigTIFF
+    IFD parser (probe.py could not open these zip members): float32, uncompressed inside, tifffile shape descriptions
+    above. npy headers of summary HPC.38.03.npz / _mask.npz read without unpickling. A first attempt with tifffile
+    on a deflated member streamed data before being stopped (<120 s); the run log counts it as up to 400 MB. Voxel
+    size not found; checked: TIFF tags (1.0, unitless), Zenodo page, Readme.txt, VolPy paper full text (PMC8075204:
+    no pixel size or frame rate per dataset). Upstream papers (Abdelfattah 2019, Adam 2019) not read in this run.'
