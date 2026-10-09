@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zenodo-19351593-3dpath-lightsheet-nuclei-centroids
 title: Manually annotated light-sheet microscopy images
 short_name: Bladder and lymph node nuclei points (light-sheet)
-description: 12 small 3D light-sheet volumes (196 x 196 x 65 voxels, 16-bit TIFF, one nuclear-marker channel) of histological
-  samples, 8 from bladder and 4 from lymph node, with manually annotated nucleus centroids (x, y, z) in a CSV per volume,
-  10,207 nuclei in total. Annotated in Napari by trained personnel and reviewed by a second annotator. Created in the EU
-  3DPATH project to train and evaluate nucleus detection.
+description: 12 small 3D light-sheet volumes (196 x 196 x 65 voxels, 16-bit TIFF, one nuclear-marker channel) of histological samples,
+  8 from bladder and 4 from lymph node, with manually annotated nucleus centroids (x, y, z) in a CSV per volume, 10,207 nuclei in total.
+  Annotated in Napari by trained personnel and reviewed by a second annotator. Created in the EU 3DPATH project to train and evaluate
+  nucleus detection.
 landing_url: https://zenodo.org/records/19351593
 doi: 10.5281/zenodo.19351593
 repository: Zenodo
@@ -19,8 +19,8 @@ imaging:
   - light-sheet
   dimensionality: 3D
   voxel_size_nm:
-    x: 653
-    y: 653
+    x: 650
+    y: 650
     z: 2000
   channels: 1
   organism: []
@@ -32,7 +32,7 @@ data:
   size_bytes: 63245284
   n_items: 12
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/19351593
   download_method: http
 annotations:
   present: true
@@ -57,15 +57,81 @@ provenance:
   - https://zenodo.org/records/19351593
   - https://zenodo.org/api/records/19351593
   - https://zenodo.org/api/records/19351593/files/D2.3%20-%20Annotated%20ground%20truth%20data_v1.0.pdf/content
+  - https://zenodo.org/records/19351593/files/Bladder-01.tif
+  - https://zenodo.org/records/19351593/files/LymphNode-03.tif
+  - https://zenodo.org/records/19351593/files/Bladder-01.csv
+  - https://zenodo.org/records/19351593/files/LymphNode-02.csv
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T01:15:00Z'
-notes: 'From the Zenodo record (25 files: 12 TIFF, 12 CSV, one PDF) and the deliverable D2.3 PDF in the record, which gives
-  the volume size (196 x 196 x 65 voxels = 128 x 128 x 130 um), the annotation procedure and 10,207 annotated nuclei. Voxel
-  size is computed from that stated physical volume (about 0.653 um in x and y, 2.0 um in z), not stated per voxel. Species
-  and the nuclear stain are not stated in the record or PDF, so organism and labels_stains are empty. There is no single
-  archive; the files are downloaded individually from the record (download_url is null). size_bytes sums all 25 files
-  including the PDF. The CSV header was read (index, axis-0, axis-1, axis-2); the TIFFs were not opened. License is CC BY-NC.'
+  last_checked: '2026-10-10T00:05:00Z'
+notes: 'From the Zenodo record (25 files: 12 TIFF, 12 CSV, one PDF) and the deliverable D2.3 PDF in the record, which gives the volume
+  size (196 x 196 x 65 voxels = 128 x 128 x 130 um), the annotation procedure and 10,207 annotated nuclei. Species and the nuclear stain
+  are not stated in the record or PDF, so organism and labels_stains are empty. No single archive; files are downloaded individually
+  (download_url is the record). size_bytes sums all 25 files including the PDF. License is CC BY-NC. enricher: voxel size 650x650x2000
+  nm from the Bladder TIFF ImageJ calibration (0.65 um, spacing 2.0 um; was 653x653x2000 computed from the PDF extent, which agrees);
+  LymphNode TIFFs carry an uncalibrated 1 um default. CSV axis-0/1/2 = z/y/x in voxels.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |-
+      zenodo.org/records/19351593 (flat, 25 files, 63.2 MB)
+        Bladder-01..08.tif       8 files  ~5.0 MB each  (65x196x196 uint16)
+        LymphNode-01..04.tif     4 files  ~5.0 MB each
+        Bladder-01..08.csv       8 files  18-48 KB     (index, axis-0, axis-1, axis-2)
+        LymphNode-01..04.csv     4 files  53-70 KB
+        D2.3 - Annotated ground truth data_v1.0.pdf  2.6 MB
+    n_files: 25
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/19351593/files/Bladder-01.tif
+    - https://zenodo.org/records/19351593/files/Bladder-01.csv
+    size_bytes: 5040199
+    description: one bladder volume (65x196x196 uint16) and its nucleus-centroid CSV (708 points)
+  arrays:
+  - role: raw
+    path_pattern: '*.tif'
+    format: tiff
+    axes: zyx
+    shape:
+    - 65
+    - 196
+    - 196
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 155
+    - 12454
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: ImageJ hyperstacks; Bladder files declare 65 slices (zyx), LymphNode files declare 65 frames (tyx in the header)
+      but the PDF describes all as 196x196x65-voxel volumes, so the page axis is z. value_range is the min/max over the 12 files from
+      the PDF table
+  - role: label
+    path_pattern: '*.csv'
+    format: csv
+    axes: null
+    shape:
+    - 708
+    - 4
+    shape_varies: true
+    dtype: float64
+    compression: none
+    encoding: points-table
+    classes:
+    - id: null
+      name: nucleus centroid
+    alignment: same-grid
+    alignment_notes: <name>.csv pairs with <name>.tif; columns index, axis-0, axis-1, axis-2 in voxel coordinates of the TIFF (axis-0
+      = z 0-64, axis-1 = y, axis-2 = x, ranges checked in 5 CSVs); LymphNode-02.csv has some x values up to 323, outside the 196-pixel
+      image
+  notes: 'Listed the Zenodo record (25 files, exact sizes). Probed Bladder-01.tif and LymphNode-03.tif headers (ImageJ, 65 x 196 x 196
+    uint16, uncompressed). Read 5 CSVs in full (Bladder-01, -07, LymphNode-01, -02, -03): 434-1426 points each, float coordinates. Read
+    the D2.3 PDF: volumes are 196x196x65 voxels = 128x128x130 um3, uint16 kept as acquired (no normalization, per the PDF), per-file
+    min/max/mean table, manual Napari annotation. Raw normalization none from the PDF (data saved in the same representation as the
+    original). Each file is a direct Zenodo link; no archive.'
