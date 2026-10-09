@@ -20,7 +20,10 @@ imaging:
   modality:
   - phase-contrast
   dimensionality: 2D+t
-  voxel_size_nm: null
+  voxel_size_nm:
+    x: 645
+    y: 645
+    z: null
   channels: 1
   organism:
   - Mus musculus
@@ -30,7 +33,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 381782364
+  size_bytes: 381781488
   n_items: 10
   access: open
   download_url: https://zenodo.org/api/records/10539720/files/Tracks.zip/content
@@ -64,10 +67,91 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T22:05:00Z'
+  last_checked: '2026-10-09T22:45:00Z'
 notes: 'Read the Zenodo API record and listed Tracks.zip with peek_archive (30 files: 10 TIFF movies of about 58 MB, and 20
   TrackMate CSVs, split into ICAM and VCAM folders). Tracks come from automatic StarDist + TrackMate tracking, not manual
   curation. The paper (PLOS Biology, full text read) describes the same T cell data as Zenodo 11286110, which has the same
   title and an identical Tracks.zip size (a re-deposit) and calls it brightfield in one place and phase contrast in its Methods,
   so phase-contrast follows the Methods. Pixel size and frame count are not stated on the record or paper; TIFF headers were
-  not read. Small dataset (10 movies).'
+  not read. Small dataset (10 movies). enricher: pixel size 0.645 um from the ImageJ TIFF header (XResolution 1.550387 px/um,
+  unit um; was null); size from the Zenodo file listing.'
+technical:
+  method: sample
+  inspected_at: '2026-10-09T22:45:00Z'
+  inspected_urls:
+  - https://zenodo.org/api/records/10539720
+  - https://zenodo.org/api/records/10539720/files/Tracks.zip/content
+  - https://zenodo.org/api/records/10539720/files/Tracks.zip/content::Tracks/ICAM/R1/Exp 1 20180126 ICAM 1.tiff
+  - https://zenodo.org/api/records/10539720/files/Tracks.zip/content::Tracks/ICAM/R1/Exp 1 20180126 ICAM 1-spots.csv
+  bytes_downloaded: 57900000
+  size_source: file-listing
+  layout:
+    tree: "10539720/\n  Tracks.zip (370.8 MB)\n    Tracks/ICAM/R1..R3/   5 .tiff movies, 10 .csv  (\"Exp <n> <date> ICAM <k>.tiff\"\
+      , \"<same>-tracks.csv\", \"<same>-spots.csv\")\n    Tracks/VCAM/R1..R3/   5 .tiff movies, 10 .csv\n  CellTracksColab_results.zip\
+      \ (11.0 MB)   analysis outputs: CSV tables, PDF plots (QC, Umap, track parameters)"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/10539720/files/Tracks.zip/content::Tracks/ICAM/R1/Exp 1 20180126 ICAM 1.tiff
+    - https://zenodo.org/api/records/10539720/files/Tracks.zip/content::Tracks/ICAM/R1/Exp 1 20180126 ICAM 1-spots.csv
+    - https://zenodo.org/api/records/10539720/files/Tracks.zip/content::Tracks/ICAM/R1/Exp 1 20180126 ICAM 1-tracks.csv
+    size_bytes: null
+    description: Movie "Exp 1 20180126 ICAM 1" (21 frames, 1024x1344) with its TrackMate spots and tracks tables.
+  arrays:
+  - role: raw
+    path_pattern: Tracks/*/R*/*.tiff
+    format: tiff
+    axes: tyx
+    shape:
+    - 21
+    - 1024
+    - 1344
+    shape_varies: null
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 1746
+    - 3781
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ hyperstack (frames 21, TYX), unit um, finterval 1 min; acquired in SlideBook.
+  - role: label
+    path_pattern: Tracks/*/R*/*-spots.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: tracks-table
+    classes: null
+    alignment: unknown
+    alignment_notes: 'TrackMate spots: TRACK_ID, POSITION_X/Y in um, FRAME, RADIUS, shape and intensity features; 3 header
+      rows (names, short names, units). Pairs with the .tiff of the same stem; pixel = um / 0.645.'
+  - role: label
+    path_pattern: Tracks/*/R*/*-tracks.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: tracks-table
+    classes: null
+    alignment: unknown
+    alignment_notes: TrackMate per-track summary table for the movie of the same stem.
+  notes: 'Zenodo listing (2 zips, exact sizes, 381,781,488 B, 70 zip members). probe.py could not read the deflated TIFF member
+    and sample.py could not open members of the extension-less /content URL, so one movie was read in full with tifffile (57.8
+    MB): ImageJ TIFF, 21 x 1024 x 1344 uint16, uncompressed, [1746, 3781] (one movie), XResolution 1550387/1000000 px per
+    um = 0.645 um/px. Spots CSV header read with peek_archive (positions in um). Not every movie has a -spots.csv in the listing.
+    download_url is Tracks.zip, which holds all images and tracks (the second zip holds only analysis outputs). 2D+t, so not
+    in the miao layout yet.'
