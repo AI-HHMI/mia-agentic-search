@@ -1,0 +1,169 @@
+schema_version: '1.2'
+id: hf-medotter-segpc-2021-myeloma-plasma-cells
+title: SegPC-2021 - Segmentation of Multiple Myeloma Plasma Cells
+short_name: Myeloma plasma cell segmentation (brightfield)
+description: 497 brightfield microscopy images of Jenner-Giemsa stained bone-marrow aspirate slides from multiple myeloma
+  patients (stain-colour normalised, 2040x1536 Olympus or 2560x1920 Nikon), from the ISBI 2021 SegPC challenge. Each image
+  has a semantic mask (background, cytoplasm, nucleus) and an instance mask for the designated cells of interest. This Hugging
+  Face mirror holds the 298 train and 199 validation images; the challenge test split with withheld ground truth is not included.
+landing_url: https://huggingface.co/datasets/MedOtter/SegPC-2021
+doi: null
+repository: HuggingFace
+accession: null
+authors:
+- Anubha Gupta
+- Ritu Gupta
+publications:
+- title: 'SegPC-2021: A challenge & dataset on segmentation of Multiple Myeloma plasma cells from microscopic images'
+  doi: 10.1016/j.media.2022.102677
+  url: https://pubmed.ncbi.nlm.nih.gov/36403309/
+date_published: null
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: Jenner-Giemsa stained bone-marrow aspirate slides from multiple myeloma patients
+  labels_stains:
+  - Jenner-Giemsa
+data:
+  formats:
+  - other
+  size_bytes: 2305652168
+  n_items: 497
+  access: open
+  download_url: https://huggingface.co/datasets/MedOtter/SegPC-2021
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  - instance-segmentation
+  coverage: partial
+  format: 'Parquet columns: mask (0 background, 1 cytoplasm, 2 nucleus) and instance_mask (one id per cell of interest) as
+    PNG images'
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: SegPC-2021 (ISBI 2021 challenge)
+  baseline_code_url: null
+license:
+  spdx: CC-BY-NC-SA-4.0
+  url: https://creativecommons.org/licenses/by-nc-sa/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-08T21:14:14Z'
+  evidence_urls:
+  - https://huggingface.co/datasets/MedOtter/SegPC-2021
+  - https://huggingface.co/api/datasets/MedOtter/SegPC-2021?blobs=true
+  - https://huggingface.co/datasets/MedOtter/SegPC-2021/raw/main/README.md
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1016%2Fj.media.2022.102677%22&format=json&resultType=core&pageSize=3
+  - https://arxiv.org/abs/2111.05125
+  - https://ieee-dataport.org/open-access/segpc-2021-segmentation-multiple-myeloma-plasma-cells-microscopic-images
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6291116/fullTextXML
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-09T01:12:00Z'
+notes: 'Third-party Hugging Face mirror of the ISBI 2021 challenge data (originals: IEEE DataPort DOI 10.21227/7np1-2q42,
+  login required; Kaggle sbilab/segpc2021dataset); DOI left null because it names the original, not this mirror. The mirror
+  turns the one-BMP-per-cell masks into per-image semantic and instance masks. Ground truth covers only designated cells of
+  interest (coverage partial, per the IEEE DataPort readme); the winning-team paper (arXiv 2111.05125) calls the labels semi-automatic
+  and noisy. 775 images released; the mirror has the 497 with ground truth (train 298, validation 199). The card warns the
+  Nikon images overlap MiMM_SBILab. Pixel size is stated nowhere checked (only 1000x magnification for the Nikon setup, PCSeg
+  paper). Parquet is not a listed format, hence other. enricher: dtype, PNG encoding and value ranges from one sampled shard.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "MedOtter/SegPC-2021 (Hugging Face), 14 files, 2,305,652,168 B\n  README.md, .gitattributes\n  data/train-0000[0-6]-of-00007.parquet\
+      \       7 shards, 180-235 MB, 298 rows\n  data/validation-0000[0-4]-of-00005.parquet  5 shards, 168-202 MB, 199 rows\n\
+      \  columns: image_id, split, image, mask, instance_mask, overlay (Image), num_instances,\n           height, width,\
+      \ is_mimm_subset, acquisition"
+    n_files: 14
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/MedOtter/SegPC-2021/resolve/main/data/train-00000-of-00007.parquet
+    size_bytes: 199803455
+    description: 'Smallest self-contained unit is one parquet shard (43 rows: image, mask, instance_mask and a half-resolution
+      overlay PNG per row); no per-image files exist.'
+  arrays:
+  - role: raw
+    path_pattern: data/*.parquet (image)
+    format: other
+    axes: yxs
+    shape:
+    - 1920
+    - 2560
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: png
+    value_range:
+    - 1
+    - 231
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Image column of each parquet row, stored as an RGB 8-bit PNG (PNG IHDR in the sampled shard): 2560x1920
+      px (Nikon) or 2040x1536 px (Olympus), i.e. shape [1920,2560,3] or [1536,2040,3]. Stain-colour normalised per the IEEE
+      DataPort readme (in-house GCTI-SN pipeline).'
+  - role: label
+    path_pattern: data/*.parquet (mask)
+    format: other
+    axes: yx
+    shape:
+    - 1920
+    - 2560
+    shape_varies: true
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 2
+    normalization: none
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: cytoplasm
+    - id: 2
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: 'mask column, grey 8-bit PNG with the same width/height as the image of its row (checked in 2 rows);
+      values {0,1,2} = background, cytoplasm, nucleus per the card and the challenge readme. Pairing rule: same parquet row.'
+  - role: label
+    path_pattern: data/*.parquet (instance_mask)
+    format: other
+    axes: yx
+    shape:
+    - 1920
+    - 2560
+    shape_varies: true
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 10
+    normalization: none
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'instance_mask column, grey 8-bit PNG, same width/height as the image of its row; 0 background, 1..N
+      one id per cell of interest (first row: ids 0-5, num_instances 5). Pairing rule: same parquet row.'
+  notes: 'Sampled one shard (train-00000-of-00007.parquet, 199.8 MB) and decoded embedded PNGs with a stdlib reader (no parquet
+    library): 172 PNGs = 43 rows x 4 image columns (row groups of 21+22 rows). image: RGB uint8; mask and instance_mask: grey
+    uint8; overlay: RGB at half size (1280x960 / 1020x768), not an array here. Value ranges from 4 decoded rows of this one
+    shard (image 21-216 and 1-231; mask 0-2; instance ids up to 10), so other shards may differ. Size from the HF file listing
+    (exact). Voxel size not found; checked: dataset card, datasets-server schema, challenge paper
+    (abstract only, not OA), IEEE DataPort page and its readme.txt, grand-challenge page, PCSeg paper (PLoS ONE 2018: 1000x
+    magnification, Nikon Eclipse-200, no pixel size). Parquet is not a format TensorSwitch reads; the original BMPs sit behind
+    an IEEE login (TCIA_SegPC_dataset.zip, 4.49 GB).'
