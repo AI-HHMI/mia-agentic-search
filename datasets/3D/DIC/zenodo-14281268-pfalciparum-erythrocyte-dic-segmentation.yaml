@@ -1,0 +1,134 @@
+schema_version: '1.2'
+id: zenodo-14281268-pfalciparum-erythrocyte-dic-segmentation
+title: 'Plasmodium falciparum-infected erythrocytes: 3D DIC Airyscan stacks with ground-truth erythrocyte and parasite masks,
+  plus unlabelled whole-life time-lapses (Zenodo 14281268)'
+short_name: Malaria erythrocyte 3D DIC masks
+description: Z-stacks of erythrocytes (64 stacks) and P. falciparum parasites (47 stacks, ring and trophozoite/schizont stages)
+  imaged by DIC on a Zeiss LSM900 Airyscan with 3D ground-truth masks derived from confocal fluorescence, split into 10 cross-validation
+  folds with predicted masks, plus a large unlabelled set of whole-life-cycle time-lapse stacks.
+landing_url: https://zenodo.org/records/14281268
+doi: 10.5281/zenodo.14281268
+repository: Zenodo
+accession: '14281268'
+authors:
+- Sophia Maria Frangos
+- Sebastian Damrich
+publications:
+- title: Deep learning image analysis for continuous single-cell imaging of dynamic processes in Plasmodium falciparum-infected
+    erythrocytes
+  doi: 10.1038/s42003-025-07894-3
+  url: null
+date_published: '2024-12-17'
+imaging:
+  modality:
+  - DIC
+  - confocal
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 79
+    y: 79
+    z: 250
+  channels: null
+  organism:
+  - Plasmodium falciparum
+  - Homo sapiens
+  sample: Live and fixed P. falciparum-infected and uninfected human erythrocytes, DIC with CellBrite and PV-membrane fluorescence
+    used for annotation
+  labels_stains:
+  - CellBrite
+data:
+  formats:
+  - tiff
+  - hdf5
+  size_bytes: 1186906713
+  n_items: 111
+  access: open
+  download_url: https://zenodo.org/records/14281268
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: Ground-truth mask stored as channel 1 of each labelled ImageJ TIFF (zcyx; channel 0 = DIC); results/*.h5 hold Cellpose
+    cross-validation predictions
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/sciai-lab/CP_RBC_Pfalciparum
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-09T14:00:00Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/14281268
+  - https://zenodo.org/api/records/14281268/files/parasite_labelled.zip/content
+  - https://zenodo.org/api/records/14281268/files/rbc_labelled.zip/content
+  - https://zenodo.org/api/records/14281268/files/wholelife_unlabelled.zip/content
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22Deep+learning+image+analysis+for+continuous+single-cell+imaging+of+dynamic+processes+in+Plasmodium+falciparum-infected+erythrocytes%22&format=json&resultType=core&pageSize=3
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11937545/fullTextXML
+  - https://zenodo.org/records/14281268
+  - https://github.com/sciai-lab/CP_RBC_Pfalciparum
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-09T15:30:00Z'
+notes: 'Three zips: parasite_labelled (47 stacks; mask-r ring, mask-ts trophozoite/schizont), rbc_labelled (64 stacks in valid1-3)
+  and wholelife_unlabelled (38 time-lapse tifs, no GT). results/ folders hold Cellpose CV predictions (.h5) and metrics (.pkl).
+  Voxel size 0.079 um x 0.25 um z from paper Methods; ImageJ headers agree (79.23 nm, spacing 0.25 um). Ground truth: erythrocytes
+  by ilastik carving on CellBrite fluorescence, parasites manual in Imaris (hence mixed: rbc_labelled = automatic-assisted
+  carving, parasite_labelled = manual). organisms: every file shows human erythrocytes (Homo sapiens), infected ones contain
+  P. falciparum; not separable by folder. enricher: GT is channel 1 of the same TIFF as the DIC raw (repo utils.tif_to_h5:
+  img[:,0]=data, img[:,1]=seg).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "rbc_labelled.zip (66.9 MB)\n  rbc_labelled/valid{1,2,3}/data/*.tif_merge.tif   64 files, 167.8 MB (DIC + GT, zcyx)\n\
+      \  rbc_labelled/valid{1,2,3}/results/<cellpose CV run>/  640 .h5 predictions, 60 .pkl metrics\nparasite_labelled.zip\
+      \ (43.3 MB)\n  parasite_labelled/mask-r/data/*.tif     ring-stage stacks (DIC + GT)\n  parasite_labelled/mask-ts/data/*.tif\
+      \    trophozoite/schizont stacks (DIC + GT)\n  parasite_labelled/mask-*/results/<cellpose CV run>/  490 .h5, 20 .pkl\n\
+      wholelife_unlabelled.zip (1.08 GB)\n  wholelife_unlabelled/wholelife/data/*.tif   38 time-lapse stacks, no GT\n  wholelife_unlabelled/wholelife/results/{erythrocyte,joint,late_stage}_model/*.h5\
+      \  predictions"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/14281268/files/rbc_labelled.zip::rbc_labelled/valid1/data/Valid1_4_uRBC.tif_merge.tif
+    size_bytes: 2621958
+    description: 'one erythrocyte stack: 29 z x 2 channels (DIC, GT mask) x 150 x 150, uint16 ImageJ TIFF'
+  arrays:
+  - role: raw
+    path_pattern: '{rbc_labelled.zip/rbc_labelled/valid[123],parasite_labelled.zip/parasite_labelled/mask-*}/data/*.tif'
+    format: tiff
+    axes: zcyx
+    shape:
+    - 29
+    - 2
+    - 150
+    - 150
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 45568
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'channel 0 = 3D DIC (observed 10752-45568, multiples of 256: 8-bit data scaled into uint16), channel
+      1 = ground-truth mask on the same grid (observed 0-4). Pairing: raw and GT are one file. ImageJ header: 29 slices, 2
+      channels, 0.25 um spacing.'
+  notes: 'Listing: 3 zips, 1,186,906,713 bytes (Zenodo API, complete). Headers probed: rbc Valid1_4_uRBC.tif_merge.tif and
+    parasite mask-ts/t-s-1-1c.tif, both ImageJ zcyx [29,2,150,150] uint16 uncompressed, 79.2 / 79.1 nm px. Sampled Valid1_4_uRBC
+    (490 KB compressed): channel 1 values 0-4 (5 values; paper calls them binary masks per cell, so likely one id per erythrocyte
+    in the crop, encoding not settled); value ranges from one sample. Shapes vary between stacks (mask-r tifs 4.7-5.1 MB vs
+    2.6 MB). The GT is a channel of the raw TIFF, not a separate file: TensorSwitch needs a channel split (c index 1) to write
+    it as a label. wholelife tifs and results .h5 not probed. Zenodo range requests intermittently returned 502/504. Not described
+    as arrays: results/*.h5 (Cellpose CV predictions, dataset ''seg'') and the unlabelled wholelife tifs.'
