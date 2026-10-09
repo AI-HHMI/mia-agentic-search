@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-18920195-brave-asr-pfib-axial-sr
 title: BenchmaRking Anisotropic vEM Evaluation for Axial Super-Resolution (BRAVE-ASR)
 short_name: BRAVE-ASR mouse brain plasma-FIB (axial SR)
-description: Co-aligned plasma-FIB-SEM volumes of mouse brain acquired at 5 nm XY with physical slice thicknesses of 5,
-  10, 20 and 40 nm, plus a larger raw 5 nm volume, providing real isotropic and anisotropic ground-truth pairs for
-  z-axis super-resolution in volume electron microscopy.
+description: Co-aligned plasma-FIB-SEM volumes of mouse brain acquired at 5 nm XY with physical slice thicknesses
+  of 5, 10, 20 and 40 nm, plus a larger raw 5 nm volume, providing real isotropic and anisotropic ground-truth pairs
+  for z-axis super-resolution in volume electron microscopy.
 landing_url: https://zenodo.org/records/18920195
 doi: 10.5281/zenodo.18920195
 repository: Zenodo
@@ -62,10 +62,70 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-09T05:20:00Z'
+  last_checked: '2026-10-09T05:28:00Z'
 notes: 'Usable without labels as restoration (axial super-resolution) data: README table lists five TIFF volumes
-  (5 nm raw 2000x2000x800; 5, 10, 20 and 40 nm slice thickness, each 2000x2000x256), all 5 nm XY, Thermo Fisher plasma-FIB,
-  1 us dwell, SIFT-registered. Z spacing differs by volume (5/10/20/40 nm), so voxel_size_nm.z is null. Size is the
-  sum of the Zenodo file sizes (about 15.2 GB, includes evaluate.py, README and CSV). The description cites the SkelEM
-  framework (ECCV 2026) but gives no paper DOI and none was looked up, so publications is empty. No segmentation
-  labels are provided.'
+  (5 nm raw 2000x2000x800; 5, 10, 20 and 40 nm slice thickness, each 2000x2000x256), all 5 nm XY, Thermo Fisher
+  plasma-FIB, 1 us dwell, SIFT-registered. Z spacing differs by volume (5/10/20/40 nm), so voxel_size_nm.z is null.
+  Size is the sum of the Zenodo file sizes (about 15.2 GB, includes evaluate.py, README and CSV). The description
+  cites the SkelEM framework (ECCV 2026) but gives no paper DOI and none was looked up, so publications is empty.
+  No segmentation labels are provided. enricher: headers differ from the README table: raw volume is 800x3000x3708,
+  the 5 nm aligned volume has 800 slices (README: 256).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "zenodo-18920195/  9 files, 15.2 GB (flat)\n  pFIB-xy_5nm_z_5nm-aligned-raw.tif   8.90 GB  800x3000x3708\
+      \ uint8, not histogram-normalized\n  pFIB-xy_5nm_z_5nm-aligned.tif       3.20 GB  800x2000x2000\n  pFIB-xy_5nm_z_10nm-aligned.tif\
+      \      1.02 GB  256x2000x2000\n  pFIB-xy_5nm_z_20nm-aligned.tif      1.02 GB  256x2000x2000\n  pFIB-xy_5nm_z_40nm-aligned.tif\
+      \      1.02 GB  256x2000x2000\n  README.md, evaluate.py, resotest.png, FID_Downsampling_Comparison.csv\n"
+    n_files: 9
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/18920195/files/pFIB-xy_5nm_z_5nm-aligned.tif
+    - https://zenodo.org/records/18920195/files/pFIB-xy_5nm_z_10nm-aligned.tif
+    size_bytes: 4224183978
+    description: The 5 nm aligned volume and the 10 nm slice-thickness volume (smallest pair; each file is one whole
+      volume).
+  arrays:
+  - role: raw
+    path_pattern: pFIB-xy_5nm_z_5nm-aligned*.tif
+    format: tiff
+    axes: zyx
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    lossy: false
+    value_range: null
+    shape:
+    - 800
+    - 2000
+    - 2000
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: '5 nm isotropic volumes: aligned (histogram-matched per README) and the larger raw one (800x3000x3708,
+      registered only).'
+  - role: target
+    path_pattern: pFIB-xy_5nm_z_{10,20,40}nm-aligned.tif
+    format: tiff
+    axes: zyx
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    lossy: false
+    value_range: null
+    shape:
+    - 256
+    - 2000
+    - 2000
+    normalization: unknown
+    alignment: unknown
+    alignment_notes: Physically thicker slices (10, 20, 40 nm) of the same tissue, 5 nm in xy, co-aligned to the
+      5 nm volume by SIFT-based affine registration (README); z extents differ (800 x 5 nm vs 256 x 10/20/40 nm),
+      and the overlap offset is not stated.
+  notes: 'Zenodo listing: 9 files, 15,171,553,316 B (= size_bytes, confirmed). Probed all five TIFF headers: ImageJ,
+    uint8, uncompressed, zyx; shapes above (no calibration in the headers). Not sampled: the smallest volume is
+    1.02 GB, over the 500 MB budget. README read: xy 5 nm for all volumes, slice thickness 5/10/20/40 nm per file,
+    four volumes histogram-normalized. All five files are direct Zenodo links (usable, range requests); no archive,
+    so download_url stays the record page. voxel_size_nm.z stays null because each file has its own z spacing (5,
+    10, 20, 40 nm, README).'
