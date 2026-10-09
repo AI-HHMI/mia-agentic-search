@@ -2,9 +2,8 @@ schema_version: '1.2'
 id: zenodo-19222986-irradiated-cell-foci
 title: Irradiated-Cell-Foci
 short_name: H2AX foci in irradiated nuclei (fluorescence)
-description: 446 fluorescence microscopy images (288x288 px, centre-cropped to 220x220)
-  of irradiated human lymphocyte nuclei stained for gamma-H2AX, with bounding boxes
-  (YOLO format) and dot annotations for every large, bright DNA double-strand-break
+description: 446 fluorescence microscopy images (288x288 px, centre-cropped to 220x220) of irradiated human lymphocyte nuclei
+  stained for gamma-H2AX, with bounding boxes (YOLO format) and dot annotations for every large, bright DNA double-strand-break
   focus, for object counting and density estimation.
 landing_url: https://zenodo.org/records/19222986
 doi: 10.5281/zenodo.19222986
@@ -24,15 +23,14 @@ imaging:
   channels: 2
   organism:
   - Homo sapiens
-  sample: Lymphocytes isolated from whole blood of healthy donors, irradiated and
-    stained for gamma-H2AX
+  sample: Lymphocytes isolated from whole blood of healthy donors, irradiated and stained for gamma-H2AX
   labels_stains:
   - DAPI (blue nuclei)
   - gamma-H2AX (red foci)
 data:
   formats:
   - tiff
-  size_bytes: 1342980
+  size_bytes: 1344705
   n_items: 446
   access: open
   download_url: https://zenodo.org/records/19222986/files/cell-foci.zip
@@ -44,8 +42,7 @@ annotations:
   - points
   - counts
   coverage: partial
-  format: 'Per image: YOLO .txt boxes (single class ''foci'') and .json dot annotations
-    with centre coordinates and count'
+  format: 'Per image: YOLO .txt boxes (single class ''foci'') and .json dot annotations with centre coordinates and count'
   source: manual
 ml:
   tasks:
@@ -68,13 +65,81 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T03:13:29Z'
-notes: 'Zip holds 446 images (images/*.RB.TIF), 446 .RB.txt YOLO label files and 446
-  .RB.json dot files. Only large, bright foci were annotated; small or dim foci were
-  excluded, hence coverage partial. Channels: blue nuclei and red foci per the description;
-  the TIFFs were not opened to confirm the channel count. Pixel size, microscope and
-  objective are not stated on the record; the record cites Bucher et al. (2021) for
-  the staining protocol but no paper was found via Europe PMC/Crossref title search,
-  so no publication is listed. Image acquisition and annotation by Bundesamt fuer
-  Strahlenschutz, preprocessing by Umweltbundesamt. ml task ''other'' = counting/density
-  estimation.'
+  last_checked: '2026-10-09T05:45:00Z'
+notes: 'Zip holds 446 images (images/*.RB.TIF), 446 .RB.txt YOLO label files and 446 .RB.json dot files. Only large, bright
+  foci were annotated; small or dim foci were excluded, hence coverage partial. Channels: blue nuclei and red foci per the
+  description; the TIFFs are RGB (3 samples, enricher). Pixel size, microscope and objective are not stated on the record;
+  the record cites Bucher et al. (2021) for the staining protocol but no paper was found via Europe PMC/Crossref title search,
+  so no publication is listed. Image acquisition and annotation by Bundesamt fuer Strahlenschutz, preprocessing by Umweltbundesamt.
+  ml task ''other'' = counting/density estimation. enricher: size includes the preview JPG (record total 1,344,705 B).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "record 19222986 (2 files, 1.3 MB)\n  preview_sample_cell_foci.jpg\n  cell-foci.zip (1.3 MB, 1338 members, 64.8\
+      \ MB uncompressed) / cell-foci/\n    images/<slide>.<n>-<n>.RB.TIF     446 RGB TIFFs, 220x220\n    labels/xywh/<same\
+      \ stem>.RB.txt    446 YOLO box files\n    labels/dots/<same stem>.RB.json   446 dot files {count, center}\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/19222986/files/cell-foci.zip::cell-foci/images/011060.11-11.RB.TIF
+    - https://zenodo.org/records/19222986/files/cell-foci.zip::cell-foci/labels/xywh/011060.11-11.RB.txt
+    - https://zenodo.org/records/19222986/files/cell-foci.zip::cell-foci/labels/dots/011060.11-11.RB.json
+    size_bytes: 146023
+    description: One image with its YOLO box file and dot file (zip members).
+  arrays:
+  - role: raw
+    path_pattern: cell-foci/images/*.RB.TIF
+    format: tiff
+    axes: yxs
+    shape:
+    - 220
+    - 220
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 254
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Single-page RGB TIFFs (photometric 2), all 145,340 B; blue = DAPI nuclei, red = gamma-H2AX foci (Zenodo
+      text). Centre-cropped from 288x288 (Zenodo text). Sample is 98% zeros (dark background).
+  - role: label
+    path_pattern: cell-foci/labels/xywh/*.RB.txt
+    format: other
+    axes: null
+    shape:
+    - 7
+    - 5
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: foci
+    alignment: same-grid
+    alignment_notes: 'YOLO text: class x_center y_center width height, normalized (Zenodo text). Pairing by stem: images/<stem>.TIF
+      <-> labels/xywh/<stem>.txt. In the sample the normalized centres x 220 match the dot pixels within 1 px, so they refer
+      to the 220x220 crop.'
+  - role: label
+    path_pattern: cell-foci/labels/dots/*.RB.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: points-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'JSON {count, center: [[x, y], ...]} in absolute pixels of the 220x220 image, derived from the box centres
+      (Zenodo text).'
+  notes: 'Exact Zenodo listing with the zip index expanded (2 files, 1,344,705 B). Probed 011060.3-3.RB.TIF (220x220x3 uint8,
+    uncompressed, RGB). Sampled 011060.11-11.RB.TIF (values 0-254, mean 0.95, one sample) and read its .txt (7 boxes) and
+    .json (count 7). Only large, bright foci are annotated (Zenodo text). Voxel size not found; checked: TIFF header (no calibration),
+    Zenodo API record (no pixel size, microscope or objective), no paper found (Bucher et al. 2021 is cited only for the staining
+    protocol). Zip and members are direct Zenodo links (usable, range requests).'
