@@ -2,14 +2,17 @@ schema_version: '1.2'
 id: zenodo-13306714-mif-dapi-nuclei-benchmark
 title: Nuclear segmentation benchmark on multiplexed immunofluorescence DAPI images (in-house ROIs with manual nuclear masks)
 short_name: Multiplexed IF DAPI nuclei masks (human tissue)
-description: DAPI intensity images (spectrally unmixed multiplexed immunofluorescence scans of human tissue) with manually annotated binary nuclear ground-truth masks for ROI fields, plus predicted masks from seven segmentation platforms (CellPose, CellProfiler, Fiji, InForm, Mesmer, QuPath, StarDist). Accompanies a nuclear segmentation benchmarking paper.
+description: DAPI intensity images (spectrally unmixed multiplexed immunofluorescence scans of human tissue) with manually
+  annotated binary nuclear ground-truth masks for ROI fields, plus predicted masks from seven segmentation platforms (CellPose,
+  CellProfiler, Fiji, InForm, Mesmer, QuPath, StarDist). Accompanies a nuclear segmentation benchmarking paper.
 landing_url: https://zenodo.org/records/13306714
 doi: 10.5281/zenodo.13306714
 repository: Zenodo
 accession: '13306714'
 authors: []
 publications:
-- title: Quantitative benchmarking of nuclear segmentation algorithms in multiplexed immunofluorescence imaging for translational studies.
+- title: Quantitative benchmarking of nuclear segmentation algorithms in multiplexed immunofluorescence imaging for translational
+    studies.
   doi: 10.1038/s42003-025-08184-8
   url: https://doi.org/10.1038/s42003-025-08184-8
 date_published: null
@@ -18,7 +21,7 @@ imaging:
   - fluorescence-other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism:
   - Homo sapiens
   sample: human tissue sections (tonsil, prostate and other tissues; paper reports three tissue types in the in-house set)
@@ -28,16 +31,17 @@ data:
   formats:
   - tiff
   size_bytes: 194488372
-  n_items: null
+  n_items: 5
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/13306714
   download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
   coverage: partial
-  format: binary TIFF masks per ROI (ground_truth/gr_tr.tiff) plus per-platform predicted masks
+  format: binary TIFF mask per 256x256 ROI (Fields/<sample>_<ULHC>/ground_truth/gr_tr.tiff, 0/255, touching nuclei split by
+    a 2-pixel gap) plus per-platform predicted masks (Fields/<ROI>/Platforms/*.tif[f])
   source: manual
 ml:
   tasks:
@@ -53,12 +57,104 @@ provenance:
   discovered_at: '2026-10-09T02:44:37Z'
   evidence_urls:
   - https://zenodo.org/records/13306714
+  - https://zenodo.org/api/records/13306714
   - https://zenodo.org/api/records/13306714/files/inhouse.zip/content
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12125308/fullTextXML
+  - https://zenodo.org/api/records/13306714/files/README_DAPI.md/content
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T02:44:37Z'
-notes: 'inhouse.zip (164.5 MB) lists 5 DAPI scans (DAPI_inhouse/*.tif) and ~33 Fields/<ROI>/ground_truth/gr_tr.tiff manual masks with per-platform prediction masks; external.zip (30 MB) could not be listed (network error) and its ground truth comes from a Synapse dataset (doi:10.7303/SYN27624812). Pixel size, scanner and exact image counts are not stated on the Zenodo page or in the paper text read; a descriptive internal.zip is mentioned but absent from the file list. No train/val/test split; intended as a benchmark.'
+  last_checked: '2026-10-09T03:15:00Z'
+notes: 'Files: inhouse.zip (5 whole-sample DAPI scans DAPI_inhouse/*.tif + 20 ROIs Fields/<sample>_<ULHC>/ with ground_truth/gr_tr.tiff
+  and 7 platform predictions), external.zip (40 ROIs: GT + Cellpose/Mesmer/StarDist predictions; raw DAPI for these is only
+  on Synapse doi:10.7303/SYN27624812, see ROIs_DAPI.csv), README_DAPI.md. ROI naming: ''Sample ID_ULHC'', e.g. Bph2_45174_14597_160_246
+  = sample Bph2_45174_14597, ULHC pixel (246,160) per the Zenodo description. internal.zip named in the README is not in the
+  record. GT drawn in GIMP, touching nuclei separated by a 2-pixel gap (paper Methods). Pixel size not stated on Zenodo or
+  in the paper text read. No train/val/test split. enricher: channels 1 (grey stored as RGB), n_items 5 raw scans, size from
+  the Zenodo listing.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './                                                        3 files    194.5 MB  .zip 2, .md 1
+
+      zip contents:
+
+      external.zip/                                             1 files      1.2 KB  .csv (ROIs_DAPI.csv)
+
+      external.zip/Fields/P#_#_#_#_#_#/Platforms/ (x40 dirs)     120 files    537.9 MB  .tiff
+
+      external.zip/Fields/P#_#_#_#_#_#/ground_truth/ (x40 dirs)      40 files      6.4 MB  .tiff
+
+      inhouse.zip/DAPI_inhouse/                                 5 files    385.5 MB  .tif
+
+      inhouse.zip/Fields/Bph#_#_#_#_#/Platforms/ (x4 dirs)       28 files    247.9 MB  .tiff 24, .tif 4
+
+      inhouse.zip/Fields/Bph#_#_#_#_#/ground_truth/ (x4 dirs)        4 files    263.2 KB  .tiff
+
+      inhouse.zip/Fields/TME#_#_#_#_#/{Platforms,ground_truth}/ (x4 dirs)
+
+      inhouse.zip/Fields/Tonsil_#color_Scan#_#_#_#_#/{Platforms,ground_truth}/ (x4 dirs)
+
+      inhouse.zip/Fields/VISTA#_#_#_#_#/{Platforms,ground_truth}/ (x4 dirs)
+
+      inhouse.zip/Fields/sixplexTonsil_#_#_#/{Platforms,ground_truth}/ (x4 dirs)
+
+      (+4 OS metadata files not shown)'
+    n_files: 333
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/13306714/files/inhouse.zip::DAPI_inhouse/TME11_12154_44141.tif
+    - https://zenodo.org/records/13306714/files/inhouse.zip::Fields/TME11_12154_44141_1378_0/ground_truth/gr_tr.tiff
+    size_bytes: 31762976
+    description: In-house DAPI scan TME11_12154_44141 and the ground truth of one of its 256x256 ROIs
+  arrays:
+  - role: raw
+    path_pattern: inhouse.zip/DAPI_inhouse/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 1408
+    - 1876
+    - 3
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range:
+    - 0.0
+    - 35.8496
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Spectrally unmixed DAPI signal of the whole sample field, grey stored as RGB (3 identical samples in
+      the sample). Scan sizes vary: 31.2-145.7 MB per file in the listing. external.zip ships no raw images (Synapse).'
+  - role: label
+    path_pattern: '*.zip/Fields/*/ground_truth/gr_tr.tiff'
+    format: tiff
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 255
+      name: nucleus
+    alignment: cropped
+    alignment_notes: 'Pairing rule: Fields/<sample ID>_<a>_<b>/ground_truth/gr_tr.tiff is a 256x256 crop of DAPI_inhouse/<sample
+      ID>.tif; the Zenodo description says ROI Bph2_45174_14597_160_246 has its upper-left pixel at (246,160), i.e. the last
+      two name fields give the corner (order as stated there). Instances are separable: touching nuclei split by a 2-pixel
+      gap. External ROIs pair with Synapse DAPI images (ROIs_DAPI.csv).'
+  notes: 'Listing: tools/listing.py on the Zenodo record with --expand-zips: 3 files, 194,488,372 B (file-listing, complete),
+    330 zip members. Probed + sampled (values from one sample): DAPI_inhouse/TME11_12154_44141.tif float32 1408x1876x3, uncompressed,
+    range 0-35.85, 66% zeros, identical samples; gr_tr.tiff 256x256 uint8 {0,255}. Voxel size not found; checked: TIFF headers
+    (no calibration), Zenodo record and README_DAPI.md, paper full text (Europe PMC, Methods). Download: zip members of https://zenodo.org/records/13306714/files/inhouse.zip
+    pass --download-check; no single archive for the whole dataset (two zips). Not listed as an array: Fields/*/Platforms/*.tif[f],
+    predicted masks from 7 tools (not ground truth; not probed).'
