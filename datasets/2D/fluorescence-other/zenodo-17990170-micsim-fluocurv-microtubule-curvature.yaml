@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: zenodo-17990170-micsim-fluocurv-microtubule-curvature
 title: 'MicSim_FluoCurv: Synthetic microscopy images of fluorescent microtubules and their curvature maps'
 short_name: Synthetic microtubule curvature maps
-description: Two sets of 1,000 simulated noisy fluorescence images of microtubules, each paired with a ground-truth
-  curvature map (local curvature in grayscale), for training networks to predict curvature without segmentation.
-  The simple set has uniform fluorescence along filaments; the complex set fades towards the ends.
+description: Two sets of 1,000 simulated noisy fluorescence images of microtubules, each paired with a
+  ground-truth curvature map (local curvature in grayscale), for training networks to predict curvature
+  without segmentation. The simple set has uniform fluorescence along filaments; the complex set fades
+  towards the ends.
 landing_url: https://zenodo.org/records/17990170
 doi: 10.5281/zenodo.17990170
 repository: Zenodo
@@ -15,7 +16,11 @@ authors:
 - Yousef ElMourabit
 - Achraf Ait Laydi
 - Sidi Mohamed Sid'El Moctar
-publications: []
+publications:
+- title: 'MTCurv: Deep learning for direct microtubule curvature mapping in noisy fluorescence microscopy
+    images'
+  doi: null
+  url: https://arxiv.org/abs/2604.26517
 date_published: '2025-12-19'
 imaging:
   modality:
@@ -29,18 +34,18 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 210600000
+  size_bytes: 210579148
   n_items: 2000
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/17990170
   download_method: http
 annotations:
   present: true
   types:
   - other
   coverage: dense
-  format: per-image curvature map TIFF (*.curvature.tiff, local curvature encoded in grayscale) next to each *.noisy.tiff
-    image
+  format: per-image curvature map TIFF (*.curvature.tiff, local curvature encoded in grayscale) next to
+    each *.noisy.tiff image
   source: automatic
 ml:
   tasks:
@@ -56,16 +61,80 @@ provenance:
   discovered_at: '2026-10-09T13:20:00Z'
   evidence_urls:
   - https://zenodo.org/records/17990170
+  - https://zenodo.org/api/records/17990170
+  - https://arxiv.org/abs/2604.26517
+  - https://arxiv.org/pdf/2604.26517
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T13:20:00Z'
-notes: 'The images are simulated, not acquired; the record is included because it is a paired training set for a microscopy
-  task (curvature regression). Zip listings (peek_archive): MicSim_FluoCurv_easy.zip (106.4 MB) and _complex.zip (104.2 MB)
-  each hold 1,000 report_NNNN.noisy.tiff images and 1,000 matching report_NNNN.curvature.tiff maps (about 0.1 MB each),
-  so n_items counts 2,000 image/map pairs. The Zenodo page lists 210.6 MB of files. Pixel size, image dimensions and
-  the exact simulation procedure are not stated on the page; the paper it asks to cite (Ait Laydi et al., MTCurv, ICPR
-  2026) was not found in Europe PMC or Crossref, so publications is empty. Ground truth comes from the simulation, hence
-  source automatic. No train/test split. Both sets share the same ground-truth curvature maps per the description.'
+  last_checked: '2026-10-09T14:00:00Z'
+notes: 'The images are simulated, not acquired (they mimic astral microtubules in the C. elegans zygote,
+  per the paper); included as a paired training set for curvature regression. Zips: MicSim_FluoCurv_easy.zip
+  (106.4 MB) and _complex.zip (104.2 MB), each 1,000 report_NNNN.noisy.tiff images + 1,000 matching report_NNNN.curvature.tiff
+  maps; n_items counts 2,000 pairs. Ground truth from the simulation (three-point curvature, encoded pixelwise
+  as intensities), hence source automatic; both sets share the same ground truth. The paper used a random
+  80/10/10 split per set, but no split ships with the data. organism empty: synthetic data. enricher:
+  paper found on arXiv (2604.26517, ICPR 2026) and added (was empty); voxel size stays null: no physical
+  pixel size stated (paper, Zenodo pages, code record checked).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                    2 files  210.6 MB (zips)\nMicSim_FluoCurv_easy.zip/tiffs_easy_crop_clean_regress/\
+      \     2000 files  293.2 MB .tiff\n  report_NNNN.noisy.tiff  report_NNNN.curvature.tiff   (0001-1000)\n\
+      MicSim_FluoCurv_complex.zip/tiffs_hard_crop_clean_regress/  2000 files  293.2 MB .tiff\n  report_NNNN.noisy.tiff\
+      \  report_NNNN.curvature.tiff   (0001-1000)\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/17990170/files/MicSim_FluoCurv_easy.zip::tiffs_easy_crop_clean_regress/report_0001.noisy.tiff
+    - https://zenodo.org/records/17990170/files/MicSim_FluoCurv_easy.zip::tiffs_easy_crop_clean_regress/report_0001.curvature.tiff
+    size_bytes: 293194
+    description: One simulated image and its curvature map (simple set), read as zip members.
+  arrays:
+  - role: raw
+    path_pattern: '*.zip::*/report_*.noisy.tiff'
+    format: tiff
+    axes: yx
+    shape:
+    - 465
+    - 315
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Simulated noisy fluorescence image; single-page greyscale TIFF.
+  - role: label
+    path_pattern: '*.zip::*/report_*.curvature.tiff'
+    format: tiff
+    axes: yx
+    shape:
+    - 465
+    - 315
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: other
+    classes: null
+    alignment: same-grid
+    alignment_notes: Per-pixel curvature map (local curvature encoded as grey value, 0 = background) paired
+      by stem with report_NNNN.noisy.tiff in the same folder; same 465x315 shape.
+  notes: 'Listing: Zenodo API + zip central directories, 2 zips, 210,579,148 B (exact); 4,000 TIFF members,
+    every one exactly 146,597 B uncompressed, so all share the probed 465x315 uint8 shape. Probe (zip
+    member headers): report_0001.noisy.tiff plain single-page TIFF, uint8, no compression, photometric
+    1. Sample (easy set, report_0001): noisy 83,128 B downloaded, values 0-255, mean 27.6, 207 distinct
+    values, p99 97 (hint: full range used, possibly contrast-stretched; not stated, so normalization unknown);
+    curvature 23,280 B, values 0-255, mean 2.3, 89% zero, 212 distinct values (continuous curvature, not
+    IDs: encoding other). Value ranges are from one sample. The curvature-to-grey scaling is not stated
+    in the paper or on Zenodo. Voxel size: none (synthetic); checked the Zenodo record, the arXiv paper
+    (Datasets section) and the code record 18156083 (a .git folder only).'
