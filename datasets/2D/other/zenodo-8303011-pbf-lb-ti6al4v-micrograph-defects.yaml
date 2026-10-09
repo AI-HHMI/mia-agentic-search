@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zenodo-8303011-pbf-lb-ti6al4v-micrograph-defects
 title: PBF-LB/M Ti6Al4V micrographs and labeled manufacturing defects
 short_name: Ti6Al4V micrographs with labelled defects (other)
-description: 775 large JPEG micrographs of laser powder-bed-fused Ti6Al4V specimens built with randomised process parameters
-  (layer thickness 25-100 um), plus 1,200 labelled binary defect images in three classes (400 lack of fusion, 400 keyhole,
-  400 process pores) with a CSV of extracted defect features, a process-parameter CSV, and a set of micrographs for model
-  application.
+description: 775 large JPEG micrographs of laser powder-bed-fused Ti6Al4V specimens built with randomised
+  process parameters (layer thickness 25-100 um), plus 1,200 labelled binary defect images in three classes
+  (400 lack of fusion, 400 keyhole, 400 process pores) with a CSV of extracted defect features, a process-parameter
+  CSV, and a set of micrographs for model application.
 landing_url: https://zenodo.org/records/8303011
 doi: 10.5281/zenodo.8303011
 repository: Zenodo
@@ -40,8 +40,8 @@ annotations:
   types:
   - classification
   coverage: partial
-  format: 'Labeled_Defects.zip: 1200 JPEG defect images in folders Keyhole, Lack_of_Fusion and Process_Pores (400 each) plus
-    Ti6Al4V_local_defect_features.csv with a label column'
+  format: 'Labeled_Defects.zip: 1200 JPEG defect images in folders Keyhole, Lack_of_Fusion and Process_Pores
+    (400 each) plus Ti6Al4V_local_defect_features.csv with a label column'
   source: manual
 ml:
   tasks:
@@ -64,12 +64,104 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T21:16:57Z'
-notes: 'Materials-science optical micrographs, not biology. Counts: the description says 775 micrographs (and in one place
-  757); Labeled_Defects.zip lists 1,200 JPEGs (400 per class, peek_archive), so n_items is 775 + 1,200 = 1,975. Only the 1,200
-  defect crops are labelled (class folders; manual labelling by the authors per the description); the 775 large micrographs
-  (about 60 MB JPEG each, in eight zips, e.g. 1-84.zip lists 84 files) carry no per-pixel annotations. No download_url because
-  the data is split over ten zips plus CSVs (52.9 GB in total, size_bytes). Imaging technique, pixel size and microscope are
-  not stated on the dataset page, so modality is other and voxel_size_nm is null; no paper is linked, so no publication is
-  listed. Annotations are image-level defect classes (classification), not masks, although the defects are described as binary
-  images.'
+  last_checked: '2026-10-09T22:58:36Z'
+notes: 'Materials-science optical micrographs, not biology. Counts: the description says 775 micrographs
+  (and in one place 757); Labeled_Defects.zip lists 1,200 JPEGs (400 per class, peek_archive), so n_items
+  is 775 + 1,200 = 1,975. Only the 1,200 defect crops are labelled (class folders; manual labelling by
+  the authors per the description); the 775 large micrographs (about 60 MB JPEG each, in eight zips, e.g.
+  1-84.zip lists 84 files) carry no per-pixel annotations. No download_url because the data is split over
+  ten zips plus CSVs (52.9 GB in total, size_bytes). Imaging technique, pixel size and microscope are
+  not stated on the dataset page, so modality is other and voxel_size_nm is null; no paper is linked,
+  so no publication is listed. Annotations are image-level defect classes (classification), not masks,
+  although the defects are described as binary images.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './   11 files  52.9 GB  .zip 10, .csv 1
+
+      zip contents:
+
+      <a>-<b>.zip/<c>-<d>/  (8 zips, 83 dirs)       774 files  53.1 GB  .jpg  micrographs <n>.jpg, ~13284x13608
+      RGB, ~60 MB each
+
+      Labeled_Defects.zip/Labeled_Defects/Ti6Al4V_local_defect_features.csv   129.9 KB
+
+      Labeled_Defects.zip/Labeled_Defects/Keyhole/          400 files  2.2 MB  .jpg (360x360)
+
+      Labeled_Defects.zip/Labeled_Defects/Lack_of_Fusion/   400 files  2.8 MB  .jpg
+
+      Labeled_Defects.zip/Labeled_Defects/Process_Pores/    400 files  1.2 MB  .jpg
+
+      Model_Application_Micrographs.zip/Images/              10 files  606.5 MB .jpg'
+    n_files: 1986
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/8303011/files/Labeled_Defects.zip::Labeled_Defects/Keyhole/0_100.jpg
+    - https://zenodo.org/records/8303011/files/Labeled_Defects.zip::Labeled_Defects/Ti6Al4V_local_defect_features.csv
+    size_bytes: 137871
+    description: One labelled keyhole defect image and the defect feature/label table
+  arrays:
+  - role: raw
+    path_pattern: '[0-9]*-[0-9]*.zip/*/*.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 13284
+    - 13608
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Full optical micrographs of polished cross-sections (1-84.zip/1-9/1.jpg probed, 63,329,507
+      B); no per-pixel annotations.
+  - role: label
+    path_pattern: Labeled_Defects.zip/Labeled_Defects/*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 360
+    - 360
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: Keyhole
+      name: keyhole
+    - id: Lack_of_Fusion
+      name: lack of fusion
+    - id: Process_Pores
+      name: process pores
+    alignment: unknown
+    alignment_notes: Binary single-defect images (the description calls them labeled binary images), class
+      = parent folder; grey stored as RGB (3 identical samples in the sample), 16 grey levels from JPEG
+      artefacts around 0/255. Names <image_index>_<pore_number>.jpg; how they map onto the micrographs
+      (crop position, scale) is not documented.
+  - role: label
+    path_pattern: Labeled_Defects.zip/Labeled_Defects/Ti6Al4V_local_defect_features.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'Semicolon-separated with decimal commas: img;pore_number;image_index;solidity;area;defect_density;perimeter;mean_defect;label
+      (one row per defect).'
+  notes: 'Listing: listing.py --expand-zips (11 files, 52,880,965,872 B exact, 1,986 zip members). Probed
+    Keyhole/0_100.jpg and Lack_of_Fusion/100_116.jpg (360x360x3 uint8 JPEG) and 1-84.zip/1-9/1.jpg (13284x13608x3
+    uint8 JPEG). Sampled Keyhole/0_100.jpg: 0-255, 16 values, samples identical (grey as RGB), value range
+    from this one file. Read the CSV header with peek_archive --cat. Voxel size not found; checked: JPEG
+    headers (no calibration), Zenodo description (no microscope or pixel size, no linked paper). No single
+    archive (10 zips + 1 CSV), so download_url stays null. Not download-ready: 2D, no voxel size, no organism
+    (materials science).'
