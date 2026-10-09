@@ -15,14 +15,17 @@ authors:
 - Anna E. King
 - James C. Vickers
 - Matthew T. K. Kirkcaldie
-publications: []
+publications:
+- title: 'ImageSURF: An ImageJ Plugin for Batch Pixel-Based Image Segmentation Using Random Forests'
+  doi: 10.5334/jors.172
+  url: https://doi.org/10.5334/jors.172
 date_published: '2017-06-27'
 imaging:
   modality:
   - confocal
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism:
   - Mus musculus
   sample: cortex sections of APPswe/PS1dE9 mice (Alzheimer model), MOAB2 immunolabelling
@@ -41,7 +44,9 @@ annotations:
   types:
   - semantic-segmentation
   coverage: sparse
-  format: RGB TIFF with signal (red) and background (blue) pixel labels in training-annotated/ (t01-t10)
+  format: 'RGB TIFF (training-annotated/t01-t10): the intensity-scaled 8-bit image with signal pixels painted red (0xFF0000)
+    and background blue (0x0000FF); labels = difference to training-unannotated/ (per the ImageSURF paper). Reference ImageSURF
+    outputs in segmentation-sample-output/'
   source: manual
 ml:
   tasks:
@@ -58,14 +63,130 @@ provenance:
   evidence_urls:
   - https://zenodo.org/api/records/819511
   - https://zenodo.org/api/records/819511/files/imagesurf-moab2-example.zip/content
+  - https://openresearchsoftware.metajnl.com/articles/10.5334/jors.172
   confidence: 0.65
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T18:00:25Z'
-notes: 'Zip contents listed with peek_archive: images-raw/01-10.tif (uint16, 2000x2000, LZW), training-annotated/t01-t10.tif,
-  segmentation-sample-output/01-10 and t01-t10 (reference outputs). Intended as a small example set for a plugin, so size
-  is near the ~10-image minimum. Annotation source "manual" is inferred from the record saying pixels were annotated as signal/background;
-  it does not name the annotator. Pixel size not stored in the file header and not stated on the Zenodo record. No associated
-  paper could be found with tools/paper.py (Europe PMC/Crossref); the record only links the ImageSURF plugin (10.5281/zenodo.818109).'
+  last_checked: '2026-10-09T20:00:00Z'
+notes: 'Zip: images-raw/01-10 and training-raw/t01-t10 (uint16, 2000x2000, 12-bit, LZW), training-unannotated/t01-t10 (8-bit
+  intensity-scaled), training-annotated/t01-t10 (RGB with sparse labels), segmentation-sample-output/01-10 and t01-t10 (binary
+  ImageSURF outputs). Only the 10 training images carry annotations; n_items 10 counts them. Annotation source "manual": the
+  ImageSURF paper says the training pixels were manually assigned class annotations in bitmap software. enricher: publication
+  added (ImageSURF paper, JORS 2017, which cites this record as its example data). Pixel size not stated in headers, the record
+  or the paper.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                   1 file   156.3 MB  .zip\nzip contents:\nimagesurf-moab2-example.zip/imagesurf-moab2-example/\n\
+      \  images-raw/                  10 files   52 MB  .tif  01-10\n  training-raw/                10 files   54 MB  .tif\
+      \  t01-t10\n  training-unannotated/        10 files   40 MB  .tif  t01-t10\n  training-annotated/          10 files\
+      \  120 MB  .tif  t01-t10\n  segmentation-sample-output/  20 files   80 MB  .tif  01-10, t01-t10"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/819511/files/imagesurf-moab2-example.zip::imagesurf-moab2-example/training-raw/t01.tif
+    - https://zenodo.org/records/819511/files/imagesurf-moab2-example.zip::imagesurf-moab2-example/training-annotated/t01.tif
+    - https://zenodo.org/records/819511/files/imagesurf-moab2-example.zip::imagesurf-moab2-example/training-unannotated/t01.tif
+    size_bytes: 21368634
+    description: 'Training image t01: raw 12-bit image, its annotated RGB image and the unannotated 8-bit image the labels
+      are read against'
+  arrays:
+  - role: raw
+    path_pattern: imagesurf-moab2-example.zip/imagesurf-moab2-example/training-raw/t[0-9][0-9].tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2000
+    - 2000
+    shape_varies: false
+    dtype: uint16
+    compression: lzw
+    value_range:
+    - 31
+    - 4095
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: '12-bit stitched confocal images (record: "captured as stitched 12-bit greyscale single-plane images");
+      the annotated subset.'
+  - role: raw
+    path_pattern: imagesurf-moab2-example.zip/imagesurf-moab2-example/images-raw/[0-9][0-9].tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2000
+    - 2000
+    shape_varies: false
+    dtype: uint16
+    compression: lzw
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 10 further raw images without annotations (only ImageSURF outputs in segmentation-sample-output/NN.tif).
+  - role: label
+    path_pattern: imagesurf-moab2-example.zip/imagesurf-moab2-example/training-annotated/t[0-9][0-9].tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 2000
+    - 2000
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: unknown
+    value_range:
+    - 0
+    - 255
+    encoding: rgb-colors
+    classes:
+    - id: 255,0,0
+      name: signal (amyloid)
+    - id: 0,0,255
+      name: background
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: training-annotated/tNN.tif pairs with training-raw/tNN.tif and training-unannotated/tNN.tif
+      (same 2000x2000 grid). Sparse labels: pixels where annotated differs from unannotated are labels (red = signal, blue
+      = background, per the record and paper); all other pixels are the grey image (253 distinct values in the sample).'
+  - role: other
+    path_pattern: imagesurf-moab2-example.zip/imagesurf-moab2-example/training-unannotated/t[0-9][0-9].tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2000
+    - 2000
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 4
+    - 255
+    normalization: contrast-stretched
+    alignment: same-grid
+    alignment_notes: '"un-annotated intensity scaled 8-bit images" (record); needed to decode the sparse labels.'
+  - role: other
+    path_pattern: imagesurf-moab2-example.zip/imagesurf-moab2-example/segmentation-sample-output/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2000
+    - 2000
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    alignment: same-grid
+    alignment_notes: 'Reference ImageSURF segmentations (automatic), NN.tif for images-raw/NN.tif and tNN.tif for training-raw/tNN.tif;
+      values {0,255} (t01: 9.5% zeros); which value is signal is not stated.'
+  notes: 'Listing: tools/listing.py on the zip with --expand-zips: 1 file, 60 members, 156,324,701 bytes (file-listing, complete;
+    345.0 MB uncompressed). Probes: raw images ImageJ TIFF uint16 LZW (ImageJ display range 0-4095), training-unannotated
+    and segmentation outputs ImageJ uint8 uncompressed; training-annotated could not be header-probed (deflated member), so
+    its compression is unknown. Samples (values from one image each): training-raw/t01 31-4095, p50 140, hint 12-bit range;
+    training-annotated/t01 2000x2000x3 uint8, 253 values; training-unannotated/t01 4-255; segmentation-sample-output/t01 {0:
+    381,707, 255: 3,618,293}. Normalization of raw "none": 12-bit detector range per the record (inferred). Voxel size not
+    found; checked: TIFF headers (no calibration), Zenodo record (20x objective, ORCA-R2 camera, no pixel size), ImageSURF
+    paper (JORS, publisher page), no other paper.'
