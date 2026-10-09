@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-15096567-colus-conifer-wood-lumen
 title: Conifer Lumen Segmentation (CoLuS) Dataset
 short_name: Conifer wood cell lumen segmentation (CoLuS)
-description: 300 images (1024 x 1024 px) of conifer wood anatomy with instance masks of cell lumina, in COCO format
-  (instances_default.json, one category "lumen") and as PNG label images; training dataset of the "Towards ROXAS AI" lumen
-  segmentation model.
+description: 300 images (1024 x 1024 px) of conifer wood anatomy with instance masks of cell lumina, in
+  COCO format (instances_default.json, one category "lumen") and as PNG label images; training dataset
+  of the "Towards ROXAS AI" lumen segmentation model.
 landing_url: https://zenodo.org/records/15096567
 doi: 10.5281/zenodo.15096567
 repository: Zenodo
@@ -25,13 +25,14 @@ imaging:
   voxel_size_nm: null
   channels: 3
   organism: []
-  sample: Conifer tree-ring wood anatomy images contributed by many researchers (species and preparation not stated in the sources read)
+  sample: Conifer tree-ring wood anatomy images contributed by many researchers (species and preparation
+    not stated in the sources read)
   labels_stains: []
 data:
   formats:
   - jpeg
   - png
-  size_bytes: 165098305
+  size_bytes: 165109101
   n_items: 300
   access: open
   download_url: https://zenodo.org/records/15096567/files/CoLuS_Dataset.zip
@@ -41,12 +42,13 @@ annotations:
   types:
   - instance-segmentation
   coverage: dense
-  format: COCO instances_default.json (single category "lumen") plus one PNG label image per image in labels/
+  format: COCO instances_default.json (single category "lumen") plus one PNG label image per image in
+    labels/
   source: unknown
 ml:
   tasks:
   - segmentation
-  splits_provided: false
+  splits_provided: true
   benchmark: null
   baseline_code_url: https://github.com/marckatzenmaier/TowardsRoxasAI
 license:
@@ -65,10 +67,89 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T23:30:00Z'
-notes: 'CoLuS_Dataset.zip (165 MB, peek_archive): 300 JPG in images/, 300 PNG in labels/, instances_default.json (COCO; categories:
-  lumen; images 1024 x 1024). Zenodo record 15096567 is a newer version of concept 8369375 (first version 8369376 holds the
-  same zip); 15096567 also adds images_train/images_test/labels_train/labels_test .dataset files, named like train/test
-  lists (not opened, so splits_provided stays false until confirmed). The paper is not open access (Europe PMC has none; ScienceDirect
-  returned 403; Crossref has no abstract), so imaging modality, pixel size, species, who annotated and how are unknown: modality
-  is "other", voxel size null, organism empty. The GitHub README only lists contributors and links.'
+  last_checked: '2026-10-09T23:13:54Z'
+notes: 'CoLuS_Dataset.zip (165 MB, peek_archive): 300 JPG in images/, 300 PNG in labels/, instances_default.json
+  (COCO; categories: lumen; images 1024 x 1024). Zenodo record 15096567 is a newer version of concept
+  8369375 (first version 8369376 holds the same zip); 15096567 also adds images_train/images_test/labels_train/labels_test
+  .dataset files, named like train/test lists (enricher: opened, plain-text lists of 200 train / 100 test
+  paths, so splits_provided true). The paper is not open access (Europe PMC has none; ScienceDirect returned
+  403; Crossref has no abstract), so imaging modality, pixel size, species, who annotated and how are
+  unknown: modality is "other", voxel size null, organism empty. The GitHub README only lists contributors
+  and links. Size now all 5 files.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './   5 files  165.1 MB  CoLuS_Dataset.zip, images_train.dataset, images_test.dataset, labels_train.dataset,
+      labels_test.dataset
+
+      CoLuS_Dataset.zip/CoLuS_Dataset/instances_default.json   97.5 MB  COCO, category lumen
+
+      CoLuS_Dataset.zip/CoLuS_Dataset/images/   300 files 135.8 MB .jpg  000001.jpg ... (1024x1024 RGB)
+
+      CoLuS_Dataset.zip/CoLuS_Dataset/labels/   300 files  15.1 MB .png  same stems (1024x1024 binary)
+
+      *.dataset: text lists, one path per line (images/<n>.jpg or labels/<n>.png): train 200, test 100'
+    n_files: 605
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/15096567/files/CoLuS_Dataset.zip::CoLuS_Dataset/images/000113.jpg
+    - https://zenodo.org/records/15096567/files/CoLuS_Dataset.zip::CoLuS_Dataset/labels/000113.png
+    size_bytes: 473817
+    description: One 1024x1024 wood-anatomy image and its lumen mask
+  arrays:
+  - role: raw
+    path_pattern: CoLuS_Dataset.zip/CoLuS_Dataset/images/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1024
+    - 1024
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB JPEG (samples differ); 1024x1024 per the COCO json.
+  - role: label
+    path_pattern: CoLuS_Dataset.zip/CoLuS_Dataset/labels/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: labels/<n>.png pairs with images/<n>.jpg (same stem, same 1024x1024
+      grid). Values {0: 366,526, 255: 682,050} in the sample; which value is lumen is not documented.'
+  - role: label
+    path_pattern: CoLuS_Dataset.zip/CoLuS_Dataset/instances_default.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: polygons
+    classes:
+    - id: null
+      name: lumen
+    alignment: same-grid
+    alignment_notes: COCO instances (one category, lumen) for all 300 images; image entries refer to images/<n>.jpg.
+  notes: 'Listing: listing.py --expand-zips (5 files, 165,109,101 B exact, 601 zip members). Sampled images/000113.jpg
+    + labels/000113.png (value ranges from this pair only): raw 1024x1024x3 uint8 RGB 0-255; label 1024x1024
+    uint8 binary. Read the four .dataset files (text lists: 200 train, 100 test). Voxel size not found;
+    checked: JPEG/PNG headers, Zenodo description, GitHub page (contributors and links only); paper not
+    open access. Not download-ready: 2D, no organism, modality unclear.'
