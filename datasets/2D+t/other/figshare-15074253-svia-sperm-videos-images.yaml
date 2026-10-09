@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: figshare-15074253-svia-sperm-videos-images
 title: MIaMIA-SVDS (SVIA) sperm videos and images dataset
 short_name: SVIA sperm detection and tracking (video)
-description: Sperm Videos and Images Analysis (SVIA) dataset in three subsets - A) 101 videos with over 125,000 bounding-box annotated sperm and
-  impurity objects for detection, B) 10 videos with over 26,000 segmented sperm as ground truth for tracking, C) over 125,000 cropped sperm/impurity images for classification.
+description: Sperm Videos and Images Analysis (SVIA) dataset in three subsets - A) 101 videos with over
+  125,000 bounding-box annotated sperm and impurity objects for detection, B) 10 videos with over 26,000
+  segmented sperm as ground truth for tracking, C) over 125,000 cropped sperm/impurity images for classification.
 landing_url: https://figshare.com/articles/dataset/MIaMIA-SVDS/15074253
 doi: 10.6084/m9.figshare.15074253.v1
 repository: Figshare
@@ -20,13 +21,14 @@ imaging:
   channels: null
   organism:
   - Homo sapiens
-  sample: Sperm microscopy videos (unstained live sperm per secondary sources, not confirmed from primary pages)
+  sample: Sperm microscopy videos (unstained live sperm per secondary sources, not confirmed from primary
+    pages)
   labels_stains: []
 data:
   formats:
-  - other
+  - png
   size_bytes: 1420257733
-  n_items: null
+  n_items: 101
   access: open
   download_url: https://ndownloader.figshare.com/files/28986378
   download_method: http
@@ -38,7 +40,8 @@ annotations:
   - tracking
   - classification
   coverage: dense
-  format: not stated
+  format: Pascal VOC XML bounding boxes per frame (Subset-A, classes S and Impurity); one PNG per segmented
+    sperm in per-frame folders (Subset-B); class letter in crop file names (Subset-C, S/I)
   source: manual
 ml:
   tasks:
@@ -59,10 +62,120 @@ provenance:
   - https://api.figshare.com/v2/articles/15074253
   - https://github.com/Demozsj/Detection-Sperm
   - https://researchers.mq.edu.au/en/publications/svia-dataset-a-new-dataset-of-microscopic-videos-and-images-for-c/
-  confidence: 0.6
+  - https://raw.githubusercontent.com/Demozsj/Detection-Sperm/main/README.md
+  - https://raw.githubusercontent.com/Demozsj/Detection-Sperm/main/MIaMIA-SpermVideo%20data%20set/Subset-A/S_0001_0001.xml
+  confidence: 0.65
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-09T05:14:34Z'
-notes: 'One 1.4 GB Data Set.rar on Figshare (API: CC BY 4.0; GitHub README says non-commercial research use welcome). RAR contents could not be listed, so formats are other, and file/annotation formats, modality and annotation files are unconfirmed. Counts come from the Figshare description and GitHub README. Paper (Chen et al., doi 10.1016/j.bbe.2021.12.010) is paywalled; only its abstract page was read, so pixel size, microscope and protocol are unconfirmed. Subset-B instance-segmentation is assumed from "segmented more than 26,000 sperms".'
+  annotations_verified: true
+  last_checked: '2026-10-09T06:05:00Z'
+notes: 'One 1.4 GB Data Set.rar on Figshare (API: CC BY 4.0; GitHub README says non-commercial research
+  use welcome). enricher: RAR5 headers walked by range requests: 159,192 files, 1.72 GB unpacked: 101
+  mp4 videos, 3,622 RGB frames (698x528 PNG), 3,622 Pascal VOC XML box files (Subset-A), 25,966 PNGs for
+  10 videos (Subset-B), 125,880 crop PNGs (Subset-C) and readme.txt. formats other -> png (was other);
+  annotations_verified true (XML boxes read from the GitHub example copy). Paper (Chen et al., doi 10.1016/j.bbe.2021.12.010)
+  is paywalled; pixel size, microscope and protocol are unconfirmed, so modality stays other. Subset-B
+  PNG content (masks vs crops) is not confirmed: the members are RAR-compressed and could not be decoded.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "Data Set.rar (RAR5, 1,420,257,733 B; 159,192 files, 1,724,981,480 B unpacked)\nData Set/readme.txt\
+      \                                       1 file      1 KB\nData Set/original videos/S_0001..S_0101.mp4\
+      \             101 files  50.9 MB\nData Set/Frames from original videos/S_####/  (x101 dirs) 3622\
+      \ files 1.50 GB  .png  S_####_####.png\nData Set/Subset-A/                                     3622\
+      \ files  30.4 MB  .xml  S_####_####.xml (one per frame)\nData Set/Subset-B/S_####/S_####_####/ (10\
+      \ videos, 451 frame dirs) 25966 files 52.9 MB  .png  S_####_####_####.png\nData Set/Subset-C/  \
+      \                                 125880 files  90.2 MB  .png  V####-F####-S####.png / -I####.png\n\
+      GitHub example copy (Demozsj/Detection-Sperm, \"MIaMIA-SpermVideo data set/\"): videos and frames\
+      \ S_0001-S_0005\n  (byte-identical to the RAR listing) and their 220 Subset-A XML files (CRLF/LF\
+      \ line-ending size differences)"
+    n_files: 159192
+    listing_complete: true
+  sample:
+    urls:
+    - https://raw.githubusercontent.com/Demozsj/Detection-Sperm/main/MIaMIA-SpermVideo%20data%20set/Frames%20from%20original%20videos/S_0001/S_0001_0001.png
+    - https://raw.githubusercontent.com/Demozsj/Detection-Sperm/main/MIaMIA-SpermVideo%20data%20set/Subset-A/S_0001_0001.xml
+    size_bytes: 374170
+    description: Video S_0001, frame 0001 (RGB PNG) and its Pascal VOC box XML, from the GitHub example
+      copy of the dataset
+  arrays:
+  - role: raw
+    path_pattern: '*/Frames from original videos/S_[0-9][0-9][0-9][0-9]/S_*.png'
+    format: png
+    axes: yxs
+    shape:
+    - 528
+    - 698
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 234
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Frames extracted from the 101 videos (3,622 frames, 4-100 per video); the 3 RGB samples
+      differ, so colour is kept as s.
+  - role: label
+    path_pattern: '*/Subset-A/S_*.xml'
+    format: other
+    axes: null
+    shape: null
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: S
+      name: sperm
+    - id: Impurity
+      name: impurity
+    alignment: same-grid
+    alignment_notes: 'Pascal VOC XML; Subset-A/S_VVVV_FFFF.xml pairs with Frames from original videos/S_VVVV/S_VVVV_FFFF.png
+      (XML <size> 698x528x3 matches the frame). Box names in the 220 GitHub XMLs: S 6,724, Impurity 149;
+      S read as sperm per the README.'
+  - role: label
+    path_pattern: '*/Subset-B/S_*/S_*/S_*.png'
+    format: png
+    axes: null
+    shape: null
+    dtype: unknown
+    compression: deflate
+    encoding: unknown
+    classes: null
+    alignment: unknown
+    alignment_notes: 10 videos (S_0001, S_0003, S_0005-S_0012); folder Subset-B/S_VVVV/S_VVVV_FFFF/ holds
+      one PNG per sperm (S_VVVV_FFFF_NNNN.png, ~2 KB each), i.e. tracking ground truth per frame. Not
+      decoded (RAR-compressed members).
+  - role: raw
+    path_pattern: '*/Subset-C/V*-F*-*.png'
+    format: png
+    axes: yxs
+    shape:
+    - 15
+    - 14
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 97
+    - 174
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Subset-C classification crops (raw images; the class is the file name letter: V####-F####-S####
+      sperm, -I#### impurity, per the README "images of sperms and impurities"). Of 111,050 stored crops
+      read: S 108,530, I 2,520.'
+  notes: 'Dataset is one RAR5 archive; tools/listing.py cannot read RAR, so the listing came from walking
+    RAR5 headers with range requests (quick-open record at the archive end, plus 111.7 MB of ranges for
+    headers it does not cache). Raw frames, Subset-A XML and Subset-B PNGs are RAR-compressed (method
+    3) and cannot be read without unrar; 111,050 Subset-C crops are stored and were read directly. Frame
+    and XML samples come from the GitHub example copy (frames/videos byte-identical in size to the RAR
+    members). value_range values are from one sample file each. size_bytes is the RAR size from the Figshare
+    API (unpacked 1,724,981,480 B). voxel size not found; checked: PNG header (no calibration), Figshare
+    API, GitHub README and example XML, Crossref/Europe PMC (paper not open access), arXiv (no preprint).
+    No direct per-file links exist on Figshare (one RAR); TensorSwitch cannot open RAR members. Readme.txt
+    inside the RAR could not be read (compressed). The 101 mp4 source videos are listed in the tree but
+    not described as an array.'
