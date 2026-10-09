@@ -2,10 +2,11 @@ schema_version: '1.2'
 id: zenodo-17986530-uo2-sem-bse-grain-boundaries
 title: SEM-BSE micrographs of UO2 with grain boundary ground truth
 short_name: UO2 SEM-BSE grain boundary labels (SEM)
-description: 'Backscattered-electron SEM images of uranium dioxide samples with grain boundary ground-truth images, from a
-  deep-learning grain boundary detection study: 6 single-image datasets (D1-D6) and 6 tilt-series datasets (T1-T6, 10-12 images
-  of the same region each) in Data.zip, split into train/validation (10 images with GT) and test folders, plus a few synthetic
-  example images with grain boundary maps. Data.zip (128 MB) is separate from Models.zip (trained model parameters, not catalogued).'
+description: 'Backscattered-electron SEM images of uranium dioxide samples with grain boundary ground-truth
+  images, from a deep-learning grain boundary detection study: 6 single-image datasets (D1-D6) and 6 tilt-series
+  datasets (T1-T6, 10-12 images of the same region each) in Data.zip, split into train/validation (10
+  images with GT) and test folders, plus a few synthetic example images with grain boundary maps. Data.zip
+  (128 MB) is separate from Models.zip (trained model parameters, not catalogued).'
 landing_url: https://zenodo.org/records/17986530
 doi: 10.5281/zenodo.17986530
 repository: Zenodo
@@ -31,7 +32,7 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: 127960597
+  size_bytes: 981948706
   n_items: 37
   access: open
   download_url: https://zenodo.org/records/17986530/files/Data.zip
@@ -41,8 +42,8 @@ annotations:
   types:
   - other
   coverage: dense
-  format: Grain boundary ground-truth PNG images (e.g. D1_GT.png, T1_GT.png), one per region of interest, in GrainBoundary
-    and TestData folders
+  format: Grain boundary ground-truth PNG images (e.g. D1_GT.png, T1_GT.png), one per region of interest,
+    in GrainBoundary and TestData folders
   source: unknown
 ml:
   tasks:
@@ -64,12 +65,92 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T21:13:42Z'
-notes: 'Counts from the Data.zip listing (peek_archive): TrainValidData has 10 images (D1-D6, T2_11, T3_11, T4_05, T5_08)
-  with 10 GT images; TestData has T1 (12 images, one T1_GT.png) and T6 (10 images, one T6_GT.png); SyntData has 5 synthetic
-  images with 5 maps. n_items is 32 real + 5 synthetic = 37 images. Splits follow the description (D1-D4 and one image each
-  of T2-T5 for training, D5-D6 for validation, T1 and T6 for testing). The accompanying manuscript is not linked on the dataset
-  page and was not found, so no publication is listed; pixel size, SEM settings and how the ground truth was made are not
-  stated on the page or in the file listing, so voxel_size_nm is null and annotations.source is unknown. The SEM images are
-  of ceramic material microstructure, not biology; modality is other because the schema has no plain SEM value. Models.zip
-  (850 MB of trained parameters and SEraMic predictions) was not inspected.'
+  last_checked: '2026-10-09T23:07:24Z'
+notes: 'Counts from the Data.zip listing (peek_archive): TrainValidData has 10 images (D1-D6, T2_11, T3_11,
+  T4_05, T5_08) with 10 GT images; TestData has T1 (12 images, one T1_GT.png) and T6 (10 images, one T6_GT.png);
+  SyntData has 5 synthetic images with 5 maps. n_items is 32 real + 5 synthetic = 37 images. Splits follow
+  the description (D1-D4 and one image each of T2-T5 for training, D5-D6 for validation, T1 and T6 for
+  testing). The accompanying manuscript is not linked on the dataset page and was not found, so no publication
+  is listed; pixel size, SEM settings and how the ground truth was made are not stated on the page or
+  in the file listing, so voxel_size_nm is null and annotations.source is unknown. The SEM images are
+  of ceramic material microstructure, not biology; modality is other because the schema has no plain SEM
+  value. Models.zip (850 MB of trained parameters and SEraMic predictions) was not inspected. enricher:
+  size_bytes now both zips (file-listing, was Data.zip only).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './   2 files  981.9 MB  Data.zip, Models.zip
+
+      Data.zip/Data/TrainValidData/Images/          10 files 119.9 MB .png  D1-D6.png, T2_11, T3_11, T4_05,
+      T5_08 (D1 4092x6134)
+
+      Data.zip/Data/TrainValidData/GrainBoundary/   10 files   1.4 MB .png  <name>_GT.png (D1_GT ... T5_GT)
+
+      Data.zip/Data/TestData/T1/Images/             12 files 781.8 KB .png  T1_01-T1_12 (288x448, tilt
+      series of one ROI)
+
+      Data.zip/Data/TestData/T1/T1_GT.png            1 file           .png  288x448
+
+      Data.zip/Data/TestData/T6/Images/             10 files   5.5 MB .png  Img01-Img10 (864x992)
+
+      Data.zip/Data/TestData/T6/T6_GT.png            1 file           .png  864x992
+
+      Data.zip/Data/SyntData/{Images,GrainBoundary}/  5 files each     .png  SIMG<n>.png / SGT<n>.png
+      (288x448)
+
+      Models.zip/Models/{B,B_SyntExp,DS,HED}/*.pt   trained parameters (not data); Models/SEraMic/Pred/T*/S*/Res_plot/*.tif
+      predictions'
+    n_files: 163
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/17986530/files/Data.zip::Data/TestData/T1/Images/T1_01.png
+    - https://zenodo.org/records/17986530/files/Data.zip::Data/TestData/T1/T1_GT.png
+    size_bytes: 75118
+    description: One 288x448 SEM-BSE image of test ROI T1 and the T1 grain-boundary map
+  arrays:
+  - role: raw
+    path_pattern: Data.zip/Data/*/*Images/*.png
+    format: png
+    axes: yx
+    shape:
+    - 4092
+    - 6134
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Greyscale SEM-BSE PNGs; D1 4092x6134, T1 tiles 288x448, T6 864x992, synthetic 288x448.
+      T1/T6 folders are tilt series (10-12 images of one ROI).
+  - role: label
+    path_pattern: Data.zip/Data/*/{GrainBoundary/*.png,T[0-9]/T[0-9]_GT.png}
+    format: png
+    axes: yx
+    shape:
+    - 4092
+    - 6134
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: TrainValidData/Images/<name>.png pairs with TrainValidData/GrainBoundary/<D
+      or T prefix>_GT.png (D1.png -> D1_GT.png, T2_11.png -> T2_GT.png); in TestData one T<n>_GT.png serves
+      every image of T<n>/Images/ (same ROI, same shape); SyntData SIMG<n> -> SGT<n>. D1_GT values {0:
+      12,251,096, 255: 299,068}, 255 = boundary.'
+  notes: 'Listing: listing.py --expand-zips (2 files, 981,948,706 B exact, 163 members; the first try
+    hit an SSL EOF from zenodo.org). Sampled D1.png + D1_GT.png (4092x6134 uint8, raw 0-255 p50 178, GT
+    binary 0/255, same shape) and T1_01.png (288x448, 0-180); headers of T1_GT, T6_GT, T6 Img01, SIMG1,
+    SGT1. Value ranges from those files only. Whether a T<n>_GT map is exact for every tilt image is not
+    stated (the description says the images are of the same ROI at different tilts). Voxel size not found;
+    checked: PNG headers (no pHYs), Zenodo description (cites the source theses/papers for D/T data; manuscript
+    not linked). Materials science: no organism; modality other (SEM-BSE).'
