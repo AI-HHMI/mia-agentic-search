@@ -1,8 +1,12 @@
 schema_version: '1.2'
 id: zenodo-10694058-chammi-channel-adaptive-benchmark
-title: CHAMMI - single-cell fluorescence images with 3, 4 or 5 channels for channel-adaptive models (Allen, HPA, Cell Painting)
+title: CHAMMI - single-cell fluorescence images with 3, 4 or 5 channels for channel-adaptive models (Allen,
+  HPA, Cell Painting)
 short_name: CHAMMI multi-channel single cells (fluorescence)
-description: Benchmark of about 220,000 single-cell crops with varying channel counts from three public sources (Allen Institute WTC-11 hiPSC, Human Protein Atlas, Broad Cell Painting), with labels for cell-cycle stage, protein localization or compound perturbation and train/test split definitions for the paper's tasks.
+description: Benchmark of about 220,000 single-cell crops with varying channel counts from three public
+  sources (Allen Institute WTC-11 hiPSC, Human Protein Atlas, Broad Cell Painting), with labels for cell-cycle
+  stage, protein localization or compound perturbation and train/test split definitions for the paper's
+  tasks.
 landing_url: https://zenodo.org/records/10694058
 doi: 10.5281/zenodo.10694058
 repository: Zenodo
@@ -28,19 +32,20 @@ imaging:
   - Cell Painting dyes and compound perturbation (Cell Painting)
 data:
   formats:
-  - tiff
+  - ome-tiff
   - png
-  size_bytes: 28115309454
+  size_bytes: 28115313975
   n_items: 220288
   access: open
-  download_url: https://zenodo.org/api/records/10694058/files/CHAMMI.tar.gz/content
+  download_url: https://zenodo.org/records/10694058/files/CHAMMI.tar.gz
   download_method: http
 annotations:
   present: true
   types:
   - classification
   coverage: dense
-  format: CSV metadata (combined_metadata.csv and per-source enriched_meta.csv) with Label and train_test_split columns
+  format: CSV metadata (combined_metadata.csv and per-source enriched_meta.csv) with Label and train_test_split
+    columns
   source: mixed
 ml:
   tasks:
@@ -60,10 +65,139 @@ provenance:
   - https://zenodo.org/api/records/10694058/files/README.md/content
   - https://zenodo.org/api/records/7988357
   - https://arxiv.org/html/2310.19224
-  confidence: 0.75
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-09T21:16:07Z'
-notes: 'Channels vary by source (Allen 3, HPA 4, Cell Painting 5; concatenated side by side per file), so channels is null. n_items sums the README counts (65,103 + 66,936 + 88,249). The 28 GB tar.gz was not listed; layout is from the README. Labels are classification only (cell-cycle, protein localization, compound); no masks. CC-BY 4.0 per paper, but users must follow the original datasets Research Use Agreements. Pixel size not stated on Zenodo or in the arXiv HTML text. 2023 benchmark, distinct from the AWS CHAMMI-75 record. Modality varies by source, hence fluorescence-other.'
+  annotations_verified: true
+  last_checked: '2026-10-09T22:09:42Z'
+notes: 'Channels vary by source (Allen 3, HPA 4, Cell Painting 5; concatenated side by side per file),
+  so channels is null. n_items sums the README counts (65,103 + 66,936 + 88,249). The 28 GB tar.gz was
+  not listed; layout is from the README. Labels are classification only (cell-cycle, protein localization,
+  compound); no masks. CC-BY 4.0 per paper, but users must follow the original datasets Research Use Agreements.
+  Pixel size not stated on Zenodo or in the arXiv HTML text. 2023 benchmark, distinct from the AWS CHAMMI-75
+  record. Modality varies by source, hence fluorescence-other. enricher: label CSVs seen in the archive
+  head (annotations_verified true); formats ome-tiff+png per README and sampled PNGs; download_url now
+  the direct tar.gz.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './                              2 files   28.1 GB  CHAMMI.tar.gz (28,115,309,454 B), README.md
+      (4,521 B)
+
+      CHAMMI.tar.gz contents (from README.md and the first 30 MB of the archive):
+
+      CHAMMI/combined_metadata.csv    45,896,319 B, 220,284 rows (CP 88,245, HPA 66,936, Allen 65,103)
+
+      CHAMMI/Allen/enriched_meta.csv
+
+      CHAMMI/Allen/crops/*.ome.tiff   65,103 crops, 1122 x 238 (3 channels side by side)
+
+      CHAMMI/HPA/enriched_meta.csv    28,815,110 B, 66,936 rows
+
+      CHAMMI/HPA/crops/*.png          66,936 crops, 512 x 2048 (4 channels side by side)
+
+      CHAMMI/CP/enriched_meta.csv
+
+      CHAMMI/CP/crops/{BBBC022,CDRP,LINCS}/<plate>/<well>/<site>/*.png   88,249 crops, 800 x 160 (5 channels)'
+    n_files: 2
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: CHAMMI.tar.gz::CHAMMI/HPA/crops/*.png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 2048
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: 'HPA crops: 4 channels (microtubules, target protein, DAPI, ER) concatenated along
+      x, 512 px each (channel_width 512 in combined_metadata.csv); greyscale PNG (mode L). The paper says
+      images were normalized to 0-255.'
+  - role: raw
+    path_pattern: CHAMMI.tar.gz::CHAMMI/Allen/crops/*.ome.tiff
+    format: ome-tiff
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: 'Allen WTC-11 crops: max projections, 3 channels (membrane, nucleus, structure) concatenated,
+      1122 x 238 per README (channel_width 374); not reached in the sampled archive head.'
+  - role: raw
+    path_pattern: CHAMMI.tar.gz::CHAMMI/CP/crops/*/*/*/*/*.png
+    format: png
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: deflate
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Cell Painting crops (BBBC022, CDRP, LINCS): 5 channels concatenated, 800 x 160 per
+      README (channel_width 160); not reached in the sampled archive head.'
+  - role: label
+    path_pattern: CHAMMI.tar.gz::CHAMMI/combined_metadata.csv
+    format: csv
+    axes: null
+    shape:
+    - 220284
+    - 7
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'One row per crop: file_path (relative to CHAMMI/), ID, cell_type, num_channels,
+      channels_content, channel_width, train_test_split.'
+  - role: label
+    path_pattern: CHAMMI.tar.gz::CHAMMI/*/enriched_meta.csv
+    format: csv
+    axes: null
+    shape:
+    - 66936
+    - 47
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes:
+    - id: mitochondria
+      name: mitochondria
+    - id: golgi apparatus
+      name: golgi apparatus
+    - id: nuclear speckles
+      name: nuclear speckles
+    - id: microtubules
+      name: microtubules
+    - id: nucleoplasm
+      name: nucleoplasm
+    - id: cytosol
+      name: cytosol
+    - id: endoplasmic reticulum
+      name: endoplasmic reticulum
+    alignment: not-applicable
+    alignment_notes: 'Per-source labels keyed by file_path: Label = cell-cycle stage (Allen), protein
+      localization (HPA, classes listed are the 7 HPA labels counted in HPA/enriched_meta.csv), compound
+      treatment (CP); train_test_split = Train / Task_one..Task_four. Shape is the HPA file.'
+  notes: 'Listing: Zenodo API (2 files, 28,115,309,454 B exact); the tar.gz cannot be listed by range,
+    so the tree inside is from README.md plus a scratch script that gunzipped the first 30,000,000 B (one
+    range request): combined_metadata.csv, HPA/enriched_meta.csv and 101 complete HPA PNG crops, all 512
+    x 2048 uint8 greyscale, values 0-255 (value range from these samples only). Allen and CP crops were
+    not reached, so their shape orientation and dtype are from the README only. No per-file sample unit:
+    the only direct file is the 28 GB tar.gz (TensorSwitch cannot pull single tar.gz members), so sample
+    is null. Voxel size not found; checked: PNG header (no pHYs), Zenodo record and README, arXiv full
+    text (crops resized/cropped from three sources, no pixel size). Not download-ready mainly because
+    the record is 2D.'
