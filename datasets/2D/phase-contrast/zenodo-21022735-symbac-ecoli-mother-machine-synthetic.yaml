@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-21022735-symbac-ecoli-mother-machine-synthetic
 title: SyMBac training data, Omnipose checkpoints, and morphology tables for Escherichia coli dormancy-exit imaging
 short_name: Synthetic E. coli mother-machine masks (phase)
-description: 10,000 synthetic phase-contrast image/mask pairs of E. coli in mother-machine trenches (5,000 mimicking
-  exponentially growing cells, 5,000 stationary-phase cells), generated with SyMBac, released with Omnipose checkpoints
-  trained on them and morphology tables for the real dormancy-exit imaging study S-BIAD3676.
+description: 10,000 synthetic phase-contrast image/mask pairs of E. coli in mother-machine trenches (5,000 mimicking exponentially
+  growing cells, 5,000 stationary-phase cells), generated with SyMBac, released with Omnipose checkpoints trained on them
+  and morphology tables for the real dormancy-exit imaging study S-BIAD3676.
 landing_url: https://zenodo.org/records/21022735
 doi: 10.5281/zenodo.21022735
 repository: Zenodo
@@ -19,7 +19,10 @@ imaging:
   modality:
   - phase-contrast
   dimensionality: 2D
-  voxel_size_nm: null
+  voxel_size_nm:
+    x: 107.9
+    y: 107.9
+    z: null
   channels: 1
   organism:
   - Escherichia coli
@@ -28,18 +31,17 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: 1000000000
+  size_bytes: 1025116494
   n_items: 10000
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/21022735/files/symbac_data.zip
   download_method: http
 annotations:
   present: true
   types:
-  - other
+  - instance-segmentation
   coverage: dense
-  format: 'symbac_data.zip: PNG masks in masks/ folders matching images/ (exponential_phase_synthetic and stationary_phase_synthetic,
-    5,000 pairs each); mask encoding was not inspected'
+  format: PNG label images (uint8, one integer id per cell, 0 = background) in masks/, same file name as the image in images/
   source: automatic
 ml:
   tasks:
@@ -56,16 +58,75 @@ provenance:
   evidence_urls:
   - https://zenodo.org/records/21022735
   - https://zenodo.org/api/records/21022735/files/symbac_data.zip/content
-  confidence: 0.6
+  - https://zenodo.org/api/records/21022735
+  - https://zenodo.org/records/21022735/files/analysis_code.zip
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T14:45:00Z'
-notes: 'Companion deposit of catalogued S-BIAD3676 (real mother-machine time-lapse and masks); this record is the synthetic training
-  set and models, not that data. symbac_data.zip (107.1 MB) lists 20,000 PNG files: images/ and masks/ folders with 5,000
-  files each in exponential_phase_synthetic and stationary_phase_synthetic. Other files: omnipose.zip (452.5 MB, 17 Omnipose
-  checkpoints), two parquet morphology tables (429 MB and 36 MB) and analysis_code.zip; about 1.0 GB of files in all.
-  Images are simulated, not acquired. Pixel size, mask encoding (instance vs binary) and the SyMBac generation settings were
-  not stated on the page or inspected, and no paper was found, so voxel_size_nm is null and the annotation type is other.
-  Masks come from the simulator, hence source automatic. No split.'
+  last_checked: '2026-10-09T16:05:00Z'
+notes: 'Companion deposit of catalogued S-BIAD3676 (real mother-machine time-lapse and masks); this record is the synthetic
+  training set. symbac_data.zip (107.1 MB): exponential_phase_synthetic and stationary_phase_synthetic, each images/ + masks/
+  with 5,000 PNGs. Other files: omnipose.zip (17 Omnipose checkpoints), two parquet morphology tables, analysis_code.zip;
+  1,025,116,494 bytes in all. Images are simulated. enricher: voxel size 107.9 nm from the SyMBac notebook in analysis_code.zip
+  (pix_mic_conv = 0.1079 microns per pixel; was null), matching the real S-BIAD3676 107.87 nm. enricher: masks are instance
+  label images (build_symbac_training_data.py: ''Masks must be 2D label images'', relabelled per tile; sample has 5 cell ids),
+  so type other -> instance-segmentation. Masks come from the simulator, hence source automatic. No split.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "symbac_data.zip (107.1 MB)\n  symbac_data/exponential_phase_synthetic/images/   5000 .png (49.5 MB)  Nonesynth_NNNNN.png\n\
+      \  symbac_data/exponential_phase_synthetic/masks/    5000 .png (1.6 MB)\n  symbac_data/stationary_phase_synthetic/images/\
+      \    5000 .png (49.1 MB)\n  symbac_data/stationary_phase_synthetic/masks/     5000 .png (1.8 MB)\nomnipose.zip (452.5\
+      \ MB)  omnipose/  17 checkpoints\nhypothesis_16_trace_measurements_long.parquet (429.1 MB)\nhypothesis_16_cell_cycle_measurements_long.parquet\
+      \ (35.9 MB)\nanalysis_code.zip (0.5 MB)  notebooks/, pipelines/, src/, external/{SyMBac,PyMMM}"
+    n_files: 5
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/21022735/files/symbac_data.zip::symbac_data/exponential_phase_synthetic/images/Nonesynth_00000.png
+    - https://zenodo.org/records/21022735/files/symbac_data.zip::symbac_data/exponential_phase_synthetic/masks/Nonesynth_00000.png
+    size_bytes: 10164
+    description: one synthetic trench image (164x34 uint16) and its instance mask
+  arrays:
+  - role: raw
+    path_pattern: symbac_data.zip/symbac_data/*_synthetic/images/*.png
+    format: png
+    axes: yx
+    shape:
+    - 164
+    - 34
+    shape_varies: null
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 65535
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: symbac_data.zip/symbac_data/*_synthetic/masks/*.png
+    format: png
+    axes: yx
+    shape:
+    - 164
+    - 34
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 134
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: masks/<name>.png pairs with images/<name>.png in the same *_synthetic folder; shapes identical in the
+      sample
+  notes: 'Listing: Zenodo API, 5 files, 1,025,116,494 bytes, complete; symbac_data.zip has 20,000 PNG members. Sampled Nonesynth_00000
+    pair (10,164 bytes): image 164x34 uint16 (mode I;16), 0-65535, p1 490, p50 11680, p99 47912; mask uint8 values {0,127,131,132,133,134}
+    (5 cells). Value ranges from one sample; only one pair sampled, so whether all images are 164x34 is not checked (shape_varies
+    null). Image histograms are randomised hist-matched in SyMBac (generate_training_data(randomise_hist_match=True) in the
+    notebook), so normalization is unknown. Code read, not run.'
