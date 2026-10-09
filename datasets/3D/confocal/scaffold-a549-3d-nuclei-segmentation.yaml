@@ -2,10 +2,9 @@ schema_version: '1.2'
 id: scaffold-a549-3d-nuclei-segmentation
 title: 'Scaffold-A549: 3D fluorescence images of A549 cell nuclei in fibrous scaffolds'
 short_name: A549 cell nuclei in scaffolds 3D (confocal)
-description: '21 3D confocal volumes of A549 human lung cancer cells grown in fibrous
-  bio-scaffolds with Hoechst-stained nuclei: 20 unlabelled training volumes and one
-  fully annotated test volume (instance labels of more than 800 nuclei), released
-  as a benchmark for unsupervised 3D nuclei segmentation.'
+description: '21 3D confocal volumes of A549 human lung cancer cells grown in fibrous bio-scaffolds with Hoechst-stained
+  nuclei: 20 unlabelled training volumes and one fully annotated test volume (instance labels of more than 800 nuclei),
+  released as a benchmark for unsupervised 3D nuclei segmentation.'
 landing_url: https://github.com/Kaiseem/Scaffold-A549
 doi: null
 repository: GitHub
@@ -18,12 +17,10 @@ authors:
 - Dejian Huang
 - Curran Jude
 publications:
-- title: 'Scaffold-A549: A Benchmark 3D Fluorescence Image Dataset for Unsupervised
-    Nuclei Segmentation'
+- title: 'Scaffold-A549: A Benchmark 3D Fluorescence Image Dataset for Unsupervised Nuclei Segmentation'
   doi: 10.1007/s12559-021-09944-4
   url: https://doi.org/10.1007/s12559-021-09944-4
-- title: 'AD-GAN: End-to-end Unsupervised Nuclei Segmentation with Aligned Disentangling
-    Training'
+- title: 'AD-GAN: End-to-end Unsupervised Nuclei Segmentation with Aligned Disentangling Training'
   url: https://arxiv.org/abs/2107.11022
   doi: 10.48550/arXiv.2107.11022
 date_published: '2021-07-30'
@@ -35,8 +32,8 @@ imaging:
   channels: 1
   organism:
   - Homo sapiens
-  sample: A549 human non-small cell lung cancer cells seeded in fibrous scaffolds
-    (3D cell culture), nuclei stained with Hoechst 33342
+  sample: A549 human non-small cell lung cancer cells seeded in fibrous scaffolds (3D cell culture), nuclei stained
+    with Hoechst 33342
   labels_stains:
   - Hoechst 33342
 data:
@@ -79,12 +76,74 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T21:30:23Z'
-notes: 'Zip (161.8 MB): train/ 20 unlabelled uint8 .npy volumes (64x512x512), test/
-  one image plus int32 label .npy, fig/ PNG previews; .npy is not a schema format,
-  hence other. Only 1 of 21 volumes is annotated (3 annotators, 9 annotations merged),
-  so labels serve evaluation; the other 20 are for unsupervised training. Voxel size
-  left null: the arXiv AD-GAN appendix gives 0.4151 um/voxel for the 1024x1024x128
-  originals, but released volumes were cropped and resized to 512x512x64 with no per-axis
-  size stated. License is the repository''s MIT LICENSE. Journal paper not open access;
-  read the arXiv preprint, README and zip listing.'
+  last_checked: '2026-10-09T00:48:07Z'
+notes: 'Zip (161.8 MB): train/ 20 unlabelled uint8 .npy volumes (64x512x512), test/ one image plus int32 label .npy,
+  fig/ PNG previews; .npy is not a schema format, hence other. Only 1 of 21 volumes is annotated (3 annotators,
+  9 annotations merged), so labels serve evaluation; the other 20 are for unsupervised training. Voxel size left
+  null: the arXiv AD-GAN appendix gives 0.4151 um/voxel for the 1024x1024x128 originals, but released volumes were
+  cropped and resized to 512x512x64 with no per-axis size stated. License is the repository''s MIT LICENSE. Journal
+  paper not open access; read the arXiv preprint, README and zip listing. enricher: label volume opened: 815 nucleus
+  instance ids on the test volume grid.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "scaffold_a549.zip (161,792,193 B; 43 members, 423.4 MB uncompressed)\n  scaffold_a549/train/sf_a549_01.npy\
+      \ ... sf_a549_20.npy   20 unlabelled volumes (16.8 MB each)\n  scaffold_a549/test/sf_a549_21.npy         \
+      \             test volume\n  scaffold_a549/test/sf_a549_21_Label.npy                instance labels (67.1\
+      \ MB)\n  scaffold_a549/fig/sf_a549_01.png ... _21.png           previews"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://github.com/Kaiseem/Scaffold-A549/releases/download/v1.0/scaffold_a549.zip::scaffold_a549/test/sf_a549_21.npy
+    - https://github.com/Kaiseem/Scaffold-A549/releases/download/v1.0/scaffold_a549.zip::scaffold_a549/test/sf_a549_21_Label.npy
+    size_bytes: 8486201
+    description: The annotated test volume and its label volume (zip members, compressed sizes).
+  arrays:
+  - role: raw
+    path_pattern: scaffold_a549.zip::scaffold_a549/*/sf_a549_[0-9][0-9].npy
+    format: other
+    axes: zyx
+    shape:
+    - 64
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'NumPy .npy (no format enum value), plain array, loads with allow_pickle=False. Axes zyx from
+      the shape (64 slices of 512x512, matching the record: originals 1024x1024x128 cropped and resized).'
+  - role: label
+    path_pattern: scaffold_a549.zip::scaffold_a549/test/*_Label.npy
+    format: other
+    axes: zyx
+    shape:
+    - 64
+    - 512
+    - 512
+    shape_varies: false
+    dtype: int32
+    compression: none
+    value_range:
+    - 0
+    - 815
+    normalization: none
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: sf_a549_21_Label.npy pairs with test/sf_a549_21.npy; same shape. 815 nucleus ids + background
+      0 (96% zeros). Only this one volume is labelled.
+  notes: 'Listing: the release zip central directory (exact sizes). Sampled with an ad hoc numpy script (np.load
+    allow_pickle=False on zip members; 14.4 MB compressed): test/sf_a549_21.npy (64,512,512) uint8, 0-255, mean
+    10.6, 40% zeros; test/sf_a549_21_Label.npy (64,512,512) int32, 0-815, 816 unique values, 96% zeros; train/sf_a549_01.npy
+    (64,512,512) uint8, 0-255, mean 7.1. Values from these samples. Voxel size not found for the released volumes:
+    the arXiv AD-GAN appendix (read by the harvester) gives 0.4151 um/voxel for the 1024x1024x128 originals, but
+    the released 512x512x64 volumes were cropped and resized with no per-axis factor stated; the .npy files carry
+    no metadata. Checked: npy headers, README, release page, arXiv text (via the harvest). .npy is not a format
+    TensorSwitch reads.'
