@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: zenodo-6467268-schistosoma-haematobium-eggs
 title: Schistosoma Haematobium Egg Image Dataset
 short_name: S. haematobium egg segmentation (brightfield)
-description: 12,051 brightfield microscopy images (2028x1520 PNG) of filtered urine samples with manually annotated polygon masks of Schistosoma
-  haematobium eggs, split 80/20 into train and test, plus a separate diagnosis test set of 65 urine samples (117 fields of view each) with expert diagnoses.
+description: 12,051 brightfield microscopy images (2028x1520 PNG) of filtered urine samples with manually
+  annotated polygon masks of Schistosoma haematobium eggs, split 80/20 into train and test, plus a separate
+  diagnosis test set of 65 urine samples (117 fields of view each) with expert diagnoses.
 landing_url: https://zenodo.org/records/6467268
 doi: 10.5281/zenodo.6467268
 repository: Zenodo
@@ -18,7 +19,8 @@ authors:
 - Vdovine, Gleb
 - Diehl, Jan-Carel
 publications:
-- title: Two-stage automated diagnosis framework for urogenital schistosomiasis in microscopy images from low-resource settings
+- title: Two-stage automated diagnosis framework for urogenital schistosomiasis in microscopy images from
+    low-resource settings
   doi: 10.1117/1.jmi.10.4.044005
   url: https://doi.org/10.1117/1.jmi.10.4.044005
 date_published: '2023-08-04'
@@ -27,16 +29,17 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Schistosoma haematobium
-  sample: Urine samples from school-age children in Abuja, Nigeria, filtered on 0.2 um membranes and imaged with the Schistoscope
-    (4x objective, Raspberry Pi HQ camera, 1.55 um sensor pixel pitch)
+  sample: Urine samples from school-age children in Abuja, Nigeria, filtered on 0.2 um membranes and imaged
+    with the Schistoscope (4x objective, Raspberry Pi HQ camera, 1.55 um sensor pixel pitch)
   labels_stains: []
 data:
   formats:
   - png
-  size_bytes: 40329227913
+  - jpeg
+  size_bytes: 40329227682
   n_items: 12051
   access: open
   download_url: null
@@ -44,9 +47,11 @@ data:
 annotations:
   present: true
   types:
-  - instance-segmentation
+  - semantic-segmentation
+  - counts
   coverage: dense
-  format: COCO-style polygon JSON converted to segmentation mask images
+  format: binary PNG masks (0/255), one per image, same file name as the image; per-sample egg counts
+    and diagnosis in a CSV (diagnosis set)
   source: manual
 ml:
   tasks:
@@ -63,10 +68,127 @@ provenance:
   evidence_urls:
   - https://zenodo.org/api/records/6467268
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10405291/fullTextXML
-  confidence: 0.75
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9146062/fullTextXML
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-09T05:14:34Z'
-notes: 'Two zips on Zenodo: SHdataset_12k.zip (27.8 GB; 12,051 images with masks, 80/20 train/test = 9,641/2,410 per paper) and diagnosis_test_dataset.zip (12.5 GB; 65 samples x 117 FoV with expert diagnosis, no masks stated). Zip contents could not be listed (Zenodo returned 504 for range requests), so annotation files were not seen in a listing; details come from the record description and paper Methods. Pixel size in um is not stated: paper gives 4x objective and 1.55 um sensor pitch, but no calibrated um/pixel. Eggs were annotated with COCO Annotator by an expert parasitologist (paper) / two experts (record); masks were generated from the JSON with a script. Size is the sum of both zips. Paper cites the Zenodo record in its Data Availability Statement.'
+  annotations_verified: true
+  last_checked: '2026-10-09T06:12:00Z'
+notes: 'Two zips on Zenodo: SHdataset_12k.zip (27.8 GB; train 9,641 / test 2,410 PNG images, each with
+  a binary mask) and diagnosis_test_dataset.zip (12.5 GB; 65 folders DT01-DT65 of 117 JPEG FoVs each plus
+  a CSV with egg_count and diagnosis per sample, no masks). enricher: zip contents listed (were unlisted);
+  masks are binary 0/255, so types instance-segmentation -> semantic-segmentation, plus counts (CSV);
+  formats png -> png, jpeg; size from the listing (was 40,329,227,913). Pixel size in um is not stated:
+  the papers give a 4x objective, 1.55 um sensor pitch and a FoV of 1078 x 1470 um, but no um/pixel value.
+  Eggs were annotated with COCO Annotator by an expert parasitologist (paper) / two experts (record);
+  masks were generated from the JSON with a script.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './                                                        2 files     40.3 GB  .zip
+
+      zip contents:
+
+      SHdataset_12k.zip/SHdataset_12k/test/images/               2410 files      5.6 GB  .png
+
+      SHdataset_12k.zip/SHdataset_12k/test/masks/                2410 files     13.6 MB  .png
+
+      SHdataset_12k.zip/SHdataset_12k/train/images/              9641 files     22.5 GB  .png
+
+      SHdataset_12k.zip/SHdataset_12k/train/masks/               9641 files     54.7 MB  .png
+
+      diagnosis_test_dataset.zip/diagnosis_test_dataset/            1 files       703 B  .csv
+
+      diagnosis_test_dataset.zip/diagnosis_test_dataset/DT#/ (x65 dirs) 7605 files 12.7 GB  .jpeg  (NNNN_NNNN.jpeg)'
+    n_files: 31708
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/6467268/files/SHdataset_12k.zip::SHdataset_12k/test/images/15307.png
+    - https://zenodo.org/records/6467268/files/SHdataset_12k.zip::SHdataset_12k/test/masks/15307.png
+    size_bytes: 2031805
+    description: Test image 15307 (RGB PNG) and its binary egg mask
+  arrays:
+  - role: raw
+    path_pattern: SHdataset_12k.zip/SHdataset_12k/*/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1520
+    - 2028
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 27
+    - 214
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB colour brightfield (the 3 samples differ in the sample). train/ 9,641 and test/
+      2,410 images.
+  - role: label
+    path_pattern: SHdataset_12k.zip/SHdataset_12k/*/masks/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1520
+    - 2028
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: S. haematobium egg
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: <split>/images/<n>.png pairs with <split>/masks/<n>.png (all 12,051
+      names match; same 1520x2028 grid in the sample). Grayscale (mode L).'
+  - role: raw
+    path_pattern: diagnosis_test_dataset.zip/diagnosis_test_dataset/DT*/*.jpeg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1520
+    - 2028
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Diagnosis set: 65 samples x 117 FoVs (7,605 JPEGs); no masks. Sample-level labels
+      only.'
+  - role: label
+    path_pattern: diagnosis_test_dataset.zip/diagnosis_test_dataset/*.csv
+    format: csv
+    axes: null
+    shape:
+    - 65
+    - 3
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes:
+    - id: 0
+      name: negative
+    - id: 1
+      name: positive
+    alignment: not-applicable
+    alignment_notes: Columns sample_id, egg_count, diagnosis; sample_id names the DT## folder (per-sample
+      egg count and 0/1 diagnosis from the expert microscopist).
+  notes: 'Listing via tools/listing.py --expand-zips over both zips (31,708 members, exact sizes). Sampled
+    one image/mask pair (test 15307, the largest mask); value_range values are from that one sample. Mask
+    values {0: 1,947,947, 255: 1,134,613} px. Masks 13492 and 10002 (5,588 B each) are all 0, so 0 = background
+    and 255 = egg; 5,675 of 12,051 masks have that exact size (likely egg-free fields). Probed one diagnosis
+    JPEG header. voxel size not found; checked: PNG/JPEG headers (no calibration), Zenodo API description,
+    both papers in full (Europe PMC PMC10405291 and PMC9146062: 4x objective, 1.55 um sensor pixel, FoV
+    1078 x 1470 um, no um/pixel value stated). download_url stays null: the dataset is two separate zips
+    (SHdataset_12k.zip is the segmentation set: https://zenodo.org/records/6467268/files/SHdataset_12k.zip).'
