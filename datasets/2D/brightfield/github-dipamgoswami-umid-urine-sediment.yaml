@@ -1,0 +1,150 @@
+schema_version: '1.2'
+id: github-dipamgoswami-umid-urine-sediment
+title: UMID - Urine Microscopic Image Dataset
+short_name: Urine sediment cell detection (brightfield)
+description: Annotated brightfield microscope images (1280 x 720 px, 400x total magnification) of urine sediment
+  with bounding boxes around red blood cells, pus cells and epithelial cells, plus point annotations for cells in
+  clusters. Released for training cell detection and counting models for kidney disease diagnosis; the repository
+  provides train, validation and test CSV files.
+landing_url: https://github.com/dipamgoswami/UMID-Urine-Microscopic-Image-Dataset
+doi: null
+repository: GitHub
+accession: dipamgoswami/UMID-Urine-Microscopic-Image-Dataset
+authors:
+- Dipam Goswami
+- Hari Om Aggrawal
+- Rajiv Gupta
+- Vinti Agarwal
+publications:
+- title: Urine microscopic image dataset
+  doi: 10.48550/arXiv.2111.10374
+  url: https://arxiv.org/abs/2111.10374
+date_published: null
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: Centrifuged human urine sediment on glass slides
+  labels_stains: []
+data:
+  formats:
+  - jpeg
+  size_bytes: 23301100
+  n_items: 366
+  access: open
+  download_url: null
+  download_method: other
+annotations:
+  present: true
+  types:
+  - bounding-box
+  - points
+  coverage: dense
+  format: Boxes and points made in Microsoft VoTT and stored in train.csv, val.csv, test.csv, classmaps.csv and
+    missed_classmaps.csv
+  source: manual
+ml:
+  tasks:
+  - detection
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-09T08:20:00Z'
+  evidence_urls:
+  - https://github.com/dipamgoswami/UMID-Urine-Microscopic-Image-Dataset
+  - https://raw.githubusercontent.com/dipamgoswami/UMID-Urine-Microscopic-Image-Dataset/main/README.md
+  - https://ar5iv.labs.arxiv.org/html/2111.10374
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-09T07:55:00Z'
+notes: 'No license in the repository (no LICENSE file; README only asks for citation) or the paper; the authors
+  say the dataset is publicly available for research. Git tree lists 588 JPG files in images/ (about 23 MB in total)
+  plus train.csv, val.csv, test.csv, classmaps.csv, missed_classmaps.csv; the README says 367 annotated images and
+  the paper 366 images with 3,733 annotated cells, so the image counts disagree (n_items uses the paper). Classes:
+  RBC (about 44%), pus cells (about 33%), epithelial cells (about 23%); a "missed label" class (about 11%) marks
+  uncertain cells and is excluded from training. Two bright-field microscopes (CH20iBIMF, 40x objective, 10x eyepiece)
+  with a 5-megapixel camera. Pixel size not stated. Files are plain git files; clone the repository. enricher: CSVs
+  annotate 366 images (268 train, 38 val, 60 test); points are zero-size boxes labelled point-*.'
+technical:
+  method: sample
+  size_source: unknown
+  layout:
+    tree: "./\n  README.md\n  train.csv  (3204 rows, 268 images)\n  val.csv    (422 rows, 38 images)\n  test.csv\
+      \   (583 rows, 60 images)\n  classmaps.csv\n  missed_classmaps.csv\n  images/    588 x .jpg (1.jpg ...)"
+    n_files: 594
+    listing_complete: true
+  sample:
+    urls:
+    - https://raw.githubusercontent.com/dipamgoswami/UMID-Urine-Microscopic-Image-Dataset/main/images/1.jpg
+    - https://raw.githubusercontent.com/dipamgoswami/UMID-Urine-Microscopic-Image-Dataset/main/train.csv
+    size_bytes: 157390
+    description: image 1.jpg and train.csv, which holds its boxes (rows with image == 1.jpg)
+  arrays:
+  - role: raw
+    path_pattern: images/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 720
+    - 1280
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 46
+    - 198
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '{train,val,test}.csv'
+    format: csv
+    axes: null
+    shape:
+    - 3204
+    - 6
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: rbc
+      name: red blood cell
+    - id: pus
+      name: pus cell / WBC
+    - id: ep
+      name: epithelial cell
+    - id: missedlabel
+      name: missed label (uncertain cell)
+    - id: point-rbc
+      name: red blood cell (point)
+    - id: point-pus
+      name: pus cell (point)
+    - id: point-ep
+      name: epithelial cell (point)
+    alignment: same-grid
+    alignment_notes: columns image,xmin,ymin,xmax,ymax,label in pixel coordinates of the 1280x720 image named in
+      column image; point annotations are rows with xmin==xmax, ymin==ymax and label point-* (train.csv only). Shape
+      is train.csv; val 422x6, test 583x6.
+  notes: 'Listing from a blobless git clone of the repository (names only, no sizes): 594 files, 588 JPGs in images/.
+    Only 366 images appear in the CSVs (268/38/60); the other 222 JPGs have no annotations. data.size_bytes (23.3
+    MB) is the harvester''s git-tree figure, not re-confirmed (github.com API and archive zip blocked by the session
+    proxy). Value range from one sample image (1.jpg). Label counts read from the CSVs: train rbc 1152, pus 703,
+    ep 242, missedlabel 353, point-ep 414, point-pus 254, point-rbc 86. No single-archive download reachable (github.com
+    archive zip returned 403 through the proxy); individual files are direct on raw.githubusercontent.com/<repo>/main/<path>.
+    Voxel size not found; checked: JPEG header (no calibration), README, paper full text (ar5iv: 400x magnification,
+    5 MP camera, no pixel size). License not found: no LICENSE file, README asks only for citation, paper (arXiv
+    CC-BY-4.0 covers the paper only).'
