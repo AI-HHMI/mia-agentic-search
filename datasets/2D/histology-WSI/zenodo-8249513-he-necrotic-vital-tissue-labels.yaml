@@ -1,0 +1,145 @@
+schema_version: '1.2'
+id: zenodo-8249513-he-necrotic-vital-tissue-labels
+title: H&E segmentation labels
+short_name: H&E necrotic vs vital tissue labels (histology)
+description: H&E-stained histology images with matching label images in three classes (background, necrotic tissue,
+  vital tissue), released as a test dataset for demonstrating 2D U-Net segmentation of H&E data; the zip also bundles
+  a trained model checkpoint (best_model.pt).
+landing_url: https://zenodo.org/records/8249513
+doi: 10.5281/zenodo.8249513
+repository: Zenodo
+accession: '8249513'
+authors:
+- Johannes Müller
+publications:
+- title: Radiomics-based tumor phenotype determination based on medical imaging and tumor microenvironment in a
+    preclinical setting
+  doi: 10.1016/j.radonc.2022.02.020
+  url: https://doi.org/10.1016/j.radonc.2022.02.020
+date_published: '2022-10-16'
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 2500
+    y: 2500
+    z: null
+  channels: 3
+  organism: []
+  sample: H&E-stained histology images (tissue origin not stated on the record)
+  labels_stains:
+  - H&E
+data:
+  formats:
+  - tiff
+  size_bytes: 223250097
+  n_items: 699
+  access: open
+  download_url: https://zenodo.org/records/8249513/files/images_and_labels.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: unknown
+  format: 'TIFF label images with the same file names as the images (labels/<name>.tif), ImageJ composite with 3
+    one-hot channels (0/255): Unannotated, NonVital, Vital'
+  source: unknown
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://zenodo.org/records/8249513
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-09T11:36:36Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/8249513
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1016%2Fj.radonc.2022.02.020%22&format=json&resultType=core&pageSize=3
+  - https://zenodo.org/records/8249513/files/images_and_labels.zip
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-09T13:36:43Z'
+notes: 'Zenodo record (API) read in full: short description, CC-BY-4.0, one 223 MB zip with 699 images/*.tif, 699
+  labels/*.tif with identical names (n_items = 699 pairs) and best_model.pt (130 MB trained model, not data). Zenodo
+  calls it a "test dataset" for a 2D U-Net demo with three classes. The paper (Radiother Oncol 2022) is not open
+  access; its abstract describes SAS and UT-SCC-14 HNSCC xenografts in 114 mice. Annotation source and coverage
+  are not documented. enricher: voxel size 2500x2500 nm from the ImageJ calibration in the TIFF headers (2.5 um/px);
+  no page states it (was null). Organism left empty: scan names in the headers (N182c_SAS_15_..._HE.czi) point to
+  the paper''s human SAS xenografts in mice, mixed tissue, not stated. channels 3 (RGB) from headers; download_url
+  now the direct zip.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  1 file  223.3 MB  (images_and_labels.zip)\nimages_and_labels.zip/\n  best_model.pt              130.4\
+      \ MB  trained model (not data)\n  images/  699 .tif  137.9 MB  RGB uint8 256x256\n  labels/  699 .tif  139.7\
+      \ MB  3-channel uint8 256x256, same names\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/8249513/files/images_and_labels.zip::images/AADB67984318577524.tif
+    - https://zenodo.org/records/8249513/files/images_and_labels.zip::labels/AADB67984318577524.tif
+    size_bytes: 397192
+    description: One 256x256 H&E tile and its 3-channel label image (same file name), read as zip members.
+  arrays:
+  - role: raw
+    path_pattern: images_and_labels.zip::images/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 3
+    - 195
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB H&E tile (photometric RGB, samples differ); ImageJ header, calibration 2.5 um/px.
+  - role: label
+    path_pattern: images_and_labels.zip::labels/*.tif
+    format: tiff
+    axes: cyx
+    shape:
+    - 3
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: one-hot
+    classes:
+    - id: 0
+      name: Unannotated
+    - id: 1
+      name: NonVital
+    - id: 2
+      name: Vital
+    alignment: same-grid
+    alignment_notes: 'Pairing: labels/<name>.tif belongs to images/<name>.tif. Same 256x256 grid, same ImageJ xorigin/yorigin
+      as the image. Channel names from the ImageJ Labels tag; Zenodo calls the classes background, necrotic and
+      vital tissue. Some pixels have no channel set (2.9% in ABPE72281137841178).'
+  notes: 'Listing: Zenodo API + zip central directory: 1 file, 223,250,097 B (exact), 1,399 members (699 images/*.tif,
+    699 labels/*.tif, best_model.pt). Probed 2 images + 2 labels (headers): images ImageJ TIFF 256x256x3 RGB uint8
+    uncompressed, labels ImageJ composite 3x256x256 uint8; all with unit um and 2.5 um/px. Read 1 image + 2 labels
+    via zip ranges (172,843 B compressed; the members are deflated in the zip): image values 3-195, RGB channels
+    differ; labels one-hot 0/255 per channel (Unannotated, NonVital, Vital), ch0 empty in both samples. Value ranges
+    come from one sample. ImageJ Info of the image names the source scan N182c_SAS_15_..._HE.czi (BioFormatsImageServer,
+    project 2020_Radiomics), which matches the paper''s SAS xenografts, but no page states the organism. tools/sample.py
+    could not read zip members (it misread them as HDF5), so a short tifffile script read them instead.'
