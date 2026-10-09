@@ -1,12 +1,12 @@
 schema_version: '1.2'
 id: zenodo-17735903-ignite-nsclc-he-pdl1
-title: 'IGNITE data toolkit: a tissue and cell-level annotated H&E and PD-L1 histopathology image dataset in non-small cell
-  lung cancer'
+title: 'IGNITE data toolkit: a tissue and cell-level annotated H&E and PD-L1 histopathology image dataset in non-small
+  cell lung cancer'
 short_name: NSCLC H&E tissue and PD-L1 nuclei (histology)
-description: '887 manually annotated regions of interest from 155 NSCLC patients (multi-centre, multi-scanner) for three tasks:
-  16-class tissue compartment segmentation in H&E, nuclei detection in PD-L1 IHC, and PD-L1-positive tumor cell detection.
-  Images are PNG ROIs (some with surrounding context); annotations are PNG label masks (H&E) and JSON point/cell annotations
-  (PD-L1).'
+description: '887 manually annotated regions of interest from 155 NSCLC patients (multi-centre, multi-scanner) for
+  three tasks: 16-class tissue compartment segmentation in H&E, nuclei detection in PD-L1 IHC, and PD-L1-positive
+  tumor cell detection. Images are PNG ROIs (some with surrounding context); annotations are PNG label masks (H&E)
+  and JSON point/cell annotations (PD-L1).'
 landing_url: https://zenodo.org/records/17735903
 doi: 10.5281/zenodo.17735903
 repository: Zenodo
@@ -24,11 +24,15 @@ imaging:
   modality:
   - histology-WSI
   dimensionality: 2D
-  voxel_size_nm: null
+  voxel_size_nm:
+    x: 500
+    y: 500
+    z: null
   channels: null
   organism:
   - Homo sapiens
-  sample: Non-small cell lung cancer biopsies, resections and TMAs (primary and metastatic sites), H&E and PD-L1 IHC stained
+  sample: Non-small cell lung cancer biopsies, resections and TMAs (primary and metastatic sites), H&E and PD-L1
+    IHC stained
   labels_stains:
   - H&E
   - PD-L1 IHC
@@ -38,7 +42,7 @@ data:
   size_bytes: 5772903856
   n_items: 1295
   access: open
-  download_url: https://zenodo.org/api/records/17735903/files/images.zip/content
+  download_url: https://zenodo.org/records/17735903/files/images.zip
   download_method: http
 annotations:
   present: true
@@ -47,8 +51,9 @@ annotations:
   - points
   - bounding-box
   coverage: partial
-  format: 'H&E: PNG label masks (annotations/he, 16 classes + unannotated per he_label_map.json); PD-L1: JSON files (nuclei_annotations.json,
-    pdl1_annotations.json and test sets)'
+  format: 'H&E: single-channel PNG label masks (annotations/he, same size as the ROI, ids per he_label_map.json:
+    0 unannotated + 16 classes); PD-L1: MS COCO JSON (nuclei_annotations.json, pdl1_annotations.json and test sets
+    with all readers)'
   source: manual
 ml:
   tasks:
@@ -69,17 +74,145 @@ provenance:
   - https://arxiv.org/pdf/2507.16855
   - https://zenodo.org/api/records/17735903/files/images.zip/content
   - https://zenodo.org/api/records/17735903/files/annotations.zip/content
+  - https://arxiv.org/html/2507.16855
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T23:58:33Z'
-notes: Pixel size not stated on the Zenodo record or in the preprint beyond the models being trained on patches at 0.5 um/pixel;
-  released PNG resolution not verified, so voxel_size_nm is null. images.zip lists 816 H&E PNGs (incl. *_with_context variants)
-  and 479 PD-L1 PNGs; annotations.zip has 816 H&E PNG masks and 4 PD-L1 JSONs (nuclei and PD-L1 annotations plus test sets
-  with all readers). Annotation JSON schema was not opened (75 MB), format wording is inferred from filenames, so it is not
-  claimed to be COCO. Preprint states 91,164 nuclei annotated over 135 PD-L1 ROIs. Train/validation splits are described in
-  the preprint (Fig. 3A); a test split exists (incl. TCGA cases). The published version is in IEEE JBHI (doi 10.1109/jbhi.2026.3685529,
-  not open access); the arXiv preprint was read. Size = images.zip + annotations.zip; models.zip, figures.zip and inference.zip
-  excluded.
+  last_checked: '2026-10-09T04:15:00Z'
+notes: 'images.zip lists 816 H&E PNGs (incl. *_with_context variants) and 479 PD-L1 PNGs; annotations.zip has 816
+  H&E PNG masks and 4 PD-L1 JSONs (nuclei and PD-L1 annotations plus test sets with all readers). Preprint states
+  91,164 nuclei annotated over 135 PD-L1 ROIs. Train/validation splits are described in the preprint (Fig. 3A);
+  a test split exists (incl. TCGA cases). The published version is in IEEE JBHI (doi 10.1109/jbhi.2026.3685529,
+  not open access); the arXiv preprint was read. Size = images.zip + annotations.zip; models.zip, figures.zip and
+  inference.zip excluded. enricher: voxel size 500x500 nm from preprint Data Records (''extracted at a resolution
+  of 0.5 micrometers per pixel''; was null). enricher: PD-L1 JSONs are MS COCO per the preprint Data Records.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "zenodo-17735903/  data: images.zip + annotations.zip, 5.8 GB (also he_label_map.json, data_overview.csv;\
+      \ models/figures/inference zips not data)\n  images.zip/images/\n    he/            816 .png  3.9 GB   patient<N>_he_roi<M>.png\
+      \ and *_with_context.png (RGB)\n    pdl1/nuclei/   135 .png  217.7 MB patient<N>_nuclei_roi<M>.png (RGBA)\n\
+      \    pdl1/pdl1/     344 .png  1.6 GB   patient<N>_pdl1_roi<M>.png\n  annotations.zip/annotations/\n    he/\
+      \            816 .png  21.6 MB  label masks, same names as images/he\n    pdl1/nuclei/   2 .json   10.6 MB\
+      \  nuclei_annotations.json, nuclei_test_set_all_readers.json\n    pdl1/pdl1/     2 .json   79.5 MB  pdl1_annotations.json,\
+      \ pdl1_test_set_all_readers.json\n"
+    n_files: 2117
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/17735903/files/images.zip::images/he/patient10_he_roi1.png
+    - https://zenodo.org/records/17735903/files/annotations.zip::annotations/he/patient10_he_roi1.png
+    size_bytes: 2156968
+    description: One H&E ROI and its tissue-compartment mask.
+  arrays:
+  - role: raw
+    path_pattern: images.zip::images/he/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 991
+    - 1129
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: H&E RGB ROIs; *_with_context.png variants are larger crops (e.g. 1792x1792) with surrounding
+      tissue and have no mask of their own.
+  - role: label
+    path_pattern: annotations.zip::annotations/he/*.png
+    format: png
+    axes: yx
+    shape:
+    - 991
+    - 1129
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    value_range:
+    - 2
+    - 9
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: Unannotated
+    - id: 1
+      name: Background
+    - id: 2
+      name: Tumor epithelium
+    - id: 3
+      name: Reactive epithelium
+    - id: 4
+      name: Stroma
+    - id: 5
+      name: Inflammation
+    - id: 6
+      name: Alveolar tissue
+    - id: 7
+      name: Fatty tissue
+    - id: 8
+      name: Necrotic tissue
+    - id: 9
+      name: Erythrocytes
+    - id: 10
+      name: Bronchial epithelium
+    - id: 11
+      name: Mucus/Plasma/Fluids
+    - id: 12
+      name: Cartilage/Bone
+    - id: 13
+      name: Macrophages
+    - id: 14
+      name: Muscle
+    - id: 15
+      name: Liver
+    - id: 16
+      name: Keratinization
+    alignment: same-grid
+    alignment_notes: annotations/he/<name>.png labels images/he/<name>.png (same shape); 0 = unannotated.
+  - role: raw
+    path_pattern: images.zip::images/pdl1/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 536
+    - 516
+    - 4
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: PD-L1 IHC ROIs, RGBA PNG (probe of patient10_nuclei_roi1.png).
+  - role: label
+    path_pattern: annotations.zip::annotations/pdl1/*/*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: other
+    classes: null
+    alignment: unknown
+    alignment_notes: MS COCO JSON per the preprint (one file per task plus a multi-reader test set); not opened
+      (10.6 and 79.5 MB). Images are referenced by file name inside the JSON.
+  notes: 'Listed images.zip + annotations.zip (2117 members, 5,772,903,856 B = size_bytes; models.zip 2.1 GB, figures.zip,
+    inference.zip and two small metadata files excluded as not image data). Probed H&E image (991x1129x3 uint8),
+    its context variant (1792x1792x3), the H&E mask (991x1129 uint8 gray) and a PD-L1 nuclei image (536x516x4 RGBA).
+    Sampled patient10_he_roi1 pair: image 0-255 mean 130 (one sample; normalization unknown), mask values {2,4,5,9}.
+    Read he_label_map.json and the head of data_overview.csv (per-ROI split, fold, scanner, shape, area_mm2). Voxel
+    size 500 nm from the preprint Data Records. The Zenodo record listing hit repeated SSL EOF errors, so the record
+    file list came from the Zenodo API via curl.'
