@@ -3,8 +3,8 @@ id: zenodo-15676241-blood-smear-schistocytes
 title: Blood Smear Cell Dataset
 short_name: Blood smear cell detection incl. schistocytes
 description: 615 PNG images of blood smears with YOLO-format bounding boxes for six cell classes - red blood cells,
-  schistocytes (fragmented RBCs), platelets, granulocytes, monocytes and lymphocytes. Deposited as a single
-  dataset.zip with an images folder, one label text file per image and a classes.txt.
+  schistocytes (fragmented RBCs), platelets, granulocytes, monocytes and lymphocytes. Deposited as a single dataset.zip
+  with an images folder, one label text file per image and a classes.txt.
 landing_url: https://zenodo.org/records/15676241
 doi: 10.5281/zenodo.15676241
 repository: Zenodo
@@ -26,7 +26,7 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: 371700000
+  size_bytes: 369871794
   n_items: 615
   access: open
   download_url: https://zenodo.org/records/15676241/files/dataset.zip
@@ -36,7 +36,8 @@ annotations:
   types:
   - bounding-box
   coverage: dense
-  format: YOLO txt, one file per image (class x_center y_center width height, normalised); class names in classes.txt (RBC, Schistocyte, PLT, GRAN, MONO, LYM)
+  format: YOLO txt, one file per image (class x_center y_center width height, normalised); class names in classes.txt
+    (RBC, Schistocyte, PLT, GRAN, MONO, LYM)
   source: unknown
 ml:
   tasks:
@@ -59,5 +60,79 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T08:45:00Z'
-notes: 'The record has no description beyond the class list, no paper link and no imaging details. dataset.zip (369.9 MB) lists 615 PNG images and 616 txt files (615 labels plus classes.txt); classes.txt and one label file were read with peek_archive and are YOLO boxes. Modality is inferred as brightfield from the stained blood-smear content and was not stated on the page; the microscope, magnification, pixel size, annotator and stain are not stated. A PeerJ Computer Science paper by the same first author (10.7717/peerj-cs.3475) describes a schistocyte-detection set with the same six classes and 6,150 images, but the record does not link it, so it is not listed as the dataset paper.'
+  last_checked: '2026-10-09T07:58:00Z'
+notes: The record has no description beyond the class list, no paper link and no imaging details. dataset.zip (369.9
+  MB) lists 615 PNG images and 616 txt files (615 labels plus classes.txt); classes.txt and one label file were
+  read with peek_archive and are YOLO boxes. Modality is inferred as brightfield from the stained blood-smear content
+  and was not stated on the page; the microscope, magnification, pixel size, annotator and stain are not stated.
+  A PeerJ Computer Science paper by the same first author (10.7717/peerj-cs.3475) describes a schistocyte-detection
+  set with the same six classes and 6,150 images, but the record does not link it, so it is not listed as the dataset
+  paper.
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "dataset.zip (369.9 MB)\n  dataset/\n    classes.txt               1 file      38 B\n    images/     \
+      \            615 files   368.2 MB  .png\n    labels/                 615 files     3.5 MB  .txt"
+    n_files: 1231
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/15676241/files/dataset.zip::dataset/images/1.png
+    - https://zenodo.org/records/15676241/files/dataset.zip::dataset/labels/1.txt
+    size_bytes: 567345
+    description: one image (images/1.png, 424x648 RGBA) and its YOLO box file (labels/1.txt, 138 boxes)
+  arrays:
+  - role: raw
+    path_pattern: dataset/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 424
+    - 648
+    - 4
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 3
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+  - role: label
+    path_pattern: dataset/labels/*.txt
+    format: other
+    axes: null
+    shape:
+    - 138
+    - 5
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    normalization: unknown
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: RBC
+    - id: 1
+      name: Schistocyte
+    - id: 2
+      name: PLT
+    - id: 3
+      name: GRAN
+    - id: 4
+      name: MONO
+    - id: 5
+      name: LYM
+    alignment: same-grid
+    alignment_notes: 'pairing: images/<n>.png <-> labels/<n>.txt (same stem). YOLO rows "class x_center y_center
+      width height", coordinates normalised to [0,1] of the image width/height; class index = line order of classes.txt
+      (0-based, YOLO convention).'
+  notes: 'Listing of dataset.zip is complete (Zenodo lists one file; 1231 zip members, exact sizes). Probed images
+    1, 10, 5, 50: all 424x648 RGBA uint8 PNG (axes yxs, s = RGBA samples, alpha included); shape_varies false is
+    from these 4 probes only. value_range [3, 255] is from one sample (images/1.png, all 4 samples). labels/1.txt
+    has 138 rows of 5 space-separated columns (row count varies per image). Voxel size not found; checked: PNG headers
+    (no pHYs reported), Zenodo API record (description is only the class list, no related identifiers, no notes),
+    no README in the zip, paper 10.7717/peerj-cs.3475 (same first author, not linked by the record; not open access
+    in Europe PMC, publisher page behind a Cloudflare challenge). Stain, microscope and magnification likewise not
+    stated.'
