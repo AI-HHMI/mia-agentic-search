@@ -2,11 +2,11 @@ schema_version: '1.2'
 id: sciencedb-19235-cart-cytotoxicity-opm
 title: Light sheet microscopy imaging dataset of CAR-T-cell-mediated cytotoxicity
 short_name: CAR-T killing 4D live imaging (OPM light-sheet)
-description: High-throughput 4D live-cell imaging of anti-CD19 CAR-T cells attacking Nalm6 target cells in a microchamber array,
-  recorded on a Bessel oblique plane (single-objective light-sheet) microscope in three channels (SYTOX Blue dead-cell marker,
-  Lifeact-EGFP actin, mApple/SiR-tubulin). Ten healthy-donor and three dasatinib-treated raw sets (about 40 chambers each, 120
-  volumes per chamber) with reconstructed projections, 4D HDF5 volumes and 3D U-Net segmentation masks of CAR-T and target cell
-  nuclei and cytoplasm/membrane.
+description: High-throughput 4D live-cell imaging of anti-CD19 CAR-T cells attacking Nalm6 target cells in a microchamber
+  array, recorded on a Bessel oblique plane (single-objective light-sheet) microscope in three channels (SYTOX Blue
+  dead-cell marker, Lifeact-EGFP actin, mApple/SiR-tubulin). Ten healthy-donor and three dasatinib-treated raw sets
+  (about 40 chambers each, 120 volumes per chamber) with reconstructed projections, 4D HDF5 volumes and 3D U-Net
+  segmentation masks of CAR-T and target cell nuclei and cytoplasm/membrane.
 landing_url: https://www.scidb.cn/detail?dataSetId=9cedf7a29c494cc59c49db4a2af54325
 doi: 10.57760/sciencedb.19235
 repository: other
@@ -26,7 +26,8 @@ imaging:
   channels: 3
   organism:
   - Homo sapiens
-  sample: Anti-CD19 CAR-T cells (from healthy-donor PBMCs) co-cultured with Nalm6 B-ALL cells in a microchamber chip, live imaging
+  sample: Anti-CD19 CAR-T cells (from healthy-donor PBMCs) co-cultured with Nalm6 B-ALL cells in a microchamber
+    chip, live imaging
   labels_stains:
   - SYTOX Blue
   - Lifeact-EGFP
@@ -46,7 +47,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: 3D U-Net label bitmaps in ROIauto/ next to 4D .h5 volumes (0 background, 1 CAR-T nucleus, 2 target nucleus, 3 CAR-T cytoplasm/membrane, 4 target cytoplasm/membrane) and aggregate segmentation maps
+  format: 3D U-Net label bitmaps in ROIauto/ next to 4D .h5 volumes (0 background, 1 CAR-T nucleus, 2 target nucleus,
+    3 CAR-T cytoplasm/membrane, 4 target cytoplasm/membrane) and aggregate segmentation maps
   source: automatic
 ml:
   tasks:
@@ -64,15 +66,94 @@ provenance:
   - https://doi.org/10.57760/sciencedb.19235
   - https://api.datacite.org/dois/10.57760/sciencedb.19235
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13009152/fullTextXML
-  confidence: 0.55
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-09T10:55:00Z'
-notes: 'Hosted on Science Data Bank; DataCite lists 506,935 files, 21.5 TB, CC BY 4.0, year 2025. The landing page is
-  JavaScript-rendered, so the file listing was not read (annotations_verified false); layout and label codes come from the paper
-  Data Records: MIP_ROI_0-39 projections, ROIauto 4D .h5 plus 3D U-Net masks, raw as Hamamatsu .dcimg and 4 GB .tiff stacks.
-  Masks are model-predicted with no stated manual correction, hence automatic. Isotropic resolution 320 nm (DataCite abstract),
-  axial step 0.6 um; pixel size not stated, so voxel_size_nm is null. n_items = 13 raw sets (10 healthy, 3 dasatinib), about
-  40 ROIs each. The paper is CC BY-NC-ND; the data licence is the DataCite CC BY 4.0.'
+  annotations_verified: true
+  last_checked: '2026-10-09T10:45:00Z'
+notes: 'Hosted on Science Data Bank; DataCite lists 506,935 files, 21.5 TB, CC BY 4.0. Layout per the paper Data
+  Records and the ScienceDB file-tree API: per set, MIP_ROI_0-39 with MIPxy/MIPxz projections and ROIauto (4D .h5
+  per time point plus *_predictions.h5 3D U-Net masks), raw Hamamatsu .dcimg and 4 GB Micro-Manager .ome.tif stacks
+  (K_1/). Masks are model-predicted with no stated manual correction, hence automatic. Isotropic resolution 320
+  nm (paper), axial scan step 0.6 um; reconstructed voxel size not stated, so voxel_size_nm is null. n_items = 13
+  raw sets (10 healthy, 3 dasatinib, folders *_ds), about 40 ROIs each. The paper is CC BY-NC-ND; the data licence
+  is CC BY 4.0. enricher: annotations verified in the file tree and an .h5 header (was false).'
+technical:
+  method: header
+  size_source: page-stated
+  layout:
+    tree: "V1/   (ScienceDB 19235; 506,935 files, 21.5 TB per DataCite; one set listed in part)\n  v01_6_40_120_0-6_hd1/\
+      \ ... v10_6_40_120_0-6_hd5/      10 healthy-donor sets\n  v11_6_36_120_0-6_hd2_ds/ ... v13_6_40_120_0-6_hd5_ds/\
+      \ 3 dasatinib sets\n    rec00001.dcimg                       raw camera stream (902 GB in v01)\n    K_1/K_6_40_120_0-6_1_MMStack*.ome.tif\
+      \ 106 files, 4 GB each (raw stacks)\n    MIP_ROI_0/ ... MIP_ROI_39/\n      MIPxy_405|488|561/, MIPxz_405|488|561/\
+      \   00001.tif ... (2D projections, 132 KB)\n      ROIauto/   242 files\n        00001.h5 ...             \
+      \        120 files, 74,712,184 B each (dataset raw)\n        00001_predictions.h5 ...         120 files, ~50-70\
+      \ KB (dataset predictions)\n        roi_binning2.txt, test_config.yaml\n    Montage/405|488|561.tif (1.16\
+      \ GB each), SegMontage/result.tif, WF/WF_1..3/"
+    n_files: 506935
+    listing_complete: false
+  sample:
+    urls:
+    - https://china.scidb.cn/download?fileId=3d69fdf55f68278bd4f429b795540b41
+    - https://china.scidb.cn/download?fileId=5d6fa80f6ba40dc2d40f586eca81e0b5
+    size_bytes: 74780267
+    description: v01_6_40_120_0-6_hd1/MIP_ROI_0/ROIauto/00001.h5 and 00001_predictions.h5 (one time point of one
+      chamber), ScienceDB file-id download links
+  arrays:
+  - role: raw
+    path_pattern: v*/MIP_ROI_*/ROIauto/[0-9][0-9][0-9][0-9][0-9].h5 (raw)
+    format: hdf5
+    axes: czyx
+    shape:
+    - 3
+    - 190
+    - 256
+    - 256
+    shape_varies: null
+    dtype: uint16
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'One file per time point (file number = frame); 3 channels. Axes: the paper calls each .h5
+      a 4D record (x, y, z, channel); stored C-order shape [3, 190, 256, 256] is that order reversed (c, z, y, x),
+      with 3 = the channel count.'
+  - role: label
+    path_pattern: v*/MIP_ROI_*/ROIauto/[0-9][0-9][0-9][0-9][0-9]_predictions.h5 (predictions)
+    format: hdf5
+    axes: zyx
+    shape:
+    - 190
+    - 256
+    - 256
+    shape_varies: null
+    dtype: uint8
+    compression: gzip
+    value_range: null
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: extracellular space
+    - id: 1
+      name: CAR-T nucleus
+    - id: 2
+      name: target cell nucleus
+    - id: 3
+      name: CAR-T cytoplasm/membrane
+    - id: 4
+      name: target cell cytoplasm/membrane
+    alignment: same-grid
+    alignment_notes: 'Pairing: NNNNN_predictions.h5 belongs to NNNNN.h5 in the same ROIauto folder; spatial shape
+      [190, 256, 256] equals the raw zyx. Class ids from the paper Data Records (pixel values not sampled).'
+  notes: 'File tree read with the ScienceDB API (gin-sdb-filetree childrenFileListByPath, the call the landing page
+    makes): top level, set v01 and v11, v01/MIP_ROI_0 and its ROIauto (242 files); not the whole 506,935-file tree,
+    so size stays DataCite-stated. Header (probe.py, range requests): 00001.h5 dataset raw [3, 190, 256, 256] uint16,
+    no compression, no attributes; 00001_predictions.h5 dataset predictions [190, 256, 256] uint8 gzip, chunks [24,
+    32, 64], no attributes. ROIauto/test_config.yaml (read as text) is a pytorch-3dunet predict config: UNet3D,
+    in_channels 3, out_channels 4, raw_internal_path raw, patch [190, 256, 256]. Download: ScienceDB direct links
+    https://china.scidb.cn/download?fileId=<id> (the landing page''s own download link form; id from the file-tree
+    API) answer 206 with range support, but the host is not on TensorSwitch''s allowlist, and the planner can''t
+    match these URLs to the .h5 arrays because their path has no file name. No archive (data.download_url null).
+    Voxel size not found; checked: h5 attributes (none), paper full text (320 nm resolution, 0.6 um scan step only),
+    upstream system paper (Nat Commun 2024, PMC11303822), DataCite, ROIauto config files.'
