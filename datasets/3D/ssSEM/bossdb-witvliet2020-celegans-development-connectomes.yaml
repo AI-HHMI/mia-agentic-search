@@ -1,12 +1,14 @@
 schema_version: '1.2'
 id: bossdb-witvliet2020-celegans-development-connectomes
-title: Connectomes across development reveal principles of brain maturation (C. elegans EM volumes, BossDB witvliet2020)
+title: Connectomes across development reveal principles of brain maturation (C. elegans EM volumes, BossDB
+  witvliet2020)
 short_name: C. elegans developmental brain connectomes (EM)
-description: Eight serial-section EM volumes of the brains of isogenic wild-type C. elegans hermaphrodites from L1 larva to
-  adult (SEM with ATUM for datasets 1, 3, 4, 5, 8; TEM for datasets 2, 6, 7), hosted on BossDB with volumetric
-  neuron and muscle segmentations (seven datasets), chemical-synapse annotations and skeleton tracings.
+description: Eight serial-section EM volumes of the brains of isogenic wild-type C. elegans hermaphrodites
+  from L1 larva to adult (SEM with ATUM for datasets 1, 3, 4, 5, 8; TEM for datasets 2, 6, 7), hosted
+  on BossDB with volumetric neuron and muscle segmentations (seven datasets), chemical-synapse annotations
+  and skeleton tracings.
 landing_url: https://bossdb.org/project/witvliet2020
-doi: null
+doi: 10.60533/boss-2020-fqi7
 repository: other
 accession: witvliet2020
 authors:
@@ -37,26 +39,29 @@ imaging:
   - ssTEM
   dimensionality: 3D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism:
   - Caenorhabditis elegans
-  sample: Whole brain (nerve ring region) of eight isogenic N2 hermaphrodites, high-pressure frozen and freeze-substituted, L1 to adult
+  sample: Whole brain (nerve ring region) of eight isogenic N2 hermaphrodites, high-pressure frozen and
+    freeze-substituted, L1 to adult
   labels_stains: []
 data:
   formats:
   - precomputed
-  size_bytes: null
+  size_bytes: 38169122701312
   n_items: 8
   access: open
-  download_url: null
-  download_method: api
+  download_url: https://bossdb-open-data.s3.amazonaws.com/witvliet2020/
+  download_method: s3
 annotations:
   present: true
   types:
   - instance-segmentation
   - synapse
   - skeleton
-  format: BossDB channels (segmentation, synapses) per *_Segmentation experiment; CATMAID skeletons and VAST segmentations described in the paper
+  format: 'neuroglancer precomputed layers per dataset: Dataset_N/segmentation (uint64, full resolution;
+    also segmentation16, uint16), Dataset_N_Segmentation/{segmentation,synapses} (uint64, downsampled
+    grid), cell names in Dataset_N_Segmentation_Properties; CATMAID skeletons and VAST files per the paper'
   coverage: dense
   source: proofread
 ml:
@@ -67,8 +72,8 @@ ml:
   benchmark: null
   baseline_code_url: null
 license:
-  spdx: unknown
-  url: null
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/legalcode
 provenance:
   discovered_by: harvest-websearch
   discovered_at: '2026-10-09T18:17:04Z'
@@ -77,10 +82,120 @@ provenance:
   - https://api.bossdb.io/v1/collection/witvliet2020/experiment/Dataset_1
   - https://api.bossdb.io/v1/coord/CF_witvliet2020_Dataset_1
   - https://pmc.ncbi.nlm.nih.gov/articles/PMC8756380/
-  confidence: 0.55
+  - https://api.datacite.org/dois/10.60533/boss-2020-fqi7
+  - https://bossdb-open-data.s3.amazonaws.com/witvliet2020/
+  - https://bossdb-open-data.s3.amazonaws.com/witvliet2020/Dataset_1/em/info
+  - https://bossdb-open-data.s3.amazonaws.com/witvliet2020/Dataset_1/segmentation/info
+  - https://bossdb-open-data.s3.amazonaws.com/witvliet2020/Dataset_1_Segmentation/synapses/info
+  - https://bossdb-open-data.s3.amazonaws.com/witvliet2020/Dataset_1_Segmentation_Properties/info
+  confidence: 0.7
 verification:
   url_ok: true
-  license_found: false
+  license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T19:10:00Z'
-notes: 'Read via BossDB API/intern (bossdb://witvliet2020/<experiment>/<channel>); no single archive. The project page is JavaScript-rendered (empty to WebFetch), so collection details come from api.bossdb.io. No license stated in the paper Data availability or the BossDB record. Per-dataset voxel sizes differ (nm, x=y/z): D1 1/30, D2 0.64/50, D3 1/30, D4 1/30, D5 2/30, D6 0.768/50, D7 1.325/50, D8 2/30, so voxel_size_nm is null. Dataset_N holds EM, Dataset_N_Segmentation the segmentation/synapses (4 nm xy for D1); Dataset_7 has no segmentation. Paper: 94,374 images, ~5 teravoxels; bytes and publication date not read this run.'
+  last_checked: '2026-10-09T21:20:00Z'
+notes: 'Read via S3 (bossdb-open-data/witvliet2020/) or the BossDB API; no single archive. Licence CC-BY-4.0
+  from the DataCite record of the BossDB DOI 10.60533/boss-2020-fqi7 (found by the enricher; was unknown).
+  Per-dataset voxel sizes differ (nm, x=y/z, from the info files and coord frames): D1 1/30, D2 0.64/50,
+  D3 1/30, D4 1/30, D5 2/30, D6 0.768/50, D7 1.325/50, D8 2/30, so voxel_size_nm is null. Dataset_N holds
+  em plus full-resolution segmentation layers; Dataset_N_Segmentation holds segmentation, synapses and
+  a template image on a 4-8x coarser grid; Dataset_7 has a uint16 segmentation only in Dataset_7/. Paper:
+  94,374 images, ~5 teravoxels.'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: 's3://bossdb-open-data/witvliet2020/   (chunk listing not run)
+
+      Dataset_{1..8}/em/                      image uint8, 6-7 levels, chunks 512x512x16
+
+      Dataset_{1..8}/segmentation/            segmentation uint64 (D7 uint16), full resolution, padded
+      extent
+
+      Dataset_{1..6,8}/segmentation16/        segmentation uint16, same grid
+
+      Dataset_{4..8}/DELsegmentation/         segmentation uint16 (name suggests a deprecated copy)
+
+      Dataset_8/segmentation_corrected/       segmentation uint64
+
+      Dataset_{1..6,8}_Segmentation/          segmentation, synapses (uint64), template (uint8) at 4-8x
+      coarser xy
+
+      Dataset_{1..6,8}_Segmentation_Properties/info   segment properties (CellName)
+
+      '
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://bossdb-open-data.s3.amazonaws.com/witvliet2020/Dataset_1/em
+    - https://bossdb-open-data.s3.amazonaws.com/witvliet2020/Dataset_1/segmentation
+    size_bytes: null
+    description: Precomputed layer roots of Dataset 1 (read remotely); one 512x512x16 chunk is ~3.6 MB
+      gzipped (em) / ~0.16 MB (segmentation).
+  arrays:
+  - role: raw
+    path_pattern: witvliet2020/Dataset_[1-8]/em
+    format: precomputed
+    axes: zyx
+    shape:
+    - 304
+    - 26112
+    - 22016
+    shape_varies: true
+    dtype: uint8
+    compression: gzip
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Eight volumes with different sizes and voxel sizes (D1 22016x26112x304 x,y,z at 1x1x30
+      nm; D6 36352x34304x432 at 0.768x0.768x50 nm, etc.).
+  - role: label
+    path_pattern: witvliet2020/Dataset_[1-8]/segmentation
+    format: precomputed
+    axes: zyx
+    shape:
+    - 320
+    - 26624
+    - 22528
+    shape_varies: true
+    dtype: uint64
+    compression: gzip
+    value_range:
+    - 0
+    - 191
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: cropped
+    alignment_notes: Same resolution and origin (offset 0) as em of the same dataset, extent padded by
+      512 px in x/y and 16 sections (D1 22528x26624x320 vs em 22016x26112x304), so the em covers a sub-region
+      starting at 0. Ids are cells; Dataset_N_Segmentation_Properties maps them to cell names (201 for
+      D1). Dataset_7 segmentation is uint16.
+  - role: label
+    path_pattern: witvliet2020/Dataset_[1-8]_Segmentation/synapses
+    format: precomputed
+    axes: zyx
+    shape:
+    - 320
+    - 7168
+    - 6144
+    shape_varies: true
+    dtype: uint64
+    compression: gzip
+    value_range: null
+    normalization: unknown
+    encoding: unknown
+    classes: null
+    alignment: scaled
+    alignment_notes: Synapse layer on the coarser Dataset_N_Segmentation grid (4x xy for D1-D5, 8x for
+      D2/D6/D8), offset 0, padded like the full-resolution segmentation. Not sampled.
+  notes: 'size estimated (uncompressed): sum of s0 voxels x bytes over every layer info under witvliet2020/
+    (em, segmentation, segmentation16, DELsegmentation, segmentation_corrected, *_Segmentation layers)
+    = 38,169,122,701,312 B (38.2 TB); bounding boxes only, segmentations are sparse and gzip, stored size
+    is far smaller. No S3 listing. Sampled Dataset_1 chunk 1.0_1.0_30.0/12800-13312_12800-13312_160-176:
+    em (3.61 MB gzip) uint8 0-255 mean 121.9; segmentation (160 KB gzip) 23 ids up to 191, 35% zero ->
+    instance (cell) ids. Ranges from one chunk each. Voxel sizes per dataset from the info files (listed
+    in notes); they agree with the paper per the harvester.'
