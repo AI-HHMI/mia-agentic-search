@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: aws-dynacell-a549-virtual-staining-3d
 title: 'DynaCell A549: paired label-free and fluorescence 3D time-lapse volumes for virtual staining'
 short_name: DynaCell A549 virtual staining pairs (live cell)
-description: Paired 3D time-lapse volumes of live A549 cells acquired on the Mantis correlative label-free and light-sheet
-  microscope, each with transmitted-light (phase) channels and one fluorescence marker per store (H2B nucleus, CAAX membrane,
-  SEC61B endoplasmic reticulum, TOMM20 mitochondria), under mock, Zika-infected and Dengue-infected conditions. 24 OME-Zarr
-  stores (12 train, 12 test) holding 262 fields of view, about 10 frames each on a shared 2-hour grid.
+description: Paired 3D time-lapse volumes of live A549 cells acquired on the Mantis correlative label-free and light-sheet microscope,
+  each with transmitted-light (phase) channels and one fluorescence marker per store (H2B nucleus, CAAX membrane, SEC61B endoplasmic
+  reticulum, TOMM20 mitochondria), under mock, Zika-infected and Dengue-infected conditions. 24 OME-Zarr stores (12 train, 12 test)
+  holding 262 fields of view, about 10 frames each on a shared 2-hour grid.
 landing_url: https://registry.opendata.aws/dynacell/
 doi: null
 repository: other
@@ -33,12 +33,15 @@ imaging:
   - light-sheet
   - brightfield
   dimensionality: 3D+t
-  voxel_size_nm: null
-  channels: null
+  voxel_size_nm:
+    x: 149.4
+    y: 149.4
+    z: 174
+  channels: 3
   organism:
   - Homo sapiens
-  sample: Live A549 lung adenocarcinoma cells (ATCC CCL-185), mock-infected or infected with Zika or Dengue virus, with one
-    endogenous fluorescent organelle marker per store
+  sample: Live A549 lung adenocarcinoma cells (ATCC CCL-185), mock-infected or infected with Zika or Dengue virus, with one endogenous
+    fluorescent organelle marker per store
   labels_stains:
   - H2B
   - CAAX
@@ -57,8 +60,9 @@ annotations:
   types:
   - other
   coverage: dense
-  format: paired fluorescence volumes (H2B, CAAX, SEC61B or TOMM20) as ground truth for the label-free channels, in zipped OME-Zarr (.ozx, OME-NGFF 0.5) with train and test splits
-  source: unknown
+  format: paired fluorescence volumes (H2B, CAAX, SEC61B or TOMM20) as ground truth for the label-free channels, in zipped OME-Zarr
+    (.ozx, OME-NGFF 0.5) with train and test splits
+  source: automatic
 ml:
   tasks:
   - other
@@ -76,16 +80,90 @@ provenance:
   - https://registry.opendata.aws/dynacell/
   - https://dynacell.s3.amazonaws.com/v1/metadata/croissant.json
   - https://dynacell.s3.amazonaws.com/?list-type=2&prefix=v1/data/&max-keys=100&delimiter=/
-  confidence: 0.65
+  - https://dynacell.s3.amazonaws.com/v1/data/biohub-a549/README.md
+  - https://dynacell.s3.amazonaws.com/v1/data/biohub-a549/test/CAAX_mock.ozx
+  - https://dynacell.s3.amazonaws.com/v1/data/biohub-a549/train/SEC61B_DENV.ozx
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T23:30:00Z'
+  last_checked: '2026-10-09T23:10:00Z'
 notes: 'Covers only the A549 (biohub-a549) subset, CC BY 4.0. The release also holds an iPSC (aics-hipsc) subset reprocessed from the
-  Allen Institute hiPSC dataset under the Allen terms of use, which limit use to noncommercial research; it is excluded here and
-  should be its own record. Sizes: the croissant file lists 24 A549 stores (train and test, 3.8-32.1 GB each) summing to 619.8 GB, while
-  the AWS registry page says about 407 GB; the listed sum is used. The task is virtual staining (label-free to fluorescence
-  translation), so annotations are paired fluorescence volumes and no masks or labels. Voxel size, frame interval per plate
-  (10, 30 or 120 min natively, subsampled to a 2 h grid) and z-step are not stated in the metadata read. The NeurIPS 2026 paper
-  is cited in the croissant file but no DOI or open full text was found, so publications is empty. Files were not opened.'
+  Allen Institute hiPSC dataset under the Allen terms of use, which limit use to noncommercial research; it is excluded here and should
+  be its own record. Size: 24 stores sum to 619.8 GB (croissant, S3 listing); the AWS registry page says about 407 GB. Virtual staining
+  task: targets are paired fluorescence volumes, no masks. Frame interval per plate: 10, 30 or 120 min natively, subsampled to a 2 h
+  grid. The NeurIPS 2026 paper is cited in the croissant file but no DOI or open full text was found, so publications is empty. enricher:
+  voxel size 149.4x149.4x174 nm from OME-Zarr multiscales scale (was null); channels 3 from README; annotations.source automatic (measured
+  fluorescence).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: |-
+      biohub-a549/
+        README.md                 2.5 KB
+        test/   12 files  342.9 GB  .ozx  ({H2B,CAAX,SEC61B,TOMM20}_{mock,ZIKV,DENV}.ozx)
+        train/  12 files  276.9 GB  .ozx  (same 12 names)
+        each .ozx = zipped OME-Zarr v3 (NGFF 0.5): 0/0/fov00NN/0  (one 5D array per field of view, sharded)
+    n_files: 25
+    listing_complete: true
+  sample:
+    urls:
+    - https://dynacell.s3.amazonaws.com/v1/data/biohub-a549/train/SEC61B_DENV.ozx
+    size_bytes: 3753472886
+    description: 'smallest store: train/SEC61B_DENV.ozx (Dengue-infected, ER marker), 2 fields of view of shape (T=7, C=3, 48, 640,
+      960); raw and target channels live in the same array'
+  arrays:
+  - role: raw
+    path_pattern: '*/*.ozx'
+    format: ome-zarr
+    axes: tczyx
+    shape:
+    - 10
+    - 3
+    - 48
+    - 640
+    - 960
+    shape_varies: true
+    dtype: float32
+    compression: blosc
+    value_range: null
+    normalization: unknown
+    classes: null
+    alignment: not-applicable
+    alignment_notes: channels 0 (Phase3D, label-free input) and 1 (Brightfield, reference) of each field-of-view array 0/0/fov00NN/0
+  - role: target
+    path_pattern: '*/*.ozx'
+    format: ome-zarr
+    axes: tczyx
+    shape:
+    - 10
+    - 3
+    - 48
+    - 640
+    - 960
+    shape_varies: true
+    dtype: float32
+    compression: blosc
+    value_range: null
+    normalization: unknown
+    classes:
+    - id: H2B
+      name: nucleus (channel Nuclei)
+    - id: CAAX
+      name: cell membrane (channel Membrane)
+    - id: SEC61B
+      name: endoplasmic reticulum (channel Structure)
+    - id: TOMM20
+      name: mitochondria (channel Structure)
+    alignment: same-grid
+    alignment_notes: channel 2 of the same array as the raw channels (fluorescence target; marker given by the file name {MARKER}_{CONDITION}.ozx),
+      so voxel-for-voxel aligned with Phase3D
+  notes: 'Headers read from two stores via zip range requests (test/CAAX_mock.ozx, train/SEC61B_DENV.ozx): array 0/0/fov0000/0 is float32
+    (T,C,Z,Y,X), sharded (inner chunks 1x1x16x640x960), bytes+blosc zstd bitshuffle; OME scale [1,1,0.174,0.1494,0.1494] um, same in
+    both stores. T varies per position (5, 7 or 10, README); C=3 everywhere. No sample downloaded: the smallest store is 3.75 GB, above
+    the 500 MB sample budget, and the data are sharded inside a zip, so value_range and normalization are unknown (README: SEC61B/TOMM20
+    Structure channel is raw GFP intensity in v1.1). data.download_url is the folder: the dataset is 24 separate .ozx files (direct
+    S3 object URLs in the listing, e.g. https://dynacell.s3.amazonaws.com/v1/data/biohub-a549/train/SEC61B_DENV.ozx). Whole dataset
+    619.8 GB.'
