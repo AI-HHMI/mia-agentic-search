@@ -30,7 +30,8 @@ imaging:
   channels: 1
   organism:
   - Homo sapiens
-  sample: follicular lymphoma diagnostic tissue microarray cores (Christie NHS Foundation Trust), DAPI nuclear counterstain
+  sample: follicular lymphoma diagnostic tissue microarray cores (Christie NHS Foundation Trust), DAPI
+    nuclear counterstain
   labels_stains:
   - DAPI
 data:
@@ -67,11 +68,73 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-08T23:30:00Z'
-notes: Pixel size is not stated on either Mendeley record (this one or the linked parent dataset 274xbhc5rx,
-  which holds the 349 raw multispectral .im3 TMA cores, not included here); no related article is linked and
-  a Europe PMC title search did not find one. The zip (one 6 MB file, "nuclear_segmentation_annotations 16bit.zip")
-  could not be listed because the Mendeley/S3 link gives no usable range requests, so image/label pairing and
-  patch size come from the dataset description only. Modality is multiplex immunofluorescence
-  multispectral per the parent record) but the instrument is not named.
+  annotations_verified: true
+  last_checked: '2026-10-09T02:25:31Z'
+notes: 'Pixel size is not stated on either Mendeley record (this one or the linked parent dataset 274xbhc5rx,
+  which holds the 349 raw multispectral .im3 TMA cores, not included here); no related article is linked
+  and a Europe PMC title search did not find one.  Modality is multiplex immunofluorescence multispectral
+  per the parent record) but the instrument is not named. enricher: zip read in full (6.3 MB): 38 train/val
+  + 3 test pairs, float64 DAPI patches, int16 labels.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://data.mendeley.com/public-files/datasets/nb46s9trx3/files/e3252421-9a54-4db5-b835-1e55c184278b/file_downloaded
+  bytes_downloaded: 6273224
+  size_source: page-stated
+  layout:
+    tree: "nuclear_segmentation_annotations 16bit.zip  6.3 MB (14.9 MB unzipped), 82 files\n  nuclear_segmentation_annotations\
+      \ 16bit/\n    training_validation/\n      DAPI_images/      38 .tif  (0.tif ... )\n      labels\
+      \ 16bit/     38 .tif  (same names)\n    testing/\n      DAPI_images/       3 .tif  (test_0..2.tif)\n\
+      \      labels 16bit/      3 .tif\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.mendeley.com/public-files/datasets/nb46s9trx3/files/e3252421-9a54-4db5-b835-1e55c184278b/file_downloaded
+    size_bytes: 6273224
+    description: The whole dataset is one 6.3 MB zip (41 DAPI patches + 41 label masks).
+  arrays:
+  - role: raw
+    path_pattern: '*/DAPI_images/*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 195
+    - 132
+    shape_varies: true
+    dtype: float64
+    compression: none
+    value_range:
+    - 0.0
+    - 104.17
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Single-page 2D patches of varying size (e.g. 195x132, 141x241, 273x202); no resolution
+      tags.
+  - role: label
+    path_pattern: '*/labels 16bit/*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 195
+    - 132
+    shape_varies: true
+    dtype: int16
+    compression: none
+    value_range:
+    - 0
+    - 250
+    encoding: instance-ids
+    classes: null
+    n_ids_observed: 251
+    alignment: same-grid
+    alignment_notes: 'Pairing: same file name in labels 16bit/ as in DAPI_images/ (same folder level);
+      shapes match for every pair read. One random integer per nucleus (Mendeley description).'
+  notes: 'The Mendeley public API lists one file, nuclear_segmentation_annotations 16bit.zip, 6,273,224
+    B (= size_bytes). The download link redirects to an S3 object that does not answer range requests,
+    so the whole 6.3 MB zip was downloaded once, read in memory and deleted: 82 TIFFs (38+3 DAPI patches,
+    38+3 labels). Read 3 raw and 3 label files: raw float64 (max 72-104 in these files), labels int16
+    with 242-251 distinct values incl. 0. value_range is over these files only. No pixel size in the TIFF
+    tags. The redirect host (prod-dcd-datasets-public-files-eu-west-1.s3.eu-west-1.amazonaws.com) is not
+    on the TensorSwitch allowlist, and data.mendeley.com itself answers range requests with 403. Voxel
+    size not found; checked: TIFF tags, Mendeley API record and description, parent record notes.'
