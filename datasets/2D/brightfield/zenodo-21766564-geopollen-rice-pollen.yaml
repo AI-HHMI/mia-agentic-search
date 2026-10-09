@@ -1,12 +1,10 @@
 schema_version: '1.2'
 id: zenodo-21766564-geopollen-rice-pollen
-title: 'GeoPollen-YOLO: rice pollen microscopy datasets, expert annotations, manual
-  timing images, and trained model'
+title: 'GeoPollen-YOLO: rice pollen microscopy datasets, expert annotations, manual timing images, and trained model'
 short_name: Rice pollen fertility boxes (bright-field)
-description: 100 bright-field microscopy images of rice pollen with 17,804 four-class
-  bounding boxes (fertile, typical sterile, stain sterile, round sterile) and a fixed
-  80/20 split, plus a 20-image independent set with three expert label sets and consensus
-  labels.
+description: 100 bright-field microscopy images of rice pollen with 17,804 four-class bounding boxes (fertile, typical sterile,
+  stain sterile, round sterile) and a fixed 80/20 split, plus a 20-image independent set with three expert label sets and
+  consensus labels.
 landing_url: https://zenodo.org/records/21766564
 doi: 10.5281/zenodo.21766564
 repository: Zenodo
@@ -23,13 +21,12 @@ imaging:
   channels: 3
   organism:
   - Oryza sativa
-  sample: Rice pollen grains on slides, classified as fertile or one of three sterile
-    morphologies
+  sample: Rice pollen grains on slides, classified as fertile or one of three sterile morphologies
   labels_stains: []
 data:
   formats:
   - jpeg
-  size_bytes: 260852329
+  size_bytes: 267800235
   n_items: 120
   access: open
   download_url: https://zenodo.org/records/21766564/files/GeoPollen-YOLO_Development_Dataset_v1.0.zip
@@ -40,8 +37,8 @@ annotations:
   - bounding-box
   - classification
   coverage: dense
-  format: YOLO .txt rows (class_id x_center y_center width height, normalized); classes
-    0 fertile, 1 typical sterile, 2 stain sterile, 3 round sterile
+  format: YOLO .txt rows (class_id x_center y_center width height, normalized); classes 0 fertile, 1 typical sterile, 2 stain
+    sterile, 3 round sterile
   source: manual
 ml:
   tasks:
@@ -65,14 +62,77 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T03:15:10Z'
-notes: 'Development zip: 100 JPEG images (81 at 1280x960, 19 at 5480x3648) with 100
-  YOLO label files and splits/fold0 train (80) / val (20); 7,601 fertile, 6,571 typical
-  sterile, 3,093 stain sterile, 539 round sterile boxes (README inside the zip). Independent
-  zip: 20 images with three original expert label sets and primary consensus labels
-  (not used for model selection). Two more archives (manual timing benchmark, model
-  checkpoint under AGPL-3.0) are not training data. Data licence CC BY 4.0 per LICENSES.md;
-  the model is AGPL-3.0. The record says it supports the GeoPollen-YOLO manuscript,
-  but no manuscript or DOI is given, so no publication is listed; microscope, objective
-  and pixel size are not stated. The Zenodo creator is listed only as ''Viking''.
-  Channels 3 assumed from JPEG colour images, not verified.'
+  last_checked: '2026-10-09T05:55:00Z'
+notes: 'Development zip: 100 JPEG images (81 at 1280x960, 19 at 5480x3648) with 100 YOLO label files and splits/fold0 train
+  (80) / val (20); 7,601 fertile, 6,571 typical sterile, 3,093 stain sterile, 539 round sterile boxes (README inside the zip).
+  Independent zip: 20 images with three original expert label sets and primary consensus labels (not used for model selection).
+  Two more archives (manual timing benchmark, model checkpoint under AGPL-3.0) are not training data. Data licence CC BY 4.0
+  per LICENSES.md; the model is AGPL-3.0. The record says it supports the GeoPollen-YOLO manuscript, but no manuscript or
+  DOI is given, so no publication is listed; microscope, objective and pixel size are not stated. The Zenodo creator is listed
+  only as ''Viking''. Channels: RGB JPEGs (enricher probe). enricher: size is the whole record (8 files, 267,800,235 B; was
+  the two dataset zips).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "record 21766564 (8 files, 267.8 MB)\n  GeoPollen-YOLO_Development_Dataset_v1.0.zip (251.7 MB)\n    images/N.jpg\
+      \ (100), labels/N.txt (100), splits/fold0/{train,val}.txt, data yaml, csv, README.md\n  GeoPollen-YOLO_Independent_Expert_Consensus_Dataset_v1.0.zip\
+      \ (9.1 MB)\n    images/N.jpg (20), labels_expert_{1,2,3}/N.txt, labels_primary_consensus/N.txt, README.md\n  GeoPollen-YOLO_Manual_Timing_Benchmark_v1.0.zip\
+      \ (4.2 MB, 10 jpg + csv)\n  GeoPollen-YOLO_Final_P3-only_FAD_Model_v1.0.zip (2.8 MB, model .pt)\n  README.md, LICENSES.md,\
+      \ RELEASE_AUDIT.json, ZENODO_FILE_MANIFEST_SHA256.csv\n"
+    n_files: 8
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/21766564/files/GeoPollen-YOLO_Development_Dataset_v1.0.zip::images/19.jpg
+    - https://zenodo.org/records/21766564/files/GeoPollen-YOLO_Development_Dataset_v1.0.zip::labels/19.txt
+    size_bytes: 435965
+    description: One 1280x960 development image and its YOLO label file (zip members).
+  arrays:
+  - role: raw
+    path_pattern: images/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 960
+    - 1280
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 1
+    - 201
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB brightfield JPEGs; 81 are 1280x960 and 19 are 5480x3648 (README; probed images/1.jpg = 3648x5480x3).
+      Same layout in the independent zip (20 images).
+  - role: label
+    path_pattern: labels*/*.txt
+    format: other
+    axes: null
+    shape:
+    - 69
+    - 5
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: fertile
+    - id: 1
+      name: typical sterile
+    - id: 2
+      name: stain sterile
+    - id: 3
+      name: round sterile
+    alignment: same-grid
+    alignment_notes: 'YOLO rows class_id x_center y_center width height, normalized to the original image (README). Pairing:
+      images/N.jpg <-> labels/N.txt; the independent set has labels_expert_1..3/N.txt and labels_primary_consensus/N.txt (consensus:
+      IoU 0.5 complete-link clustering, >= 2 of 3 experts, median box fusion, README).'
+  notes: 'Exact Zenodo listing with the four zip indexes expanded (8 files, 267,800,235 B). Read both dataset READMEs. Probed
+    images/1.jpg (3648x5480x3 JPEG). Sampled images/19.jpg (960x1280x3 uint8, values 1-201, one sample) and read labels/19.txt
+    (69 boxes). Voxel size not found; checked: JPEG headers, Zenodo API record, both READMEs (no pixel size, microscope or
+    objective); no manuscript DOI is given. Zips and members are direct Zenodo links (usable, range requests; zenodo.org dropped
+    TLS connections a few times, retried).'
