@@ -1,10 +1,11 @@
 schema_version: '1.2'
 id: figshare-26512204-jrc-cos7-1a-nuclei-fib-sem
-title: Manual nuclei instance segmentation of FIB-SEM volume jrc_cos7-1a (CellMap / OpenOrganelle), interphase COS-7 cell
+title: Manual nuclei instance segmentation of FIB-SEM volume jrc_cos7-1a (CellMap / OpenOrganelle), interphase
+  COS-7 cell
 short_name: COS-7 cell nuclei segmentation (FIB-SEM)
-description: Reconstructed FIB-SEM volume jrc_cos7-1a from the Janelia CellMap project on the public janelia-cosem-datasets S3 bucket
-  (OpenOrganelle) with dense manual nucleus segmentations drawn in Amira, stored as a multiscale OME-Zarr label array. The EM data
-  covers 41.22 x 8.74 x 3.63 (x, y, z) um.
+description: Reconstructed FIB-SEM volume jrc_cos7-1a from the Janelia CellMap project on the public janelia-cosem-datasets
+  S3 bucket (OpenOrganelle) with dense manual nucleus segmentations drawn in Amira, stored as a multiscale
+  OME-Zarr label array. The EM data covers 41.22 x 8.74 x 3.63 (x, y, z) um.
 landing_url: https://doi.org/10.25378/janelia.26512204.v1
 doi: 10.25378/janelia.26512204.v1
 repository: OpenOrganelle
@@ -34,7 +35,7 @@ imaging:
 data:
   formats:
   - zarr
-  size_bytes: null
+  size_bytes: 19319020164
   n_items: 1
   access: open
   download_url: s3://janelia-cosem-datasets/jrc_cos7-1a/jrc_cos7-1a.zarr/
@@ -67,10 +68,77 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T08:19:23Z'
-notes: 'The Figshare record (CC BY 4.0) lists the annotation as dense manual nucleus segmentations made in Amira (protocols.io
-  Amira vEM protocol) and gives the source EM voxel size as 2 x 2 x 2 (x, y, z); the EM array in the bucket (recon-2/em/fibsem-int16) has
-  s0 at 4 nm per its .zattrs, which is the value used here, and the label array s0 is at 64 nm. The label
-  array lives under labels/inference in the bucket but is described as manual by the Figshare record. The Figshare record cites a
-  bioRxiv paper (10.1101/2024.09.05.611438) that could not be read (HTTP 429), so no publication is listed. Total size was not
-  measured. Only the nucleus class is annotated.'
+  last_checked: '2026-10-09T09:46:27Z'
+notes: 'The Figshare record (CC BY 4.0) lists the annotation as dense manual nucleus segmentations made
+  in Amira (protocols.io Amira vEM protocol) and gives the source EM voxel size as 2 x 2 x 2 (x, y, z);
+  the EM array in the bucket (recon-2/em/fibsem-int16) has s0 at 4 nm per its .zattrs, which is the value
+  used here, and the label array s0 is at 64 nm. The label array lives under labels/inference in the bucket
+  but is described as manual by the Figshare record. The Figshare record cites a bioRxiv paper (10.1101/2024.09.05.611438)
+  that could not be read (HTTP 429), so no publication is listed. Only the nucleus class is annotated.
+  enricher: Figshare''s 2 nm / 41.22 x 8.74 x 3.63 um match recon-1 (2 nm, 20609 x 4368 x 1813 px); the
+  nuc labels match the recon-2 extent (4 nm EM), so recon-2 is the raw used here.'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "jrc_cos7-1a.zarr/   (s3://janelia-cosem-datasets; listing stopped at 50,000 files / 34.8 GB,\
+      \ incomplete)\n  recon-1/em/fibsem-uint8/s0..s10       2 nm, zyx 1813 x 4368 x 20609 uint8 (not\
+      \ used here)\n  recon-2/em/fibsem-int16/s0..s8        4 nm, zyx 1014 x 1500 x 6350 int16, zstd,\
+      \ 64^3 chunks\n  recon-2/labels/inference/segmentations/nuc/s0..s4   64 nm, zyx 63 x 93 x 396 uint8,\
+      \ blosc-lz4"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_cos7-1a/jrc_cos7-1a.zarr/recon-2/em/fibsem-int16
+    - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_cos7-1a/jrc_cos7-1a.zarr/recon-2/labels/inference/segmentations/nuc
+    size_bytes: null
+    description: The recon-2 EM OME-Zarr and the nucleus label OME-Zarr (chunked stores; read remotely)
+  arrays:
+  - role: raw
+    path_pattern: jrc_cos7-1a.zarr/recon-2/em/fibsem-int16
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 1014
+    - 1500
+    - 6350
+    shape_varies: false
+    dtype: int16
+    compression: zstd
+    value_range:
+    - 0
+    - 7366
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 9 levels, s0 scale 4 nm, translation 0. Value range from a central crop of s4 (64
+      nm).
+  - role: label
+    path_pattern: jrc_cos7-1a.zarr/recon-2/labels/inference/segmentations/nuc
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 63
+    - 93
+    - 396
+    shape_varies: false
+    dtype: uint8
+    compression: blosc
+    value_range:
+    - 0
+    - 1
+    encoding: binary
+    classes:
+    - id: 1
+      name: nucleus
+    alignment: scaled
+    alignment_notes: '5 levels, s0 at 64 nm (16x the EM s0) with translation 30 nm per its .zattrs; same
+      shape as EM s4 (64 nm), covering the whole recon-2 volume. Values {0, 1}: one nucleus as a binary
+      mask.'
+  notes: 'size estimated (uncompressed): raw 1 x 1014x1500x6350 int16 + label 1 x 63x93x396 uint8 = 19,319,020,164
+    B (19.3 GB); s0 levels of the two arrays only, compressed chunks download smaller, and the bucket
+    prefix also holds recon-1 (2 nm, not counted). Probe: both stores'' .zattrs/.zarray (OME-Zarr v0.4
+    multiscales, zarr v2). Sample (sample.py): central crops of EM s4 and label s0, both [63, 93, 396];
+    EM int16 0-7366 (p1 6681, p50 6986), label {0: 1,965,577, 1: 354,587}. Value ranges from that one
+    crop. Download: chunked stores on janelia-cosem-datasets S3 (public HTTPS), read remotely; no archive.
+    Voxel size 4 nm from the EM .zattrs (Figshare''s 2 nm refers to recon-1).'
