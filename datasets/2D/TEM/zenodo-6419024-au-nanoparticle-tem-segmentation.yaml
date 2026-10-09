@@ -70,7 +70,7 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T21:03:16Z'
+  last_checked: '2026-10-10T00:45:00Z'
 notes: 'Image counts and shapes come from HDF5 headers read with probe.py (images/labels datasets: 5 nm 8x4096x4096, 2.2 nm
   14x4096x4096, 10 nm 15x4096x4096 float32; 20 nm 25x2048x2048, images int32); the 62 total is their sum. No download_url
   because there are 8 separate .h5 files rather than one archive; files are at https://zenodo.org/records/6419024/files/<name>.
@@ -79,3 +79,74 @@ notes: 'Image counts and shapes come from HDF5 headers read with probe.py (image
   not described on the Zenodo page; annotations.source is therefore unknown. Related but different from dryad-d1sp93-hrtem-nanoparticle-segmentation
   (Sytwu/Rangel DaCosta/Scott 2023, 407 HRTEM images of Au, Ag and CdSe): this is the earlier 2022 Au-only deposit with different
   files.'
+technical:
+  method: sample
+  inspected_at: '2026-10-10T00:45:00Z'
+  inspected_urls:
+  - https://zenodo.org/api/records/6419024
+  - https://zenodo.org/records/6419024/files/Au_5nm_330kx_423e_Images.h5
+  - https://zenodo.org/records/6419024/files/Au_5nm_330kx_423e_Labels.h5
+  - https://zenodo.org/records/6419024/files/Au_20nm_87kx_16e_Images.h5
+  bytes_downloaded: 17300000
+  size_source: file-listing
+  layout:
+    tree: "6419024/  (Zenodo, 8 HDF5 files, 5.8 GB)\n  Au_2p2nm_330kx_423e_{Images,Labels}.h5   images / labels (14, 4096,\
+      \ 4096) float32\n  Au_5nm_330kx_423e_{Images,Labels}.h5     (8, 4096, 4096)\n  Au_10nm_330kx_425e_{Images,Labels}.h5\
+      \    (15, 4096, 4096)\n  Au_20nm_87kx_16e_{Images,Labels}.h5      (25, 2048, 2048)"
+    n_files: 8
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/6419024/files/Au_20nm_87kx_16e_Images.h5
+    - https://zenodo.org/records/6419024/files/Au_20nm_87kx_16e_Labels.h5
+    size_bytes: 838864896
+    description: 'Smallest pair (Au 20 nm, 87kx): 25 images and their labels; no smaller file exists.'
+  arrays:
+  - role: raw
+    path_pattern: Au_*_Images.h5 (images)
+    format: hdf5
+    axes: null
+    shape:
+    - 8
+    - 4096
+    - 4096
+    shape_varies: true
+    dtype: float32
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0.0
+    - 1139.1311
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Stack of 2D micrographs per file (first axis = image index, not stated in the docs); 4096 x 4096 at 330kx,
+      2048 x 2048 at 87kx.
+  - role: label
+    path_pattern: Au_*_Labels.h5 (labels)
+    format: hdf5
+    axes: null
+    shape:
+    - 8
+    - 4096
+    - 4096
+    shape_varies: true
+    dtype: float32
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0.0
+    - 1.0
+    encoding: binary
+    classes:
+    - id: 1
+      name: Au nanoparticle
+    alignment: same-grid
+    alignment_notes: Labels file <name>_Labels.h5 pairs with <name>_Images.h5; same shape; values {0, 1} as float32 in the
+      slab read.
+  notes: 'Zenodo listing: 8 HDF5 files, exact sizes, 5,804,933,120 B. probe.py on 3 files: one dataset each (images / labels),
+    float32, contiguous, uncompressed; 8 + 14 + 15 + 25 = 62 images (matches n_items; counts for 2p2nm and 10nm from file
+    size / 4096^2 x 4 B). Read a 512-row slab of image 0 of the 5 nm pair (images [0, 1139.1], labels {0, 1}). Values from
+    one slab. Pixel size not stated (magnification only in names). Axis order not documented, so axes stay null. 2D, so not
+    in the miao layout yet.'
