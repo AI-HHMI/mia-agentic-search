@@ -38,7 +38,7 @@ data:
   - zarr
   - n5
   - precomputed
-  size_bytes: 148800000000
+  size_bytes: 150947779456
   n_items: 1
   access: open
   download_url: s3://janelia-cosem-datasets/jrc_hela-3/
@@ -77,10 +77,90 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T22:16:01Z'
+  last_checked: '2026-10-09T02:07:10Z'
 notes: 'S3 listing: jrc_hela-3.zarr/recon-1/labels/groundtruth has 19 crops; em/fibsem-uint8 is uint8
-  zstd, scale from its .zattrs. size_bytes = uncompressed s0 voxels (compressed size unknown). COSEM preprint
-  full text: blocks manually segmented in HeLa, Jurkat, Macrophage and SUM159 volumes (Amira-Avizo), holdout
+  zstd, scale from its .zattrs. size_bytes = uncompressed s0 estimate incl. 19 crops. COSEM preprint full
+  text: blocks manually segmented in HeLa, Jurkat, Macrophage and SUM159 volumes (Amira-Avizo), holdout
   blocks for validation; sample prep per Xu et al. 2020. CC-BY-4.0 is stated for the collection on the
   AWS registry page. Species inferred from the cell line name. Separate volume from sibling jrc-hela-2
   record; own crops. Per-crop train/val split undocumented.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_hela-3/jrc_hela-3.zarr/recon-1/em/fibsem-uint8
+  - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_hela-3/jrc_hela-3.zarr/recon-1/labels/groundtruth/crop27/all
+  - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_hela-3/jrc_hela-3.zarr/recon-1/em/fibsem-uint8/s1
+  - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_hela-3/jrc_hela-3.zarr/recon-1/labels/groundtruth/crop27/all/s0
+  bytes_downloaded: 200562500
+  size_source: estimated
+  layout:
+    tree: "jrc_hela-3/\n  thumbnail.jpg\n  jrc_hela-3.n5/\n  neuroglancer/\n  jrc_hela-3.zarr/recon-1/\n\
+      \    em/fibsem-uint8/            s0..s4 (OME-Zarr multiscale, 5 levels)\n    labels/groundtruth/\
+      \         19 crop groups: crop27 33 34 50 51 60-65 85-87 100-102 111 181\n      cropN/all      \
+      \           all classes in one array\n      cropN/<class>             per-class arrays (mito, er,\
+      \ golgi, ...)\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_hela-3/jrc_hela-3.zarr/recon-1/labels/groundtruth/crop27/all/s0
+    - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_hela-3/jrc_hela-3.zarr/recon-1/em/fibsem-uint8/s0
+    size_bytes: null
+    description: One ground-truth crop (crop27/all, 400x400x400 uint8 at s0, 64 MB uncompressed) plus
+      the EM region under its OME-Zarr translation.
+  arrays:
+  - role: raw
+    path_pattern: jrc_hela-3.zarr/recon-1/em/fibsem-uint8/s*
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 12000
+    - 1000
+    - 12400
+    shape_varies: false
+    dtype: uint8
+    compression: zstd
+    lossy: false
+    chunks:
+    - 128
+    - 128
+    - 128
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: OME-Zarr scale 3.24/4/4 nm (z/y/x), translation 0.
+  - role: label
+    path_pattern: jrc_hela-3.zarr/recon-1/labels/groundtruth/crop*/all/s*
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 400
+    - 400
+    - 400
+    shape_varies: true
+    dtype: uint8
+    compression: zstd
+    lossy: false
+    chunks:
+    - 64
+    - 64
+    - 64
+    encoding: semantic-ids
+    classes: null
+    n_ids_observed: 16
+    alignment: transform-provided
+    alignment_notes: 'Each crop carries OME-Zarr scale + translation in nm (crop27: scale 1.62/2/2 nm
+      z/y/x, translation 11627.55/3199/22799 nm); the EM s0 grid is 3.24/4/4 nm, so labels sit on a 2x
+      finer grid and must be placed by the translation. Crop shapes (s0, zyx): 13 crops 400^3, crop50/51
+      512^3, crop102 600^3, crop111 1000x500x1000, crop100 980x440x620.'
+  notes: 'Full S3 listing not attempted (millions of zarr chunks); prefixes enumerated with S3 ListObjectsV2
+    delimiter queries: 19 groundtruth crops. Headers via probe.py (em: 5 levels, zstd, uint8; crop27/all:
+    5 levels). Samples: central crop of em s1 (375x250x387, uint8, range [0,255] with 256 values, saturated
+    at an end, one sample) and crop27/all s0 (400^3, 16 distinct values 1..36, no zeros). crop27 .zattrs
+    lists cellmap.annotation.class_names (ecs, pm, mito_mem, mito_lum, ...) but not the id-to-name mapping,
+    so classes are null. Size estimated (uncompressed): raw 1 x 12000x1000x12400 uint8 (148,800,000,000
+    B) + label 19 crops (''all'' s0, shapes read from each crop''s .zarray this run, 2,147,779,456 voxels)
+    uint8 = 150,947,779,456 B (150.9 GB). Level s0 only; per-class arrays, pyramid levels and the n5/precomputed
+    copies are not counted; zstd chunks download smaller.'
