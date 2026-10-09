@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-3513571-lysto-lymphocyte-ihc
 title: Lymphocyte Assessment Hackathon (LYSTO)
 short_name: Lymphocyte counting in CD3/CD8 IHC patches
-description: Training (20,000 patches) and test (12,000 patches) sets of the LYSTO hackathon at MICCAI 2019. Patches of
-  299 x 299 px (about 75 x 75 um at 0.24 um/px) were extracted from CD3/CD8 immunohistochemistry whole slide images
-  of colon, breast and prostate cancer from 9 centres. Each patch is labelled with the number of annotated
+description: Training (20,000 patches) and test (12,000 patches) sets of the LYSTO hackathon at MICCAI 2019. Patches
+  of 299 x 299 px (about 75 x 75 um at 0.24 um/px) were extracted from CD3/CD8 immunohistochemistry whole slide
+  images of colon, breast and prostate cancer from 9 centres. Each patch is labelled with the number of annotated
   lymphocytes it contains, derived from exhaustive point annotations of lymphocytes in regions of interest.
 landing_url: https://zenodo.org/records/3513571
 doi: 10.5281/zenodo.3513571
@@ -30,24 +30,26 @@ imaging:
   channels: 3
   organism:
   - Homo sapiens
-  sample: CD3 or CD8 immunohistochemistry-stained tumour sections (colon n=28, breast n=33, prostate n=22 slides), scanned on a 3DHistech Pannoramic 250 Flash II
+  sample: CD3 or CD8 immunohistochemistry-stained tumour sections (colon n=28, breast n=33, prostate n=22 slides),
+    scanned on a 3DHistech Pannoramic 250 Flash II
   labels_stains:
   - CD3
   - CD8
 data:
   formats:
   - hdf5
-  size_bytes: 8600000000
+  size_bytes: 8584596898
   n_items: 32000
   access: open
-  download_url: https://zenodo.org/records/3513571/files/training.h5
+  download_url: https://zenodo.org/records/3513571
   download_method: http
 annotations:
   present: true
   types:
   - counts
-  coverage: dense
-  format: Per-patch lymphocyte count (training_labels.csv; bins 0, 1-5, 6-10, 11-20, 21-50, 51-200, >200); counts derived from exhaustive manual point annotations of CD3/CD8-positive cells in ROIs
+  coverage: partial
+  format: Per-patch lymphocyte count (training_labels.csv; bins 0, 1-5, 6-10, 11-20, 21-50, 51-200, >200); counts
+    derived from exhaustive manual point annotations of CD3/CD8-positive cells in ROIs
   source: manual
 ml:
   tasks:
@@ -65,10 +67,93 @@ provenance:
   - https://zenodo.org/records/3473557
   - https://zenodo.org/records/3513571
   - https://arxiv.org/pdf/2301.06304
+  - https://zenodo.org/api/records/3513571
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T10:20:00Z'
-notes: 'Zenodo lists training.h5 (5.4 GB), test.h5 (3.2 GB) and training_labels.csv (620 kB), 8.6 GB in total. The paper (arXiv 2301.06304) describes 20,000 training and 12,000 test patches (n_items = 32,000), released as HDF5 and from 83 WSIs (training 43 slides from 2 centres, test 40 slides from 8 centres, one shared). The files inside the HDF5 (dataset names, dtype) were not inspected, and whether test labels are included in test.h5 is not stated on the Zenodo page, so annotations_verified rests on the label CSV listing. ML task is lymphocyte counting (regression), which has no schema value, hence other. The Zenodo record was published 2019-10-04 under 10.5281/zenodo.3513571; zenodo.org/records/3473557 resolves to the same record. The paper also describes an external lung validation set, not part of this record.'
+  last_checked: '2026-10-09T08:12:00Z'
+notes: 'Zenodo lists training.h5 (5.4 GB), test.h5 (3.2 GB) and training_labels.csv (620 kB), 8.6 GB in total. The
+  paper (arXiv 2301.06304) describes 20,000 training and 12,000 test patches (n_items = 32,000), released as HDF5
+  and from 83 WSIs (training 43 slides from 2 centres, test 40 slides from 8 centres, one shared). ML task is lymphocyte
+  counting (regression), which has no schema value, hence other. The Zenodo record was published 2019-10-04 under
+  10.5281/zenodo.3513571; zenodo.org/records/3473557 resolves to the same record. The paper also describes an external
+  lung validation set, not part of this record. enricher: size 8,584,596,898 B from the Zenodo file listing (was
+  8.6e9 stated); download_url set to the record page since the data are 3 separate files, no single archive (was
+  training.h5); coverage partial: test.h5 holds no labels (datasets organ, x only), counts exist for the 20,000
+  training patches only (training.h5 y, training_labels.csv).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "zenodo.org/records/3513571 (8.6 GB, 3 files)\n  training.h5            5.4 GB   datasets organ [20000]\
+      \ str, x [20000,299,299,3] uint8, y [20000] int32\n  test.h5                3.2 GB   datasets organ [12000]\
+      \ str, x [12000,299,299,3] uint8 (no y)\n  training_labels.csv    620 kB   columns x (patch name), y (count),\
+      \ organ"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/3513571/files/training.h5
+    size_bytes: 5365019104
+    description: training.h5 is the smallest file with both images (x) and labels (y); patches can be read from
+      it by HDF5 range access. test.h5 (3.2 GB) has images only.
+  arrays:
+  - role: raw
+    path_pattern: '*.h5 (x)'
+    format: hdf5
+    axes: null
+    shape:
+    - 20000
+    - 299
+    - 299
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+  - role: label
+    path_pattern: training.h5 (y)
+    format: hdf5
+    axes: null
+    shape:
+    - 20000
+    shape_varies: false
+    dtype: int32
+    compression: none
+    value_range:
+    - 0
+    - 70
+    normalization: none
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'one integer per patch: y[i] = number of annotated lymphocytes in patch x[i] (paper: counted
+      in the patch minus a 4 um border, i.e. the central 267x267 px). Index i pairs y with x in training.h5; training_labels.csv
+      repeats the same counts by patch name (training_<i+1>.png).'
+  - role: label
+    path_pattern: training_labels.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    normalization: unknown
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: columns x (patch name training_<n>.png), y (lymphocyte count), organ (e.g. colon_5); rows per
+      training patch.
+  notes: 'Listing from the Zenodo API is complete (3 files, exact sizes). HDF5 headers probed by range: training.h5
+    has organ [20000] object (strings), x [20000,299,299,3] uint8, y [20000] int32; test.h5 has organ [12000] and
+    x [12000,299,299,3] only, so test labels are not released here. All datasets contiguous, uncompressed, no attributes.
+    x axes are left null: no HDF5 attribute names them; the paper describes 299x299 px RGB patches, but no source
+    states the axis order. Sampled y in full (all 20,000 values): range [0, 70], 56 distinct values, 21% zeros (a
+    count per patch, not instance IDs). The x sample (central crop) failed three times with TLS EOF errors from
+    zenodo.org, so raw value range is not measured. Voxel size 240 nm stated by the paper (0.24 um/pixel) and kept.
+    No single archive exists: data.download_url is the record page; direct files are training.h5, test.h5 and training_labels.csv
+    under https://zenodo.org/records/3513571/files/ (all usable per download-check). The per-patch organ strings
+    (HDF5 dataset organ) are metadata and not listed as an array.'
