@@ -67,10 +67,70 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T20:54:15Z'
+  last_checked: '2026-10-09T23:55:00Z'
 notes: Labels are text captions (the "other" annotation and task) plus a subtype column (classification), not masks or boxes.
   Checked the Zenodo page and API record, the zip listing (262,777 .jpg files, via peek_archive) and the head of captions.csv,
   and the arXiv abstract page (2202.03432). The full text of the paper was not retrievable (not in Europe PMC; paper.py found
   nothing) so patch size, magnification, pixel size, scanner, number of WSIs/patients and any train/test split are not stated
   on the Zenodo page, the file listing or the arXiv abstract page; voxel_size_nm is therefore null and splits_provided false.
   Number of patches (262K) is from the dataset page and matches the zip listing.
+technical:
+  method: sample
+  inspected_at: '2026-10-09T23:55:00Z'
+  inspected_urls:
+  - https://zenodo.org/api/records/6550925
+  - https://zenodo.org/records/6550925/files/patches_captions.zip::patches_captions/0b55781a671c424a9c6f63cedce6097e_dce0f7.jpg
+  - https://zenodo.org/records/6550925/files/captions.csv
+  bytes_downloaded: 32010
+  size_source: file-listing
+  layout:
+    tree: "6550925/\n  patches_captions.zip (7.2 GB)\n    patches_captions/<case id>_<6 hex>.jpg   262,777 patches\n  captions.csv\
+      \ (265 KB)   id, subtype, text"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/6550925/files/patches_captions.zip::patches_captions/0b55781a671c424a9c6f63cedce6097e_dce0f7.jpg
+    - https://zenodo.org/records/6550925/files/captions.csv
+    size_bytes: 295915
+    description: One 300x300 patch and the caption table (its row is the case id before the underscore).
+  arrays:
+  - role: raw
+    path_pattern: patches_captions/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 300
+    - 300
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    lossy: true
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB H&E patch; file name = <case id>_<patch id>.jpg.
+  - role: label
+    path_pattern: captions.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: other
+    classes: null
+    alignment: unknown
+    alignment_notes: 'One row per case: id (32-hex, the prefix of the patch file names), subtype (e.g. Well differentiated
+      tubular adenocarcinoma), text (diagnostic caption). Patches pair with rows by that prefix.'
+  notes: 'Zenodo listing with zip members: 2 files, exact sizes, 7,199,653,395 B; 262,777 .jpg patches in one folder. Sampled
+    one patch: RGB 300 x 300 uint8 [0, 255] (one image). Read the first 600 B of captions.csv. No pixel calibration in JPEGs;
+    pixel size and magnification not stated (harvester checked the page, API and arXiv abstract). 2D, so not in the miao layout
+    yet.'
