@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: hf-microstructformer-em-axon-ultrastructure
 title: MicroStructFormer EM ultrastructure segmentation of axons, myelin and mitochondria in gene-edited mice
 short_name: Mouse axon ultrastructure segmentation (TEM)
-description: 540 electron microscopy images of myelinated fibres from gene-edited (hypomyelinated) mice, each paired
-  with a semantic segmentation mask (528 train, 12 validation). Mask classes in id2label.json are background, abnormality,
-  mito-like organelle, mitochondria, mitochondria outside axon, periaxonal space, axon and myelin. Released for training
-  and fine-tuning the MicroStructFormer model.
+description: 540 electron microscopy images of myelinated fibres from gene-edited (hypomyelinated) mice, each paired with
+  a semantic segmentation mask (528 train, 12 validation). Mask classes in id2label.json are background, abnormality, mito-like
+  organelle, mitochondria, mitochondria outside axon, periaxonal space, axon and myelin. Released for training and fine-tuning
+  the MicroStructFormer model.
 landing_url: https://huggingface.co/datasets/Dnq2025/Mask2former_Finetune
 doi: null
 repository: HuggingFace
@@ -26,7 +26,7 @@ imaging:
   - TEM
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism:
   - Mus musculus
   sample: myelinated fibres (spinal cord) of variably hypomyelinated gene-edited mice
@@ -34,7 +34,7 @@ imaging:
 data:
   formats:
   - other
-  size_bytes: 5686957817
+  size_bytes: 5687058506
   n_items: 540
   access: open
   download_url: null
@@ -63,16 +63,96 @@ provenance:
   - https://huggingface.co/api/datasets/Dnq2025/Mask2former_Finetune/tree/main
   - https://dnq2023.github.io/MSF_WEBSITE/
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.64898%2F2026.05.26.727755%22&format=json&resultType=core&pageSize=3
+  - https://huggingface.co/datasets/Dnq2025/Mask2former_Finetune/raw/main/README.md
+  - https://huggingface.co/datasets/Dnq2025/Mask2former_Finetune/raw/main/id2label.json
+  - https://dnq2023.github.io/MSF_WEBSITE/dataset/
+  - https://dnq2023.github.io/MSF_WEBSITE/pipeline-integration/
+  - https://huggingface.co/datasets/Dnq2025/Mask2former_Finetune/resolve/main/data/validation-00000-of-00001.parquet
   confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T03:20:00Z'
-notes: 'Data is Parquet (image and label columns, 12 train shards plus validation) on Hugging Face, hence formats other.
-  Pixel size, image dimensions, instrument and annotation procedure are not stated on the dataset card, the project
-  website (dnq2023.github.io/MSF_WEBSITE, which only says transmission EM of mouse myelinated fibres and links annotations
-  on Roboflow) or the Europe PMC abstract; the preprint full text was not open access via Europe PMC and bioRxiv
-  returned HTTP 429, so voxel size and annotation source are left unknown. Spinal cord comes from the abstract.
-  Modality TEM per project website. Split sizes from the card (528 train / 12 validation). download_url left null:
-  data is in 13 Parquet shards under data/.'
+  last_checked: '2026-10-09T01:04:23Z'
+notes: 'Data is Parquet on Hugging Face (12 train shards, 1 validation shard; image and label columns holding PNG bytes),
+  hence formats other. Modality TEM per project website. Split sizes from the card (528 train / 12 validation). Pixel size
+  and annotation procedure not stated on the card or website; preprint full text unreachable (Europe PMC not OA, bioRxiv HTTP
+  429). enricher: channels 1 from the decoded validation PNGs (grayscale, was null). enricher: size from the complete HF listing.
+  enricher: validation masks only use ids 0-5; per the website ids 6 axon and 7 myelin come from AxonDeepSeg at inference,
+  not these masks. Possible duplicate of PR #552 (same HF dataset).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "README.md, .gitattributes\nid2label.json                         8 classes (0-7)\ndata/                       \
+      \          13 files, 5.7 GB\n  train-000NN-of-00012.parquet        12 shards, 528 rows (0.43-0.50 GB each)\n  validation-00000-of-00001.parquet\
+      \   12 rows (117 MB)\neach row: image (PNG bytes, 3964x3964 uint8 grey) + label (PNG mask, same size)\nnames: <split>_<genotype>__<age>__<tract>__<tract>_x<magnification>_<n>_png.rf.<hash>_aug0_image.png\
+      \ (Roboflow export)"
+    n_files: 16
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/Dnq2025/Mask2former_Finetune/resolve/main/data/validation-00000-of-00001.parquet
+    size_bytes: 117218426
+    description: 'validation shard: 12 EM image + mask pairs (PNG bytes inside one Parquet file)'
+  arrays:
+  - role: raw
+    path_pattern: data/*.parquet
+    format: png
+    axes: yx
+    shape:
+    - 3964
+    - 3964
+    shape_varies: null
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    classes: null
+    alignment: not-applicable
+    alignment_notes: Parquet column image (HF Image feature, PNG bytes, greyscale mode L) in the same row as its mask.
+  - role: label
+    path_pattern: data/*.parquet
+    format: png
+    axes: yx
+    shape:
+    - 3964
+    - 3964
+    shape_varies: null
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 5
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: abnormality
+    - id: 2
+      name: mito like organelle
+    - id: 3
+      name: mitochondria
+    - id: 4
+      name: mitochondria outside axon
+    - id: 5
+      name: periaxonal space
+    - id: 6
+      name: axon
+    - id: 7
+      name: myelin
+    alignment: same-grid
+    alignment_notes: 'Parquet column label: PNG mask in the same row as its image, same 3964 x 3964 size; pixel values index
+      id2label.json. Validation masks only use 0-5.'
+  notes: 'Sample: downloaded the validation shard (117,218,426 B) and decoded all 24 PNGs with a pure-Python snappy decoder
+    (no pyarrow): 12 images mode L uint8 3964x3964, each spanning 0-255 (256 levels, mean 105-154); 12 masks mode L uint8
+    3964x3964, values within 0-5 (ids 6 axon / 7 myelin never present). Value ranges are from this one shard. Normalization
+    unknown: full 0-255 range, but saturation not checked and docs silent. Images are Roboflow exports (names .rf.<hash>_aug0),
+    possibly resized; file names carry magnification (e.g. x9300) only. Voxel size not found; checked: PNG headers (IHDR then
+    IDAT, no pHYs/tEXt), HF card, datasets-server info, id2label.json, project website (home, dataset, getting-started, pipeline
+    pages), Europe PMC (not OA), bioRxiv full text and JATS XML (HTTP 429). Annotation source still unknown for the same reason.
+    Not convertible as is: images live inside Parquet; download_url stays null (13 shards, no single archive; direct links
+    via HF resolve/main/data/<shard>).'
