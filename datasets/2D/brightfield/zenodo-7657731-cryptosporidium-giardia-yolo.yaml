@@ -40,7 +40,7 @@ data:
   formats:
   - jpeg
   size_bytes: 147486258
-  n_items: 1720
+  n_items: 1727
   access: open
   download_url: https://zenodo.org/api/records/7657731/files/Cryptosporidium_dataset.rar/content
   download_method: http
@@ -49,7 +49,7 @@ annotations:
   types:
   - bounding-box
   coverage: unknown
-  format: per-image .txt label files (YOLO format per the record), classes Cryptosporidium and Giardia
+  format: per-image YOLO .txt label files (class x_center y_center width height, normalized), classes Cryptosporidium and Giardia
   source: unknown
 ml:
   tasks:
@@ -67,15 +67,70 @@ provenance:
   - https://zenodo.org/api/records/7657731
   - https://zenodo.org/api/records/7657731/files/Cryptosporidium_dataset.rar/content
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1139%2Fbcb-2023-0059%22&format=json&resultType=core&pageSize=3
-  confidence: 0.6
+  confidence: 0.65
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-09T12:30:00Z'
-notes: The only file is a single .rar (147 MB), which peek_archive cannot list; the first 400 KB of the archive show paths
-  optical_microscopy_images/test/images/<n>color.jpg, and the record description states per-image YOLO .txt labels, so label
-  files and counts were not directly seen (annotations_verified false). Image count 1,720 is taken from the paper abstract
-  (520 optical + 1,200 phase-contrast images used for YOLOv5); the full paper is not open access and was not read, so annotation
-  procedure, microscope, magnification and pixel size are unknown. A second Zenodo record (7643929, no license, no files)
-  is an earlier empty version of the same upload.
+  annotations_verified: true
+  last_checked: '2026-10-09T12:20:00Z'
+notes: 'The only file is a single RAR5 archive (147 MB). Paper abstract gives 520 optical + 1,200 phase-contrast images; the
+  full paper is not open access and was not read, so annotation procedure, microscope, magnification and pixel size are unknown.
+  A second Zenodo record (7643929, no license, no files) is an earlier empty version of the same upload. enricher: RAR headers
+  read: 521 optical + 1,206 phase-contrast JPEGs (n_items 1727, was 1720 from the abstract), each with a YOLO .txt label
+  (annotations_verified true); YOLO class ids 0 and 1, names in data.yaml (compressed, not read). organisms: both genera occur
+  in both folders.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |-
+      ./                                                   1 file   147.5 MB  .rar (RAR5)
+      Cryptosporidium_dataset.rar/
+        optical_microscopy_images/                         data.yaml
+          train/images/  365 .jpg    train/labels/  365 .txt   train/*.cache
+          valid/images/  104 .jpg    valid/labels/  114 .txt   valid/*.cache
+          test/images/    52 .jpg    test/labels/    52 .txt
+        phase_contrast_microscopy_images/                  data.yaml
+          train/images/  846 .jpg    train/labels/  846 .txt   train/*.cache
+          valid/images/  242 .jpg    valid/labels/  242 .txt   valid/*.cache
+          test/images/   118 .jpg    test/labels/   118 .txt
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/7657731/files/Cryptosporidium_dataset.rar/content
+    size_bytes: 147486258
+    description: The whole dataset is one RAR archive; RAR members cannot be fetched individually, so the archive is the smallest unit.
+  arrays:
+  - role: raw
+    path_pattern: Cryptosporidium_dataset.rar/*_microscopy_images/{train,valid,test}/images/*.jpg
+    format: jpeg
+    axes: yxs
+    shape: [640, 640, 3]
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range: [0, 255]
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Optical images are named <n>color.jpg, phase-contrast <n>.jpg. All 3 sampled images are 640 x 640 RGB (a
+      resized export, so the original pixel size does not carry over).'
+  - role: label
+    path_pattern: Cryptosporidium_dataset.rar/*_microscopy_images/{train,valid,test}/labels/*.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Same stem as the image (test/images/166color.jpg <-> test/labels/166color.txt). YOLO rows "class xc yc w h",
+      coordinates normalized to [0, 1] of the image. Class ids 0 and 1 are Cryptosporidium and Giardia in an order given only in data.yaml (not read). valid/labels has 114 .txt for 104 images (10 extra label files).'
+  notes: 'Downloaded the whole RAR (147,486,258 B; the only file) and parsed its RAR5 headers in a script (no unrar tool available,
+    nothing extracted or executed): 3,468 files. 1,876 members are stored uncompressed, 1,592 RAR-compressed (not readable here,
+    including both data.yaml files). Read stored members: 3 JPEGs (640x640x3 uint8; values 0-255, 0-190, 23-253) and all
+    1,242 stored label .txt files (648 box rows: optical class 0 = 32, class 1 = 88; phase-contrast 0 = 134, 1 = 394). Pixel
+    size not found; checked: JPEG files, Zenodo record, paper abstract (full text not open access). RAR is not a format
+    TensorSwitch can open member by member. The archive was deleted after inspection.'
