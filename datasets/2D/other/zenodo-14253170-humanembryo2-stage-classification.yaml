@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zenodo-14253170-humanembryo2-stage-classification
 title: HumanEmbryo2.0
 short_name: Human embryo developmental stages (time-lapse)
-description: 5,500 real 256 x 256 px PNG frames of human embryos at five developmental stages (2-cell, 4-cell,
-  8-cell, morula, blastocyst), 1,100 per stage, pre-split into 1,000 train and 100 test images per stage.
-  Frames are central-focal-plane images from EmbryoScope time-lapse systems, from a Norwegian fertility clinic
-  and the public Human Embryo Time-Lapse Video dataset.
+description: 5,500 real 256 x 256 px PNG frames of human embryos at five developmental stages (2-cell,
+  4-cell, 8-cell, morula, blastocyst), 1,100 per stage, pre-split into 1,000 train and 100 test images
+  per stage. Frames are central-focal-plane images from EmbryoScope time-lapse systems, from a Norwegian
+  fertility clinic and the public Human Embryo Time-Lapse Video dataset.
 landing_url: https://zenodo.org/records/14253170
 doi: 10.5281/zenodo.14253170
 repository: Zenodo
@@ -29,10 +29,11 @@ imaging:
   - other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism:
   - Homo sapiens
-  sample: human preimplantation embryos imaged in EmbryoScope time-lapse incubators (Hoffman modulation contrast)
+  sample: human preimplantation embryos imaged in EmbryoScope time-lapse incubators (Hoffman modulation
+    contrast)
   labels_stains: []
 data:
   formats:
@@ -69,11 +70,55 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T23:48:00Z'
-notes: 'Zenodo API record and the zip listing (peek_archive: 5,500 PNGs, 100 test and 1,000 train per stage) read; paper
-  Methods read from the arXiv HTML (the Europe PMC tool found no full text). Real images come from Volvat Spiren
-  clinic (Oslo, EmbryoScope, Hoffman contrast optics, central focal plane) and from the public Human Embryo Time-Lapse
-  Video dataset (Zenodo 6390798); stage labels from embryologist timings or the public dataset labels, so source is
-  mixed. Embryos with more than 15% fragmentation were excluded. Magnification and pixel size are not stated, so
-  voxel_size_nm is null. Hoffman modulation contrast is not in the modality list, so modality is other. The synthetic
-  images in the paper are on Hugging Face and are not part of this record. Zenodo states CC-BY-4.0 for this record.'
+  last_checked: '2026-10-09T02:48:03Z'
+notes: 'Zenodo API record and the zip listing (peek_archive: 5,500 PNGs, 100 test and 1,000 train per
+  stage) read; paper Methods read from the arXiv HTML (the Europe PMC tool found no full text). Real images
+  come from Volvat Spiren clinic (Oslo, EmbryoScope, Hoffman contrast optics, central focal plane) and
+  from the public Human Embryo Time-Lapse Video dataset (Zenodo 6390798); stage labels from embryologist
+  timings or the public dataset labels, so source is mixed. Embryos with more than 15% fragmentation were
+  excluded. Magnification and pixel size are not stated, so voxel_size_nm is null. Hoffman modulation
+  contrast is not in the modality list, so modality is other. The synthetic images in the paper are on
+  Hugging Face and are not part of this record. Zenodo states CC-BY-4.0 for this record. enricher: PNGs
+  are 256x256 grey stored as RGB (channels 1, was null).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://zenodo.org/api/records/14253170/files/HumanEmbryo2.0.zip/content::HumanEmbryo2.0/2cell/train/00001.png
+  - https://zenodo.org/api/records/14253170/files/HumanEmbryo2.0.zip/content::HumanEmbryo2.0/2cell/test/00001.png
+  - https://zenodo.org/api/records/14253170/files/HumanEmbryo2.0.zip/content::HumanEmbryo2.0/blastocyst/train/00001.png
+  bytes_downloaded: 150179
+  size_source: file-listing
+  layout:
+    tree: "HumanEmbryo2.0.zip  264.6 MB, 5500 PNG\n  HumanEmbryo2.0/<stage>/{train,test}/NNNNN.png\n \
+      \   stages: 2cell, 4cell, 8cell, morula, blastocyst\n    1000 train + 100 test per stage\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/14253170/files/HumanEmbryo2.0.zip/content::HumanEmbryo2.0/2cell/train/00001.png
+    size_bytes: 48018
+    description: One 2-cell training image; its label is the stage folder.
+  arrays:
+  - role: raw
+    path_pattern: HumanEmbryo2.0/*/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB PNG 256x256; R=G=B in the blastocyst sample (samples_identical), i.e. greyscale
+      stored as RGB. Class = <stage> folder, split = train/test folder.
+  notes: 'Zip central directory read: 5500 PNGs, 1000 train + 100 test for each of 5 stages. Three PNGs
+    opened by range (150 KB): all 256x256 RGB uint8, 0-255; in the blastocyst file all three channels
+    are identical (grey stored as RGB), so imaging.channels set to 1. No DPI or pixel-size metadata. Labels
+    are folder names only (no label files). Voxel size not found; checked: PNG metadata, Zenodo record,
+    harvester reading of the arXiv Methods (magnification not stated).'
