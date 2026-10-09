@@ -1,0 +1,150 @@
+schema_version: '1.2'
+id: zenodo-3515446-cart-lymphocytes-phase-contrast-boxes
+title: 'Lymphocytes Dataset: phase-contrast and fluorescence images of an in vitro immunotherapy screen with cell-type bounding
+  boxes (Zenodo 3515446)'
+short_name: CAR-T lymphocyte cell boxes (phase contrast)
+description: 108 image triplets (phase contrast, GFP and mCherry fluorescence, 36 train and 72 test; test crops are 256x256
+  PNG) from time-lapse screens of CAR-T lymphocytes with tumour cells, with Pascal VOC XML bounding boxes of cell-type classes
+  (e.g. Dead) for the test set derived from fluorescent markers.
+landing_url: https://zenodo.org/records/3515446
+doi: 10.5281/zenodo.3515446
+repository: Zenodo
+accession: '3515446'
+authors:
+- Joseph Boyd
+- Zelia Gouveia
+- Franck Perez
+- Thomas Walter
+publications:
+- title: Experimentally-Generated Ground Truth for Detecting Cell Types in an Image-Based Immunotherapy Screen
+  doi: 10.1109/isbi45749.2020.9098696
+  url: null
+date_published: '2019-10-21'
+imaging:
+  modality:
+  - phase-contrast
+  - fluorescence-other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: In vitro co-culture of CAR-T lymphocytes and tumour cells, phase contrast with GFP and mCherry markers
+  labels_stains:
+  - GFP
+  - mCherry
+data:
+  formats:
+  - tiff
+  - png
+  size_bytes: 212198245
+  n_items: 108
+  access: open
+  download_url: https://zenodo.org/api/records/3515446/files/lymphocytes.zip/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  coverage: unknown
+  format: Pascal VOC XML in test/labels/<video>/<frame>.xml, one object per cell with a class name (Dead seen) and bndbox
+  source: automatic
+ml:
+  tasks:
+  - detection
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-09T14:30:00Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/3515446
+  - https://zenodo.org/api/records/3515446/files/lymphocytes.zip/content
+  - https://institut-curie.org/publications/experimentally-generated-ground-truth-detecting-cell-types-image-based-immunotherapy-screen
+  - https://doi.org/10.1109/isbi45749.2020.9098696
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-09T13:05:00Z'
+notes: 'Zip index (396 files): train/{phase_contrast,GFP_calibrated,mCherry_calibrated} 36 TIFF each; test/{phase_contrast,GFP_calibrated,mCherry_calibrated}
+  72 PNG each; test/labels 72 Pascal VOC XML (one test XML read). No label files for the train split were seen in the archive.
+  The Zenodo description is only ''Train and test data''; the paper''s full text was not accessible (IEEE, abstract per web
+  search says ground truth comes from the fluorescent markers by simple image processing, so labels are automatic). Class
+  list, pixel size, microscope and magnification not verified. Only the paper''s landing page and DOI redirect were read.
+  enricher: a second test XML (VID193_A6_4_02d20h00m) has 111 boxes of classes RAJI and Dead.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "lymphocytes.zip  212,198,245 B, 719 members (incl. __MACOSX/ metadata)\n  zenodo/train/{phase_contrast,GFP_calibrated,mCherry_calibrated}/\
+      \  36 .tif each (VID193_<well>_<site>_<DDdHHhMMm>.tif)\n  zenodo/test/{phase_contrast,GFP_calibrated,mCherry_calibrated}/\
+      \   72 .png each\n  zenodo/test/labels/{VID193_A5_4,VID193_A6_4}/                       36 .xml each (Pascal VOC)\n"
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: lymphocytes.zip::zenodo/train/phase_contrast/*.tif
+    format: tiff
+    axes: null
+    shape:
+    - 2
+    - 1040
+    - 1408
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range:
+    - 1
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Train frames, 2-page TIFF (PIL n_frames 2) of 1040x1408; what the second page is (channel, time or a
+      copy) is not stated, so axes are null. GFP_calibrated and mCherry_calibrated hold the matching fluorescence frames.
+  - role: raw
+    path_pattern: lymphocytes.zip::zenodo/test/phase_contrast/*.png
+    format: png
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 1
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Test crops 256x256 (wells A5_4 and A6_4, 36 time points each); GFP/mCherry crops alongside.
+  - role: label
+    path_pattern: lymphocytes.zip::zenodo/test/labels/*/*.xml
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: boxes-table
+    classes:
+    - id: RAJI
+      name: Raji target cell
+    - id: Dead
+      name: dead cell
+    alignment: same-grid
+    alignment_notes: Pascal VOC per test frame, labels/<video>/<frame>.xml pairs with test/phase_contrast/<frame>.png; <size>
+      256x256 matches. Classes seen in two files; no train labels in the archive.
+  notes: 'Zip central directory read from the last 128 KB (curl; Python requests to zenodo.org failed with SSL errors this
+    run, so listing.py/probe.py could not run): 36 train TIFF and 72 test PNG per channel folder, 72 test XML, plus __MACOSX
+    metadata. Archive size from the Zenodo record (page-stated). Read with curl ranges (1.3 MB): test VID193_A6_4_02d20h00m.png
+    L 256x256 uint8 [1,255] mean 128.0; its XML 111 boxes (RAJI, Dead); train VID193_A1_1_02d10h00m.tif 2 pages of 1040x1408
+    uint8 [1,255] mean 128.0, uncompressed, no resolution tag. Value ranges from single files. Voxel size not found: TIFF/PNG
+    headers, Zenodo description ("Train and test data"); paper full text not accessible. No sample unit: member links could
+    not be checked with probe.py --download-check this run.'
