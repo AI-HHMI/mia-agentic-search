@@ -1,13 +1,11 @@
 schema_version: '1.2'
 id: psdi-9gkqa-pty79-cobalt-nanocrystal-tem-synthetic
-title: 'Segmented TEM images of cobalt nanocrystals: synthetic training set with COCO
-  labels (TEMPOS)'
+title: 'Segmented TEM images of cobalt nanocrystals: synthetic training set with COCO labels (TEMPOS)'
 short_name: Cobalt nanocrystal TEM segmentation (synthetic)
-description: 'PSDI record with three zips: 1,000 synthetic TEM images of cobalt nanocrystals
-  generated with the TEMPOS software (PNG, COCO instances_train.json, VIA region json
-  and the generator settings json), 256 experimental TEM image patches (512x512 PNG,
-  no labels), and the same 256 experimental images segmented by a Detectron2 model
-  trained on the synthetic data, with two CSV tables of extracted particle information.'
+description: 'PSDI record with three zips: 1,000 synthetic TEM images of cobalt nanocrystals generated with the TEMPOS software
+  (PNG, COCO instances_train.json, VIA region json and the generator settings json), 256 experimental TEM image patches (512x512
+  PNG, no labels), and the same 256 experimental images segmented by a Detectron2 model trained on the synthetic data, with
+  two CSV tables of extracted particle information.'
 landing_url: https://data-collections.psdi.ac.uk/records/9gkqa-pty79
 doi: null
 repository: other
@@ -16,8 +14,8 @@ authors:
 - Natalia da Silva de Sa
 - Andrew Stewart
 publications:
-- title: Size-Resolved Shape Evolution in Inorganic Nanocrystals Captured via High-Throughput
-    Deep Learning-Driven Statistical Characterization
+- title: Size-Resolved Shape Evolution in Inorganic Nanocrystals Captured via High-Throughput Deep Learning-Driven Statistical
+    Characterization
   doi: 10.1021/acsnano.4c09312
   url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11526432/fullTextXML
 date_published: '2026-03-24'
@@ -28,8 +26,7 @@ imaging:
   voxel_size_nm: null
   channels: 1
   organism: []
-  sample: Cobalt oxide nanocrystals (experimental images courtesy of Mary Scott lab;
-    synthetic images generated with TEMPOS)
+  sample: Cobalt oxide nanocrystals (experimental images courtesy of Mary Scott lab; synthetic images generated with TEMPOS)
   labels_stains: []
 data:
   formats:
@@ -44,9 +41,10 @@ annotations:
   types:
   - instance-segmentation
   coverage: dense
-  format: COCO instances_train.json and VIA region json for synthetic images; model-predicted
-    segmentations of the experimental images as PNG plus CSV particle tables
-  source: automatic
+  format: COCO instances json (polygons, one class 'particle') for the 1,000 synthetic images (instances_train.json, plus
+    VIA via_region_data.json) and for the 256 experimental images (instances_val.json); RGB overlay PNGs of Detectron2 predictions
+    and two CSV particle tables
+  source: unknown
 ml:
   tasks:
   - segmentation
@@ -71,16 +69,118 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T10:38:17Z'
-notes: 'Sizes from the PSDI file API: synthetic 227 MB, experimental 53 MB, segmented
-  140 MB (420 MB total). Zip listings: synthetic_cobalt has 1000 PNG under train/
-  plus instances_train.json, via_region_data.json and a generator settings json; experimental_cobalt
-  has 256 PNG plus 1 json; experimental_cobalt_segmented has 256 PNG plus 2 CSV. All
-  labels are synthetic by construction or model predictions, so only the synthetic
-  set has exact ground truth; no manual annotation of the experimental images. Pixel
-  size not stated on the record or in file listings; the related paper reports 86
-  pm pixels for its own 4k images but does not tie this to these 512x512 patches,
-  so left null. The record page and its files API lists no zip member timestamps;
-  the related paper (Scott lab) is linked on the record as supplemented-by. Different
-  from the already catalogued PSDI gold nanoparticle record (sgvf0-j3g53): another
-  material, different zips and a different record.'
+  last_checked: '2026-10-09T12:25:00Z'
+notes: 'Sizes from the PSDI file API: synthetic 226,781,457 B, experimental 53,314,702 B, segmented 140,058,016 B. Synthetic
+  labels are exact by construction (TEMPOS generator settings json in the zip). Pixel size not stated on the record or in
+  the files; the related paper reports 86 pm (and 33-67 pm) pixels for its own patches but does not tie them to these 512x512
+  images, so left null. Different from the PSDI gold nanoparticle record (sgvf0-j3g53). enricher: experimental_cobalt.zip
+  also holds instances_val.json (COCO, 256 images, 3,765 particle polygons, info "Training labels mary-scott data"), so the
+  experimental images are labelled too; how those labels were made is not stated, so annotations.source is unknown (was automatic).
+  The segmented zip holds RGB overlay renderings of model predictions, not label maps.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "synthetic_cobalt.zip  226,781,457 B, 1,005 members (233 MB uncompressed)\n  mary-scott-training4.json         \
+      \              TEMPOS generator settings\n  20250510201454mary-scott-training4_histogrameq_0.9/train/\n    0.png ...\
+      \ 999.png (1000)  instances_train.json  via_region_data.json\nexperimental_cobalt.zip  53,314,702 B, 257 members (70\
+      \ MB uncompressed)\n  0.png ... 255.png (256)  instances_val.json\nexperimental_cobalt_segmented.zip  140,058,016 B,\
+      \ 259 members (166 MB uncompressed)\n  20250515221711_..._coco/  256 *.png overlays  mean_stats.csv  stats.csv\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://data-collections.psdi.ac.uk/api/records/9gkqa-pty79/files/experimental_cobalt.zip/content
+    size_bytes: 53314702
+    description: The experimental zip, 256 TEM patches with their COCO polygons (instances_val.json). Host not on TensorSwitch's
+      allowlist yet, and its S3 redirect rejects HEAD, so zip members can't be addressed individually.
+  arrays:
+  - role: raw
+    path_pattern: synthetic_cobalt.zip::*/train/*.png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 1,000 synthetic greyscale TEM images named 0.png to 999.png; the folder name says histogrameq_0.9 (histogram
+      equalisation is not documented further).
+  - role: label
+    path_pattern: synthetic_cobalt.zip::*/train/instances_train.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: polygons
+    classes:
+    - id: 0
+      name: particle
+    alignment: same-grid
+    alignment_notes: COCO images[].file_name points to the PNGs in the same folder; polygons in pixel coordinates. via_region_data.json
+      holds the same kind of regions in VIA format (not read).
+  - role: raw
+    path_pattern: experimental_cobalt.zip::*.png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 256 experimental TEM patches 0.png to 255.png (COCO lists all as 512x512).
+  - role: label
+    path_pattern: experimental_cobalt.zip::instances_val.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: polygons
+    classes:
+    - id: 0
+      name: particle
+    alignment: same-grid
+    alignment_notes: 'COCO: 256 images (file_name 0.png ...), 3,765 annotations with polygon segmentation, bbox and area in
+      pixel coordinates.'
+  - role: other
+    path_pattern: experimental_cobalt_segmented.zip::*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    alignment: same-grid
+    alignment_notes: RGB renderings of Detectron2 predictions over the experimental images (<n>.png.png / <n>.png), for viewing,
+      not label maps.
+  notes: 'Listing: the PSDI files API (3 zips, 420,154,175 B, exact). tools/listing.py and peek_archive.py fail here because
+    the S3 redirect target answers HEAD with 403; zip indexes were read with a small GET-range script (requests only). Sampled
+    (2.9 MB total): synthetic train/0.png L 512x512 uint8 [0,255], mean 127.9; experimental 0.png L 512x512 uint8 [0,255],
+    mean 173.6; segmented 0.png.png RGB 512x512x3 (overlay); instances_val.json 18,084,302 B: 256 images, 3,765 annotations,
+    1 category; generator settings json (TEMPOS parameters, img_size 512). Value ranges from single files. Voxel size not
+    found: checked PNG headers (no pHYs), PSDI record API, generator json, paper (86 pm and 33-67 pm for the paper''s own
+    patches, not tied to these files). No single archive for the whole record, so data.download_url stays null.'
