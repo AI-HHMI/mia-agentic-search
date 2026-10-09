@@ -2,7 +2,13 @@ schema_version: '1.2'
 id: zenodo-21931379-hcci-sem-phase-segmentation
 title: Open-access SEM dataset and robustness benchmark for ML microstructure segmentation of high-chromium cast iron
 short_name: High-chromium cast iron phase segmentation (SEM)
-description: 774 registered SEM micrographs of high-chromium cast iron (26 wt.% Cr) acquired across four SEM instruments, three detectors (SE, BSE, InLens), three accelerating voltages, two etchants, three heat-treatment states and two image scales. For 12 regions of interest the same microstructure area was imaged under many acquisition conditions and registered, so 12 manually corrected phase masks propagate across the full image set (one mask file per image). Up to seven phase classes (austenite, fresh martensite, retained austenite, eutectic carbides, tempered martensite, secondary carbides, combined tempered martensite + secondary carbides) support binary, four-class and seven-class segmentation; per-image acquisition metadata is provided in a spreadsheet.
+description: 774 registered SEM micrographs of high-chromium cast iron (26 wt.% Cr) acquired across four SEM instruments,
+  three detectors (SE, BSE, InLens), three accelerating voltages, two etchants, three heat-treatment states and two image
+  scales. For 12 regions of interest the same microstructure area was imaged under many acquisition conditions and registered,
+  so 12 manually corrected phase masks propagate across the full image set (one mask file per image). Up to seven phase classes
+  (austenite, fresh martensite, retained austenite, eutectic carbides, tempered martensite, secondary carbides, combined tempered
+  martensite + secondary carbides) support binary, four-class and seven-class segmentation; per-image acquisition metadata
+  is provided in a spreadsheet.
 landing_url: https://zenodo.org/records/21931379
 doi: 10.5281/zenodo.21931379
 repository: Zenodo
@@ -19,7 +25,8 @@ imaging:
   voxel_size_nm: null
   channels: null
   organism: []
-  sample: High-chromium cast iron (26 wt.% Cr), etched with Vilella's reagent or Nital; three specimen states (as-cast; 980 C water quenched; 980 C 9 h air cooled)
+  sample: High-chromium cast iron (26 wt.% Cr), etched with Vilella's reagent or Nital; three specimen states (as-cast; 980
+    C water quenched; 980 C 9 h air cooled)
   labels_stains: []
 data:
   formats:
@@ -34,7 +41,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: PNG masks (Masks/<n>_Mask.png, one per image), class names in Classes.txt, per-image metadata in Metadata_All_Samples.xlsx
+  format: RGB colour-coded PNG masks (Masks/<n>_Mask.png, one per image), colour-to-class palette in Classes.txt, per-image
+    metadata in Metadata_All_Samples.xlsx
   source: manual
 ml:
   tasks:
@@ -57,5 +65,88 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T17:25:00Z'
-notes: 'Materials-science SEM (not biological), so modality is "other" (scanning electron microscopy of metallographic sections). Zip listing (peek_archive) shows 774 Images/<n>.png and 774 Masks/<n>_Mask.png plus Classes.txt and Metadata_All_Samples.xlsx; the record text says 777 micrographs, the zip lists 774 (3 fewer than stated). Masks were created for 12 registered regions of interest and propagated to all images of each stack (WEKA trainable segmentation + expert correction, per the record). Pixel size varies per image and is stored in the metadata spreadsheet, not stated on the record page, so voxel_size_nm is null. The accompanying paper is not yet published ("Journal / DOI - to be added" on the record), so publications is empty; Classes.txt could not be read (Zenodo range requests timed out). No train/val/test split is provided.'
+  last_checked: '2026-10-09T18:25:00Z'
+notes: 'Materials-science SEM (not biological), so modality is "other" (modality family: EM; scanning electron microscopy
+  of metallographic sections, SE/BSE/InLens) and organism is empty. Zip has 774 Images/<n>.png and 774 Masks/<n>_Mask.png
+  (the record text says 777; Metadata_All_Samples.xlsx has 777 rows). Masks: 12 registered ROI masks (WEKA + expert correction)
+  propagated to every image of their stack. Paper not yet published ("to be added" on the record). No split. enricher: voxel
+  size stays null: pixel size varies per image (Metadata_All_Samples.xlsx "Pixel Size" column, in m: ≥20 distinct values, 13.3-104 nm for 770 of 777 rows, e.g. 67.4
+  nm x107 images, 104.2 nm x107, 13.5 nm x105). enricher: Classes.txt read: 7 RGB-coded phase classes (technical.arrays[1].classes).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                   1 file      4.3 GB  .zip (HCCI Dataset .zip)\nzip contents:\nHCCI%20Dataset%20.zip/\n\
+      \  ./                                  2 files    64.8 KB  Classes.txt, Metadata_All_Samples.xlsx\n  Images/       \
+      \                    774 files     4.2 GB  .png  (<n>.png)\n  Masks/                            774 files    89.7 MB\
+      \  .png  (<n>_Mask.png)\n  (+8 macOS ._ metadata files not shown)"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/21931379/files/HCCI%20Dataset%20.zip?download=1::Images/828.png
+    - https://zenodo.org/records/21931379/files/HCCI%20Dataset%20.zip?download=1::Masks/828_Mask.png
+    size_bytes: 2434981
+    description: Image 828 (smallest micrograph in the zip) and its phase mask
+  arrays:
+  - role: raw
+    path_pattern: HCCI%20Dataset%20.zip/Images/[0-9]*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1792
+    - 1959
+    - 4
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 78
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGBA PNG (4 samples per pixel; the samples are not identical in the sampled image). Member sizes 2.3-8.1
+      MB, so image sizes vary.
+  - role: label
+    path_pattern: HCCI%20Dataset%20.zip/Masks/[0-9]*_Mask.png
+    format: png
+    axes: yxs
+    shape:
+    - 1792
+    - 1959
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: rgb-colors
+    classes:
+    - id: 0,0,255
+      name: Austenite_AsCast
+    - id: 0,255,255
+      name: FreshMartensite_AsCast
+    - id: 255,0,255
+      name: EutecticCarbides_all
+    - id: 135,100,65
+      name: TemperedMartensite_Q980_inclSecCarb
+    - id: 0,255,0
+      name: SecondaryCarbides_Q980
+    - id: 255,255,0
+      name: TemperedMartensite_Q980_pure
+    - id: 247,148,29
+      name: RetainedAustenite_Q980_0h
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: Images/<n>.png pairs with Masks/<n>_Mask.png (all 774 numbers pair one-to-one in the listing).
+      Sampled pair has the same 1792x1959 grid (raw RGBA, mask RGB). Classes are RGB colours from the PALETTE in Classes.txt;
+      12 registered ROI masks are propagated to every image of their stack.'
+  notes: 'Listing: tools/listing.py on the zip download URL with --expand-zips: 1 file, 1558 zip members, 4,300,445,667 bytes
+    (file-listing, complete; same as the Zenodo API size). Probe + sample of Images/828.png (2,323,662 B) and Masks/828_Mask.png
+    (111,319 B): raw PNG 1792x1959x4 RGBA uint8, values 78-255 (one sample only); mask PNG 1792x1959x3 RGB uint8, each sample
+    {0,255} in this image (colours from the Classes.txt PALETTE; one colour, 135,100,65, is not 0/255). Metadata_All_Samples.xlsx
+    read by range (64,373 B): columns File Name, SEM, Detector, Gun, Voltage, Magnification, Etching, Sample, Kind, Pixel
+    Size (m), Beam Current, Dwell Time, ...; pixel size varies per image (≥20 distinct values, 13.3-104 nm in 770 of 777 rows), so imaging.voxel_size_nm is null.
+    The zip also holds 8 macOS ._ resource-fork files (excluded by the [0-9]* globs). Normalization unknown: no docs on contrast
+    processing. The zip API content URL (/api/records/.../content) failed with TLS EOF on range requests in this run; the
+    /records/.../files/...?download=1 URL worked.'
