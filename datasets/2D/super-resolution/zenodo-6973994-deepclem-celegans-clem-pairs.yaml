@@ -2,7 +2,11 @@ schema_version: '1.2'
 id: zenodo-6973994-deepclem-celegans-clem-pairs
 title: Manually aligned fluorescence (SIM) and scanning EM image pairs of C. elegans sections for CLEM registration
 short_name: C. elegans aligned CLEM pairs (SIM + SEM)
-description: 'Training data for DeepCLEM: 117 training and 4 validation manually aligned correlative light and electron microscopy image pairs of C. elegans resin sections, each as a fluorescence (Hoechst chromatin, SIM) image and the matching scanning electron microscopy image, in folders fluo_training, sem_training, fluo_validation and sem_validation (242 TIFFs, 16.8 MB zip). Used to train a network that predicts the chromatin fluorescence from EM images for automatic registration.'
+description: 'Training data for DeepCLEM: 117 training and 4 validation manually aligned correlative light and electron
+  microscopy image pairs of C. elegans resin sections, each as a fluorescence (Hoechst chromatin, SIM) image and
+  the matching scanning electron microscopy image, in folders fluo_training, sem_training, fluo_validation and sem_validation
+  (242 TIFFs, 16.8 MB zip). Used to train a network that predicts the chromatin fluorescence from EM images for
+  automatic registration.'
 landing_url: https://zenodo.org/records/6973994
 doi: 10.5281/zenodo.6973994
 repository: Zenodo
@@ -29,7 +33,8 @@ imaging:
   channels: 1
   organism:
   - Caenorhabditis elegans
-  sample: C. elegans, high-pressure frozen, freeze-substituted, methacrylate-embedded 100 nm sections; Hoechst 33342 chromatin stain imaged by SIM, then the same sections by SEM
+  sample: C. elegans, high-pressure frozen, freeze-substituted, methacrylate-embedded 100 nm sections; Hoechst 33342
+    chromatin stain imaged by SIM, then the same sections by SEM
   labels_stains:
   - Hoechst 33342
 data:
@@ -45,7 +50,8 @@ annotations:
   types:
   - other
   coverage: dense
-  format: Paired fluorescence and SEM TIFFs with the same file name in matching folders; the manual alignment is the annotation
+  format: Paired fluorescence and SEM TIFFs with the same file name in matching folders; the manual alignment is
+    the annotation
   source: manual
 ml:
   tasks:
@@ -69,5 +75,70 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T22:15:00Z'
-notes: 'Zip listed with peek_archive (242 TIFFs in four folders) and its Readme read. Paper Methods read on the F1000Research page (first 100k characters): fluorescence by SIM with live Hoechst 33342, EM by SEM, 100 nm sections, ground truth made by manual overlay alignment in Inkscape (30 subimages described there; the Zenodo set has 121 pairs). Pixel size and image size are not stated on the page, Readme or the Methods text read. SEM has no entry in the modality enum, so it is listed as other after super-resolution. The training/validation split is the folder split of 117/4 pairs.'
+  last_checked: '2026-10-09T01:04:43Z'
+notes: 'Zip listed with peek_archive (242 TIFFs in four folders) and its Readme read. Paper Methods read on the
+  F1000Research page (first 100k characters): fluorescence by SIM with live Hoechst 33342, EM by SEM, 100 nm sections,
+  ground truth made by manual overlay alignment in Inkscape (30 subimages described there; the Zenodo set has 121
+  pairs). Pixel size and image size are not stated on the page, Readme or the Methods text read. SEM has no entry
+  in the modality enum, so it is listed as other after super-resolution. The training/validation split is the folder
+  split of 117/4 pairs.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "DeepCLEM_training.zip (16.8 MB)\n  DeepCLEM_training/Readme.txt, .DS_Store\n  DeepCLEM_training/fluo_training/<name>.tif\
+      \     117   (e.g. A1S10_U.tif)\n  DeepCLEM_training/sem_training/<name>.tif      117   same names\n  DeepCLEM_training/fluo_validation/<name>.tif\
+      \     4\n  DeepCLEM_training/sem_validation/<name>.tif      4\n  __MACOSX/...  macOS resource forks mirroring\
+      \ every file (not TIFFs)"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/6973994/files/DeepCLEM_training.zip::DeepCLEM_training/fluo_training/A1S10_U.tif
+    - https://zenodo.org/records/6973994/files/DeepCLEM_training.zip::DeepCLEM_training/sem_training/A1S10_U.tif
+    size_bytes: null
+    description: 'One aligned pair: fluorescence (SIM, Hoechst) and SEM image of section A1S10_U.'
+  arrays:
+  - role: raw
+    path_pattern: DeepCLEM_training.zip::DeepCLEM_training/sem_*/*.tif
+    format: tiff
+    axes: null
+    shape:
+    - 2
+    - 256
+    - 256
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'SEM image, the network input. Plain 2-page TIFF written by tifffile ({"shape": [2, 256, 256]});
+      both pages have the same mean in the sample, so probably a duplicated plane, but what the page axis means
+      is not stated, so axes stay null.'
+  - role: target
+    path_pattern: DeepCLEM_training.zip::DeepCLEM_training/fluo_*/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: Chromatin fluorescence (SIM, Hoechst) manually aligned to the SEM image; fluo_<split>/<name>.tif
+      pairs with sem_<split>/<name>.tif (same file name). Both 256x256 in the sample.
+  notes: 'Listing: the Zenodo zip central directory (exact sizes; 242 TIFFs plus __MACOSX resource forks, which
+    are not images). Read with an ad hoc tifffile script (~0.3 MB): fluo_training/A1S10_U.tif uint8 256x256, 0-255,
+    1 page; sem_training/A1S10_U.tif uint8 2x256x256, 0-255, both pages mean 130.92. No calibration in the TIFFs
+    (resolution 1/1, no unit). Values from one pair only. Voxel size not found; checked: TIFF tags, Zenodo page,
+    Readme (via the harvest), F1000Research Methods (harvester read; no pixel size stated). Both images of a pair
+    share one 256x256 grid after the manual alignment, so the SIM camera pixel size would not apply to the fluorescence
+    tiles directly.'
