@@ -2,10 +2,11 @@ schema_version: '1.2'
 id: zenodo-17329675-nori-kidney-tubule-segmentation
 title: Normalized Raman Imaging (NoRI) Kidney Dataset
 short_name: Mouse kidney tubule masks, label-free Raman (NoRI)
-description: Stitched Normalized Raman Imaging (stimulated Raman scattering) images of mouse kidney sections with protein and lipid
-  concentration channels plus an immunofluorescence channel, in 100 images across three experimental groups (male vs female,
-  ischemia time course, regional anatomy). A "Segmentation Analysis" folder provides raw images, tubule instance masks, tubule-class
-  maps and manual versus automatic measurement tables.
+description: Stitched Normalized Raman Imaging (stimulated Raman scattering) images of mouse kidney sections
+  with protein and lipid concentration channels plus an immunofluorescence channel, in 100 images across
+  three experimental groups (male vs female, ischemia time course, regional anatomy). A "Segmentation
+  Analysis" folder provides raw images, tubule instance masks, tubule-class maps and manual versus automatic
+  measurement tables.
 landing_url: https://zenodo.org/records/17329675
 doi: 10.5281/zenodo.17329675
 repository: Zenodo
@@ -36,11 +37,12 @@ imaging:
     x: 414
     y: 414
     z: null
-  channels: 3
+  channels: 6
   organism:
   - Mus musculus
-  sample: Formaldehyde-fixed mouse kidney vibratome sections imaged on an Olympus FV3000 (60x 1.2 NA water objective) by stimulated
-    Raman scattering (protein and lipid channels) and immunofluorescence (endomucin plus group-specific markers)
+  sample: Formaldehyde-fixed mouse kidney vibratome sections imaged on an Olympus FV3000 (60x 1.2 NA water
+    objective) by stimulated Raman scattering (protein and lipid channels) and immunofluorescence (endomucin
+    plus group-specific markers)
   labels_stains:
   - endomucin
   - LTL
@@ -50,7 +52,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 7296100000
+  size_bytes: 7296116366
   n_items: 100
   access: open
   download_url: https://zenodo.org/records/17329675/files/nori_kidney_dataset.zip?download=1
@@ -59,9 +61,12 @@ annotations:
   present: true
   types:
   - instance-segmentation
+  - semantic-segmentation
   - classification
-  coverage: partial
-  format: TIFF label images (*_masks.tiff per tubule, *_tubule_class.tiff) with CSV measurement tables (gold and automatic) in per-image folders
+  coverage: dense
+  format: 'Per FoV folder images/Segmentation Analysis/<name>/: <name>_masks.tiff (6-channel CYX uint16:
+    tubule_gt and tubule_auto instance ids, binary nuclei, brushborder, lumen, glomeruli), <name>_tubule_class.tiff
+    (RGB class map) and <name>_gold.csv / <name>_automatic.csv per-tubule tables'
   source: mixed
 ml:
   tasks:
@@ -80,15 +85,140 @@ provenance:
   - https://zenodo.org/api/records/17329675
   - https://zenodo.org/records/17329675/files/nori_kidney_dataset.zip?download=1
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13270097/fullTextXML
-  confidence: 0.75
+  - https://zenodo.org/api/records/17329675/files/nori_kidney_dataset.zip/content
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T10:25:00Z'
-notes: 'Found via the 2026 Scientific Reports paper (Europe PMC full text read). Zip listing (529 files: 322 TIFF, 202 CSV) was read with
-  peek_archive: images/ holds large stitched images (some up to 539 MB), a "Kidney Anatomy" set and per-image "Segmentation Analysis"
-  folders with raw, masks, tubule_class and gold/automatic CSV. The paper states ground-truth tubule masks were made by manually
-  correcting SAM output (about 8 h per image from scratch, so source is mixed), but the zip does not obviously hold masks for all
-  100 images, so coverage is partial and the count of labelled images is unverified. Pixel size 414 nm is from the paper Methods.
-  Modality is label-free stimulated Raman scattering (no enum value) with a confocal immunofluorescence channel.'
+  last_checked: '2026-10-09T11:37:18Z'
+notes: 'Found via the 2026 Scientific Reports paper (Europe PMC full text read). Pixel size 414 nm is
+  from the paper Methods (headers carry no calibration). Modality is label-free stimulated Raman scattering
+  (no enum value) with confocal immunofluorescence channels. enricher: all 100 FoV folders hold raw, masks,
+  tubule_class, gold and automatic files (coverage dense, was partial). Source mixed: tubule_gt = SAM
+  output corrected by a domain expert (proofread); tubule_auto, nuclei, lumen (ilastik), brush border
+  (Otsu) and tubule classes (ilastik object classifier) are automatic (paper Methods). channels 6 (was
+  3): protein, lipid, endomucin, LTL, uromodulin, AQP2 per the TIFF description. Kidney Anatomy (19 tif)
+  and 3 Fused_S*.tiff in images/ have no masks.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "nori_kidney_dataset.zip                   7.3 GB, 529 members\n  README.md\n  csvs/       \
+      \   Image Key.xlsx, Master Spreadsheet NoRI Kidney Results.xlsx, glomeruli.csv, injured_areas.csv\n\
+      \  images/\n    Fused_S4.tiff, Fused_S7_1.tiff, Fused_S7_2.tiff     large stitched images (no masks)\n\
+      \    Kidney Anatomy/                                    19 .tif (no masks)\n    Segmentation Analysis/\
+      \                             100 FoV folders, 5 files each\n      C10_Day1_MAP1/\n        C10_Day1_MAP1_raw.tiff\
+      \            46 MB\n        C10_Day1_MAP1_masks.tiff          0.6 MB\n        C10_Day1_MAP1_tubule_class.tiff\
+      \   0.1 MB\n        C10_Day1_MAP1_gold.csv\n        C10_Day1_MAP1_automatic.csv\n      C1_Day2_MAP1/\
+      \ ... CRC11_MAP1/ ... Fused_S1/ ... IRI11_MAP1/ ..."
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/17329675/files/nori_kidney_dataset.zip?download=1::images/Segmentation
+      Analysis/C10_Day1_MAP1/C10_Day1_MAP1_raw.tiff
+    - https://zenodo.org/records/17329675/files/nori_kidney_dataset.zip?download=1::images/Segmentation
+      Analysis/C10_Day1_MAP1/C10_Day1_MAP1_masks.tiff
+    - https://zenodo.org/records/17329675/files/nori_kidney_dataset.zip?download=1::images/Segmentation
+      Analysis/C10_Day1_MAP1/C10_Day1_MAP1_tubule_class.tiff
+    - https://zenodo.org/records/17329675/files/nori_kidney_dataset.zip?download=1::images/Segmentation
+      Analysis/C10_Day1_MAP1/C10_Day1_MAP1_gold.csv
+    size_bytes: 47010341
+    description: 'One field of view (C10_Day1_MAP1): 6-channel NoRI/IF image, 6-channel mask stack, tubule
+      class map and the human-corrected per-tubule table.'
+  arrays:
+  - role: raw
+    path_pattern: nori_kidney_dataset.zip/images/Segmentation Analysis/*/*_raw.tiff
+    format: tiff
+    axes: cyx
+    shape:
+    - 6
+    - 1970
+    - 2942
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 7180
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Channels (TIFF description JSON, axes CYX): protein, lipid, endomucin, LTL, uromodulin,
+      AQP2. Raman channels are calibrated concentrations (16-bit); IF channels 12-bit (max 4095 in the
+      sample).'
+  - role: label
+    path_pattern: nori_kidney_dataset.zip/images/Segmentation Analysis/*/*_masks.tiff
+    format: tiff
+    axes: cyx
+    shape:
+    - 6
+    - 1970
+    - 2942
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 241
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: tubule_gt (human-corrected tubule instances)
+    - id: 1
+      name: tubule_auto (automatic tubule instances, ilastik-cleaned)
+    - id: 2
+      name: nuclei (binary)
+    - id: 3
+      name: brushborder (binary)
+    - id: 4
+      name: lumen (binary)
+    - id: 5
+      name: glomeruli (binary)
+    alignment: same-grid
+    alignment_notes: classes ids are channel indices. Channels 0-1 hold instance ids (234 / 241 in the
+      sample), channels 2-5 are {0,1}. Same shape as <name>_raw.tiff in the same folder.
+  - role: label
+    path_pattern: nori_kidney_dataset.zip/images/Segmentation Analysis/*/*_tubule_class.tiff
+    format: tiff
+    axes: yxs
+    shape:
+    - 1970
+    - 2942
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    encoding: rgb-colors
+    classes:
+    - id: '[255,0,0]'
+      name: LTL+ tubule
+    - id: '[0,255,0]'
+      name: Umod+ tubule
+    - id: '[0,0,255]'
+      name: AQP2+ tubule
+    - id: '[255,255,255]'
+      name: unknown tubule class
+    - id: '[0,0,0]'
+      name: background
+    alignment: same-grid
+    alignment_notes: RGB class map (README); sample has exactly these 5 colours. Same yx as raw.
+  - role: label
+    path_pattern: nori_kidney_dataset.zip/images/Segmentation Analysis/*/*_gold.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: other
+    alignment: not-applicable
+    alignment_notes: Per-tubule measurements on the human-corrected segmentation (README); *_automatic.csv
+      is the same on the automatic one.
+  notes: 'Listing: tools/listing.py --expand-zips (529 members, exact sizes, 7,296,116,366 B). Sample:
+    C10_Day1_MAP1 raw (46.1 MB) and masks (0.55 MB) via sample.py, plus a script re-reading raw, masks
+    and tubule_class (tifffile) for channel metadata and per-channel ids; value_range from that one FoV
+    (full array). Shapes vary between FoVs (folder sizes 27-96 MB). Headers carry no physical calibration
+    (resolution 1/1, no unit); pixel size 414 nm from paper Methods. normalization unknown: Raman channels
+    are NoRI concentration maps (paper), IF channels raw 12-bit. Download: the single zip is direct (Zenodo,
+    range requests).'
