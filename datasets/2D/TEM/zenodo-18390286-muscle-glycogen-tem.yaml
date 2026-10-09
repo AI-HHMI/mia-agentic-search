@@ -12,7 +12,8 @@ accession: null
 authors:
 - Joachim Nielsen
 publications:
-- title: A semantic segmentation model to predict subcellular glycogen localization using transmission electron microscopy images
+- title: A semantic segmentation model to predict subcellular glycogen localization using transmission electron
+    microscopy images
   doi: 10.1371/journal.pone.0351502
   url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13274865/fullTextXML
 date_published: '2026-02-04'
@@ -27,15 +28,15 @@ imaging:
   channels: 1
   organism:
   - Homo sapiens
-  sample: Longitudinal 60 nm ultrathin sections of human vastus lateralis biopsies (freeze-fixed glutaraldehyde, uranyl
-    acetate and lead citrate), imaged on a Philips CM100 with an Olympus Veleta camera at 66,000x
+  sample: Longitudinal 60 nm ultrathin sections of human vastus lateralis biopsies (freeze-fixed glutaraldehyde,
+    uranyl acetate and lead citrate), imaged on a Philips CM100 with an Olympus Veleta camera at 66,000x
   labels_stains:
   - uranyl acetate
   - lead citrate
 data:
   formats:
   - tiff
-  size_bytes: 4500000000
+  size_bytes: 4488648457
   n_items: 1135
   access: open
   download_url: null
@@ -67,11 +68,87 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T04:50:00Z'
-notes: 'peek_archive of the four zips: region.zip 859 TIFF + 859 .seg.nrrd (training, partially annotated for 5 region
-  labels), glycogen.zip 100 TIFF + 100 .seg.nrrd (subset of the region images, partially annotated glycogen vs
-  non-glycogen), test.zip 92 TIFF + 92 .seg.nrrd (fully annotated test images), test_ss.zip 84 TIFF without masks
-  (subsarcolemmal test images, validated by manual point counting). Each image is about 4.2 MB. n_items = 859 + 100 +
-  92 + 84 = 1135 and the glycogen set overlaps the region set. Pixel size 0.77 nm from the paper Methods. Record also
-  contains two PyTorch weight files (region_model.pth, glycogen_model.pth). size_bytes is the Zenodo total (about 4.5 GB),
-  rounded. Zenodo page links the bioRxiv preprint; the PLOS ONE version was read for Methods.'
+  last_checked: '2026-10-09T05:55:00Z'
+notes: 'peek_archive of the four zips: region.zip 859 TIFF + 859 .seg.nrrd (training, partially annotated for 5
+  region labels), glycogen.zip 100 TIFF + 100 .seg.nrrd (subset of the region images, partially annotated glycogen
+  vs non-glycogen), test.zip 92 TIFF + 92 .seg.nrrd (fully annotated test images), test_ss.zip 84 TIFF without masks
+  (subsarcolemmal test images, validated by manual point counting). Each image is about 4.2 MB. n_items = 859 +
+  100 + 92 + 84 = 1135 and the glycogen set overlaps the region set. Pixel size 0.77 nm from the paper Methods.
+  Record also contains two PyTorch weight files (region_model.pth, glycogen_model.pth). enricher: size_bytes exact
+  from the Zenodo listing (was rounded). Zenodo page links the bioRxiv preprint; the PLOS ONE version was read for
+  Methods.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "zenodo-18390286/  6 files, 4.49 GB\n  region.zip    region/   859 .TIF + 859 .seg.nrrd  (training, region\
+      \ labels)\n  glycogen.zip  glycogen/ 100 .TIF + 100 .seg.nrrd  (training, glycogen vs background)\n  test.zip\
+      \      test/      92 .TIF +  92 .seg.nrrd  (test)\n  test_ss.zip   test_ss/   84 .TIF, no masks\n  region_model.pth,\
+      \ glycogen_model.pth  (PyTorch weights; not opened)\n  <set>/<x>_NNNN.TIF <-> <set>/<x>_NNNN.seg.nrrd, e.g.\
+      \ test/g_0004\n"
+    n_files: 2186
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/18390286/files/test.zip::test/g_0004.TIF
+    - https://zenodo.org/records/18390286/files/test.zip::test/g_0004.seg.nrrd
+    size_bytes: 4237598
+    description: One test TEM image and its 3D Slicer segmentation.
+  arrays:
+  - role: raw
+    path_pattern: '*.zip::*/*.TIF'
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    lossy: false
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Single-page 8-bit TEM images (upper-case .TIF extension).
+  - role: label
+    path_pattern: '*.zip::*/*.seg.nrrd'
+    format: other
+    axes: null
+    shape:
+    - 2048
+    - 2048
+    - 1
+    shape_varies: false
+    dtype: uint8
+    compression: gzip
+    lossy: false
+    value_range: null
+    encoding: semantic-ids
+    classes:
+    - id: 1
+      name: A-band
+    - id: 2
+      name: I-band
+    - id: 3
+      name: intermyofibrillar
+    - id: 4
+      name: myofibril
+    - id: 5
+      name: sarco
+    - id: 6
+      name: mitochondria
+    - id: 7
+      name: z-disc
+    alignment: same-grid
+    alignment_notes: 3D Slicer .seg.nrrd (NRRD0004, gzip, unsigned char, sizes 2048 2048 1, identity space directions)
+      with the same stem as the TIF. Classes listed are from test/g_0004 (7 segments); glycogen/ files hold 1 =
+      Glycogen, 2 = Background. 0 = unlabelled (partial annotation).
+  notes: 'Zenodo listing with zips expanded: 6 files, 4,488,648,457 B (= size_bytes, confirmed), 2186 members. Probed
+    test/g_0004.TIF (2048x2048 uint8, uncompressed) and read the text headers of test/g_0004.seg.nrrd and glycogen/b_0153.seg.nrrd
+    (peek_archive --cat): label value / segment name pairs as in classes. Sampled g_0004.TIF: 0-255, mean 155 (one
+    sample; hint possibly contrast-stretched, undocumented). The NRRD label data were not decoded (probe.py and
+    sample.py do not read NRRD), so label values are from the headers only. Zips and members are direct Zenodo links
+    (usable, range requests); four zips, no single archive, so download_url stays null. Pixel size 0.77 nm from
+    the paper Methods (record).'
