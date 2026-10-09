@@ -58,8 +58,8 @@ annotations:
   types:
   - bounding-box
   coverage: dense
-  format: object detection labels per image (YOLO-style layout implied by classes.txt and the paper's YOLO/RT-DETR training),
-    9 classes
+  format: YOLO .txt per image (labels/<split>/<patient-uuid>/<image-uuid>.txt; class x_center y_center width height, normalized),
+    9 classes in classes.txt
   source: mixed
 ml:
   tasks:
@@ -78,16 +78,87 @@ provenance:
   - https://zenodo.org/api/records/8358829/files/Plasmodium-v1.zip.001/content
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1128%2Fspectrum.01440-23%22&format=json&resultType=core&pageSize=3
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10846087/fullTextXML
-  confidence: 0.7
+  confidence: 0.85
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-09T12:05:00Z'
-notes: 'Files: Plasmodium-v1.zip split into parts .001-.005 (about 44 GB) and models.zip (0.4 GB). Only the start of part
-  .001 could be read (split zip, no central directory): it shows Plasmodium-v1/classes.txt and images/test/<patient-uuid>/<uuid>.jpg;
-  the label files were not seen, so the label format (YOLO assumed) and annotations_verified are unconfirmed. Counts from
-  the paper: 24,720 training/validation images (475 smears, 2,002,597 labels, 80/20 split) plus 4,508 test images (170 smears,
-  358,825 labels). Labelling: manual then automatic with manual correction in CVAT (hence mixed). Cameras: Leica FlexCam C1
-  / DF450C on DM2000 / DM2500. Pixel size not stated. Test-set smears come from six hospitals; labels for the test set were
-  not checked. Size is the sum of the six Zenodo files.'
+  annotations_verified: true
+  last_checked: '2026-10-09T11:55:00Z'
+notes: 'Files: Plasmodium-v1.zip split into parts .001-.005 (about 44 GB) and models.zip (0.4 GB). Counts from the paper:
+  24,720 training/validation images (475 smears, 2,002,597 labels, 80/20 split) plus 4,508 test images (170 smears, 358,825
+  labels). Labelling: manual then automatic with manual correction in CVAT (hence mixed). Cameras: Leica FlexCam C1 / DF450C
+  on DM2000 / DM2500. Pixel size not stated. Test-set smears come from six hospitals; labels for the test set were not checked.
+  Size is the sum of the six Zenodo files. enricher: YOLO .txt labels confirmed from the split zip central directory and one
+  label file (annotations_verified was false). organisms: human blood smears; parasite species are box classes in the labels,
+  not separate folders.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "zenodo 8358829/  6 files, 44,817,331,552 B\n  Plasmodium-v1.zip.001 ... .004   10,485,760,000 B each  (one zip\
+      \ split by bytes;\n  Plasmodium-v1.zip.005             2,462,723,333 B   central directory in .005)\n  models.zip  \
+      \                        411,568,219 B   (models/{rt-detr,yolov5,yolov8}/model.pt)\n  Plasmodium-v1/  (69,115 entries,\
+      \ 44.7 GB uncompressed)\n    classes.txt, image_list.xlsx\n    images/train/<patient-uuid>/*.jpg        20,830 (404\
+      \ folders, 29.0 GB)\n    images/validation/<patient-uuid>/*.jpg    3,890 (73 folders, 5.4 GB)\n    images/test/<patient-uuid>/*.jpg\
+      \          4,508 (170 folders, 6.1 GB)\n    images/test-zoom/<patient-uuid>/*.jpg     4,508 (zoomed versions of test,\
+      \ 4.1 GB)\n    labels/{train,validation,test,test-zoom}/<patient-uuid>/*.txt   one per image\n"
+    n_files: 6
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: Plasmodium-v1.zip::Plasmodium-v1/images/*/*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1920
+    - 2560
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB photographs; sizes seen 1920x2560, 2160x3840, 1080x1920 (and 1439x2559 in test-zoom).
+  - role: label
+    path_pattern: Plasmodium-v1.zip::Plasmodium-v1/labels/*/*/*.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: WBC
+    - id: 1
+      name: RBC
+    - id: 2
+      name: Platelets
+    - id: 3
+      name: P. falciparum
+    - id: 4
+      name: P. ovale
+    - id: 5
+      name: P. malariae
+    - id: 6
+      name: P. vivax
+    - id: 7
+      name: Babesia
+    - id: 8
+      name: Trypanosoma brucei
+    alignment: same-grid
+    alignment_notes: 'labels/<split>/<patient>/<uuid>.txt pairs with images/<split>/<patient>/<uuid>.jpg. YOLO lines: class
+      x_center y_center width height, normalized to [0,1]. Class ids are the line order of classes.txt (0-based, YOLO convention).'
+  notes: 'Zenodo listing complete (6 files, exact sizes). Plasmodium-v1.zip is one ZIP64 archive split by bytes into .001-.005
+    (a single disk; offsets run across the parts), so tools/peek_archive.py and zip-member specs cannot read it. Its 13.6
+    MB central directory (in .005) was read with a short requests script: 69,115 entries. Read in full: classes.txt and one
+    label .txt. One test JPEG (1.03 MB) decoded: 1920x2560x3 uint8, [0,255], from one sample only; 12 more JPEG headers (64
+    KB each) give the sizes listed. No sample: TensorSwitch cannot fetch members of a split zip, and no direct per-file links
+    exist (Zenodo lists only the parts). Pixel size not found; checked: JPEG headers (72 dpi default only), Zenodo description,
+    paper full text (cameras and x1000 magnification only). test-zoom is not explained in the docs.'
