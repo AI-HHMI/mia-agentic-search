@@ -3,8 +3,8 @@ id: zenodo-3773097-artefact-lisa-wsi-artefacts
 title: Artefact segmentation in digital pathology whole-slide images
 short_name: Slide artefact segmentation (H&E/IHC WSI)
 description: 22 whole-slide images (H&E or IHC stained) with RGB renderings at 1.25x and 2.5x magnification, tissue/background
-  masks and masks of slide artefacts (tears, folds, ink, knife damage, blur), split into train, validation and test
-  slides, released with the Snow Supervision paper on imperfect annotations.
+  masks and masks of slide artefacts (tears, folds, ink, knife damage, blur), split into train, validation and test slides,
+  released with the Snow Supervision paper on imperfect annotations.
 landing_url: https://zenodo.org/records/3773097
 doi: 10.5281/zenodo.3773097
 repository: Zenodo
@@ -21,7 +21,7 @@ imaging:
   - histology-WSI
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism: []
   sample: Colorectal cancer tissue (train), gastroesophageal junction lesion and mouth cancer (validation/test)
   labels_stains:
@@ -31,7 +31,7 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: 2184400000
+  size_bytes: 2179994458
   n_items: 22
   access: open
   download_url: https://zenodo.org/records/3773097/files/artefact-lisa.zip
@@ -41,7 +41,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: partial
-  format: PNG masks per slide (*_mask.png artefact annotations, *_bg.png tissue/background), plus patch-level artefact table for validation tiles
+  format: PNG masks per slide (*_mask.png artefact annotations, *_bg.png tissue/background), plus patch-level artefact table
+    for validation tiles
   source: manual
 ml:
   tasks:
@@ -50,8 +51,8 @@ ml:
   benchmark: null
   baseline_code_url: null
 license:
-  spdx: CC-BY-4.0
-  url: https://creativecommons.org/licenses/by/4.0/
+  spdx: CC-BY-NC-4.0
+  url: http://creativecommons.org/licenses/by-nc/4.0/
 provenance:
   discovered_by: harvest-repositories
   discovered_at: '2026-10-09T03:50:00Z'
@@ -59,15 +60,139 @@ provenance:
   - https://zenodo.org/api/records/3773097
   - https://zenodo.org/records/3773097/files/artefact-lisa.zip
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.21203%2Frs.3.rs-116512%2Fv1%22&format=json&resultType=core&pageSize=3
-  confidence: 0.75
+  confidence: 0.65
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T03:55:00Z'
-notes: 'Zip listing (peek_archive, 176 files, 2.18 GB) shows per-slide *-1.25_rgb.png / *-2.5_rgb.png, *_bg.png and *_mask.png
-  in train/ validation/ test/ plus validation_tiles; DATASET.txt states 22 WSIs and that most artefacts are not annotated
-  (918 annotated in train), hence coverage partial. Pixel size not stated in DATASET.txt, record or paper abstract;
-  the paper is not open access (Europe PMC returned only the abstract), so voxel size, scanner and annotation procedure
-  details are unchecked. Zenodo metadata and the in-archive LICENSE file give CC-BY-4.0. Size is the uncompressed
-  total from the zip listing.'
+  last_checked: '2026-10-09T06:30:00Z'
+notes: 'Zip (176 files): per-slide *-1.25_rgb.png / *-2.5_rgb.png, *_bg.png and *_mask.png in train/ (18 WSIs) validation/
+  (3) test/ (1), plus validation_tiles/ (rgb + bg, patch-level artefact table in DATASET.txt). Most artefacts are not annotated
+  (918 in train), hence coverage partial; annotations by a biomedical engineer from expert examples (Zenodo description).
+  Pixel size not stated (only 1.25x/2.5x magnification). Organism not stated (human tumour tissue presumably, unstated). enricher:
+  LICENSE CONFLICT - Zenodo metadata says CC-BY-4.0, the LICENSE file inside the zip says CC-BY-NC-4.0; spdx set to the in-archive
+  CC-BY-NC-4.0 (was CC-BY-4.0), needs human review. enricher: size_bytes = exact zip size from the file listing (was uncompressed
+  estimate); channels 3 from sample.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './                                    1 file      2.2 GB  .zip (artefact-lisa.zip)
+
+      zip contents:
+
+      artefact-lisa.zip/                     2 files     2.4 KB  DATASET.txt, LICENSE
+
+      artefact-lisa.zip/train/             108 files     1.7 GB  .png  (train01..18 x {1.25,2.5} x {rgb,bg,mask})
+
+      artefact-lisa.zip/validation/         18 files   305.3 MB  .png  (validation01..03 x {1.25,2.5} x {rgb,bg,mask})
+
+      artefact-lisa.zip/test/                6 files   137.0 MB  .png  (test01 x {1.25,2.5} x {rgb,bg,mask})
+
+      artefact-lisa.zip/validation_tiles/   42 files    19.0 MB  .png  (00..20 x {rgb,bg})
+
+      (sizes inside the zip are uncompressed)'
+    n_files: 176
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/3773097/files/artefact-lisa.zip::train/train01-1.25_rgb.png
+    - https://zenodo.org/records/3773097/files/artefact-lisa.zip::train/train01-1.25_mask.png
+    - https://zenodo.org/records/3773097/files/artefact-lisa.zip::train/train01-1.25_bg.png
+    size_bytes: 18529671
+    description: 'training slide 01 at 1.25x: RGB image, artefact mask and tissue/background mask'
+  arrays:
+  - role: raw
+    path_pattern: artefact-lisa.zip/{train,validation,test}/*_rgb.png
+    format: png
+    axes: yxs
+    shape:
+    - 3312
+    - 4560
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Whole slides rendered at 1.25x (e.g. 3312x4560, 3456x7068) and 2.5x (twice the size, e.g. 6624x9120).
+  - role: label
+    path_pattern: artefact-lisa.zip/{train,validation,test}/*_mask.png
+    format: png
+    axes: yx
+    shape:
+    - 3312
+    - 4560
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: <slide>-<mag>_rgb.png pairs with <slide>-<mag>_mask.png and <slide>-<mag>_bg.png (same
+      shape per magnification). Artefact mask values {0,255}; only some artefacts are annotated (sparse positives).'
+  - role: label
+    path_pattern: artefact-lisa.zip/{train,validation,test}/*_bg.png
+    format: png
+    axes: yx
+    shape:
+    - 3312
+    - 4560
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 1
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: Tissue/background mask, values {0,1}; which value is tissue is not documented.
+  - role: raw
+    path_pattern: artefact-lisa.zip/validation_tiles/*_rgb.png
+    format: png
+    axes: yxs
+    shape:
+    - 420
+    - 420
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 245
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 21 patches of varying size from the validation slides at 1.25x; patch-level artefact labels only in the
+      DATASET.txt table.
+  - role: label
+    path_pattern: artefact-lisa.zip/validation_tiles/*_bg.png
+    format: png
+    axes: yx
+    shape:
+    - 420
+    - 420
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 1
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: NN_rgb.png with NN_bg.png (same shape in the sample).'
+  notes: 'Listing: tools/listing.py on the Zenodo record with --expand-zips: 1 zip, 176 members, 2,179,994,458 bytes (file-listing,
+    complete). Probed train01 (1.25x 3312x4560, 2.5x 6624x9120; RGB PNG + grey bg/mask PNGs, no pixel-size chunk) and test01-1.25
+    (3456x7068x3). Sampled (values from single files only): train01-1.25_rgb 0-255, _mask {0: 15091366, 255: 11354}, _bg {0,1};
+    validation_tiles/00 rgb 0-245, bg {0,1}. Pixel size not found; checked: PNG headers, Zenodo API record and description,
+    DATASET.txt, LICENSE, Europe PMC (preprint rs-116512 not open access, abstract only), Research Square page (no text retrieved),
+    web search. License conflict: Zenodo says CC-BY-4.0, in-zip LICENSE says CC-BY-NC-4.0. data.download_url is the one direct
+    zip (usable, range requests).'
