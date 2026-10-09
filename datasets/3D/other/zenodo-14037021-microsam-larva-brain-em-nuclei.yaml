@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: zenodo-14037021-microsam-larva-brain-em-nuclei
 title: microSAM - 3d user study data
 short_name: Fly larva brain EM nucleus labels (micro-SAM)
-description: Two small volume-EM crops from a fruit fly larva brain for nucleus segmentation - an annotation volume (TIFF) with
-  three annotation results (ilastik carving, default micro-SAM, fine-tuned micro-SAM) and a separate HDF5 crop with raw data and
-  nucleus labels used to fine-tune micro-SAM. Generated for the micro-SAM 3D annotation user study.
+description: Two small volume-EM crops from a fruit fly larva brain for nucleus segmentation - an annotation
+  volume (TIFF) with three annotation results (ilastik carving, default micro-SAM, fine-tuned micro-SAM)
+  and a separate HDF5 crop with raw data and nucleus labels used to fine-tune micro-SAM. Generated for
+  the micro-SAM 3D annotation user study.
 landing_url: https://zenodo.org/records/14037021
 doi: 10.5281/zenodo.14037021
 repository: Zenodo
@@ -30,17 +31,18 @@ data:
   formats:
   - tiff
   - hdf5
-  size_bytes: 16294233
+  size_bytes: 16295324
   n_items: 2
   access: open
-  download_url: https://zenodo.org/records/14037021/files/3d-user-study-data.zip?download=1
+  download_url: https://zenodo.org/records/14037021/files/3d-user-study-data.zip
   download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
   coverage: dense
-  format: TIFF label volumes for three annotation methods; HDF5 train_data.h5 with raw and labels/nuclei
+  format: TIFF instance label volumes (annotations/annotations_{ilastik_carving,default_sam,finetuned_sam}.tif)
+    for annotation_volume.tif; HDF5 train_data.h5 with raw and labels/nuclei
   source: mixed
 ml:
   tasks:
@@ -65,8 +67,113 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T11:05:00Z'
-notes: 'Found while following the Nature Methods micro-SAM paper (Europe PMC full text read: user study 2, nucleus segmentation in an internal
-  volume EM dataset of the fruit fly larva brain). The zip was listed with peek_archive (4 TIFF and 1 HDF5, 16 MB). This is a very small
-  dataset (two crops); the annotations are user-study results from interactive tools, so label source is mixed. Voxel size, EM technique
-  and crop shapes are not stated in the README or paper main text. Companion of the 2d user study record.'
+  last_checked: '2026-10-09T13:20:00Z'
+notes: 'Found while following the Nature Methods micro-SAM paper (Europe PMC full text read: user study
+  2, nucleus segmentation in an internal volume EM dataset of the fruit fly larva brain). The zip was
+  listed with peek_archive (4 TIFF and 1 HDF5, 16 MB). This is a very small dataset (two crops); the annotations
+  are user-study results from interactive tools, so label source is mixed. Voxel size, EM technique and
+  crop shapes are not stated in the README or paper main text. Companion of the 2d user study record.
+  enricher: modality stays other: paper says volume EM, technique not stated. Label sources: annotations/*.tif
+  are interactive user-study results (ilastik carving, micro-SAM), train_data.h5 labels/nuclei are the
+  ground truth used for fine-tuning.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  2 files  16.3 MB  (README.md, 3d-user-study-data.zip)\n3d-user-study-data.zip/\n  annotation_volume.tif\
+      \                      EM crop, uint8 32x512x512\n  train_data.h5                              raw\
+      \ (uint8) + labels/nuclei (uint32), 32x512x512\n  annotations/annotations_ilastik_carving.tif\n\
+      \  annotations/annotations_default_sam.tif\n  annotations/annotations_finetuned_sam.tif\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/14037021/files/3d-user-study-data.zip::annotation_volume.tif
+    - https://zenodo.org/records/14037021/files/3d-user-study-data.zip::annotations/annotations_finetuned_sam.tif
+    size_bytes: 7833370
+    description: annotation_volume.tif (EM crop) and its fine-tuned micro-SAM nucleus annotation, read
+      as zip members; train_data.h5 (7,977,996 B) is the second raw+label unit.
+  arrays:
+  - role: raw
+    path_pattern: 3d-user-study-data.zip::annotation_volume.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 32
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Plain 32-page TIFF; the README calls it a small EM volume crop, so pages are z.
+  - role: label
+    path_pattern: 3d-user-study-data.zip::annotations/annotations_*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 32
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint32
+    compression: deflate
+    value_range:
+    - 0
+    - 100
+    encoding: instance-ids
+    classes:
+    - id: null
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: Three alternative nucleus annotations (ilastik carving, default micro-SAM, fine-tuned
+      micro-SAM) of annotation_volume.tif; same 32x512x512 shape.
+  - role: raw
+    path_pattern: 3d-user-study-data.zip::train_data.h5 (raw)
+    format: hdf5
+    axes: null
+    shape:
+    - 32
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: gzip
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Separate EM crop used to fine-tune micro-SAM (README).
+  - role: label
+    path_pattern: 3d-user-study-data.zip::train_data.h5 (labels/nuclei)
+    format: hdf5
+    axes: null
+    shape:
+    - 32
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint32
+    compression: gzip
+    value_range:
+    - 0
+    - 214
+    encoding: instance-ids
+    classes:
+    - id: null
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: labels/nuclei is in the same file as raw, identical shape.
+  notes: 'Listing: Zenodo API + zip central directory, 2 files, 16,295,324 B (exact); zip has 5 members.
+    The zip (16.3 MB) was downloaded whole and read: annotation_volume.tif plain 32-page TIFF (series
+    axes QYX), uint8, deflate, values 0-255, no calibration (resolution 1/1); annotations/*.tif uint32,
+    deflate, 0-45 (default SAM, 46 values), 0-100 (finetuned SAM, 61 values), 0-36 (ilastik, 37 values);
+    train_data.h5: raw uint8 32x512x512 gzip chunks 4x64x128, labels/nuclei uint32 32x512x512 gzip, 49
+    distinct values up to 214; no HDF5 attributes. TIFF pages taken as z from the README (EM volume crop);
+    HDF5 axes not stated (left null). Voxel size not found; checked: TIFF tags, HDF5 attributes, Zenodo
+    README, paper full text (internal dataset, no resolution), user-study-v3 repo.'
