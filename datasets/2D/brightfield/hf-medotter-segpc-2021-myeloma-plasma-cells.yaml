@@ -2,10 +2,11 @@ schema_version: '1.2'
 id: hf-medotter-segpc-2021-myeloma-plasma-cells
 title: SegPC-2021 - Segmentation of Multiple Myeloma Plasma Cells
 short_name: Myeloma plasma cell segmentation (brightfield)
-description: 497 brightfield microscopy images of Jenner-Giemsa stained bone-marrow aspirate slides from multiple myeloma
-  patients (stain-colour normalised, 2040x1536 Olympus or 2560x1920 Nikon), from the ISBI 2021 SegPC challenge. Each image has
-  a semantic mask (background, cytoplasm, nucleus) and an instance mask for the designated cells of interest. This Hugging Face mirror
-  holds the 298 train and 199 validation images; the challenge test split with withheld ground truth is not included.
+description: 497 brightfield microscopy images of Jenner-Giemsa stained bone-marrow aspirate slides from multiple
+  myeloma patients (stain-colour normalised, 2040x1536 Olympus or 2560x1920 Nikon), from the ISBI 2021 SegPC challenge.
+  Each image has a semantic mask (background, cytoplasm, nucleus) and an instance mask for the designated cells
+  of interest. This Hugging Face mirror holds the 298 train and 199 validation images; the challenge test split
+  with withheld ground truth is not included.
 landing_url: https://huggingface.co/datasets/MedOtter/SegPC-2021
 doi: null
 repository: HuggingFace
@@ -43,7 +44,8 @@ annotations:
   - semantic-segmentation
   - instance-segmentation
   coverage: partial
-  format: 'Parquet columns: mask (0 background, 1 cytoplasm, 2 nucleus) and instance_mask (one id per cell of interest) as PNG images'
+  format: 'Parquet columns: mask (0 background, 1 cytoplasm, 2 nucleus) and instance_mask (one id per cell of interest)
+    as PNG images'
   source: mixed
 ml:
   tasks:
@@ -68,5 +70,91 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T22:50:00Z'
-notes: 'Third-party Hugging Face mirror of the ISBI 2021 challenge data; the card cites the originals (IEEE DataPort DOI 10.21227/7np1-2q42, Kaggle sbilab/segpc2021dataset), which were not fetched, so the DOI is left null. The mirror turns the one-BMP-per-cell masks into per-image semantic and instance masks. Ground truth covers only designated cells of interest (coverage partial); the winning-team paper (arXiv 2111.05125) calls the labels semi-automatic and noisy. The challenge paper is not open access (abstract only): 775 images released, the mirror has 497 with ground truth. The card warns the Nikon images overlap MiMM_SBILab. Pixel size is not stated in the card or abstract. Parquet is not a listed format, hence other.'
+  last_checked: '2026-10-09T00:49:58Z'
+notes: 'Third-party Hugging Face mirror of the ISBI 2021 challenge data; the card cites the originals (IEEE DataPort
+  DOI 10.21227/7np1-2q42, Kaggle sbilab/segpc2021dataset), which were not fetched, so the DOI is left null. The
+  mirror turns the one-BMP-per-cell masks into per-image semantic and instance masks. Ground truth covers only designated
+  cells of interest (coverage partial); the winning-team paper (arXiv 2111.05125) calls the labels semi-automatic
+  and noisy. The challenge paper is not open access (abstract only): 775 images released, the mirror has 497 with
+  ground truth. The card warns the Nikon images overlap MiMM_SBILab. Pixel size is not stated in the card or abstract.
+  Parquet is not a listed format, hence other.'
+technical:
+  method: metadata-only
+  size_source: file-listing
+  layout:
+    tree: "MedOtter/SegPC-2021 (Hugging Face), 14 files, 2,305,652,168 B\n  README.md, .gitattributes\n  data/train-0000[0-6]-of-00007.parquet\
+      \       7 shards, 180-235 MB, 298 rows\n  data/validation-0000[0-4]-of-00005.parquet  5 shards, 168-202 MB,\
+      \ 199 rows\n  columns: image_id, split, image, mask, instance_mask, overlay (Image), num_instances,\n    \
+      \       height, width, is_mimm_subset, acquisition"
+    n_files: 14
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/MedOtter/SegPC-2021/resolve/main/data/train-00000-of-00007.parquet
+    size_bytes: 199803455
+    description: Smallest self-contained unit is one parquet shard (~43 rows, image + masks in each row); no per-image
+      files exist.
+  arrays:
+  - role: raw
+    path_pattern: data/*.parquet (image)
+    format: other
+    axes: yxs
+    shape:
+    - 1920
+    - 2560
+    - 3
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Image column of each parquet row; height/width columns give 1920x2560 for the first train row
+      (Nikon); Olympus images are 2040x1536 per the card. Embedded encoding not read (no parquet reader allowed).
+  - role: label
+    path_pattern: data/*.parquet (mask)
+    format: other
+    axes: yx
+    shape:
+    - 1920
+    - 2560
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: none
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: cytoplasm
+    - id: 2
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: mask column, same height/width as image per the datasets-server first row; class ids from the
+      dataset card.
+  - role: label
+    path_pattern: data/*.parquet (instance_mask)
+    format: other
+    axes: yx
+    shape:
+    - 1920
+    - 2560
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: none
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'instance_mask column, one id per cell of interest (num_instances column: 5 in the first train
+      row).'
+  notes: 'Metadata-only: the data are 12 parquet shards with images embedded per row; no allowed tool reads parquet,
+    so no image bytes were decoded. Schema, split row counts (train 298, validation 199) and the first row (1920x2560,
+    Nikon, 5 instances, is_mimm_subset true) come from the Hugging Face datasets-server API (/info, /first-rows);
+    its asset previews are re-encoded JPEGs, so they were not sampled. Size from the HF file listing (exact). Voxel
+    size not found; checked: dataset card, datasets-server schema (no pixel-size column), challenge paper abstract
+    (not open access); the IEEE DataPort / Kaggle originals were not fetched. Parquet is not a format TensorSwitch
+    reads.'
