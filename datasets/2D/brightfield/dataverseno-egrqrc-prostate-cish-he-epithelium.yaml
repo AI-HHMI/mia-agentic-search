@@ -1,0 +1,133 @@
+schema_version: '1.2'
+id: dataverseno-egrqrc-prostate-cish-he-epithelium
+title: 'The Prostate_Cancer_CISH_HE_Epithelium_Segmentation dataset: prostate TMA cores stained for miRNA cISH, controls and
+  H&E with epithelium masks (DataverseNO)'
+short_name: Prostate TMA epithelium masks (cISH, H&E)
+description: High-resolution brightfield images of prostate tissue microarray cores from 70 patients (30 prostate cancer,
+  40 benign prostatic hyperplasia) stained by chromogenic in situ hybridization for eight miRNAs, U6 and scrambled controls,
+  and H&E, with one single-channel epithelium segmentation mask per image.
+landing_url: https://doi.org/10.18710/EGRQRC
+doi: 10.18710/EGRQRC
+repository: other
+accession: EGRQRC
+authors:
+- Henrik Sahlin Pettersen
+- Erik Nesje Wiik
+publications: []
+date_published: '2025-04-15'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: FFPE prostate tissue microarray cores (normal, Gleason 3 and Gleason 4 epithelium, BPH), 4 um sections
+  labels_stains:
+  - hematoxylin and eosin
+  - miRNA chromogenic ISH (8 miRNAs)
+  - U6
+  - scrambled probe
+data:
+  formats:
+  - jpeg
+  - png
+  size_bytes: 307898500943
+  n_items: 399
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: <name>_mask.png single-channel PNG next to each <name>.jpg; 0 background, 255 prostate epithelium (per readme)
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC0-1.0
+  url: https://creativecommons.org/publicdomain/zero/1.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-09T15:10:00Z'
+  evidence_urls:
+  - https://dataverse.no/api/datasets/:persistentId/?persistentId=doi:10.18710/EGRQRC
+  - https://dataverse.no/api/access/datafile/248394
+  - https://dataverse.no/api/access/datafile/246917
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-09T12:50:00Z'
+notes: '12 files, about 308 GB: one zip per stain (HE, 550A, 1246, 3614, 4326, 4632, 4742, 4754, 7850, U6, Scr; 19-58 GB each),
+  SPSS_database.zip and a readme. Only HE.zip was listed (zip central directory read by range requests): 399 jpg + 399 _mask.png
+  pairs (Cancer_Prostatectomy 200, Normal_TURP_BPH 119, Normal_Prostatectomy 80). n_items counts H&E pairs only; other stains
+  assumed to have the same layout per the readme. Readme: masks based on manual annotation by an expert pathologist with DeepLabV3
+  models used in the pipeline, hence source mixed. Pixel size not stated. No paper cited. Sibling dataset by the same authors
+  for colorectal tissue is a separate record.'
+technical:
+  method: header
+  size_source: page-stated
+  layout:
+    tree: "00Readme.txt              8,698 B\nSPSS_database.zip        42,155 B\nHE.zip           19,266,063,123 B   HE/Cancer/Cancer_Prostatectomy/\
+      \    200 .jpg + 200 _mask.png\n                                    HE/Normal/Normal_Prostatectomy/     80 .jpg +  80\
+      \ _mask.png\n                                    HE/Normal/Normal_TURP_BPH/         119 .jpg + 119 _mask.png\n550A.zip\
+      \ 22.4 GB  1246.zip 22.2 GB  3614.zip 23.2 GB  4326.zip 23.4 GB\n4632.zip 23.2 GB  4742.zip 22.7 GB  4754.zip 23.5 GB\
+      \  7850.zip 22.5 GB\nScr.zip  47.4 GB  U6.zip   58.0 GB  (same <Marker>/{Normal,Cancer}/... layout per readme)\n"
+    n_files: 13
+    listing_complete: false
+  sample:
+    urls:
+    - https://dataverse.no/api/access/datafile/246917::HE/Cancer/Cancer_Prostatectomy/HE_PCa_A041-5b.jpg
+    - https://dataverse.no/api/access/datafile/246917::HE/Cancer/Cancer_Prostatectomy/HE_PCa_A041-5b_mask.png
+    size_bytes: 50417472
+    description: One H&E TMA core image (10742x10742 RGB JPEG, 50 MB) and its epithelium mask, as members of HE.zip.
+  arrays:
+  - role: raw
+    path_pattern: '*.zip::*/*/*/*[!k].jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 10742
+    - 10742
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One RGB brightfield image per TMA core, <Marker>_<BPH|PCa>_<patient>-<sample><core type>[_info].jpg (readme);
+      shape read from HE_PCa_A041-5b.jpg.
+  - role: label
+    path_pattern: '*.zip::*/*/*/*_mask.png'
+    format: png
+    axes: yx
+    shape:
+    - 10742
+    - 10742
+    shape_varies: null
+    dtype: bool
+    compression: deflate
+    value_range: null
+    encoding: binary
+    classes:
+    - id: 255
+      name: prostate epithelium
+    alignment: same-grid
+    alignment_notes: <name>_mask.png pairs with <name>.jpg in the same folder; 10742x10742 for both in the pair read. Stored
+      as 1-bit PNG (PIL mode 1); the readme gives 255 = epithelium, background otherwise.
+  notes: 'Dataverse API lists 12 data files plus readme with exact sizes (307,898,500,943 B; page-stated). tools/listing.py
+    was stopped: the datafile URLs redirect to presigned S3 (uit-dataverseno-prod01.s3-oslo.educloud.no) that rejects HEAD,
+    and the tool fell back to streaming whole files (see the run log). HE.zip index read with GET ranges (104 KB): 399 jpg
+    + 399 _mask.png in 3 folders; other stain zips not listed. Headers of HE_PCa_A041-5b.jpg (JPEG RGB 10742x10742) and its
+    mask (PNG mode 1, 10742x10742) read by inflating the first 64 KB of each member. No values sampled. Voxel size not found:
+    readme, Dataverse metadata and JPEG/PNG headers checked; no paper cited.'
