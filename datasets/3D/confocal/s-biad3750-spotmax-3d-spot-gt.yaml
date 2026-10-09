@@ -2,10 +2,9 @@ schema_version: '1.2'
 id: s-biad3750-spotmax-3d-spot-gt
 title: 'SpotMAX: a generalist framework for multi-dimensional automatic spot detection and quantification'
 short_name: SpotMAX 3D spot ground truth (yeast, C. elegans)
-description: >-
-  3D fluorescence z-stacks with expert-annotated spot centres (smFISH in budding yeast, mitochondrial DNA nucleoids in
-  yeast, COSA-1 crossover foci in C. elegans germ cells) and single-cell segmentation masks, used to train and benchmark
-  the SpotMAX spot detector.
+description: 3D fluorescence z-stacks with expert-annotated spot centres (smFISH in budding yeast, mitochondrial
+  DNA nucleoids in yeast, COSA-1 crossover foci in C. elegans germ cells) and single-cell segmentation masks, used
+  to train and benchmark the SpotMAX spot detector.
 landing_url: https://www.ebi.ac.uk/biostudies/bioimages/studies/S-BIAD3750
 doi: 10.6019/S-BIAD3750
 repository: BioImageArchive
@@ -53,15 +52,16 @@ data:
   size_bytes: 22751113185
   n_items: 727
   access: open
-  download_url: null
-  download_method: ftp
+  download_url: https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/750/S-BIAD3750/Files/
+  download_method: http
 annotations:
   present: true
   types:
   - points
   - instance-segmentation
   coverage: dense
-  format: 'Spot centres in *_gt_manual.csv (one per annotator); single-cell masks in *_segm.npz; Cell-ACDC Position_N/Images folder layout; SpotMAX outputs (.h5, .csv) also included'
+  format: Spot centres in *_gt_manual.csv (one per annotator); single-cell masks in *_segm.npz; Cell-ACDC Position_N/Images
+    folder layout; SpotMAX outputs (.h5, .csv) also included
   source: mixed
 ml:
   tasks:
@@ -81,15 +81,96 @@ provenance:
   - https://www.ebi.ac.uk/biostudies/files/S-BIAD3750/Padovani_et_al_2026_Science_Advances_SpotMAX_ground_truth_file_list.json
   - https://api.biorxiv.org/details/biorxiv/10.1101/2024.10.22.619610
   - https://www.biorxiv.org/content/biorxiv/early/2024/11/19/2024.10.22.619610.source.xml
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/750/S-BIAD3750/Files/SpotMAX_gt_dataset/Yeast_smFISH_MDN1_gene_SpotMAX_analysis_params.ini
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/750/S-BIAD3750/Files/SpotMAX_gt_dataset/C_elegans_CO_COSA-1_Halo_SpotMAX_analysis_params.ini
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/750/S-BIAD3750/Files/SpotMAX_gt_dataset/Yeast_mito_mtDNA_SpotMAX_analysis_params.ini
   confidence: 0.9
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T00:15:34Z'
-notes: >-
-  File list: 3,958 files, 22.8 GB (727 TIFF, one per channel; 731 npz masks; 1,465 CSV; 747 h5 SpotMAX outputs) in
-  Cell-ACDC Position folders for C. elegans COSA-1 (Halo, mNeonGreen), yeast mtDNA and yeast smFISH (MDN1, SUT509).
-  C. elegans sets have spot annotations from three annotators. Methods: yeast smFISH 20 planes at 240 nm, yeast mtDNA
-  0.35 um steps, C. elegans 70-75 planes at 200 nm. Lateral pixel size not stated in the paper, study page or file list,
-  so voxel_size_nm is null. The paper's hematopoietic stem cell DNA-FISH data is not in this ground-truth file list.
+  last_checked: '2026-10-09T05:05:00Z'
+notes: 'File list: 3,958 files, 22.8 GB (727 TIFF, one per channel; 731 npz masks; 1,465 CSV; 747 h5 SpotMAX outputs)
+  in Cell-ACDC Position folders for C. elegans COSA-1 (Halo, mNeonGreen), yeast mtDNA and yeast smFISH (MDN1, SUT509).
+  C. elegans sets have spot annotations from three annotators. Methods: yeast smFISH 20 planes at 240 nm, yeast
+  mtDNA 0.35 um steps, C. elegans 70-75 planes at 200 nm. The paper''s hematopoietic stem cell DNA-FISH data is
+  not in this ground-truth file list. enricher: voxel size per subset from the SpotMAX .ini files (x=y, z, nm):
+  C. elegans Halo and mNeonGreen 33.85, 150; yeast mtDNA 67.25, 350; yeast smFISH MDN1 and SUT509 72.06, 240 (MDN1
+  metadata.csv says z 290). Differs, so null. organisms: Caenorhabditis elegans = C_elegans_CO/; Saccharomyces cerevisiae
+  = Yeast_mito/, Yeast_smFISH/.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "S-BIAD3750/Files/  3958 files, 22.75 GB (BioStudies file list) + file_list .json/.tsv\n  SpotMAX_gt_dataset/\n\
+      \    <subset>_SpotMAX_analysis_params.ini   5 (pixel sizes per subset)\n    C_elegans_CO/COSA-1/{Halo,mNeonGreen}/Position_N/\
+      \   307 files\n    Yeast_mito/.../Position_N/                          2816 files\n    Yeast_smFISH/{MDN1_gene,SUT509_gene}/Position_N/\
+      \    830 files\n      Images/<stem>_<channel>.tif         raw z-stacks, one per channel (727; 11 files are\
+      \ 0 B)\n      Images/<stem>_<annotator>_gt_manual.csv   spot centres (frame_i, Cell_ID, z, y, x, id)\n   \
+      \   Images/<stem>_segm.npz              cell segmentation\n      Images/<stem>_metadata.csv          sizes\
+      \ and PhysicalSize X/Y/Z\n      spotMAX_output/*.h5, *.csv, *.ini   SpotMAX results\n"
+    n_files: 3958
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/750/S-BIAD3750/Files/SpotMAX_gt_dataset/Yeast_smFISH/MDN1_gene/Position_1/Images/MMY116_2c_ACT1_MDN1_7_s10_MDN1.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/750/S-BIAD3750/Files/SpotMAX_gt_dataset/Yeast_smFISH/MDN1_gene/Position_1/Images/MMY116_2c_ACT1_MDN1_7_s10_dimitra_MDN1_gt_manual.csv
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/750/S-BIAD3750/Files/SpotMAX_gt_dataset/Yeast_smFISH/MDN1_gene/Position_1/Images/MMY116_2c_ACT1_MDN1_7_s10_segm.npz
+    size_bytes: 25600087
+    description: 'Yeast smFISH MDN1, Position_1: the MDN1 channel stack, one annotator''s spot table and the cell
+      segmentation.'
+  arrays:
+  - role: raw
+    path_pattern: SpotMAX_gt_dataset/*/Position_*/Images/*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 25
+    - 700
+    - 700
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    lossy: false
+    value_range:
+    - 669
+    - 2687
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: One ImageJ z-stack per channel (spot channel plus e.g. ACT1, DAPI, phase contrast); the spot
+      channel is named in the gt csv file name.
+  - role: label
+    path_pattern: SpotMAX_gt_dataset/*/Position_*/Images/*_gt_manual.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: points-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Columns frame_i, Cell_ID, z, y, x, id in voxel coordinates of the raw stack with the same
+      <stem>; one file per annotator (C. elegans: three annotators).'
+  - role: label
+    path_pattern: SpotMAX_gt_dataset/*/Position_*/Images/*_segm.npz
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    encoding: instance-ids
+    classes: null
+    alignment: unknown
+    alignment_notes: Cell-ACDC cell segmentation (instance labels per Cell-ACDC convention); metadata.csv of the
+      sample says segm_isSegm3D False, i.e. 2D masks for a 3D stack. Not opened (npz).
+  notes: 'BioStudies file list JSON (3958 files, exact sizes): 22,751,113,185 B (tif 22.51 GB, h5 163 MB, npz 29
+    MB, txt 28 MB, ini, png, csv); size_source page-stated because listing.py only got a partial HTTP index (FTP
+    timed out). 11 files have size 0. Probed and sampled the MDN1 stack of Yeast_smFISH/MDN1_gene/Position_1: ImageJ
+    25x700x700 uint16, uncompressed, zyx, header voxel 72x72x290 nm; values 669-2687 (one sample; sample.py hint
+    12-bit detector range, no clipping, so normalization none, inferred). Read its gt_manual.csv head and metadata.csv.
+    All files are direct https on ftp.ebi.ac.uk (usable, range requests); no archive, so download_url is the Files/
+    folder. voxel_size_nm null: subsets differ (see notes).'
