@@ -23,20 +23,32 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Populus
-  - Quercus
-  - Acer
+  - Quercus texana
+  - Quercus shumardii
+  - Quercus nigra
+  - Quercus phellos
+  - Quercus pagoda
+  - Ulmus alata
   - Fraxinus
+  - Quercus stellata
   - Ulmus americana
+  - Dirca palustris
+  - Quercus michauxii
+  - Ilex opaca
+  - Acer rubrum
   - Carya ovata
+  - Vaccinium stamineum
+  - Salix
+  - Nyssa sylvatica
   sample: nail-polish peels of the abaxial leaf epidermis of hardwood trees on microscope slides
   labels_stains: []
 data:
   formats:
   - jpeg
-  size_bytes: 9329272659
+  size_bytes: 9329890669
   n_items: 10715
   access: open
   download_url: https://zenodo.org/records/8271253/files/Labeled%20Stomatal%20Images.zip
@@ -66,16 +78,79 @@ provenance:
   - https://zenodo.org/api/records/8271253/files/Labeled%20Stomatal%20Images.zip/content
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1038%2Fs41597-023-02657-3%22&format=json&resultType=core&pageSize=3
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10762138/fullTextXML
+  - https://zenodo.org/records/8271253/files/Labeled%20Stomatal%20Images.csv
   confidence: 0.85
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T18:08:11Z'
-notes: 'Zip listing (peek_archive): 10,715 .jpg plus 10,715 YOLO .txt files, 9.3 GB. Per the paper, 1,000 images were labelled
-  manually to train a YOLO model (StoManager1) that was used to label the rest, with labels reviewed, hence annotation source
-  mixed. Imaging per paper Methods: microscope slides with 10X eyepiece and 20X or 40X objective; the microscope model and
-  camera are not stated. Pixel size is not a single value: the accompanying CSV gives per-image resolution (pixels per 0.1
-  mm), so voxel_size_nm is null. Organisms listed at genus/species level for the taxa the paper and record name; the full
-  list covers 17 hardwood species and seven Populus taxa. No train/val/test split is shipped (the paper recommends splitting
-  in Roboflow). Brightfield is inferred from standard light-microscope nail-polish peels, not stated explicitly.'
+  last_checked: '2026-10-09T20:30:00Z'
+notes: 'Zip: 10,715 .jpg plus 10,715 YOLO .txt in one flat folder, 9.3 GB; a CSV outside the zip lists species, magnification,
+  size and resolution per image. Per the paper, 1,000 images were labelled manually to train a YOLO model (StoManager1) that
+  labelled the rest, with review, hence source mixed. Imaging per paper Methods: 10X eyepiece, 20X or 40X objective; microscope
+  and camera not stated. Brightfield is inferred (nail-polish peels), not stated. No split shipped. enricher: organism list
+  now the 18 taxa of the CSV ScientificName column (was 6, partly genus level); STMHD files map to taxa via the CSV. enricher:
+  voxel size stays null: CSV Resolution (pixels per 0.1 mm) is 118, 239, 465, 476 or 930 depending on magnification (100x/200x/400x)
+  and image size.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './                                         2 files   9.3 GB  Labeled Stomatal Images.zip, Labeled Stomatal Images.csv
+      (618 KB)
+
+      zip contents:
+
+      Labeled%20Stomatal%20Images.zip/Labeled Stomatal Images/   21430 files  9.4 GB  .jpg 10715, .txt 10715 (STMHD<NNNN>.jpg
+      + .txt)'
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/8271253/files/Labeled%20Stomatal%20Images.zip::Labeled Stomatal Images/STMHD0001.jpg
+    - https://zenodo.org/records/8271253/files/Labeled%20Stomatal%20Images.zip::Labeled Stomatal Images/STMHD0001.txt
+    size_bytes: 544773
+    description: First image (Nuttall oak, 100x) and its YOLO label file
+  arrays:
+  - role: raw
+    path_pattern: Labeled%20Stomatal%20Images.zip/Labeled Stomatal Images/STMHD*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 768
+    - 1024
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 23
+    - 248
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB JPEG; the CSV gives 1024x768 for 6,704 images and 2048x1536 for 4,011.
+  - role: label
+    path_pattern: Labeled%20Stomatal%20Images.zip/Labeled Stomatal Images/STMHD*.txt
+    format: csv
+    axes: null
+    shape:
+    - 169
+    - 5
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: inner_guard_cell_walls
+    - id: 1
+      name: whole_stomata
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: STMHD<NNNN>.txt annotates STMHD<NNNN>.jpg. YOLO Darknet rows "class x_center y_center
+      width height", space separated, coordinates normalised to [0,1] of the image size (169 rows in STMHD0001.txt).'
+  notes: 'Listing: tools/listing.py on the Zenodo record (2 files, 9,329,890,669 bytes, file-listing, complete) and on the
+    zip with --expand-zips (21,430 members). Sample: STMHD0001.jpg 768x1024x3 uint8, values 23-248 (one sample only). STMHD0001.txt
+    read with peek_archive --cat: 169 YOLO rows, classes 0 and 1. CSV (618,010 B) columns FileName, Species, ScientificName,
+    Magnification, Witdh, Heigth, Resolution: 18 taxa, magnification 100/200/400, Resolution 118-930 pixels per 0.1 mm, so
+    the pixel size varies per image (e.g. 465 px per 0.1 mm for 3,327 images). Voxel size not settable as one value; checked:
+    JPEG headers (no calibration), the CSV, the Zenodo record, the paper (harvester).'
