@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: zenodo-20301518-pyropia-haitanensis-cell-instances
 title: Microscopy and Annotation Dataset of Pyropia haitanensis Strains Sansha-5 and WO115-2
 short_name: Pyropia haitanensis cell instances (microscopy)
-description: 32 high-resolution microscopy images of the red alga Pyropia haitanensis (strains Sansha-5 and WO115-2; 8 fields of view each imaged at 0 h and 24 h) with 3,359 completely annotated cell instances, stored as one JSON annotation file per TIFF image.
+description: 32 high-resolution microscopy images of the red alga Pyropia haitanensis (strains Sansha-5 and WO115-2;
+  8 fields of view each imaged at 0 h and 24 h) with 3,359 completely annotated cell instances, stored as one JSON
+  annotation file per TIFF image.
 landing_url: https://zenodo.org/records/20301518
 doi: 10.5281/zenodo.20301518
 repository: Zenodo
@@ -20,7 +22,7 @@ imaging:
   - other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Pyropia haitanensis
   sample: Pyropia haitanensis (strains Sansha-5 and WO115-2) cells, imaged at 0 h and 24 h
@@ -31,14 +33,15 @@ data:
   size_bytes: 460823027
   n_items: 32
   access: open
-  download_url: https://zenodo.org/api/records/20301518/files/Porphyra%20haitanensis.zip/content
+  download_url: https://zenodo.org/records/20301518/files/Porphyra%20haitanensis.zip
   download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
   coverage: dense
-  format: one JSON annotation file per image (about 7-10 MB each) next to the TIFF, in sansha-5/ and WO115-2/ folders
+  format: LabelMe JSON per image (polygon per cell, label = cell number), same stem as the TIFF, in sansha-5/ and
+    WO115-2/ folders
   source: unknown
 ml:
   tasks:
@@ -56,10 +59,73 @@ provenance:
   evidence_urls:
   - https://zenodo.org/api/records/20301518
   - https://zenodo.org/api/records/20301518/files/Porphyra%20haitanensis.zip/content
-  confidence: 0.6
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-08T23:30:00Z'
-notes: 'One zip (461 MB) listed with peek_archive: 16 .tif (sansha-5) and 16 .tiff (WO115-2) images, each paired with a .json file. The record description gives the counts (32 images, 3,359 cell instances) but not the JSON schema, so the annotation type (instance segmentation per the keywords) was not verified by opening a JSON file (members are 7-10 MB, above the tool limit). The record has no linked paper, so none was read; imaging modality, microscope, pixel size, channels and annotation procedure are not stated. Keywords mention cell tracking and cell division; the 0 h / 24 h images are of the same fields but no tracking links were verified.'
+  last_checked: '2026-10-09T00:09:01Z'
+notes: 'One zip (461 MB) listed with peek_archive: 16 .tif (sansha-5) and 16 .tiff (WO115-2) images, each paired
+  with a .json file. The record description gives the counts (32 images, 3,359 cell instances) but not the JSON
+  schema. The record has no linked paper, so none was read; imaging modality, microscope, pixel size, channels and
+  annotation procedure are not stated. Keywords mention cell tracking and cell division; the 0 h / 24 h images are
+  of the same fields but no tracking links were verified. enricher: JSON opened: LabelMe polygons, one per cell
+  (instance segmentation). channels 3 = RGB TIFF (was unknown).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Porphyra haitanensis.zip  (460,823,027 B; 64 members, 531.7 MB uncompressed)\n  sansha-5/<field> <MMDD>.tif\
+      \ + .json      16 images + 16 LabelMe JSON (fields A2-A6, B3-B6; dates 0808/0809/0810)\n  WO115-2/<id> T0.tiff,\
+      \ T24[-1].tiff + .json  16 images + 16 LabelMe JSON\n  .tif/.tiff 248.3 MB, .json 283.4 MB (each JSON embeds\
+      \ the image as base64 PNG)"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/20301518/files/Porphyra%20haitanensis.zip::sansha-5/A3 0808.tif
+    - https://zenodo.org/records/20301518/files/Porphyra%20haitanensis.zip::sansha-5/A3 0808.json
+    size_bytes: 15864606
+    description: One Sansha-5 field (A3, 0 h) image and its LabelMe polygon file (zip members).
+  arrays:
+  - role: raw
+    path_pattern: Porphyra haitanensis.zip::*/*.tif*
+    format: tiff
+    axes: yxs
+    shape:
+    - 2160
+    - 3840
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 32
+    - 166
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB colour (photometric 2), 3840x2160; sansha-5 files end .tif, WO115-2 files .tiff. Both sampled
+      files have the same shape.
+  - role: label
+    path_pattern: Porphyra haitanensis.zip::*/*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: none
+    encoding: polygons
+    classes: null
+    alignment: same-grid
+    alignment_notes: LabelMe 5.5.0 JSON with the same stem as the image (imagePath, imageHeight 2160, imageWidth
+      3840 match the TIFF). shapes[] are polygons in pixel coordinates, one per cell, label = a running cell number
+      ("1", "2", ...); 83 cells in A3 0808. imageData embeds the image as base64 PNG. Whether numbers link cells
+      between 0 h and 24 h images is not documented.
+  notes: 'Listing: the single Zenodo zip, central directory (exact sizes). Read with ad hoc scripts (zip members
+    by range; probe.py could not open these members): sansha-5/A3 0808.tif (7,365,652 B: RGB uint8 2160x3840x3,
+    LZW, range 32-166, 300 dpi tag, no physical calibration), WO115-2/250102-1-1 T0.tiff (6,265,926 B: same shape,
+    range 75-227) and sansha-5/A3 0808.json (8,498,954 B: LabelMe, 83 polygon shapes). Value ranges from these samples
+    only. Voxel size not found; checked: TIFF tags (dpi only), Zenodo API record (description, keywords; no related
+    identifiers or paper), LabelMe JSON (no scale). The record names no microscope, so modality stays other.'
