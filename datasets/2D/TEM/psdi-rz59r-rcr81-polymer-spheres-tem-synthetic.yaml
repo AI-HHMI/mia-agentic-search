@@ -1,0 +1,184 @@
+schema_version: '1.2'
+id: psdi-rz59r-rcr81-polymer-spheres-tem-synthetic
+title: 'Segmented TEM images of polymer spheres: synthetic training set with COCO, YOLO and mask labels (TEMPOS)'
+short_name: Polymer sphere TEM segmentation (synthetic)
+description: 'PSDI record with three zips: a synthetic TEM training set of spheres generated with the TEMPOS software (about
+  1,350 train and 270 validation PNG images in 1024 px size with COCO, VIA and SAM2 annotation JSON, YOLO label txt files
+  and mask PNGs), 66 experimental TEM micrographs of latex and silica spheres on carbon films (Gatan dm4), and those 66 images
+  segmented by a Detectron2 model trained on the synthetic data, with CSV particle statistics.'
+landing_url: https://data-collections.psdi.ac.uk/records/rz59r-rcr81
+doi: null
+repository: other
+accession: rz59r-rcr81
+authors:
+- Natalia da Silva de Sa
+- Andrew Stewart
+publications: []
+date_published: '2026-03-24'
+imaging:
+  modality:
+  - TEM
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: Latex and silica polymer spheres on ultra-thin lacey or holey carbon (experimental); synthetic images generated
+    with TEMPOS
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: 2151692692
+  n_items: 1686
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: COCO instances_train/val JSON, VIA region JSON, SAM2 annotation JSON, YOLO label txt and mask PNGs for the synthetic
+    images; model-predicted segmentations (PNG) and CSV statistics for the experimental images
+  source: automatic
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-09T10:40:09Z'
+  evidence_urls:
+  - https://data-collections.psdi.ac.uk/api/records/rz59r-rcr81
+  - https://data-collections.psdi.ac.uk/api/records/rz59r-rcr81/files
+  - https://data-collections.psdi.ac.uk/records/rz59r-rcr81/files/synthetic_polymer.zip
+  - https://data-collections.psdi.ac.uk/records/rz59r-rcr81/files/experimental_polymer_dm4.zip
+  - https://data-collections.psdi.ac.uk/records/rz59r-rcr81/files/experimental_segmented_polymer.zip
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-09T13:00:00Z'
+notes: 'Sizes from the PSDI file API: synthetic 996,021,043 B, experimental dm4 905,645,411 B, segmented 250,026,238 B. Labels
+  are synthetic by construction or model predictions; no manual annotation of the experimental images. No paper is linked
+  on the record. Pixel size not stated on the record or in the file listings. dm4 is not a schema format, so formats lists
+  png only. Different from the PSDI gold nanoparticle record (sgvf0-j3g53). enricher: zip indexes read: synthetic train 1,350
+  images + 1,350 YOLO txt + 1,350 masks, valid 270 images + 270 txt (no masks), COCO/VIA/SAM2 json; 66 dm4; 66 overlay PNG.
+  n_items 1,686 = 1,350 + 270 synthetic + 66 experimental (was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "synthetic_polymer.zip  996,021,043 B, 4,607 members (1.12 GB uncompressed)\n  synthetic_data+exp_bg_model3_1024.json\
+      \             TEMPOS settings\n  20240906134603synthetic_data+exp_bg_model2_1024/\n    train/images/  1,350 .png + instances_train.json,\
+      \ via_region_data.json, sam2_annotations.json\n    train/labels/  1,350 .txt (YOLO polygons)   train/masks/ 1,350 .png\n\
+      \    train/train.csv, train/labels.cache\n    valid/images/  270 .png + instances_val.json, via_region_data.json\n \
+      \   valid/labels/  270 .txt   valid/labels.cache\nexperimental_polymer_dm4.zip  905,645,411 B   66 .dm4 (2021-02-04_SilicaSpheres_200nm_..._NNNN.dm4)\n\
+      experimental_segmented_polymer.zip  250,026,238 B   20260323224342/ 66 .dm4.png, stats.csv, mean_stats.csv\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://data-collections.psdi.ac.uk/api/records/rz59r-rcr81/files/synthetic_polymer.zip/content
+    size_bytes: 996021043
+    description: The synthetic zip (images, masks and labels). Host not on TensorSwitch's allowlist yet and its S3 redirect
+      rejects HEAD, so zip members can't be addressed individually; members train/images/0.png and train/masks/0.png were
+      read for this inspection.
+  arrays:
+  - role: raw
+    path_pattern: synthetic_polymer.zip::*/{train,valid}/images/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Synthetic greyscale TEM images 0.png ... (train 1,350, valid 270); the folder name says synthetic data
+      on experimental backgrounds (exp_bg).
+  - role: label
+    path_pattern: synthetic_polymer.zip::*/train/masks/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: masks/<n>.png pairs with images/<n>.png (same number); train split only, valid has no masks.
+  - role: label
+    path_pattern: synthetic_polymer.zip::*/{train,valid}/labels/*.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: polygons
+    classes: null
+    alignment: same-grid
+    alignment_notes: YOLO segmentation txt per image (labels/<n>.txt), one line per particle, class 0 then 100 normalised
+      x y points; 9 particles in 0.txt.
+  - role: label
+    path_pattern: synthetic_polymer.zip::*/{train,valid}/images/instances_*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: polygons
+    classes: null
+    alignment: same-grid
+    alignment_notes: COCO instances json per split (train 28.9 MB, valid 5.6 MB, not opened); VIA and SAM2 json alongside.
+  - role: raw
+    path_pattern: experimental_polymer_dm4.zip::*.dm4
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 66 Gatan DM4 micrographs (silica and latex spheres), ~17.4 MB each; no reader in the allowed tool set,
+      headers not read.
+  - role: other
+    path_pattern: experimental_segmented_polymer.zip::*/*.png
+    format: png
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: deflate
+    value_range: null
+    alignment: unknown
+    alignment_notes: Detectron2 prediction renderings named <dm4 name>.png (not opened), with stats.csv / mean_stats.csv.
+  notes: 'Listing: PSDI files API (3 zips, 2,151,692,692 B exact); zip indexes read with a GET-range script because the S3
+    redirect rejects HEAD (tools/listing.py cannot). Sampled ~13.9 MB of ranges: train/images/0.png L 1024x1024 uint8 [0,255]
+    mean 82.4; train/masks/0.png L 1024x1024 uint8 {0,255}; train/labels/0.txt 9 lines, class 0, 200 coordinates each. Values
+    from single files. labels.cache files are YOLO pickles and were not opened. Voxel size not found: PNG headers, PSDI record
+    API, settings json name only; DM4 headers (which may carry a calibration for the experimental images) could not be read
+    with the allowed libraries. No single archive for the record, so data.download_url stays null.'
