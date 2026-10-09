@@ -2,7 +2,11 @@ schema_version: '1.2'
 id: zenodo-7418555-multiscanner-canine-scc-histology
 title: Multi-Scanner Canine Cutaneous Squamous Cell Carcinoma Histopathology Dataset
 short_name: Canine cutaneous SCC multi-scanner histology WSIs
-description: 44 canine cutaneous squamous cell carcinoma slides digitized with five whole-slide scanners (220 pyramidal TIFFs at 4 um/pixel). The 1,243 manual polygon annotations (tumor and six skin tissue classes - epidermis, dermis, subcutis, bone, cartilage, inflammation/necrosis combined) made on the Aperio CS2 scans were transferred to the other four scanners by WSI registration and visually validated; they are provided as MS COCO JSON and a SlideRunner SQLite database. Designed for scanner domain-shift and domain-generalization studies.
+description: 44 canine cutaneous squamous cell carcinoma slides digitized with five whole-slide scanners (220 pyramidal TIFFs
+  at 4 um/pixel). The 1,243 manual polygon annotations (tumor and six skin tissue classes - epidermis, dermis, subcutis, bone,
+  cartilage, inflammation/necrosis combined) made on the Aperio CS2 scans were transferred to the other four scanners by WSI
+  registration and visually validated; they are provided as MS COCO JSON and a SlideRunner SQLite database. Designed for scanner
+  domain-shift and domain-generalization studies.
 landing_url: https://zenodo.org/records/7418555
 doi: 10.5281/zenodo.7418555
 repository: Zenodo
@@ -34,7 +38,8 @@ imaging:
   channels: 3
   organism:
   - Canis lupus familiaris
-  sample: Canine cutaneous squamous cell carcinoma tissue sections, 44 samples each digitized with five scanners (Aperio ScanScope CS2, NanoZoomer S210, NanoZoomer 2.0-HT, Pannoramic 1000, Aperio GT 450)
+  sample: Canine cutaneous squamous cell carcinoma tissue sections, 44 samples each digitized with five scanners (Aperio ScanScope
+    CS2, NanoZoomer S210, NanoZoomer 2.0-HT, Pannoramic 1000, Aperio GT 450)
   labels_stains: []
 data:
   formats:
@@ -49,7 +54,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: partial
-  format: MS COCO JSON (scc.json) and SlideRunner SQLite database (scc.sqlite); 1,243 polygons, transferred from the CS2 scans to the other scanners by registration
+  format: 'MS COCO JSON (scc.json: 220 images, 6,215 polygons = 1,243 x 5 scanners, 13 categories of which 7 used) and SlideRunner
+    SQLite database (scc.sqlite); polygons transferred from the CS2 scans to the other scanners by registration'
   source: manual
 ml:
   tasks:
@@ -73,5 +79,93 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T18:10:00Z'
-notes: 'Multi-scanner SCC subset of the CATCH dataset (catalog record tcia-2m93-fx66-catch-canine-cutaneous-histology, also pending as an open PR). It differs from CATCH: it re-digitizes 44 SCC samples with five scanners (220 images, lower-resolution 4 um/pixel pyramidal TIFFs, not the original 40x SVS) and provides annotations transferred across scanners. Zenodo file listing (API): 220 .tif plus scc.json and scc.sqlite. Stain is not stated on the Zenodo page or the arXiv paper text read, so labels_stains is empty (CATCH is H&E per its own record). The paper used a slide-level 30/5/9 train/val/test split for its experiments but the split is not provided as files. Annotations cover the polygons only (partial coverage). Original scanner pixel sizes are 0.22-0.26 um/pixel per the record, but the deposited TIFFs are 4 um/pixel. No download_url set because files are individual (222 files) with no single archive.'
+  last_checked: '2026-10-09T19:05:00Z'
+notes: 'Multi-scanner SCC subset of the CATCH dataset (catalog record tcia-2m93-fx66-catch-canine-cutaneous-histology, also
+  pending as an open PR). It differs from CATCH: it re-digitizes 44 SCC samples with five scanners (220 images, lower-resolution
+  4 um/pixel pyramidal TIFFs, not the original 40x SVS) and provides annotations transferred across scanners. Zenodo file
+  listing (API): 220 .tif plus scc.json and scc.sqlite. Stain is not stated on the Zenodo page or the arXiv paper text read,
+  so labels_stains is empty (CATCH is H&E per its own record). The paper used a slide-level 30/5/9 train/val/test split for
+  its experiments but the split is not provided as files. Annotations cover the polygons only (partial coverage). Original
+  scanner pixel sizes are 0.22-0.26 um/pixel per the record, but the deposited TIFFs are 4 um/pixel. No download_url set because
+  files are individual (222 files) with no single archive.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./   222 files  12.1 GB  .tif 220, .json 1 (scc.json, 30.3 MB), .sqlite 1 (scc.sqlite, 92.0 MB)\n  scc_<NN>_<scanner>.tif\
+      \   44 samples (scc_01 .. scc_44) x 5 scanners: cs2, nz20, nz210, p1000, gt450"
+    n_files: 222
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7418555/files/scc_08_cs2.tif
+    - https://zenodo.org/records/7418555/files/scc.json
+    size_bytes: 49627174
+    description: Sample 08, Aperio CS2 scan (pyramidal TIFF) plus the COCO JSON holding the polygons of all 220 images
+  arrays:
+  - role: raw
+    path_pattern: scc_*_*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 4338
+    - 5624
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 12
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Pyramidal BigTIFF, tiled 128x128, RGB (photometric 2): page 0 is the full 4 um/px image (axes yxs);
+      pages 1+ are reduced-resolution levels (NewSubfileType 1, each half the size; 7 pages for scc_08_cs2, 8 for scc_08_p1000).
+      TIFF resolution tags say 10 px/cm (a default), the record states 4 um/px.'
+  - role: label
+    path_pattern: scc.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    encoding: polygons
+    classes:
+    - id: 1
+      name: Bone
+    - id: 2
+      name: Cartilage
+    - id: 3
+      name: Dermis
+    - id: 4
+      name: Epidermis
+    - id: 5
+      name: Subcutis
+    - id: 6
+      name: Inflamm/Necrosis
+    - id: 11
+      name: SCC
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: COCO images[].file_name = scc_<NN>_<scanner>.tif; annotations[].image_id links polygons
+      to it. COCO width/height equal the page-0 TIFF size (scc_08_cs2 5624x4338, scc_08_p1000 4482x10859), so polygon coordinates
+      are page-0 pixels. Categories 7-10, 12, 13 (other CATCH tumour types) are defined but unused.'
+  - role: label
+    path_pattern: scc.sqlite
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    encoding: polygons
+    alignment: unknown
+    alignment_notes: SlideRunner SQLite database with the same annotations (per the record); not opened.
+  notes: 'Listing: tools/listing.py on the Zenodo record: 222 files, 12,081,080,702 bytes (file-listing, complete). Probe
+    of scc_08_cs2.tif and scc_08_p1000.tif: plain pyramidal BigTIFF (no ImageJ/OME metadata), uint8 RGB, deflate, tiled; page
+    shapes listed with tifffile (header reads only). Sample: scc_08_cs2.tif page 0 (19,303,740 B): 4338x5624x3 uint8, 12-255,
+    p50 236 (mostly white background; one sample only). scc.json (30,323,434 B, read by an ad hoc script): COCO keys info/licenses/categories/images/annotations;
+    220 images, 6,215 polygon annotations, 7-94 per image; used category counts Epidermis 2155, SCC 1550, Dermis 1130, Subcutis
+    640, Inflamm/Necrosis 500, Bone 205, Cartilage 35. The COCO "licenses" entry says "Attribution-NonCommercial-NoDerivs
+    License" (CC BY-NC-ND 2.0); the Zenodo record says CC-BY-4.0, which is kept. No single archive: download_url stays null;
+    every file is a direct Zenodo URL (records/7418555/files/<name>). scc.sqlite not inspected.'
