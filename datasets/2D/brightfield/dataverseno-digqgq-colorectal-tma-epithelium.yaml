@@ -20,7 +20,7 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Homo sapiens
   sample: FFPE tissue microarray cores of colorectal cancer and normal colorectal mucosa from 100 patients; H&E, IHC and ISH
@@ -64,15 +64,94 @@ provenance:
   - https://dataverse.no/api/access/datafile/234047
   - https://zenodo.org/api/records/14800740
   - https://dataverse.no/api/access/datafile/233917
-  confidence: 0.7
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-09T10:50:00Z'
-notes: 'One zip per stain (HE, ECAD, Ki67, ..., miR-143, miR-145, U6, Scr; 471 GB in total) plus SPSS tables and a readme.
-  Only HE.zip was listed (zip central directory read by range requests): 552 .jpg and 552 .png with matching names; the .png
-  are presumed to be the epithelium masks per the readme, not opened, so annotations_verified is false. n_items counts H&E
-  cores only; other stain zips not listed. Readme: masks from a DeepLabV3 model (NoCodeSeg) trained on pathologist annotations
-  with active learning, hence source mixed. Pixel size not stated (''40x''). No paper cited yet. Zenodo 14800740 mirrors only
-  a readme and samples.'
+  annotations_verified: true
+  last_checked: '2026-10-09T11:15:00Z'
+notes: 'One zip per stain (HE, 13 IHC, miR-143, miR-145, U6, Scr; 470,971,048,454 B in total per the Dataverse API) plus SPSS
+  tables and a readme. n_items counts H&E cores only (552 jpg + 552 png masks). Readme: masks from a DeepLabV3 model (NoCodeSeg)
+  trained on pathologist annotations with active learning, hence source mixed. Pixel size not stated (''40x''). No paper cited
+  yet. Zenodo 14800740 mirrors only a readme and samples. enricher: sampled H&E pair HE__A001-1: RGB jpg + boolean (1-bit)
+  png mask of the same shape, annotations_verified true; channels 3 (RGB); Ki67.zip has the same <stain>/<Cancer|Normal mucosa>/
+  layout. No single direct archive for the whole dataset (21 files), so download_url stays null.'
+technical:
+  method: sample
+  inspected_at: '2026-10-09T11:15:00Z'
+  inspected_urls:
+  - https://dataverse.no/api/datasets/:persistentId/?persistentId=doi:10.18710/DIGQGQ
+  - https://dataverse.no/api/access/datafile/233917
+  - https://dataverse.no/api/access/datafile/233920
+  - https://dataverse.no/api/access/datafile/233917::HE/Normal mucosa/HE__A001-1.jpg
+  - https://dataverse.no/api/access/datafile/233917::HE/Normal mucosa/HE__A001-1.png
+  - https://dataverse.no/api/access/datafile/233917::HE/Cancer/HE__A001-4.png
+  bytes_downloaded: 36953540
+  size_source: page-stated
+  layout:
+    tree: "./                          21 files   471.0 GB (Dataverse API, exact per file)\n  00_Readme.txt             6,483\
+      \ B\n  SPSS_databases.zip        31,612 B\n  HE.zip                    18,941,510,930 B\n    HE/Cancer/            \
+      \  264 .jpg (10.2 GB) + 264 .png masks\n    HE/Normal mucosa/       288 .jpg (8.6 GB) + 288 .png masks\n      HE__A001-1.jpg,\
+      \ HE__A001-1.png, ...\n  Ki67.zip                  16,133,520,010 B\n    Ki67/Cancer/            264 .jpg + 264 .png\n\
+      \    Ki67/Normal mucosa/     293 .jpg + 293 .png\n  CD44, CTNND1, ECAD, FSCN1, KLF5, KRAS, LASP1, MACC1,\n  NAIP, SMA,\
+      \ SMAD3, VIMENTIN .zip   16.1-19.6 GB each (not listed inside)\n  miR-143.zip, miR-145.zip  ~89.6 GB each (not listed\
+      \ inside)\n  U6.zip 23.1 GB, Scr.zip 22.6 GB  (not listed inside)\n"
+    n_files: 21
+    listing_complete: false
+  sample:
+    urls:
+    - https://dataverse.no/api/access/datafile/233917::HE/Normal mucosa/HE__A001-1.jpg
+    - https://dataverse.no/api/access/datafile/233917::HE/Normal mucosa/HE__A001-1.png
+    size_bytes: 36833572
+    description: One H&E normal-mucosa TMA core (9352 x 8400 RGB JPEG) and its epithelium mask (1-bit PNG).
+  arrays:
+  - role: raw
+    path_pattern: '*/{Cancer,Normal mucosa}/*.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 8400
+    - 9352
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    lossy: true
+    chunks: null
+    value_range:
+    - 10
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '*/{Cancer,Normal mucosa}/*.png'
+    format: png
+    axes: yx
+    shape:
+    - 8400
+    - 9352
+    shape_varies: true
+    dtype: bool
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 1
+    normalization: unknown
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Mask has the same file stem as its image in the same folder (HE__A001-1.jpg / HE__A001-1.png) and the
+      same width x height (checked on HE__A001-1). 1-bit PNG (mode 1): foreground is presumably epithelium (readme: epithelium
+      segmentation mask per core); value meaning not stated.'
+  notes: 'Listing: Dataverse API file list (21 files, exact sizes, total 470,971,048,454 B); zip central directories read
+    by range requests for HE.zip (1,104 members: 552 jpg + 552 png) and Ki67.zip (1,114 members); the other 17 zips were not
+    opened. Sample (one core, values from one sample): HE__A001-1.jpg RGB uint8 9352x8400, range [10, 255], JFIF density 1:1
+    without unit; HE__A001-1.png 1-bit bool, 45% foreground; HE/Cancer/HE__A001-4.png 9680x9184, so core size varies. Some
+    jpgs are tiny (HE__A039-4.jpg 995 B, HE__A036-6.jpg 14.8 KB), probably empty/missing cores. Voxel size not found; checked:
+    JPEG/PNG headers, Dataverse metadata, 00_Readme.txt (only "40x"), web search for a paper (none). Download: dataverse.no
+    access URLs redirect to signed S3 (educloud.no) with range support, but the host is not on the TensorSwitch allowlist;
+    probe.py and sample.py also fail on these zips (HEAD on the GET-signed URL returns 403). Members were read with a requests-based
+    zip reader. No single archive for the whole dataset.'
