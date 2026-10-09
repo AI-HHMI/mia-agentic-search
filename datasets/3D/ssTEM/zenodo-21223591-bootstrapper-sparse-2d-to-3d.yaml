@@ -1,0 +1,142 @@
+schema_version: '1.2'
+id: zenodo-21223591-bootstrapper-sparse-2d-to-3d
+title: Bootstrapper datasets, 3D EM and expansion-microscopy volumes with dense and sparse instance labels
+short_name: Bootstrapper 3D EM volumes, dense+sparse labels
+description: 'Archive (data.tar, 3.9 GB, zarr arrays) accompanying "A general method for bootstrapping dense 3D
+  segmentations from sparse 2D annotations". Six core datasets (cremi_a, cremi_b, cremi_c, epi, fib, harris15) each
+  hold volume_1.zarr with raw, dense labels and sparse_labels, plus a held-out volume_2.zarr with raw and labels.
+  Five single-volume datasets (liconn, mitoem, cremi_clefts, fluo, prism) hold volume_1.zarr with a sparse_labels_mask.
+  Voxel sizes (z,y,x in nm) are listed per dataset on the Zenodo page: for example 40,8,8 for CREMI, 8,8,8 for the
+  FIB-SEM volume, 24,18,18 for LICONN.'
+landing_url: https://zenodo.org/records/21223591
+doi: 10.5281/zenodo.21223591
+repository: Zenodo
+accession: '21223591'
+authors:
+- Vijay Venu Thiyagarajan
+- Arlo Sheridan
+- Kristen Harris
+- Uri Manor
+publications:
+- title: A general method for bootstrapping dense 3D segmentations from sparse 2D annotations
+  doi: 10.1101/2024.06.14.599135
+  url: https://www.biorxiv.org/content/10.1101/2024.06.14.599135v3
+date_published: '2026-07-06'
+imaging:
+  modality:
+  - ssTEM
+  - FIB-SEM
+  - expansion
+  dimensionality: 3D
+  voxel_size_nm: null
+  channels: null
+  organism:
+  - Drosophila melanogaster
+  - Mus musculus
+  sample: Eleven public volumes - Drosophila neuropil EM (CREMI), hippocampal neuropil EM, plant epithelium, isotropic
+    FIB-SEM, MitoEM mitochondria, expansion-microscopy mouse cortex (LICONN), PRISM expansion light microscopy and
+    a 2D+time fluorescence set
+  labels_stains: []
+data:
+  formats:
+  - zarr
+  size_bytes: 3896176640
+  n_items: 11
+  access: open
+  download_url: https://zenodo.org/records/21223591/files/data.tar
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: Zarr label arrays (labels, sparse_labels, sparse_labels_mask) beside raw in volume_N.zarr
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: null
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-08T20:40:24Z'
+  evidence_urls:
+  - https://zenodo.org/records/21223591
+  - https://www.biorxiv.org/content/biorxiv/early/2026/05/10/2024.06.14.599135.source.xml
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-09T00:31:39Z'
+notes: 'Repackaging of public datasets (CREMI, Harris 2015, Wolny 2020 plant tissue, MitoEM, Cell Tracking Challenge,
+  LICONN, PRISM) with dense and sparse labels used to evaluate the bootstrapper method; users are asked to cite
+  both the originals and this archive, so overlap with individual records of the originals is possible (checked:
+  no catalog match on accession, DOI or paper). The tar archive was only partly read (first 300 entries, by the
+  enricher), so most of the structure comes from the Zenodo description. Voxel size differs per dataset (see description),
+  so imaging.voxel_size_nm is null. organisms: Drosophila melanogaster = cremi_a/b/c, cremi_clefts; Mus musculus
+  = liconn (preprint); others not stated. Sparse labels for the core datasets were derived from the dense ones (preprint
+  Methods). enricher: tar walk shows zarr v2 labels (uint64) in epi.'
+technical:
+  method: header
+  size_source: page-stated
+  layout:
+    tree: "data.tar  (3,896,176,640 B; the record's only file; plain tar, read by header walk)\n  data/<dataset>/volume_1.zarr/\
+      \   (zarr v2, '/' or '.' chunk keys, blosc-lz4)\n    raw/, labels/, sparse_labels/ [, sparse_labels_mask/]\n\
+      \  data/<dataset>/volume_2.zarr/{raw,labels}   (core datasets only, per the Zenodo description)\n  datasets:\
+      \ cremi_a, cremi_b, cremi_c, epi, fib, harris15 (core); liconn, mitoem, cremi_clefts, fluo, prism\n  tar order\
+      \ starts with data/epi/; also holds macOS '._*' resource-fork files next to chunks\n  first 300 tar entries\
+      \ read (data/epi/volume_1.zarr only)"
+    n_files: 1
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: label
+    path_pattern: data/*/volume_[12].zarr/labels
+    format: zarr
+    axes: zyx
+    shape:
+    - 320
+    - 960
+    - 1000
+    shape_varies: true
+    dtype: uint64
+    compression: blosc
+    value_range: null
+    normalization: none
+    encoding: instance-ids
+    classes: null
+    alignment: unknown
+    alignment_notes: 'epi/volume_1.zarr/labels .zarray: shape 320x960x1000, chunks 20x120x125, <u8, blosc lz4. Dense
+      instance labels per the description; raw .zarray not reached by the walk, so raw/label grids are not compared.'
+  - role: label
+    path_pattern: data/*/volume_1.zarr/sparse_labels
+    format: zarr
+    axes: zyx
+    shape:
+    - 1
+    - 960
+    - 946
+    shape_varies: true
+    dtype: uint64
+    compression: blosc
+    value_range: null
+    normalization: none
+    encoding: instance-ids
+    classes: null
+    alignment: offset
+    alignment_notes: 'epi sparse_labels: one z-slice 1x960x946 (chunks 1x240x237), .zattrs axis_names z,y,x, units
+      nm, voxel_size [235,75,75], offset [57810,0,1425] nm, i.e. a single annotated 2D section placed by a world
+      offset. sparse_labels_mask (|u1, same shape/offset) marks the annotated pixels.'
+  notes: 'Header-level: data.tar is one plain tar of zarr stores (one file per chunk), which no allowed tool lists;
+    an ad hoc script walked the first 300 tar headers by range requests (~2.4 MB) and read the .zgroup/.zarray/.zattrs
+    met on the way (all in data/epi/volume_1.zarr). The tar holds tens of thousands of chunk files, so a full walk
+    (1 request each) was not done: listing_complete false, per-dataset shapes unknown. No chunk was decoded. Size:
+    the Zenodo API states the one file as 3,896,176,640 B (page-stated, since the tar contents were not fully listed).
+    Voxel sizes differ per dataset (Zenodo description, z,y,x nm): cremi_a/b/c 40,8,8; epi 235,75,75 (also in the
+    epi .zattrs); fib 8,8,8; harris15 50,8,8; liconn 24,18,18; mitoem 30,8,8; cremi_clefts 40,4,4; fluo 1,1,1 (2D+t);
+    prism 400,168,168 (18 channels). TensorSwitch cannot read tar members, so no sample unit.'
