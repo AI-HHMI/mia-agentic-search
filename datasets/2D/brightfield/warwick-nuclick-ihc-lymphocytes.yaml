@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: warwick-nuclick-ihc-lymphocytes
 title: NuClick IHC lymphocyte segmentation dataset
 short_name: IHC lymphocyte segmentation (NuClick)
-description: 871 immunohistochemistry (IHC) image patches (671 train, 200 validation) with lymphocyte segmentation masks, released by the Warwick TIA Centre as exemplar output of the NuClick interactive segmentation framework. Each patch has a PNG image, a NumPy mask, a pyramid TIFF and ASAP XML annotations.
+description: 871 immunohistochemistry (IHC) image patches (671 train, 200 validation) with lymphocyte segmentation masks,
+  released by the Warwick TIA Centre as exemplar output of the NuClick interactive segmentation framework. Each patch has
+  a PNG image, a NumPy mask, a pyramid TIFF and ASAP XML annotations.
 landing_url: https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick
 doi: null
 repository: LabWebsite
@@ -21,8 +23,11 @@ imaging:
   modality:
   - brightfield
   dimensionality: 2D
-  voxel_size_nm: null
-  channels: null
+  voxel_size_nm:
+    x: 240
+    y: 240
+    z: null
+  channels: 3
   organism: []
   sample: Immunohistochemistry (IHC) stained tissue patches with lymphocytes
   labels_stains: []
@@ -40,7 +45,8 @@ annotations:
   types:
   - instance-segmentation
   coverage: dense
-  format: 'Per-patch NumPy mask (.npy) in IHC/masks and ASAP XML annotations in IHC_xml_asap; images as PNG and pyramid TIFF'
+  format: uint32 instance-ID masks (.npy, 256x256) in IHC/masks/{Train,Validation}, paired by stem with PNG images in IHC/images;
+    ASAP XML spline polygons (group Inflam) with 3-level pyramid TIFF images in IHC_xml_asap
   source: mixed
 ml:
   tasks:
@@ -58,10 +64,108 @@ provenance:
   - https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick
   - https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick/ihc_nuclick.zip
   - https://arxiv.org/abs/2005.14511
-  confidence: 0.6
+  - https://arxiv.org/pdf/2005.14511
+  - https://lyon19.grand-challenge.org/Data/
+  confidence: 0.65
 verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-08T12:26:16Z'
-notes: 'No license is stated on the Warwick page; the only term is that publications using the data must cite the NuClick paper. The paper full text is not open access via Europe PMC and the arXiv PDF could not be read, so organism, tissue, magnification, pixel size, scanner and the annotation procedure were not confirmed (the arXiv abstract calls the data exemplar outputs of the NuClick tool, hence source mixed, i.e. click-guided semi-automatic masks). A third-party Hugging Face mirror (MedOtter/NuClick-IHC) says 256x256 patches from the LYON19 cohort; this was not verified from the original. Zip listing: IHC/images and IHC/masks (671 Train, 200 Validation each) plus IHC_xml_asap XML (671 + 200), 3484 files, 799.5 MB uncompressed (871 PNG, 871 NPY, 871 TIF, 871 XML). The same page also releases a WBC dataset, recorded separately (warwick-nuclick-hemato-wbc).'
+  last_checked: '2026-10-09T01:20:00Z'
+notes: 'No license on the Warwick page; it only requires citing the NuClick paper. Organism not stated (LYON19 page and abstract:
+  breast, colon, prostate IHC specimens, CD3/CD8, from Dutch medical centres). Annotations: NuClick-generated instance masks
+  from clicks of a non-expert user (arXiv paper), hence source mixed. Same Warwick page also releases a WBC set (separate
+  record). Possible duplicate of open PR #348 (warwick-nuclick-ihc-lymphocyte-masks). enricher: voxel size 240x240 nm from
+  LYON19 Data page (WSIs 0.24 um/px, ROIs saved at full resolution; NuClick arXiv: 441 256x256 patches extracted from LYON19);
+  resampling not stated (was null). enricher: channels 3 (RGB PNG probed); annotations.format from inspection.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick/ihc_nuclick.zip
+  bytes_downloaded: 650096
+  size_source: file-listing
+  layout:
+    tree: "ihc_nuclick.zip/IHC_nuclick/\n  IHC/images/Train/ROI_<n>_<k>.png              671   69.7 MB\n  IHC/images/Validation/ROI_<n>_<k>.png\
+      \         200   23.5 MB\n  IHC/masks/Train/ROI_<n>_<k>.npy               671  176.0 MB\n  IHC/masks/Validation/ROI_<n>_<k>.npy\
+      \          200   52.5 MB\n  IHC_xml_asap/Train/ROI_<n>_<k>.{tif,xml}      671 + 671  368.0 MB\n  IHC_xml_asap/Validation/ROI_<n>_<k>.{tif,xml}\
+      \ 200 + 200  109.8 MB\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick/ihc_nuclick.zip::IHC_nuclick/IHC/images/Validation/ROI_338_2.png
+    - https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick/ihc_nuclick.zip::IHC_nuclick/IHC/masks/Validation/ROI_338_2.npy
+    size_bytes: 388184
+    description: One 256x256 validation patch (RGB PNG) and its uint32 instance mask (.npy) with 13 lymphocytes (zip members).
+  arrays:
+  - role: raw
+    path_pattern: IHC_nuclick/IHC/images/{Train,Validation}/ROI_*_*.png
+    format: png
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: IHC_nuclick/IHC/masks/{Train,Validation}/ROI_*_*.npy
+    format: other
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: null
+    dtype: uint32
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 13
+    encoding: instance-ids
+    classes:
+    - id: null
+      name: lymphocyte
+    n_ids_observed: 14
+    alignment: same-grid
+    alignment_notes: 'Mask IHC/masks/<split>/ROI_<n>_<k>.npy pairs with image IHC/images/<split>/ROI_<n>_<k>.png (same stem,
+      same 256x256 grid). Structure annotated: lymphocytes (one instance ID each).'
+  - role: label
+    path_pattern: IHC_nuclick/IHC_xml_asap/{Train,Validation}/ROI_*_*.xml
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: polygons
+    classes:
+    - id: Inflam
+      name: lymphocyte
+    n_ids_observed: null
+    alignment: same-grid
+    alignment_notes: ASAP XML (Type Spline, PartOfGroup Inflam) in pixel coordinates of the same-stem 256x256 patch; ROI_338_2.xml
+      has 13 splines (555 points, x 23..255, y 0..255), matching the 13 instances of ROI_338_2.npy.
+  notes: 'Zip central directory (range requests): 3,484 members, 458,872,711 B, complete. Probes: ROI_338_2.png RGB uint8
+    256x256 deflate; IHC_xml_asap ROI_338_2.tif plain tiled TIFF (112x112 tiles, uncompressed), 3 pages, first 256x256x3 uint8;
+    the page says these are pyramid TIFFs (member size 527,800 B is consistent with 256/128/64 levels, not 3 full pages),
+    duplicates of the PNGs for ASAP, so not listed as an array. Masks are NumPy .npy (no data.formats value), read with a
+    short script (np.load allow_pickle=False): Validation ROI_338_2.npy uint32 0..13, 14 values (consecutive instance IDs);
+    Train ROI_100_2.npy all zero (patches without lymphocytes exist). Image value range from one sample (tools/sample.py:
+    0..255, mean 142; hint contrast-stretched not confirmed, so normalization unknown). Download: zip and members are direct
+    with range requests, but warwick.ac.uk is not on the TensorSwitch fetch allowlist. Organism not stated in the Warwick
+    page, NuClick arXiv paper or LYON19 page/abstract.'
+  inspected_at: '2026-10-09T01:20:00Z'
