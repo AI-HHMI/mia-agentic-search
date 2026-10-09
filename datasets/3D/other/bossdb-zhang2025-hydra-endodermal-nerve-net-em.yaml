@@ -1,11 +1,12 @@
 schema_version: '1.2'
 id: bossdb-zhang2025-hydra-endodermal-nerve-net-em
-title: High resolution electron microscopy, segmentation and morphological reconstruction of 20 complete neurons and all vesicles in the endodermal nerve net of Hydra vulgaris (BossDB zhang2025)
+title: High resolution electron microscopy, segmentation and morphological reconstruction of 20 complete
+  neurons and all vesicles in the endodermal nerve net of Hydra vulgaris (BossDB zhang2025)
 short_name: Hydra endodermal nerve net neurons (volume EM)
-description: Volume EM of a small Hydra vulgaris specimen on BossDB (image channel, 4 x 4 x 30 nm) with a neuron segmentation
-  channel (neurons) from the partial ultrastructural reconstruction of the endodermal nerve net (20 complete neurons
-  in five morphological subtypes; all vesicles segmented and classified according to the paper's summary and the
-  dataset title).
+description: Volume EM of a small Hydra vulgaris specimen on BossDB (image channel, 4 x 4 x 30 nm) with
+  a neuron segmentation channel (neurons) from the partial ultrastructural reconstruction of the endodermal
+  nerve net (20 complete neurons in five morphological subtypes; all vesicles segmented and classified
+  according to the paper's summary and the dataset title).
 landing_url: https://bossdb.org/project/zhang2025
 doi: 10.60533/boss-2025-08g4
 repository: other
@@ -39,7 +40,7 @@ imaging:
     x: 4
     y: 4
     z: 30
-  channels: null
+  channels: 1
   organism:
   - Hydra vulgaris
   sample: Small Hydra vulgaris specimen, endodermal nerve net
@@ -47,16 +48,18 @@ imaging:
 data:
   formats:
   - precomputed
-  size_bytes: null
+  size_bytes: 321514540892160
   n_items: 1
   access: open
-  download_url: null
-  download_method: api
+  download_url: https://bossdb-open-data.s3.amazonaws.com/zhang2025/
+  download_method: s3
 annotations:
   present: true
   types:
   - instance-segmentation
-  format: BossDB annotation channel neurons (uint64) over the image channel
+  - organelle
+  format: 'neuroglancer precomputed segmentation layers on S3: neurons (uint32, 8x8x30 nm) and five vesicle
+    instance layers CV_seg, DCV_seg, DCVH_seg, SCV_seg, SDCV_seg (uint32, 8x8x30 nm)'
   coverage: partial
   source: unknown
 ml:
@@ -78,10 +81,185 @@ provenance:
   - https://api.bossdb.io/v1/coord/zhang2025_hydra
   - https://api.datacite.org/dois/10.60533/boss-2025-08g4
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A41167196+AND+SRC%3AMED&format=json&resultType=core&pageSize=3
+  - https://bossdb-open-data.s3.amazonaws.com/zhang2025/
+  - https://bossdb-open-data.s3.amazonaws.com/zhang2025/image/info
+  - https://bossdb-open-data.s3.amazonaws.com/zhang2025/neurons/info
+  - https://bossdb-open-data.s3.amazonaws.com/zhang2025/CV_seg/info
+  - https://bossdb-open-data.s3.amazonaws.com/zhang2025/neurons/segment_properties/info
+  - https://api.bossdb.io/v1/collection/zhang2025/experiment/hydra/channel/neurons
+  - https://raw.githubusercontent.com/PytorchConnectomics/VesiclePy/main/README.md
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T20:50:00Z'
-notes: 'One experiment (hydra) with channels image and neurons; voxel size 4 x 4 x 30 nm (180224 x 139264 x 1830 voxels) from its BossDB coordinate frame. Licence CC-BY-4.0 from the DataCite record of the BossDB DOI. The Current Biology paper is not open access, so only its abstract was read (partial reconstruction of the endodermal nerve net, 5 neuron subtypes). The vesicle segmentation mentioned in the dataset title is not a BossDB channel (only image and neurons are listed). Whether neurons were traced manually or segmented automatically is not stated in the sources read; the EM modality (SEM vs TEM) is also not stated, hence modality other and annotations.source unknown. The DataCite entry also points to the VesiclePy repository (github.com/PytorchConnectomics/VesiclePy). The DataCite author list differs from the paper author list, which is used here as initials. Publication date not read.'
+  last_checked: '2026-10-09T19:40:00Z'
+notes: 'One experiment (hydra); voxel size 4 x 4 x 30 nm (180224 x 139264 x 1830 voxels) from the BossDB
+  coordinate frame and the precomputed image info. Licence CC-BY-4.0 from the DataCite record. The Current
+  Biology paper is not open access (abstract only). enricher: the S3 store (bossdb-open-data/zhang2025/)
+  holds layers image, em (same volume, 4096x4096x1 chunks), neurons, neurons_unchunked and vesicle layers
+  CV_seg, DCV_seg, DCVH_seg, SCV_seg, SDCV_seg, all labels at 8 x 8 x 30 nm; the abstract mentions clear
+  and dense-core vesicles, but the layer abbreviations are not defined in any source read. Manual vs automatic
+  tracing not stated (VesiclePy README describes automated vesicle segmentation with proofreading tools,
+  not this dataset specifically); EM modality not stated, hence modality other and source unknown.'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "s3://bossdb-open-data/zhang2025/   (neuroglancer precomputed; chunk listing not run: millions\
+      \ of chunks)\n  image/              image uint8, 8 scales, s0 4_4_30 180224x139264x1830 (x,y,z),\
+      \ chunks 512x512x64, raw encoding, gzip on S3\n  em/                 image uint8, 1 scale 4_4_30,\
+      \ same size, chunks 4096x4096x1\n  neurons/            segmentation uint32, 5 scales, s0 8_8_30\
+      \ 90112x69632x1830, chunks 512x512x64, meshes + segment_properties\n  neurons_unchunked/  segmentation\
+      \ uint32, 1 scale 8_8_30, chunks 8192x8192x1\n  CV_seg/ DCV_seg/ DCVH_seg/ SCV_seg/ SDCV_seg/  \
+      \ segmentation uint32, 5 scales, s0 8_8_30 90112x69632x1830, chunks 512x512x16, meshes\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://bossdb-open-data.s3.amazonaws.com/zhang2025/image
+    - https://bossdb-open-data.s3.amazonaws.com/zhang2025/neurons
+    size_bytes: null
+    description: Precomputed layer roots of image and neurons (chunked stores, read remotely); one 512x512x64
+      chunk is 16 MB (image) / 64 MB (neurons) uncompressed, much less gzipped.
+  arrays:
+  - role: raw
+    path_pattern: zhang2025/image
+    format: precomputed
+    axes: zyx
+    shape:
+    - 1830
+    - 139264
+    - 180224
+    shape_varies: false
+    dtype: uint8
+    compression: gzip
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: zhang2025/em is the same volume rechunked as 4096x4096x1 tiles.
+  - role: label
+    path_pattern: zhang2025/neurons
+    format: precomputed
+    axes: zyx
+    shape:
+    - 1830
+    - 69632
+    - 90112
+    shape_varies: false
+    dtype: uint32
+    compression: gzip
+    value_range:
+    - 0
+    - 22
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: scaled
+    alignment_notes: 'Labels at 8x8x30 nm vs image 4x4x30 nm: exactly half the image xy size, same z,
+      offset 0. segment_properties map 63 segment ids to neuron numbers 1-20 ("Segmentation Name"; "*"
+      for unnamed segments).'
+  - role: label
+    path_pattern: zhang2025/CV_seg
+    format: precomputed
+    axes: zyx
+    shape:
+    - 1830
+    - 69632
+    - 90112
+    shape_varies: false
+    dtype: uint32
+    compression: gzip
+    value_range:
+    - 0
+    - 450
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: scaled
+    alignment_notes: Vesicle instance layer CV_seg (abbreviation not defined in sources read); 8x8x30
+      nm, half the image xy size, offset 0.
+  - role: label
+    path_pattern: zhang2025/DCV_seg
+    format: precomputed
+    axes: zyx
+    shape:
+    - 1830
+    - 69632
+    - 90112
+    shape_varies: false
+    dtype: uint32
+    compression: gzip
+    value_range: null
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: scaled
+    alignment_notes: Vesicle instance layer DCV_seg (abbreviation not defined in sources read); 8x8x30
+      nm, half the image xy size, offset 0.
+  - role: label
+    path_pattern: zhang2025/DCVH_seg
+    format: precomputed
+    axes: zyx
+    shape:
+    - 1830
+    - 69632
+    - 90112
+    shape_varies: false
+    dtype: uint32
+    compression: gzip
+    value_range: null
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: scaled
+    alignment_notes: Vesicle instance layer DCVH_seg (abbreviation not defined in sources read); 8x8x30
+      nm, half the image xy size, offset 0.
+  - role: label
+    path_pattern: zhang2025/SCV_seg
+    format: precomputed
+    axes: zyx
+    shape:
+    - 1830
+    - 69632
+    - 90112
+    shape_varies: false
+    dtype: uint32
+    compression: gzip
+    value_range: null
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: scaled
+    alignment_notes: Vesicle instance layer SCV_seg (abbreviation not defined in sources read); 8x8x30
+      nm, half the image xy size, offset 0.
+  - role: label
+    path_pattern: zhang2025/SDCV_seg
+    format: precomputed
+    axes: zyx
+    shape:
+    - 1830
+    - 69632
+    - 90112
+    shape_varies: false
+    dtype: uint32
+    compression: gzip
+    value_range: null
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: scaled
+    alignment_notes: Vesicle instance layer SDCV_seg (abbreviation not defined in sources read); 8x8x30
+      nm, half the image xy size, offset 0.
+  notes: 'size estimated (uncompressed): raw 1 x 1830x139264x180224 uint8 + 6 label layers 1 x 1830x69632x90112
+    uint32 = 321,514,540,892,160 B (321.5 TB). This is the full bounding box at s0; the volume is sparse
+    (an empty-region 512x512x64 image chunk is 17 KB gzipped, absent label chunks are not stored), so
+    the stored size is far smaller. A full S3 listing was not run (millions of chunk objects). Probed
+    info files of every layer. Sampled with a short requests+numpy script: image chunk 81920-82432_45056-45568_1408-1472
+    uint8 min 0 max 255 mean 159.5; neurons chunk 40960-41472_22528-23040_1408-1472 ids {0,22}, 89% zero;
+    CV_seg chunk 40960-41472_27648-28160_320-336 10 ids (404-450), 99.4% zero. Value ranges are from one
+    chunk each. Voxel size 4x4x30 nm from the precomputed image info (nm by spec), agrees with the BossDB
+    coord frame. Vesicle layer abbreviations (CV, DCV, DCVH, SCV, SDCV) not defined in sources read (paper
+    not open access).'
