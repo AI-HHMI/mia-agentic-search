@@ -3,8 +3,8 @@ id: figshare-27118035-ai4skin-cutaneous-spindle-cell-wsi
 title: 'AI4SkIN: a fusocelular skin dataset with whole slide images for deep learning models'
 short_name: Skin spindle cell neoplasm H&E slides (WSI)
 description: 641 H&E-stained whole slide images of cutaneous spindle cell neoplasms from two Spanish hospitals (40x scans, 0.227 or
-  0.25 um per pixel), grouped by tumour subtype and labelled with a multiclass diagnosis by 2 expert pathologists and 10 pathologists in
-  training (crowd labels), plus a spreadsheet of the labels used in the paper's Gaussian-process classification benchmark.
+  0.25 um per pixel), grouped by tumour subtype and labelled with a multiclass diagnosis by 2 expert pathologists and 10 pathologists
+  in training (crowd labels), plus a spreadsheet of the labels used in the paper's Gaussian-process classification benchmark.
 landing_url: https://springernature.figshare.com/articles/dataset/A_Fusocelular_Skin_Dataset_with_Whole_Slide_Images_for_Deep_Learning_Models/27118035
 doi: 10.6084/m9.figshare.27118035.v2
 repository: Figshare
@@ -48,12 +48,13 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: Slide-level multiclass diagnosis per WSI (expert and pathologist-in-training labels in AI4SKIN_database_v2.xlsx); WSI.7z folders grouped by subtype
+  format: 'Slide-level diagnosis: class folders in WSI.7z (0_lm .. 6_scc) and the GT column of AI4SKIN_database_v2.xlsx (plus 10 annotator
+    columns and MV / DS / GLAD / MACE crowd-label aggregates)'
   source: manual
 ml:
   tasks:
   - classification
-  splits_provided: false
+  splits_provided: true
   benchmark: null
   baseline_code_url: null
 license:
@@ -65,14 +66,74 @@ provenance:
   evidence_urls:
   - https://api.figshare.com/v2/articles/27118035
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12078617/fullTextXML
-  confidence: 0.75
+  - https://ndownloader.figshare.com/files/59285450
+  - https://ndownloader.figshare.com/files/49574349
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-09T12:15:00Z'
-notes: 'Figshare lists WSI.7z (362.8 GB) and AI4SKIN_database_v2.xlsx (v2 only removes duplicate rows). The .7z cannot be listed
-  remotely, so the file listing was not seen (annotations_verified false); the layout (slides grouped by subtype, files named
-  AI4SkIN_HOSPITAL_NUMBER_SAMPLE.tif) is from the paper Data Records. Slides were scanned on a Ventana iScan HT at 40x (0.227 um/pixel,
-  HCUV) and a Philips Ultra Fast Scanner at 40x (0.25 um/pixel, HUSC, converted from .isyntax to tiff); the two scanners differ, so voxel_size_nm is null. The paper describes six classes (one, scc, is under-represented and dropped in the
-  validation, leaving 626 WSIs) and patient-level train / validation / test sets (paper Table 3), but no split file was seen in the Figshare listing, so splits_provided is false. Labels are slide-level only, no regions or masks. The paper is CC BY-NC-ND; the Figshare data record is CC BY.'
+  annotations_verified: true
+  last_checked: '2026-10-09T10:40:00Z'
+notes: 'Figshare lists WSI.7z (362.8 GB) and AI4SKIN_database_v2.xlsx (v2 only removes duplicate rows). Slides: Ventana iScan HT 40x
+  (0.227 um/pixel, HCUV) and Philips Ultra Fast Scanner 40x (0.25 um/pixel, HUSC, converted from .isyntax to tiff); the two differ,
+  so voxel_size_nm is null (HCUV 227 nm = AI4SKIN_HCUV_*.tif, HUSC 250 nm = AI4SKIN_HUSC_*.tif). Labels are slide-level only, no regions
+  or masks. The paper is CC BY-NC-ND; the Figshare data record is CC BY. enricher: 7z header read: 641 .tif in 7 class folders (annotations_verified
+  true, was false); the xlsx has a subset column (train 384 / val 101 / test 141 for 626 WSIs, scc excluded), so splits_provided true
+  (was false).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "./                               2 files   362.8 GB\n  WSI.7z                        362,831,482,444 B  (641 .tif, 7z header\
+      \ read)\n    WSI/0_lm/    104 slides  AI4SKIN_<HCUV|HUSC>_<n>_<sample>.tif\n    WSI/1_lms/    46\n    WSI/2_df/    195\n    WSI/3_dfs/\
+      \    57\n    WSI/4_scm/   122\n    WSI/5_afx/   102\n    WSI/6_scc/    15\n  AI4SKIN_database_v2.xlsx      44,297 B  (626 rows:\
+      \ annotator labels, GT, subset, center)\n"
+    n_files: 2
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: WSI.7z/WSI/*/AI4SKIN_*.tif
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'TIFF headers not readable: members of a 7z archive (LZMA-packed) cannot be range-read by the inspection tools.'
+  - role: label
+    path_pattern: AI4SKIN_database_v2.xlsx
+    format: other
+    axes: null
+    shape:
+    - 626
+    - 18
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes:
+    - id: 0
+      name: leiomyoma (lm)
+    - id: 1
+      name: leiomyosarcoma (lms)
+    - id: 2
+      name: dermatofibroma (df)
+    - id: 3
+      name: dermatofibrosarcoma (dfs)
+    - id: 4
+      name: spindle cell melanoma (scm)
+    - id: 5
+      name: atypical fibroxanthoma (afx)
+    - id: 6
+      name: squamous cell carcinoma (scc), folder only, not in the xlsx
+    alignment: not-applicable
+    alignment_notes: 'xlsx table (one row per slide, column WSI = file stem); GT ids 0-5 match the class-folder prefixes (counts equal:
+      104/46/195/57/122/102). Columns Marker_1..10 (-1 = not labelled), GT, MV, DS, GLAD, MACE, WSI, subset, center.'
+  notes: 'Listing: Figshare API (2 files, exact sizes). 7z next header (40 B) and the LZMA-packed header (9,978 B, 56,590 B unpacked)
+    were read with range requests: 641 .tif names in 7 class folders, HCUV 284 / HUSC 357. xlsx (44 KB) read in full: 626 rows. No sample:
+    7z members cannot be extracted remotely and the archive is 362.8 GB; TIFF shape/dtype/compression and axes unknown. Voxel size:
+    paper Methods state 0.227 um/pixel (HCUV) and 0.25 um/pixel (HUSC); not one value, so null. Download: WSI.7z is one direct file
+    (ndownloader redirects to a signed S3 URL); no per-slide links exist.'
