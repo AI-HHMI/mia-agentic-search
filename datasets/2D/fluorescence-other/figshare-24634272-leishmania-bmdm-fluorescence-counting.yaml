@@ -52,7 +52,7 @@ ml:
   baseline_code_url: null
 license:
   spdx: MIT
-  url: null
+  url: https://opensource.org/licenses/MIT
 provenance:
   discovered_by: harvest-literature
   discovered_at: '2026-10-10T23:10:00Z'
@@ -64,7 +64,78 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T23:15:00Z'
-notes: 'One 1.08 GB zip listed with peek_archive: Training 44 images with 44 annotation TIFFs, Validation 10 and 10, Test 26 images (MOI 1:5 nine, 1:10 seven, 1:20 ten) and Count.xlsx; 135 files. The
-  description says annotations are centroids, but the annotation images were not opened, so the encoding of the three classes is unconfirmed. No paper was found in Europe PMC, so the microscope, channels,
-  stain and pixel size are unstated; file names show Leica LIF exports. Figshare lists the license as MIT (no URL). Test images have counts only, not centroids.'
+  last_checked: '2026-10-10T22:15:00Z'
+notes: 'Training 44 images with 44 annotation TIFFs, Validation 10 and 10, Test 26 images (MOI 1:5 nine, 1:10 seven, 1:20 ten) and Count.xlsx; 135 files. Test images have counts only, not centroids. No paper was found in Europe PMC, so microscope, channels, stain and pixel size are unstated; file names show Leica LIF exports. enricher: annotations confirmed as sparse binary centroid pixels, 4 pages per mask (3 categories documented; page order not); license URL from the Figshare API (was null). organisms: Mus musculus = macrophages, Leishmania major = amastigotes, in the same images.'
+technical:
+  method: sample
+  inspected_at: '2026-10-10T22:15:00Z'
+  inspected_urls:
+  - https://ndownloader.figshare.com/files/43291788
+  bytes_downloaded: 38800000
+  size_source: file-listing
+  layout:
+    tree: |
+      Leishmania_infection.zip (1.08 GB, 135 members)
+        Leishmania_infection/
+          Training/Original_images/   44 .tif (791.7 MB)  <name>_org_<n>.tif
+          Training/Annotation/        44 .tif (738.2 MB)  <name>_Mask_<n>.tif
+          Validation/Original_images/ 10 .tif (167.8 MB)
+          Validation/Annotation/      10 .tif (167.8 MB)
+          Test/Original_images/MOI_1-05/, MOI_1-10/, MOI_1-20/   26 .tif (436.2 MB)  <lif name> - Series<k>.tif
+          Test/Count/Count.xlsx       expert manual counts (8.7 KB)
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/43291788::Leishmania_infection/Validation/Original_images/M_24h_1-5_org_2.tif
+    - https://ndownloader.figshare.com/files/43291788::Leishmania_infection/Validation/Annotation/M_24h_1-5_Mask_2.tif
+    size_bytes: 33555200
+    description: One validation image and its centroid annotation (2048x2048, 2-page uint16 raw and 4-page binary mask; 14 MB compressed in the zip).
+  arrays:
+  - role: raw
+    path_pattern: Leishmania_infection/*/Original_images/**/*.tif
+    format: tiff
+    axes: null
+    shape:
+    - 2
+    - 2048
+    - 2048
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 293
+    - 65535
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Plain 2-page TIFFs in 49 of 54 annotated images and all 26 test images; 5 training images are 3-page ImageJ TIFFs (images=3, channels=3, labels c:1/3..c:3/3). The page axis of the plain files is not stated (likely channels for these 2D images, not documented).'
+  - role: label
+    path_pattern: Leishmania_infection/*/Annotation/*_Mask_*.tif
+    format: tiff
+    axes: null
+    shape:
+    - 4
+    - 2048
+    - 2048
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: null
+      name: Amastigotes
+    - id: null
+      name: Infected Macrophages
+    - id: null
+      name: Total Macrophages
+    alignment: same-grid
+    alignment_notes: 'Pairing: <name>_org_<n>.tif <-> <name>_Mask_<n>.tif in the same split. Each mask is a plain 4-page uint8 TIFF of sparse {0,255} centroid pixels (20-46 nonzero pixels per page in the 2 masks read), one page per category presumably; the description names 3 categories, the page order and the 4th page are not documented. In the uninfected (sin_inf) mask pages 0 and 2 are empty and pages 1 and 3 identical (46 px).'
+  notes: 'Complete Figshare listing: one zip, 1,081,484,724 bytes, 135 members (all deflated). Read via range: 2 raw images (G_24h_sin_inf2_org_12: ImageJ CYX 3x2048x2048 uint16, [328, 65535]; M_24h_1-5_org_2: plain 2x2048x2048 uint16, [293, 65535]) and 2 masks (4x2048x2048 uint8, values {0,255}). Headers of 4 more raws (first 1 MB of the inflated member): 2048x2048 uint16 pages, no calibration. Values from single files; raws reach 65535 (saturated pixels). Count.xlsx not opened. Voxel size not set: only the ImageJ file carries a calibration (unit micron, XResolution 9.692308 px/um, i.e. 103.2 nm/px); the other 5 headers read have none, and no page or paper states it; checked TIFF headers, Figshare API, Europe PMC (no paper). Channel count (2 or 3) and stains are not documented.'
