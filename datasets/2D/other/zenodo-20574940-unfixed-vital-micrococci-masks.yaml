@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: zenodo-20574940-unfixed-vital-micrococci-masks
 title: Unfixed vital micrococci microscopy images with binary segmentation masks and bounding boxes
 short_name: Unfixed vital micrococci masks (microscopy)
-description: 100,000 colour microscopy images (about 400 x 400 px, PNG) of unfixed vital micrococci, each with a paired binary
-  segmentation mask of the microorganism foreground, plus a bboxes.json of bounding boxes per part. Split over ten zip parts of
-  10,000 image/mask pairs each. Intended for training, validation and benchmarking of segmentation, classification and detection models.
+description: 100,000 colour microscopy images (about 400 x 400 px, PNG) of unfixed vital micrococci, each
+  with a paired binary segmentation mask of the microorganism foreground, plus a bboxes.json of bounding
+  boxes per part. Split over ten zip parts of 10,000 image/mask pairs each. Intended for training, validation
+  and benchmarking of segmentation, classification and detection models.
 landing_url: https://zenodo.org/records/20574940
 doi: 10.5281/zenodo.20574940
 repository: Zenodo
@@ -36,10 +37,10 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: null
-  n_items: 100000
+  size_bytes: 22074929099
+  n_items: 200000
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/20574940
   download_method: http
 annotations:
   present: true
@@ -47,7 +48,8 @@ annotations:
   - semantic-segmentation
   - bounding-box
   coverage: dense
-  format: PNG binary masks (255 = microorganism foreground, 0 = background) with the same filename as the image; bboxes.json maps each image file to one [x1, y1, x2, y2] box
+  format: PNG binary masks (255 = microorganism foreground, 0 = background) with the same filename as
+    the image; bboxes.json maps each image file to one [x1, y1, x2, y2] box
   source: unknown
 ml:
   tasks:
@@ -66,10 +68,99 @@ provenance:
   evidence_urls:
   - https://zenodo.org/records/20574940
   - https://zenodo.org/records/20574940/files/pt01.zip
+  - https://zenodo.org/api/records/20574940
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T13:55:00Z'
-notes: 'Zenodo page (v1-0, ten zips of 2.2 GB, MIT) states 100,000 image/mask pairs, PNG, about 400 x 400 px. pt01.zip listing: 20,000 PNGs (images/ and masks/, 10,000 pairs) plus bboxes.json (one box per image); other parts not listed. The title says "Generated Microscopic Images" and the page does not say whether images are real or synthetic; no paper is linked; modality, microscope, stain, pixel size and annotation procedure are not stated (a sample image looks like a real colour micrograph). Organism empty: only "micrococci", no taxon. Differs from zenodo-21992855 (same authors, real images, 4.1 GB, five classes plus 84 scenes). Confidence lowered: origin unconfirmed.'
+  last_checked: '2026-10-10T14:21:24Z'
+notes: 'Zenodo page (v1-0, ten zips of 2.2 GB, MIT) states 100,000 image/mask pairs, PNG, about 400 x
+  400 px. pt01.zip listing: 20,000 PNGs (images/ and masks/, 10,000 pairs) plus bboxes.json (one box per
+  image); other parts not listed. The title says "Generated Microscopic Images" and the page does not
+  say whether images are real or synthetic; no paper is linked; modality, microscope, stain, pixel size
+  and annotation procedure are not stated. Organism empty: only "micrococci", no taxon. Differs from zenodo-21992855
+  (same authors, real images, 4.1 GB, five classes plus 84 scenes). Confidence lowered: origin unconfirmed.
+  enricher: size 22,074,929,099 bytes from the Zenodo API file list (10 zips); n_items 100000 -> 200000
+  (100,000 images + 100,000 masks).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "pt01.zip ... pt10.zip   10 zips, 2.20-2.21 GB each, 22.1 GB\n  ptNN/images/NNNNNN.png   10,000\
+      \ RGB images per zip\n  ptNN/masks/NNNNNN.png    10,000 binary masks per zip\n  ptNN/bboxes.json\
+      \         one [x1, y1, x2, y2] box per image file name\n"
+    n_files: 10
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/20574940/files/pt01.zip::pt01/images/000001.png
+    - https://zenodo.org/records/20574940/files/pt01.zip::pt01/masks/000001.png
+    - https://zenodo.org/records/20574940/files/pt01.zip::pt01/bboxes.json
+    size_bytes: null
+    description: Image 000001 of part 1, its mask, and the part-1 bounding-box file
+  arrays:
+  - role: raw
+    path_pattern: pt[0-9][0-9].zip::pt[0-9][0-9]/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 386
+    - 382
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 106
+    - 237
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB colour PNGs; sizes vary (the page gives an average of 401.8 x 400.3 px).
+  - role: label
+    path_pattern: pt[0-9][0-9].zip::pt[0-9][0-9]/masks/*.png
+    format: png
+    axes: yx
+    shape:
+    - 386
+    - 382
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 255
+      name: microorganism foreground
+    - id: 0
+      name: background
+    alignment: same-grid
+    alignment_notes: 'Mask has the same file name as its image in the same part (page: "Each image and
+      mask pair has the same filename"); sampled pair shares the 386x382 grid.'
+  - role: label
+    path_pattern: pt[0-9][0-9].zip::pt[0-9][0-9]/bboxes.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: deflate
+    value_range: null
+    normalization: none
+    encoding: boxes-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: JSON object keyed by image file name, each value one box [x1, y1, x2, y2] in pixels
+      of that image.
+  notes: 'Zenodo API lists 10 zips, 22,074,929,099 bytes in total (complete file list; zip contents listed
+    for pt01 only: 20,000 PNGs + bboxes.json, 2,216.8 MB uncompressed). Sampled pt01/images/000001.png
+    (386x382x3 uint8, values 106-237, RGB channels not identical) and its mask (386x382 uint8, values
+    {0: 145716, 255: 1736}); one sample. bboxes.json starts {"000001.png": [195, 239, 244, 287], ...}.
+    tools/sample.py could not read members through the /api/.../content URL (it took the member for HDF5),
+    so the sample uses the equivalent https://zenodo.org/records/20574940/files/pt01.zip URL (download-check
+    usable). Whether the images are real or generated is not stated beyond the title ("Generated Microscopic
+    Images"). No single archive: download_url is the record page; the ten direct zips are https://zenodo.org/api/records/20574940/files/ptNN.zip/content
+    (pt01 checked usable).'
