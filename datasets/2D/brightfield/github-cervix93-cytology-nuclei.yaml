@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: github-cervix93-cytology-nuclei
 title: A New Cervical Cytology Dataset for Nucleus Detection and Image Classification (Cervix93)
 short_name: Cervix93 cervical cytology nuclei (brightfield)
-description: 93 image stacks (10 to 20 focal planes each, 1280x960 pixels, 40x) of ThinPrep Pap-stained cervical cytology slides,
-  each with an extended depth of field (EDF) image, slide grade labels (Negative / LSIL / HSIL) and 2,705 manually marked nucleus
-  points. Train/test sets (set 0 / set 1) and MATLAB evaluation and baseline code are included.
+description: 93 image stacks (10 to 20 focal planes each, 1280x960 pixels, 40x) of ThinPrep Pap-stained cervical cytology slides, each
+  with an extended depth of field (EDF) image, slide grade labels (Negative / LSIL / HSIL) and 2,705 manually marked nucleus points.
+  Train/test sets (set 0 / set 1) and MATLAB evaluation and baseline code are included.
 landing_url: https://github.com/parham-ap/cytology_dataset
 doi: null
 repository: GitHub
@@ -13,7 +13,8 @@ authors:
 - Hady Ahmady Phoulady
 - Peter R. Mouton
 publications:
-- title: A New Cervical Cytology Dataset for Nucleus Detection and Image Classification (Cervix93) and Methods for Cervical Nucleus Detection
+- title: A New Cervical Cytology Dataset for Nucleus Detection and Image Classification (Cervix93) and Methods for Cervical Nucleus
+    Detection
   doi: null
   url: https://ar5iv.arxiv.org/html/1811.09651
 date_published: null
@@ -22,7 +23,7 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism:
   - Homo sapiens
   sample: archived ThinPrep Pap-stained cervical cytology slides from Moffitt Cancer Center (Tampa, FL)
@@ -30,8 +31,8 @@ imaging:
   - Pap stain
 data:
   formats:
-  - other
-  size_bytes: null
+  - png
+  size_bytes: 2082816000
   n_items: 93
   access: open
   download_url: null
@@ -42,7 +43,8 @@ annotations:
   - points
   - classification
   coverage: dense
-  format: manually marked nucleus points per frame and a per-frame grade label (labels.csv); file formats of the points not stated
+  format: per-frame CSV of manually marked nucleus points (dataset/EDF/frameNNN.csv, one row per nucleus, 2 integer columns, no header)
+    plus dataset/labels.csv (frame, grade N/L/H, set 0=train/1=test)
   source: manual
 ml:
   tasks:
@@ -61,16 +63,84 @@ provenance:
   - https://github.com/parham-ap/cytology_dataset
   - https://github.com/parham-ap/cytology_dataset/tree/master/dataset
   - https://ar5iv.arxiv.org/html/1811.09651
-  confidence: 0.55
+  - https://arxiv.org/abs/1811.09651
+  - https://arxiv.org/pdf/1811.09651
+  confidence: 0.6
 verification:
   url_ok: true
   license_found: false
-  annotations_verified: false
-  last_checked: '2026-10-10T05:15:30Z'
-notes: 'README and the dataset/ folder listing show EDF/, 93 frameNNN_stack/ folders and labels.csv; no license file or statement
-  on the repository page or in the paper (arXiv 1811.09651, read via ar5iv: Stereologer microscope, 40x, 1280x960, 10-20 planes
-  per stack, EDF by Bradley and Bamford, points marked inside each nucleus by hand, 2,705 points; train set 69 frames /
-  1,983 nuclei, test 24 frames / 722 nuclei). Image file formats, annotation files, total size, pixel size, publication date
-  and the paper DOI were not stated in what was read . Dimensionality is recorded as 2D because points are marked per frame and in the EDF image, but the data
-  are also focal-plane stacks. formats is other because the image format is unknown. The annotation files were not seen
-  in a listing of their contents.'
+  annotations_verified: true
+  last_checked: '2026-10-10T06:30:00Z'
+notes: 'Images are 8-bit greyscale PNGs, 1280x960 (probed). 93 EDF images with point CSVs, 1602 focal-plane PNGs in 93 frameNNN_stack/
+  folders, labels.csv; MATLAB codes/. No license file or statement in the repo, README or arXiv paper (the arXiv licence covers the
+  paper only). Pixel size not stated (paper: Stereologer system, 40x, 1280x960). z spacing of the stacks not stated; annotations are
+  per EDF image, so recorded as 2D. enricher: formats png (was other), channels 1 (was null), annotations verified.'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "README.md\ncodes/  EvaluateDetection.m, NucleusSegmentation.m, Test.m\ndataset/\n  labels.csv            frame,label,set\
+      \ (93 rows)\n  EDF/frame000.png ... frame092.png   93 PNG\n  EDF/frame000.csv ... frame092.csv   93 CSV (nucleus points)\n  frame000_stack/\
+      \ ... frame092_stack/  fov000.png ...  1602 PNG (10-20 per stack)\n"
+    n_files: 1794
+    listing_complete: true
+  sample:
+    urls:
+    - https://raw.githubusercontent.com/parham-ap/cytology_dataset/master/dataset/EDF/frame000.png
+    - https://raw.githubusercontent.com/parham-ap/cytology_dataset/master/dataset/EDF/frame000.csv
+    size_bytes: 560883
+    description: One EDF image and its nucleus point CSV (frame000, grade H, training set)
+  arrays:
+  - role: raw
+    path_pattern: dataset/EDF/frame*.png
+    format: png
+    axes: yx
+    shape:
+    - 960
+    - 1280
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 249
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Extended depth of field image computed from the frame stack (paper: method of Bradley and Bamford).'
+  - role: raw
+    path_pattern: dataset/frame*_stack/fov*.png
+    format: png
+    axes: yx
+    shape:
+    - 960
+    - 1280
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Focal planes of each frame (10-20 per stack, top to bottom of the slide); not annotated themselves.
+  - role: label
+    path_pattern: dataset/EDF/frame*.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: points-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: Pairs with dataset/EDF/<same stem>.png. One row per manually marked nucleus, two pixel coordinates, no header.
+      EvaluateDetection.m documents rows as x and y, but in the CSVs read the 2nd column reaches 1191 (> 960 rows), so column 1 looks
+      like the row (y, <=960) and column 2 the column (x, <=1280); check before use. Frame grade and train/test split are in dataset/labels.csv.
+  notes: 'Tree from the git tree of parham-ap/cytology_dataset (master, last commit 2018-11-26), names only; per-file sizes not read.
+    Probed EDF/frame000.png and frame000_stack/fov000.png: 960x1280 uint8 greyscale PNG. Sampled EDF/frame000.png (560653 B): min 0
+    max 249, mean 205 (one sample). Point CSVs read for frames 000/001/050: 28/54/39 rows. size estimated (uncompressed): raw 93 x 960x1280
+    uint8 + raw 1602 x 960x1280 uint8 = 2,082,816,000 B (2.1 GB); PNGs download smaller. No single direct archive could be checked:
+    the GitHub archive zip returned HTTP 403 here; files are at raw.githubusercontent.com/parham-ap/cytology_dataset/master/<path>.
+    Voxel size not found; checked: PNG headers (no calibration), README, MATLAB codes, arXiv 1811.09651 full text. License not found;
+    checked: repo files, README, arXiv page.'
