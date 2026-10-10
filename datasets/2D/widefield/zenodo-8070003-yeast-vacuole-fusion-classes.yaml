@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-8070003-yeast-vacuole-fusion-classes
 title: Vacuole fusion in fluorescent images training data
 short_name: Yeast vacuole fusion classes (widefield)
-description: 18,362 small TIFF regions of interest of Saccharomyces cerevisiae cells with FM4-64 (vacuole) and BODIPY 493/503
-  (lipid droplet) channels, sorted into three class folders (fully-fused, partially-fused, rejected) for training a
-  vacuole-phenotype classifier.
+description: 18,362 small TIFF regions of interest of Saccharomyces cerevisiae cells with FM4-64 (vacuole)
+  and BODIPY 493/503 (lipid droplet) channels, sorted into three class folders (fully-fused, partially-fused,
+  rejected) for training a vacuole-phenotype classifier.
 landing_url: https://zenodo.org/records/8070003
 doi: 10.5281/zenodo.8070003
 repository: Zenodo
@@ -15,8 +15,8 @@ authors:
 - Jacob Egebjerg
 - Daniel Wüstner
 publications:
-- title: Automated quantification of lipophagy in Saccharomyces cerevisiae from fluorescence and cryo-soft X-ray microscopy
-    data using deep learning
+- title: Automated quantification of lipophagy in Saccharomyces cerevisiae from fluorescence and cryo-soft
+    X-ray microscopy data using deep learning
   doi: 10.1101/2023.02.27.530171
   url: https://www.biorxiv.org/content/biorxiv/early/2023/02/27/2023.02.27.530171.source.xml
 date_published: '2023-06-22'
@@ -28,8 +28,8 @@ imaging:
   channels: 2
   organism:
   - Saccharomyces cerevisiae
-  sample: yeast cells (wild type and ncr1/npc2 deletion strains) in stationary phase, vacuoles stained with FM4-64 and lipid
-    droplets with BODIPY 493/503, Leica DMIRBE with 63x 1.4 NA oil objective
+  sample: yeast cells (wild type and ncr1/npc2 deletion strains) in stationary phase, vacuoles stained
+    with FM4-64 and lipid droplets with BODIPY 493/503, Leica DMIRBE with 63x 1.4 NA oil objective
   labels_stains:
   - FM4-64
   - BODIPY 493/503
@@ -68,9 +68,53 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T07:40:00Z'
-notes: 'Zip listing (peek_archive) shows 18,362 TIFFs in three class folders. The linked preprint (lipophagy in yeast) describes
-  32x32 px single-cell ROIs that were manually annotated as healthy vs sick vacuole phenotypes; the three folder names here
-  (fully-fused, partially-fused, rejected) are not described in the preprint text, so the class definitions and the exact
-  image size in this deposit were not verified. Pixel size is not stated in the preprint Methods read. Baseline code is
-  the LipoSeg repository named in the preprint data-availability statement.'
+  last_checked: '2026-10-10T08:20:00Z'
+notes: 'Zip listing (peek_archive) shows 18,362 TIFFs in three class folders. The linked preprint (lipophagy
+  in yeast) describes 32x32 px single-cell ROIs that were manually annotated as healthy vs sick vacuole
+  phenotypes; the three folder names here (fully-fused, partially-fused, rejected) are not described in
+  the preprint text, so the class definitions and the exact image size in this deposit were not verified.
+  Pixel size is not stated in the preprint Methods read. Baseline code is the LipoSeg repository named
+  in the preprint data-availability statement. enricher: ROIs are 2-channel 50x50 uint16 TIFFs (header
+  + sample); voxel size still not stated anywhere checked.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                  1 file   373.0 MB  .zip\nzip contents:\nfluorescence_vacuole_fusion_training_data.zip/fluorescence_vacuole_fusion_training_data/\n\
+      \  fully-fused/       7338 files  292.5 MB  .tif\n  partially-fused/   3008 files  116.8 MB  .tif\n\
+      \  rejected/          8016 files  305.6 MB  .tif\n  leica_<date>_<treatment>_<strain>_img_<NN>_roi<N>.tif\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/8070003/files/fluorescence_vacuole_fusion_training_data.zip::fluorescence_vacuole_fusion_training_data/fully-fused/leica_20230417_Myriocin_NCR1_img_02_roi10.tif
+    size_bytes: 10422
+    description: one 2-channel 50x50 ROI TIFF from the fully-fused class folder
+  arrays:
+  - role: raw
+    path_pattern: fluorescence_vacuole_fusion_training_data.zip::fluorescence_vacuole_fusion_training_data/*/*.tif
+    format: tiff
+    axes: cyx
+    shape:
+    - 2
+    - 50
+    - 50
+    shape_varies: null
+    dtype: uint16
+    compression: none
+    value_range:
+    - 114
+    - 1062
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'One ROI per TIFF, 2 pages = the FM4-64 and BODIPY 493/503 channels (Zenodo description:
+      "All images contain a ROI with FM4-64 and BODIPY 493/503 channels"); page order not stated. The
+      class label is the parent folder name.'
+  notes: 'Listing via Zenodo API + zip central directory (18,362 TIFF members; size confirmed). One ROI
+    sampled (6,450 bytes read): uint16 2x50x50, values 114-1062 (one sample; 12-bit detector range, no
+    clipping). The deposit files are 50x50 px uint16, not the 32x32 8-bit ROIs the Feb 2023 preprint describes,
+    and were acquired 2023-04-17 (file names), after the preprint. Classes = folder names (fully-fused,
+    partially-fused, rejected); no label files. Voxel size not found; checked: TIFF header (no calibration),
+    Zenodo API description, preprint Methods (148 nm is the cryo-fluorescence on the TXM beamline, not
+    the Leica DMIRBE used here), LipoSeg GitHub README (SXT pixel size only). TIFF page order (which channel
+    is first) not stated.'
