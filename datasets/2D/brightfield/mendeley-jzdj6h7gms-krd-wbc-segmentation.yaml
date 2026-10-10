@@ -3,8 +3,8 @@ id: mendeley-jzdj6h7gms-krd-wbc-segmentation
 title: Creating a white blood cell dataset for segmentation
 short_name: White blood cell segmentation (KRD-WBC)
 description: 600 images (512 x 512 px) of white blood cells from a clinical lab in Erbil, Kurdistan region of Iraq, each with
-  a ground-truth mask image of the same size, covering five WBC subtypes (neutrophils, lymphocytes, monocytes,
-  eosinophils, basophils) with a class label table.
+  a ground-truth mask image of the same size, covering five WBC subtypes (neutrophils, lymphocytes, monocytes, eosinophils,
+  basophils) with a class label table.
 landing_url: https://data.mendeley.com/datasets/jzdj6h7gms/2
 doi: 10.17632/jzdj6h7gms.2
 repository: other
@@ -20,7 +20,7 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism: []
   sample: White blood cells of five subtypes collected at Nanakali and Bio lab, Erbil, Kurdistan region of Iraq
   labels_stains: []
@@ -30,15 +30,16 @@ data:
   size_bytes: 23978028
   n_items: 600
   access: open
-  download_url: null
-  download_method: other
+  download_url: https://data.mendeley.com/datasets/jzdj6h7gms/2
+  download_method: http
 annotations:
   present: true
   types:
   - semantic-segmentation
   - classification
   coverage: dense
-  format: One mask JPEG per image (mask<N>.jpg, 512 x 512) plus class labels.csv (Image ID, category)
+  format: One binary mask JPEG per image (Dataset/mask/mask<N>.jpg, 0/255 with JPEG artefacts, 512 x 512) plus class labels.csv
+    (Image ID, category)
   source: manual
 ml:
   tasks:
@@ -60,5 +61,92 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T20:20:00Z'
-notes: 'Mendeley public API file list: 1,201 files (600 image<N>.jpg, 600 mask<N>.jpg, class labels.csv; 24.0 MB total); class labels.csv header read (Image, category per image). No paper found for this dataset (web search, not cited). Microscope, magnification, stain, pixel size, species and what the mask grey levels encode (whole cell, nucleus, cytoplasm) are not stated on the record, so they are left unknown; contributor notes credit Dr. Fattah Alizadeh with generating the ground-truth masks and Dr. Nawsherwan Sadiq Mohammad with labelling the cells. Whole dataset is also downloadable as a single archive from the Mendeley page (no direct URL recorded).'
+  last_checked: '2026-10-10T20:35:00Z'
+notes: 'Mendeley public API file list: 1,201 files (600 image<N>.jpg, 600 mask<N>.jpg, class labels.csv; 24.0 MB total); class
+  labels.csv header read (Image, category per image). No paper found for this dataset (web search, not cited). Microscope,
+  magnification, stain, pixel size, species and what the mask grey levels encode (whole cell, nucleus, cytoplasm) are not
+  stated on the record, so they are left unknown; contributor notes credit Dr. Fattah Alizadeh with generating the ground-truth
+  masks and Dr. Nawsherwan Sadiq Mohammad with labelling the cells. Whole dataset is also downloadable as a single archive
+  from the Mendeley page (no direct URL recorded). enricher: class counts from class labels.csv: Neutrophil 300, Lymphocyte
+  230, Monocyte 39, Basophil 20, Eosinophil 11. Organism not stated on the record, left empty.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "KRD-WBC dataset/   1,201 files  23.98 MB (Mendeley public API)\n  class labels.csv          12.4 KB  Image ID ->\
+      \ category (5 WBC subtypes)\n  Dataset/image/image<N>.jpg   600  RGB 512x512\n  Dataset/mask/mask<N>.jpg     600  greyscale\
+      \ 512x512 masks\n"
+    n_files: 1201
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.mendeley.com/public-files/datasets/jzdj6h7gms/files/5fabcd7b-5c22-4f8c-9f27-f4fef2f4aa16/file_downloaded
+    - https://data.mendeley.com/public-files/datasets/jzdj6h7gms/files/e1397215-03f6-4f5c-a832-4ebb230beb79/file_downloaded
+    size_bytes: 36449
+    description: image1.jpg and its mask mask1.jpg (Lymphocyte)
+  arrays:
+  - role: raw
+    path_pattern: Dataset/image/image*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 55
+    - 246
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: Dataset/mask/mask*.jpg
+    format: jpeg
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: image<N>.jpg pairs with mask<N>.jpg; the class of image N is row ImageN of class labels.csv. Masks are
+      0/255 with JPEG ringing (37 distinct values in mask1); threshold at 128.
+  - role: label
+    path_pattern: class labels.csv
+    format: csv
+    axes: null
+    shape:
+    - 600
+    - 2
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: other
+    classes:
+    - id: null
+      name: Neutrophil
+    - id: null
+      name: Lymphocyte
+    - id: null
+      name: Monocyte
+    - id: null
+      name: Eosinophil
+    - id: null
+      name: Basophil
+    alignment: not-applicable
+    alignment_notes: Image-level class per image ID (column header spelled "Categoriy").
+  notes: 'Exact listing from the Mendeley public API (1,201 files, folder names from its folders endpoint). Sampled image1/mask1
+    (36 KB, fetched with curl: Mendeley returns HTTP 403 to python-requests, so probe.py/sample.py and probably TensorSwitch
+    cannot fetch these files): image RGB uint8 512x512, range 55-246; mask L uint8 512x512, 0 (251,366 px) and 255 (9,218
+    px) plus JPEG-artefact values. What the white mask region covers (whole cell or nucleus) is not stated. Voxel size not
+    found; checked: JPEG headers (no dpi), Mendeley record description, no paper exists.'
