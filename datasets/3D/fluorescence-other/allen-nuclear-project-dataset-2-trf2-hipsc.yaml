@@ -1,0 +1,141 @@
+schema_version: '1.2'
+id: allen-nuclear-project-dataset-2-trf2-hipsc
+title: Nuclear Project Dataset 2 (TRF2 (TERF2) telomeres, 3D single-cell images and segmentations)
+short_name: hiPSC 3D single cells, TRF2 telomeres + masks
+description: 1,906 cropped 3D single-cell images of live mEGFP-TRF2 tagged hiPSCs (telomeres) with NucViolet DNA and CellMask membrane
+  dyes and label-free predicted fibrillarin and nucleophosmin channels, each with 8-bit segmentation masks (DNA, membrane, TERF2 foci
+  and the two label-free channels) and a cell-cycle stage label.
+landing_url: https://allencell.s3.amazonaws.com/aics/nuclear_project_dataset_2/README.md
+doi: null
+repository: other
+accession: null
+authors:
+- Jianxu Chen
+- Christopher Frick
+- Kim Metzler
+publications: []
+date_published: null
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 108
+    y: 108
+    z: 108
+  channels: 5
+  organism:
+  - Homo sapiens
+  sample: Live gene-edited hiPSCs (TRF2 (TERF2)-mEGFP line from the Allen Cell Collection), single-cell crops
+  labels_stains:
+  - TRF2-mEGFP
+  - NucViolet (DNA)
+  - CellMask Deep Red (membrane)
+data:
+  formats:
+  - ome-tiff
+  size_bytes: 350654504948
+  n_items: 1906
+  access: open
+  download_url: s3://allencell/aics/nuclear_project_dataset_2/
+  download_method: s3
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  - classification
+  coverage: dense
+  format: multi-channel uint8 3D OME-TIFF masks (0/255) in crop_seg/; cell_stage label per cell in metadata.csv
+  source: automatic
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: custom
+  url: https://www.allencell.org/terms-of-use.html
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-10T05:15:30Z'
+  evidence_urls:
+  - https://allencell.s3.amazonaws.com/aics/nuclear_project_dataset_2/README.md
+  - https://allencell.s3.amazonaws.com/aics/nuclear_project_dataset_2/metadata.csv
+  - https://allencell.s3.amazonaws.com/?list-type=2&prefix=aics/nuclear_project_dataset_2/
+  - https://www.allencell.org/terms-of-use.html
+  - https://allencell.s3.amazonaws.com/aics/nuclear_project_dataset_2/crop_raw/354384cbb31c803ee749a36b26c596ae249329d64be6fdcc56aecc27f8c3dcd3_raw.ome.tif
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-10T07:30:00Z'
+notes: 'Read README, metadata.csv (1,906 rows, 0.108333 um isotropic; originals 0.108 x 0.108 x 0.29 um) and the S3 listing (size =
+  sum of crop_raw and crop_seg). Masks are 0/255 uint8 per channel. Stages: M0 1,824; M6M7_single 41; M4M5 17; M1M2 14; M3 9; M6M7_complete
+  1. Cell and DNA masks were regenerated with a deep learning model; flag_for_removal-low_counts marks cells with under 31 TRF2 clusters.
+  Mitotic cell_stage comes from rules plus a classifier. Same series as catalogued nuclear project dataset 1 (SON), different tagged
+  structure. S3 was listed because the Quilt viewer is JavaScript only. License: Allen Institute Terms of Use (non-commercial research,
+  attribution; commercial needs written permission). No paper is linked.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "s3://allencell/aics/nuclear_project_dataset_2/   10,555 files, 350,654,504,948 B\n  README.md, metadata.csv             \
+      \    2 files, 1.0 MB\n  crop_raw/<hash>_raw.ome.tif             5,203 files, 317.3 GB\n  crop_seg/<hash>_segmentation.ome.tif\
+      \    5,203 files, 1.7 GB\n  fov_path/<hash>_<plate>_100X_<date>_..._Scene-<n>-P<n>-<well>.ome.tiff   147 files, 31.7 GB\n"
+    n_files: 10555
+    listing_complete: true
+  sample:
+    urls:
+    - https://allencell.s3.amazonaws.com/aics/nuclear_project_dataset_2/crop_raw/354384cbb31c803ee749a36b26c596ae249329d64be6fdcc56aecc27f8c3dcd3_raw.ome.tif
+    - https://allencell.s3.amazonaws.com/aics/nuclear_project_dataset_2/crop_seg/ce62b4ab3b74c5ff71c1ea350434c2a1372936d34d95430bee62e5715e39c9f0_segmentation.ome.tif
+    size_bytes: 57525124
+    description: 'First metadata.csv row: one single-cell raw crop and its segmentation (paired by metadata.csv, not by name).'
+  arrays:
+  - role: raw
+    path_pattern: crop_raw/*_raw.ome.tif
+    format: ome-tiff
+    axes: czyx
+    shape:
+    - 5
+    - 128
+    - 266
+    - 261
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 81
+    - 50773
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Channel names per cell in metadata.csv name_dict (crop_raw). Z interpolated to isotropic 0.108 um from 0.29 um
+      (README).
+  - role: label
+    path_pattern: crop_seg/*_segmentation.ome.tif
+    format: ome-tiff
+    axes: czyx
+    shape:
+    - 5
+    - 128
+    - 266
+    - 261
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairs come from metadata.csv (CellId, crop_raw, crop_seg); file hashes differ. Same CZYX shape: one 0/255 mask
+      per raw channel (name_dict: dna, membrane, TERF2, labelfree_fbl, labelfree_npm1 + _segmentation).'
+  notes: 'S3 listing complete (10,555 files, exact sizes, 350,654,504,948 B). Probed the first metadata.csv pair: raw (5, 128, 266,
+    261) CZYX uint16 deflate BigTIFF, seg (5, 128, 266, 261) uint8 deflate, OME layout (no physical size in the header). Sampled that
+    pair: raw 81..50773 over all channels (one cell), seg {0, 255} as README states. Voxel size 0.108 um isotropic from README and metadata.csv
+    scale_micron (0.108333). Both sample URLs pass download-check. data.download_url stays the S3 prefix (no single archive). The listing
+    has 5,203 crop pairs but metadata.csv lists 1,906 cells; the other files are not referenced by metadata.csv (possibly the earlier
+    release, cf. CellId_old) and fov_path/ (147 full FOV OME-TIFFs) is not described in the README.'
