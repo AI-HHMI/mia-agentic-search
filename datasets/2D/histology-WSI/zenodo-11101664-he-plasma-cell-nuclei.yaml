@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: zenodo-11101664-he-plasma-cell-nuclei
 title: H&E cervix & endometrial plasma cell nuclei dataset
 short_name: Plasma cell nuclei classes (H&E cervix)
-description: 8,823 H&E image patches (224x224 px RGB, 40x) of nuclei from cervix and endometrial tissue stored as one NumPy
-  array, with per-nucleus contour annotations labelled plasma cell or other and a table of nuclear features.
+description: 8,823 H&E image patches (224x224 px RGB, 40x) of nuclei from cervix and endometrial tissue
+  stored as one NumPy array, with per-nucleus contour annotations labelled plasma cell or other and a
+  table of nuclear features.
 landing_url: https://zenodo.org/records/11101664
 doi: 10.5281/zenodo.11101664
 repository: Zenodo
@@ -29,7 +30,7 @@ data:
   size_bytes: 1364826052
   n_items: 8823
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/11101664
   download_method: http
 annotations:
   present: true
@@ -37,8 +38,8 @@ annotations:
   - instance-segmentation
   - classification
   coverage: dense
-  format: annotation.json (per nucleus - slide_id, centroid, contour polygon x/y, class_id such as Plasmacell) and feature.csv
-    (per-nucleus colour/morphology features); images in image_array_patch_size=224.npy
+  format: annotation.json (per nucleus - slide_id, centroid, contour polygon x/y, class_id "Plasma cell"
+    2725 / "Other" 6098) and feature.csv (per-nucleus colour/morphology features); images in image_array_patch_size=224.npy
   source: unknown
 ml:
   tasks:
@@ -59,9 +60,86 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T08:00:00Z'
-notes: 'The Zenodo description is a single line ("plasma cell/other, 224x224 pixels at 40x magnification ... will be updated
-  soon"); no paper is linked and none was found, so no Methods were read. Header of image_array_patch_size=224.npy read by
-  range request (shape 8823x224x224x3 uint8). The first annotation.json entries show slide_id (A_Train_12.svs), centroid, contour
-  and class_id Plasmacell; the full set of class names was not checked. Pixel size, annotator and source of the slides are not
-  stated. Data are NumPy files, so formats is other. Only the first part of annotation.json was read.'
+  last_checked: '2026-10-10T08:05:00Z'
+notes: 'The Zenodo description is a single line ("plasma cell/other, 224x224 pixels at 40x magnification
+  ... will be updated soon"); no paper is linked and none was found, so no Methods were read. Header of
+  image_array_patch_size=224.npy read by range request (shape 8823x224x224x3 uint8). The first annotation.json
+  entries show slide_id (A_Train_12.svs), centroid, contour and class_id Plasmacell; the full set of class
+  names was not checked. Pixel size, annotator and source of the slides are not stated. Data are NumPy
+  files, so formats is other. Only the first part of annotation.json was read. enricher: full annotation.json
+  parsed (Plasma cell 2725 / Other 6098, 20 slides); contours are in slide coordinates.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                3 files   1.4 GB  .csv 1, .json 1, .npy 1\n  image_array_patch_size=224.npy\
+      \   1.33 GB  (8823, 224, 224, 3) uint8\n  annotation.json                 16.2 MB  8823 nuclei\n\
+      \  feature.csv                     20.5 MB  per-nucleus features\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/11101664/files/image_array_patch_size=224.npy
+    - https://zenodo.org/records/11101664/files/annotation.json
+    size_bytes: 1344342792
+    description: the dataset is one NumPy array plus one annotation JSON; there is no smaller file unit
+      (a single patch is a 150,528-byte range at offset 128 + i*150528)
+  arrays:
+  - role: raw
+    path_pattern: image_array_patch_size=224.npy
+    format: other
+    axes: null
+    shape:
+    - 8823
+    - 224
+    - 224
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 28
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: NumPy .npy (v1 header, 128 bytes, C order) of nucleus-centred RGB patches; axes not
+      stated (shape reads as patch, y, x, RGB).
+  - role: label
+    path_pattern: annotation.json
+    format: json
+    axes: null
+    shape:
+    - 8823
+    - 5
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    encoding: polygons
+    classes:
+    - id: Plasma cell
+      name: Plasma cell
+    - id: Other
+      name: Other
+    alignment: unknown
+    alignment_notes: One entry per patch (8823 = 8823; keys "0".."8822", pairing by index inferred from
+      the equal counts). Keys slide_id, centroid_x, centroid_y, contour {x, y}, class_id. Contours and
+      centroids are in whole-slide pixel coordinates of 20 slides (A_Train_*.svs) that are not in the
+      deposit, not in patch coordinates.
+  - role: other
+    path_pattern: feature.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    alignment: unknown
+    alignment_notes: per-nucleus colour / cytoplasm / morphology features (header read).
+  notes: 'Listing via Zenodo API (3 files, sizes exact). NumPy header read by range request; patch 0 read
+    (150,528 bytes): uint8 RGB, values 28-255 (one patch). annotation.json downloaded in full (16.2 MB)
+    and parsed: 8823 nuclei, class_id Plasma cell 2725 / Other 6098, 20 source slides. .npy is not a format
+    TensorSwitch reads, and there is no per-patch file. No direct single archive: data.download_url is
+    the record page; the three direct files are https://zenodo.org/records/11101664/files/<name>. Voxel
+    size not found; checked: npy header (none), Zenodo API description ("40x magnification" only, no um/px),
+    annotation.json keys, paper search by title/author in Europe PMC (none found). Annotation source (manual/automatic)
+    not stated.'
