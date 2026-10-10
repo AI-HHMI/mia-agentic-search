@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: zenodo-5553771-detecdiv-yeast-trap-segmentation
 title: Annotated pixels from brightfield images from yeast cell in microfluidic traps - DetecDiv (id02)
 short_name: Yeast mother-cell trap segmentation (brightfield)
-description: About 1,400 manually segmented 60 x 60 px brightfield crops of budding yeast cells dividing in microfluidic traps, each with a 3-class pixel mask (background, mother cell, other), made with the DetecDiv software.
+description: About 1,400 manually segmented 60 x 60 px brightfield crops of budding yeast cells dividing
+  in microfluidic traps, each with a 3-class pixel mask (background, mother cell, other), made with the
+  DetecDiv software.
 landing_url: https://zenodo.org/records/5553771
 doi: 10.5281/zenodo.5553771
 repository: Zenodo
@@ -10,7 +12,8 @@ accession: '5553771'
 authors:
 - Théo Aspert
 publications:
-- title: DetecDiv, a generalist deep-learning platform for automated cell division tracking and survival analysis
+- title: DetecDiv, a generalist deep-learning platform for automated cell division tracking and survival
+    analysis
   doi: 10.1101/2021.10.05.463175
   url: https://www.biorxiv.org/content/10.1101/2021.10.05.463175v1
 date_published: '2021-10-07'
@@ -22,10 +25,11 @@ imaging:
     x: 325
     y: 325
     z: null
-  channels: null
+  channels: 1
   organism:
   - Saccharomyces cerevisiae
-  sample: Budding yeast (BY4742 wild type) growing in microfluidic mother-cell traps, frames from time-lapse; 20x 0.45 NA brightfield, sCMOS with 6.5 um pixels.
+  sample: Budding yeast (BY4742 wild type) growing in microfluidic mother-cell traps, frames from time-lapse;
+    20x 0.45 NA brightfield, sCMOS with 6.5 um pixels.
   labels_stains: []
 data:
   formats:
@@ -33,14 +37,15 @@ data:
   size_bytes: 6328601
   n_items: 1404
   access: open
-  download_url: https://zenodo.org/api/records/5553771/files/cellSegmentation.zip/content
+  download_url: https://zenodo.org/records/5553771/files/cellSegmentation.zip
   download_method: http
 annotations:
   present: true
   types:
   - semantic-segmentation
   coverage: dense
-  format: TIFF mask images with 3 pixel values (1 background, 2 mother, 3 other)
+  format: 'RGB TIFF masks, one-hot over the 3 samples (each pixel 255 in exactly one); the Zenodo text
+    calls them 3 pixel values: 1 background, 2 mother, 3 other'
   source: manual
 ml:
   tasks:
@@ -62,5 +67,85 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T19:15:11Z'
-notes: 'Single 6.3 MB cellSegmentation.zip listed with tools/peek_archive.py: 2,808 .tif files (24.8 MB uncompressed) under trainingdataset/, i.e. about 1,404 image/mask pairs; counts derived from the file count and the record text ("~1400 raw images"). Record text gives image size 60x60 and pixel size 325 nm. The record says the images are 16-bit RGB tiff plus .mat, while the zip lists only .tif. The paper (bioRxiv preprint; full text read) describes the DetecDiv annotation GUI (painting images, 15-30 s per image) and a 200/50 train/test split for the classification task, but no split is given for this segmentation set. Related trained network: zenodo 5553851.'
+  last_checked: '2026-10-10T19:52:44Z'
+notes: 'Single 6.3 MB cellSegmentation.zip listed with tools/peek_archive.py: 2,808 .tif files (24.8 MB
+  uncompressed) under trainingdataset/, i.e. about 1,404 image/mask pairs; counts derived from the file
+  count and the record text ("~1400 raw images"). Record text gives image size 60x60 and pixel size 325
+  nm. The record says the images are 16-bit RGB tiff plus .mat, while the zip lists only .tif. The paper
+  (bioRxiv preprint; full text read) describes the DetecDiv annotation GUI (painting images, 15-30 s per
+  image) and a 200/50 train/test split for the classification task, but no split is given for this segmentation
+  set. Related trained network: zenodo 5553851. enricher: masks are one-hot RGB, not pixel values 1-3;
+  images are uint8 60x59, not 16-bit 60x60 as the record text says; download_url set to the direct zip
+  (zenodo.org/records/... form, range requests work).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "cellSegmentation.zip  6,328,601 B (2,808 members, 24.8 MB uncompressed)\n  trainingdataset/\n\
+      \    images/  Pos<n>_<k>_<m>_frame_<NNNN>.tif  1404  9.5 MB\n    labels/  Pos<n>_<k>_<m>_frame_<NNNN>.tif\
+      \  1404  15.3 MB\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5553771/files/cellSegmentation.zip::trainingdataset/images/Pos0_1_146_frame_0271.tif
+    - https://zenodo.org/records/5553771/files/cellSegmentation.zip::trainingdataset/labels/Pos0_1_146_frame_0271.tif
+    size_bytes: 17766
+    description: One 60x59 brightfield crop and its one-hot RGB mask (same file name in images/ and labels/).
+  arrays:
+  - role: raw
+    path_pattern: trainingdataset/images/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 60
+    - 59
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: packbits
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Grey stored as RGB: sample.py found the 3 samples identical (samples_identical:
+      true), so s is not a channel axis.'
+  - role: label
+    path_pattern: trainingdataset/labels/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 60
+    - 59
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: packbits
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: one-hot
+    classes:
+    - id: 1
+      name: background
+    - id: 2
+      name: mother
+    - id: 3
+      name: other
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: same file name in images/ and labels/ (all 1,404 names match). Each
+      mask pixel is 255 in exactly one of the 3 samples (checked in all 1,404 masks). Sample 0 holds 89%
+      of the pixels, so it is background; samples 1 and 2 are presumably mother and other in the Zenodo
+      text order, which no source states.'
+  notes: 'listing.py on the zip: 2,808 TIFF members (1,404 images + 1,404 labels), every member exact,
+    6,328,601 B = size_bytes. probe.py on 2 images + 2 labels: single-page plain RGB TIFF (photometric
+    2), 60x59x3 uint8, packbits. The whole 6.3 MB zip was read once to check all files: every image and
+    mask is 60x59x3; image values [0, 255] (every 50th image); masks only 0/255, one-hot. sample.py on
+    Pos0_1_146_frame_0271: raw [0, 255], mean 131, 251 unique values, samples identical (grey as RGB),
+    hint full range used (from one sample; normalization not documented, so unknown); label {0: 7080,
+    255: 3540}. The Zenodo text says 16-bit RGB 60x60 plus .mat files; the zip has only 8-bit 60x59 TIFFs.
+    Direct download: the zip and its members pass probe.py --download-check (range requests). Voxel size
+    325 nm x/y from the Zenodo record text (no TIFF calibration); 2D, so no z.'
+  inspected_at: '2026-10-10T19:52:44Z'
