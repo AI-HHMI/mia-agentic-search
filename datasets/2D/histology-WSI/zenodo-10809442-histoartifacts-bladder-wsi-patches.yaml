@@ -2,10 +2,11 @@ schema_version: '1.2'
 id: zenodo-10809442-histoartifacts-bladder-wsi-patches
 title: HistoArtifacts
 short_name: Histology artifact classes (H&E bladder patches)
-description: 53,496 PNG patches of H&E bladder cancer slides labelled by histological artifact (artifact-free, blood, blur, air
-  bubbles, damaged tissue, folded tissue) with train/validation/test folders, including 20x and 40x sub-datasets.
+description: 53,496 PNG patches of H&E bladder cancer slides labelled by histological artifact (artifact-free,
+  blood, blur, air bubbles, damaged tissue, folded tissue) with train/validation/test folders, including
+  20x and 40x sub-datasets.
 landing_url: https://zenodo.org/records/10809442
-doi: null
+doi: 10.5281/zenodo.10809442
 repository: Zenodo
 accession: '10809442'
 authors:
@@ -14,8 +15,8 @@ authors:
 - Tahlita C. M. Zuiverloon
 - Kjersti Engan
 publications:
-- title: 'Equipping Computational Pathology Systems with Artifact Processing Pipelines: A Showcase for Computation and
-    Performance Trade-offs'
+- title: 'Equipping Computational Pathology Systems with Artifact Processing Pipelines: A Showcase for
+    Computation and Performance Trade-offs'
   doi: null
   url: https://arxiv.org/html/2403.07743v3
 date_published: '2024-03-12'
@@ -23,15 +24,12 @@ imaging:
   modality:
   - histology-WSI
   dimensionality: 2D
-  voxel_size_nm:
-    x: 227
-    y: 227
-    z: null
+  voxel_size_nm: null
   channels: 3
   organism:
   - Homo sapiens
-  sample: H&E-stained bladder cancer resection WSIs from Erasmus MC (Hamamatsu NanoZoomer 2.0HT), 224x224 px patches at 40x
-    (0.227 um per pixel), plus separate 20x folded-tissue sub-dataset
+  sample: H&E-stained bladder cancer resection WSIs from Erasmus MC (Hamamatsu NanoZoomer 2.0HT), 224x224
+    px patches at 40x (0.227 um per pixel), plus separate 20x folded-tissue sub-dataset
   labels_stains:
   - H&E
 data:
@@ -47,8 +45,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: 'folder-based class labels in train/validation/test folders (e.g. D20x/fold_20x/{training,validation,test}/{fold_20x,artifact_free_20x}/;
-    D40x/ for the 40x classes)'
+  format: folder-based class labels in train/validation/test folders (e.g. D20x/fold_20x/{training,validation,test}/{fold_20x,artifact_free_20x}/;
+    D40x/ for the 40x classes)
   source: manual
 ml:
   tasks:
@@ -72,11 +70,67 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T09:30:00Z'
-notes: 'Zip listing (peek_archive): 53,496 PNGs; only part of the folder tree was printed (D20x/fold_20x with fold_20x vs artifact_free_20x
-  in training/validation/test, and D40x/test), so full class counts per folder were not checked. The arXiv paper (HTML, first
-  100k characters) describes patches of 224x224x3 from 55 Erasmus MC bladder WSIs (35/10/10 split), 0.227 um per pixel at 40x,
-  six classes (artifact-free, blood, blur, air bubbles, damaged tissue, folded tissue) annotated manually by one author; its
-  table totals 51,697 patches, which differs from the 53,496 files in the zip, and the 20x sub-dataset is not described in the part
-  read, so the 227 nm pixel size applies to the 40x patches only. The Zenodo record also cites several earlier papers for
-  sub-datasets. The record DOI was not shown in the fetched metadata, so doi is null.'
+  last_checked: '2026-10-10T09:05:00Z'
+notes: 'Zip listing (peek_archive): 53,496 PNGs; full tree in technical.layout. The arXiv paper (HTML,
+  first 100k characters) describes patches of 224x224x3 from 55 Erasmus MC bladder WSIs (35/10/10 split),
+  0.227 um per pixel at 40x, six classes (artifact-free, blood, blur, air bubbles, damaged tissue, folded
+  tissue) annotated manually by one author; its table totals 51,697 patches, which differs from the 53,496
+  files in the zip, and the 20x sub-dataset is not described in the part read, so the 227 nm pixel size
+  applies to the 40x patches only. The Zenodo record also cites several earlier papers for sub-datasets.
+  enricher: doi from Zenodo API; voxel size null (40x = 227 nm, 20x subset differs, not stated).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                   1 file   4.8 GB  .zip\nzip contents:\nmulticlass_artifact_data.zip/multiclass_artifact_data/\n\
+      \  D20x/fold_20x/{training,validation,test}/{artifact_free_20x,fold_20x}/   1529 files  154 MB \
+      \ .png\n    training 513+478, validation 140+130, test 130+138\n  D40x/{training,validation,test}/<class>/\
+      \                  51967 files  4.7 GB  .png\n    classes artifact_free, blood, blur, bubble, damage,\
+      \ fold\n    training 5249/16743/5661/2499/2577/998\n    validation 1591/4186/754/1175/332/114\n\
+      \    test 965/5996/1137/846/1013/131\n  <split>_<class>_<N>.png\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/10809442/files/multiclass_artifact_data.zip::multiclass_artifact_data/D40x/test/fold/test_fold_1.png
+    size_bytes: 46694
+    description: one 40x patch of class fold (test split); the class is the folder name
+  arrays:
+  - role: raw
+    path_pattern: multiclass_artifact_data.zip::multiclass_artifact_data/D40x/*/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 224
+    - 224
+    - 4
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 4
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGBA PNG (4 samples; the paper describes 224x224x3). 40x patches; split = first folder,
+      class = second folder.
+  - role: raw
+    path_pattern: multiclass_artifact_data.zip::multiclass_artifact_data/D20x/fold_20x/*/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 224
+    - 224
+    - 4
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGBA PNG, header only. 20x folded-tissue sub-dataset (fold_20x vs artifact_free_20x).
+  notes: 'Listing via Zenodo API + zip central directory (53,496 PNG members = D40x 51967 + D20x 1529;
+    size confirmed). Headers of one D40x and one D20x PNG: 224x224 RGBA uint8 deflate. One D40x patch
+    sampled (46,704 bytes): values 4-255 (one sample). The paper table totals 51,697 patches; the zip
+    has 53,496. Voxel size: 0.227 um/px at 40x per the arXiv paper (as read by the harvester); the D20x
+    sub-dataset is extracted at 20x and its pixel size is not stated in the sources read, so voxel_size_nm
+    is null (two pixel sizes). Zenodo range requests intermittently failed (SSL EOF / 504).'
