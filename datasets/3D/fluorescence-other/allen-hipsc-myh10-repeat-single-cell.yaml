@@ -1,0 +1,145 @@
+schema_version: '1.2'
+id: allen-hipsc-myh10-repeat-single-cell
+title: MYH10 repeat dataset (supplementary to the hiPSC single-cell image dataset)
+short_name: hiPSC MYH10 3D single cells + masks (confocal)
+description: 'Repeat acquisition of the MYH10-mEGFP hiPSC line from the Allen Institute for Cell Science: 395 cropped 3D single-cell
+  images (DNA, membrane and MYH10 channels) with 8-bit segmentation masks, plus the 62 source field-of-view images with their cell and
+  nuclear instance segmentations and MYH10 structure segmentations, and a cell-cycle stage label per cell.'
+landing_url: https://allencell.s3.amazonaws.com/aics/hipsc_single_cell_image_dataset_supp_myh10/README.md
+doi: null
+repository: other
+accession: null
+authors:
+- Jianxu Chen
+- Kim Metzler
+publications: []
+date_published: null
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 108
+    y: 108
+    z: 108
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: gene-edited hiPSC colonies (MYH10-mEGFP line from the Allen Cell Collection), single-cell crops and full fields of view
+  labels_stains:
+  - MYH10-mEGFP
+  - DNA dye
+  - membrane dye
+data:
+  formats:
+  - ome-tiff
+  size_bytes: 23534245750
+  n_items: 395
+  access: open
+  download_url: s3://allencell/aics/hipsc_single_cell_image_dataset_supp_myh10/
+  download_method: s3
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - semantic-segmentation
+  - classification
+  coverage: dense
+  format: crop_seg multi-channel uint8 3D OME-TIFF masks (0/255); fov_seg_path 4-channel uint8 FOV masks with one integer id per cell
+    (nuclei, cells and contours); struct_seg_path masks (0/255); cell_stage per cell in metadata.csv
+  source: unknown
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: custom
+  url: https://www.allencell.org/terms-of-use.html
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-10T05:15:30Z'
+  evidence_urls:
+  - https://allencell.s3.amazonaws.com/aics/hipsc_single_cell_image_dataset_supp_myh10/README.md
+  - https://allencell.s3.amazonaws.com/aics/hipsc_single_cell_image_dataset_supp_myh10/metadata.csv
+  - https://allencell.s3.amazonaws.com/?list-type=2&prefix=aics/hipsc_single_cell_image_dataset_supp_myh10/
+  - https://www.allencell.org/terms-of-use.html
+  - https://allencell.s3.amazonaws.com/aics/hipsc_single_cell_image_dataset_supp_myh10/crop_raw/853632f9_raw.ome.tif
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-10T07:40:00Z'
+notes: 'Read README, metadata.csv (395 cells from 62 FOVs, all MYH10, scale 0.108333 um isotropic, channels dna/membrane/structure in
+  the raw crops; masks for dna, membrane, membrane roof, struct, struct roof) and the S3 listing (size is the sum of all objects: 10.7
+  GB crops, 12.6 GB FOVs). Stages: M0 380, M4M5 5, M6M7_single 5, M6M7_complete 3. Supplementary package to the larger catalogued hiPSC
+  single-cell image dataset (allen-hipsc-single-cell-image-dataset), a separate repeat of the MYH10 line. How the segmentations were
+  produced is not stated in the README and no paper is linked. License: Allen Institute Terms of Use (non-commercial research, attribution;
+  commercial needs written permission).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "s3://allencell/aics/hipsc_single_cell_image_dataset_supp_myh10/   978 files, 23,534,245,750 B\n  README.md, metadata.csv\
+      \                          2 files, 299.7 KB\n  crop_raw/<hash>_raw.ome.tif                      395 files, 10.7 GB\n  crop_seg/<hash>_segmentation.ome.tif\
+      \             395 files, 136.0 MB\n  fov_path/<hash>_<plate>_100X_<date>-alignV2-Scene-<n>-P<n>-<well>.tiff   62 files, 12.6 GB\n\
+      \  fov_seg_path/<hash>_..._CellNucSegCombined.ome.tiff                   62 files, 53.9 MB\n  struct_seg_path/<hash>_..._struct_segmentation.tiff\
+      \                   62 files, 20.8 MB\n"
+    n_files: 978
+    listing_complete: true
+  sample:
+    urls:
+    - https://allencell.s3.amazonaws.com/aics/hipsc_single_cell_image_dataset_supp_myh10/crop_raw/853632f9_raw.ome.tif
+    - https://allencell.s3.amazonaws.com/aics/hipsc_single_cell_image_dataset_supp_myh10/crop_seg/a04e02a4_segmentation.ome.tif
+    size_bytes: 18241250
+    description: 'First metadata.csv row: one single-cell raw crop and its segmentation (paired by metadata.csv, not by name).'
+  arrays:
+  - role: raw
+    path_pattern: crop_raw/*_raw.ome.tif
+    format: ome-tiff
+    axes: zcyx
+    shape:
+    - 84
+    - 3
+    - 266
+    - 252
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 369
+    - 8924
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Channels dna, membrane, structure (MYH10) per metadata.csv name_dict; 0.108333 um isotropic (scale_micron).
+  - role: label
+    path_pattern: crop_seg/*_segmentation.ome.tif
+    format: ome-tiff
+    axes: zcyx
+    shape:
+    - 84
+    - 5
+    - 266
+    - 252
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: Pairs come from metadata.csv (crop_raw, crop_seg); hashes differ. Same Z/Y/X; 5 mask channels (dna, membrane, membrane_roof,
+      struct, struct_roof _segmentation) vs 3 raw channels. Values 0/255.
+  notes: 'S3 listing complete (978 files, exact sizes). Probed the first metadata.csv crop pair (raw 84x3x266x252 ZCYX uint16, seg 84x5x266x252
+    uint8, deflate) and its FOV files. Sampled the crop pair: raw 369..8924 (one cell), seg {0,255}. technical.arrays describes the
+    crops only, because imaging.voxel_size_nm (108 nm isotropic, metadata.csv scale_micron) holds for them alone. The 62 FOV sets are
+    on the original 108.3 x 108.3 x 290 nm grid: fov_path/*.tiff (OME-XML in the first IFD: XYCZT, Z 75, C 4 = TL brightfield, EGFP,
+    CellMask Deep Red, Hoechst; 600x900 uint16; the probe cannot parse it), fov_seg_path/*_CellNucSegCombined.ome.tiff (75x4x600x900
+    ZCYX uint8, instance ids: nucleus, cell, nucleus contour, cell contour) and struct_seg_path/*_struct_segmentation.tiff (75x600x900
+    ZYX uint8, 0/255, header 108.33x108.33x290 nm). All 5 files of the first row pass download-check; no archive, download_url stays
+    the S3 prefix.'
