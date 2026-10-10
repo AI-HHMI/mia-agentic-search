@@ -1,0 +1,194 @@
+schema_version: '1.2'
+id: zenodo-17608677-murinecyto-det-leukocytes
+title: 'MurineCyto-Det: A High-Resolution Dataset for Leukocyte Detection in Murine Cytology Images'
+short_name: Murine BALF leukocytes (cytology)
+description: 333 high-resolution (1024 x 1024 px) cytology images from mouse bronchoalveolar lavage fluid, annotated with five cell
+  classes (macrophage/monocyte, neutrophil, eosinophil, lymphocyte, unknown cell/debris), pixel-level segmentation masks and one-to-one
+  matched bounding boxes (JSON).
+landing_url: https://zenodo.org/records/17608677
+doi: 10.5281/zenodo.17608677
+repository: Zenodo
+accession: null
+authors:
+- Thang Le X.
+- Lan-Anh Tran Thi
+- Farabi Dia Aldeen
+- Wang Shiyuan
+- Anh Phan T.Q.
+- Cormier Stephania A.
+- Taada Anvi
+- McGrew Derek
+- Du Yuxuan
+- Luan Vu D.
+publications: []
+date_published: '2026-04-13'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Mus musculus
+  sample: cytology preparations of mouse bronchoalveolar lavage fluid (BALF)
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: 289440082
+  n_items: 333
+  access: open
+  download_url: https://zenodo.org/records/17608677/files/data.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  - instance-segmentation
+  - classification
+  coverage: dense
+  format: per-image JSON annotations (bounding boxes and class), PNG masks and grayscale PNG masks in separate folders
+  source: unknown
+ml:
+  tasks:
+  - detection
+  - segmentation
+  - classification
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/legalcode
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-09T22:54:16Z'
+  evidence_urls:
+  - https://zenodo.org/records/17608677
+  - https://zenodo.org/api/records/17608677
+  - https://zenodo.org/api/records/17608677/files/data.zip/content
+  - https://zenodo.org/records/17608677/files/data.zip
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-10T00:40:00Z'
+notes: 'From the Zenodo record description and the zip listing via peek_archive (1,332 files: annotations/ 333 JSON, images/ 333, masks/
+  333, masks_grayscale/ 333 PNG). No related paper is cited on the record and a title search in Europe PMC and Crossref found none,
+  so the stain, microscope, objective and pixel size are not stated: voxel_size_nm is null, and modality is recorded as brightfield
+  only as the closest option for stained cytology images (not stated). How the annotations were made, and by whom, is not described
+  in the record. No split is provided. The JSON and masks were not opened. enricher: per-image COCO-style JSON (Labelbox export) carries
+  a licenses entry "Research Use Only", unlike the Zenodo CC BY 4.0; spdx kept as the record states.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |-
+      data.zip/
+        annotations/      333 files  7.3 MB    .json  (COCO-style: categories, bbox, area per cell)
+        images/           333 files  279.0 MB  .png   (P<nn>_<a>_<b>_<id>.png, 1024x1024 RGB)
+        masks/            333 files  5.6 MB    .png   (RGB colour-coded classes)
+        masks_grayscale/  333 files  4.3 MB    .png   (class ids 0-5)
+    n_files: 1332
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/17608677/files/data.zip::images/P01_10_10_162.png
+    - https://zenodo.org/records/17608677/files/data.zip::masks_grayscale/P01_10_10_162.png
+    - https://zenodo.org/records/17608677/files/data.zip::annotations/P01_10_10_162.json
+    size_bytes: 989370
+    description: one 1024x1024 cytology image, its class-id mask and its box annotations
+  arrays:
+  - role: raw
+    path_pattern: images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1024
+    - 1024
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 13
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB colour (samples differ)
+  - role: label
+    path_pattern: masks_grayscale/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 5
+    normalization: none
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - &id001
+      id: 1
+      name: Macrophage/Monocyte
+    - &id002
+      id: 2
+      name: Neutrophil
+    - &id003
+      id: 3
+      name: Eosinophil
+    - &id004
+      id: 4
+      name: Lymphocyte
+    - &id005
+      id: 5
+      name: Unknown cell/Debris
+    alignment: same-grid
+    alignment_notes: same file name as the image; values are the JSON category ids (1-5), 0 background
+  - role: label
+    path_pattern: masks/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1024
+    - 1024
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: rgb-colors
+    alignment: same-grid
+    alignment_notes: colour-coded version of masks_grayscale (pixel counts match per class in one sample)
+  - role: label
+    path_pattern: annotations/*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    classes:
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    alignment: same-grid
+    alignment_notes: 'COCO-style per image: bbox [x, y, w, h] in pixels, category_id, area; segmentation via Labelbox mask URLs (not
+      in the file); 65 cells in one sample'
+  notes: 'Listed data.zip with --expand-zips (1,332 members, exact sizes). Sampled P01_10_10_162 (989 KB): image RGB 13-255 (mean 209);
+    masks_grayscale values {0: 797,867, 1: 139,753, 2: 76,259, 3: 3,946, 5: 30,751}; masks RGB with matching per-colour counts; JSON
+    5 categories, 65 annotations. value_range from one sample. Voxel size not found; checked: PNG headers, Zenodo API record and description,
+    JSON info block (Kaggle link, no pixel size); no paper cited. download_url is the one direct zip.'
