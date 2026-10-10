@@ -1,0 +1,134 @@
+schema_version: '1.2'
+id: allen-hipsc-12x-overview-colony-masks
+title: hiPSC 12X overview image dataset (supplementary to the hiPSC single-cell image dataset)
+short_name: hiPSC well overviews + colony masks (brightfield)
+description: 3,010 stitched 12x transmitted-light overview images (CZI) of 96-well plate wells of hiPSC cultures from 416 plates, each
+  paired with a segmentation TIFF in which the hiPSC colonies are segmented. Released by the Allen Institute for Cell Science as a supplement
+  to its hiPSC single-cell image dataset.
+landing_url: https://allencell.s3.amazonaws.com/aics/hipsc_12x_overview_image_dataset/README.md
+doi: null
+repository: other
+accession: null
+authors:
+- Jianxu Chen
+- Calysta Yan
+- Kim Metzler
+publications: []
+date_published: null
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 1083.3
+    y: 1083.3
+    z: null
+  channels: 1
+  organism:
+  - Homo sapiens
+  sample: hiPSC cultures (colonies) in 96-well plates; stitched whole-well overview
+  labels_stains: []
+data:
+  formats:
+  - czi
+  - tiff
+  size_bytes: 236959968984
+  n_items: 3010
+  access: open
+  download_url: s3://allencell/aics/hipsc_12x_overview_image_dataset/
+  download_method: s3
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: one int32 2D TIFF per overview (colonysegmentedimagepath/*_seg.tiff, ~1410 x 1461, about 1/4 of the CZI size); integer colony
+    values; paths in metadata.csv
+  source: unknown
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: custom
+  url: https://www.allencell.org/terms-of-use.html
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-10T05:15:30Z'
+  evidence_urls:
+  - https://allencell.s3.amazonaws.com/aics/hipsc_12x_overview_image_dataset/README.md
+  - https://allencell.s3.amazonaws.com/aics/hipsc_12x_overview_image_dataset/metadata.csv
+  - https://allencell.s3.amazonaws.com/?list-type=2&prefix=aics/hipsc_12x_overview_image_dataset/
+  - https://www.allencell.org/terms-of-use.html
+  - https://allencell.s3.amazonaws.com/aics/hipsc_12x_overview_image_dataset/stitchedwelloverviewimagepath/397f57ce_3500001914_10X_20180409_5_50-Scene-05-E8-E08.czi
+  confidence: 0.55
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-10T07:50:00Z'
+notes: 'Read README, metadata.csv (3,010 rows, 416 barcodes, every row has an image and a seg path) and the S3 listing (size is the
+  sum of all objects: 215 GB CZI, 21.8 GB seg TIFF). Probed one seg TIFF: int32, 1413 x 1482, axes yx; the first 256 KB of one CZI showed
+  Gray16 pixels, 12x total magnification, a transmitted-light brightfield channel, Axio Observer.Z1/7. Not found: how the colonies were
+  segmented, and any paper (the README only says supplementary to the hiPSC single-cell dataset). Tiff seg sizes vary (some are 144
+  KB). License: Allen Institute Terms of Use (non-commercial research, attribution; commercial needs written permission). enricher:
+  voxel size 1083.3 nm (x, y) from the CZI metadata Scaling (1.0833e-06 m per pixel, TotalMagnification 100, 10x/0.45; was null); CZI
+  5845x5640 Gray8 in the file read; seg TIFFs are ~4x smaller (1410x1461).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "s3://allencell/aics/hipsc_12x_overview_image_dataset/   6,022 files, 236,959,968,984 B\n  README.md, metadata.csv       \
+      \                  2 files, 706.6 KB\n  stitchedwelloverviewimagepath/<hash>_<barcode>_10X_<date>_...-Scene-<n>-<well>.czi   3,010\
+      \ files, 215.2 GB\n  colonysegmentedimagepath/<hash>_<same stem>_seg.tiff                               3,010 files, 21.8 GB\n"
+    n_files: 6022
+    listing_complete: true
+  sample:
+    urls:
+    - https://allencell.s3.amazonaws.com/aics/hipsc_12x_overview_image_dataset/stitchedwelloverviewimagepath/397f57ce_3500001914_10X_20180409_5_50-Scene-05-E8-E08.czi
+    - https://allencell.s3.amazonaws.com/aics/hipsc_12x_overview_image_dataset/colonysegmentedimagepath/e25b5d05_3500001914_10X_20180409_5_50-Scene-05-E8-E08_seg.tiff
+    size_bytes: 74940488
+    description: 'First metadata.csv row: one stitched 12x well overview (CZI) and its colony segmentation TIFF'
+  arrays:
+  - role: raw
+    path_pattern: stitchedwelloverviewimagepath/*.czi
+    format: czi
+    axes: yx
+    shape:
+    - 5640
+    - 5845
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Stitched transmitted-light well overview (CZI metadata: SizeX 5845, SizeY 5640, SizeC/T/S/M 1, PixelType Gray8,
+      ComponentBitCount 16; a second file 5886x5647). The harvester saw Gray16 in another CZI, so dtype is left unknown.'
+  - role: label
+    path_pattern: colonysegmentedimagepath/*_seg.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 1410
+    - 1461
+    shape_varies: true
+    dtype: int32
+    compression: none
+    value_range:
+    - 0
+    - 39
+    normalization: unknown
+    encoding: unknown
+    classes: null
+    alignment: scaled
+    alignment_notes: Pairs with the CZI of the same stem (metadata.csv row). Shape is 1/4 of the CZI (5640/1410 = 4.0, 5845/1461 = 4.0),
+      i.e. a 4x downsampled grid (~4333 nm per pixel); not stated in the README. The sample has 39 distinct integers (0..39), which
+      looks like one id per colony, but the README only says colonies are segmented.
+  notes: 'S3 listing complete (6,022 files, exact sizes). Probed seg TIFFs of rows 1-2 (int32, 1410x1461 and 1411x1471, uncompressed,
+    single page). CZI is not readable by tools/probe.py: read its metadata segment with a short requests script (754,909 B by range):
+    Scaling X/Y 1.0833e-06 m, SizeX 5845, SizeY 5640, Gray8, objective 10x/0.45, total magnification 100. Sampled seg row 1: 0..39,
+    39 distinct values, 70.5% zero (one sample). Voxel size from the CZI header only (README and metadata.csv state none); z not applicable
+    (2D). Both sample URLs pass download-check; TensorSwitch CZI support not checked.'
