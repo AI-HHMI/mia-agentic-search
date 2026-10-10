@@ -1,0 +1,133 @@
+schema_version: '1.2'
+id: s-biad2102-trout-adipocytes-3d-confocal
+title: 3D imaging of trout adipocytes in situ
+short_name: Trout adipocyte 3D segmentation (confocal)
+description: 24 confocal 3D stacks (Leica SP8, 25x, 300 um depth mosaics) of cleared subcutaneous and visceral adipose tissue
+  from rainbow trout, stained with 5-DTAF and Nile Red, with matching 3D adipocyte instance masks.
+landing_url: https://www.ebi.ac.uk/biostudies/BioImages/studies/S-BIAD2102
+doi: 10.6019/S-BIAD2102
+repository: BioImageArchive
+accession: S-BIAD2102
+authors:
+- Jerome Bugeon
+publications:
+- title: 3D imaging and quantitative analysis of adipocytes in situ and ex situ
+  doi: 10.1080/21623945.2025.2558573
+  url: https://doi.org/10.1080/21623945.2025.2558573
+date_published: '2025-06-24'
+imaging:
+  modality:
+  - confocal
+  dimensionality: 3D
+  voxel_size_nm: null
+  channels: 2
+  organism:
+  - Oncorhynchus mykiss
+  sample: cleared subcutaneous and visceral adipose tissue of rainbow trout (animals M12, M13 at several body weights)
+  labels_stains:
+  - 5-DTAF (green)
+  - Nile Red (red)
+data:
+  formats:
+  - tiff
+  size_bytes: 102412576347
+  n_items: 24
+  access: open
+  download_url: https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/102/S-BIAD2102/Files/
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: 3D TIFF label stacks (Cellpose output, float32) in a masks folder, one per image stack
+  source: automatic
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/legalcode
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-10T21:44:41Z'
+  evidence_urls:
+  - https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD2102
+  - https://www.ebi.ac.uk/biostudies/files/S-BIAD2102/trout_adipose_tissue.json
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/102/S-BIAD2102/Files/trout_adipose_tissue.json
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12456214/fullTextXML
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-10T23:16:00Z'
+notes: '24 image stacks (45.1 GB) and 24 mask stacks (57.4 GB); paper Hue et al. 2025 (Adipocyte). Masks: Cellpose 2 model
+  retrained on 8 manually corrected images (1694 masks), border/sphericity < 0.35/< 5000 voxel objects removed in Fiji, each
+  stack manually checked in 2D/3D (study + paper Methods). enricher: annotations.source automatic (inference + filter, manually
+  validated; was mixed). enricher: voxel size left null, two groups: 20 stacks (M13-M19) 1154x1154x1159 nm in the ImageJ headers,
+  matching the paper''s ''voxel size was 1.15x1.15x1.15 um''; the 4 M12 stacks (2022-03-17 to 04-01) 576.8x576.8x999.4 nm
+  (masks 580 nm xy, no z). Images are RGB-stored (green 5-DTAF, red Nile Red). No train/test split.'
+technical:
+  method: header
+  size_source: page-stated
+  layout:
+    tree: "Files/\n  trout_adipose_tissue.json, trout_adipose_tissue.tsv   file list (exact sizes in the .json)\n  trout_adipose_tissue/\n\
+      \    image/   24 .tif  (45.1 GB; *_RGB.tif)\n    masks/   24 .tif  (57.4 GB; *_RGB_cp_masks_[Ff]iltre.tif)\n"
+    n_files: 50
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/102/S-BIAD2102/Files/trout_adipose_tissue/image/2022-05-02_M16_TA%20visc_833g_RGB.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/102/S-BIAD2102/Files/trout_adipose_tissue/masks/2022-05-02_M16_TA%20visc_833g_RGB_cp_masks_Filtre.tif
+    size_bytes: 2436613315
+    description: 'Smallest pair, M16 VAT 833 g: RGB image 267x962x1391x3 and its instance mask 267x932x1371.'
+  arrays:
+  - role: raw
+    path_pattern: trout_adipose_tissue/image/*_RGB.tif
+    format: tiff
+    axes: zyxs
+    shape:
+    - 267
+    - 962
+    - 1391
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'ImageJ stacks, RGB (photometric 2); green = 5-DTAF, red = Nile Red per study. All 24 probed: M13-M19
+      ~260-276 x ~980-1430 x ~980-1436; M12 323-375 x ~1960 x ~2860 (finer xy).'
+  - role: label
+    path_pattern: trout_adipose_tissue/masks/*_cp_masks_*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 267
+    - 932
+    - 1371
+    shape_varies: true
+    dtype: float32
+    compression: none
+    normalization: unknown
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    - id: null
+      name: adipocyte (one ID per cell)
+    alignment: cropped
+    alignment_notes: 'Pairing: mask = image stem + _cp_masks_Filtre / _cp_masks_filtre. All 24 pairs probed: same z count,
+      masks 20-46 px smaller in y and x than their image (e.g. 962x1391 -> 932x1371); crop offset not stated. Header voxel
+      size equals the image group (1154/1159 nm; M12 580 nm xy).'
+  notes: 'Exact sizes from the BioStudies file list (48 data files, 102,412,576,347 bytes); listing.py read the HTTP index
+    (FTP timed out), so page-stated. All 48 TIFF headers probed. No sample downloaded: the smallest image is 1.07 GB and tools/sample.py
+    page-wise reading fails on these ImageJ files (metadata parse error, seen on S-BIAD2103/2104), so value ranges are not
+    measured; encoding instance-ids from the Cellpose pipeline, as measured on companion S-BIAD2103 masks (float32 integer
+    IDs). Masks are cropped relative to images with an unstated offset. Voxel size: two calibration groups (see notes); checked
+    TIFF headers, BioStudies REMBI sections, file list, paper Methods; no code repo. Direct per-file https links on ftp.ebi.ac.uk
+    with range requests; no single archive offered, so download_url is the Files/ folder. Confirmed size > 50 GB.'
