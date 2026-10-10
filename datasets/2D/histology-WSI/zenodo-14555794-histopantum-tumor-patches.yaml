@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-14555794-histopantum-tumor-patches
 title: 'HISTOPANTUME: Histological Pan-cancer Tumor image dataset'
 short_name: Pan-cancer tumour vs non-tumour patches (H&E)
-description: H&E histology patches from 160 TCGA diagnostic slides (colorectal, ovarian, stomach, uterus) labelled tumour or
-  non-tumour from pathologist-annotated regions, saved as 224x224 JPEG in one archive per cancer type; built as a domain
-  generalization benchmark (281,142 patches per the paper).
+description: H&E histology patches from 160 TCGA diagnostic slides (colorectal, ovarian, stomach, uterus)
+  labelled tumour or non-tumour from pathologist-annotated regions, saved as 224x224 JPEG in one archive
+  per cancer type; built as a domain generalization benchmark (281,142 patches per the paper).
 landing_url: https://zenodo.org/records/14555794
 doi: 10.5281/zenodo.14555794
 repository: Zenodo
@@ -23,15 +23,12 @@ imaging:
   modality:
   - histology-WSI
   dimensionality: 2D
-  voxel_size_nm:
-    x: 500
-    y: 500
-    z: null
+  voxel_size_nm: null
   channels: 3
   organism:
   - Homo sapiens
-  sample: H&E-stained TCGA diagnostic whole slide images, 40 slides per cancer type (colorectal, uterus, ovary, stomach), tumour
-    subtypes adenocarcinoma and mucinous carcinoma
+  sample: H&E-stained TCGA diagnostic whole slide images, 40 slides per cancer type (colorectal, uterus,
+    ovary, stomach), tumour subtypes adenocarcinoma and mucinous carcinoma
   labels_stains:
   - H&E
 data:
@@ -40,15 +37,15 @@ data:
   size_bytes: 2915618444
   n_items: 281142
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/14555794
   download_method: http
 annotations:
   present: true
   types:
   - classification
   coverage: dense
-  format: 'folder-based class labels: tumour and non-tumour subfolders inside one tar.gz per cancer type (colon, ovarian, stomach,
-    uterus); file names <TCGA-slide-name>_<x>_<y>.jpg'
+  format: 'folder-based class labels: tumour and non-tumour subfolders inside one tar.gz per cancer type
+    (colon, ovarian, stomach, uterus); file names <TCGA-slide-name>_<x>_<y>.jpg'
   source: manual
 ml:
   tasks:
@@ -70,12 +67,54 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-10T09:10:00Z'
-notes: 'Zenodo description: patches extracted at 0.5 um per pixel from 512x512 then resized to 224x224 and saved as JPEG, four
-  tar.gz archives (colon, ovarian, stomach, uterus) with tumour and non-tumour subfolders. The arXiv paper (read from the PDF)
-  states 40 TCGA WSIs per cancer type, tumour/non-tumour regions annotated by one experienced pathologist, and 281,142 patches of
-  512x512 px at about 0.5 mpp; n_items is that paper figure and may differ from the archives. tar.gz archives cannot be listed
-  remotely, so the folder layout and counts are taken from the Zenodo description and were not checked in the files; hence
-  annotations_verified is false. The paper title spells the dataset HISTOPANTUM, Zenodo spells it HISTOPANTUME. The slides come
-  from TCGA, so the underlying images are also public elsewhere. download_url is null because there are four separate archives.'
+  annotations_verified: true
+  last_checked: '2026-10-10T08:55:00Z'
+notes: 'Zenodo description: patches extracted at 0.5 um per pixel from 512x512 then resized to 224x224
+  and saved as JPEG, four tar.gz archives (colon, ovarian, stomach, uterus) with tumour and non-tumour
+  subfolders. The arXiv paper (read from the PDF) states 40 TCGA WSIs per cancer type, tumour/non-tumour
+  regions annotated by one experienced pathologist, and 281,142 patches of 512x512 px at about 0.5 mpp;
+  n_items is that paper figure and may differ from the archives. The paper title spells the dataset HISTOPANTUM,
+  Zenodo spells it HISTOPANTUME. The slides come from TCGA, so the underlying images are also public elsewhere.
+  download_url is null because there are four separate archives. enricher: voxel size set null (500 nm
+  is the pre-resize scale; files are 512->224 resized).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                       4 files   2.9 GB  .tar.gz\n  colon.tar.gz      536.9 MB\n  ovarian.tar.gz\
+      \    698.4 MB\n  stomach.tar.gz    592.3 MB\n  uterus.tar.gz       1.09 GB\ntar contents (head of\
+      \ colon.tar.gz, streamed):\n  colon/tumour/<TCGA-slide-name>_<x>_<y>.jpg\n  colon/non-tumour/...\
+      \   (per the Zenodo description; not reached in the streamed head)\n"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/14555794/files/colon.tar.gz
+    size_bytes: 536933725
+    description: smallest archive (colon); tar.gz members cannot be fetched singly
+  arrays:
+  - role: raw
+    path_pattern: '*.tar.gz::*/*/*.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 224
+    - 224
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB JPEG patches; class = parent folder (tumour / non-tumour), cancer type = top
+      folder (colon, ovarian, stomach, uterus). File name <TCGA-slide-name>_<x>_<y>.jpg encodes the source
+      slide and patch position.
+  notes: 'Listing via Zenodo API (4 tar.gz, sizes exact; size confirmed). tar.gz cannot be listed remotely,
+    so the first 131,072 bytes of colon.tar.gz were streamed: members colon/, colon/tumour/, then TCGA-*.jpg
+    of 17-26 KB; two decoded as JPEG RGB 224x224 uint8, values 0-255. Voxel size: Zenodo says patches
+    were "extracted from 0.5 micron-per-pixel resolution" at 512x512 and "resized to 224x224", so the
+    files are not at 0.5 um/px; the resized pixel size is not stated, so voxel_size_nm is null (was 500x500).
+    JPEG has no dpi. data.download_url is the record page: four separate archives, direct at https://zenodo.org/records/14555794/files/<cancer>.tar.gz.'
