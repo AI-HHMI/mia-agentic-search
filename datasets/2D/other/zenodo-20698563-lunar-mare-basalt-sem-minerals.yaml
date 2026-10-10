@@ -66,5 +66,105 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T15:15:00Z'
-notes: 'One 1.0 GB zip with code, trained models and data/data-sem-label (17,248 image/mask/metadata triples in 28 folders, from the data README; folder listing of the zip agrees). Only 1,078 samples are unique: the rest are rotated (x4) and brightness-scaled (x5, 50-120 percent) copies, so splits must group by sample. Pixel size varies per image (0.02-20 um, stored in per-image txt files), hence voxel_size_nm is null. Who made the masks and how is not stated in the Zenodo page or data README; the paper full text is not open access, so annotation source stays unknown. data-lsc-modal.xlsx holds modal abundances with rock-type labels (ilmenite, olivine, pigeonite basalt).'
+  last_checked: '2026-10-10T15:05:00Z'
+notes: 'One 1.0 GB zip with code, trained models and data/data-sem-label (17,248 image/mask/metadata triples in 28 folders, from the data README; folder listing of the zip agrees). Only 1,078 samples are unique: the rest are rotated (x4) and brightness-scaled (x5, 50-120 percent) copies, so splits must group by sample. Pixel size varies per image (0.02-20 um, stored in per-image txt files), hence voxel_size_nm is null. Who made the masks and how is not stated in the Zenodo page or data README; the paper full text is not open access, so annotation source stays unknown. data-lsc-modal.xlsx holds modal abundances with rock-type labels. enricher: modality is SEM (BSE), EM family; no organism (lunar rock). Masks sampled, 10 classes from data README.'
+technical:
+  method: sample
+  inspected_at: '2026-10-10T15:05:00Z'
+  inspected_urls:
+  - https://zenodo.org/records/20698563/files/zenodo2.zip
+  - https://zenodo.org/records/20698563/files/zenodo2.zip::zenodo2/data/data-sem-label/README.md
+  - https://zenodo.org/records/20698563/files/zenodo2.zip::zenodo2/data/data-sem-label/10003-Vaci/input-features/10003_21-1_b50.txt
+  - https://zenodo.org/records/20698563/files/zenodo2.zip::zenodo2/data/data-sem-label/10003-Vaci/input-images/10003_8-3_b50.png
+  - https://zenodo.org/records/20698563/files/zenodo2.zip::zenodo2/data/data-sem-label/10003-Vaci/output-images/10003_8-3_b50.png
+  bytes_downloaded: 21845
+  size_source: file-listing
+  layout:
+    tree: |
+      zenodo2.zip (1.0 GB, 51,774 members)
+        zenodo2/
+          README, requirements.txt, environment.yml, 2 .ipynb
+          data/data-lsc-modal/          data-lsc-modal.xlsx, README.md
+          data/data-sem-label/          README.md, unique_samples.txt
+            {meteorite_id}-{acquirer}/  28 folders (e.g. 10003-Vaci, 15016-Bell)
+              input-images/             17,248 .png in total (SEM BSE tiles, ~650 MB)
+              output-images/            17,248 .png in total (class-index masks, ~100 MB)
+              input-features/           17,248 .txt in total (pixel_size, rock_type)
+          models/Unets/                 5 .pth (278 MB)
+          models/rockClassifiers/       6 .pkl
+          utils/                        4 .py
+    n_files: 51774
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/20698563/files/zenodo2.zip::zenodo2/data/data-sem-label/10003-Vaci/input-images/10003_8-3_b50.png
+    - https://zenodo.org/records/20698563/files/zenodo2.zip::zenodo2/data/data-sem-label/10003-Vaci/output-images/10003_8-3_b50.png
+    size_bytes: 22118
+    description: One 256x256 SEM tile (sample 10003_8, rotation 3, brightness 50 percent) and its 10-class mask, members of the one zip.
+  arrays:
+  - role: raw
+    path_pattern: zenodo2/data/data-sem-label/*/input-images/*.png
+    format: png
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 108
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: zenodo2/data/data-sem-label/*/output-images/*.png
+    format: png
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 5
+    normalization: none
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: void
+    - id: 1
+      name: metallic Fe (kamacite, martensite)
+    - id: 2
+      name: FeS (troilite)
+    - id: 3
+      name: metal oxides (ilmenite, ulvospinel, chromite)
+    - id: 4
+      name: pyroxene group
+    - id: 5
+      name: plagioclase
+    - id: 6
+      name: silicate minerals (quartz, cristobalite)
+    - id: 7
+      name: olivine
+    - id: 8
+      name: late-stage melt (mesostasis, groundmass)
+    - id: 9
+      name: other (phosphate, zircon, etc.)
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: same file name in <folder>/input-images/ and <folder>/output-images/ (and .txt in input-features/).
+      Shapes match (256x256). File names are {sample}-{rotation 1-4}_{brightness b50..b120}; rotation 1 / b100 is the original.'
+  notes: 'Listing of the one zip (exact sizes, 1,022,204,180 bytes, 51,774 members) agrees with the data README (17,248 triples
+    in 28 folders). Sampled one pair: raw 8-bit grayscale PNG (mode L) 256x256, range [0, 108] mean 18; mask uint8 with values
+    {0,1,2,4,5}, consistent with the README class index 0-9 (values from one sample). Pixel size is per image in input-features/*.txt
+    (e.g. 10003-Vaci/10003_21-1_b50.txt: pixel_size 0.6 um); the record states 0.02-20 um across images, so no single voxel
+    size applies. Voxel size search: PNG headers (no calibration), Zenodo record, data README, per-image txt, paper (not open
+    access; Europe PMC and Crossref give no full text; publisher page returns 403). The zip also holds code, .pth models and
+    .pkl classifiers (not data; never run or unpickled).'
