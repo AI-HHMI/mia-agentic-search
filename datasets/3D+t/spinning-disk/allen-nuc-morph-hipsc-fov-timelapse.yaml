@@ -1,0 +1,183 @@
+schema_version: '1.2'
+id: allen-nuc-morph-hipsc-fov-timelapse
+title: WTC-11 hiPSC FOV-nuclei timelapse dataset V1 (nuc-morph-dataset)
+short_name: hiPSC colony nuclei timelapses (spinning-disk)
+description: Allen Institute for Cell Science 3D timelapses (5 min interval, up to 570 timepoints) of lamin B1-mEGFP WTC-11 hiPSC colonies
+  imaged with a 20x/0.8 NA spinning-disk confocal in fluorescence and brightfield, released as OME-Zarr. 14 analysis movies (baseline
+  colonies, DNA replication inhibitor, nuclear import inhibitor, feeding and fixed controls) come with a separate 3D nuclear segmentation
+  volume; 61 further movies are provided for self-supervised Vision Transformer pretraining, and one PCNA + DNA dye lattice light-sheet
+  movie has no segmentations.
+landing_url: https://allencell.s3.amazonaws.com/aics/nuc-morph-dataset/README.md
+doi: null
+repository: other
+accession: null
+authors:
+- Julie C. Dixon
+- Christopher L. Frick
+- Chantelle L. Leveille
+- Philip Garrison
+- Peyton A. Lee
+- Saurabh S. Mogre
+- Benjamin Morris
+- Nivedita Nivedita
+- Ritvik Vasan
+- Jianxu Chen
+- Matheus P. Viana
+- Julie A. Theriot
+- Susanne M. Rafelski
+publications:
+- title: Colony context and size-dependent compensation mechanisms give rise to variations in nuclear growth trajectories
+  doi: 10.1101/2024.06.28.601071
+  url: https://api.biorxiv.org/details/biorxiv/10.1101/2024.06.28.601071
+date_published: null
+imaging:
+  modality:
+  - spinning-disk
+  - brightfield
+  dimensionality: 3D+t
+  voxel_size_nm: null
+  channels: 2
+  organism:
+  - Homo sapiens
+  sample: live WTC-11 hiPSC colonies (lamin B1-mEGFP line AICS-0013 cl. 210; PCNA-mEGFP line AICS-0088 cl. 83 for one movie)
+  labels_stains:
+  - lamin B1-mEGFP
+data:
+  formats:
+  - ome-zarr
+  size_bytes: 4601900000000
+  n_items: 76
+  access: open
+  download_url: https://allencell.s3.amazonaws.com/aics/nuc-morph-dataset/hipsc_fov_nuclei_timelapse_dataset/
+  download_method: s3
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - tracking
+  coverage: dense
+  format: 3D nuclear segmentation masks (uint16, seg.ome.zarr, 0.290 x 0.108 x 0.108 um voxels) for 14 analysis movies; single-nucleus
+    tracks and features in separate DataFrames
+  source: automatic
+ml:
+  tasks:
+  - segmentation
+  - tracking
+  - self-supervised
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: custom
+  url: https://www.allencell.org/terms-of-use.html
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-10T05:15:30Z'
+  evidence_urls:
+  - https://pmc.ncbi.nlm.nih.gov/articles/PMC11230432/
+  - https://allencell.s3.amazonaws.com/aics/nuc-morph-dataset/README.md
+  - https://allencell.s3.amazonaws.com/aics/nuc-morph-dataset/hipsc_fov_nuclei_timelapse_dataset/hipsc_fov_nuclei_timelapse_data_table.csv
+  - https://www.allencell.org/terms-of-use.html
+  - https://api.biorxiv.org/details/biorxiv/10.1101/2024.06.28.601071
+  - https://allencell.s3.amazonaws.com/aics/nuc-morph-dataset/hipsc_fov_nuclei_timelapse_dataset/hipsc_fov_nuclei_timelapse_data_used_for_analysis/fixed_control_fov_timelapse_dataset/20220901_01/raw.ome.zarr
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-10T06:45:00Z'
+notes: 'Different subset of the Allen nuc-morph-dataset package than allen-nucmorph-20x-100x-hipsc-nuclei-3d. 76 movies (data table):
+  61 pretraining, 14 with seg.ome.zarr, 1 PCNA lattice light-sheet movie. enricher: voxel_size_nm set to null (was 271x271x763): subsets
+  differ. Table: 75 20x movies 0.763 (z) x 0.271 x 0.271 um; PCNA movie 0.145 um isotropic; segmentations 0.290 x 0.108 x 0.108 um.
+  Segmentations are model-predicted (ViT decoder). Channel order differs between movies (channel 1 is mEGFP in 2020/2022 movies, transmitted
+  light in 2023 ones; see the table). Size sums the table raw-size column (GB), without segmentations. License: Allen Institute Terms
+  of Use (non-commercial research, attribution).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "hipsc_fov_nuclei_timelapse_dataset/\n  hipsc_fov_nuclei_timelapse_data_table.csv          76 movies, metadata\n  hipsc_fov_nuclei_timelapse_data_used_for_analysis/\n\
+      \    baseline_colonies_fov_timelapse_dataset/  20200323_05_large, _06_medium, _09_small\n    feeding_control_fov_timelapse_dataset/\
+      \     20230720_01_control, _04_pre-starved, _07_re-fed\n    dna_replication_inhibitor_fov_timelapse_dataset/  5 scenes (20220411_*,\
+      \ 20230424_*)\n    nuclear_import_inhibitor_fov_timelapse_dataset/   20230417_01_control, _07_importazole\n    fixed_control_fov_timelapse_dataset/\
+      \       20220901_01\n    pcna_dna_dye_fov_timelapse_dataset/        20230414_01 (raw only)\n      <scene>/MIP.png, raw.xml, raw.ome.zarr/,\
+      \ seg.ome.zarr/\n  hipsc_fov_nuclei_timelapse_data_for_pretraining_vision_transformer/\n    baseline_conditions/, control/, inhibitor_*_conditions/,\
+      \ pre-starved/, re-fed/, ...  61 scenes\n      <scene>/raw.ome.zarr/\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://allencell.s3.amazonaws.com/aics/nuc-morph-dataset/hipsc_fov_nuclei_timelapse_dataset/hipsc_fov_nuclei_timelapse_data_used_for_analysis/fixed_control_fov_timelapse_dataset/20220901_01/raw.ome.zarr
+    - https://allencell.s3.amazonaws.com/aics/nuc-morph-dataset/hipsc_fov_nuclei_timelapse_dataset/hipsc_fov_nuclei_timelapse_data_used_for_analysis/fixed_control_fov_timelapse_dataset/20220901_01/seg.ome.zarr
+    size_bytes: null
+    description: 'Smallest annotated movie: fixed control 20220901_01 (20 timepoints; raw 3.6 GB per the data table) with its segmentation
+      store'
+  arrays:
+  - role: raw
+    path_pattern: hipsc_fov_nuclei_timelapse_data_used_for_analysis/*/*/raw.ome.zarr
+    format: ome-zarr
+    axes: tczyx
+    shape:
+    - 570
+    - 2
+    - 42
+    - 1248
+    - 1824
+    shape_varies: true
+    dtype: uint16
+    compression: blosc
+    value_range:
+    - 42
+    - 65535
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 't 20-576, x 1824 or 1848 per movie; PCNA movie (188, 2, 150, 2048, 2332). 5 pyramid levels. Channels: mEGFP-lamin
+      B1 fluorescence and transmitted light, order per movie in the data table.'
+  - role: raw
+    path_pattern: hipsc_fov_nuclei_timelapse_data_for_pretraining_vision_transformer/*/*/raw.ome.zarr
+    format: ome-zarr
+    axes: tczyx
+    shape:
+    - 570
+    - 2
+    - 42
+    - 1248
+    - 1824
+    shape_varies: true
+    dtype: uint16
+    compression: blosc
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 61 unannotated movies for self-supervised pretraining; t 192-576 per the data table.
+  - role: label
+    path_pattern: hipsc_fov_nuclei_timelapse_data_used_for_analysis/*/*/seg.ome.zarr
+    format: ome-zarr
+    axes: tczyx
+    shape:
+    - 570
+    - 1
+    - 108
+    - 3120
+    - 4560
+    shape_varies: true
+    dtype: uint16
+    compression: blosc
+    value_range:
+    - 0
+    - 320
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: scaled
+    alignment_notes: 'Pairs with raw.ome.zarr in the same scene folder. Segmentation grid is 0.290 x 0.108 x 0.108 um vs raw 0.763 x
+      0.271 x 0.271 um (data table): 2.5x finer in y/x (1248->3120, 1824->4560), z 42 -> 108/109 planes, same physical extent (~31-32
+      x 338 x 494 um). Segmented timepoints can be fewer than raw ones (e.g. 110 of 193, 150 of 192, 86 of 218). Zarr scale metadata
+      disagree with the table in some stores (see technical.notes).'
+  notes: 'S3 prefix listed by folder (delimiter) only; chunk objects not counted (millions), so no file count or confirmed size. Probed
+    raw/seg stores of baseline 20200323_09_small, fixed control 20220901_01, pretraining 20200323_01 and PCNA 20230414_01 (zarr v2,
+    blosc-lz4, chunks one yx plane). Sampled 20200323_09_small level 0 central chunks: raw (2,2,2,1248,1824) uint16 min 42 max 65535
+    mean 15170 (max hits the dtype ceiling); seg (2,1,1,3120,4560) uint16 0..320, 321 ids, 74% zero (one sample). Voxel size: zarr scale
+    says z 757.9 nm (table 763), fixed-control seg says 270.8 x 763.2 nm on its 3120x4620 grid (table 108/290 nm), PCNA z 400 nm (table
+    145); the data table wins, values differ between subsets, so imaging.voxel_size_nm is null. Size: table raw sizes only (seg stores
+    not included). Whole download is S3 folders (no archive); TensorSwitch reads the .ome.zarr roots remotely.'
