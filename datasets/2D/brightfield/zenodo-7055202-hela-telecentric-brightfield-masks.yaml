@@ -1,0 +1,142 @@
+schema_version: '1.2'
+id: zenodo-7055202-hela-telecentric-brightfield-masks
+title: Telecentric bright-field transmitted light microscopic dataset
+short_name: HeLa cell masks in telecentric bright-field
+description: 500 bright-field images (1024 x 1024 RGB PNG, cropped from time-lapse series of living HeLa cells) with manually drawn
+  single-class cell masks, pre-split into 320 train, 80 validation and 100 test image/mask pairs.
+landing_url: https://zenodo.org/records/7055202
+doi: 10.5281/zenodo.7055202
+repository: Zenodo
+accession: '7055202'
+authors:
+- Ali Ghaznavi
+- Renata Rychtáriková
+- Mohammadmehdi Saberioon
+- Dalibor Štys
+publications:
+- title: 'Cell segmentation from telecentric bright-field transmitted light microscopy images using a Residual Attention U-Net: A case
+    study on HeLa line.'
+  doi: 10.1016/j.compbiomed.2022.105805
+  url: https://doi.org/10.1016/j.compbiomed.2022.105805
+date_published: '2022-08-31'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: living HeLa cells (ECACC 93021013) in glass-bottom Petri dishes, time-lapse frames
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: 2735406586
+  n_items: 500
+  access: open
+  download_url: https://zenodo.org/records/7055202/files/Dataset.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: single-class PNG masks (1024 x 1024), one per image, in spilit_y_mask_* folders
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC0-1.0
+  url: https://creativecommons.org/publicdomain/zero/1.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-09T23:47:33Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/7055202
+  - https://zenodo.org/api/records/7055202/files/README.txt/content
+  - https://zenodo.org/api/records/7055202/files/Dataset.zip/content
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1016%2Fj.compbiomed.2022.105805%22&format=json&resultType=core&pageSize=3
+  - https://zenodo.org/records/7055202/files/Dataset.zip
+  confidence: 0.85
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-10T00:30:00Z'
+notes: 'Dataset.zip lists 1000 PNG files (500 images + 500 masks) in spilit_x_image_{train,validate,test} and spilit_y_mask_{train,validate,test}
+  folders (peek_archive), matching the README counts (320/80/100). The README states a raw pixel size of 113 nm on a custom telecentric
+  microscope, but the released images were converted from Bayer raw to a quarter-resolution RGB and cropped, so the pixel size of the
+  released PNGs is not stated; voxel_size_nm is left null. Paper is not open access (Europe PMC full text unavailable); abstract and
+  the README (which cites the paper sections) were read. The README says the data is also deposited on Dryad (10.5061/dryad.80gb5mksp).
+  enricher: images are 16-bit RGB PNGs (header), not all 1024x1024 (e.g. 1024x987); masks binary 0/255.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |-
+      Dataset.zip/Dataset/
+        README.txt                          9.1 KB
+        spilit_x_image_train/train/   320 files  1.7 GB    .png  (<n>.png)
+        spilit_x_image_validate/val/   80 files  437.0 MB  .png
+        spilit_x_image_test/test/     100 files  545.0 MB  .png
+        spilit_y_mask_train/train/    320 files  2.3 MB    .png  (same <n>.png)
+        spilit_y_mask_validate/val/    80 files  574.1 KB  .png
+        spilit_y_mask_test/test/      100 files  734.9 KB  .png
+    n_files: 1008
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7055202/files/Dataset.zip::Dataset/spilit_x_image_train/train/348.png
+    - https://zenodo.org/records/7055202/files/Dataset.zip::Dataset/spilit_y_mask_train/train/348.png
+    size_bytes: 5297330
+    description: one training image (1024x987 RGB, 16-bit) and its manual cell mask
+  arrays:
+  - role: raw
+    path_pattern: spilit_x_image_*/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1024
+    - 1024
+    - 3
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 16-bit RGB PNG per the header (README says 8-bit colour after Bayer conversion); 1024x1024 or 1024x987 in the files
+      probed (412.png, 348.png, val/374.png)
+  - role: label
+    path_pattern: spilit_y_mask_*/*/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1024
+    - 987
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: cell
+    alignment: same-grid
+    alignment_notes: spilit_y_mask_<split>/<split>/<n>.png pairs with spilit_x_image_<split>/<split>/<n>.png; same spatial grid in the
+      sample
+  notes: 'Listed the record (2 files) and Dataset.zip with --expand-zips (1,008 members incl. 7 .DS_Store). Read README.txt. Probed
+    3 images (16-bit RGB PNG, 1024x1024 or 1024x987). Sampled train 348 pair (5.3 MB): mask values {0: 778,822, 255: 231,866}; the image
+    was decoded by PIL as 8-bit RGB, so its value range is not recorded. Voxel size not stated for the released PNGs; checked: PNG headers
+    (no physical size), README (raw camera pixel 113 nm before Bayer quarter-resolution conversion and cropping), Zenodo record; the
+    paper (10.1016/j.compbiomed.2022.105805) is not open access. Not computed from the raw value. download_url is the one direct zip.'
