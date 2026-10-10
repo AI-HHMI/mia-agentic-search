@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: empiar-11718-pbs-psii-thylakoid-cryoet
 title: In situ cryo-ET structure of phycobilisome–photosystem II supercomplex from red alga
 short_name: Red alga thylakoid membrane and PBS-PSII (cryo-ET)
-description: 60 reconstructed cryo-FIB lamella cryo-electron tomograms of the red alga Porphyridium purpureum
-  (4x binned, 1.3684 nm voxels) with raw tilt series. One tomogram (Fig1_tomo_012) ships a thylakoid-membrane
-  segmentation volume and an annotation of the phycobilisome-photosystem II complexes (.em).
+description: 60 reconstructed cryo-FIB lamella cryo-electron tomograms of the red alga Porphyridium purpureum (4x binned,
+  1.3684 nm voxels) with manually picked and STOPGAP-refined PBS-PSII particle coordinates. Four tomograms have a thylakoid-membrane
+  segmentation volume and a PBS-PSII annotation volume (.em, averages mapped back), one of them (Fig1_tomo_012) together with
+  its tomogram.
 landing_url: https://www.ebi.ac.uk/empiar/EMPIAR-11718/
 doi: null
 repository: EMPIAR
@@ -27,7 +28,7 @@ imaging:
     x: 1.3684
     y: 1.3684
     z: 1.3684
-  channels: null
+  channels: 1
   organism:
   - Porphyridium purpureum
   sample: Cryo-FIB-milled lamellae (~150 nm) of Porphyridium purpureum UTEX 2757 cells, thylakoid membranes
@@ -38,16 +39,17 @@ data:
   size_bytes: 113900000000
   n_items: 60
   access: open
-  download_url: https://www.ebi.ac.uk/empiar/EMPIAR-11718/
-  download_method: ftp
+  download_url: https://ftp.ebi.ac.uk/empiar/world_availability/11718/
+  download_method: http
 annotations:
   present: true
   types:
   - semantic-segmentation
   - points
   coverage: sparse
-  format: mrc segmentation volume (thylakoid membrane); .em particle annotation (PBS-PSII)
-  source: manual
+  format: MRC binary membrane segmentation volumes and EM-format float32 PBS-PSII annotation volumes on the tomogram grid;
+    particle coordinates as IMOD .model/.coords, STOPGAP .star and .em motive lists
+  source: mixed
 ml:
   tasks:
   - segmentation
@@ -64,16 +66,115 @@ provenance:
   - https://www.ebi.ac.uk/empiar/EMPIAR-11718/
   - https://www.ebi.ac.uk/empiar/api/entry/EMPIAR-11718/
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8437437/fullTextXML
+  - https://ftp.ebi.ac.uk/empiar/world_availability/11718/data/
   confidence: 0.55
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-10T17:54:40Z'
-notes: 'Annotations exist for a single tomogram only (Fig1_tomo_012 membrane segmentation and PBS-PSII
-  annotation, from the EMPIAR API record); the other 59 tomograms are unlabeled, so this is a small labeled
-  set inside a large unlabeled one. The paper Methods say PBS-PSII particles were picked manually (75,310 sub-tomograms);
-  how the membrane segmentation was made is not stated there; file listing not inspected, so annotations_verified is
-  false. Voxel size 13.684 A is from the EMPIAR record (binning 4; paper states a 3.421 A raw pixel size).
-  EMPIAR lists 60 tomograms while the paper Methods mention 51 tilt series. Paper Data availability lists
-  only EMDB maps (EMD-31241..45). Checked: EMPIAR landing page, EMPIAR API record, paper full text.'
+  annotations_verified: true
+  last_checked: '2026-10-10T18:50:00Z'
+notes: 'Label volumes: Tomograms_Segmentation_Annotation_for_publication/ has membrane segmentations + PBS annotation .em
+  for Fig1_tomo_012, FigS1B_tomo_9_2_006, tomo_2_1_008 and tomo_10_1_013; only Fig1_tomo_012 has its tomogram in the entry
+  (Tomograms_bin4/Fig1_tomo_012_tomogram.mc); the other 59 tomograms carry particle coordinates only. Paper Methods: membranes
+  segmented with TomoSegMemTV, Amira and ChimeraX; PBS-PSII picked manually and refined with STOPGAP, averages re-mapped into
+  the tomograms (so source mixed). Voxel size 13.684 A from EMPIAR (binning 4) and MRC headers; paper raw pixel 3.421 A. EMPIAR
+  lists 60 tomograms; paper Methods mention 51 tilt series. enricher: no raw tilt series are in the entry (description corrected);
+  download_url set to the https tree.'
+technical:
+  method: header
+  inspected_at: '2026-10-10T18:45:00Z'
+  inspected_urls:
+  - https://ftp.ebi.ac.uk/empiar/world_availability/11718/data/All_tomograms_coordinates/Tomograms_bin4/Fig1_tomo_012_tomogram.mc
+  - https://ftp.ebi.ac.uk/empiar/world_availability/11718/data/All_tomograms_coordinates/Tomograms_bin4/tomo013_tomogram.mrc
+  - https://ftp.ebi.ac.uk/empiar/world_availability/11718/data/Tomograms_Segmentation_Annotation_for_publication/Fig1_tomo_012_ThylakoidMembrane_segmentation.mrc
+  - https://ftp.ebi.ac.uk/empiar/world_availability/11718/data/Tomograms_Segmentation_Annotation_for_publication/tomo_2_1_008_ThylakoidMembrane_segmentation.mrc
+  - https://ftp.ebi.ac.uk/empiar/world_availability/11718/data/Tomograms_Segmentation_Annotation_for_publication/FigS1C_tomo_9_2_003_tomogram.mrc
+  - https://ftp.ebi.ac.uk/empiar/world_availability/11718/data/Tomograms_Segmentation_Annotation_for_publication/Fig1_tomo_012_PBS_annotation_.em
+  - https://ftp.ebi.ac.uk/empiar/world_availability/11718/data/Tomograms_Segmentation_Annotation_for_publication/Fig1_tomo_012_segmentation_annotation_image.tif
+  bytes_downloaded: 0
+  size_source: page-stated
+  layout:
+    tree: "11718/  11718.xml\n  data/\n    All_tomograms_coordinates/\n      Tomograms_bin4/                     59 .mrc +\
+      \ 1 .mc  109.5 GB  tomoNNN_tomogram.mrc, Fig1_tomo_012_tomogram.mc\n      Particle_coordinates_ManuallyPick/  40 .coords\
+      \ + 40 .model  (IMOD)\n      Particle_with_Stopgap/              51 .em + 21 .star  (motive lists)\n    Tomograms_Segmentation_Annotation_for_publication/\
+      \  23 files  16.0 GB\n      <tomo>_ThylakoidMembrane_[sS]egmentation.mrc  x4 (424-846 MB)\n      <tomo>_PBS_[aA]nnotation[_].em\
+      \                x4 (1.7 GB)\n      <tomo>_segmentation_annotation_image.tif      x4 (RGB renderings)\n      FigS1C_tomo_9_2_003_tomogram.mrc;\
+      \ particle .star / _ali.em files\n"
+    n_files: 236
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/empiar/world_availability/11718/data/All_tomograms_coordinates/Tomograms_bin4/Fig1_tomo_012_tomogram.mc
+    - https://ftp.ebi.ac.uk/empiar/world_availability/11718/data/Tomograms_Segmentation_Annotation_for_publication/Fig1_tomo_012_ThylakoidMembrane_segmentation.mrc
+    - https://ftp.ebi.ac.uk/empiar/world_availability/11718/data/Tomograms_Segmentation_Annotation_for_publication/Fig1_tomo_012_PBS_annotation_.em
+    size_bytes: 4000471060
+    description: 'Fig1_tomo_012: tomogram (500 x 927 x 959 float32), its binary membrane segmentation and its PBS-PSII annotation
+      volume; not downloaded this run.'
+  arrays:
+  - role: raw
+    path_pattern: data/All_tomograms_coordinates/Tomograms_bin4/*_tomogram.{mrc,mc}
+    format: mrc
+    axes: zyx
+    shape:
+    - 500
+    - 927
+    - 959
+    shape_varies: true
+    dtype: float32
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 4x-binned tomograms, header voxel 13.684 A. Fig1_tomo_012_tomogram.mc is an MRC file with a .mc extension.
+  - role: label
+    path_pattern: data/Tomograms_Segmentation_Annotation_for_publication/*_ThylakoidMembrane_[sS]egmentation.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 500
+    - 927
+    - 959
+    shape_varies: true
+    dtype: int8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: binary
+    classes:
+    - id: 1
+      name: thylakoid membrane
+    alignment: same-grid
+    alignment_notes: Pairs by tomogram name prefix (Fig1_tomo_012_...). Header min/max 0/1. Fig1 file is int8 (mode 0) at
+      13.684 A; tomo_2_1_008 is int16 [500,926,958] with a 1 A (unset) header voxel. Only Fig1_tomo_012 has its raw tomogram
+      in the entry.
+  - role: label
+    path_pattern: data/Tomograms_Segmentation_Annotation_for_publication/*_PBS_[aA]nnotation*.em
+    format: other
+    axes: zyx
+    shape:
+    - 500
+    - 927
+    - 959
+    shape_varies: true
+    dtype: float32
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: other
+    classes:
+    - id: null
+      name: PBS-PSII supercomplex (sub-tomogram averages re-mapped into the tomogram)
+    alignment: same-grid
+    alignment_notes: 'EM-format volume (header: PC byte order, type 5 float32, dims x959 y927 z500), same grid as Fig1_tomo_012_tomogram;
+      density map, not integer labels (paper: averages re-mapped with refined orientations).'
+  notes: 'HTTP index listing (FTP timed out; sizes rounded, 236 files, ~125.5 GB; EMPIAR states 113.9 GB, kept as size). Headers
+    probed: Fig1_tomo_012_tomogram.mc and tomo013_tomogram.mrc ([500,927,959] float32, 13.684 A), FigS1C_tomo_9_2_003_tomogram.mrc
+    ([500,926,958] float32), Fig1 membrane segmentation (int8, min/max 0/1), tomo_2_1_008 membrane segmentation (int16, 0/1,
+    1 A voxel), Fig1 PBS annotation .em (float32 959x927x500), annotation TIFF ([3456,3634,3] RGB rendering, not a label).
+    No sample downloaded: the smallest label/raw pair is ~2.2 GB, over the 500 MB budget. Particle coordinate files (.coords/.model/.star/.em
+    motls) are not described as arrays. The only tomogram with labels has a .mc extension, which the TensorSwitch planner
+    does not map to mrc, so the sample does not match the raw array.'
