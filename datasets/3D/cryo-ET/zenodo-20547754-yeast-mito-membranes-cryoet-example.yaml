@@ -1,0 +1,142 @@
+schema_version: '1.2'
+id: zenodo-20547754-yeast-mito-membranes-cryoet-example
+title: Cropped yeast cryo-ET tomogram with mitochondrial membrane segmentation (Surface Morphometrics example)
+short_name: Yeast mitochondrial membranes (cryo-ET)
+description: A single cropped cryo-electron tomogram of a yeast cell with a semantic segmentation of inner and outer mitochondrial
+  membrane sections, packaged as the benchmark/example input of the Surface Morphometrics pipeline. Cropped from EMPIAR-12534.
+landing_url: https://zenodo.org/records/20547754
+doi: 10.5281/zenodo.20547754
+repository: Zenodo
+accession: '20547754'
+authors:
+- Benjamin Barad
+- Ya-Ting Chang
+publications:
+- title: Quantifying organellar ultrastructure in cryo-electron tomography using a surface morphometrics pipeline
+  doi: 10.1083/jcb.202204093
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC9960335/
+date_published: '2026-06-04'
+imaging:
+  modality:
+  - cryo-ET
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 0.998
+    y: 0.998
+    z: 0.998
+  channels: 1
+  organism:
+  - Saccharomyces cerevisiae
+  sample: yeast cell cryo-tomogram crop showing inner and outer mitochondrial membrane (IMM, OMM)
+  labels_stains: []
+data:
+  formats:
+  - mrc
+  size_bytes: 43760103
+  n_items: 1
+  access: open
+  download_url: https://zenodo.org/records/20547754/files/surface_morphometrics_example.tar.gz
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: 'MRC label volume (int8): 0 background, IMM=1, OMM=2 (README.txt and config.yml in the archive)'
+  source: unknown
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-10T02:54:48Z'
+  evidence_urls:
+  - https://zenodo.org/records/20547754
+  - https://zenodo.org/api/records/20547754
+  - https://github.com/GrotjahnLab/surface_morphometrics
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9960335/fullTextXML
+  - https://www.ebi.ac.uk/empiar/api/entry/EMPIAR-12534/
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-10T04:15:00Z'
+notes: 'Single small benchmark crop (one volume), not a training set; included because it meets the 1-volume minimum. Annotation
+  procedure not stated for this crop; the paper describes TomoSegMemTV plus manual cleanup for the pipeline. enricher: voxel
+  size 9.98 A = 0.998 nm isotropic from the MRC headers and the archive README.txt ("Tomogram voxel size: 9.98 A"), matching
+  EMPIAR-12534 reconstructed tomograms (pixel 9.98 A) (was null). enricher: archive contents verified (README.txt, config.yml,
+  tomograms/*.mrc, segmentations/*_labels.mrc); annotations_verified true.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "record 20547754  1 file, 43,760,103 B (.tar.gz)\n  surface_morphometrics_example.tar.gz\n    surface_morphometrics_example/\n\
+      \      README.txt                                   497 B\n      config.yml                                   1,501\
+      \ B\n      tomograms/YTC042_2_lam10_ts_004.mrc          47,186,944 B\n      segmentations/YTC042_2_lam10_ts_004_labels.mrc\
+      \  23,593,984 B\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/20547754/files/surface_morphometrics_example.tar.gz
+    size_bytes: 43760103
+    description: The whole dataset is one 43.8 MB tar.gz holding one tomogram and its label volume; there is no smaller unit.
+  arrays:
+  - role: raw
+    path_pattern: surface_morphometrics_example.tar.gz::surface_morphometrics_example/tomograms/*.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 160
+    - 384
+    - 384
+    shape_varies: false
+    dtype: float16
+    compression: none
+    lossy: false
+    value_range:
+    - -0.187744140625
+    - 0.10479736328125
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: surface_morphometrics_example.tar.gz::surface_morphometrics_example/segmentations/*_labels.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 160
+    - 384
+    - 384
+    shape_varies: false
+    dtype: int8
+    compression: none
+    lossy: false
+    value_range:
+    - 0
+    - 2
+    normalization: none
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: IMM (inner mitochondrial membrane)
+    - id: 2
+      name: OMM (outer mitochondrial membrane)
+    n_ids_observed: 3
+    alignment: same-grid
+    alignment_notes: <name>_labels.mrc in segmentations/ pairs with <name>.mrc in tomograms/; same 384x384x160 (nx,ny,nz)
+      shape, 9.98 A voxel size and zero origin in both MRC headers.
+  notes: 'Whole archive (43,760,103 B) downloaded once and read in memory with tarfile + mrcfile (mrc mode 12 = float16 tomogram,
+    mode 0 = int8 labels), then deleted. Value ranges are from this one volume: tomogram mean ~0, std 0.019; label voxel counts
+    0: 22,520,729, 1: 870,574, 2: 201,657. Axes zyx = MRC storage order (nz=160 slowest). MRC header voxel size 9.98 A in
+    x, y, z agrees with README.txt. No direct per-file links: Zenodo serves only the tar.gz, and TensorSwitch pulls members
+    only out of zips, so automatic conversion needs tar support or a manual unpack.'
