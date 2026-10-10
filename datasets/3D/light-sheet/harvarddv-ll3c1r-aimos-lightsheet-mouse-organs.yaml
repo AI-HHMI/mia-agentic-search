@@ -1,0 +1,176 @@
+schema_version: '1.2'
+id: harvarddv-ll3c1r-aimos-lightsheet-mouse-organs
+title: Light-sheet microscopy dataset for AIMOS
+short_name: Whole-body mouse organ segmentation (light-sheet)
+description: 15 cleared whole-body mouse light-sheet fluorescence scans (native autofluorescence and propidium-iodide nucleus staining)
+  with manually annotated 3D segmentations of brain, lungs, heart, liver, kidneys and spleen.
+landing_url: https://doi.org/10.7910/DVN/LL3C1R
+doi: 10.7910/DVN/LL3C1R
+repository: other
+accession: DVN/LL3C1R
+authors:
+- Schoppe, Oliver
+publications:
+- title: Deep learning-enabled multi-organ segmentation in whole-body mouse scans
+  doi: 10.1038/s41467-020-19449-7
+  url: https://doi.org/10.1038/s41467-020-19449-7
+date_published: '2020-04-27'
+imaging:
+  modality:
+  - light-sheet
+  dimensionality: 3D
+  voxel_size_nm: null
+  channels: 2
+  organism:
+  - Mus musculus
+  sample: tissue-cleared whole mouse bodies, native autofluorescence or propidium-iodide nucleus staining
+  labels_stains:
+  - propidium iodide
+data:
+  formats:
+  - nifti
+  size_bytes: 377953705
+  n_items: 15
+  access: open
+  download_url: https://dataverse.harvard.edu/api/access/datafile/3796610
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: manually annotated 3D organ segmentation volumes (brain, lungs, heart, liver, kidneys, spleen) inside AIMOS_LSFM.tar.gz
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC0-1.0
+  url: http://creativecommons.org/publicdomain/zero/1.0
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-10T21:19:36Z'
+  evidence_urls:
+  - https://dataverse.harvard.edu/api/datasets/:persistentId/?persistentId=doi:10.7910/DVN/LL3C1R
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7648799/fullTextXML
+  - https://dataverse.harvard.edu/api/access/datafile/3796610
+  - https://raw.githubusercontent.com/oschoppe/AIMOS/master/code/AIMOS_prepare_custom_data.py
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-10T23:25:00Z'
+notes: 'Harvard Dataverse lists one file, AIMOS_LSFM.tar.gz (377,953,705 bytes), CC0 1.0, released 2020-04-27 by Oliver Schoppe (TUM).
+  The tar holds mouse_<n>/ folders with scan_native.nii.gz, scan_pi.nii.gz, GT.nii.gz and preview.png. The paper (Nat Commun 2020) says
+  the light-sheet scans were acquired at 6 um isotropic resolution, but the deposited NIfTI volumes are only about 250 x 500 x 130 voxels
+  per whole mouse, so they are downsampled and 6 um does not apply to them. Their headers carry the default 1.0 spacing with no units.
+  enricher: voxel size removed (was 6000 nm isotropic, from the paper); channels 2 (native autofluorescence and PI, one file each).
+  Class IDs 1-6 (Brain, Heart, Lung, Liver, Kidney, Spleen; 0 background) come from the AIMOS code (AIMOS_prepare_custom_data.py, dataset
+  ''LSFM''). The CT sets are separate datasets.'
+technical:
+  method: sample
+  inspected_at: '2026-10-10T23:25:00Z'
+  inspected_urls:
+  - https://dataverse.harvard.edu/api/access/datafile/3796610
+  bytes_downloaded: 120012800
+  size_source: page-stated
+  layout:
+    tree: "AIMOS_LSFM.tar.gz (378 MB; members seen in the first 60 MB of the stream)\n  mouse_<n>/          15 mice (paper, Dataverse\
+      \ description)\n    scan_native.nii.gz   ~9-14 MB, autofluorescence\n    scan_pi.nii.gz       ~13 MB, propidium iodide\n    GT.nii.gz\
+      \            ~0.3 MB, organ labels\n    preview.png          ~65 KB\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://dataverse.harvard.edu/api/access/datafile/3796610
+    size_bytes: 377953705
+    description: The whole tar.gz (378 MB). Its members can't be fetched on their own (no index in a tar.gz); one mouse is scan_native/scan_pi/GT.nii.gz
+      in mouse_<n>/.
+  arrays:
+  - role: raw
+    path_pattern: mouse_*/scan_native.nii.gz
+    format: nifti
+    axes: zyx
+    shape:
+    - 129
+    - 500
+    - 250
+    shape_varies: true
+    dtype: uint16
+    compression: gzip
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 44976
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: raw
+    path_pattern: mouse_*/scan_pi.nii.gz
+    format: nifti
+    axes: zyx
+    shape:
+    - 129
+    - 500
+    - 250
+    shape_varies: true
+    dtype: uint16
+    compression: gzip
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 54193
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: PI channel of the same mouse; mouse_5 scan_native and scan_pi have the same shape and affine.
+  - role: label
+    path_pattern: mouse_*/GT.nii.gz
+    format: nifti
+    axes: zyx
+    shape:
+    - 137
+    - 500
+    - 250
+    shape_varies: true
+    dtype: uint16
+    compression: gzip
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 6
+    normalization: none
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: brain
+    - id: 2
+      name: heart
+    - id: 3
+      name: lung
+    - id: 4
+      name: liver
+    - id: 5
+      name: kidney
+    - id: 6
+      name: spleen
+    alignment: same-grid
+    alignment_notes: GT.nii.gz pairs with the scans in the same mouse_<n>/ folder. The AIMOS code expects scan and annotation to be
+      volumes of the same size. The GT and the scans have the same affine (diag -1,-1,1). Shape match was not checked within one mouse
+      (GT sampled from mouse_8, scans from mouse_5).
+  notes: 'tar.gz has no index, so it was read as a stream: two 60 MB prefixes (120 MB total), listing the first 10 members and sampling
+    mouse_8/GT, mouse_5/scan_native and mouse_5/scan_pi. NIfTI shapes from nibabel are (x, y, z) = (250, 500, 129) for the mouse_5 scans
+    and (250, 500, 137) for the mouse_8 GT. They are written here in zyx (slowest to fastest) order, so z varies between mice. Header
+    zooms are 1.0 with unknown units. GT has 7 IDs (0-6). Value ranges come from one volume each. The member listing is incomplete (n_files
+    unknown); the size is the exact file size from the Dataverse API (page-stated). TensorSwitch cannot take single members out of a tar.gz, so no sample file matches an array. Voxel size not set: the paper''s 6 um is the acquisition resolution, and the
+    files are downsampled (a whole mouse in 500 voxels). Checked: NIfTI headers, Dataverse API metadata, paper full text (Methods, Data
+    availability, Fig. 6), AIMOS README and code (no per-file spacing). The paper processed scans at 240 um/vx, but nothing says that
+    is the deposited spacing.'
