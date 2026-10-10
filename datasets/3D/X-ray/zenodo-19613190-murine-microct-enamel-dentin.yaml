@@ -37,7 +37,7 @@ data:
   size_bytes: 43797103110
   n_items: 248
   access: open
-  download_url: https://zenodo.org/api/records/19613190/files/Dataset208_murine.zip/content
+  download_url: https://zenodo.org/records/19613190/files/Dataset208_murine.zip
   download_method: http
 annotations:
   present: true
@@ -69,10 +69,74 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T23:05:00Z'
-notes: 'Zip is in nnU-Net layout (Dataset208_murine: imagesTr, labelsTr, imagesTs, labelsTs, dataset.json with numTraining
-  200). The record text says 248 scans; the zip holds 1,088 .nii.gz files including macOS ._ copies. The header of one training
-  scan (Mur_00004) reads 23.1 um isotropic voxels, 475 x 544 x 519, int16; voxel sizes likely differ between in vivo and ex
-  vivo scans (spreadsheet lists Quantum GX2 and FX scanners), so voxel_size_nm is left null. The manuscript is under review
-  and no paper link exists yet, so publications is empty and the annotation procedure (record says "reference standard segmentations")
-  could not be read; source is unknown. The trained model is in a separate Zenodo record (10.5281/zenodo.19612302).'
+  last_checked: '2026-10-10T22:30:00Z'
+notes: 'Zip is in nnU-Net layout (Dataset208_murine: imagesTr 200, labelsTr 200, imagesTs 48, labelsTs 48, predictionTs 48, dataset.json with numTraining 200), plus 545 macOS ._ copies. The manuscript is under review and no paper link exists yet, so publications is empty and the annotation procedure (record says "reference standard segmentations") could not be read; source is unknown. The trained model is in a separate Zenodo record (10.5281/zenodo.19612302). enricher: voxel_size_nm stays null: NIfTI headers differ between scans, about 23.12 x 23.16 x 23.16 um (Mur_00004, Mur_00212; 475x544x519) and 20.0 um isotropic (Mur_00133, Mur_00193, Mur_00244; 512^3); the spreadsheet lists in vivo Quantum GX2 / FX and ex vivo Quantum GX2 scans but no voxel size or case IDs.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |-
+      ./                                                        6 files     43.8 GB  .csv 4, .xlsx 1, .zip 1
+        Mice_Characteristics_data_partition.xlsx, METRICS_{HA,VOLUME,DSC,NSD}.csv
+      zip contents:
+      Dataset208_murine.zip/Dataset208_murine/
+        ./                                                        1 files       232 B  .json (dataset.json)
+        imagesTr/                                               200 files     35.2 GB  .nii.gz  (Mur_NNNNN_0000.nii.gz)
+        imagesTs/                                                48 files      8.5 GB  .nii.gz
+        labelsTr/                                               200 files    113.3 MB  .nii.gz  (Mur_NNNNN.nii.gz)
+        labelsTs/                                                48 files     27.1 MB  .nii.gz
+        predictionTs/                                            48 files     27.0 MB  .nii.gz  (model predictions)
+        (+545 macOS ._ metadata files not shown)
+    n_files: 6
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/19613190/files/Dataset208_murine.zip::Dataset208_murine/imagesTr/Mur_00004_0000.nii.gz
+    - https://zenodo.org/records/19613190/files/Dataset208_murine.zip::Dataset208_murine/labelsTr/Mur_00004.nii.gz
+    size_bytes: 99602754
+    description: Training case Mur_00004, CT volume and its 5-class enamel/dentin label volume
+  arrays:
+  - role: raw
+    path_pattern: 'Dataset208_murine.zip/Dataset208_murine/imagesT[rs]/Mur_[0-9]*_0000.nii.gz'
+    format: nifti
+    axes: zyx
+    shape: [475, 544, 519]
+    shape_varies: true
+    dtype: int16
+    compression: gzip
+    value_range: [-1377, 7798]
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: nnU-Net channel 0 ("CT"). Shapes and voxel sizes vary between scans (475x544x519 at ~23.1 um, 512^3 at 20.0 um in the headers probed).
+  - role: label
+    path_pattern: 'Dataset208_murine.zip/Dataset208_murine/labelsT[rs]/Mur_[0-9]*.nii.gz'
+    format: nifti
+    axes: zyx
+    shape: [475, 544, 519]
+    shape_varies: true
+    dtype: int16
+    compression: gzip
+    value_range: [0, 4]
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: Incisors dentin
+    - id: 2
+      name: Incisors enamel
+    - id: 3
+      name: Molars dentin
+    - id: 4
+      name: Molars enamel
+    alignment: same-grid
+    alignment_notes: 'Pairing rule (nnU-Net): imagesTr/Mur_NNNNN_0000.nii.gz pairs with labelsTr/Mur_NNNNN.nii.gz (same for Ts). Sampled pair has the same shape and the same NIfTI zooms. Classes from dataset.json. predictionTs/ holds model predictions for the test cases and is not a label array.'
+  notes: >-
+    Listing: tools/listing.py on the Zenodo record with --expand-zips, 6 files, 43,797,103,110 bytes (file-listing,
+    complete), 1090 zip members. Probed NIfTI headers (zip members): Mur_00004 and Mur_00212 int16 475x544x519, voxel
+    23121 x 23162 x 23158 nm; Mur_00133, Mur_00193, Mur_00244 int16 512x512x512, voxel 20000 nm isotropic. Sampled
+    Mur_00004 (99.2 MB image, 65 KB label): image -1377..7798 (p50 -895), label values {0: 19090835, 1: 34717, 2: 9879,
+    3: 20859, 4: 2225}, same grid; value ranges from this one sample. dataset.json read with peek_archive: channel
+    "CT", labels background 0, Incisors dentin 1, Incisors enamel 2, Molars dentin 3, Molars enamel 4, numTraining 200.
+    Voxel size: no single value (headers differ per scan); checked headers, Zenodo record and model record
+    10.5281/zenodo.19612302, spreadsheet, Europe PMC (paper not found, under review). Annotation source not stated.
