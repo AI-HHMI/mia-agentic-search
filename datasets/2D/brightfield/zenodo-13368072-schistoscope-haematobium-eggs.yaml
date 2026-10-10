@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-13368072-schistoscope-haematobium-eggs
 title: A schistosomiasis dataset with bright- and darkfield images
 short_name: S. haematobium eggs in urine (brightfield)
-description: 4,368 SchistoScope (mobile phone microscope) images, 4032x3024 JPG, of capillary-trapped urine samples from
-  patients in two Cote d'Ivoire field visits (March 2020 and November 2021), taken in brightfield and darkfield, with
-  CSV annotations marking the position of Schistosoma haematobium eggs and 'doubtful' objects.
+description: 4,368 SchistoScope (mobile phone microscope) images, 4032x3024 JPG, of capillary-trapped urine samples from patients
+  in two Cote d'Ivoire field visits (March 2020 and November 2021), taken in brightfield and darkfield, with CSV annotations
+  marking the position of Schistosoma haematobium eggs and 'doubtful' objects.
 landing_url: https://zenodo.org/records/13368072
 doi: 10.5281/zenodo.13368072
 repository: Zenodo
@@ -33,10 +33,10 @@ imaging:
 data:
   formats:
   - jpeg
-  size_bytes: 2250500380
+  size_bytes: 2253651531
   n_items: 4368
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/13368072
   download_method: http
 annotations:
   present: true
@@ -68,11 +68,70 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T20:10:00Z'
+  last_checked: '2026-10-10T21:30:00Z'
 notes: 'Two zips read with peek_archive: nov2021 has 2,280 JPGs and mar2020 has 2,088 (images named <visit>_<patient>_<fov>_<contrast>.jpg),
-  each with an annotations CSV and a patients list; size_bytes is the sum of both zips (the record also holds a 3 MB PDF).
-  The Zenodo record has no description text and no author list in its metadata (authors left empty); the paper title
-  here is the PLOS NTD article that the record names via isMetadataFor. Pixel pitch is about 1 um/pixel per the paper. The paper describes the annotations as bounding boxes, but
-  the CSV columns I read give a single x,y coordinate per object (nov2021 sample rows), so they are listed as points.
-  Annotated by one microscopist, verified by a second. The paper split patients into folds for training but no split
-  files are provided. Duplicate of the AFRICAI XNAT copy is not checked.'
+  each with an annotations CSV and a patients list; enricher: size_bytes = exact listing incl. the 3 MB dataset PDF. The Zenodo
+  record has no description text and no author list in its metadata (authors left empty); the paper title here is the PLOS
+  NTD article that the record names via isMetadataFor. Pixel pitch is about 1 um/pixel per the paper. The paper describes
+  the annotations as bounding boxes, but the CSV columns I read give a single x,y coordinate per object (nov2021 sample rows),
+  so they are listed as points. Annotated by one microscopist, verified by a second. The paper split patients into folds for
+  training but no split files are provided.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  3 files  2.25 GB\n  nov2021.zip  1.10 GB\n    nov2021/nov2021_images/nov2021_<patient>_<fov>_<contrast>.jpg\
+      \   2,280\n    nov2021/nov2021_docs/nov2021_annotations_08262024.csv      1,623 objects (S.haematobium 1,330, doubtful\
+      \ 293)\n    nov2021/nov2021_docs/nov2021_patients_list_08262024.csv    per image: patientNum, frameNum, Contrast, numberEggs,\
+      \ patientEggs\n  mar2020.zip  1.15 GB\n    mar2020/mar2020_images/*.jpg   2,088\n    mar2020/mar2020_docs/*.csv    \
+      \ 2 (same structure)\n  schistosomiasisDatasetPaper.pdf  3.2 MB\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/13368072/files/nov2021.zip::nov2021/nov2021_images/nov2021_001_1_0.jpg
+    - https://zenodo.org/records/13368072/files/nov2021.zip::nov2021/nov2021_docs/nov2021_annotations_08262024.csv
+    size_bytes: 266802
+    description: One 4032x3024 field of view (patient 001, fov 1, contrast 0) and the nov2021 point annotation table
+  arrays:
+  - role: raw
+    path_pattern: '*.zip::*/*_images/*.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 3024
+    - 4032
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: File name <visit>_<patient>_<fov>_<contrast>.jpg; contrast codes 0 and 2 occur (BF/DF mapping not stated
+      in what was read; the sampled contrast-0 image is dark, mean 6.6, so 0 is likely darkfield).
+  - role: label
+    path_pattern: '*.zip::*/*_docs/*_annotations_*.csv'
+    format: csv
+    axes: null
+    shape:
+    - 1623
+    - 4
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: points-table
+    classes:
+    - id: S.haematobium
+      name: Schistosoma haematobium egg
+    - id: doubtful
+      name: doubtful object
+    alignment: same-grid
+    alignment_notes: Columns imageName, objectType, xCoord, yCoord (pixel coordinates in the named JPEG). Shape is for nov2021.
+  notes: 'Exact Zenodo listing with both zips expanded. Probed nov2021_001_0_0.jpg: JPEG 3024x4032x3 uint8. Sampled nov2021_001_1_0.jpg
+    (range 0-255, mean 6.6, RGB samples differ) and read both nov2021 CSVs in full. Value range from one image. The dataset
+    PDF in the record was not parsed (no PDF reader available). Voxel size: the record keeps 1000 nm from the paper ("pixel
+    pitch ~1 um/pixel").'
