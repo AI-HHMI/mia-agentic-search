@@ -41,7 +41,7 @@ data:
   formats:
   - jpeg
   - png
-  size_bytes: 62100000
+  size_bytes: 62061131
   n_items: 390
   access: open
   download_url: https://zenodo.org/api/records/20149533/files/Microscopic%20Pollen%20Species%20Image%20Database.zip/content
@@ -76,10 +76,83 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T21:30:00Z'
-notes: 'Zip (62.1 MB, 1163 files) holds POLLENdataset/<species>/ folders with N.jpg images and N-mascara.(jpg|png) masks plus
-  extra mask variants (mascara2, mascara3). Zenodo text states 390 images and 618 grains; the 2016 paper states 389 images,
-  1388x1040 px, masks as binary bmp, drawn manually by an expert palynologist; imaging used a Zeiss Axioskop 40 with AxioCam
-  MR, methyl green glycerin jelly mount. Magnification and pixel size not stated on the Zenodo page or in the paper. Zenodo
-  record is a 2026 re-deposit of the 2016 paper supplement; file formats here (jpg/png) differ from the bmp described in the
-  paper. n_items taken from the Zenodo page; the zip listing was not counted per species.'
+  last_checked: '2026-10-10T22:30:00Z'
+notes: 'Zip POLLENdataset/<folder>/ with N.jpg images, N-mascara.jpg|png binary masks and extra masks N-mascara2..8.jpg (undocumented). Zenodo: 390 images, 618 grains; paper: 389 images, 1388x1040 px, bmp
+  masks drawn manually by an expert palynologist, Zeiss Axioskop 40 + AxioCam MR; pixel size not stated. organisms by folder (Zenodo table, common names, image counts): Acacia farnesiana = Acacia farnesiana/,
+  Medicago sativa = alfalfa/, Chenopodium murale = chenopodium murale/, Cynodon dactylon = cynodon dactylon/, Helianthus ciliaris = helianthos cilliaris/, Morus alba = morus alba/, Carya illinoensis = nogal/,
+  Olea europaea = olivo/, Prosopis glandulosa = prosopis glandulosa/, Salix = sauce/, Schinus molle = Schinus molle 22/, Sorghum halepense = sorghum halepense/. enricher: size from zip listing (was 62.1
+  MB page value).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "record 20149533/ (1 file, 62.1 MB)\n  Microscopic Pollen Species Image Database.zip (1163 members, 71.7 MB uncompressed)\n    POLLENdataset/<12 species folders>/\n      N.jpg                \
+      \ 392 images (RGB, 1388x1040)\n      N-mascara.jpg|png     373 jpg + 16 png binary masks\n      N-mascara2..8.jpg     382 extra masks (2-8 per image, undocumented)\n      22-mascara (incomp).jpg \
+      \ 1 (chenopodium murale)\n    folders: Acacia farnesiana 45, alfalfa 29, chenopodium murale 31, cynodon dactylon 34,\n      helianthos cilliaris 34, morus alba 24, nogal 31, olivo 28, prosopis glandulosa\
+      \ 52,\n      sauce 30, Schinus molle 22 23, sorghum halepense 31 images\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/20149533/files/Microscopic%20Pollen%20Species%20Image%20Database.zip::POLLENdataset/alfalfa/1.jpg
+    - https://zenodo.org/records/20149533/files/Microscopic%20Pollen%20Species%20Image%20Database.zip::POLLENdataset/alfalfa/1-mascara.jpg
+    size_bytes: 192831
+    description: One alfalfa image (1388x1040 RGB JPEG) and its primary binary mask.
+  arrays:
+  - role: raw
+    path_pattern: Microscopic Pollen Species Image Database.zip/POLLENdataset/*/{[0-9],[0-9][0-9]}.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1040
+    - 1388
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 32
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Species class = folder name (organism mapping in notes).
+  - role: label
+    path_pattern: Microscopic Pollen Species Image Database.zip/POLLENdataset/*/*-mascara.{jpg,png}
+    format: jpeg
+    axes: yx
+    shape:
+    - 1040
+    - 1388
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: pollen grain
+    alignment: same-grid
+    alignment_notes: 'N-mascara.* pairs with N.jpg in the same folder; same 1388x1040 grid. JPEG masks are 8-bit grey with JPEG ringing (41 grey levels seen), threshold at 127; the 16 PNG masks (Acacia
+      farnesiana) are 1-bit. 381 of 392 images have a primary mask: chenopodium murale 22 (only ''22-mascara (incomp).jpg''), prosopis 51-52, sorghum 24-32 lack one, and Schinus molle 22 has masks 24-31
+      without images.'
+  - role: label
+    path_pattern: Microscopic Pollen Species Image Database.zip/POLLENdataset/*/*-mascara[2-8].jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1040
+    - 1388
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Extra masks, RGB with identical channels; not documented. alfalfa/1: mascara2-4 are disjoint parts of mascara (one grain each?); olivo/1: mascara2 lies outside mascara, so their meaning
+      is unclear.'
+  notes: 'Zenodo API + zip central directory (listing.py, complete: 1 file, 62,061,131 B, 1163 members). Sampled 9 members (511,638 B): images alfalfa/1 and Acacia farnesiana/10 are 1040x1388x3 uint8 JPEG
+    (ranges [70,255] and [32,255]; value_range from these two), JFIF 150 dpi (no physical pixel size). Masks: alfalfa/1-mascara.jpg L-mode uint8 0-255 (33% >127), Acacia 10-mascara.png 1-bit, mascara2..4
+    RGB grey. Pixel size not found; checked: JPEG/PNG headers (150 / 72 dpi defaults), Zenodo description, paper full text (camera sensor only, no magnification or um/px). Paper says masks were bmp; this
+    deposit has jpg/png.'
