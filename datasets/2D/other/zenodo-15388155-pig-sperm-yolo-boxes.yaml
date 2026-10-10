@@ -2,8 +2,8 @@ schema_version: '1.2'
 id: zenodo-15388155-pig-sperm-yolo-boxes
 title: Pig/boar sperm microscopy frames with bounding boxes for sperm, non-sperm and sperm clusters
 short_name: Pig/boar sperm bounding boxes (frames)
-description: 60 image frames of Pig/boar semen samples with YOLO-format bounding boxes in three classes (sperm, non-sperm, sperm
-  cluster), packaged as a small YOLO dataset with train/val/test folders.
+description: 60 image frames of Pig/boar semen samples with YOLO-format bounding boxes in three classes (sperm, non-sperm,
+  sperm cluster), packaged as a small YOLO dataset with train/val/test folders.
 landing_url: https://zenodo.org/records/15388155
 doi: 10.5281/zenodo.15388155
 repository: Zenodo
@@ -52,14 +52,78 @@ provenance:
   evidence_urls:
   - https://zenodo.org/api/records/15388155
   - https://zenodo.org/api/records/15388155/files/pig_coco8_60.zip/content
+  - https://zenodo.org/records/15388155/files/pig_coco8_60.zip
   confidence: 0.5
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T13:50:00Z'
-notes: 'The Zenodo record has no description, paper or imaging details. Facts come from the zip listing (60 JPG images and 60
-  matching txt label files, data.yaml with the three classes). The archive listing shows images/train, images/val and
-  images/test folders (listing truncated to its first entries; the 24 train and 12 test files seen are only part of the
-  60). Modality, microscope, magnification, pixel size, image dimensions and who annotated are not stated anywhere I could
-  read, so modality is "other". The "coco8" in the file name refers to the YOLO dataset layout.'
+  last_checked: '2026-10-10T12:55:55Z'
+notes: 'The Zenodo record has no description, paper or imaging details. Facts come from the zip (60 JPG images, 60 matching
+  YOLO txt label files, data.yaml with the three classes). Split per full zip listing: 39 train, 9 val, 12 test. Modality,
+  microscope, magnification, pixel size and who annotated are not stated anywhere I could read, so modality is "other". The
+  "coco8" in the file name refers to the YOLO dataset layout. enricher: image size 776x582 RGB from headers; split counts
+  from full zip listing.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "pig_coco8_60.zip  (8,134,276 B, the only file; 124 members, 8.3 MB uncompressed)\n  pig_coco8_60/\n    data.yaml\
+      \                 class names (534 B)\n    images/train/  39 .jpg    5.2 MB\n    images/val/     9 .jpg    1.2 MB\n\
+      \    images/test/   12 .jpg    1.6 MB\n    labels/train/  39 .txt    197.6 KB\n    labels/val/     9 .txt    52.1 KB\n\
+      \    labels/test/   12 .txt    62.9 KB\n    (+3 .DS_Store files)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/15388155/files/pig_coco8_60.zip::pig_coco8_60/images/test/337645_20250310_090058.000.jpg
+    - https://zenodo.org/records/15388155/files/pig_coco8_60.zip::pig_coco8_60/labels/test/337645_20250310_090058.000.txt
+    size_bytes: 136208
+    description: One 776x582 RGB test frame and its YOLO box file (122 boxes).
+  arrays:
+  - role: raw
+    path_pattern: pig_coco8_60/images/*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 582
+    - 776
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 19
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: pig_coco8_60/labels/*/*.txt
+    format: other
+    axes: null
+    shape:
+    - 122
+    - 5
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: Sperm
+    - id: 1
+      name: Non-sperm
+    - id: 2
+      name: Sperm cluster
+    alignment: same-grid
+    alignment_notes: 'YOLO text, one row per box: class x_center y_center width height, normalised to the frame size; labels/<split>/<stem>.txt
+      pairs with images/<split>/<stem>.jpg.'
+  notes: 'Complete Zenodo listing (1 zip, 8,134,276 B, 124 members). Probed 2 test JPEGs: 582x776x3 uint8, JPEG (lossy). Sampled
+    images/test/337645_20250310_090058.000.jpg: values [19, 255] in this one frame (mean 76), RGB channels not identical.
+    Read its label file and data.yaml with peek_archive: 122 rows of 5 space-separated columns; class names from data.yaml
+    (which still says ''80 COCO classes'' in a template comment and has absolute Colab paths). Shape [122, 5] is for this
+    one file; row count varies. Box files are not a listed format, hence format other. Voxel size not found; checked: JPEG
+    headers, Zenodo API record (no description, no related identifiers, one version), data.yaml, paper search by title/author
+    (none). Modality and annotation source are not stated anywhere checked.'
