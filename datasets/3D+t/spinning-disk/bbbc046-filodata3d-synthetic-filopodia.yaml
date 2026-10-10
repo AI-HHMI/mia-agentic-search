@@ -1,52 +1,46 @@
 schema_version: '1.2'
 id: bbbc046-filodata3d-synthetic-filopodia
-title: FiloData3D - A549 cells with filopodia
-short_name: Synthetic 3D filopodia time-lapse (confocal)
-description: 180 synthetic 3D time-lapse sequences (30 frames each) of single A549 lung cancer cells with
-  filopodia (wild-type, CRMP-2 overexpressing, CRMP-2 phospho-defective), generated with FiloGen to mimic
-  spinning disk confocal imaging at varying signal-to-noise and anisotropy, with generated reference annotations
-  for filopodium segmentation and tracking.
+title: FiloData3D - synthetic 3D time-lapse sequences of A549 cells with filopodia and reference masks and tip tracks
+short_name: FiloData3D synthetic filopodia (spinning-disk)
+description: 180 synthetic 3D time-lapse sequences (30 frames each) of single A549 lung cancer cells with growing and branching filopodia, in three phenotypes (wild-type, CRMP-2-overexpressing, CRMP-2 phospho-defective), simulated to resemble spinning-disk confocal GFP-actin imaging. Sequences vary in signal-to-noise and anisotropy and are stored at several scale factors; they carry inherently generated reference annotations - label masks per frame and text files of filopodial tip positions and branch lengths.
 landing_url: https://bbbc.broadinstitute.org/BBBC046
 doi: null
-repository: LabWebsite
+repository: other
 accession: BBBC046
-authors: []
+authors:
+- Dmitry V. Sorokin
+- Martin Maška
 publications:
-- title: 'FiloGen: A Model-Based Generator of Synthetic 3-D Time-Lapse Sequences of Single Motile Cells
-    With Growing and Branching Filopodia'
+- title: 'FiloGen: A Model-Based Generator of Synthetic 3-D Time-Lapse Sequences of Single Motile Cells With Growing and Branching Filopodia'
   doi: 10.1109/TMI.2018.2845884
   url: https://doi.org/10.1109/TMI.2018.2845884
-- title: Toward Robust Fully 3D Filopodium Segmentation and Tracking in Time-Lapse Fluorescence Microscopy
-  doi: 10.1109/ICIP.2019.8803721
-  url: https://doi.org/10.1109/ICIP.2019.8803721
 date_published: null
 imaging:
   modality:
   - spinning-disk
   dimensionality: 3D+t
   voxel_size_nm: null
-  channels: 1
+  channels: null
   organism:
   - Homo sapiens
-  sample: synthetic (simulated) A549 lung cancer cells expressing GFP-actin, three filopodia phenotypes
+  sample: Synthetic (simulated) A549 lung cancer cells with GFP-actin-like filopodia, generated to mimic spinning-disk confocal imaging (63x/1.20 water objective)
   labels_stains: []
 data:
   formats:
   - tiff
-  size_bytes: 36207847235
+  size_bytes: 36128439593
   n_items: 180
   access: open
-  download_url: https://data.broadinstitute.org/bbbc/BBBC046/
+  download_url: https://datasets.gryf.fi.muni.cz/filodata3d/FiloData3D.zip
   download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
+  - points
   - tracking
   coverage: dense
-  format: 'Per sequence folder (e.g. WT-ID551-AR-8): label-mask TIFF frames, centre_trajectories_umCoords.txt
-    (per-frame 3D positions in um) and tip_lengths_um.txt (comma-delimited filopodial tip lengths over
-    time, -1 = absent); image frames under factor-<F>/img_tNNN.tif'
+  format: 'Per-frame mask_tNNN.tif label volumes (uint16, LZW; one set per cell and anisotropy ratio, shared by its five factor folders) plus text files: tip_trajectories_umCoords/pxOffsets, tip_lengths_um, centre_trajectories_umCoords/pxOffsets'
   source: automatic
 ml:
   tasks:
@@ -60,101 +54,79 @@ license:
   url: https://creativecommons.org/licenses/by-nc-sa/4.0/
 provenance:
   discovered_by: harvest-websearch
-  discovered_at: '2026-10-01T20:45:00Z'
+  discovered_at: '2026-10-10T12:13:30Z'
   evidence_urls:
   - https://bbbc.broadinstitute.org/BBBC046
-  - https://data.broadinstitute.org/bbbc/BBBC046/WT-ID551.zip
-  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1109%2FTMI.2018.2845884%22
-  confidence: 0.75
+  - https://datasets.gryf.fi.muni.cz/filodata3d/FiloData3D.zip
+  - https://cbia.fi.muni.cz/datasets/
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22FiloGen%3A+a+model-based+generator+of+synthetic+3-D+time-lapse+sequences+of+single+motile+cells+with+growing+and+branching+filopodia%22&format=json&resultType=core&pageSize=3
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T21:10:47Z'
-notes: 'Simulated data. Only WT-ID551.zip was listed (740 members: 4 AR folders x 30 .tif in the AR folder
-  (11.1 MB total, presumably label masks; file names not visible in the listing), plus centre_trajectories_umCoords.txt
-  and tip_lengths_um.txt per AR folder, and 20 factor-F folders x 30 img_tNNN.tif (1.4 GB)). The other
-  8 zips were not listed. size_bytes is the sum of the nine zip sizes quoted on the page (36.2 GB), approximate.
-  Voxel size not stated on the page; the FiloGen paper is not open access so only its abstract was read;
-  the ICIP paper was not read. NC license restricts commercial use. enricher: size_bytes exact from listing
-  of all 9 zips (was 36.21 GB page sum); mask_tNNN.tif label stacks seen and sampled in WT-ID551 and in
-  the central directories of the PD zips, so annotations_verified true.'
+  last_checked: '2026-10-10T13:25:00Z'
+notes: 'Synthetic data from the FiloGen simulator, not real microscopy; annotations are generated with the images. BBBC046 also offers nine per-cell zips (data.broadinstitute.org/bbbc/BBBC046/<PHENO>-ID<n>.zip) with the same folders. Licence holder is Martin Maska per the BBBC page. enricher: layout is 36 cell folders <PHENO>-ID<n>-AR-<1|2|4|8>, each with factor-0.25..4.00 image subfolders (36 x 5 = 180 sequences x 30 frames). Mask values: 0, 50 and groups 100-103, 200-203, ... (sample), consistent with cell body + individual filopodial branches as the BBBC page says; the numbering scheme itself is not documented. enricher: tracking added to types (tip trajectory files). Voxel size not set: no source states it, and z differs between anisotropy ratios (133 slices at AR-1, 17 at AR-8 in the sample).'
 technical:
   method: sample
   size_source: file-listing
   layout:
-    tree: "./  9 zips, 36,207,847,235 B\n  {OE-ID351,OE-ID352,WT-ID550,WT-ID551,WT-ID552,PD-ID450,PD-ID451,PD-ID452}.zip\n\
-      \    <seq>-AR-{1,2,4,8}/                 30 mask_t000..t029.tif + 5 .txt\n      centre_trajectories_{umCoords,pxOffsets}.txt\n\
-      \      tip_trajectories_{umCoords,pxOffsets}.txt, tip_lengths_um.txt\n    <seq>-AR-{1,2,4,8}/factor-{0.25,0.50,1.00,2.00,4.00}/\
-      \   30 img_tNNN.tif each\n  OE-ID350.zip\n    OE-ID350-AR-{1,2,4,8}.zip           (nested zips,\
-      \ not expanded)\n"
-    n_files: 9
+    tree: "FiloData3D.zip  (36,128,439,593 B; 6,660 members)\n  OE-ID35[0-2]-AR-{1,2,4,8}/   12 dirs  (CRMP-2-overexpressing)\n  PD-ID45[0-2]-AR-{1,2,4,8}/   12 dirs  (CRMP-2-phospho-defective)\n  WT-ID55[0-2]-AR-{1,2,4,8}/   12 dirs  (wild-type)\n    each cell dir:\n      mask_t000.tif .. mask_t029.tif          30 label volumes\n      tip_trajectories_umCoords.txt, tip_trajectories_pxOffsets.txt\n      tip_lengths_um.txt\n      centre_trajectories_umCoords.txt, centre_trajectories_pxOffsets.txt\n      factor-0.25/ factor-0.50/ factor-1.00/ factor-2.00/ factor-4.00/\n        img_t000.tif .. img_t029.tif          30 image volumes each\n  totals: img 5,400 files (7.3-7.7 GB per factor level),\n          mask 1,080 files (245 MB), txt 180 files"
+    n_files: 6660
     listing_complete: true
   sample:
     urls:
-    - https://data.broadinstitute.org/bbbc/BBBC046/WT-ID551.zip::WT-ID551-AR-8/factor-1.00/img_t001.tif
-    - https://data.broadinstitute.org/bbbc/BBBC046/WT-ID551.zip::WT-ID551-AR-8/mask_t001.tif
-    size_bytes: 603524
-    description: One time frame (16x146x167 z-stack) of a WT sequence at AR 8, factor 1.00, and its label
-      mask (zip members, read by range).
+    - https://datasets.gryf.fi.muni.cz/filodata3d/FiloData3D.zip::WT-ID550-AR-1/factor-1.00/img_t000.tif
+    - https://datasets.gryf.fi.muni.cz/filodata3d/FiloData3D.zip::WT-ID550-AR-1/mask_t000.tif
+    size_bytes: 4580224
+    description: 'one time frame (t000) of wild-type cell 550 at anisotropy ratio 1 and fluorescence factor 1.00: image volume + its label mask'
   arrays:
   - role: raw
-    path_pattern: <seq>-AR-<ar>/factor-<f>/img_t<NNN>.tif
+    path_pattern: '*-ID*-AR-*/factor-*/img_t*.tif'
     format: tiff
     axes: zyx
     shape:
-    - 16
+    - 133
     - 146
-    - 167
+    - 143
     shape_varies: true
     dtype: uint16
     compression: lzw
     value_range:
     - 416
-    - 1797
+    - 1883
     normalization: unknown
     alignment: not-applicable
-    alignment_notes: null
+    alignment_notes: 'one file per time frame (img_tNNN, 30 frames); pages are z slices of the 3D frame (BBBC: 3D time-lapse sequences, files per frame). Shape varies by cell and anisotropy ratio (AR-8 sample: 17 x 146 x 143).'
   - role: label
-    path_pattern: <seq>-AR-<ar>/mask_t<NNN>.tif
+    path_pattern: '*-ID*-AR-*/mask_t*.tif'
     format: tiff
     axes: zyx
     shape:
-    - 16
+    - 133
     - 146
-    - 167
+    - 143
     shape_varies: true
     dtype: uint16
     compression: lzw
     value_range:
     - 0
-    - 100
+    - 503
+    normalization: none
     encoding: instance-ids
     classes: null
     alignment: same-grid
-    alignment_notes: One mask per time frame per AR folder, shared by the 5 factor-<f> image variants
-      of that AR; sampled image and mask both 16x146x167. Mask values match tip-trajectory IDs (e.g. 100,
-      200) in tip_trajectories_*.txt.
+    alignment_notes: 'mask_tNNN.tif in <cell>-AR-<n>/ pairs with factor-*/img_tNNN.tif of the same folder (one mask per frame shared by the five factor variants); shapes identical (133x146x143 for WT-ID550-AR-1 t000). Values: 0, 50 (likely cell body) and 100-103, 200-203, ... (likely filopodium/branch ids); mapping not documented.'
   - role: label
-    path_pattern: <seq>-AR-<ar>/tip_trajectories_umCoords.txt
-    format: other
+    path_pattern: '*-ID*-AR-*/tip_trajectories_umCoords.txt'
+    format: csv
     axes: null
     shape: null
-    shape_varies: null
+    shape_varies: true
     dtype: unknown
     compression: none
-    value_range: null
+    normalization: none
     encoding: tracks-table
-    classes: null
-    alignment: transform-provided
-    alignment_notes: Lines "<id>:x,y,z;x,y,z;..." with one triple per frame and -1,-1,-1 where the tip
-      is absent; um coordinates plus a pxOffsets variant.
-  notes: 'listing.py --expand-zips on all 9 zips: 36,207,847,235 B exact, complete for the top-level files
-    (listing.py "complete": true); member detail below. PD-ID45x.zip (7.4-9.8 GB) are >4 GB zips without
-    zip64 records, which listing.py reads as empty; their central directories were read by a requests
-    range script (154 KB each, logged as header): 740 files each, same layout as the others. OE-ID350.zip
-    holds 4 nested AR zips, not expanded. probe.py: img_t001 at AR-1 is 129x146x167 uint16 LZW, at AR-8
-    16x146x167, so z depth depends on the anisotropy ratio. Pages are z (one file per frame; page says
-    3D time-lapse, 30 frames). sample.py at WT-ID551 AR-8 factor-1.00 t001: image [416, 1797] uint16 (12-bit-like
-    range, simulated); mask values {0: 339172, 50: 50931, 100: 9}. Page: masks label the cell body and
-    individual filopodial branches. Values are from one frame. Voxel size not stated in headers.'
+    alignment: unknown
+    alignment_notes: per-tip lines "<id>:x,y,z;x,y,z;..." over 30 frames in micrometres; *_pxOffsets.txt gives the same as linear voxel offsets; tip_lengths_um.txt gives branch lengths per frame (-1 = absent)
+  notes: 'Listing: tools/listing.py --expand-zips on FiloData3D.zip (6,660 members, complete, exact sizes). Probed (headers): WT-ID550-AR-1 img_t000 at factors 0.25/1.00/4.00 and mask_t000: plain multi-page TIFF, 133 pages of 146x143, uint16, LZW, no calibration. Sampled (tools/sample.py): WT-ID550-AR-1 factor-1.00 img_t000 + mask_t000 (same shape; mask values {0,50,100}); WT-ID550-AR-8 factor-1.00 img_t029 (17x146x143, range 416-1883, one sample; 12-bit-like range); PD-ID450-AR-1 mask_t029 (323x216x255, 19 values 0-503). value_range of raw is from the AR-8 sample. Voxel size not found; checked: TIFF headers, BBBC046 page, CBIA datasets page, txt files in the zip (no README), FiloGen paper (not open access, abstract only), ICIP 2019 paper (not found in Europe PMC/arXiv). The trajectory files give both um and voxel-offset coordinates; no spacing is stated. AR-n subsets have different z sampling, so one voxel size would not fit all.'
