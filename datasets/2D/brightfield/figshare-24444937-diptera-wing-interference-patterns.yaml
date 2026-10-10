@@ -3,8 +3,8 @@ id: figshare-24444937-diptera-wing-interference-patterns
 title: An exhaustive dataset of Diptera Wing Interferential Patterns (WIPs)
 short_name: Diptera wing interference patterns (microscope)
 description: 2,399 pictures of wing interferential patterns (thin-film colour patterns on cleared wings) of dipteran insects
-  of medical interest from 6 families and 18 genera, imaged on slides with a Keyence VHX 1000 microscope using HDR.
-  Each picture is labelled with family, genus and species-level class in an accompanying spreadsheet.
+  of medical interest from 6 families and 18 genera, imaged on slides with a Keyence VHX 1000 microscope using HDR. Each picture
+  is labelled with family, genus and species-level class in an accompanying spreadsheet.
 landing_url: https://figshare.com/articles/dataset/An_exhaustive_dataset_of_Diptera_Wing_Interferential_Patterns_WIPs_/24444937
 doi: 10.6084/m9.figshare.24444937.v2
 repository: Figshare
@@ -29,7 +29,7 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Culicidae
   - Calliphoridae
@@ -37,12 +37,13 @@ imaging:
   - Tabanidae
   - Ceratopogonidae
   - Psychodidae
-  sample: Dissected insect wings mounted dry on glass slides under a cover slip (ethanol-preserved), wing interferential patterns photographed at 10 degree illumination incidence
+  sample: Dissected insect wings mounted dry on glass slides under a cover slip (ethanol-preserved), wing interferential patterns
+    photographed at 10 degree illumination incidence
   labels_stains: []
 data:
   formats:
-  - other
-  size_bytes: 2549599609
+  - jpeg
+  size_bytes: 2549599619
   n_items: 2399
   access: open
   download_url: https://ndownloader.figshare.com/files/43007683
@@ -52,7 +53,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: Spreadsheet IdentifiantDiptera2.xlsx with picture number, order, family, genus and class (species); images organised per family and genus in nested zips
+  format: Spreadsheet IdentifiantDiptera2.xlsx (picture number, order, family, genus, class); images nested as <Family>.zip/<Genus>.zip/<class>.zip/<class>/<picture
+    number>.jpg
   source: manual
 ml:
   tasks:
@@ -75,5 +77,62 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T20:00:00Z'
-notes: 'Dataset Cplt.zip (peek_archive) contains six nested family zips (Psychodidae 2.25 GB, Culicidae 243 MB, Calliphoridae 21 MB, Ceratopogonidae 12 MB, Tabanidae 12 MB, Muscidae 7 MB); the image file format inside them was not listed, hence formats other. 2,399 pictures and 18 genera from the paper. Species labels were assigned by trained entomologists. A companion figshare item 22083050 (Dataset restrcitedGC.zip, Glossinidae and Culicidae, 2.8 GB, CC BY 4.0) holds selected genera and was not made a separate record; the paper presents this one as completing it. Pixel size not stated; magnification adjusted to give constant-size pictures. The one Tabanus wing shows no distinguishable pattern (paper).'
+  last_checked: '2026-10-10T20:15:00Z'
+notes: 'Dataset Cplt.zip holds six family zips (Psychodidae 2.25 GB, Culicidae 243 MB, Calliphoridae 21 MB, Ceratopogonidae
+  12 MB, Tabanidae 12 MB, Muscidae 7 MB). 2,399 pictures and 18 genera from the paper. Species labels assigned by trained
+  entomologists. Companion figshare item 22083050 (Glossinidae and Culicidae, 2.8 GB, CC BY 4.0) not a separate record. Pixel
+  size not stated; magnification adjusted per wing to give constant-size pictures (paper). The one Tabanus wing shows no pattern
+  (paper). enricher: formats jpeg (was other; RGB JPEGs found three zip levels deep); size_bytes = exact figshare listing
+  incl. the xlsx; channels 3. organisms: one per family zip (Culicidae.zip, Calliphoridae.zip, Muscidae.zip, Tabanidae.zip,
+  Ceratopogonidae.zip, Psychodidae.zip).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  2 files  2.55 GB\n  Dataset Cplt.zip            2.55 GB\n    Dataset Cplt/<Family>.zip            6 family\
+      \ zips (deflated): Psychodidae 2.25 GB, Culicidae 243 MB,\n                                         Calliphoridae 21\
+      \ MB, Ceratopogonidae 12 MB, Tabanidae 12 MB, Muscidae 7 MB\n      <Family>/<Genus>.zip               e.g. Tabanidae/{Atylotus,Chrysops,Tabanus}.zip,\
+      \ Muscidae/Haematobia.zip\n        <Genus>/<class>.zip              class number (species-level class in the xlsx)\n\
+      \          <class>/<picture number>.jpg   e.g. 120/3186.jpg, 91/2417.jpg\n  IdentifiantDiptera2.xlsx    74.6 KB  picture\
+      \ number -> order, family, genus, class\n"
+    n_files: 2
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: Dataset Cplt.zip::Dataset Cplt/*.zip
+    format: jpeg
+    axes: yxs
+    shape:
+    - 634
+    - 1280
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: JPEGs sit three zip levels deep (family/genus/class); the class is the innermost folder number, mapped
+      to taxa in IdentifiantDiptera2.xlsx by picture number.
+  - role: label
+    path_pattern: IdentifiantDiptera2.xlsx
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: Excel table of image-level labels keyed by picture number (file name stem); not opened.
+  notes: 'Exact figshare listing (2 files). The family zips inside Dataset Cplt.zip are deflated, so their members cannot
+    be read by range request; I read the two smallest whole (Muscidae.zip 6.7 MB, Tabanidae.zip 11.7 MB) in memory: each nests
+    genus zips, then class zips, then JPEGs. Sampled 4 JPEGs: RGB uint8, 634x1280, 730x1380, 578x1352, 596x1374 (shapes vary),
+    range 0-255, 72 dpi default tag (no calibration). TensorSwitch cannot reach these JPEGs (nested deflated zips), so no
+    sample unit is given. Voxel size not found; checked: JPEG headers, figshare API record, paper full text (magnification
+    varied per wing).'
