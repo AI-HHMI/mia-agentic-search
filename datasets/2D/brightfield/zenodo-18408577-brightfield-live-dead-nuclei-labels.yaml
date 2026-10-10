@@ -62,11 +62,79 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T22:20:00Z'
+  last_checked: '2026-10-10T22:10:00Z'
 notes: 'Single zip listed with peek_archive: 3168 TIFFs in train/im, train/label, validation/im, validation/label
   (792 each). File names look like xy001z01.tif (position and z index, 11 z-slices per position in the
   first positions seen), so images may be focal-plane slices of z-stacks; treated here as 2D images. The
   record says "Validation/Test set: 792 images". Pixel size 1.3 um/pixel is from the record text. No paper
   or method description is linked from the record, and a web search found no paper, so how the live/dead
   nuclear labels were produced (probably from fluorescence) is unknown. Classes from the record: 1 background,
-  2 live nuclei, 3 dead nuclei.'
+  2 live nuclei, 3 dead nuclei. enricher: label maps confirmed as semantic IDs {1, 2, 3} (sampled).'
+technical:
+  method: sample
+  inspected_at: '2026-10-10T22:10:00Z'
+  inspected_urls:
+  - https://zenodo.org/api/records/18408577/files/data%20share%20-%20model%20trained%20data%20MDA%20MCF.zip/content
+  bytes_downloaded: 1631000
+  size_source: file-listing
+  layout:
+    tree: |
+      data share - model trained data MDA MCF.zip (1.28 GB, 3168 members)
+        train/im/            792 .tif (837.5 MB)   xy<pos>z<nn>.tif
+        train/label/         792 .tif (19.5 MB)    xy<pos>z<nn>_nucleiMap.tif
+        validation/im/       792 .tif (837.5 MB)
+        validation/label/    792 .tif (19.4 MB)
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/18408577/files/data%20share%20-%20model%20trained%20data%20MDA%20MCF.zip/content::train/im/xy001z01.tif
+    - https://zenodo.org/api/records/18408577/files/data%20share%20-%20model%20trained%20data%20MDA%20MCF.zip/content::train/label/xy001z01_nucleiMap.tif
+    size_bytes: 1078412
+    description: One training brightfield image and its nuclei label map (1024x1024 uint8 each).
+  arrays:
+  - role: raw
+    path_pattern: '*/im/*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint8
+    compression: packbits
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '*/label/*_nucleiMap.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint8
+    compression: packbits
+    lossy: false
+    chunks: null
+    value_range:
+    - 1
+    - 3
+    normalization: unknown
+    encoding: semantic-ids
+    classes:
+    - id: 1
+      name: Background
+    - id: 2
+      name: Live nuclei
+    - id: 3
+      name: Dead nuclei
+    alignment: same-grid
+    alignment_notes: 'Pairing: <split>/im/xy<pos>z<nn>.tif <-> <split>/label/xy<pos>z<nn>_nucleiMap.tif; same 1024x1024 shape.'
+  notes: 'Complete Zenodo listing: one zip, 1,280,577,794 bytes, 3168 deflated members. Probed and read 2 pairs via range (train xy001z01, validation xy013z06): single-page uint8 TIFFs, PackBits, 1024x1024; raws [0, 255] (p1 42, p99 141, mean 100); labels contain exactly {1, 2, 3}, matching the documented classes (background is 1, not 0). Values from 2 files each. TIFF resolution tags are 72 dpi defaults, ignored; pixel size 1.3 um from the Zenodo description. Each split has 72 positions x 11 z indices (train xy001-xy132, validation xy013-xy144, no shared positions); each z slice has its own label map, so they are kept as 2D images.'
