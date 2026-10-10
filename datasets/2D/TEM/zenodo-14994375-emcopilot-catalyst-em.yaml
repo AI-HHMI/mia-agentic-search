@@ -2,12 +2,19 @@ schema_version: '1.2'
 id: zenodo-14994375-emcopilot-catalyst-em
 title: EMcopilot dataset - catalyst nanoparticle electron micrographs with manual labels
 short_name: Catalyst nanoparticle EM segmentation (STEM)
-description: Experimental electron micrographs of supported catalyst materials (PtSn/Al2O3 nanoparticles, PtSn/Al2O3 clusters, Au/ZSM-5) with a manual label image for each micrograph, SAM-generated masks for two of the materials, plus synthetic/adapted images and model checkpoints from the EMcopilot self-supervised segmentation work.
+description: Experimental electron micrographs of supported catalyst materials (PtSn/Al2O3 nanoparticles, PtSn/Al2O3 clusters,
+  Au/ZSM-5) with a manual label image for each micrograph, SAM-generated masks for two of the materials, plus synthetic/adapted
+  images and model checkpoints from the EMcopilot self-supervised segmentation work.
 landing_url: https://zenodo.org/records/14994375
 doi: 10.5281/zenodo.14994375
 repository: Zenodo
 accession: '14994375'
-authors: []
+authors:
+- Wenhao Yuan
+- Bingqing Yao
+- Shengdong Tan
+- Fengqi You
+- Qian He
 publications:
 - title: Generative learning of morphological and contrast heterogeneities for self-supervised electron micrograph segmentation
   doi: 10.1038/s41524-025-01800-5
@@ -18,13 +25,14 @@ imaging:
   - TEM
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism: []
   sample: Supported catalyst nanoparticles and clusters (PtSn/Al2O3, Au/ZSM-5); materials samples, no organism
   labels_stains: []
 data:
   formats:
   - png
+  - tiff
   size_bytes: 3110441471
   n_items: 166
   access: open
@@ -35,7 +43,7 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: PNG label images, one per micrograph (folder 02_manual_labels)
+  format: PNG binary masks (0 background, 255 nanoparticle), one per micrograph, same file name (02_manual_labels)
   source: manual
 ml:
   tasks:
@@ -52,11 +60,116 @@ provenance:
   discovered_at: '2026-10-10T17:16:42Z'
   evidence_urls:
   - https://zenodo.org/records/14994375
-  - https://arxiv.org/abs/2407.19544
-  confidence: 0.6
+  - https://zenodo.org/api/records/14994375
+  - https://www.nature.com/articles/s41524-025-01800-5
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T17:25:00Z'
-notes: 'Zip listed with peek_archive: 7014 files; 01_experimental_images and 02_manual_labels (same folder names) each hold 33 + 23 + 110 = 166 PNGs (nanoparticle / clusters / Au_ZSM5); 03_SAM_masks has 33 + 23 for two materials; the rest are generated/synthetic/adapted images and .pt/.pth checkpoints (not counted in n_items). Modality is not stated on the dataset page (its MeSH tag says scanning transmission EM); the authors'' preprint abstract (arXiv 2407.19544, same authors and topic; not confirmed to describe this exact data) names HAADF-STEM and BF-TEM, so TEM is used with that caveat. Pixel size is not stated on the dataset page or in that abstract. The npj Computational Materials paper is not open access (paper.py found no full text, and the publisher page redirects to a login), so its Methods were not read. Label encoding (binary vs. classes) was not checked. A newer version of the Zenodo record exists (this is v3).'
+  last_checked: '2026-10-10T18:05:00Z'
+notes: 'Paper (npj Comput Mater 11, 322; open access) Methods: PtSn@Al2O3 images are HAADF-STEM, 2048x2048 px at 0.019-0.038
+  nm/px (2.5-5 Mx); Au@ZSM-5 images are BF-TEM, 1024x1024 at 0.38 nm/px; manual masks drawn as LabelMe polygons and converted
+  to binary PNG. Pixel size differs per subset and within PtSn, so voxel_size_nm stays null. 03_SAM_masks are automatic SAM
+  masks; 04-06 are generated masks/synthetic/adapted images; 07-08 are model checkpoints (not counted in n_items). Paper Data
+  availability cites concept 10.5281/zenodo.14791390; a newer version (18929384, 9.8 GB zip) exists. No organism: materials
+  samples. enricher: authors from the Zenodo API (were empty); formats + tiff (01_03_Au_ZSM5/*.png are LZW TIFFs named .png);
+  channels 1 (grey stored as RGB).'
+technical:
+  method: sample
+  inspected_at: '2026-10-10T18:00:00Z'
+  inspected_urls:
+  - https://zenodo.org/records/14994375/files/EMcopilot_dataset.zip
+  - https://zenodo.org/records/14994375/files/EMcopilot_dataset.zip::EMcopilot_dataset/01_experimental_images/01_01_PtSn_Al2O3_nanoparticle/1.png
+  - https://zenodo.org/records/14994375/files/EMcopilot_dataset.zip::EMcopilot_dataset/02_manual_labels/02_01_PtSn_Al2O3_nanoparticle/1.png
+  - https://zenodo.org/records/14994375/files/EMcopilot_dataset.zip::EMcopilot_dataset/01_experimental_images/01_03_Au_ZSM5/1.png
+  - https://zenodo.org/records/14994375/files/EMcopilot_dataset.zip::EMcopilot_dataset/02_manual_labels/02_03_Au_ZSM5/1.png
+  bytes_downloaded: 11566617
+  size_source: file-listing
+  layout:
+    tree: "EMcopilot_dataset.zip  (3.1 GB, 7014 members)\n  EMcopilot_dataset/\n    01_experimental_images/01_01_PtSn_Al2O3_nanoparticle/\
+      \   33 .png  324.7 MB\n    01_experimental_images/01_02_PtSn_Al2O3_clusters/       23 .png  219.6 MB\n    01_experimental_images/01_03_Au_ZSM5/\
+      \                  110 .png  177.6 MB (LZW TIFFs)\n    02_manual_labels/{02_01_..nanoparticle,02_02_..clusters,02_03_Au_ZSM5}/\
+      \  33 + 23 + 110 .png  1.4 MB\n    03_SAM_masks/{03_01,03_02}/                          33 + 23 .png\n    04_generated_masks/04_01_PtSn_Al2O3_nanoparticle/\
+      \      330 .png    1.2 MB\n    05_synthetic_images/05_01_PtSn_Al2O3_nanoparticle/     330 .png   55.1 MB\n    06_adapted_images/06_01_PtSn_Al2O3_nanoparticle/\
+      \      5940 .png    1.2 GB\n    07_model_checkpoints_pix2pix/ (5 folders)               23 .pth   1.0 GB\n    08_model_checkpoints_CBAMUNet++/\
+      \ (3 folders)             3 .pt  313.8 MB\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/14994375/files/EMcopilot_dataset.zip::EMcopilot_dataset/01_experimental_images/01_01_PtSn_Al2O3_nanoparticle/1.png
+    - https://zenodo.org/records/14994375/files/EMcopilot_dataset.zip::EMcopilot_dataset/02_manual_labels/02_01_PtSn_Al2O3_nanoparticle/1.png
+    size_bytes: 11319028
+    description: PtSn/Al2O3 nanoparticle micrograph 1 (2048 x 2048 PNG, grey stored as RGB) and its manual binary mask.
+  arrays:
+  - role: raw
+    path_pattern: EMcopilot_dataset/01_experimental_images/01_0[12]_*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 2048
+    - 2048
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: HAADF-STEM, PtSn/Al2O3; 1024 x 1024 or 2048 x 2048. The three RGB samples are identical (grey stored
+      as RGB).
+  - role: raw
+    path_pattern: EMcopilot_dataset/01_experimental_images/01_03_Au_ZSM5/*.png
+    format: tiff
+    axes: yxs
+    shape:
+    - 1024
+    - 1024
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: BF-TEM, Au/ZSM-5. Files are named .png but are plain single-page LZW TIFFs (probed 3 of 110); RGB samples
+      identical (grey).
+  - role: label
+    path_pattern: EMcopilot_dataset/02_manual_labels/*/*.png
+    format: png
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: nanoparticle
+    alignment: same-grid
+    alignment_notes: 'Pairs by folder suffix and file name: 01_experimental_images/01_0K_<material>/N.png <-> 02_manual_labels/02_0K_<material>/N.png;
+      same y x shape as the raw image (raw has a trailing RGB axis).'
+  notes: 'Exact listing of EMcopilot_dataset.zip via range requests (7014 members). Sampled two pairs: nanoparticle 1 (raw
+    [2048,2048,3] uint8 0-255, samples identical; mask uint8 {0,255}) and Au_ZSM5 1 (raw LZW TIFF [1024,1024,3] uint8 0-255,
+    samples identical; mask {0,255}). Values from these samples; normalization unknown (full 8-bit range used, no doc). Pixel
+    size per subset is stated in the paper (0.019-0.038 nm/px HAADF-STEM, 0.38 nm/px BF-TEM) but not per file, so no single
+    voxel size. PNG/TIFF headers carry no calibration. SAM, generated and synthetic masks/images and checkpoints are not described
+    as arrays. Untrusted .pt/.pth checkpoints were not opened.'
