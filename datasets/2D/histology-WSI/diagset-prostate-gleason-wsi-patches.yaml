@@ -1,13 +1,12 @@
 schema_version: '1.2'
 id: diagset-prostate-gleason-wsi-patches
-title: 'DiagSet: prostate cancer histopathology scans and patches annotated by Gleason
-  grade'
+title: 'DiagSet: prostate cancer histopathology scans and patches annotated by Gleason grade'
 short_name: Prostate Gleason H&E patches (DiagSet)
-description: 'H&E prostate tissue scans (Hamamatsu C12000-22, 40x, 0.25 um/px) annotated
-  by three pathologists into regions of nine classes (scan background, tissue background,
-  normal, artifact, Gleason 1-5): DiagSet-A with 2.6 million 256x256 patches from
-  430 annotated scans at four magnifications, DiagSet-B with 4,675 scans with binary
-  diagnoses and DiagSet-C with 46 scans diagnosed independently by several pathologists.'
+description: 'H&E prostate tissue scans (Hamamatsu C12000-22, 40x, 0.25 um/px) annotated by
+  three pathologists into regions of nine classes (scan background, tissue background, normal,
+  artifact, Gleason 1-5): DiagSet-A with 2.6 million 256x256 patches from 430 annotated scans
+  at four magnifications, DiagSet-B with 4,675 scans with binary diagnoses and DiagSet-C with
+  46 scans diagnosed independently by several pathologists.'
 landing_url: https://github.com/michalkoziarski/DiagSet
 doi: null
 repository: GitHub
@@ -40,8 +39,7 @@ imaging:
   channels: 3
   organism:
   - Homo sapiens
-  sample: Human prostate tissue biopsies, H&E, 5-7 um sections, Hamamatsu C12000-22
-    scanner
+  sample: Human prostate tissue biopsies, H&E, 5-7 um sections, Hamamatsu C12000-22 scanner
   labels_stains:
   - H&E
 data:
@@ -58,9 +56,8 @@ annotations:
   - classification
   - semantic-segmentation
   coverage: partial
-  format: Pathologist-outlined regions with one of nine class labels per scan (via
-    NDP.Server), turned into patch labels (>=0.75 overlap at 40x); DiagSet-B/C have
-    scan-level diagnoses
+  format: Pathologist-outlined regions with one of nine class labels per scan (via NDP.Server),
+    turned into patch labels (>=0.75 overlap at 40x); DiagSet-B/C have scan-level diagnoses
   source: manual
 ml:
   tasks:
@@ -82,12 +79,76 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: false
-  last_checked: '2026-10-10T23:02:02Z'
+  last_checked: '2026-10-11T00:10:00Z'
 notes: 'GitHub page says the data are available after registration at ai-econsilio.diag.pl
-  with administrator activation (usually under 24 h); that site was not opened. No
-  dataset licence stated (the Scientific Reports paper is CC BY 4.0). Scan counts,
-  patch counts (2,604,206 in DiagSet-A: 346 train, 42 validation, 42 test scans),
-  scan resolution and the nine classes come from the paper (full text via Europe PMC).
-  Raw file formats (scans and patch containers) were not seen, so data.formats is
-  other; the repo has a Python container for loading DiagSet-A patches. Dataset size
+  with administrator activation (usually under 24 h); that site was not opened. No dataset
+  licence stated (the Scientific Reports paper is CC BY 4.0). Scan counts, patch counts (2,604,206
+  in DiagSet-A: 346 train, 42 validation, 42 test scans), scan resolution and the nine classes
+  come from the paper (full text via Europe PMC). enricher: files not inspected (registration
+  site, cert error); the repo loader reads DiagSet-A patches as NumPy blobs (np.load) under
+  blobs/S/<mag>x/<scan>/<class>/, so data.formats stays other. Voxel size 250 nm is the 40x
+  scan resolution (paper); 20x/10x/5x patches are coarser, values not stated. Dataset size
   not stated.'
+technical:
+  method: metadata-only
+  size_source: unknown
+  layout:
+    tree: "DiagSet-A/   (from the repo's loader code, not a listing)\n  blobs/S/{40x,20x,10x,5x}/<scan_id>/<class>/<blob>\
+      \   NumPy arrays of 256x256 patches\n  distributions/S/<mag>x/<scan_id>.json   per-scan\
+      \ class counts\n  partitions/DiagSet-A.2/{train,validation,test}.csv   scan_id splits"
+    n_files: null
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: DiagSet-A/blobs/S/*x/*/*/*
+    format: other
+    axes: null
+    shape: null
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'NumPy blobs read with np.load by the repo loader; each blob holds several
+      256x256 RGB patches (paper: 256x256, stride 128) of one scan, one class and one magnification.
+      Shape and dtype not seen.'
+  - role: label
+    path_pattern: DiagSet-A/blobs/S/*x/*/*/*
+    format: other
+    axes: null
+    shape: null
+    dtype: unknown
+    compression: unknown
+    encoding: other
+    classes:
+    - id: BG
+      name: scan background
+    - id: T
+      name: tissue background
+    - id: N
+      name: normal tissue
+    - id: A
+      name: acquisition artifact
+    - id: R1
+      name: Gleason 1
+    - id: R2
+      name: Gleason 2
+    - id: R3
+      name: Gleason 3
+    - id: R4
+      name: Gleason 4
+    - id: R5
+      name: Gleason 5
+    alignment: not-applicable
+    alignment_notes: Patch class = name of the parent folder (<class> in blobs/S/<mag>x/<scan>/<class>/);
+      class codes from the loader DEFAULT_LABEL_DICTIONARY and the paper. Region outlines
+      (NDP.Server) are not described as released.
+  notes: 'Not inspected: data only after registration and manual account activation at https://ai-econsilio.diag.pl
+    (the site also failed TLS verification from here). Layout and class codes come from the
+    GitHub loader (diagset-a-container/container.py, read, not run) and the paper; nothing
+    was listed, probed or sampled. No direct download links: GitHub README and paper Data
+    availability point only to the registration site. Size: not stated anywhere (paper gives
+    1.2 GB average per WSI scan, not the release size); no estimate since blob shapes/dtypes
+    and counts per file are unknown. Voxel size: 0.25 um/pixel at 40x (paper Methods); lower
+    magnifications not stated. License: none on GitHub (no LICENSE file), README or paper
+    Data availability.'
