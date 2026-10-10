@@ -2,10 +2,9 @@ schema_version: '1.2'
 id: zenodo-20703287-avian-blood-cells
 title: Avian Blood Cell dataset
 short_name: Avian blood smear cells (brightfield)
-description: 4,600 avian blood smear microscopy images with five cell types (red blood cells, thrombocytes, lymphocytes,
-  heterophils, monocytes). 1,000 images are labelled (500 with both segmentation masks and YOLO bounding boxes, 500 with
-  bounding boxes only) and 3,600 are unlabelled, with a train / test split of the labelled images. Image sizes range from
-  1280 x 720 to 3264 x 1840 pixels.
+description: 4,600 avian blood smear microscopy images with five cell types (red blood cells, thrombocytes, lymphocytes, heterophils,
+  monocytes). 1,000 images are labelled (500 with both segmentation masks and YOLO bounding boxes, 500 with bounding boxes only) and
+  3,600 are unlabelled, with a train / test split of the labelled images. Image sizes range from 1280 x 720 to 3264 x 1840 pixels.
 landing_url: https://zenodo.org/records/20703287
 doi: 10.5281/zenodo.20703287
 repository: Zenodo
@@ -34,7 +33,7 @@ data:
   size_bytes: 13746871715
   n_items: 4600
   access: open
-  download_url: https://zenodo.org/api/records/20703287/files/ABC_dataset.zip/content
+  download_url: https://zenodo.org/records/20703287/files/ABC_dataset.zip
   download_method: http
 annotations:
   present: true
@@ -43,8 +42,8 @@ annotations:
   - instance-segmentation
   - classification
   coverage: dense
-  format: YOLO .txt bounding boxes (train_set/yolo_annotations, 500 files) and per-image .tif masks (train_set/mask_annotations,
-    500 files); test_set/test_annotations holds 500 .txt files; the 3,600 unannotated images are in unannotated/
+  format: YOLO .txt bounding boxes (train_set/yolo_annotations, 500 files) and per-image .tif masks (train_set/mask_annotations, 500
+    files); test_set/test_annotations holds 500 .txt files; the 3,600 unannotated images are in unannotated/
   source: manual
 ml:
   tasks:
@@ -65,14 +64,106 @@ provenance:
   - https://zenodo.org/records/20703287
   - https://zenodo.org/api/records/20703287
   - https://zenodo.org/api/records/20703287/files/ABC_dataset.zip/content
+  - https://zenodo.org/records/20703287/files/ABC_dataset.zip
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T23:55:00Z'
-notes: 'From the Zenodo record and the zip listing via peek_archive (6,099 files: 4,599 PNG images, 1,000 .txt, 500 .tif).
-  The associated paper is mentioned but not cited on the record and a title search found none, so species, microscope, objective,
-  staining and pixel size are not stated in anything checked: organism, labels_stains and voxel_size_nm are left empty.
-  Image modality is assumed to be brightfield-type blood smear imaging but this is not stated explicitly. The test_set/test_annotations
-  folder holds 500 .txt files (it was not opened, so whether it contains masks as well is unknown). The mask files were not opened.'
+  last_checked: '2026-10-10T00:25:00Z'
+notes: 'From the Zenodo record and the zip listing via peek_archive (6,099 files: 4,599 PNG images, 1,000 .txt, 500 .tif). The associated
+  paper is mentioned but not cited on the record and a title search found none, so species, microscope, objective, staining and pixel
+  size are not stated in anything checked: organism, labels_stains and voxel_size_nm are left empty. Image modality is assumed to be
+  brightfield-type blood smear imaging but this is not stated explicitly. test_set has YOLO boxes only (500 .txt); masks exist for train_set
+  only. enricher: annotated images are 640x640 (resized, per the record), unannotated ones keep their original size; masks are uint16
+  instance IDs.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |-
+      ABC_dataset.zip/ABC_dataset/
+        annotated/train_set/images/             500 files  249.2 MB  .png  (img1..img500, 640x640 RGB)
+        annotated/train_set/mask_annotations/   500 files   20.9 MB  .tif  (img<N>_masks.tif)
+        annotated/train_set/yolo_annotations/   500 files    2.4 MB  .txt
+        annotated/test_set/test_images/         500 files  264.0 MB  .png  (img1..img500)
+        annotated/test_set/test_annotations/    500 files    2.4 MB  .txt  (YOLO boxes)
+        unannotated/                           3599 files   13.2 GB  .png  (image_NNNNN.png, original size)
+    n_files: 6099
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/20703287/files/ABC_dataset.zip::ABC_dataset/annotated/train_set/images/img1.png
+    - https://zenodo.org/records/20703287/files/ABC_dataset.zip::ABC_dataset/annotated/train_set/mask_annotations/img1_masks.tif
+    - https://zenodo.org/records/20703287/files/ABC_dataset.zip::ABC_dataset/annotated/train_set/yolo_annotations/img1.txt
+    size_bytes: 510430
+    description: one training image (640x640 RGB), its instance mask and its YOLO box file
+  arrays:
+  - role: raw
+    path_pattern: annotated/*/*images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 640
+    - 640
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 22
+    - 230
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: annotated train and test images, resized to 640x640 per the record; RGB colour (samples differ)
+  - role: raw
+    path_pattern: unannotated/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1840
+    - 3264
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 3,599 unlabelled images at original resolution (1280x720 to 3264x1840 per the record)
+  - role: label
+    path_pattern: annotated/train_set/mask_annotations/*_masks.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 640
+    - 640
+    shape_varies: false
+    dtype: uint16
+    compression: lzw
+    value_range:
+    - 0
+    - 101
+    normalization: none
+    encoding: instance-ids
+    alignment: same-grid
+    alignment_notes: train_set/mask_annotations/img<N>_masks.tif pairs with train_set/images/img<N>.png; same 640x640 grid. 102 distinct
+      values in one sample (0 + 101 cells); cell type is in the YOLO file, not the mask
+  - role: label
+    path_pattern: annotated/*/*annotations/*.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: float64
+    compression: none
+    encoding: boxes-table
+    alignment: same-grid
+    alignment_notes: 'YOLO text (class cx cy w h, normalized): train_set/yolo_annotations/img<N>.txt and test_set/test_annotations/img<N>.txt
+      pair with img<N>.png in the same split (names repeat across splits). 5 cell classes per the record; the id-to-name mapping is
+      not given'
+  notes: 'Listed the 13.7 GB zip with --expand-zips (6,099 members, exact sizes); checked that all 500 names pair across images, masks
+    and YOLO files in each split. Probed train img1.png, img1_masks.tif, test img71.png, unannotated image_00920.png. Sampled train
+    img1 pair (507 KB): RGB 22-230, mask 0-101; read two YOLO files. value_range from one sample. Voxel size not found; checked: PNG/TIFF
+    headers (no physical size), Zenodo API record and description (no microscope, objective or pixel size), related identifiers (none);
+    the paper is mentioned but not cited. download_url is the one direct zip.'
