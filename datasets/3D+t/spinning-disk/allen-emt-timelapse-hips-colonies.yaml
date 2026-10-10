@@ -1,0 +1,192 @@
+schema_version: '1.2'
+id: allen-emt-timelapse-hips-colonies
+title: Allen Institute hiPS cell EMT timelapse dataset (emt_timelapse_dataset)
+short_name: hiPSC EMT 3D timelapses + masks (spinning-disk)
+description: 'OME-Zarr 3D live and fixed spinning-disk confocal images of hiPS cell colonies and lumenoids undergoing epithelial to
+  mesenchymal transition (3,538 images listed in the manifest: 890 live timelapses, mostly every 30 min for 60 h, and 2,648 fixed immunofluorescence
+  images). Most images have a model-predicted all-cells mask; a smaller set has H2B nuclear instance segmentations (193), cytoplasmic-GFP
+  ground-truth masks (38) or collagen IV ground-truth masks (6).'
+landing_url: https://allencell.s3.amazonaws.com/aics/emt_timelapse_dataset/README.md
+doi: null
+repository: other
+accession: null
+authors:
+- C. Hookway
+- A. Borensztejn
+- L. K. Harris
+- J. C. Dixon
+- M. P. Viana
+- J. A. Theriot
+- S. M. Rafelski
+publications:
+- title: A human induced pluripotent stem (hiPS) cell model for the holistic study of epithelial to mesenchymal transitions (EMTs)
+  doi: 10.1101/2024.08.16.608353
+  url: https://api.biorxiv.org/details/biorxiv/10.1101/2024.08.16.608353
+date_published: null
+imaging:
+  modality:
+  - spinning-disk
+  - brightfield
+  dimensionality: 3D+t
+  voxel_size_nm: null
+  channels: null
+  organism:
+  - Homo sapiens
+  sample: hiPS cell colonies (2D) and lumenoids (3D) undergoing EMT; mostly the AICS-0061 histone H2B-mEGFP line, plus lines tagging
+    TJP1, EOMES, CLYBL, CDH1, SOX2 and others
+  labels_stains: []
+data:
+  formats:
+  - ome-zarr
+  size_bytes: null
+  n_items: 3538
+  access: open
+  download_url: https://allencell.s3.amazonaws.com/aics/emt_timelapse_dataset/data/
+  download_method: s3
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - semantic-segmentation
+  coverage: partial
+  format: OME-Zarr label volumes per image (all_cells_mask, H2B_nuclear_segmentation, cytoGFP_ground_truth_segmentation, collagenIV_ground_truth_segmentation)
+    plus a collagen IV mesh; links in manifests/imaging_and_segmentation_data.csv
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: custom
+  url: https://www.allencell.org/terms-of-use.html
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-10T05:15:30Z'
+  evidence_urls:
+  - https://allencell.s3.amazonaws.com/aics/emt_timelapse_dataset/README.md
+  - https://allencell.s3.amazonaws.com/aics/emt_timelapse_dataset/manifests/imaging_and_segmentation_data.csv
+  - https://allencell.s3.amazonaws.com/aics/emt_timelapse_dataset/manifests/Imaging_and_segmentation_data_column_description.csv
+  - https://api.biorxiv.org/details/biorxiv/10.1101/2024.08.16.608353
+  - https://www.allencell.org/terms-of-use.html
+  - https://allencell.s3.amazonaws.com/aics/emt_timelapse_dataset/data/3500006256_11_raw_converted.ome.zarr
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-10T07:15:00Z'
+notes: 'Manifest (3,538 rows): 3,420 all-cells masks, 193 H2B nuclear segmentations, 38 cytoGFP and 6 collagen IV ground-truth masks.
+  All-cells and nuclear masks are CNN/Cellpose predictions; ground truth is Otsu thresholding of cytoplasmic mEGFP, so source mixed,
+  coverage partial. enricher: voxel_size_nm null (was 271x271x2880): manifest pixel sizes differ (0.271 um xy, z 2.88 um actual in 3,441
+  images; 0.325, 0.542, 0.33 um in 64; z 0.72 um in 2). channels null (was 4): C is 1-4 per image. Dimensionality: 890 live timelapses
+  (TCZYX/TCYX), 2,648 fixed CZYX images. License: Allen Institute Terms of Use (non-commercial research, attribution).'
+technical:
+  method: sample
+  size_source: unknown
+  layout:
+    tree: "emt_timelapse_dataset/\n  README.md\n  manifests/imaging_and_segmentation_data.csv  3,538 rows (one per image, S3 URLs per\
+      \ file)\n  manifests/Imaging_and_segmentation_data_column_description.csv\n  data/  (flat)\n    <plate>_<scene>[_<well>_<stain>]_raw_converted.ome.zarr/\
+      \   3,538 raw stores\n    <plate>_<scene>[_<stain>]_all_cells_mask.ome.zarr/          3,420\n    <plate>_<scene>_H2B_nuclear_segmentation.ome.zarr/\
+      \          193\n    <plate>_<scene>_cytoGFP_ground_truth_segmentation.ome.zarr/ 38\n    <plate>_<scene>_T<tt>_collagenIV_ground_truth_segmentation.ome.zarr/\
+      \  (6 images)\n    collagen IV probability stores and mesh folders\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://allencell.s3.amazonaws.com/aics/emt_timelapse_dataset/data/3500007015_10_E3_N-cadherin_E-cadherin_raw_converted.ome.zarr
+    - https://allencell.s3.amazonaws.com/aics/emt_timelapse_dataset/data/3500007015_10_EcadNcad_all_cells_mask.ome.zarr
+    size_bytes: null
+    description: One fixed (single-timepoint) 4-channel image and its all-cells mask
+  arrays:
+  - role: raw
+    path_pattern: data/*_raw_converted.ome.zarr
+    format: ome-zarr
+    axes: tczyx
+    shape:
+    - 121
+    - 3
+    - 30
+    - 1248
+    - 1848
+    shape_varies: true
+    dtype: uint16
+    compression: blosc
+    value_range:
+    - 48
+    - 65535
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: T 1 (fixed) to 1001, C 1-4, Z 1-60, X 1834-5709 per the manifest; channel contents per image in the manifest (channel
+      0 bright-field in 3,533).
+  - role: label
+    path_pattern: data/*_all_cells_mask.ome.zarr
+    format: ome-zarr
+    axes: tczyx
+    shape:
+    - 1
+    - 1
+    - 30
+    - 1248
+    - 1848
+    shape_varies: true
+    dtype: uint8
+    compression: blosc
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: Pairs with the raw store of the same Data ID (manifest columns Raw File URL / All Cells Mask URL; file stems can
+      differ, e.g. _E3_N-cadherin_E-cadherin_raw_converted vs _EcadNcad_all_cells_mask). Same t/z/y/x shape and scale, one channel.
+      Values {0,255}.
+  - role: label
+    path_pattern: data/*_H2B_nuclear_segmentation.ome.zarr
+    format: ome-zarr
+    axes: tczyx
+    shape:
+    - 120
+    - 1
+    - 30
+    - 1248
+    - 1848
+    shape_varies: null
+    dtype: uint16
+    compression: blosc
+    value_range:
+    - 0
+    - 298
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: unknown
+    alignment_notes: Same z/y/x grid and scale as the raw store, but 120 timepoints vs 121 in the raw (3500006256_11); which raw timepoint
+      is missing is not stated.
+  - role: label
+    path_pattern: data/*_cytoGFP_ground_truth_segmentation.ome.zarr
+    format: ome-zarr
+    axes: tczyx
+    shape:
+    - 121
+    - 1
+    - 30
+    - 1248
+    - 1848
+    shape_varies: null
+    dtype: uint8
+    compression: blosc
+    value_range: null
+    normalization: unknown
+    encoding: unknown
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same shape and scale as its raw store (3500006256_72 probed); not sampled.
+  notes: 'Manifest read in full; S3 data/ prefix not enumerated (flat folder of chunked stores), so no file count or confirmed size.
+    Probed (zarr v2, blosc-lz4, one-plane chunks, 5 levels, scale 270.83/270.83/2880 nm): raw 3500006256_11 (121,3,30,1248,1848) uint16,
+    its all-cells mask (121,1,...) uint8, H2B seg (120,1,30,1248,1848) uint16; fixed raw 3500007015_10_E3 (1,4,30,1248,1848) and mask
+    (1,1,30,...); cytoGFP GT 3500006256_72 (121,1,30,1248,1848) uint8. Sampled central chunks (one sample each): fixed raw 62..65535,
+    mask {0,255} 86% zero; live raw 48..65535, H2B seg 0..298, 270 ids. Size estimate not possible with one shape per array: T, C, Z
+    and X vary per image (manifest has them). Voxel size: manifest per image, differs between subsets.'
