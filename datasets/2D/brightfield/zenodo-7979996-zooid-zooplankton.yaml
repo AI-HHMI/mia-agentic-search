@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-7979996-zooid-zooplankton
 title: ZooID Dataset and Model Weights
 short_name: ZooID zooplankton taxa images (light microscopy)
-description: 'Zooplankton images for automatic taxon identification with low-cost microscope and camera equipment. The deposit
-  holds original photographs, ~2,090 automatically extracted and manually verified single-organism crops grouped in per-taxon
-  folders (the code repository names five taxa: Amphipods, Copepods, Fish Larvae, Ostracods, Quetognaths), and CNN model weights.'
+description: 'Zooplankton images for automatic taxon identification with low-cost microscope and camera equipment. The deposit holds
+  original photographs, ~2,090 automatically extracted and manually verified single-organism crops grouped in per-taxon folders (the
+  code repository names five taxa: Amphipods, Copepods, Fish Larvae, Ostracods, Quetognaths), and CNN model weights.'
 landing_url: https://zenodo.org/records/7979996
 doi: 10.5281/zenodo.7979996
 repository: Zenodo
@@ -20,7 +20,7 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: 3
+  channels: null
   organism: []
   sample: zooplankton specimens imaged with a low-cost microscope and camera
   labels_stains: []
@@ -28,10 +28,10 @@ data:
   formats:
   - jpeg
   - tiff
-  size_bytes: 2223000000
+  size_bytes: 2200234228
   n_items: 2093
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/7979996/files/manuallyVerified_ExtractedImages.zip
   download_method: http
 annotations:
   present: true
@@ -57,16 +57,69 @@ provenance:
   - https://zenodo.org/records/7979996/files/manuallyVerified_ExtractedImages.zip
   - https://zenodo.org/records/7979996/files/originalImages.zip
   - https://github.com/arickGrootveld/ZooID
+  - https://zenodo.org/api/records/7979996
   confidence: 0.55
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T05:15:30Z'
-notes: 'peek_archive: manuallyVerified_ExtractedImages.zip has 2093 JPEGs (532 MB) in per-taxon folders (FishLarvae seen in the
-  listed head; the full list of folders and per-class counts was not read); originalImages.zip has 1702 JPEGs, 3 TIFFs and
-  2 MP4 videos (1.7 GB). Size is the sum of the three zips on the Zenodo page (2.2 GB). Five taxa come from the GitHub README, not
-  from the full file listing. No paper is listed on the Zenodo record; microscope type, magnification, pixel size, organism
-  names (taxa are higher-level groups) and labelling procedure are not stated on the Zenodo page or README. Modality brightfield
-  is an assumption from "microscope and camera" in the README. There are no segmentation masks; the images are crops and
-  labels are folder-based classes.'
+  last_checked: '2026-10-10T07:00:00Z'
+notes: 'peek_archive: manuallyVerified_ExtractedImages.zip has 2093 JPEG crops in 5 taxon folders (Amphipods 270, Copepods 458, FishLarvae
+  621, Ostracods 391, Quetognaths 358 entries, folder entries included); originalImages.zip has 1702 JPEGs, 3 TIFFs, 2 MP4s in the same
+  5 folders. Probed crops are 8-bit greyscale JPEG, originals RGB 3840x2160 JPEG, so channels is null (was 3). Size is the exact sum
+  of the 3 Zenodo files (API). No paper; microscope, magnification, pixel size, organism names (taxa are higher-level groups) and labelling
+  procedure not stated on Zenodo or README. Modality brightfield is an assumption from "microscope and camera". No masks: labels are
+  folder-based classes. enricher: download_url set to the crops zip.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "manuallyVerified_ExtractedImages.zip  514.5 MB  2093 .jpg\n  manuallyVerified_ExtractedImages/{Amphipods,Copepods,FishLarvae,Ostracods,Quetognaths}/Snap_<n>_extractedImage<k>.jpg\n\
+      originalImages.zip  1677.1 MB  1702 .jpg, 3 .tif, 2 .mp4, .DS_Store\n  originalImages/{Amphipods,Copepods,FishLarvae,Ostracods,Quetognaths}/Snap_<n>.jpg\n\
+      model_files.zip  8.7 MB  (CNN weights; not listed)\n"
+    n_files: 3
+    listing_complete: false
+  sample:
+    urls:
+    - https://zenodo.org/records/7979996/files/manuallyVerified_ExtractedImages.zip::manuallyVerified_ExtractedImages/FishLarvae/Snap_858_extractedImage0.jpg
+    size_bytes: 206945
+    description: One manually verified FishLarvae crop (class = folder name)
+  arrays:
+  - role: raw
+    path_pattern: manuallyVerified_ExtractedImages.zip::manuallyVerified_ExtractedImages/*/*.jpg
+    format: jpeg
+    axes: yx
+    shape:
+    - 1998
+    - 844
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 246
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Single-organism crops; class label is the parent folder (Amphipods, Copepods, FishLarvae, Ostracods, Quetognaths).
+      Crop size varies (1998x844, 1469x3606 seen).
+  - role: raw
+    path_pattern: originalImages.zip::originalImages/*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 2160
+    - 3840
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Original RGB photographs the crops were extracted from (Snap_<n>.jpg -> Snap_<n>_extractedImage<k>.jpg). 3 extra
+      RGB TIFFs (1038x1388x3) named by species and 2 MP4 videos.
+  notes: 'Zip indexes read with tools/peek_archive.py (all 3 Zenodo files, exact sizes from the Zenodo API: 2,200,234,228 B); tools/listing.py
+    did not finish within ~15 min, so per-member listing is from peek_archive. Probed crops Copepods/Snap_739_extractedImage0.jpg (1469x3606
+    uint8 grey), originals Copepods/Snap_556.jpg (2160x3840x3) and FishLarvae/Auxis sp.tif (1038x1388x3, plain, RGB). Sampled FishLarvae/Snap_858_extractedImage0.jpg:
+    1998x844 uint8, min 0 max 246 mean 35 (one sample). Voxel size not found; checked: JPEG/TIFF headers, Zenodo record and API, GitHub
+    README; no paper. Zenodo downloads were intermittently cut (SSL EOF) during this run.'
