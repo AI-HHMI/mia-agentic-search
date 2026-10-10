@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: cbia-colon-tissue-simulated-3d
 title: Simulated 3D images of human colon tissue nuclei with labelled ground truth (digital phantoms)
 short_name: Simulated colon tissue 3D (confocal)
-description: Synthetic 3D confocal images of human colon tissue at a high and a low signal-to-noise ratio, generated with the group virtual microscope, with labelled ground-truth volumes. Offered as ICS, HDF5 and 3D-TIFF zips.
+description: Synthetic 3D confocal images of human colon tissue at a high and a low signal-to-noise ratio,
+  generated with the group virtual microscope, with labelled ground-truth volumes. Offered as ICS, HDF5
+  and 3D-TIFF zips.
 landing_url: https://cbia.fi.muni.cz/datasets/
 doi: null
 repository: LabWebsite
@@ -15,25 +17,30 @@ imaging:
   modality:
   - confocal
   dimensionality: 3D
-  voxel_size_nm: null
+  voxel_size_nm:
+    x: 123.806
+    y: 123.806
+    z: 123.8
   channels: null
-  organism: []
+  organism:
+  - Homo sapiens
   sample: Simulated human colon tissue (digital phantom) imaged by a simulated confocal microscope
   labels_stains: []
 data:
   formats:
   - tiff
-  size_bytes: null
-  n_items: null
+  size_bytes: 11142053878
+  n_items: 120
   access: open
   download_url: https://datasets.gryf.fi.muni.cz/iciar2011/ColonTissue_LowNoise_3D_TIFF.zip
   download_method: http
 annotations:
   present: true
   types:
-  - instance-segmentation
+  - semantic-segmentation
   coverage: dense
-  format: Labelled 3D TIFF volume per image (image-labels_NNNN.tif) next to each image (image-final_NNNN.tif) in the same zip
+  format: One binary foreground/background 3D TIFF (image-labels_NNNN.tif, values 0/1) per image (image-final_NNNN.tif)
+    in the same zip
   source: automatic
 ml:
   tasks:
@@ -50,10 +57,78 @@ provenance:
   evidence_urls:
   - https://cbia.fi.muni.cz/datasets/
   - https://datasets.gryf.fi.muni.cz/iciar2011/ColonTissue_LowNoise_3D_TIFF.zip
+  - https://datasets.gryf.fi.muni.cz/iciar2011/ColonTissue_HighNoise_3D_ICS.zip
+  - https://datasets.gryf.fi.muni.cz/iciar2011/ColonTissue_HighNoise_3D_TIFF.zip
   confidence: 0.6
 verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-10T12:13:30Z'
-notes: 'Synthetic (simulated) images from the group virtual microscope (modelled Zeiss S100, 63x/1.40 oil objective, Atto CARV confocal unit, Micromax CCD), not real microscopy; labels are generated with the images. The CBIA page states no license or terms beyond a citation request, and gives no voxel size. The low-noise zip (5.9 GB) holds 30 image-final and 30 image-labels TIFF volumes (peek_archive); the high-noise zip was not listed. The page cites Svoboda, Homola, Stejskal, ICIAR 2011, which tools/paper.py could not find, so no publication is listed. The page also offers ICS and HDF5 copies.'
+  last_checked: '2026-10-10T14:05:38Z'
+notes: 'Synthetic (simulated) images from the group virtual microscope (modelled Zeiss S100, 63x/1.40
+  oil objective, Atto CARV confocal unit, Micromax CCD), not real microscopy; labels are generated with
+  the images. The CBIA page states no license or terms beyond a citation request,. The page cites Svoboda,
+  Homola, Stejskal, ICIAR 2011 (not found by tools/paper.py). enricher: voxel size 123.806x123.806x123.8
+  nm from the ICS headers (parameter scale, micrometers) of the same data (was null); the page says ICS,
+  HDF5 and 3D-TIFF copies hold the same data. the high-SNR label sample holds only {0,1} and the page
+  calls the ground truth foreground/background images, so labels are binary masks, not instance ids. Size
+  and n_items are for the 2 3D-TIFF zips (file listing). organism Homo sapiens: the page says human colon
+  tissue (simulated).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "ColonTissue_LowNoise_3D_TIFF.zip   60 files  5.9 GB\nColonTissue_HighNoise_3D_TIFF.zip  60\
+      \ files  5.2 GB\n  image-final_0000.tif ... image-final_0029.tif   30 per zip (~154-176 MB each)\n\
+      \  image-labels_0000.tif ... image-labels_0029.tif  30 per zip (~11 MB each)\n(identical data also\
+      \ offered as *_3D_ICS.zip and *_3D_HDF5.zip)\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://datasets.gryf.fi.muni.cz/iciar2011/ColonTissue_HighNoise_3D_TIFF.zip::image-final_0000.tif
+    - https://datasets.gryf.fi.muni.cz/iciar2011/ColonTissue_HighNoise_3D_TIFF.zip::image-labels_0000.tif
+    size_bytes: 171104830
+    description: 'Volume 0 of the high-SNR set: one simulated 3D image and its ground-truth label volume'
+  arrays:
+  - role: raw
+    path_pattern: '*_3D_TIFF.zip::image-final_*.tif'
+    format: tiff
+    axes: zyx
+    shape: &id001
+    - 129
+    - 1030
+    - 1300
+    shape_varies: false
+    dtype: uint16
+    compression: lzw
+    value_range:
+    - 69
+    - 204
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Plain multi-page TIFF, one page per z slice: the page calls the files 3D-TIFF, and
+      the ICS copy of the same image orders x y z with z = 129, matching the 129 TIFF pages.'
+  - role: label
+    path_pattern: '*_3D_TIFF.zip::image-labels_*.tif'
+    format: tiff
+    axes: zyx
+    shape: *id001
+    shape_varies: false
+    dtype: uint16
+    compression: lzw
+    value_range:
+    - 0
+    - 1
+    normalization: none
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: image-labels_NNNN.tif pairs with image-final_NNNN.tif in the same zip (same number);
+      identical shapes and the same ICS voxel scale.
+  notes: 'Exact listing of all 2 3D-TIFF zips (120 TIFFs, 11,142,053,878 bytes). Probed and sampled volume
+    0 of ColonTissue_HighNoise_3D_TIFF.zip (one sample): image 129x1030x1300 uint16 LZW, values 69-204;
+    labels uint16, values 0-1. TIFFs carry no calibration; voxel size and axis order come from the ICS
+    header of the same image (layout order x y z, sizes match; scale 0.123806 um in x and y, 0.1238 um
+    in z for the image and 0.123806 um for the labels). Identical ICS and HDF5 copies are offered as separate
+    zips and are not counted in the size. No license found.'
