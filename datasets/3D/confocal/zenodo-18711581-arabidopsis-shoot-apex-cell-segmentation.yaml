@@ -3,10 +3,10 @@ id: zenodo-18711581-arabidopsis-shoot-apex-cell-segmentation
 title: 'Image processing data for manuscript: Control of plant organ growth through cell division orientation
   in inner tissues'
 short_name: Arabidopsis shoot apex cells (3D confocal)
-description: 66 processed 3D Airyscan/confocal image stacks of Arabidopsis thaliana inflorescence shoot apices
-  (mPS-PI stained cell walls, 40x), each packaged as a zip with the converted 8-bit image, a watershed cell
-  segmentation (manually corrected), cell-wall and new-wall images, layer and rib-zone attribution images,
-  and cell and wall measurement CSV files.
+description: 66 processed 3D Airyscan/confocal image stacks of Arabidopsis thaliana inflorescence shoot
+  apices (mPS-PI stained cell walls, 40x), each packaged as a zip with the converted 8-bit image, a watershed
+  cell segmentation (manually corrected), cell-wall and new-wall images, layer and rib-zone attribution
+  images, and cell and wall measurement CSV files.
 landing_url: https://zenodo.org/records/18711581
 doi: 10.5281/zenodo.18711581
 repository: Zenodo
@@ -20,10 +20,7 @@ imaging:
   modality:
   - confocal
   dimensionality: 3D
-  voxel_size_nm:
-    x: 182.6
-    y: 182.6
-    z: 334
+  voxel_size_nm: null
   channels: 1
   organism:
   - Arabidopsis thaliana
@@ -66,11 +63,93 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T17:10:00Z'
-notes: 'Voxel size 0.1826 x 0.1826 x 0.334 um is from the Metadata.txt inside one zip (image 280, 40x) and may differ
-  for other stacks, e.g. the Airyscan ones. The Metadata.txt there records watershed segmentation (sigma, min volume
-  40 um3, level 4) followed by correct_segmentation, so labels are automatic plus manual correction. The zenodo
-  text says cells were manually corrected; segmentation files were seen only in that one zip listing (_seg.tif,
-  _walls.tif, _layers.tif, cell_data.csv); the other 65 zips were assumed equivalent from the record description.
-  Modality is Airyscan/confocal per file names. The manuscript (Yates et al. 2026) was not found in Europe PMC
-  and the record lists no paper DOI, so no paper was read. Total size is the sum of the 66 zip sizes.'
+  last_checked: '2026-10-10T16:58:19Z'
+notes: 'Voxel size 0.1826 x 0.1826 x 0.334 um is from the Metadata.txt inside one zip (image 280, 40x)
+  and may differ for other stacks, e.g. the Airyscan ones. The Metadata.txt there records watershed segmentation
+  (sigma, min volume 40 um3, level 4) followed by correct_segmentation, so labels are automatic plus manual
+  correction. The zenodo text says cells were manually corrected; segmentation files were seen only in
+  that one zip listing (_seg.tif, _walls.tif, _layers.tif, cell_data.csv); the other 65 zips were assumed
+  equivalent from the record description. Modality is Airyscan/confocal per file names. The manuscript
+  (Yates et al. 2026) was not found in Europe PMC and the record lists no paper DOI, so no paper was read.
+  Total size is the sum of the 66 zip sizes. enricher: voxel size set to null (was 182.6x182.6x334): Metadata.txt
+  of image 366 gives 183.3x183.3x250 nm, so stacks differ.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  66 zips  44.7 GB (58 '*_Airyscan Processing.zip', 8 '*_40x.zip'), one per apex image\n\
+      \  <name>.zip/<name>/\n    <name>_R.tif          raw cell-wall stack (8-bit), e.g. 353x880x880\n\
+      \    <name>_N.tif          (role not documented)\n    <name>_seg.tif        cell instance labels\
+      \ (uint16)\n    <name>_walls.tif, _new_walls.tif, _new_walls_r.tif, _new_walls_ribzone.tif, _layers.tif,\n\
+      \    _cells_ribzone.tif, _main_axis.tif, _main_axis_r.tif   derived label/attribute stacks\n   \
+      \ <name>_cell_data.csv, <name>_walls_data.csv, <name>_area.points, Metadata.txt\n    ._* AppleDouble\
+      \ files\n"
+    n_files: 66
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/18711581/files/20241209_mPS-PI_Meristem_366_t0_40x_Airyscan%20Processing.zip::20241209_mPS-PI_Meristem_366_t0_40x_Airyscan
+      Processing/20241209_mPS-PI_Meristem_366_t0_40x_Airyscan Processing_R.tif
+    - https://zenodo.org/records/18711581/files/20241209_mPS-PI_Meristem_366_t0_40x_Airyscan%20Processing.zip::20241209_mPS-PI_Meristem_366_t0_40x_Airyscan
+      Processing/20241209_mPS-PI_Meristem_366_t0_40x_Airyscan Processing_seg.tif
+    size_bytes: 205017394
+    description: Raw cell-wall stack and cell segmentation of apex 366 (Airyscan)
+  arrays:
+  - role: raw
+    path_pattern: '*.zip::*/*_R.tif'
+    format: tiff
+    axes: zyx
+    shape:
+    - 353
+    - 880
+    - 880
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '*.zip::*/*_seg.tif'
+    format: tiff
+    axes: zyx
+    shape:
+    - 353
+    - 880
+    - 880
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 65305
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Same stem in the same zip folder (<name>_R.tif <-> <name>_seg.tif); identical shape.
+      Metadata.txt: watershed segmentation of the _R.tif, then correct_segmentation (manual).'
+  - role: label
+    path_pattern: '*.zip::*/*_cell_data.csv'
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: Per-cell geometry / layer / division table keyed by cell label (not read).
+  notes: 'Exact Zenodo listing: 66 zips, 44,672,603,996 B. Listed zips 280 (40x) and 366 (Airyscan); same
+    member set. Headers of deflated members are not readable remotely, so 366''s _R.tif and _seg.tif were
+    sampled (204 MB): R 353x880x880 uint8, 0-255, mean 31 (plain multi-page TIFF; pages recorded as z
+    because the Zenodo text calls these 3D confocal stacks and Metadata.txt gives a z voxel size); seg
+    uint16, 8,164 IDs, max 65305. Metadata.txt says R was converted from 16 to 8 bit with max 20000, hence
+    contrast-stretched. Voxel sizes differ per image (Metadata.txt): 280 0.1826x0.1826x0.334 um, 366 0.1833x0.1833x0.25
+    um, so imaging.voxel_size_nm is null; each zip''s Metadata.txt states its own.'
