@@ -1,8 +1,11 @@
 schema_version: '1.2'
 id: cbia-vasculogenesis-simulated-endothelial
-title: Simulated vasculogenesis time-lapse - endothelial cells forming networks, with per-frame cell label masks
+title: Simulated vasculogenesis time-lapse - endothelial cells forming networks, with per-frame cell label
+  masks
 short_name: Simulated vasculogenesis endothelial cells
-description: Simulated fluorescence image sequence of endothelial cells forming vascular networks with thin, elongated chords (vasculogenesis), released by the Centre for Biomedical Image Analysis, Masaryk University. 997 frames as PNG images with a matching sequence of cell label masks.
+description: Simulated fluorescence image sequence of endothelial cells forming vascular networks with
+  thin, elongated chords (vasculogenesis), released by the Centre for Biomedical Image Analysis, Masaryk
+  University. 997 frames as PNG images with a matching sequence of cell label masks.
 landing_url: https://cbia.fi.muni.cz/datasets/
 doi: null
 repository: LabWebsite
@@ -18,22 +21,24 @@ imaging:
   voxel_size_nm: null
   channels: null
   organism: []
-  sample: Simulated endothelial cells forming networks (vasculogenesis), computer-generated fluorescence images
+  sample: Simulated endothelial cells forming networks (vasculogenesis), computer-generated fluorescence
+    images
   labels_stains: []
 data:
   formats:
   - png
-  size_bytes: 182500000
-  n_items: 997
+  size_bytes: 182757336
+  n_items: 1994
   access: open
   download_url: https://datasets.gryf.fi.muni.cz/icip2016/vasculogenesis-images.zip
   download_method: http
 annotations:
   present: true
   types:
-  - instance-segmentation
+  - semantic-segmentation
   coverage: dense
-  format: One PNG label mask per frame (mask_NNNN.png), 997 frames, in vasculogenesis-labels.zip
+  format: One binary PNG mask per frame (mask_NNNN.png, values 0/255, same frame number as image_NNNN.png),
+    997 frames, in vasculogenesis-labels.zip
   source: automatic
 ml:
   tasks:
@@ -56,5 +61,70 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-10T12:13:30Z'
-notes: 'Synthetic (simulated) images with generated labels, not real microscopy. The CBIA page asks users to cite Svoboda D. et al., ICIP 2016, but no paper could be found with tools/paper.py (not in Europe PMC or Crossref), so no publication is listed. Zip listings via peek_archive: vasculogenesis-images.zip (997 PNG, 171 MB) and vasculogenesis-labels.zip (997 PNG, 11 MB). The page states no license or terms beyond the citation request. Whether labels are instance ids or binary was not checked. Pixel size, frame interval and cell line are not stated. Sources checked: CBIA datasets page, both zip listings.'
+  last_checked: '2026-10-10T13:53:50Z'
+notes: 'Synthetic (simulated) images with generated labels, not real microscopy. The CBIA page asks users
+  to cite Svoboda D. et al., ICIP 2016, but no paper could be found with tools/paper.py (not in Europe
+  PMC or Crossref), so no publication is listed. Zip listings via peek_archive: vasculogenesis-images.zip
+  (997 PNG, 171 MB) and vasculogenesis-labels.zip (997 PNG, 11 MB). The page states no license or terms
+  beyond the citation request. Pixel size, frame interval and cell line are not stated. Sources checked:
+  CBIA datasets page, both zip listings. enricher: sampled masks are binary 0/255 foreground, not instance
+  ids, so annotation type changed instance-segmentation -> semantic-segmentation; n_items 997 -> 1994
+  (997 images + 997 masks).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'vasculogenesis-images.zip/  997 files  171.4 MB  .png  (image_0003.png ... image_0999.png)
+
+      vasculogenesis-labels.zip/  997 files   11.0 MB  .png  (mask_0003.png ... mask_0999.png)
+
+      '
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://datasets.gryf.fi.muni.cz/icip2016/vasculogenesis-images.zip::image_0003.png
+    - https://datasets.gryf.fi.muni.cz/icip2016/vasculogenesis-labels.zip::mask_0003.png
+    size_bytes: 184196
+    description: 'Frame 3: one simulated fluorescence image and its binary cell mask'
+  arrays:
+  - role: raw
+    path_pattern: vasculogenesis-images.zip::image_*.png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One grayscale PNG per time frame; the frame number is in the file name.
+  - role: label
+    path_pattern: vasculogenesis-labels.zip::mask_*.png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: mask_NNNN.png pairs with image_NNNN.png (same frame number); identical 512x512 shape.
+      Foreground 255, background 0.
+  notes: 'Exact listing of both zips (1994 PNG members, 182,757,336 bytes). Probed image_0003.png and
+    mask_0003.png: 512x512 uint8 grayscale PNG. Sampled frames 3 and 500 (one sample each): images span
+    0-255 (256 values, mean ~49); masks have exactly two values {0,255}, so they are binary foreground
+    masks, not per-cell instance ids. Frames are numbered 0003-0999. Pixel size and frame interval are
+    not stated on the CBIA page or in the zips; the ICIP 2016 paper is not in Europe PMC. No license found.'
