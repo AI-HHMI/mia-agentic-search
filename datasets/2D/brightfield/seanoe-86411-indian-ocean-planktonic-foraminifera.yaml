@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: seanoe-86411-indian-ocean-planktonic-foraminifera
 title: Tropical Indian ocean annotated planktonic foraminifera image dataset from surface sediments
 short_name: Planktonic foraminifera taxa (brightfield)
-description: 185,222 focus-stacked brightfield images of planktonic foraminifera (>150 um sieve fraction) from tropical
-  Indian Ocean surface sediments, captured with the MiSo microfossil sorting machine (4x telecentric lens, about
-  1159.4 pixels per mm) and assigned to 36 taxa classes including foraminifera fragments.
+description: 185,222 focus-stacked brightfield images of planktonic foraminifera (>150 um sieve fraction) from tropical Indian
+  Ocean surface sediments, captured with the MiSo microfossil sorting machine (4x telecentric lens, about 1159.4 pixels per
+  mm) and assigned to 36 taxa classes including foraminifera fragments.
 landing_url: https://www.seanoe.org/data/00752/86411/
 doi: 10.17882/86411
 repository: other
@@ -33,13 +33,16 @@ imaging:
     y: 862.5
     z: null
   channels: null
-  organism: []
-  sample: Planktonic foraminifera (>150 um sieve fraction) picked from coretop surface sediments of the tropical Indian Ocean (RV Marion Dufresne MOZAPHARE-MD104 and BARAT 94 cruises), imaged with a MiSo sorting machine and fused into full-focus Z-stack images
+  organism:
+  - Foraminifera
+  sample: Planktonic foraminifera (>150 um sieve fraction) picked from coretop surface sediments of the tropical Indian Ocean
+    (RV Marion Dufresne MOZAPHARE-MD104 and BARAT 94 cruises), imaged with a MiSo sorting machine and fused into full-focus
+    Z-stack images
   labels_stains: []
 data:
   formats:
-  - other
-  size_bytes: null
+  - jpeg
+  size_bytes: 14586458523
   n_items: 185222
   access: open
   download_url: https://www.seanoe.org/data/00752/86411/data/91729.rar
@@ -49,8 +52,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: Image-level taxon labels (36 classes incl. fragments); labelling layout inside the RAR not inspected
-  source: automatic
+  format: 'Image-level taxon labels as folder names: <taxon>/<image>.jpg inside the RAR (36 classes)'
+  source: proofread
 ml:
   tasks:
   - classification
@@ -72,6 +75,37 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-10T19:10:00Z'
-notes: 'One 13 GB RAR; peek_archive cannot list RAR, so image format (Marchant et al. 2020 export JPEG crops, one folder per class), layout and label files are unverified. Labels come from a CNN (98% agreement with human classifiers per DataCite abstract), hence source automatic. Pixel size from 1159.4 px/mm (0.8625 um; matches 3.45 um pixels, 4x lens in the 2020 paper). Focus-stacked, so 2D. Adebayo 2023 not open access, not read. Differs from zenodo-3996436 and pangaea-897873. Non-commercial license.'
+  annotations_verified: true
+  last_checked: '2026-10-10T19:30:00Z'
+notes: 'One 13 GB RAR (14,586,458,523 B). Labels come from a CNN (Base Cyclic 16); the page says every image was reviewed
+  by at least one human expert classifier, hence source proofread (enricher; was automatic). Pixel size from 1159.4 px/mm
+  (0.8625 um) on the SEANOE page. Focus-stacked, so 2D. Adebayo 2023 not open access, not read. Differs from zenodo-3996436
+  and pangaea-897873. Non-commercial license. enricher: RAR file headers read: members are <taxon folder>/<name>.jpg (formats
+  jpeg, was other); organism Foraminifera (was empty).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "91729.rar  14.59 GB (RAR5, one archive)\n  <taxon name>/*.jpg     185,222 images in 36 taxon folders (count from\
+      \ the SEANOE page)\n    e.g. Turborotalita quinqueloba/00065_MD077205_0-1_(1)_IN7U41YvOUaZlGkKKmg0FQ01.jpg  14.2 KB\n"
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: 91729.rar::*/*.jpg
+    format: jpeg
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Class label = parent folder name (taxon); no separate label files.
+  notes: 'Read the first 64 KB of the RAR by range request and parsed the RAR5 file headers: the first 3 members are Turborotalita
+    quinqueloba/*.jpg (14-33 KB each, compressed with RAR method 3). RAR has no central directory and no RAR decompressor
+    is available here, so the per-class counts, the image shape, dtype and colour mode were not read, and no sample unit can
+    be given: TensorSwitch cannot pull single members out of a RAR (only zip). Size is the exact Content-Length of the single
+    archive. Voxel size 862.5 nm from the page (1159.4 px/mm). www.seanoe.org is not on the TensorSwitch fetch allowlist.'
