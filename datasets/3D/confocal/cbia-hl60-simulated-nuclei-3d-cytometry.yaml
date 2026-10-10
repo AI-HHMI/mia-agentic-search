@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: cbia-hl60-simulated-nuclei-3d-cytometry
 title: Simulated 3D images of HL60 cell nuclei with clustering and noise variants (digital phantoms)
 short_name: Simulated HL60 nuclei 3D (confocal)
-description: Synthetic 3D confocal images of HL60 cell nuclei, 20 nuclei per image set at 0, 25, 50 or 75 % clustering probability, each at a high and a low signal-to-noise ratio, with labelled ground-truth volumes. Offered as ICS, HDF5 and 3D-TIFF zips, one per clustering and noise condition.
+description: Synthetic 3D confocal images of HL60 cell nuclei, 20 nuclei per image set at 0, 25, 50 or
+  75 % clustering probability, each at a high and a low signal-to-noise ratio, with labelled ground-truth
+  volumes. Offered as ICS, HDF5 and 3D-TIFF zips, one per clustering and noise condition.
 landing_url: https://cbia.fi.muni.cz/datasets/
 doi: null
 repository: LabWebsite
@@ -18,7 +20,10 @@ imaging:
   modality:
   - confocal
   dimensionality: 3D
-  voxel_size_nm: null
+  voxel_size_nm:
+    x: 123.806
+    y: 123.806
+    z: 123.8
   channels: null
   organism: []
   sample: Simulated HL60 cell nuclei (digital phantoms) imaged by a simulated confocal microscope
@@ -26,8 +31,8 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: null
-  n_items: null
+  size_bytes: 14245362578
+  n_items: 480
   access: open
   download_url: https://datasets.gryf.fi.muni.cz/cytometry2009/HL60_LowNoise_C00_3D_TIFF.zip
   download_method: http
@@ -36,7 +41,8 @@ annotations:
   types:
   - instance-segmentation
   coverage: dense
-  format: Labelled 3D TIFF volume per image (image-labels_NNNN.tif) next to each image (image-final_NNNN.tif) in the same zip
+  format: One 3D TIFF of per-nucleus instance ids (image-labels_NNNN.tif, 0 = background) per image (image-final_NNNN.tif)
+    in the same zip
   source: automatic
 ml:
   tasks:
@@ -54,10 +60,83 @@ provenance:
   - https://cbia.fi.muni.cz/datasets/
   - https://datasets.gryf.fi.muni.cz/cytometry2009/HL60_LowNoise_C00_3D_TIFF.zip
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22Generation+of+digital+phantoms+of+cell+nuclei+and+simulation+of+image+formation+in+3D+image+cytometry%22&format=json&resultType=core&pageSize=3
+  - https://datasets.gryf.fi.muni.cz/cytometry2009/HL60_HighNoise_C00_3D_ICS.zip
+  - https://datasets.gryf.fi.muni.cz/cytometry2009/HL60_LowNoise_C25_3D_TIFF.zip
+  - https://datasets.gryf.fi.muni.cz/cytometry2009/HL60_LowNoise_C50_3D_TIFF.zip
+  - https://datasets.gryf.fi.muni.cz/cytometry2009/HL60_LowNoise_C75_3D_TIFF.zip
+  - https://datasets.gryf.fi.muni.cz/cytometry2009/HL60_HighNoise_C00_3D_TIFF.zip
+  - https://datasets.gryf.fi.muni.cz/cytometry2009/HL60_HighNoise_C25_3D_TIFF.zip
+  - https://datasets.gryf.fi.muni.cz/cytometry2009/HL60_HighNoise_C50_3D_TIFF.zip
+  - https://datasets.gryf.fi.muni.cz/cytometry2009/HL60_HighNoise_C75_3D_TIFF.zip
   confidence: 0.6
 verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-10T12:13:30Z'
-notes: 'Synthetic (simulated) images from the group virtual microscope (modelled Zeiss S100, 63x/1.40 oil objective, Atto CARV confocal unit, Micromax CCD), not real microscopy; labels are generated with the images. The CBIA page states no license or terms beyond a citation request, and gives no voxel size. One listed zip (HL60_LowNoise_C00_3D_TIFF.zip, 1.95 GB) holds 30 image-final and 30 image-labels TIFF volumes (peek_archive); the other seven conditions were not listed. Paper is not open access (abstract only). The page also offers ICS and HDF5 copies.'
+  last_checked: '2026-10-10T14:05:37Z'
+notes: 'Synthetic (simulated) images from the group virtual microscope (modelled Zeiss S100, 63x/1.40
+  oil objective, Atto CARV confocal unit, Micromax CCD), not real microscopy; labels are generated with
+  the images. The CBIA page states no license or terms beyond a citation request,. enricher: voxel size
+  123.806x123.806x123.8 nm from the ICS headers (parameter scale, micrometers) of the same data (was null);
+  the page says ICS, HDF5 and 3D-TIFF copies hold the same data. the HL60 C00 high-SNR label sample has
+  20 non-zero ids (1-20) and the page says each image set holds 20 nuclei, so labels are per-nucleus instance
+  ids. Size and n_items are for the 8 3D-TIFF zips (file listing). organism left empty: simulated phantoms;
+  the page names the cell type but no species.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "HL60_{Low,High}Noise_C{00,25,50,75}_3D_TIFF.zip  8 zips  14.2 GB\n  image-final_0000.tif ...\
+      \ image-final_0029.tif   30 per zip (~45-51 MB each)\n  image-labels_0000.tif ... image-labels_0029.tif\
+      \  30 per zip (~3 MB each)\nHighNoise: 240 files 6.5 GB; LowNoise: 240 files 7.8 GB\n(identical\
+      \ data also offered as *_3D_ICS.zip and *_3D_HDF5.zip)\n"
+    n_files: 8
+    listing_complete: true
+  sample:
+    urls:
+    - https://datasets.gryf.fi.muni.cz/cytometry2009/HL60_HighNoise_C00_3D_TIFF.zip::image-final_0000.tif
+    - https://datasets.gryf.fi.muni.cz/cytometry2009/HL60_HighNoise_C00_3D_TIFF.zip::image-labels_0000.tif
+    size_bytes: 54262876
+    description: 'Volume 0 of the high-SNR set: one simulated 3D image and its ground-truth label volume'
+  arrays:
+  - role: raw
+    path_pattern: '*_3D_TIFF.zip::image-final_*.tif'
+    format: tiff
+    axes: zyx
+    shape: &id001
+    - 129
+    - 565
+    - 807
+    shape_varies: false
+    dtype: uint16
+    compression: lzw
+    value_range:
+    - 68
+    - 235
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Plain multi-page TIFF, one page per z slice: the page calls the files 3D-TIFF, and
+      the ICS copy of the same image orders x y z with z = 129, matching the 129 TIFF pages.'
+  - role: label
+    path_pattern: '*_3D_TIFF.zip::image-labels_*.tif'
+    format: tiff
+    axes: zyx
+    shape: *id001
+    shape_varies: false
+    dtype: uint16
+    compression: lzw
+    value_range:
+    - 0
+    - 20
+    normalization: none
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: image-labels_NNNN.tif pairs with image-final_NNNN.tif in the same zip (same number);
+      identical shapes and the same ICS voxel scale.
+  notes: 'Exact listing of all 8 3D-TIFF zips (480 TIFFs, 14,245,362,578 bytes). Probed and sampled volume
+    0 of HL60_HighNoise_C00_3D_TIFF.zip (one sample): image 129x565x807 uint16 LZW, values 68-235; labels
+    uint16, values 0-20. TIFFs carry no calibration; voxel size and axis order come from the ICS header
+    of the same image (layout order x y z, sizes match; scale 0.123806 um in x and y, 0.1238 um in z for
+    the image and 0.123806 um for the labels). Identical ICS and HDF5 copies are offered as separate zips
+    and are not counted in the size. No license found.'
