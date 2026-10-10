@@ -2,11 +2,10 @@ schema_version: '1.2'
 id: zenodo-17068651-celldetective-nk-mcf7-segmentation
 title: 'Celldetective segmentation annotations: MCF-7 nuclei, primary NK cells and RICM lymphocytes'
 short_name: NK/MCF-7 co-culture cell masks (widefield, RICM)
-description: 'Three sets of multichannel time-lapse frames with instance-segmentation labels made with Celldetective''s
-  napari plugin: MCF-7 nuclei in co-culture with NK cells (122 frames), primary NK cells in co-culture with MCF-7 (105
-  frames) and primary NK cells spreading on an antibody-coated surface imaged by reflection interference contrast
-  microscopy (135 frames). Each frame is a multichannel TIFF with a *_labelled.tif mask and a JSON describing the channels
-  and pixel calibration.'
+description: 'Three sets of multichannel time-lapse frames with instance-segmentation labels made with Celldetective''s napari
+  plugin: MCF-7 nuclei in co-culture with NK cells (122 frames), primary NK cells in co-culture with MCF-7 (105 frames) and
+  primary NK cells spreading on an antibody-coated surface imaged by reflection interference contrast microscopy (135 frames).
+  Each frame is a multichannel TIFF with a *_labelled.tif mask and a JSON describing the channels and pixel calibration.'
 landing_url: https://zenodo.org/records/17068651
 doi: 10.5281/zenodo.17068651
 repository: Zenodo
@@ -49,7 +48,7 @@ data:
   size_bytes: 1475428323
   n_items: 362
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/17068651
   download_method: http
 annotations:
   present: true
@@ -61,7 +60,7 @@ annotations:
 ml:
   tasks:
   - segmentation
-  splits_provided: false
+  splits_provided: true
   benchmark: null
   baseline_code_url: https://github.com/celldetective/celldetective
 license:
@@ -79,13 +78,136 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T19:30:00Z'
-notes: 'Covers the three db_*.zip segmentation sets of the Zenodo record (peek_archive: 122, 105 and 135 image/label
-  pairs, 336 + 629 + 510 MB; size_bytes is their summed zip size). The record also holds demos (demo_adcc, demo_ricm),
-  trained models, and two single-cell signal classification/regression sets (db-si-NucPI, db-si-NucCondensation) that are
-  not described here. Pixel size is stored per frame in the JSON files and differs between sets: 0.3112 um (MCF-7 nuclei
-  frame checked), 0.1568 um (NK frame checked) and 0.2 um (RICM frame checked), so voxel_size_nm is null. The paper
-  mentions 20x/0.4 (0.31 um) and 40x/1.3 (0.157 um) objectives. The channel list varies (up to five channels: brightfield,
-  Hoechst, PI, CFSE, LAMP1). Split not provided. Annotators are experts per the paper; the MCF-7 and NK sets use
-  multiple channels and time information, and the RICM set was pre-annotated by thresholding then corrected manually.
-  License is CC BY-NC 4.0, which limits commercial use.'
+  last_checked: '2026-10-10T20:05:00Z'
+notes: 'Covers the three db_*.zip segmentation sets of the Zenodo record (122, 105 and 135 pairs). The record also holds demos
+  (demo_adcc, demo_ricm), trained models, and two single-cell signal classification/regression sets (db-si-NucPI, db-si-NucCondensation)
+  that are not described here. Pixel size is stored per frame in the JSON files and differs between sets: 0.3112 um (MCF-7
+  nuclei frame checked), 0.1568 um (NK frame checked) and 0.2 um (RICM frame checked), so voxel_size_nm is null. The channel
+  list varies (up to five channels: brightfield, Hoechst, PI, CFSE, LAMP1). Annotators are experts per the paper; the MCF-7
+  and NK sets use multiple channels and time information, and the RICM set was pre-annotated by thresholding then corrected
+  manually. organisms: Homo sapiens = MCF-7/NK sets; Mus musculus = mouse T cells in some RICM frames. enricher: test folders
+  exist (mcf7 test_set/ 8 pairs, ricm test/ 10 pairs), so splits_provided true (was false).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "db_mcf7_nuclei_w_lymphocytes.zip   336.5 MB\n  db_mcf7_nuclei_w_lymphocytes/*.tif|*_labelled.tif|*.json   114 frames\
+      \ (342 files)\n  db_mcf7_nuclei_w_lymphocytes/test_set/                      8 frames (24 files)\ndb_primary_NK_w_mcf7.zip\
+      \           629.3 MB\n  db_primary_NK_w_mcf7/*.tif|*_labelled.tif|*.json           105 frames (315 files)\ndb_spreading_lymphocytes.zip\
+      \       509.7 MB\n  db_spreading_lymphocytes/*.tif|*_labelled.tif|*.json       125 frames (375 files)\n  db_spreading_lymphocytes/test/\
+      \                             10 frames (30 files)\n(the Zenodo record's 18 other zips are demos and models, not part\
+      \ of this record)\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/17068651/files/db_mcf7_nuclei_w_lymphocytes.zip::db_mcf7_nuclei_w_lymphocytes/110_snap_0_1_46.tif
+    - https://zenodo.org/records/17068651/files/db_mcf7_nuclei_w_lymphocytes.zip::db_mcf7_nuclei_w_lymphocytes/110_snap_0_1_46_labelled.tif
+    size_bytes: 2622112
+    description: One MCF-7 co-culture frame (4 channels, 512x512 uint16) and its instance mask
+  arrays:
+  - role: raw
+    path_pattern: db_mcf7_nuclei_w_lymphocytes.zip::db_mcf7_nuclei_w_lymphocytes/**/*[!d].tif
+    format: tiff
+    axes: cyx
+    shape:
+    - 4
+    - 512
+    - 512
+    shape_varies: true
+    dtype: uint16
+    compression: unknown
+    value_range:
+    - 0
+    - 65535
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Channels per the JSON: brightfield, dead nuclei (PI), effector fluo (CFSE), live nuclei (Hoechst); stored
+      as planar samples (tifffile axes SYX). 0.3112 um/px.'
+  - role: label
+    path_pattern: db_mcf7_nuclei_w_lymphocytes.zip::db_mcf7_nuclei_w_lymphocytes/**/*_labelled.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: true
+    dtype: int16
+    compression: none
+    value_range:
+    - 0
+    - 42
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: <stem>.tif pairs with <stem>_labelled.tif and <stem>.json (channel names, spatial_calibration in um/px)
+      in the same folder.
+  - role: raw
+    path_pattern: db_primary_NK_w_mcf7.zip::db_primary_NK_w_mcf7/*[!d].tif
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Not sampled (probe could not read the deflated member header); 0.1568 um/px per the harvest JSON check.
+  - role: label
+    path_pattern: db_primary_NK_w_mcf7.zip::db_primary_NK_w_mcf7/*_labelled.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 962
+    - 993
+    shape_varies: true
+    dtype: int16
+    compression: none
+    value_range: null
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: <stem>.tif pairs with <stem>_labelled.tif and <stem>.json (channel names, spatial_calibration in um/px)
+      in the same folder.
+  - role: raw
+    path_pattern: db_spreading_lymphocytes.zip::db_spreading_lymphocytes/**/*[!d].tif
+    format: tiff
+    axes: null
+    shape:
+    - 1002
+    - 1004
+    shape_varies: true
+    dtype: float32
+    compression: unknown
+    value_range:
+    - 0.673
+    - 1.73
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'RICM; channel count varies: train frame JSON lists brightfield + adhesion, test frame adhesion only
+      (sampled test frame is single-channel YX float32, around 1.0, i.e. background-normalised). 0.2 um/px.'
+  - role: label
+    path_pattern: db_spreading_lymphocytes.zip::db_spreading_lymphocytes/**/*_labelled.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1002
+    - 1004
+    shape_varies: true
+    dtype: int16
+    compression: none
+    value_range:
+    - 0
+    - 21
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: <stem>.tif pairs with <stem>_labelled.tif and <stem>.json (channel names, spatial_calibration in um/px)
+      in the same folder.
+  notes: 'Exact listing of the three db_*.zip files with members expanded (1,086 members). Probed labelled TIFFs of each set:
+    ImageJ single-page int16 YX, uncompressed (512x512, 962x993, 1002x1004). Sampled two pairs: MCF-7 110_snap_0_1_46 (raw
+    [4,512,512] uint16 0-65535, mask 43 distinct ids 0-42) and RICM test/Dalia01092020_202_0039 (raw [1002,1004] float32 0.67-1.73,
+    mask 22 distinct ids 0-21, same grid). Value ranges from these samples only. Raw path patterns exclude *_labelled.tif
+    via [!d]. Voxel size differs per set (JSON spatial_calibration 0.3112, 0.1568, 0.2 um/px), so imaging.voxel_size_nm stays
+    null. Zenodo TLS dropped several requests (SSLEOFError); retries succeeded.'
