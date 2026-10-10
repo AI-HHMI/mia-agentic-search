@@ -2,10 +2,9 @@ schema_version: '1.2'
 id: zenodo-21261399-yeast-mitochondria-patches
 title: Fluorescence Microscopy Patches of Yeast Mitochondria with Cell Masks
 short_name: Yeast mitochondria patches with cell masks
-description: 3,334 fluorescence patches (224 x 224 px, 16-bit, resampled to 0.06 um/px) of single Magnusiomyces magnusii
-  yeast cells with DiOC6(3)-stained mitochondria and matching 8-bit cell masks. Cells grew in five media (YPD, YPGal,
-  YPGly, SD, acetate) and were sampled on cultivation days 1-3 across two experiments; metadata.csv gives experiment,
-  day and medium per patch.
+description: 3,334 fluorescence patches (224 x 224 px, 16-bit, resampled to 0.06 um/px) of single Magnusiomyces magnusii yeast cells
+  with DiOC6(3)-stained mitochondria and matching 8-bit cell masks. Cells grew in five media (YPD, YPGal, YPGly, SD, acetate) and were
+  sampled on cultivation days 1-3 across two experiments; metadata.csv gives experiment, day and medium per patch.
 landing_url: https://zenodo.org/records/21261399
 doi: 10.5281/zenodo.21261399
 repository: Zenodo
@@ -33,10 +32,10 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: 198230769
+  size_bytes: 198296002
   n_items: 3334
   access: open
-  download_url: https://zenodo.org/api/records/21261399/files/images.zip/content
+  download_url: https://zenodo.org/records/21261399
   download_method: http
 annotations:
   present: true
@@ -63,16 +62,80 @@ provenance:
   - https://zenodo.org/api/records/21261399/files/README.md/content
   - https://zenodo.org/api/records/21261399/files/images.zip/content
   - https://zenodo.org/api/records/21261399/files/masks.zip/content
+  - https://zenodo.org/records/21261399/files/images.zip
+  - https://zenodo.org/records/21261399/files/masks.zip
+  - https://zenodo.org/records/21261399/files/LICENSE.md
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T00:10:00Z'
-notes: 'From the Zenodo record, its README and both zip listings (3,334 PNG images and 3,334 PNG masks with matching names).
-  Masks were produced automatically with Cellpose-SAM from paired brightfield images and then visually quality-controlled,
-  so they mark whole cells, not mitochondria. The accompanying study (Interpretable Textural Descriptors for Quantification
-  of Mitochondrial States in Yeast Fluorescence Microscopy) has no DOI on the record, so publications is empty. Microscope
-  and objective are not stated; images were resampled to 0.06 um/px. The images are split into two experiments with different
-  condition coverage; no train/test split is provided. The images zip is 195.4 MB and masks.zip 2.8 MB (size_bytes is their
-  sum).'
+  last_checked: '2026-10-10T00:20:00Z'
+notes: 'From the Zenodo record, its README and both zip listings (3,334 PNG images and 3,334 PNG masks with matching names). Masks were
+  produced automatically with Cellpose-SAM from paired brightfield images and then visually quality-controlled, so they mark whole cells,
+  not mitochondria. The accompanying study (Interpretable Textural Descriptors for Quantification of Mitochondrial States in Yeast Fluorescence
+  Microscopy) has no DOI on the record, so publications is empty. Microscope and objective are not stated; images were resampled to
+  0.06 um/px. The images are split into two experiments with different condition coverage; no train/test split is provided. Files: images.zip
+  195.4 MB, masks.zip 2.8 MB, metadata.csv, README, LICENSE, CITATION (size_bytes is all six). enricher: masks are binary (0 background,
+  1 cell); download_url is the record (two zips, no single archive).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |-
+      zenodo.org/records/21261399
+        images.zip/images/<id>.png   3334 files  195.8 MB  (224x224 uint16)
+        masks.zip/masks/<id>.png     3334 files    3.0 MB  (224x224 uint8)
+        metadata.csv                 59.5 KB   (image, experiment, day, medium)
+        README.md, LICENSE.md, CITATION.cff
+    n_files: 6670
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/21261399/files/images.zip::images/06803_01.png
+    - https://zenodo.org/records/21261399/files/masks.zip::masks/06803_01.png
+    size_bytes: 68768
+    description: one yeast cell patch (224x224 uint16) and its cell mask
+  arrays:
+  - role: raw
+    path_pattern: images/*.png
+    format: png
+    axes: yx
+    shape:
+    - 224
+    - 224
+    shape_varies: false
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 727
+    - 5222
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 16-bit greyscale PNG (mode I;16), resampled to 0.06 um/px per the README
+  - role: label
+    path_pattern: masks/*.png
+    format: png
+    axes: yx
+    shape:
+    - 224
+    - 224
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 1
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: cell
+    alignment: same-grid
+    alignment_notes: masks/<id>.png pairs with images/<id>.png (same identifier, joined via metadata.csv); same 224x224 grid
+  notes: 'Listed the record with --expand-zips (6 files, 6,668 zip members, exact sizes). Read README.md, LICENSE.md (CC BY 4.0) and
+    metadata.csv. Sampled images/06803_01.png (68 KB): uint16 727-4938 p99.9, max 5222; masks/06803_01.png: values {0: 2,712, 1: 47,464}.
+    value_range from one sample. Voxel size 60 nm from the README (resampled to a common 0.06 um/pixel); PNGs carry no calibration.
+    No single archive: images.zip and masks.zip are both direct (usable) links.'
