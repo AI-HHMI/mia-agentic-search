@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: mendeley-wg4bpm33hj-ccagt-agnor-cervical
 title: 'CCAgT: Images of Cervical Cells with AgNOR Stain Technique'
 short_name: CCAgT AgNOR cervical cytology (brightfield)
-description: 9,339 brightfield images (1600x1200, 0.111 um/pixel per the Hugging Face card) of cervical cytology slides stained with the AgNOR technique, from 15 slides, with more than 63,000 annotated objects (nuclei, NORs/clusters/satellites, leukocytes etc.). Annotations are semantic masks (8 pixel values), COCO-format boxes and polygons, made in Labelbox and reviewed. 70/15/15 train/test/validation split in the loader.
+description: 9,339 brightfield images (1600x1200, 0.111 um/pixel per the Hugging Face card) of cervical cytology
+  slides stained with the AgNOR technique, from 15 slides, with more than 63,000 annotated objects (nuclei, NORs/clusters/satellites,
+  leukocytes etc.). Annotations are semantic masks (8 pixel values), COCO-format boxes and polygons, made in Labelbox
+  and reviewed. 70/15/15 train/test/validation split in the loader.
 landing_url: https://data.mendeley.com/datasets/wg4bpm33hj/2
 doi: 10.17632/wg4bpm33hj.2
 date_published: '2022-06-01'
@@ -39,10 +42,10 @@ data:
   formats:
   - jpeg
   - png
-  size_bytes: null
+  size_bytes: 3573688679
   n_items: 9339
   access: open
-  download_url: https://md-datasets-cache-zipfiles-prod.s3.eu-west-1.amazonaws.com/wg4bpm33hj-2.zip
+  download_url: https://data.mendeley.com/datasets/wg4bpm33hj/2
   download_method: http
 annotations:
   present: true
@@ -57,12 +60,12 @@ ml:
   tasks:
   - segmentation
   - detection
-  splits_provided: true
+  splits_provided: false
   benchmark: null
   baseline_code_url: null
 license:
   spdx: CC-BY-NC-3.0
-  url: null
+  url: https://creativecommons.org/licenses/by-nc/3.0
 provenance:
   discovered_by: harvest-websearch
   discovered_at: '2026-10-10T01:14:56Z'
@@ -71,10 +74,108 @@ provenance:
   - https://huggingface.co/datasets/lapix/CCAgT
   - https://huggingface.co/datasets/lapix/CCAgT/raw/main/CCAgT.py
   - https://api.crossref.org/works/10.1109/CBMS49503.2020.00110
-  confidence: 0.65
+  - https://data.mendeley.com/public-api/datasets/wg4bpm33hj?version=2
+  - https://data.mendeley.com/public-files/datasets/wg4bpm33hj/files/d2930d96-ed66-4d0b-b32d-542e49fc11a0/file_downloaded
+  - https://huggingface.co/datasets/lapix/CCAgT/raw/main/README.md
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-10T01:25:00Z'
-notes: 'Details (pixel size, formats, annotation types, split) come from the Hugging Face dataset card (lapix/CCAgT, a loader script that downloads the Mendeley zip), since the Mendeley Files section was empty and the zip index could not be read (server reports no size). Paper full text is not open access (IEEE CBMS 2020; second-version paper at SSRN 10.2139/ssrn.4126881 not read). Image count and annotation formats not verified in the archive listing. Pixel size 0.111 um from the HF card.'
+  annotations_verified: true
+  last_checked: '2026-10-10T02:55:00Z'
+notes: 'Pixel size 0.111 um, 9339 images, 63190 annotations: Mendeley description and readme.md. Paper full text
+  is not open access (IEEE CBMS 2020; SSRN 10.2139/ssrn.4126881 not read). enricher: license.url from the Mendeley
+  API data_licence (CC BY NC 3.0). enricher: annotations_verified true (masks listed and sampled). enricher: splits_provided
+  false (no split files; the HF loader draws a seeded 70/15/15 split). enricher: size_bytes from the Mendeley file
+  API (was null); download_url set to the landing page because the old S3 zip cache now answers 403.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "./  33 files, 3,573,688,679 B (Mendeley public API, exact sizes)\n  CCAgT_COCO_OD.json      32.6 MB \
+      \ COCO boxes/polygons\n  CCAgT.parquet.gzip       9.1 MB  annotation table\n  readme.md                6.7\
+      \ KB\n  images/  A.zip ... O.zip (15, one per slide)  3.52 GB  -> <slide>/<slide>_<tile>_<x>_<y>.jpg\n  masks/\
+      \   A.zip ... O.zip (15)                 16.2 MB  -> <slide>/<slide>_<tile>_<x>_<y>.png\ne.g. images/N.zip:\
+      \ 248 .jpg (93.0 MB); masks/N.zip: 248 .png, same stems\n"
+    n_files: 33
+    listing_complete: true
+  sample:
+    urls:
+    - https://prod-dcd-datasets-public-files-eu-west-1.s3.eu-west-1.amazonaws.com/c2f98d7a-c27c-4e5d-9faf-89d2051c5dfe::N/N_14222_-178560_142560.jpg
+    - https://prod-dcd-datasets-public-files-eu-west-1.s3.eu-west-1.amazonaws.com/0a052efd-3a19-4a19-b6ff-43312d21079f::N/N_14222_-178560_142560.png
+    size_bytes: 406453
+    description: Slide N image N_14222_-178560_142560.jpg and its mask from images/N.zip and masks/N.zip (S3 object
+      URLs that the Mendeley file_downloaded links redirect to).
+  arrays:
+  - role: raw
+    path_pattern: images/*.zip
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1200
+    - 1600
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 23
+    - 222
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB brightfield tiles inside one zip per slide; members <slide>/<slide>_<tile>_<x>_<y>.jpg.
+  - role: label
+    path_pattern: masks/*.zip
+    format: png
+    axes: yx
+    shape:
+    - 1200
+    - 1600
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 2
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: nucleus
+    - id: 2
+      name: cluster
+    - id: 3
+      name: satellite
+    - id: 4
+      name: nucleus out of focus
+    - id: 5
+      name: overlapped nuclei
+    - id: 6
+      name: non-viable nucleus
+    - id: 7
+      name: leukocyte nucleus
+    alignment: same-grid
+    alignment_notes: One grey PNG per image, same stem in masks/<slide>.zip (248 of 248 paired for slide N); values
+      0-7 per the HF dataset card.
+  - role: label
+    path_pattern: CCAgT_COCO_OD.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: COCO object-detection annotations (boxes/polygons) for all images; not opened.
+  notes: 'Listing from the Mendeley public API (root files plus folders/2 -> images, masks), exact per-file sizes;
+    tools/listing.py cannot list Mendeley, so size_source is page-stated (sum of API sizes). Zip indexes read with
+    peek_archive (images/N.zip 248 .jpg 93.0 MB; masks/N.zip 248 .png). Probed N_14222_-178560_142560: jpeg 1200x1600x3
+    uint8; png 1200x1600 uint8 grey. Sampled by downloading images/N.zip and masks/N.zip whole (93.5 MB; sample.py
+    misreads extensionless zip URLs): raw value range 23-222 (one image, RGB channels differ); that mask has values
+    {0,1,2}; all 248 slide-N masks together hold values 0-7. Direct links: the Mendeley file_downloaded URLs 302
+    to S3 objects (prod-dcd-datasets-public-files-eu-west-1.s3.eu-west-1.amazonaws.com, ranges ok, not on the TensorSwitch
+    allowlist); the probe got HTTP 403 on the Mendeley URLs themselves. No single archive: the old md-datasets-cache
+    zip returns 403.'
