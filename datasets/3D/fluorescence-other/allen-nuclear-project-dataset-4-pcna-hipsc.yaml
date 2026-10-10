@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: allen-nuclear-project-dataset-4-pcna-hipsc
 title: Nuclear Project Dataset 4 (PCNA DNA replication foci, 3D single-cell images and segmentations)
 short_name: hiPSC 3D single cells, PCNA replication foci
-description: "2,420 cropped 3D single-cell images of live mEGFP-PCNA tagged hiPSCs (DNA replication foci) with NucViolet DNA and CellMask membrane dyes and label-free predicted fibrillarin and nucleophosmin channels, each with 8-bit segmentation masks (DNA, membrane, PCNA foci and the two label-free channels) and a cell-cycle stage label."
+description: 2,420 cropped 3D single-cell images of live mEGFP-PCNA tagged hiPSCs (DNA replication foci) with NucViolet DNA and CellMask
+  membrane dyes and label-free predicted fibrillarin and nucleophosmin channels, each with 8-bit segmentation masks (DNA, membrane,
+  PCNA foci and the two label-free channels) and a cell-cycle stage label.
 landing_url: https://allencell.s3.amazonaws.com/aics/nuclear_project_dataset_4/README.md
 doi: null
 repository: other
@@ -24,7 +26,7 @@ imaging:
   channels: 5
   organism:
   - Homo sapiens
-  sample: "Live gene-edited hiPSCs (PCNA-mEGFP line from the Allen Cell Collection), single-cell crops"
+  sample: Live gene-edited hiPSCs (PCNA-mEGFP line from the Allen Cell Collection), single-cell crops
   labels_stains:
   - PCNA-mEGFP
   - NucViolet (DNA)
@@ -62,10 +64,77 @@ provenance:
   - https://allencell.s3.amazonaws.com/aics/nuclear_project_dataset_4/metadata.csv
   - https://allencell.s3.amazonaws.com/?list-type=2&prefix=aics/nuclear_project_dataset_4/
   - https://www.allencell.org/terms-of-use.html
+  - https://allencell.s3.amazonaws.com/aics/nuclear_project_dataset_4/crop_raw/3d7aebaf329ae6445fa76cd81888f4421eeb24985270a328af38917261691438_raw.ome.tif
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T05:15:30Z'
-notes: "Read README, metadata.csv (2,420 rows, 0.108333 um isotropic; originals 0.108 x 0.108 x 0.29 um) and the S3 listing (size = sum of crop_raw and crop_seg). Masks are 0/255 uint8 per channel. Stages: M0 2,275; M6M7_single 65; M4M5 36; M1M2 26; M3 15; M6M7_complete 3. PCNA masks are blank for cells without replication foci (~40%). Interphase stage (cell_stage_fine) was set manually by an expert; mitotic stage from rules plus a classifier. How masks were made is not stated. Same series as catalogued nuclear project dataset 1 (SON), different tagged structure. S3 was listed because the Quilt viewer is JavaScript only. License: Allen Institute Terms of Use (non-commercial research, attribution; commercial needs written permission). No paper is linked."
+  last_checked: '2026-10-10T07:30:00Z'
+notes: 'Read README, metadata.csv (2,420 rows, 0.108333 um isotropic; originals 0.108 x 0.108 x 0.29 um) and the S3 listing (size =
+  sum of crop_raw and crop_seg). Masks are 0/255 uint8 per channel. Stages: M0 2,275; M6M7_single 65; M4M5 36; M1M2 26; M3 15; M6M7_complete
+  3. PCNA masks are blank for cells without replication foci (~40%). Interphase stage (cell_stage_fine) was set manually by an expert;
+  mitotic stage from rules plus a classifier. How masks were made is not stated. Same series as catalogued nuclear project dataset 1
+  (SON), different tagged structure. S3 was listed because the Quilt viewer is JavaScript only. License: Allen Institute Terms of Use
+  (non-commercial research, attribution; commercial needs written permission). No paper is linked.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "s3://allencell/aics/nuclear_project_dataset_4/   4,842 files, 147,810,928,715 B\n  README.md, metadata.csv              \
+      \   2 files, 1.3 MB\n  crop_raw/<hash>_raw.ome.tif             2,420 files, 146.9 GB\n  crop_seg/<hash>_segmentation.ome.tif \
+      \   2,420 files, 934.9 MB\n"
+    n_files: 4842
+    listing_complete: true
+  sample:
+    urls:
+    - https://allencell.s3.amazonaws.com/aics/nuclear_project_dataset_4/crop_raw/3d7aebaf329ae6445fa76cd81888f4421eeb24985270a328af38917261691438_raw.ome.tif
+    - https://allencell.s3.amazonaws.com/aics/nuclear_project_dataset_4/crop_seg/b48389624da6063169eaab9a557157c5d6b37be02f908a2fdf429e80cd06a82c_segmentation.ome.tif
+    size_bytes: 63543034
+    description: 'First metadata.csv row: one single-cell raw crop and its segmentation (paired by metadata.csv, not by name).'
+  arrays:
+  - role: raw
+    path_pattern: crop_raw/*_raw.ome.tif
+    format: ome-tiff
+    axes: czyx
+    shape:
+    - 5
+    - 107
+    - 255
+    - 347
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 93
+    - 65394
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Channel names per cell in metadata.csv name_dict (crop_raw). Z interpolated to isotropic 0.108 um from 0.29 um
+      (README).
+  - role: label
+    path_pattern: crop_seg/*_segmentation.ome.tif
+    format: ome-tiff
+    axes: czyx
+    shape:
+    - 6
+    - 107
+    - 255
+    - 347
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: Pairs come from metadata.csv (CellId, crop_raw, crop_seg); file hashes differ. Same Z/Y/X as the raw crop, but
+      the probed mask has 6 channels while name_dict lists 5 (dna, membrane, PCNA, labelfree_fbl, labelfree_npm1 _segmentation); the
+      6th is not named in metadata.csv or the README.
+  notes: 'S3 listing complete (4,842 files, exact sizes, 147,810,928,715 B). Probed the first metadata.csv pair: raw (5, 107, 255, 347)
+    CZYX uint16 deflate BigTIFF, seg (6, 107, 255, 347) uint8 deflate, OME layout (no physical size in the header). Sampled that pair:
+    raw 93..65394 over all channels (one cell), seg {0, 255} as README states. Voxel size 0.108 um isotropic from README and metadata.csv
+    scale_micron (0.108333). Both sample URLs pass download-check. data.download_url stays the S3 prefix (no single archive). '
