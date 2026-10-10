@@ -28,7 +28,7 @@ imaging:
     x: 908
     y: 908
     z: null
-  channels: null
+  channels: 4
   organism:
   - Rattus norvegicus
   sample: Rat L4/L5 dorsal root ganglion sections 7 or 14 days after spared nerve injury (SNI) or sham injury
@@ -44,7 +44,7 @@ data:
   size_bytes: 18182466983
   n_items: 2541
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/6546069
   download_method: http
 annotations:
   present: true
@@ -71,10 +71,141 @@ provenance:
   - https://zenodo.org/api/records/6546069/files/sham_d14_rat3.zip/content
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1097%2Fj.pain.0000000000002758%22&format=json&resultType=core&pageSize=3
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10026836/fullTextXML
-  confidence: 0.75
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-10T21:30:00Z'
-notes: 'Pixel size 0.908 um/pixel and 2541 images (847 per marker) are from the paper Methods; the channel count is not stated (folder names DAPI and GFAP appear in the listing; the paper names NF, GFAP and GS markers). Only 15 images per marker (3 expert annotators, STAPLE consensus) are manual ground truth (12 NF and 24 GS/GFAP images used for training); masks for the remaining images are deepflash2 model predictions, hence annotations.source mixed and coverage partial. Annotations_ratDRG.rar could not be listed remotely (rar), so annotations_verified is false; one zip (sham_d14_rat3.zip) was listed: 128 tif images and 192 png files. 26 files, 18.2 GB in total, one zip per animal plus 3 model zips and the annotations rar; no single direct archive, so download_url is null.'
+  annotations_verified: true
+  last_checked: '2026-10-10T22:05:00Z'
+notes: 'Pixel size 0.908 um/pixel and 2541 images (847 per marker) are from the paper Methods. Only 15 images per marker (3 expert annotators, STAPLE consensus) are manual ground truth (in Annotations_ratDRG.rar, rar, not listable remotely); the per-image masks in the animal zips (<marker>_pred/masks) are deepflash2 model predictions, hence annotations.source mixed and coverage partial. 26 files, 18.2 GB, one zip per animal plus 2 model zips and the annotations rar; no single archive for the whole dataset. enricher: channels 4 (DAPI, GFAP, GS, NF folders per section in every listed zip; was null). enricher: annotations_verified true (mask PNGs listed and sampled). enricher: download_url set to the Zenodo record (many files; was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |-
+      ./                                          26 files   18.2 GB  .zip 25, .rar 1 (Annotations_ratDRG.rar)
+      zip contents (20 of 25 zips expanded; 6923 members):
+      GS+GFAP model.zip/GS+GFAP/                   3 files  293.6 MB  .pth
+      NF model.zip/...                                                .pth (trained models)
+      {SNI,sham}_d{7,14}_rat#.zip/<animal>/<section>/ (24 animal zips; sections L4CL, L4IL, L5CL, L5IL)
+        DAPI/NNNN.tif                       raw channel, uint16
+        GFAP/NNNN.tif                       raw channel, uint16
+        GS/NNNN.tif                         raw channel, uint16
+        NF/NNNN.tif                         raw channel, uint16
+        GFAP_pred/masks/NNNN.png            predicted binary mask
+        GFAP_pred/uncertainties/NNNN.png    prediction uncertainty map
+        GS_pred/masks/NNNN.png
+        GS_pred/uncertainties/NNNN.png
+        NF_pred/masks/NNNN.png
+        NF_pred/uncertainties/NNNN.png
+      e.g. sham_d14_rat3.zip: 320 members, 128 .tif (914.0 MB) + 192 .png (74.8 MB) uncompressed
+    n_files: 26
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/6546069/files/sham_d14_rat3.zip::sham_d14_rat3/L4CL/NF/0001.tif
+    - https://zenodo.org/records/6546069/files/sham_d14_rat3.zip::sham_d14_rat3/L4CL/NF_pred/masks/0001.png
+    size_bytes: 7902823
+    description: Animal sham_d14_rat3, section L4CL, image 0001; NF channel tile image and its predicted NF mask
+  arrays:
+  - role: raw
+    path_pattern: '*.zip/*/*/NF/*.tif'
+    format: tiff
+    axes: yx
+    shape: [2042, 1926]
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range: [155, 16383]
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Neurofilament (NF) channel. Single-page TIFF (tiff_layout shaped, axes yx). File sizes differ (7.9-12.9 MB), so shapes vary per image.
+  - role: raw
+    path_pattern: '*.zip/*/*/GS/*.tif'
+    format: tiff
+    axes: yx
+    shape: [2042, 1926]
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Glutamine synthetase (GS) channel; same file names and sizes as the NF channel of the section (header of NF probed; GS not probed separately).
+  - role: raw
+    path_pattern: '*.zip/*/*/GFAP/*.tif'
+    format: tiff
+    axes: yx
+    shape: [2042, 1926]
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: GFAP channel; same file names and sizes as the NF channel of the section (not probed separately).
+  - role: raw
+    path_pattern: '*.zip/*/*/DAPI/*.tif'
+    format: tiff
+    axes: yx
+    shape: [2042, 1926]
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: DAPI channel (no masks); same file names and sizes as the NF channel (not probed separately).
+  - role: label
+    path_pattern: '*.zip/*/*/NF_pred/masks/*.png'
+    format: png
+    axes: yx
+    shape: [2042, 1926]
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range: [0, 255]
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: NF-positive neuronal somata
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: <section>/NF_pred/masks/NNNN.png labels <section>/NF/NNNN.tif (same shape in the sample). deepflash2 predictions (automatic), not manual annotations.'
+  - role: label
+    path_pattern: '*.zip/*/*/GS_pred/masks/*.png'
+    format: png
+    axes: yx
+    shape: [2042, 1926]
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    encoding: binary
+    classes:
+    - id: 255
+      name: GS-positive ring-shaped glial cells
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: <section>/GS_pred/masks/NNNN.png labels <section>/GS/NNNN.tif. deepflash2 predictions (GS+GFAP model); not sampled, binary 0/255 assumed from the NF mask sample only.'
+  - role: label
+    path_pattern: '*.zip/*/*/GFAP_pred/masks/*.png'
+    format: png
+    axes: yx
+    shape: [2042, 1926]
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    encoding: binary
+    classes:
+    - id: 255
+      name: GFAP-positive ring-shaped glial cells
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: <section>/GFAP_pred/masks/NNNN.png labels <section>/GFAP/NNNN.tif. deepflash2 predictions (GS+GFAP model); not sampled.'
+  notes: >-
+    Listing: tools/listing.py on the Zenodo record, 26 files, 18,182,466,983 bytes (file-listing, complete); with
+    --expand-zips 20 of 25 zips were expanded (6923 members), the rar cannot be listed. Probed (zip members of
+    sham_d14_rat3.zip): NF/0001.tif uint16 2042x1926 uncompressed single page; NF_pred/masks/0001.png and
+    uncertainties/0001.png uint8 grey 2042x1926 (the *_pred/uncertainties/*.png files are per-pixel model uncertainty maps, same grid; not listed as an array). Sampled NF/0001.tif (5.4 MB compressed in zip): 155-16383, p50 272,
+    saturated at the 14-bit maximum (16383); NF mask values {0: 3614768, 255: 318124}. Value ranges are from this one
+    sample only. Class names from the paper (NF model segments NF-positive neuronal somata; GS+GFAP model segments
+    ring-shaped glial cells). The manual expert annotations (15 images per marker, 3 annotators) are only in
+    Annotations_ratDRG.rar, which could not be inspected; its layout is unknown. The model zips hold .pth weights
+    (not opened). Data offered as 26 separate files on Zenodo, no single archive; direct files are
+    https://zenodo.org/records/6546069/files/<name>.
