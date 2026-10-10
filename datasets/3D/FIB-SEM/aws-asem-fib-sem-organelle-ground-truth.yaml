@@ -1,0 +1,100 @@
+schema_version: '1.2'
+id: aws-asem-fib-sem-organelle-ground-truth
+title: 'ASEM: FIB-SEM cell volumes with organelle ground truth (mitochondria, ER,
+  Golgi, nuclear pores, clathrin-coated pits)'
+short_name: ASEM FIB-SEM cells with organelle labels
+description: Isotropic 4-5 nm FIB-SEM volumes of whole cultured cells (chemically
+  fixed and high-pressure frozen) from the Kirchhausen lab, stored as Zarr (and TIFF)
+  in the AWS ASEM bucket. Seven volumes carry manual/semi-automated ground-truth blocks
+  for mitochondria, ER, Golgi apparatus, nuclear pores or clathrin-coated pits; the
+  other volumes hold raw data and model predictions only.
+landing_url: https://registry.opendata.aws/asem-project/
+doi: null
+repository: other
+accession: asem-project
+authors:
+- Bastian Gallusser
+- Giorgio Maltese
+- Giuseppe Di Caprio
+- Tegy John Vadakkan
+- Anwesha Sanyal
+- Elliott Somerville
+- Mrinal Sahasrabudhe
+- Justin O'Connor
+- Martin Weigert
+- Tom Kirchhausen
+publications:
+- title: Deep neural network automated segmentation of cellular structures in volume
+    electron microscopy
+  doi: 10.1083/jcb.202208005
+  url: https://doi.org/10.1083/jcb.202208005
+date_published: null
+imaging:
+  modality:
+  - FIB-SEM
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 5
+    y: 5
+    z: 5
+  channels: 1
+  organism:
+  - Homo sapiens
+  sample: Cultured cells (HEK293A, HeLa, SVG-A, SUM159, Jurkat, BSC-1, macrophages)
+    prepared by chemical fixation or high-pressure freezing and freeze substitution
+  labels_stains: []
+data:
+  formats:
+  - zarr
+  - tiff
+  size_bytes: null
+  n_items: 35
+  access: open
+  download_url: null
+  download_method: s3
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  - organelle
+  coverage: partial
+  format: Zarr label arrays under <cell>.zarr/volumes/labels/{mito,er,golgi,ccp,np};
+    uint32 for mito/er/golgi, uint8 for ccp/np
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/kirchhausenlab/incasem
+license:
+  spdx: CC-BY-SA-4.0
+  url: https://creativecommons.org/licenses/by-sa/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-10T22:42:47Z'
+  evidence_urls:
+  - https://registry.opendata.aws/asem-project/
+  - https://asem-project.s3.amazonaws.com/?list-type=2&prefix=datasets/&delimiter=/
+  - https://asem-project.s3.amazonaws.com/datasets/46/46.zarr/volumes/raw/.zarray
+  - https://asem-project.s3.amazonaws.com/datasets/46/46.zarr/volumes/raw/.zattrs
+  - https://asem-project.s3.amazonaws.com/datasets/46/46.zarr/volumes/labels/mito/.zarray
+  - https://asem-project.s3.amazonaws.com/datasets/3A/3A.zarr/volumes/labels/np/.zarray
+  - https://asem-project.s3.amazonaws.com/datasets/1E/1E.zarr/volumes/labels/ccp/.zarray
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9728137/fullTextXML
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-10T22:42:47Z'
+notes: 'Bucket s3://asem-project/datasets/ (us-east-1, anonymous). 35 numbered dataset
+  folders (e.g. 46, 58, 1E, 3A); S3 listing shows a labels/ group only in 1E (ccp),
+  2E (ccp, er, mito), 3A (mito, np, np_bottom), 46, 58, 61, 64 (er, golgi, mito);
+  others have raw/predictions only, so coverage is partial and the paper says labels
+  are small blocks (about 2-80 um3). Spot-checked: 46 raw uint8 1921x1100x4600 at
+  5 nm, labels/mito uint32 same shape; 3A and 1E at 4 nm. Voxel size recorded as 5
+  nm (several volumes are 4 nm, SUM159 about 10 nm per paper). Organism lists human
+  cell lines only; the species of BSC-1 and macrophage cells was not checked. Licence
+  CC BY-SA 4.0 from registry. Some labelled volumes are re-used COSEM/OpenOrganelle
+  data (paper Table S1, not read). Total size not measured (chunked Zarr).'
