@@ -1,14 +1,24 @@
 schema_version: '1.2'
 id: s-biad3729-lewy-brain-mito-tem
-title: Correlative Ultrastructural Mapping of Lewy Pathology Reveals Regional Diversity in Parkinson's and Dementia with Lewy bodies
+title: Correlative Ultrastructural Mapping of Lewy Pathology Reveals Regional Diversity in Parkinson's and Dementia with Lewy
+  bodies
 short_name: Human brain mitochondria segmentation (TEM)
-description: Raw TEM micrographs of ultrathin sections of post-mortem human brain (substantia nigra, entorhinal cortex, anterior cingulate cortex, hippocampal CA2) from Parkinson's disease and Dementia with Lewy bodies cases, acquired in a correlative light and electron microscopy workflow. The submission includes manual instance segmentation of mitochondria (crops with masks) for entorhinal cortex and substantia nigra images.
+description: Raw TEM micrographs of ultrathin sections of post-mortem human brain (substantia nigra, entorhinal cortex, anterior
+  cingulate cortex, hippocampal CA2) from Parkinson's disease and Dementia with Lewy bodies cases, acquired in a correlative
+  light and electron microscopy workflow. The submission includes manual instance segmentation of mitochondria (crops with
+  masks) for entorhinal cortex and substantia nigra images.
 landing_url: https://www.ebi.ac.uk/biostudies/studies/S-BIAD3729
 doi: 10.6019/S-BIAD3729
 repository: BioImageArchive
 accession: S-BIAD3729
-authors: []
-publications: []
+authors:
+- Notash Shafiei
+- Amanda Lewis
+publications:
+- title: Correlative ultrastructural mapping of Lewy pathology reveals regional diversity in Parkinson's and dementia with
+    Lewy bodies
+  doi: 10.1007/s00401-026-03039-w
+  url: https://doi.org/10.1007/s00401-026-03039-w
 date_published: '2026-07-03'
 imaging:
   modality:
@@ -18,13 +28,14 @@ imaging:
   channels: 1
   organism:
   - Homo sapiens
-  sample: post-mortem brain neurons (substantia nigra, entorhinal cortex, anterior cingulate cortex, hippocampal CA2) with Lewy pathology
+  sample: post-mortem brain neurons (substantia nigra, entorhinal cortex, anterior cingulate cortex, hippocampal CA2) with
+    Lewy pathology
   labels_stains: []
 data:
   formats:
   - tiff
-  size_bytes: null
-  n_items: null
+  size_bytes: 160456840426
+  n_items: 16845
   access: open
   download_url: https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/729/S-BIAD3729/Files/
   download_method: ftp
@@ -34,14 +45,15 @@ annotations:
   - instance-segmentation
   - organelle
   coverage: unknown
-  format: numbered TIFF masks paired with TIFF crops (Folder_NNNN/crops/N.tif and masks/N.tif), grouped by region/disease (ENT-PD, SN-DLB, HN-ENT-DLB, SN-PD)
+  format: 'One float32 TIFF mask per uint8 TIFF crop, same file name: Shafiei_Mito-Segmentation/<group>/Folder_NNNN/crops/N.tif
+    and masks/N.tif (16,845 pairs in 10 region/disease groups, 129 folders); some masks folders also hold roundness_results.txt'
   source: proofread
 ml:
   tasks:
   - segmentation
   splits_provided: false
   benchmark: null
-  baseline_code_url: null
+  baseline_code_url: https://github.com/LBEM-CH/mitoanalyzer
 license:
   spdx: CC-BY-4.0
   url: https://creativecommons.org/licenses/by/4.0/legalcode
@@ -51,10 +63,99 @@ provenance:
   evidence_urls:
   - https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD3729
   - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/729/S-BIAD3729/Files/Shafiei_Mito-Segmentation.json
-  confidence: 0.7
+  - https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD3729/files?offset=0&limit=1000
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13346217/fullTextXML
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T13:58:26Z'
-notes: 'Mask annotation procedure per study metadata: manual delineation in Napari, converted to QuPath polygons, used to train Cellpose Cyto2, proofread with Segment Anything. Pixel size, total size, exact image count and author list were not stated in the study metadata or the file listing (the listing JSON, ~3 MB, was read only in part, roughly 1,100 entries; crops/masks pair by matching numeric file name within each Folder, but some folders list masks without visible crops). The metadata Publication section carries no citation and no dataset paper could be identified, so none is listed (the cited DOI 10.1038/s41596-025-01153-9 is a specimen-preparation protocol). Raw TEM micrographs are listed separately in Shafiei_Raw-TEM-Micrographs_SubmissionList.json, which was not read.'
+  last_checked: '2026-10-10T15:20:00Z'
+notes: 'Annotation (study metadata + paper Methods): 43 EM images manually annotated in Napari, used to fine-tune Cellpose
+  Cyto2 in QuPath; output segmentations proofread with SAM, so most masks are model output proofread. Masks are per-object
+  crops; Shafiei_Raw-TEM-Micrographs/ (252 full TEM micrographs, ~153 GB) has no masks. enricher: paper 10.1007/s00401-026-03039-w
+  found by title (was none); authors from study metadata (was empty); size 160,456,840,426 B and n_items 16845 crop/mask pairs
+  from the BioStudies files API (were null). Pixel size not stated anywhere checked; the paper says images were acquired at
+  three different magnifications, so there is no single voxel size.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "./  Shafiei_Mito-Segmentation.json/.tsv, Shafiei_Raw-TEM-Micrographs_SubmissionList.json/.tsv  4 files  5.3 MB\n\
+      Shafiei_Mito-Segmentation/<group>/Folder_NNNN/crops/N.tif  16845 files  1.42 GB  (uint8 RGB crops)\nShafiei_Mito-Segmentation/<group>/Folder_NNNN/masks/N.tif\
+      \  16845 files  5.6 GB  (float32 masks) + 91 *results.txt\n  groups (pairs): SN-PD 4360, SN-DLB 2849, HN-SN-PD 2723,\
+      \ ENT-DLB 1829, HC-SN 1726,\n                  ENT-PD 864, HN-SN-DLB 741, HC-ENT 655, HN-ENT-PD 594, HN-ENT-DLB 504\n\
+      Shafiei_Raw-TEM-Micrographs/DLB/{ACC,CA2,ENT,SN}/...  226 images  142.5 GB  .tif (+2 .jpg, 1 .png)\nShafiei_Raw-TEM-Micrographs/PD/{ACC,CA2,ENT}/...\
+      \      26 images  11.0 GB  .tif\n(.DS_Store files: 168, omitted)"
+    n_files: 34151
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/729/S-BIAD3729/Files/Shafiei_Mito-Segmentation/ENT-DLB/Folder_0038/crops/0.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/729/S-BIAD3729/Files/Shafiei_Mito-Segmentation/ENT-DLB/Folder_0038/masks/0.tif
+    size_bytes: 14556
+    description: One mitochondrion crop (47x58, grey stored as RGB) and its mask
+  arrays:
+  - role: raw
+    path_pattern: Shafiei_Mito-Segmentation/*/Folder_*/crops/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 47
+    - 58
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 87
+    - 192
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Photometric RGB but the 3 samples are identical (grey stored as RGB, checked with tools/sample.py on
+      SN-PD/Folder_0097/crops/1.tif).
+  - role: label
+    path_pattern: Shafiei_Mito-Segmentation/*/Folder_*/masks/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 47
+    - 58
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range:
+    - 0
+    - 10207
+    normalization: unknown
+    encoding: other
+    classes:
+    - id: null
+      name: mitochondrion
+    alignment: same-grid
+    alignment_notes: Pairs with crops/N.tif of the same Folder by file name (all 16,845 pairs complete); same yx shape as
+      the crop. Each sampled mask holds 0 and a single foreground value (255 in ENT-DLB/Folder_0038/masks/0.tif, 10207 in
+      SN-PD/Folder_0097/masks/1.tif), i.e. a one-object mask whose foreground value varies (possibly an instance ID).
+  - role: raw
+    path_pattern: Shafiei_Raw-TEM-Micrographs/**/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 12263
+    - 12874
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Full TEM micrographs without masks. Probed: PD/CA2/LN/image_000241.tif 2048x2048 uint8 palette (photometric
+      3); DLB/ACC/LB/image_000011.tif 12263x12874 uint16. Sizes 4.2 MB to 3.9 GB per file.'
+  notes: 'Listing: BioStudies files API (34,147 files with exact sizes, 35 pages) plus Content-Length of the 4 root file lists;
+    tools/listing.py stopped early (FTP timeout, HTTP index capped at 200 dirs), so size_source is page-stated (API sizes),
+    not file-listing. Probed crops/masks 0.tif of ENT-DLB/Folder_0038 and two raw micrographs; sampled SN-PD/Folder_0097 pair
+    1 (raw 200x213x3 uint8, 19 grey levels 87-192, one sample) and ENT-DLB/Folder_0038 pair 0 (mask 0/255). value_range is
+    from these samples. 13 files have size 0 (e.g. HC-SN/Folder_0014/crops/40.tif). Voxel size not found; checked: TIFF headers
+    (no calibration), BioStudies study metadata (acquisition parameters N/A), file lists, paper full text (Methods; three
+    magnifications), mitoanalyzer README. No direct whole-dataset archive: download_url stays the Files/ folder; per-file
+    https links on ftp.ebi.ac.uk work (range requests).'
