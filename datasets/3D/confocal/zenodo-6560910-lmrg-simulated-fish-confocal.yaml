@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: zenodo-6560910-lmrg-simulated-fish-confocal
 title: LMRG Image Analysis Study - FISH datasets
 short_name: Simulated 3D FISH spots with labels (confocal)
-description: Simulated 3D confocal fluorescence images of sub-diffraction punctate staining (FISH in C. elegans) from the ABRF Light Microscopy Research Group image analysis study. Four image volumes with four matching label (ground truth) volumes and a confocal PSF (1.4 NA, 1.5 refractive index, 80 nm / 250 nm).
+description: Simulated 3D confocal fluorescence images of sub-diffraction punctate staining (FISH in C. elegans) from the
+  ABRF Light Microscopy Research Group image analysis study. Four image volumes with four matching label (ground truth) volumes
+  and a confocal PSF (1.4 NA, 1.5 refractive index, 80 nm / 250 nm).
 landing_url: https://zenodo.org/records/6560910
 doi: 10.5281/zenodo.6560910
 repository: Zenodo
@@ -10,13 +12,19 @@ accession: '6560910'
 authors:
 - Kristopher Kubow
 - Thomas Pengo
-publications: []
+publications:
+- title: Comparison of Independent Analyses of Identical Image Sets Reveals Significant Analyst-to-Analyst Variability
+  doi: 10.7171/3fc1f5fe.60f1999c
+  url: https://europepmc.org/article/MED/41111557
 date_published: '2022-05-18'
 imaging:
   modality:
   - confocal
   dimensionality: 3D
-  voxel_size_nm: null
+  voxel_size_nm:
+    x: 161.616
+    y: 161.616
+    z: 200.0
   channels: 1
   organism:
   - Caenorhabditis elegans
@@ -53,10 +61,82 @@ provenance:
   evidence_urls:
   - https://zenodo.org/api/records/6560910
   - https://github.com/ABRFLMRG/image-analysis-study
-  confidence: 0.55
+  - https://github.com/ABRFLMRG/image-analysis-study/blob/main/point_registration/correct_scales.py
+  - https://github.com/ABRFLMRG/image-analysis-study/blob/main/image_generation/README_image_generation.md
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22Comparison+of+Independent+Analyses+of+Identical+Image+Sets+Reveals+Significant+Analyst-to-Analyst+Variability%22&format=json&resultType=core&pageSize=3
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T13:58:26Z'
-notes: 'Files per Zenodo record: celegans_dyn-{10,90}_ceff-{0,90}_final.ics.ome.tiff (about 39.6-40.5 MB each) with matching *_label.ics.ome.tiff (about 49.0-49.9 MB each) and PSF_confocal_1.4NA_1.5ri_80nm_250nm.ics (33.6 MB); size_bytes is the sum of the 9 listed files. Meaning of dyn/ceff parameters, image dimensions, voxel size, spot counts and label encoding are not stated on the record or in the study GitHub README (which has no dataset description or license), and no paper was found, so they stay unknown. File header probing returned HTTP 504 from Zenodo, so voxel size could not be read from the files. Labels are inferred to come from the simulation (source: automatic). Sibling record 6560759 (simulated widefield nuclei) is a separate dataset already in the catalog; this one is a different simulated sample type (confocal punctate FISH).'
+  last_checked: '2026-10-10T15:20:00Z'
+notes: 'Files: 4 simulated (Cytopacq) confocal volumes celegans_dyn-{10,90}_ceff-{0,90}_final.ics.ome.tiff, matching *_label.ics.ome.tiff,
+  and PSF_confocal_1.4NA_1.5ri_80nm_250nm.ics. Per the study repo, ceff = clustering effect (0 = low) and dyn = dynamic range
+  usage (90 = high SNR); each phantom has 1500 spots (ini). Labels come from the simulation (automatic). Sibling record 6560759
+  (simulated widefield nuclei) is a separate dataset. enricher: voxel size 161.616x161.616x200 nm from OME-TIFF header, matching
+  the study repo correct_scales.py (fish xy 0.1616 um, z 0.200 um) and ini z step 0.2 um (was null). enricher: paper found
+  via Europe PMC (Pengo, Kubow et al. 2025, J Biomol Tech), not open access, full text not read. enricher: organism C. elegans
+  is the simulated phantom, no real specimen.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  9 files  391.6 MB (Zenodo, flat)\n  celegans_dyn-{10,90}_ceff-{0,90}_final.ics.ome.tiff   4 files  39.6-40.5\
+      \ MB  (uint16 80x495x495 zyx)\n  celegans_dyn-{10,90}_ceff-{0,90}_label.ics.ome.tiff   4 files  49.0-49.9 MB  (uint16\
+      \ 99x495x495 zyx)\n  PSF_confocal_1.4NA_1.5ri_80nm_250nm.ics              1 file   33.6 MB  (PSF, ICS)\n"
+    n_files: 9
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/6560910/files/celegans_dyn-10_ceff-0_final.ics.ome.tiff
+    - https://zenodo.org/records/6560910/files/celegans_dyn-10_ceff-0_label.ics.ome.tiff
+    size_bytes: 88531529
+    description: One simulated volume (celegans_dyn-10_ceff-0_final) and its label volume.
+  arrays:
+  - role: raw
+    path_pattern: celegans_*_final.ics.ome.tiff
+    format: ome-tiff
+    axes: zyx
+    shape:
+    - 80
+    - 495
+    - 495
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 2343
+    - 11907
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: OME-TIFF, 80 z slices, OME calibration 161.616 x 161.616 x 200 nm (probed dyn-90_ceff-90). ceff-90 files
+      are ~1 MB larger than ceff-0 files (about 2 extra 495x495 uint16 slices), so z depth may differ per file.
+  - role: label
+    path_pattern: celegans_*_label.ics.ome.tiff
+    format: ome-tiff
+    axes: zyx
+    shape:
+    - 99
+    - 495
+    - 495
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 1501
+    encoding: instance-ids
+    classes: null
+    alignment: scaled
+    alignment_notes: 'celegans_X_label pairs with celegans_X_final. Same 495x495 xy grid, but 99 z slices vs 80 in the raw:
+      99 x 0.1616 um = 16.0 um = 80 x 0.2 um (VOI depth 16 um in the ini), so the label appears to be on an isotropic 161.6
+      nm grid and needs z rescaling (ratio 0.808) to match the raw. Label header calibration could not be read (probe failed),
+      so this is inferred from shapes.'
+  notes: 'Listing: Zenodo API, 9 files, 391,580,940 B (exact). Probe: dyn-90_ceff-90_final OME-TIFF uint16 [80,495,495] zyx,
+    uncompressed, 161.616x161.616x200 nm; probes of other files hit Zenodo HTTP 504 / truncated reads. Sample (dyn-10_ceff-0
+    pair, 88.5 MB, measured then deleted): raw values 2343-11907 (mean 5172, camera baseline 5130 in the ini, 14-bit, no clipping;
+    normalization none inferred); label values 0-1501, 1502 distinct values, 86.6% zero; value 1 covers about 13% of voxels
+    (p99 = 1), likely the worm body, and 2-1501 would be the 1500 spots set in the ini; not documented, so instance-ids is
+    from the sample. value_range is from one sample. Voxel size: OME header, confirmed by study repo correct_scales.py (SCALES_MAP
+    fish 0.1616 / 0.200 um). The PSF file is not listed as an array. Download: no single archive (files-archive 404); data.download_url
+    stays the record page, the 9 direct files are /records/6560910/files/<name> (usable, range requests).'
