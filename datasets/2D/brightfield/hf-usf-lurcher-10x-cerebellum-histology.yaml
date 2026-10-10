@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: hf-usf-lurcher-10x-cerebellum-histology
 title: Lurcher 10x Microscopy Dataset
 short_name: Lurcher mouse cerebellum histology (brightfield)
-description: 949 JPEG brightfield images (10x, Cresyl violet) of tissue sections through the cerebellum of mouse brains, labelled by animal as Lurcher mutant or wild-type control, with predefined train/val/test fold manifests and seed prompts for classification.
+description: 949 JPEG brightfield images (10x, Cresyl violet) of tissue sections through the cerebellum
+  of mouse brains, labelled by animal as Lurcher mutant or wild-type control, with predefined train/val/test
+  fold manifests and seed prompts for classification.
 landing_url: https://huggingface.co/datasets/USF-CS-Microscopy-Image-Analysis/Lurcher_10x
 doi: null
 repository: HuggingFace
@@ -26,7 +28,8 @@ imaging:
   channels: 3
   organism:
   - Mus musculus
-  sample: Cresyl violet (Nissl) stained histological sections through the cerebellum of mouse brains, wild-type controls and Lurcher mutants; 10x magnification.
+  sample: Cresyl violet (Nissl) stained histological sections through the cerebellum of mouse brains,
+    wild-type controls and Lurcher mutants; 10x magnification.
   labels_stains:
   - Cresyl violet
 data:
@@ -35,14 +38,16 @@ data:
   size_bytes: 474358363
   n_items: 949
   access: open
-  download_url: null
+  download_url: https://huggingface.co/datasets/USF-CS-Microscopy-Image-Analysis/Lurcher_10x
   download_method: http
 annotations:
   present: true
   types:
   - classification
   coverage: dense
-  format: Class label (lurcher or wild) from folder name and metadata.csv, with case id; fold manifests as JSONL
+  format: Class label (lurcher or wild) from the folder name images/microscopy_lurcher/<class>/<case id>/,
+    repeated as "class" in the fold manifests (folds/microscopy_lurcher/fold-N/{train,val,test}.jsonl);
+    no metadata.csv in the repo
   source: unknown
 ml:
   tasks:
@@ -65,5 +70,74 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T19:15:11Z'
-notes: 'Counts come from the Hub file tree: 949 jpg (774 lurcher, 175 wild), 12 fold manifests (jsonl), 4 json, about 474 MB. The card says 21 mouse brains (10 wild-type, 11 Lurcher) while the earlier arXiv paper (2411.02639v2, fetched through a summarizing reader) uses 18 mice (9 and 9) and 1,471 test images, so this release differs from that paper. Labels are per animal (genotype), not per image or region, and the paper does not say how genotype was assigned. Microscope, pixel size and section thickness are not stated on the card or in the paper. Companion CVPRW 2026 paper (arXiv 2605.20495) was not read. Hosted as a Hub dataset; files can be listed through the Hub API.'
+  last_checked: '2026-10-10T20:27:28Z'
+notes: 'Counts come from the Hub file tree: 949 jpg (774 lurcher, 175 wild), 12 fold manifests (jsonl),
+  4 json, about 474 MB. The card says 21 mouse brains (10 wild-type, 11 Lurcher) while the earlier arXiv
+  paper (2411.02639v2, fetched through a summarizing reader) uses 18 mice (9 and 9) and 1,471 test images,
+  so this release differs from that paper. Labels are per animal (genotype), not per image or region,
+  and the paper does not say how genotype was assigned. Microscope, pixel size and section thickness are
+  not stated on the card or in the paper. Companion CVPRW 2026 paper (arXiv 2605.20495) was not read.
+  Hosted as a Hub dataset; files can be listed through the Hub API. enricher: the Hub tree has 11 lurcher
+  case folders (774 images) but only 1 wild case folder (5973, 175 images), not the 10 wild-type animals
+  the card states; no metadata.csv in the repo (labels from folders and fold manifests).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Lurcher_10x/  967 files, 474,358,363 B (Hub API tree, LFS sizes)\n  README.md  .gitattributes\n\
+      \  images/microscopy_lurcher/\n    lurcher/<case>/<case>_lurcher_10x_lurcher_<a>_<b>_Image_<NN>.jpg\
+      \   11 cases, 774 jpg\n      (5917 50, 5954 51, 5955 43, 6323 45, 6350 74, 6480 50, 6481 42, 6509\
+      \ 61, 6510 30, 6926 133, 6927 195)\n    wild/5973/*.jpg                                        \
+      \             1 case, 175 jpg\n  folds/microscopy_lurcher/fold-{5,6,8,10}/  train.jsonl val.jsonl\
+      \ test.jsonl seed.json\n"
+    n_files: 967
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/USF-CS-Microscopy-Image-Analysis/Lurcher_10x/resolve/main/images/microscopy_lurcher/lurcher/5917/5917_lurcher_10x_lurcher_1_1_Image_01.jpg
+    size_bytes: 522442
+    description: One 845x1523 RGB brightfield image of Lurcher case 5917; its class is its folder name.
+  arrays:
+  - role: raw
+    path_pattern: images/microscopy_lurcher/*/*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 845
+    - 1523
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Image-level class from the folder (lurcher / wild), per animal (case id folder).
+      Fold manifests list {"image_path", "class"} per image.
+  - role: label
+    path_pattern: folds/microscopy_lurcher/fold-*/*.jsonl
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes:
+    - id: lurcher
+      name: Lurcher mutant
+    - id: wild
+      name: wild-type control
+    alignment: not-applicable
+    alignment_notes: 'JSON lines {"image_path": <path under images/>, "class": "lurcher"|"wild"}; 4 folds
+      x train/val/test.'
+  notes: 'Hub API tree (recursive) lists 967 files with exact (LFS) sizes, 474,358,363 B = size_bytes.
+    probe.py: 845x1523x3 and 845x1536x3 RGB JPEGs, so width varies. sample.py on 5917_lurcher_10x_lurcher_1_1_Image_01.jpg
+    (522,442 B): [0, 255], mean 199 (bright background), samples differ (stained colour), hint full range
+    used (from one sample). fold-5/test.jsonl (14,920 B) read: one {"image_path", "class"} object per
+    line. Download: every file is a direct Hub resolve/main URL (passes --download-check); no archive,
+    so download_url is the dataset page. Voxel size not found; checked: JPEG headers, dataset card (10x
+    only), arXiv 2411.02639 (as read by the harvester: not stated).'
+  inspected_at: '2026-10-10T20:27:28Z'
