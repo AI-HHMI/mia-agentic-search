@@ -1,0 +1,110 @@
+schema_version: '1.2'
+id: uci-773-defungi-fungi-direct-examination
+title: 'DeFungi: Direct Mycological Examination of Microscopic Fungi Images'
+short_name: Superficial fungi classes (direct microscopy)
+description: Cropped 500 x 500 px patches of direct-examination microscope images of superficial fungal infections (yeasts,
+  moulds and dermatophytes) donated by a Colombian mycology laboratory, manually labelled into five fungal classes with expert
+  assistance. UCI lists 9,114 images (about 150 MB) as a classification benchmark.
+landing_url: https://archive.ics.uci.edu/dataset/773/defungi
+doi: 10.48550/arXiv.2109.07322
+repository: other
+accession: '773'
+authors:
+- Farshid Hajati
+- Camilo Javier Pineda Sopo
+- Soheila Gheisari
+publications:
+- title: 'DeFungi: Direct Mycological Examination of Microscopic Fungi Images'
+  doi: 10.48550/arXiv.2109.07322
+  url: https://arxiv.org/abs/2109.07322
+date_published: '2023-01-28'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Fungi
+  sample: Direct-examination microscope images of patient samples with superficial fungal infections (yeasts, moulds, dermatophytes),
+    taken with a Sony DSC-W830 compact camera on a microscope, with or without staining
+  labels_stains: []
+data:
+  formats:
+  - jpeg
+  size_bytes: 149100000
+  n_items: 9114
+  access: open
+  download_url: https://archive.ics.uci.edu/static/public/773/defungi.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  coverage: dense
+  format: Image-level class labels as top-level folder names (H1, ...; five classes, codes not explained in the UCI page or
+    paper)
+  source: manual
+ml:
+  tasks:
+  - classification
+  splits_provided: false
+  benchmark: Five-class benchmark in the paper (VGG16, Inception V3, ResNet50; 85/15 train-validation split)
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-10T21:00:00Z'
+  evidence_urls:
+  - https://archive.ics.uci.edu/dataset/773/defungi
+  - https://arxiv.org/abs/2109.07322
+  - https://arxiv.org/pdf/2109.07322
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-10T20:55:00Z'
+notes: 'UCI page: 9,114 instances, 149.1 MB zip of .jpg images, CC BY 4.0, five manually labelled classes (not named there).
+  The paper counts differ: about 3,025 raw donated images, patched to 500 x 500 px and filtered, with 2,500 images used in
+  the 5-class experiments, so the zip size may include more patches than the paper used. enricher: zip streamed for its first
+  2 MB (no range support): members are <class>/<class>_<image><side>_<patch>.jpg, first class folder H1; 500x500 RGB JPEGs.
+  Magnification, stain and pixel size are not stated for this dataset (the paper only mentions 10x to 1000x in general terms).
+  The paper says the data are also on Kaggle (camilovu/lemm-pre-processed, lemm-raw) and GitHub (s4632865/lemm), not read
+  here. Organism Fungi (kingdom; species per class not named).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "defungi.zip  149.1 MB (UCI page; server sends no Content-Length)\n  H1/H1_<image><a|b>_<patch>.jpg   first 122\
+      \ members read (H1/H1_100a_1.jpg ... H1/H1_103a_21.jpg)\n  <four more class folders>        not reached: only the first\
+      \ 2 MB were read\n"
+    n_files: 1
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: defungi.zip::*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 500
+    - 500
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 63
+    - 196
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Class = top-level folder name (e.g. H1); patches of one raw image share the <image><side> stem.
+  notes: 'archive.ics.uci.edu serves the zip without range requests or Content-Length, so it cannot be listed remotely. I
+    streamed the first 2 MB, parsed the zip64 local headers (122 members, all H1/*.jpg, deflated) and decoded 3 JPEGs: RGB
+    500x500 uint8, ranges 68-193, 64-196, 63-178. The other class folders, the total member count and any label files were
+    not reached. No sample unit: TensorSwitch needs range requests for zip members, and the host is not on its allowlist.
+    Voxel size not found; checked: JPEG headers (no dpi), UCI page, arXiv paper (raw images 640x480 to 5152x3864, magnification
+    not given per image).'
