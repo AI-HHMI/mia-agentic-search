@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: allen-nuclear-project-dataset-3-rpb1-hipsc
 title: Nuclear Project Dataset 3 (RPB1 (POLR2A) RNA polymerase II, 3D single-cell images and segmentations)
 short_name: hiPSC 3D single cells, RPB1 Pol II + masks
-description: "3,073 cropped 3D single-cell images of live mEGFP-RPB1 tagged hiPSCs (RNA polymerase II) with NucViolet DNA and CellMask membrane dyes and label-free predicted fibrillarin and nucleophosmin channels, each with 8-bit segmentation masks (DNA, membrane, POLR2A (whole and bright-blob versions) and the two label-free channels) and a cell-cycle stage label."
+description: 3,073 cropped 3D single-cell images of live mEGFP-RPB1 tagged hiPSCs (RNA polymerase II) with NucViolet DNA and CellMask
+  membrane dyes and label-free predicted fibrillarin and nucleophosmin channels, each with 8-bit segmentation masks (DNA, membrane,
+  POLR2A (whole and bright-blob versions) and the two label-free channels) and a cell-cycle stage label.
 landing_url: https://allencell.s3.amazonaws.com/aics/nuclear_project_dataset_3/README.md
 doi: null
 repository: other
@@ -24,7 +26,7 @@ imaging:
   channels: 5
   organism:
   - Homo sapiens
-  sample: "Live gene-edited hiPSCs (RPB1 (POLR2A)-mEGFP line from the Allen Cell Collection), single-cell crops"
+  sample: Live gene-edited hiPSCs (RPB1 (POLR2A)-mEGFP line from the Allen Cell Collection), single-cell crops
   labels_stains:
   - RPB1-mEGFP
   - NucViolet (DNA)
@@ -62,10 +64,77 @@ provenance:
   - https://allencell.s3.amazonaws.com/aics/nuclear_project_dataset_3/metadata.csv
   - https://allencell.s3.amazonaws.com/?list-type=2&prefix=aics/nuclear_project_dataset_3/
   - https://www.allencell.org/terms-of-use.html
+  - https://allencell.s3.amazonaws.com/aics/nuclear_project_dataset_3/crop_raw/52acaa66fc14f938d02868a6a0d169f265dd9c38767af487069c89c8e7e4112d_raw.ome.tif
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T05:15:30Z'
-notes: "Read README, metadata.csv (3,073 rows, 0.108333 um isotropic; originals 0.108 x 0.108 x 0.29 um) and the S3 listing (size = sum of crop_raw and crop_seg). Masks are 0/255 uint8 per channel. Stages: M0 2,946; M6M7_single 48; M4M5 36; M1M2 30; M3 10; M6M7_complete 3. Known issue (2022-04-12) with polr2a_blob_segmentation. Mitotic cell_stage comes from rules plus a classifier. How masks were made is not stated. Same series as catalogued nuclear project dataset 1 (SON), different tagged structure. S3 was listed because the Quilt viewer is JavaScript only. License: Allen Institute Terms of Use (non-commercial research, attribution; commercial needs written permission). No paper is linked."
+  last_checked: '2026-10-10T07:30:00Z'
+notes: 'Read README, metadata.csv (3,073 rows, 0.108333 um isotropic; originals 0.108 x 0.108 x 0.29 um) and the S3 listing (size =
+  sum of crop_raw and crop_seg). Masks are 0/255 uint8 per channel. Stages: M0 2,946; M6M7_single 48; M4M5 36; M1M2 30; M3 10; M6M7_complete
+  3. Known issue (2022-04-12) with polr2a_blob_segmentation. Mitotic cell_stage comes from rules plus a classifier. How masks were made
+  is not stated. Same series as catalogued nuclear project dataset 1 (SON), different tagged structure. S3 was listed because the Quilt
+  viewer is JavaScript only. License: Allen Institute Terms of Use (non-commercial research, attribution; commercial needs written permission).
+  No paper is linked.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "s3://allencell/aics/nuclear_project_dataset_3/   6,148 files, 186,815,238,304 B\n  README.md, metadata.csv              \
+      \   2 files, 1.6 MB\n  crop_raw/<hash>_raw.ome.tif             3,073 files, 185.5 GB\n  crop_seg/<hash>_segmentation.ome.tif \
+      \   3,073 files, 1.3 GB\n"
+    n_files: 6148
+    listing_complete: true
+  sample:
+    urls:
+    - https://allencell.s3.amazonaws.com/aics/nuclear_project_dataset_3/crop_raw/52acaa66fc14f938d02868a6a0d169f265dd9c38767af487069c89c8e7e4112d_raw.ome.tif
+    - https://allencell.s3.amazonaws.com/aics/nuclear_project_dataset_3/crop_seg/5660c0c16b0e269809feb89f6c6881819a3327296ecb0bd223968e824a1b3886_segmentation.ome.tif
+    size_bytes: 42472059
+    description: 'First metadata.csv row: one single-cell raw crop and its segmentation (paired by metadata.csv, not by name).'
+  arrays:
+  - role: raw
+    path_pattern: crop_raw/*_raw.ome.tif
+    format: ome-tiff
+    axes: czyx
+    shape:
+    - 5
+    - 83
+    - 293
+    - 301
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 163
+    - 62777
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Channel names per cell in metadata.csv name_dict (crop_raw). Z interpolated to isotropic 0.108 um from 0.29 um
+      (README).
+  - role: label
+    path_pattern: crop_seg/*_segmentation.ome.tif
+    format: ome-tiff
+    axes: czyx
+    shape:
+    - 6
+    - 83
+    - 293
+    - 301
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairs come from metadata.csv (CellId, crop_raw, crop_seg); file hashes differ. Same Z/Y/X as the raw crop; 6 mask
+      channels vs 5 raw channels (name_dict crop_seg: dna, membrane, polr2a, polr2a_blob, labelfree_fbl, labelfree_npm1 _segmentation).
+      README: polr2a_blob_segmentation has a known issue (2022-04-12).'
+  notes: 'S3 listing complete (6,148 files, exact sizes, 186,815,238,304 B). Probed the first metadata.csv pair: raw (5, 83, 293, 301)
+    CZYX uint16 deflate BigTIFF, seg (6, 83, 293, 301) uint8 deflate, OME layout (no physical size in the header). Sampled that pair:
+    raw 163..62777 over all channels (one cell), seg {0, 255} as README states. Voxel size 0.108 um isotropic from README and metadata.csv
+    scale_micron (0.108333). Both sample URLs pass download-check. data.download_url stays the S3 prefix (no single archive). '
