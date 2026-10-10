@@ -3,7 +3,7 @@ id: zenodo-10020273-hippocampus-voltage-imaging-hpc2
 title: HPC2 voltage imaging videos of mouse hippocampal neurons with manual neuron ROI annotations
 short_name: Mouse hippocampus voltage imaging (widefield)
 description: 13 wide-field voltage-imaging videos (SomArchon indicator, mouse hippocampus, 10,000-20,000 frames each) with
-  hand-drawn neuron ROIs from two annotators, plus a trained U-Net model. Introduced as the HPC2 dataset group for real-time
+  hand-drawn neuron ROIs from three annotators, plus a trained U-Net model. Introduced as the HPC2 dataset group for real-time
   neuron segmentation in voltage imaging.
 landing_url: https://zenodo.org/records/10020273
 doi: 10.5281/zenodo.10020273
@@ -39,7 +39,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 16704500055
+  size_bytes: 16720244647
   n_items: 13
   access: open
   download_url: https://zenodo.org/api/records/10020273/files/voltage_HPC2.zip/content
@@ -49,8 +49,8 @@ annotations:
   types:
   - instance-segmentation
   coverage: unknown
-  format: HPC2_GT/ contains one annotation TIFF per video plus per-annotator ImageJ ROI files (AnnotatorA/, AnnotatorB/ as .zip
-    and .roi)
+  format: 'HPC2_GT/<video>.tif: multi-page binary TIFF, one page per neuron ROI; plus per-annotator ImageJ ROI files (AnnotatorA/,
+    AnnotatorB/, AnnotatorC/ as .zip and .roi)'
   source: manual
 ml:
   tasks:
@@ -69,16 +69,92 @@ provenance:
   - https://zenodo.org/api/records/10020273/files/voltage_HPC2.zip/content
   - https://arxiv.org/abs/2403.16438
   - https://arxiv.org/pdf/2403.16438
+  - https://github.com/mitmedialab/voltage
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T12:25:00Z'
-notes: 'The Zenodo record has no description; facts come from the zip listing (peek_archive: 13 HPC2/*.tif videos 1.0-2.7 GB
-  each, HPC2_GT/*.tif plus AnnotatorA and AnnotatorB ROI files) and the arXiv paper (full PDF read), which introduces HPC2
-  as 13 mouse-hippocampus videos with SomArchon, conventional one-photon wide-field microscopy, 645-826 fps, 10,000-20,000
-  frames per video. Pixel size and the annotation procedure are not stated on the record or in the paper text I read; the
-  paper does not describe who annotated HPC2 beyond the ROI files. Annotation coverage is unknown: the record does not say whether all neurons are covered
-  and ROI counts per video were not checked. The zip also contains a trained U-Net model in a
-  separate file (voltage_u-net_model.h5, 15.7 MB). Some GT ROI files are .roi (single ROI) rather than .zip.'
+  last_checked: '2026-10-10T13:40:00Z'
+notes: 'The Zenodo record has no description; facts come from the zip listing (peek_archive: 13 HPC2/*.tif videos 1.0-2.7
+  GB each, HPC2_GT/*.tif plus AnnotatorA/B/C ROI files) and the arXiv paper (full PDF read), which introduces HPC2 as 13 mouse-hippocampus
+  videos with SomArchon, conventional one-photon wide-field microscopy, 645-826 fps, 10,000-20,000 frames per video. Pixel
+  size and the annotation procedure are not stated on the record or in the paper text I read; the paper does not describe
+  who annotated HPC2 beyond the ROI files. Annotation coverage is unknown: the record does not say whether all neurons are
+  covered and ROI counts per video were not checked. The zip also contains a trained U-Net model in a separate file (voltage_u-net_model.h5,
+  15.7 MB). Some GT ROI files are .roi (single ROI) rather than .zip. enricher: three annotator folders (A, B, C) in the zip
+  listing and code repo (was two); size now includes the U-Net .h5.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "./                           2 files   16.7 GB\n  voltage_HPC2.zip           16.7 GB  (65 members, 23.5 GB uncompressed)\n\
+      \    HPC2/                    13 files  23.5 GB  .tif  (videos, e.g. 00_02.tif, 02_01.tif)\n    HPC2_GT/           \
+      \      13 files   3.3 MB  .tif  (one per video, same names)\n    HPC2_GT/AnnotatorA/      13 files  .zip 11, .roi 2\n\
+      \    HPC2_GT/AnnotatorB/      13 files  .zip 10, .roi 3\n    HPC2_GT/AnnotatorC/      13 files  .zip\n  voltage_u-net_model.h5\
+      \     15.7 MB  (trained model, not data)\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/10020273/files/voltage_HPC2.zip/content::HPC2/02_01.tif
+    - https://zenodo.org/api/records/10020273/files/voltage_HPC2.zip/content::HPC2_GT/02_01.tif
+    size_bytes: 1170926034
+    description: Smallest video HPC2/02_01.tif (1.17 GB, deflated in the zip) and its ground-truth mask stack HPC2_GT/02_01.tif.
+  arrays:
+  - role: raw
+    path_pattern: voltage_HPC2.zip::HPC2/*.tif
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Voltage-imaging videos (10,000-20,000 frames each per the paper). Header not readable: the members are
+      deflated inside the zip, so axes, shape and dtype are unknown.'
+  - role: label
+    path_pattern: voltage_HPC2.zip::HPC2_GT/*.tif
+    format: tiff
+    axes: null
+    shape:
+    - 3
+    - 124
+    - 398
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: 1
+      name: neuron
+    alignment: unknown
+    alignment_notes: 'Pairing: HPC2_GT/<name>.tif belongs to HPC2/<name>.tif (same file name; code repo params/run_hpc2.py).
+      Each page is one neuron ROI as a binary mask (code repo evaluate/roi.py: multipage binary TIFF, shape (# ROIs, height,
+      width)); the page axis is an ROI index, not z/t/c, so axes stay null. Shape from probe of HPC2_GT/01_01.tif (3 pages,
+      124 x 398). Raw shape unknown, so grid match not confirmed. AnnotatorA/B/C hold the per-annotator ImageJ ROIs.'
+  - role: label
+    path_pattern: voltage_HPC2.zip::HPC2_GT/Annotator?/*.{zip,roi}
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    encoding: polygons
+    classes: null
+    alignment: same-grid
+    alignment_notes: ImageJ ROI contours per annotator (A, B, C), in video pixel coordinates (code repo evaluate/roi.py reads
+      them into masks of the image shape).
+  notes: 'Listing: Zenodo API + zip central directory, 2 files, 16,720,244,647 B, complete (65 zip members). Probed HPC2_GT/01_01.tif
+    (148,644 B, uncompressed uint8, 3 x 124 x 398). Raw video header not readable (deflated zip member). Not sampled: smallest
+    video is 1.17 GB, over the 500 MB budget. Zenodo returned intermittent HTTP 504 / SSL EOF on range requests during this
+    run. Voxel size not found; checked: Zenodo API record (no description), GT TIFF header (no calibration), arXiv 2403.16438
+    full text (HTML and PDF), code repo github.com/mitmedialab/voltage (README, params, gt, evaluate). Size from listing,
+    so no estimate needed. Code repo is MIT; the data are CC-BY-4.0 on Zenodo.'
