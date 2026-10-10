@@ -2,8 +2,8 @@ schema_version: '1.2'
 id: empiar-10812-2d-class-selection-training
 title: Training data set for automated 2D class selection
 short_name: Cryo-EM 2D class averages with quality scores
-description: 18,051 RELION 2D class average images from 233 cryo-EM 2D classification jobs, each job with a manually
-  assigned job score and each class sorted by hand into quality categories, used to train the relion_class_ranker network.
+description: 18,051 RELION 2D class average images from 233 cryo-EM 2D classification jobs, each job with a manually assigned
+  job score and each class sorted by hand into quality categories, used to train the relion_class_ranker network.
 landing_url: https://www.ebi.ac.uk/empiar/EMPIAR-10812/
 doi: 10.6019/EMPIAR-10812
 repository: EMPIAR
@@ -41,7 +41,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: 'Per 2D classification job subdirectory (233): job_score.txt (manual job score 0 to 1), backup_selection.star (manual class category 0 to 6 per class), RELION run_*.star metadata and features_normalized.star'
+  format: 'Per 2D classification job subdirectory (233): job_score.txt (manual job score 0 to 1), backup_selection.star (manual
+    class category 0 to 6 per class), RELION run_*.star metadata and features_normalized.star'
   source: manual
 ml:
   tasks:
@@ -65,9 +66,89 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T06:30:00Z'
-notes: 'Derived data: the images are 2D class averages (single-particle cryo-EM), not raw micrographs, and the source proteins are not
-  listed, so organism is left empty. The EMPIAR entry gives size 20.7 GB (rounded) and 18,051 images in .mrcs stacks, one stack per job
-  folder; the folder listing shows 233 job directories, matching the 233 jobs in the paper. Pixel and box sizes vary per job and are not set. The paper (open
-  access) states the network was trained on these 18,051 classes and that a validation split of 5,850 classes from 73 jobs was used only during development, so no split is
-  provided. Class category codes (1 best ... 6 or 0 worst) follow the entry description. Checked: EMPIAR entry page and API, data folder listing, paper Methods and Data availability.'
+  last_checked: '2026-10-10T04:35:00Z'
+notes: 'Derived data: the images are 2D class averages (single-particle cryo-EM), not raw micrographs, and the source proteins
+  are not listed, so organism is left empty. The EMPIAR entry gives size 20.7 GB (rounded) and 18,051 images in .mrcs stacks,
+  one stack per job folder; the folder listing shows 233 job directories, matching the 233 jobs in the paper. Pixel and box
+  sizes vary per job and are not set (enricher: MRC headers show 4.24, 1.66 and 2.68 A/px and boxes 64 and 210 px in three
+  jobs; each job states its own _rlnPixelSize in run_model.star). The paper (open access) states the network was trained on
+  these 18,051 classes and that a validation split of 5,850 classes from 73 jobs was used only during development, so no split
+  is provided. Class category codes (1 best ... 6 or 0 worst) follow the entry description. Checked: EMPIAR entry page and
+  API, data folder listing, paper Methods and Data availability.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "data/   233 job folders (12 random characters each), 20.7 GB (EMPIAR entry)\n  <job>/   e.g. Eeheevaoj2qu/\n  \
+      \  run_classes.mrcs          2D class averages, one stack per job (1.6 MB in Eeheevaoj2qu)\n    backup_selection.star\
+      \     manual class category per class (_rlnSelected)\n    job_score.txt             manual job score (e.g. 0.2)\n  \
+      \  features_normalized.star  class_ranker features\n    run_data.star  run_model.star  run_optimiser.star  run_sampling.star\
+      \   RELION metadata\n10812.xml\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/empiar/world_availability/10812/data/Eeheevaoj2qu/run_classes.mrcs
+    - https://ftp.ebi.ac.uk/empiar/world_availability/10812/data/Eeheevaoj2qu/backup_selection.star
+    - https://ftp.ebi.ac.uk/empiar/world_availability/10812/data/Eeheevaoj2qu/job_score.txt
+    size_bytes: 1639677
+    description: 'Job Eeheevaoj2qu: its 100 class averages (64x64, 4.24 A/px), class categories and job score'
+  arrays:
+  - role: raw
+    path_pattern: data/*/run_classes.mrcs
+    format: mrc
+    axes: null
+    shape:
+    - 100
+    - 64
+    - 64
+    shape_varies: true
+    dtype: float32
+    compression: none
+    lossy: false
+    value_range:
+    - -8.187946319580078
+    - 7.675360679626465
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One MRC stack per job; the first axis indexes the 2D class averages (space group 0 image stack), not
+      z. Number of classes (100, 200) and box size (64, 210 px) vary per job.
+  - role: label
+    path_pattern: data/*/backup_selection.star
+    format: other
+    axes: null
+    shape:
+    - 100
+    - 1
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range:
+    - 0
+    - 5
+    encoding: semantic-ids
+    classes:
+    - id: 1
+      name: best (red)
+    - id: 5
+      name: second-best (magenta)
+    - id: 2
+      name: third-best (green)
+    - id: 3
+      name: fourth-best (blue)
+    - id: 4
+      name: fourth-best (cyan)
+    - id: 6
+      name: worst (yellow)
+    - id: 0
+      name: worst (not coloured)
+    alignment: not-applicable
+    alignment_notes: RELION STAR loop with one _rlnSelected value per class, row i = image i of run_classes.mrcs in the same
+      job folder. job_score.txt in the same folder holds one job-level score.
+  notes: 'Listing: the data/ HTTP index has 233 job folders; listing.py stopped after 200 folders (1,593 files, 19.6 GB, rounded
+    sizes), so size stays the EMPIAR-stated 20.7 GB. Job Eeheevaoj2qu holds 8 files. Probed run_classes.mrcs of 3 jobs: (100,64,64)
+    4.24 A, (100,210,210) 1.66 A, (200,210,210) 2.68 A, float32. Sampled Eeheevaoj2qu (1,639,424 B): min -8.19, max 7.68,
+    mean 0.06, std 0.87 (one sample; RELION references, normalization not documented). backup_selection.star read: 100 rows,
+    values 0, 1, 2, 5; job_score.txt 0.2. Category meanings from the EMPIAR entry description. Voxel size not set: it differs
+    per job (stated per job in run_model.star _rlnPixelSize and the MRC header). Direct per-file https links exist; no single
+    archive. STAR files are not in the array format list (other).'
