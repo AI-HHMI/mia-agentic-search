@@ -1,0 +1,163 @@
+schema_version: '1.2'
+id: zenodo-15589145-pointtree-axon-training-blocks
+title: 'Dataset for PointTree: Automatic and accurate reconstruction of long-range axonal projections
+  of single-neuron'
+short_name: Mouse axon blocks with masks and skeletons (CSFT)
+description: 18 sparse-labelled mouse brain image blocks with neuron axons (raw 3D TIFF volumes of about
+  268 MB each), each with a segmentation mask TIFF and an SWC skeleton traced semi-automatically with
+  GTree, used as training data for the PointTree axon-reconstruction network. The same Zenodo record also
+  holds the PointTree software and the figure data of the paper.
+landing_url: https://zenodo.org/records/15589145
+doi: 10.5281/zenodo.15589145
+repository: Zenodo
+accession: '15589145'
+authors:
+- Lin Cai
+publications:
+- title: Automatic and accurate reconstruction of long-range axonal projections of single-neuron in mouse
+    brain.
+  doi: 10.7554/eLife.102840
+  url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12401544/fullTextXML
+date_published: '2025-06-04'
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 3D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Mus musculus
+  sample: C57BL/6 mouse brain with AAV-labelled (EYFP / YFP) single-neuron axons, imaged by chemical sectioning
+    fluorescence tomography (CSFT) and HD-fMOST
+  labels_stains:
+  - EYFP
+data:
+  formats:
+  - tiff
+  size_bytes: 2113629212
+  n_items: 18
+  access: open
+  download_url: https://zenodo.org/records/15589145/files/dataset_for_training.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  - skeleton
+  coverage: sparse
+  format: mask/<n>.tif segmentation TIFFs and swc_file/<n>.swc neuron skeletons, paired with raw_image/<n>.tif
+  source: proofread
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/FateUBW0227/Seg_Net
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-10T18:13:36Z'
+  evidence_urls:
+  - https://zenodo.org/records/15589145
+  - https://zenodo.org/api/records/15589145/files/dataset_for_training.zip/content
+  - https://zenodo.org/api/records/15589145/files/ReadMe.MD/content
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12401544/fullTextXML
+  - https://raw.githubusercontent.com/FateUBW0227/Seg_Net/main/README.md
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-10T20:34:18Z'
+notes: 'Record covers dataset_for_training.zip (peek_archive: raw_image/1..18.tif at 268.5 MB each, mask/1..18.tif,
+  swc_file/1..18.swc; 4.9 GB uncompressed). The Zenodo record also holds PointTree_software.zip and figure
+  data zips (Full_data1/2, patch_data, data_for_different_SNR, etc.), not described here. The paper says
+  each training set has 20 blocks of 512x512x512 voxels, which does not match the 18 blocks listed, so
+  counts are from the file listing. Voxel size is not stated in the paper text or ReadMe I read (skeleton
+  points are interpolated to under 1 um spacing). The skeletons come from the semi-automatic GTree software
+  with manual modification per the paper; masks are derived from them, so they are listed as proofread.
+  Which of the two imaging systems each block comes from is not stated. enricher: sampled block 1: raw
+  512^3 uint16, mask 512^3 uint8 with graded values 0-253 (not binary), same grid; voxel size still not
+  found (block origin system not stated).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "dataset_for_training.zip  2,113,629,212 B (54 members, 4.9 GB uncompressed)\n  raw_image/<1-18>.tif\
+      \   18  268,532,914 B each (512x512x512 uint16)\n  mask/<1-18>.tif        18  LZW, e.g. 1.tif 4,742,268\
+      \ B\n  swc_file/<1-18>.swc    18  25.7 MB total\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/15589145/files/dataset_for_training.zip::raw_image/1.tif
+    - https://zenodo.org/records/15589145/files/dataset_for_training.zip::mask/1.tif
+    - https://zenodo.org/records/15589145/files/dataset_for_training.zip::swc_file/1.swc
+    size_bytes: 276294020
+    description: 'Block 1: raw 512^3 volume, its mask and its SWC skeleton (same number in raw_image/,
+      mask/, swc_file/).'
+  arrays:
+  - role: raw
+    path_pattern: raw_image/*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 512
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 2816
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: '512-page TIFF; pages are z: the paper and the Seg_Net README describe the training
+      data as 512x512x512 voxel 3D image blocks.'
+  - role: label
+    path_pattern: mask/*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 512
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 253
+    normalization: none
+    encoding: unknown
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: same number in raw_image/ and mask/. Shapes match. Values are graded
+      (254 distinct, 97.6% zeros), consistent with the paper''s Gaussian-kernel probability images built
+      from skeletons (Figure 1-figure supplement 1), but the paper does not say these training masks are
+      made that way, so encoding is unknown; Seg_Net README: "Generate mask images from labeled swc files".'
+  - role: label
+    path_pattern: swc_file/*.swc
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: graph
+    alignment: unknown
+    alignment_notes: SWC neuron skeletons (id, type, x, y, z, radius, parent); 1.swc coordinates span
+      about 1-512, so they look like voxel coordinates of the matching block, which no source states.
+  notes: 'listing.py on the zip: 54 members with exact sizes, 2,113,629,212 B = size_bytes. probe.py:
+    mask/1.tif 512 pages 512x512 uint8 LZW (tifffile shaped layout, axis order not in the file); raw_image/1.tif
+    is deflated in the zip and could not be header-probed. sample.py on block 1 (114,579,275 + 4,230,956
+    B downloaded): raw 512x512x512 uint16 [0, 2816], mean 32, hint 12-bit detector range (normalization
+    none, inferred); mask [0, 253], 254 values, 97.6% zeros; same shape (from one sample). swc_file/1.swc
+    head read with peek_archive. Download: the zip and its raw/mask/swc members pass --download-check.
+    The paper describes 2 training sets of 20 blocks; the zip has 18. Voxel size not found; checked: TIFF
+    headers, Zenodo ReadMe.MD, paper full text (Europe PMC: block sizes in voxels only), Seg_Net README.
+    Blocks come from CSFT or HD-fMOST data, and the zip does not say which, so an upstream voxel size
+    cannot be assigned.'
+  inspected_at: '2026-10-10T20:34:18Z'
