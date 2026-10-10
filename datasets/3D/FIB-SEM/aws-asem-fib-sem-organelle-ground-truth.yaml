@@ -1,13 +1,12 @@
 schema_version: '1.2'
 id: aws-asem-fib-sem-organelle-ground-truth
-title: 'ASEM: FIB-SEM cell volumes with organelle ground truth (mitochondria, ER,
-  Golgi, nuclear pores, clathrin-coated pits)'
+title: 'ASEM: FIB-SEM cell volumes with organelle ground truth (mitochondria, ER, Golgi, nuclear pores,
+  clathrin-coated pits)'
 short_name: ASEM FIB-SEM cells with organelle labels
-description: Isotropic 4-5 nm FIB-SEM volumes of whole cultured cells (chemically
-  fixed and high-pressure frozen) from the Kirchhausen lab, stored as Zarr (and TIFF)
-  in the AWS ASEM bucket. Seven volumes carry manual/semi-automated ground-truth blocks
-  for mitochondria, ER, Golgi apparatus, nuclear pores or clathrin-coated pits; the
-  other volumes hold raw data and model predictions only.
+description: Isotropic 4-5 nm FIB-SEM volumes of whole cultured cells (chemically fixed and high-pressure
+  frozen) from the Kirchhausen lab, stored as Zarr (and TIFF) in the AWS ASEM bucket. Seven volumes carry
+  manual/semi-automated ground-truth blocks for mitochondria, ER, Golgi apparatus, nuclear pores or clathrin-coated
+  pits; the other volumes hold raw data and model predictions only.
 landing_url: https://registry.opendata.aws/asem-project/
 doi: null
 repository: other
@@ -24,8 +23,7 @@ authors:
 - Martin Weigert
 - Tom Kirchhausen
 publications:
-- title: Deep neural network automated segmentation of cellular structures in volume
-    electron microscopy
+- title: Deep neural network automated segmentation of cellular structures in volume electron microscopy
   doi: 10.1083/jcb.202208005
   url: https://doi.org/10.1083/jcb.202208005
 date_published: null
@@ -33,15 +31,12 @@ imaging:
   modality:
   - FIB-SEM
   dimensionality: 3D
-  voxel_size_nm:
-    x: 5
-    y: 5
-    z: 5
+  voxel_size_nm: null
   channels: 1
   organism:
   - Homo sapiens
-  sample: Cultured cells (HEK293A, HeLa, SVG-A, SUM159, Jurkat, BSC-1, macrophages)
-    prepared by chemical fixation or high-pressure freezing and freeze substitution
+  sample: Cultured cells (HEK293A, HeLa, SVG-A, SUM159, Jurkat, BSC-1, macrophages) prepared by chemical
+    fixation or high-pressure freezing and freeze substitution
   labels_stains: []
 data:
   formats:
@@ -50,7 +45,7 @@ data:
   size_bytes: null
   n_items: 35
   access: open
-  download_url: null
+  download_url: https://registry.opendata.aws/asem-project/
   download_method: s3
 annotations:
   present: true
@@ -58,8 +53,8 @@ annotations:
   - semantic-segmentation
   - organelle
   coverage: partial
-  format: Zarr label arrays under <cell>.zarr/volumes/labels/{mito,er,golgi,ccp,np};
-    uint32 for mito/er/golgi, uint8 for ccp/np
+  format: Zarr v2 arrays <cell>/<cell>.zarr/volumes/labels/<class> (mito, er, golgi, ccp, np, np_bottom);
+    binary masks, uint8 0/255 or uint32 0/1; offset (nm, zyx) in .zattrs; TIFF copies in <cell>_tiff/
   source: mixed
 ml:
   tasks:
@@ -82,19 +77,103 @@ provenance:
   - https://asem-project.s3.amazonaws.com/datasets/3A/3A.zarr/volumes/labels/np/.zarray
   - https://asem-project.s3.amazonaws.com/datasets/1E/1E.zarr/volumes/labels/ccp/.zarray
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9728137/fullTextXML
+  - https://asem-project.s3.amazonaws.com/README.md
+  - https://asem-project.s3.amazonaws.com/datasets_info.xlsx
+  - https://raw.githubusercontent.com/kirchhausenlab/incasem/main/README.md
+  - https://asem-project.s3.amazonaws.com/datasets/2E/2E.zarr/volumes/labels/mito/.zattrs
+  - https://asem-project.s3.amazonaws.com/datasets/1E/1E.zarr/volumes/raw/.zattrs
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T22:42:47Z'
-notes: 'Bucket s3://asem-project/datasets/ (us-east-1, anonymous). 35 numbered dataset
-  folders (e.g. 46, 58, 1E, 3A); S3 listing shows a labels/ group only in 1E (ccp),
-  2E (ccp, er, mito), 3A (mito, np, np_bottom), 46, 58, 61, 64 (er, golgi, mito);
-  others have raw/predictions only, so coverage is partial and the paper says labels
-  are small blocks (about 2-80 um3). Spot-checked: 46 raw uint8 1921x1100x4600 at
-  5 nm, labels/mito uint32 same shape; 3A and 1E at 4 nm. Voxel size recorded as 5
-  nm (several volumes are 4 nm, SUM159 about 10 nm per paper). Organism lists human
-  cell lines only; the species of BSC-1 and macrophage cells was not checked. Licence
-  CC BY-SA 4.0 from registry. Some labelled volumes are re-used COSEM/OpenOrganelle
-  data (paper Table S1, not read). Total size not measured (chunked Zarr).'
+  last_checked: '2026-10-10T23:05:00Z'
+notes: 'Bucket s3://asem-project/datasets/ (us-east-1, anonymous), 35 cell folders; labels/ only in 1E
+  (ccp), 2E (ccp, er, mito), 3A (mito, np, np_bottom), 46, 58, 61, 64 (er, golgi, mito); others raw/predictions
+  only. Labels are small blocks (about 2-80 um3, paper). Annotation source: mito via Ilastik carving,
+  ER/Golgi via graph-cut tool, both edited in VAST; NP and CCP manual in VAST (paper Methods). Organism
+  lists human cell lines only; BSC-1 and macrophage species not stated in sources read. Licence CC BY-SA
+  4.0 (registry, bucket README, LICENSE). enricher: voxel size set to null (was 5x5x5): labelled volumes
+  differ, .zattrs resolution 4 nm for 1E, 2E, 3A and 5 nm for 46, 58, 61, 64; datasets_info.xlsx also
+  lists 10 nm cells. enricher: download_url = registry page (no single archive; S3 Zarr stores).'
+technical:
+  method: sample
+  size_source: unknown
+  layout:
+    tree: null
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://asem-project.s3.amazonaws.com/datasets/1E/1E.zarr/volumes/raw
+    - https://asem-project.s3.amazonaws.com/datasets/1E/1E.zarr/volumes/labels/ccp
+    size_bytes: null
+    description: 'cell 1E (4 nm): raw Zarr 751x1088x2817 uint8 plus clathrin-coated-pit labels on the
+      same grid (zlib-compressed chunked stores; read remotely)'
+  arrays:
+  - role: raw
+    path_pattern: '*/*.zarr/volumes/raw'
+    format: zarr
+    axes: zyx
+    shape:
+    - 751
+    - 1088
+    - 2817
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 96
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '*/*.zarr/volumes/labels/*'
+    format: zarr
+    axes: zyx
+    shape:
+    - 200
+    - 200
+    - 200
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: null
+      name: mito
+    - id: null
+      name: er
+    - id: null
+      name: golgi
+    - id: null
+      name: ccp
+    - id: null
+      name: np
+    - id: null
+      name: np_bottom
+    alignment: offset
+    alignment_notes: 'One binary array per class, named by its folder (labels/<class>). Each label .zattrs
+      has offset (nm, z,y,x) and resolution equal to the raw; voxel index = (label offset - raw offset)/resolution.
+      Some labels cover the whole raw grid (1E ccp, 2E ccp, 3A np, 46/58 all, 61 mito), others are crops
+      (2E mito 200^3 at offset [4060,1264,1176] nm). dtype uint8 (0/255: ccp, np, 2E/3A mito) or uint32
+      (0/1: er, golgi, 46-64 mito).'
+  notes: 'Inspected Zarr metadata (.zarray/.zattrs) of raw and every label array of the 7 labelled cells
+    (S3 delimiter listings), bucket README/LICENSE, datasets_info.xlsx, incasem README. Zarr v2, numcodecs
+    zlib (recorded as deflate), chunks 128^3 (46 raw 256^3), dimension_separator ".". Axes z,y,x per incasem
+    README ("offset and shape ... in z, y, x"; .zattrs offset in nm). Resolution per .zattrs: 4 nm isotropic
+    (1E, 2E, 3A), 5 nm (46, 58, 61, 64), so record voxel size is null; TensorSwitch needs the per-volume
+    .zattrs resolution. Samples (one each, central chunk-aligned crops): 2E raw [251,491,472] uint8 96-255
+    (p99 = 255, top saturated); 2E labels/mito full 200^3 uint8 {0,255} 31% fg; 2E labels/er [110,290,255]
+    uint32 {0,1}. Each cell also holds raw_equalized_0.02 (CLAHE), predictions/ (model output, not ground
+    truth), neuroglancer_volumes/ pyramids and a <cell>_tiff/ copy as 2D TIFF stacks. Size not measured:
+    a full S3 listing of datasets/ did not finish in 15 min (very many chunk objects); not stated on any
+    page read, and no estimate since shapes vary per cell. No single archive: data are folders of Zarr
+    chunks in the bucket (README suggests aws s3 cp / quilt3). Not download-ready: arrays are nested in
+    Zarr groups (<cell>.zarr/volumes/...), whose URLs do not end in .zarr, so the planner matches no sample;
+    voxel size differs per cell; many labels are offset crops.'
