@@ -1,0 +1,110 @@
+schema_version: '1.2'
+id: zenodo-7739793-membrain-seg-training-patch
+title: MemBrain-seg training data
+short_name: Cryo-ET membrane segmentation patch (MemBrain-seg)
+description: One cryo-electron tomogram patch (tomo02_patch000) with a preprocessed version and a membrane label volume, released as training data for segmenting membranes in cryo-ET tomograms.
+landing_url: https://zenodo.org/records/7739793
+doi: 10.5281/zenodo.7739793
+repository: Zenodo
+accession: '7739793'
+authors:
+- Lamm, Lorenz
+publications: []
+date_published: '2023-03-16'
+imaging:
+  modality:
+  - cryo-ET
+  dimensionality: 3D
+  voxel_size_nm: null
+  channels: null
+  organism: []
+  sample: null
+  labels_stains: []
+data:
+  formats:
+  - mrc
+  size_bytes: 30505967
+  n_items: 1
+  access: open
+  download_url: https://zenodo.org/records/7739793/files/MemBrain-seg.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: MRC label volume (patches_labels/tomo02_patch000_lab.mrc)
+  source: unknown
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-10T02:24:39Z'
+  evidence_urls:
+  - https://zenodo.org/records/7739793
+  - https://zenodo.org/api/records/7739793
+  - https://raw.githubusercontent.com/teamtomo/membrain-seg/main/docs/Usage/Annotations.md
+  confidence: 0.55
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-10T03:15:00Z'
+notes: 'Zenodo record is minimal ("More details will follow"), no paper cited, so organism, sample, pixel size, annotation procedure and microscope are unknown. The 30.5 MB zip holds 3 MRC files for a single 160^3 patch (tomo02_patch000): tomos_raw, patches_preprocessed and patches_labels. Only one volume, so this is a very small sample. enricher: authors Lamm, Lorenz and date 2023-03-16 from the Zenodo API (was Helmholtz AI / null). enricher: labels hold 0/1/2; MemBrain-seg docs name the training-patch classes membrane, no membrane and ignore, but don''t state the numeric mapping for this file. The larger MemBrain-seg training set is a separate Zenodo record (15089686).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "MemBrain-seg.zip/MemBrain-seg/\n  patches_labels/        1 files  16.4 MB  .mrc\n  patches_preprocessed/  1 files  16.4 MB  .mrc\n  tomos_raw/             1 files  16.4 MB  .mrc"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7739793/files/MemBrain-seg.zip::MemBrain-seg/tomos_raw/tomo02_patch000.mrc
+    - https://zenodo.org/records/7739793/files/MemBrain-seg.zip::MemBrain-seg/patches_labels/tomo02_patch000_lab.mrc
+    size_bytes: 32770048
+    description: 'the whole dataset: one 160^3 raw tomogram patch and its label volume'
+  arrays:
+  - role: raw
+    path_pattern: MemBrain-seg/tomos_raw/*.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 160
+    - 160
+    - 160
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - -54.140785217285156
+    - 41.69986343383789
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: patches_preprocessed/tomo02_patch000.mrc is a 'preprocessed' copy on the same 160^3 grid; its MRC header min/max/mean equal this file's and the preprocessing is undocumented, so it is not listed as an array
+  - role: label
+    path_pattern: MemBrain-seg/patches_labels/*_lab.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 160
+    - 160
+    - 160
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - 0.0
+    - 2.0
+    encoding: semantic-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: label <stem>_lab.mrc pairs with raw <stem>.mrc; identical 160^3 shape. Values 0/1/2 stored as float32 (41% zeros, mean 1.09); MemBrain-seg docs name the classes membrane, no membrane and ignore without a numeric mapping, so classes are left unset
+  notes: 'Listing of the one Zenodo zip is complete (3 MRC members, 30,505,967 bytes zipped). Raw and label sampled in full with tools/sample.py (15.2 MB downloaded); the raw value range is the MRC header min/max (same as the sample). MRC headers store voxel size 0 A. Voxel size not found; checked: MRC headers, Zenodo API record (description ''More details will follow''), zip listing (no README), MemBrain-seg GitHub README and docs (Training, Annotations), MemBrain v2 preprint (bioRxiv 10.1101/2024.01.05.574336; only the default rescaling to 10 A, not this patch''s size), Zenodo 15089686 (rescaled patches, not these files). Organism not stated in any of these sources. Annotation source not stated for this record (the preprint describes manually refined patches, but the record doesn''t cite it). Direct download: the zip and both sample members passed probe.py --download-check (range requests).'
