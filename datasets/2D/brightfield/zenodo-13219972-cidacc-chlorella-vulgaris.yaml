@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-13219972-cidacc-chlorella-vulgaris
 title: CIDACC - Chlorella vulgaris microscope images with cell bounding boxes and masks for counting
 short_name: Chlorella cell boxes and masks (brightfield)
-description: 628 brightfield microscope images of Chlorella vulgaris in a Neubauer hemocytometer (464 with countable single cells,
-  164 with cell clusters), as 2592x1944 originals and 640x640 downscaled copies, with YOLO-style bounding boxes (5,808 cells
-  plus 183 clusters) and PNG masks. Made for cell detection, counting and size estimation.
+description: 628 brightfield microscope images of Chlorella vulgaris in a Neubauer hemocytometer (464 with countable single
+  cells, 164 with cell clusters), as 2592x1944 originals and 640x640 downscaled copies, with YOLO-style bounding boxes (5,808
+  cells plus 183 clusters) and PNG masks. Made for cell detection, counting and size estimation.
 landing_url: https://zenodo.org/records/13219972
 doi: 10.5281/zenodo.13219972
 repository: Zenodo
@@ -29,12 +29,13 @@ imaging:
   channels: 3
   organism:
   - Chlorella vulgaris
-  sample: Chlorella vulgaris culture samples (10 uL, diluted) in an improved Neubauer hemocytometer, Olympus CX43RF microscope with EP50 camera and 40x objective
+  sample: Chlorella vulgaris culture samples (10 uL, diluted) in an improved Neubauer hemocytometer, Olympus CX43RF microscope
+    with EP50 camera and 40x objective
   labels_stains: []
 data:
   formats:
   - png
-  size_bytes: null
+  size_bytes: 274417396
   n_items: 628
   access: open
   download_url: https://zenodo.org/records/13219972/files/CIDACC-dataset.zip
@@ -46,7 +47,8 @@ annotations:
   - semantic-segmentation
   - counts
   coverage: dense
-  format: 'Per image: YOLO-style txt (class x_center y_center width height, normalized) in bbs/ and PNG mask in masks/ for the 640x640 images; folders clusters and distinct'
+  format: 'Per image: YOLO-style txt (class x_center y_center width height, normalized) in bbs/ and PNG mask in masks/ for
+    the 640x640 images; folders clusters and distinct'
   source: manual
 ml:
   tasks:
@@ -66,10 +68,95 @@ provenance:
   - https://zenodo.org/api/records/13219972
   - https://zenodo.org/records/13219972/files/CIDACC-dataset.zip
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11440301/fullTextXML
+  - https://www.ncbi.nlm.nih.gov/research/bionlp/RESTful/pmcoa.cgi/BioC_json/PMC11440301/unicode
   confidence: 0.85
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T15:05:00Z'
-notes: 'One 274 MB zip (listed, 2,512 files): original_images/{clusters,distinct} (164 + 464 PNG, 2592x1944) and clusters/ and distinct/ each with images, bbs and masks (164 and 464 items; one distinct mask is a BMP). Paper (Data in Brief 2024, open access) gives 5,808 cell labels in distinct and 183 in clusters, boxes made in Roboflow and masks in Fiji. Pixel size is not stated in the Zenodo page or paper (Neubauer hemocytometer at 40x). The distinct class images are countable; cluster images are not.'
+  last_checked: '2026-10-10T15:39:00Z'
+notes: 'One 274 MB zip (listed, 2,512 files): original_images/{clusters,distinct} (164 + 464 PNG, 2592x1944) and clusters/
+  and distinct/ each with images, bbs and masks (164 and 464 items; one distinct mask is a BMP). Paper (Data in Brief 2024,
+  open access) gives 5,808 cell labels in distinct and 183 in clusters, boxes made in Roboflow and masks in Fiji. Pixel size
+  is not stated in the Zenodo page or paper (Neubauer hemocytometer at 40x). The distinct class images are countable; cluster
+  images are not. enricher: size 274,417,396 B from the Zenodo file listing (was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "CIDACC-dataset.zip  274.4 MB  (2,512 members, 278.7 MB uncompressed)\n  dataset/clusters/images/            164\
+      \ png   12.0 MB  (640x640 RGB)\n  dataset/clusters/masks/             164 png  185.0 KB\n  dataset/clusters/bbs/   \
+      \            164 txt  135.3 KB  (YOLO boxes)\n  dataset/distinct/images/            464 png   23.1 MB  (640x640 RGB)\n\
+      \  dataset/distinct/masks/             464 files 738.3 KB  (463 png, 1 bmp: 191.bmp)\n  dataset/distinct/bbs/      \
+      \         464 txt  116.2 KB  (YOLO boxes)\n  dataset/original_images/clusters/   164 png   81.1 MB  (2592x1944 originals)\n\
+      \  dataset/original_images/distinct/   464 png  161.4 MB  (2592x1944 originals)\n"
+    n_files: 2513
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/13219972/files/CIDACC-dataset.zip::dataset/distinct/images/1.png
+    - https://zenodo.org/records/13219972/files/CIDACC-dataset.zip::dataset/distinct/masks/1.png
+    - https://zenodo.org/records/13219972/files/CIDACC-dataset.zip::dataset/distinct/bbs/1.txt
+    size_bytes: 112091
+    description: One 640x640 distinct image (1.png) with its mask and YOLO box file.
+  arrays:
+  - role: raw
+    path_pattern: dataset/*/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 640
+    - 640
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 78
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Downscaled (paper: to 640x640) copies of the 2592x1944 originals in dataset/original_images/; the aspect
+      ratio changes, so the pixel grid is anisotropic relative to the originals.'
+  - role: label
+    path_pattern: dataset/*/masks/*.png
+    format: png
+    axes: yx
+    shape:
+    - 640
+    - 640
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'dataset/<class>/masks/N.png pairs with dataset/<class>/images/N.png (same stem, same 640x640 grid).
+      Paper: masks made in Fiji, white = cells/clusters, black = background. One mask (distinct/masks/191.bmp) is a BMP and
+      is not matched by this pattern.'
+  - role: label
+    path_pattern: dataset/*/bbs/*.txt
+    format: other
+    axes: null
+    shape:
+    - 2
+    - 5
+    shape_varies: true
+    dtype: float32
+    compression: none
+    encoding: boxes-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'One YOLO txt per image (same stem): class x_center y_center width height, normalized to the image size,
+      so it applies to the 640x640 images and the originals alike. Class ids are not mapped in the files; the paper names
+      two classes (single C. vulgaris cells and cell clusters). distinct/bbs/1.txt has 2 rows, both class 0.'
+  notes: 'Listing: Zenodo API, 1 zip, 274,417,396 B (exact), 2,512 members. Sample (distinct 1.png image + mask, 112 KB, measured
+    then deleted): image uint8 RGB 640x640, values 78-255 (mean 196), channels differ (true colour, brightfield); mask uint8
+    {0,255} (645 white px); bbs/1.txt read with peek_archive (2 boxes, class 0). value_range is from one sample. Voxel size
+    not found; checked: zip listing (no metadata files), PNG headers via sample, Zenodo API description, paper full text (Data
+    in Brief, gives only 2592x1944 px, Olympus CX43RF, EP50 camera, 40x objective; no um/px). The 640x640 copies are non-uniformly
+    resized from 2592x1944, so even a stated camera pixel size would not carry over directly. Zenodo returned intermittent
+    HTTP 504 during this run; the zip URL passed --download-check with range requests (members 206).'
