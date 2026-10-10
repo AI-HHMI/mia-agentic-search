@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zhou-lizard-brain-microct-biomedisa
 title: X-ray microCT of Podarcis bocagei lizard heads with semi-manual and deep-learning segmentation labels of six brain regions
 short_name: Lizard brain regions segmentation (X-ray microCT)
-description: PTA-stained lizard (Podarcis bocagei) head microCT volumes cropped to the brain, with 3D label volumes for six brain
-  regions (olfactory bulbs, telencephalon, diencephalon, midbrain, cerebellum, brainstem). SegmForDLmanual holds 15 image/label pairs
-  segmented semi-manually and used as training data; SegmFromDLalgorithm holds 14 pairs with labels predicted by a deep-learning
-  network. Also an uncropped example scan, one more full-head recon and Biomedisa networks trained on 5-11 volumes.
+description: PTA-stained lizard (Podarcis bocagei) head microCT volumes cropped to the brain, with 3D label volumes for six brain regions
+  (olfactory bulbs, telencephalon, diencephalon, midbrain, cerebellum, brainstem). SegmForDLmanual holds 15 image/label pairs segmented
+  semi-manually and used as training data; SegmFromDLalgorithm holds 14 pairs with labels predicted by a deep-learning network. Also
+  an uncropped example scan, one more full-head recon and Biomedisa networks trained on 5-11 volumes.
 landing_url: https://su.figshare.com/articles/dataset/X-ray_microCT_lizard_brain_data_and_labels/26164570
 doi: 10.17045/sthlmuni.26164570.v3
 repository: Figshare
@@ -27,11 +27,11 @@ imaging:
     x: 17400
     y: 17400
     z: 17400
-  channels: null
+  channels: 1
   organism:
   - Podarcis bocagei
-  sample: Whole lizard heads (fixed in 4% PFA) stained with phosphotungstic acid, scanned in tubes with a Zeiss Xradia Versa 520
-    (100 kV, 9 W, 0.4x objective); volumes cropped to the brain
+  sample: Whole lizard heads (fixed in 4% PFA) stained with phosphotungstic acid, scanned in tubes with a Zeiss Xradia Versa 520 (100
+    kV, 9 W, 0.4x objective); volumes cropped to the brain
   labels_stains:
   - phosphotungstic acid
 data:
@@ -48,7 +48,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: One label TIFF volume per image volume (NN_image.tiff / NN_label.tiff), six brain-region classes
+  format: One label TIFF volume per image volume (NN_image.tiff / NN_label.tif[f]), uint8, values 0 = background and 1-6 = the six brain
+    regions
   source: mixed
 ml:
   tasks:
@@ -67,16 +68,133 @@ provenance:
   - https://ndownloader.figshare.com/files/47441930
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1101%2F2024.07.05.602071%22&format=json&resultType=core&pageSize=3
   - https://www.biorxiv.org/content/biorxiv/early/2024/07/06/2024.07.05.602071.source.xml
+  - https://ndownloader.figshare.com/files/56419223
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T04:15:00Z'
-notes: 'Landing page via WebFetch returned 403; metadata taken from the figshare API record (logged). Figshare files: 06_recon.zip
-  (uncropped example), SegmForDLmanual.zip (30 TIFFs = 15 image/label pairs, semi-manual labels: ~20-30 slices manually in Dragonfly
-  then Biomedisa-extended), SegmFromDLalgorithm.zip (28 files, labels predicted by the DL network; listing checked with peek_archive),
-  28_100kV..._recon.zip, four Biomedisa trained-network .h5 files. The paper says 29 specimens were scanned. Voxel size 17.4 um
-  effective, from paper Methods (isotropic). Label class values/order not documented in the sources checked (paper figure lists
-  six regions by colour). Mixed annotation source: manual training labels plus network-predicted labels. Paper-stated 16-bit
-  reconstruction TIFFs.'
+  last_checked: '2026-10-10T05:10:00Z'
+notes: 'Landing page via WebFetch returned 403; metadata taken from the figshare API record (logged). Figshare files: 06_recon.zip (uncropped
+  example), SegmForDLmanual.zip (30 TIFFs = 15 image/label pairs, semi-manual labels: ~20-30 slices manually in Dragonfly then Biomedisa-extended),
+  SegmFromDLalgorithm.zip (28 files, labels predicted by the DL network; listing checked with peek_archive), 28_100kV..._recon.zip,
+  four Biomedisa trained-network .h5 files. The paper says 29 specimens were scanned. Voxel size 17.4 um effective, from paper Methods
+  (isotropic). Label class values/order not documented in the sources checked (paper figure lists six regions by colour). Mixed annotation
+  source: manual training labels plus network-predicted labels. enricher: channels 1 (single-channel uint16 CT, sampled); size from
+  complete figshare listing; voxel size confirmed by TIFF XResolution (17.42 um).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "26164570/  (figshare, 8 files, 6.7 GB)\n  SegmForDLmanual.zip (files/47441930)  704.7 MB -> 1.13 GB\n    SegmForDLmanual/NN_image.tiff,\
+      \ NN_label.tiff   15 pairs (01,04,07-11,14-16,19,21,23,26,27)\n  SegmFromDLalgorithm.zip (files/47441942)  709.3 MB -> 1.10 GB\n\
+      \    SegmFromDLalgorithm/NN_image.tiff, NN_label.tif[f]   14 pairs (02,03,05,06,12,13,17,18,20,22,24,25,28,29)\n  06_recon.zip\
+      \ (files/47404912)  782.2 MB\n    06_pbw28_100kV9WLE2Obj0p4xBin2t1sP801_recon/0001.tiff ...   582 slice TIFFs, uncropped head,\
+      \ 1.2 GB\n  28_100kV9WLE2Obj0p4xBin2t1sP801_recon.zip (files/56419223)  1.45 GB\n    28_pbo24_100kV9WLE2Obj0p4xBin2t1sP801_recon/0001.tiff\
+      \ ... + Header.txt   1016 slice TIFFs, 2.1 GB\n  NetworkTrainedWith{5,7,9,11}data.tar.h5   4 Biomedisa networks, 755.1 MB each"
+    n_files: 8
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/47441930::SegmForDLmanual/27_image.tiff
+    - https://ndownloader.figshare.com/files/47441930::SegmForDLmanual/27_label.tiff
+    size_bytes: 60069422
+    description: 'specimen 27 of the manual training set: one 173 x 210 x 550 uint16 microCT volume and its uint8 brain-region label
+      volume (uncompressed TIFF members of SegmForDLmanual.zip)'
+  arrays:
+  - role: raw
+    path_pattern: Segm*/*_image.tiff
+    format: tiff
+    axes: zyx
+    shape:
+    - 173
+    - 210
+    - 550
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 7556
+    - 45787
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'plain multi-page TIFF, one page per slice of the cropped 3D CT volume (pages = z; the uncropped recons are stored
+      as one TIFF per slice); XResolution 574.03 px/cm = 17.42 um, isotropic per the paper. Shapes vary per specimen (e.g. 02: 192 x
+      251 x 583).'
+  - role: label
+    path_pattern: SegmForDLmanual/*_label.tiff
+    format: tiff
+    axes: zyx
+    shape:
+    - 173
+    - 210
+    - 550
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 6
+    normalization: none
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: null
+      name: olfactory bulb
+    - id: null
+      name: telencephalon
+    - id: null
+      name: diencephalon
+    - id: null
+      name: midbrain
+    - id: null
+      name: cerebellum
+    - id: null
+      name: brainstem
+    alignment: same-grid
+    alignment_notes: 'semi-manual labels (Dragonfly on ~20-30 slices, extended with Biomedisa); pairing: NN_label.tiff belongs to NN_image.tiff
+      in the same folder, identical shape (27: 173 x 210 x 550). Values 1-6 are the six regions the paper names, but the value-to-region
+      order is not documented.'
+  - role: label
+    path_pattern: SegmFromDLalgorithm/*_label.tif*
+    format: tiff
+    axes: zyx
+    shape:
+    - 192
+    - 251
+    - 583
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: none
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: null
+      name: olfactory bulb
+    - id: null
+      name: telencephalon
+    - id: null
+      name: diencephalon
+    - id: null
+      name: midbrain
+    - id: null
+      name: cerebellum
+    - id: null
+      name: brainstem
+    alignment: same-grid
+    alignment_notes: 'labels predicted by the trained network (automatic); pairing: NN_label.tif[f] belongs to NN_image.tiff, same shape
+      (02 header: 192 x 251 x 583, page shape and count match the 56.3 MB uint16 image). 02 and 20 labels are deflate-compressed .tif,
+      the other 12 are uncompressed .tiff (by member size). Encoding assumed the same as the manual set; not sampled.'
+  notes: 'Listing: tools/listing.py on the figshare API, 8 files, 6,662,290,233 B, complete; zip members via peek_archive. Sampled SegmForDLmanual
+    27_image.tiff + 27_label.tiff (36,952,831 + 301,313 B compressed) with a scratch script using tools/peek_archive.read_member and
+    tools/sample.stats (sample.py treats the extension-less figshare zip URL as HDF5). Image: uint16 173x210x550, 7556-45787 (one sample),
+    plain TIFF, no ImageJ/OME metadata. Label: uint8, values 0-6 (82.6% background), all 7 present. SegmFromDLalgorithm 02_label.tif
+    header probed: uint8 deflate 192x251x583. Voxel size: TIFF XResolution 17.42 um agrees with the paper''s effective 17.4 um. The
+    28 recon Header.txt says ''Pixel Size = 15.222057'' (no unit, before magnification compensation per the paper), not used. Not described
+    as arrays: 06_recon and 28 recon (uncropped whole-head slice TIFFs, no labels) and the Biomedisa networks (.tar.h5). No single archive
+    holds the image/label pairs and the recons, so data.download_url stays null; direct per-file links are https://ndownloader.figshare.com/files/<id>
+    (ids in the tree).'
