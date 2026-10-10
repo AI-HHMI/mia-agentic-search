@@ -1,0 +1,162 @@
+schema_version: '1.2'
+id: zenodo-5149062-hiv1-virion-tem-detection
+title: HIV-1 virion TEM micrographs with bounding boxes and maturation-class labels (TEMNet)
+short_name: HIV-1 virion boxes and classes (TEM)
+description: 59 TEM micrographs of HIV-1 virions (46 train, 13 validation) with a CSV of bounding boxes
+  and mature, immature or eccentric labels per virion, plus a classification set of 1,806 cropped, augmented
+  virion images in train and validation folders by class. Made for the TEMNet and Faster R-CNN virion
+  detectors.
+landing_url: https://zenodo.org/records/5149062
+doi: 10.5281/zenodo.5149062
+repository: Zenodo
+accession: '5149062'
+authors:
+- Juan S. Rey
+- Wen Li
+- Alexander J. Bryer
+- Hagan Beatson
+- Christian Lantz
+- Alan N. Engelman
+- Juan R. Perilla
+publications:
+- title: Deep-learning in situ classification of HIV-1 virion morphology
+  doi: 10.1016/j.csbj.2021.10.001
+  url: https://doi.org/10.1016/j.csbj.2021.10.001
+date_published: '2021-07-30'
+imaging:
+  modality:
+  - TEM
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Human immunodeficiency virus 1
+  sample: HIV-1 virions (wild-type, integrase and protease mutants, primary isolates) produced in HEK293T
+    cells and imaged by TEM at 30,000x
+  labels_stains: []
+data:
+  formats:
+  - png
+  - tiff
+  size_bytes: 1647849731
+  n_items: 1865
+  access: open
+  download_url: https://zenodo.org/records/5149062
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  - classification
+  coverage: dense
+  format: 'Detection: one region_data CSV per micrograph with a rectangle (x, y, width, height) and particle_class
+    (mature, immature, eccentric) per virion; classification: TIFF crops in class folders'
+  source: manual
+ml:
+  tasks:
+  - detection
+  - classification
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/Perilla-lab/TEMNet
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-10T13:16:23Z'
+  evidence_urls:
+  - https://zenodo.org/records/5149062
+  - https://zenodo.org/api/records/5149062
+  - https://zenodo.org/records/5149062/files/HIV-1_rcnn_dataset_full.zip
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8554174/fullTextXML
+  - https://zenodo.org/records/5149062/files/HIV-1_virion_classification_backbone_dataset.zip
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-10T14:51:40Z'
+notes: 'Two zips (rcnn dataset 849 MB, classification backbone dataset 799 MB). HIV-1_rcnn_dataset_full.zip
+  was listed: 59 PNG micrographs and 113 region_data CSVs (train/val folders per micrograph). Paper (open
+  access) gives 30,000x magnification, micrographs cropped to 4,000 x 2,620 pixels and manual ground-truth
+  labelling; pixel size is not stated on the Zenodo page or in the paper text read. The classification
+  crops are extracted and augmented from the same micrographs, so they overlap the detection set. enricher:
+  classification zip listed: 1,806 TIFF crops (train 1,443: mature 716, eccentric 542, immature 185; val
+  363: 180/136/47), matching the record text.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "HIV-1_rcnn_dataset_full.zip  848.9 MB (173 members)\n  rcnn_dataset_full/train/<id>/<id>.png\
+      \ + region_data_<id>.csv   46 micrographs\n  rcnn_dataset_full/val/<id>/<id>.png + region_data_<id>.csv\
+      \     13 micrographs\n  rcnn_dataset_full/annotated_dataset_csvs/region_data_<id>.csv  54 CSVs\n\
+      HIV-1_virion_classification_backbone_dataset.zip  798.9 MB (1,806 members)\n  backbone_dataset/{train,val}/{mature,eccentric,immature}/*.tif\
+      \  1,443 + 363 crops\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5149062/files/HIV-1_rcnn_dataset_full.zip::rcnn_dataset_full/train/0133009/0133009.png
+    - https://zenodo.org/records/5149062/files/HIV-1_rcnn_dataset_full.zip::rcnn_dataset_full/train/0133009/region_data_0133009.csv
+    size_bytes: 16140137
+    description: One training micrograph and its box CSV
+  arrays:
+  - role: raw
+    path_pattern: HIV-1_rcnn_dataset_full.zip::rcnn_dataset_full/*/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 2620
+    - 4000
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: TEM micrographs stored as RGB PNG (4000 x 2620, the crop size the paper gives); one
+      folder per micrograph id.
+  - role: label
+    path_pattern: HIV-1_rcnn_dataset_full.zip::rcnn_dataset_full/*/*/region_data_*.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: none
+    encoding: boxes-table
+    classes:
+    - id: mature
+      name: mature
+    - id: immature
+      name: immature
+    - id: eccentric
+      name: eccentric
+    alignment: same-grid
+    alignment_notes: VIA-style CSV (filename, file_size, file_attributes, region_count, region_id, region_shape_attributes
+      {"name":"rect","x","y","width","height"}, region_attributes {"particle_class"}) next to the PNG
+      of the same id; the filename column says <id>-copy.png.
+  - role: raw
+    path_pattern: HIV-1_virion_classification_backbone_dataset.zip::backbone_dataset/*/*/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 234
+    - 274
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Single-virion grayscale crops; class = folder name (mature, eccentric, immature).
+  notes: 'Exact indexes of both zips (173 and 1,806 members). Probed rcnn train/0133009/0133009.png (4000x2620
+    RGB uint8) and backbone train/immature/i37_old.tif (274x234 uint8, uncompressed, single page). Read
+    region_data_0133009.csv (50 boxes). The rcnn zip also holds a LibreOffice lock file (.~lock.region_data_7826008.csv#).
+    Pixel values not sampled. Voxel size not found; checked: PNG/TIFF headers, Zenodo API record, CSVs,
+    paper (PMC8554174, harvest run: 30,000x, no pixel size). No single archive: download_url is the record
+    page; both zips are direct links.'
