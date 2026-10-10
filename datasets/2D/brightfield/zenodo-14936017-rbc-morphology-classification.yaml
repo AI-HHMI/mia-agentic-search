@@ -2,9 +2,7 @@ schema_version: '1.2'
 id: zenodo-14936017-rbc-morphology-classification
 title: Red blood cell morphology images for classification, combining Chula RBC-12, ThalassemiaPBS and Algerian smear samples
 short_name: Red blood cell morphology classes (blood smear)
-description: Blood smear images of red blood cells labelled by morphology class, compiled from the Chula RBC-12 dataset
-  (13 listed classes), the ThalassemiaPBS dataset (nine cell types) and 13 supplementary smear images from an Algerian cancer
-  centre covering five RBC disorders. Single cells and regions of interest were cropped and sorted by class.
+description: Blood smear images of red blood cells labelled by morphology class, compiled from the Chula RBC-12 dataset (13 listed classes), the ThalassemiaPBS dataset (nine cell types) and 13 supplementary smear images from an Algerian cancer centre covering five RBC disorders. Single cells and regions of interest were cropped and sorted by class.
 landing_url: https://zenodo.org/records/14936017
 doi: 10.5281/zenodo.14936017
 repository: Zenodo
@@ -30,7 +28,8 @@ imaging:
   labels_stains: []
 data:
   formats:
-  - other
+  - png
+  - jpeg
   size_bytes: 93690243
   n_items: null
   access: open
@@ -40,14 +39,13 @@ annotations:
   present: true
   types:
   - classification
-  coverage: unknown
-  format: class labels by cell morphology type (cropped cell images sorted by class; Chula label files with x/y coordinates and
-    type values 1 to 11 are described on the record)
+  coverage: dense
+  format: 'class = folder name: RBC/{train,val,test}/<class>/<crop>.png|.jpg (single-cell crops, plus _blurred/_flipped/_rotated augmented copies); no separate label files seen in the parts of the archive read'
   source: manual
 ml:
   tasks:
   - classification
-  splits_provided: false
+  splits_provided: true
   benchmark: null
   baseline_code_url: null
 license:
@@ -60,17 +58,48 @@ provenance:
   - https://zenodo.org/api/records/14936017
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1016%2Fj.dib.2022.107886%22&format=json&resultType=core&pageSize=3
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8857444/fullTextXML
-  confidence: 0.55
+  - https://github.com/Chula-PIC-Lab/Chula-RBC-12-Dataset
+  confidence: 0.65
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-10T13:35:00Z'
-notes: 'The single file is RBC.rar (93.7 MB), a format the archive peeker cannot list, so the image format, image counts and
-  folder layout were not verified; formats is therefore "other" (the ThalassemiaPBS source paper says PNG grayscale, original
-  4100 x 3075 px, but that applies to the source dataset, not necessarily this archive). Labels come from the record
-  description: Chula and ThalassemiaPBS cells categorised with their label files, Algerian samples labelled by specialists.
-  The record is a compilation of two earlier public datasets (Chula RBC-12, arXiv 2012.01321, and ThalassemiaPBS, Data in
-  Brief 2022, full text read) and its CC-BY-4.0 licence may not override the sources'' licences. Pixel size is not stated;
-  magnification is given only for the Algerian samples (1000x). The Chula paper was not found by the paper tool and was not
-  read.'
+  annotations_verified: true
+  last_checked: '2026-10-10T13:20:00Z'
+notes: 'Single file RBC.rar (93.7 MB, RAR5). Compilation of Chula RBC-12 (arXiv 2012.01321) and ThalassemiaPBS (Data in Brief 2022) plus 13 Algerian smear images; its CC-BY-4.0 may not override the sources'' licences. Labels: Chula/ThalassemiaPBS cells sorted with the authors'' label files, Algerian samples labelled by specialists. enricher: formats png + jpeg from RAR headers (was other); splits train/val/test and class folders seen, so splits_provided true and annotations verified; classes seen: Acanthocyte, Burr cell, Hypochromia, Ovalocyte, Schistocyte, Spherocyte, Stomatocyte, Target Cell, cigar cell, normal, teardrop. Folders also hold augmented copies (_blurred/_flipped/_rotated). enricher: voxel size not stated anywhere (crops of resized smear images).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "RBC.rar  (93,690,243 B, RAR5; partial header walk)\n  RBC/\n    train/<class>/   *.png, *.jpg (+ *_blurred, *_flipped, *_rotated)\n    val/<class>/\n    test/<class>/\n  classes seen: Acanthocyte, Burr cell, Hypochromia, Ovalocyte,\n    Schistocyte, Spherocyte, Stomatocyte, Target Cell, cigar cell,\n    normal, teardrop\n  e.g. RBC/test/Acanthocyte/ADB2-K1-0010 objek#19.png (1,157 B)\n       RBC/test/Burr cell/0404.jpg"
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: RBC/*/*/*.png
+    format: png
+    axes: yx
+    shape:
+    - 49
+    - 52
+    shape_varies: true
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 224
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: grayscale (mode L) single-cell crops; class label is the parent folder name, split is the grandparent folder
+  - role: raw
+    path_pattern: RBC/*/*/*.jpg
+    format: jpeg
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: JPEG crops are RAR-compressed and could not be decoded without an unrar library; class label is the parent folder name
+  notes: 'Listing: Zenodo API, 1 file (RBC.rar, 93,690,243 B, complete). RAR members are not listable with the repo tools: RAR5 headers parsed from the first 4 MB, three 4 MB windows (15, 60, 89.5 MB) and the last 790 KB, ~17.6 MB read with range requests (three other windows got HTTP 504). Several thousand member names seen in these windows, but not the full member list, so the total image count is unknown. Stored (uncompressed) PNG members decoded with PIL: grayscale uint8, 39x39 to 58x52 px, ranges 0-213 to 0-224 (4 samples). No Label folder with x/y/type text files seen in the parts read, although the Zenodo description mentions one. sample null: no direct per-file link (members inside a RAR, which TensorSwitch cannot open); RBC.rar is a direct file with range requests. Voxel size not found; checked: Zenodo API, Chula RBC-12 README (1000x, 640x480 images), ThalassemiaPBS paper full text (1000x, 4100x3075 resized to 800x600), PNG headers (no dpi).'
