@@ -21,10 +21,7 @@ imaging:
   modality:
   - X-ray
   dimensionality: 3D
-  voxel_size_nm:
-    x: 9100
-    y: 9100
-    z: 9100
+  voxel_size_nm: null
   channels: null
   organism:
   - Mus musculus
@@ -41,7 +38,7 @@ data:
   n_items: 20
   access: open
   download_url: null
-  download_method: http
+  download_method: other
 annotations:
   present: true
   types:
@@ -66,14 +63,65 @@ provenance:
   - https://datadryad.org/api/v2/datasets/doi%3A10.5061%2Fdryad.4j0zpc8qq
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12868216/fullTextXML
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.3389%2Ffbinf.2025.1677527%22&format=json&resultType=core&pageSize=3
+  - https://datadryad.org/api/v2/versions/452514/files?per_page=100
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-10T22:55:00Z'
-notes: 'Twenty scan zips (44.6 GB total with models and software): 6 mouse bones (9.1 or 11.3 um), leopard (66.8 um), capybara (120.7 um, labels only), sea otter (30 um, labels only) and 11 river otter
-  (50 um, updated labels only; their raw scans are in the existing record dryad-b2rbnzsq4-otter-long-bone-micro-ct, which this dataset extends with mouse and other species, new labels and a new
-  model). Voxel size is that of the six mouse scans (9.1 um; 11.3 for one); other scans differ. Dryad downloads need a token, so zip contents were not listed (annotations_verified false) and file layout
-  comes from the page README; the README does not describe label values. Labels: Avizo 3D masks (Otsu thresholding plus filtering, with manual corrections), hence mixed. Dryad API reports CC0-1.0; the
-  landing page text does not state it.'
+  last_checked: '2026-10-10T22:20:00Z'
+notes: 'Twenty scan zips: 6 mouse, leopard, capybara (subvolume), sea otter and 11 river otter (labels only; raw in dryad-b2rbnzsq4-otter-long-bone-micro-ct). Dryad downloads need a browser session, so zips were not listed (annotations_verified false); layout from the page README, which does not give label values. Labels: Avizo masks (Otsu plus filtering, manual corrections), hence mixed. License CC0-1.0 per Dryad API. enricher: voxel_size_nm null (was 9100, mouse only); page Table 1 per scan, isotropic: 9.1 um (5 mouse), 11.3 um (1R_1U_HF), 66.8 (leopard), 120.7 (capybara), 50.0 (river otter), 30.0 (sea otter). organisms: Mus musculus = *R_*U_HF.zip; Panthera pardus = AMNH_Mammals_M-89009_F.zip; Hydrochoerus hydrochaeris = AMNH_Mammals_M-206440_mixed.zip; Enhydra lutris = ZMB_Mam_30740_HRU.zip; Lontra canadensis = OMNH/UAM/UF/UWBM zips.'
+technical:
+  method: metadata-only
+  size_source: page-stated
+  layout:
+    tree: |-
+      ./  24 files  44.6 GB (Dryad API file list, exact sizes)
+      README.md, _BONe_Avizo.zip, _BONe_standalone.zip (software), _Models.zip (3.7 GB, .pth models + logs)
+      1R_1U_HF.zip, 2R_2U_HF.zip, 5R_5U_HF.zip, 7R_7U_HF.zip, 12R_12U_HF.zip, 19R_19U_HF.zip (mouse, 2.0-12.1 GB)
+        _Data/<scan>/_Scan/<scan>.xtekct, <scan>-cropped_.info, <scan>-cropped_NNNN.tif   (raw slices)
+        _Data/<scan>/BP-label/<scan>-cropped_bone-pores-label_.info, ..._NNNN.tif          (label slices)
+      AMNH_Mammals_M-89009_F.zip (leopard, 8.0 GB)
+        _Data/<scan>/Scan_/<scan>_NNNN.tif, BP_label/<scan>_bone-pores-label_v3_NNNN.tif
+      AMNH_Mammals_M-206440_mixed.zip, ZMB_Mam_30740_HRU.zip, 11 OMNH/UAM/UF/UWBM zips (12-72 MB)
+        _Data/<scan>/BP_label/<scan>_bone-pores-label_v3_NNNN.tif   (labels only)
+      (layout from the README on the Dryad page; zips not listed)
+    n_files: 24
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: '*.zip/_Data/*/{_Scan,Scan_}/*_[0-9][0-9][0-9][0-9].tif'
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One TIFF per z slice (slice index NNNN in the file name, e.g. 0000-1791 for 1R_1U_HF), per the README tree. Raw scans only in the 6 mouse zips and AMNH_Mammals_M-89009_F.zip; river otter raw scans are in dryad.b2rbnzsq4, the other scans on MorphoSource.
+  - role: label
+    path_pattern: '*.zip/*Data/*/{BP-label,BP_label}/*bone-pores-label*_[0-9][0-9][0-9][0-9].tif'
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    encoding: unknown
+    classes:
+    - id: null
+      name: bone
+    - id: null
+      name: pores
+    alignment: unknown
+    alignment_notes: 'Pairing rule (README): _Scan/<scan>-cropped_NNNN.tif pairs with BP-label/<scan>-cropped_bone-pores-label_NNNN.tif (same slice index and count). Pixel values of the classes are not documented.'
+  notes: >-
+    Not inspected: Dryad file downloads are blocked for scripted access (API /api/v2/files/<id>/download returns
+    HTTP 401 without a token; the landing page's /downloads/file_stream/<id> links return HTTP 403), so no zip could
+    be listed, probed or sampled. Layout, file names and the raw/label pairing come from the README rendered on the
+    Dryad page; shapes, dtypes and label values are unknown. Size 44,638,405,276 bytes is the sum of the 24 file sizes
+    in the Dryad API file list (equal to storageSize). Voxel size: per-scan values in the README Table 1 (9.1-120.7 um
+    isotropic), no single value, so imaging.voxel_size_nm is null. No direct download: Dryad API needs a token, page
+    links need a browser session; upstream raw scans (dryad.b2rbnzsq4, MorphoSource) were not checked for this run.
