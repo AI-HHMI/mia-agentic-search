@@ -1,0 +1,138 @@
+schema_version: '1.2'
+id: zenodo-18624029-oscc-primary-ln-he-masks
+title: OSCC Primary Tumor and Lymph Node Metastasis Segmentation Dataset
+short_name: Oral SCC and lymph node H&E tumor masks
+description: Digitized histopathology images of primary oral cavity squamous cell carcinoma (550 H&E images plus 55 cytokeratin-stained
+  tumor images) and 167 H&E cervical lymph node images from elective neck dissections, with binary tumor masks manually drawn by one
+  experienced board-certified pathologist (cytokeratin slides guided delineation of occult metastases in 57 lymph node cases). TIFF
+  images and single-channel TIFF masks, 772 image/mask pairs, no predefined splits.
+landing_url: https://zenodo.org/records/18624029
+doi: 10.5281/zenodo.18624029
+repository: Zenodo
+accession: null
+authors:
+- Gil Eli Akrish
+publications: []
+date_published: '2026-02-13'
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: H&E-stained (and some cytokeratin-stained) sections of oral cavity squamous cell carcinoma and cervical lymph nodes from Rambam
+    Health Care Campus
+  labels_stains:
+  - hematoxylin and eosin
+  - cytokeratin
+data:
+  formats:
+  - tiff
+  size_bytes: 17498819945
+  n_items: 772
+  access: open
+  download_url: https://zenodo.org/records/18624029/files/OSCC_Primary_and_LN_Segmentation_Dataset.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: single-channel TIFF masks named Mask_caseXXX.tif (tumor = 255, background = 0 in the files sampled), one per image
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/legalcode
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-09T22:54:16Z'
+  evidence_urls:
+  - https://zenodo.org/records/18624029
+  - https://zenodo.org/api/records/18624029
+  - https://zenodo.org/api/records/18624029/files/OSCC_Primary_and_LN_Segmentation_Dataset.zip/content
+  - https://zenodo.org/records/18624029/files/OSCC_Primary_and_LN_Segmentation_Dataset.zip
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-10T00:45:00Z'
+notes: 'From the Zenodo record and the zip listing and Readme.txt via peek_archive (1,545 files: SCCA_images 605 and SCCA_masks 605
+  TIFF, LN_HE_images 167 and LN_HE_masks 167 TIFF, plus Readme.txt and one extra PNG). The Readme cites a manuscript under review (no
+  DOI yet), so publications is empty. Scanner, magnification and pixel size are not stated, so voxel_size_nm is null. The 55 cytokeratin-stained
+  images sit in SCCA_images next to the H&E ones (used for pretraining per the Readme); n_items counts all 772 image/mask pairs. enricher:
+  masks sampled are {0, 255} (record said 1); images are RGBA TIFFs; one LN image is a PNG (_case583.png).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |-
+      OSCC_Primary_and_LN_Segmentation_Dataset.zip/OSCC_Primary_and_LN_Segmentation_Dataset/
+        Readme.txt                       3.6 KB
+        SCCA_images/   605 files  11.1 GB  .tif  (_case<N>.tif)
+        SCCA_masks/    605 files   4.7 GB  .tif  (Mask_case<N>.tif)
+        LN_HE_images/  167 files   6.8 GB  .tif 166, .png 1 (_case583.png)
+        LN_HE_masks/   167 files   2.8 GB  .tif
+    n_files: 1545
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/18624029/files/OSCC_Primary_and_LN_Segmentation_Dataset.zip::OSCC_Primary_and_LN_Segmentation_Dataset/LN_HE_images/_case551.tif
+    - https://zenodo.org/records/18624029/files/OSCC_Primary_and_LN_Segmentation_Dataset.zip::OSCC_Primary_and_LN_Segmentation_Dataset/LN_HE_masks/Mask_case551.tif
+    size_bytes: 13799576
+    description: one lymph-node H&E image (1608x2250 RGBA) and its tumour mask
+  arrays:
+  - role: raw
+    path_pattern: '*_images/_case*.tif'
+    format: tiff
+    axes: yxs
+    shape:
+    - 1608
+    - 2250
+    - 4
+    shape_varies: true
+    dtype: uint8
+    compression: unknown
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGBA (4 samples, samples differ); the header could not be read by range (probe returned no layout), shape from
+      the sample; sizes vary per case
+  - role: label
+    path_pattern: '*_masks/Mask_case*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 1608
+    - 2250
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: tumor
+    alignment: same-grid
+    alignment_notes: <split>_masks/Mask_case<N>.tif pairs with <split>_images/_case<N>.tif; same spatial grid in the sample (SCCA case1
+      mask 2502x3500)
+  notes: 'Listed the 17.5 GB zip with --expand-zips (1,545 members, exact sizes). Probed SCCA case1 and LN case551 masks (ImageJ TIFF,
+    uint8, uncompressed); the image headers were not parsed by range. Sampled LN case551 (13.8 MB): image RGBA 0-255 (mean 202), mask
+    {0: 3,562,558, 255: 55,442}. value_range from one sample. Readme.txt could not be re-read this run (Zenodo TLS errors); the harvester
+    read it. Voxel size not found; checked: TIFF headers (no calibration), Zenodo record; the manuscript is under review (no DOI). download_url
+    is the one direct zip.'
