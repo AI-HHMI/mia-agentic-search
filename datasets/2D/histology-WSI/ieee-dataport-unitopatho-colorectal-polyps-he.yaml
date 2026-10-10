@@ -1,13 +1,13 @@
 schema_version: '1.2'
 id: ieee-dataport-unitopatho-colorectal-polyps-he
-title: 'UniToPatho: labeled H&E patches for colorectal polyp classification and adenoma
-  dysplasia grading'
+title: 'UniToPatho: labeled H&E patches for colorectal polyp classification and adenoma dysplasia
+  grading'
 short_name: Colorectal polyp H&E patches (UniToPatho)
-description: 9,536 H&E patches cropped from 292 whole-slide images of colorectal polyps
-  (one slide per patient, scanned at 20x, 0.4415 um/px), labelled by expert pathologists
-  into six classes (normal, hyperplastic polyp, tubular and tubulo-villous adenoma
-  with high- or low-grade dysplasia), at 800 um (8,669 patches) and 7,000 um (867
-  patches) scales, with metadata CSVs and a slide-level 204/88 train/test split.
+description: 9,536 H&E patches cropped from 292 whole-slide images of colorectal polyps (one
+  slide per patient, scanned at 20x, 0.4415 um/px), labelled by expert pathologists into six
+  classes (normal, hyperplastic polyp, tubular and tubulo-villous adenoma with high- or low-grade
+  dysplasia), at 800 um (8,669 patches) and 7,000 um (867 patches) scales, with metadata CSVs
+  and a slide-level 204/88 train/test split.
 landing_url: https://ieee-dataport.org/open-access/unitopatho
 doi: 10.21227/9fsv-tm25
 repository: other
@@ -48,15 +48,15 @@ data:
   size_bytes: 274980000000
   n_items: 9536
   access: registration
-  download_url: null
+  download_url: https://ieee-dataport.org/open-access/unitopatho
   download_method: other
 annotations:
   present: true
   types:
   - classification
   coverage: dense
-  format: Six-class label per patch in CSV metadata files (image id, label, type,
-    source WSI/ROI, resolution, patch coordinates)
+  format: Six-class label per patch in CSV metadata files (image id, label, type, source WSI/ROI,
+    resolution, patch coordinates)
   source: manual
 ml:
   tasks:
@@ -74,17 +74,82 @@ provenance:
   - https://ieee-dataport.org/open-access/unitopatho
   - https://github.com/EIDOSlab/UNITOPATHO
   - https://arxiv.org/pdf/2101.09991
+  - https://ieee-dataport.org/help/accessing-ieee-dataport-dataset-files-through-amazon-web-services-aws
+  - https://zenodo.org/api/records/4643645
   confidence: 0.65
 verification:
   url_ok: true
   license_found: false
   annotations_verified: false
-  last_checked: '2026-10-10T22:57:28Z'
-notes: IEEE DataPort lists the dataset as Open Access with UNITOPatho.zip of 274.98
-  GB (PNG + CSV, two scales); the page says a free IEEE account is enough but another
-  passage says a DataPort subscription is required, so access is recorded as registration
-  (unconfirmed). No dataset licence is stated on the DataPort page; the GitHub MIT
-  licence covers the code. Details (20x, 0.4415 um/px, 292 slides, 8,669 + 867 patches,
-  70/30 slide-level split) from the ICIP 2021 preprint (arXiv 2101.09991, read as
-  PDF). Patch files and annotations were not listed (the 275 GB archive is behind
-  a login), so formats and annotation layout come from the DataPort description.
+  last_checked: '2026-10-10T23:58:00Z'
+notes: 'IEEE DataPort lists the dataset as Open Access with UNITOPatho.zip of 274.98 GB (PNG
+  + CSV, two scales). No dataset licence is stated on the DataPort page; the GitHub MIT licence
+  covers the code. Details (20x, 0.4415 um/px, 292 slides, 8,669 + 867 patches, 70/30 slide-level
+  split) from the ICIP 2021 preprint (arXiv 2101.09991, read as PDF). enricher: access confirmed
+  as registration: page says files are accessible to all logged-in users with a free IEEE account;
+  AWS S3 access needs a DataPort subscription. enricher: download_url set to the DataPort page
+  (the only host; zip behind login). Zenodo 4643645 (CC-BY-4.0) holds only an announcement PDF,
+  not the data.'
+technical:
+  method: metadata-only
+  size_source: page-stated
+  layout:
+    tree: null
+    n_files: null
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: '**/*.png'
+    format: png
+    axes: yxs
+    shape:
+    - 1812
+    - 1812
+    - 3
+    shape_varies: true
+    dtype: unknown
+    compression: png
+    value_range: null
+    normalization: unknown
+    classes: null
+    alignment: not-applicable
+    alignment_notes: RGB H&E patches; 8,669 at the 800 um scale (1812x1812 px) and 867 at the
+      7000 um scale (15,855x15,855 px), both at 0.4415 um/px (arXiv 2101.09991 Sec. 2). A 7000_224
+      folder with 224x224 downsampled copies is mentioned in the GitHub Example notebook.
+  - role: label
+    path_pattern: '**/*.csv'
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: other
+    classes:
+    - id: NORM
+      name: Normal tissue
+    - id: HP
+      name: Hyperplastic Polyp
+    - id: TA.HG
+      name: Tubular Adenoma, High-Grade dysplasia
+    - id: TA.LG
+      name: Tubular Adenoma, Low-Grade dysplasia
+    - id: TVA.HG
+      name: Tubulo-Villous Adenoma, High-Grade dysplasia
+    - id: TVA.LG
+      name: Tubulo-Villous Adenoma, Low-Grade dysplasia
+    alignment: not-applicable
+    alignment_notes: 'Per-patch class label table (image_id, label, type, WSI, roi, mpp, x,
+      y, w, h) per resolution (DataPort instructions); images are stored under <resolution>/<top_label_name>/<image_id>
+      per the dataloader. Pairing: CSV row image_id -> PNG file.'
+  notes: 'Not inspected: the only copy is UNITOPatho.zip (274.98 GB) on IEEE DataPort, behind
+    a free IEEE login (AWS S3 route needs a subscription), so no listing, header or sample.
+    Shapes from the paper; dtype, exact folder names and file counts per folder unconfirmed;
+    path_pattern globs are generic. No direct download: DataPort page offers a login-gated button
+    only; Zenodo search finds only an announcement PDF (4643645) and the paper (5568938); Hugging
+    Face search empty; GitHub README links DataPort only. Voxel size 441.5 nm from DataPort
+    page and paper ("20x magnification (0.4415 um/px)"); patch pixel sizes (800 um/1812 px,
+    7000 um/15,855 px) agree, so patches are not resampled. Licence: none on DataPort page,
+    GitHub README, Zenodo announcement PDF or arXiv preprint.'
