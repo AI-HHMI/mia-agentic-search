@@ -2,11 +2,11 @@ schema_version: '1.2'
 id: zenodo-3689490-warwick-em-96x96
 title: 96x96 Electron Microscopy Images
 short_name: Warwick 96x96 STEM and TEM images
-description: Three NumPy arrays of 96x96 single-channel electron micrographs for rapid machine-learning development
-  - 19,769 crops from full STEM images, the same 19,769 STEM images area-downsampled to 96x96, and 17,266 TEM images
-  area-downsampled to 96x96. Images come from many projects and scientists at the University of Warwick and are
-  a small-image variant of the Warwick Electron Microscopy Datasets. No labels; the images were used to train
-  autoencoders / VAEs and partial-scan completion networks.
+description: Three NumPy arrays of 96x96 single-channel electron micrographs for rapid machine-learning
+  development - 19,769 crops from full STEM images, the same 19,769 STEM images area-downsampled to 96x96,
+  and 17,266 TEM images area-downsampled to 96x96. Images come from many projects and scientists at the
+  University of Warwick and are a small-image variant of the Warwick Electron Microscopy Datasets. No
+  labels; the images were used to train autoencoders / VAEs and partial-scan completion networks.
 landing_url: https://zenodo.org/records/3689490
 doi: 10.5281/zenodo.3689490
 repository: Zenodo
@@ -64,10 +64,88 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-10T16:55:00Z'
+  last_checked: '2026-10-10T17:02:14Z'
 notes: 'Unlabeled by design, ML-partitioned (paper: VAEs, partial-STEM completion); no explicit self-supervised
   statement. Files per Zenodo API: stem_crops.npy, stem_downsampled.npy (728.8 MB each), tem_downsampled.npy
   (636.5 MB); counts and [N,96,96,1] 32-bit shapes are from the paper (arXiv 2003.01113), arrays not opened.
   Paper says train/val/test images are concatenated in that order, with no split files here, so splits_provided
-  is false. Pixel size, instrument and sample not stated for the pooled, downsampled images. Paper main repository
-  record is Zenodo 3834197 (code and links only).'
+  is false. Pixel size, instrument and sample not stated for the pooled, downsampled images. Paper main
+  repository record is Zenodo 3834197 (code and links only).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  3 files  2.09 GB (Zenodo 3689490)\n  96x96_stem_crops.npy        728,764,544 B  float32\
+      \ (19769, 96, 96, 1)\n  96x96_stem_downsampled.npy  728,764,544 B  float32 (19769, 96, 96, 1)\n\
+      \  96x96_tem_downsampled.npy   636,493,952 B  float32 (17266, 96, 96, 1)\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/3689490/files/96x96_tem_downsampled.npy
+    size_bytes: 636493952
+    description: Smallest of the three single-array .npy files (17,266 TEM images)
+  arrays:
+  - role: raw
+    path_pattern: 96x96_stem_crops.npy
+    format: other
+    axes: null
+    shape:
+    - 19769
+    - 96
+    - 96
+    - 1
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - 8325
+    - 8254863
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 'First 3 images read: per-image ranges differ by orders of magnitude (8,325-351,264;
+      4.5e6-8.3e6), i.e. not normalized.'
+  - role: raw
+    path_pattern: 96x96_stem_downsampled.npy
+    format: other
+    axes: null
+    shape:
+    - 19769
+    - 96
+    - 96
+    - 1
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - 34154.7
+    - 614442.1
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 'First 3 images: 3.4e4-6.1e5, not normalized.'
+  - role: raw
+    path_pattern: 96x96_tem_downsampled.npy
+    format: other
+    axes: null
+    shape:
+    - 17266
+    - 96
+    - 96
+    - 1
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - 0.0229
+    - 0.6731
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: First 3 images in 0.02-0.67 (within [0, 1]); whether the whole array is rescaled
+      is not stated.
+  notes: 'Exact Zenodo listing (3 files, 2,094,023,040 B). .npy headers (NumPy v1, descr <f4, no pickles):
+    stem_crops and stem_downsampled (19769, 96, 96, 1), tem_downsampled (17266, 96, 96, 1); axes are image
+    index, y, x, channel (not stated in the header; axes left null). Read the first 3 images of each file
+    by range request (3 x 36,864 B, little-endian float32): STEM files hold unnormalized intensities (up
+    to ~8e6), TEM values lie in 0.02-0.67. Value ranges are from those 3 images only. Unlabelled by design
+    (no label arrays). TensorSwitch has no .npy reader. Voxel size not found: the npy files carry no metadata;
+    the paper (per harvest) does not state pixel sizes for the pooled downsampled images.'
