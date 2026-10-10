@@ -1,13 +1,11 @@
 schema_version: '1.2'
 id: hf-yanchaoz-emneuron-multispecies-vem-neurons
-title: 'EMNeuron: multi-species volume EM database with dense neuron instance labels
-  (SegNeuron)'
+title: 'EMNeuron: multi-species volume EM database with dense neuron instance labels (SegNeuron)'
 short_name: EMNeuron multi-species volume EM neurons
-description: Training and validation archives of EMNeuron, a database of 16 volume
-  EM datasets (4 in-house, 12 public, 8 nm-scale SBF-SEM, ATUM-SEM, FIB-SEM and ssTEM
-  from fly, fish, mouse, human, zebra finch) built for the SegNeuron generalist neuron
-  instance segmentation model; the paper reports over 22 billion voxels of which over
-  3 billion are densely labelled.
+description: Training and validation archives of EMNeuron, a database of 16 volume EM datasets (4 in-house,
+  12 public, 8 nm-scale SBF-SEM, ATUM-SEM, FIB-SEM and ssTEM from fly, fish, mouse, human, zebra finch)
+  built for the SegNeuron generalist neuron instance segmentation model; the paper reports over 22 billion
+  voxels of which over 3 billion are densely labelled.
 landing_url: https://huggingface.co/datasets/yanchaoz/EMNeuron
 doi: null
 repository: HuggingFace
@@ -19,30 +17,28 @@ authors:
 - Jing Liu
 - Hua Han
 publications:
-- title: 'SegNeuron: 3D Neuron Instance Segmentation in Any EM Volume with a Generalist
-    Model'
+- title: 'SegNeuron: 3D Neuron Instance Segmentation in Any EM Volume with a Generalist Model'
   doi: 10.1007/978-3-031-72111-3_55
   url: https://papers.miccai.org/miccai-2024/paper/0518_paper.pdf
 date_published: '2026-05-28'
 imaging:
   modality:
   - ssTEM
+  - FIB-SEM
+  - ssSEM
+  - SBF-SEM
   dimensionality: 3D
-  voxel_size_nm:
-    x: 8
-    y: 8
-    z: 40
+  voxel_size_nm: null
   channels: 1
   organism: []
-  sample: Volume EM of brain tissue from several species (e.g. Drosophila FAFB/FIB-SEM,
-    mouse Kasthuri/Minnie/Pinky, human H01, zebra finch, zebrafish) pooled from public
-    and in-house datasets
+  sample: Volume EM of brain tissue from several species (e.g. Drosophila FAFB/FIB-SEM, mouse Kasthuri/Minnie/Pinky,
+    human H01, zebra finch, zebrafish) pooled from public and in-house datasets
   labels_stains: []
 data:
   formats:
   - tiff
-  size_bytes: 2939140349
-  n_items: 2
+  size_bytes: 2939142789
+  n_items: 89
   access: open
   download_url: https://huggingface.co/datasets/yanchaoz/EMNeuron/resolve/main/labeled.rar
   download_method: http
@@ -51,8 +47,8 @@ annotations:
   types:
   - instance-segmentation
   coverage: partial
-  format: Per volume raw TIFF (0.tif) with instance mask TIFF (0_MaskIns.tif) per
-    the SegNeuron README; archives are RAR and were not opened
+  format: 'labeled.rar: per volume raw N.tif + instance mask N_MaskIns.tif (76 pairs in 10 folders); valid.rar:
+    raw.tif + label.tif (some also label_0.tif) per folder'
   source: mixed
 ml:
   tasks:
@@ -63,7 +59,7 @@ ml:
   baseline_code_url: https://github.com/yanchaoz/SegNeuron
 license:
   spdx: MIT
-  url: null
+  url: https://huggingface.co/datasets/yanchaoz/EMNeuron/raw/main/README.md
 provenance:
   discovered_by: harvest-websearch
   discovered_at: '2026-10-10T22:52:25Z'
@@ -76,20 +72,117 @@ provenance:
   - https://huggingface.co/datasets/yanchaoz/EMNeuron/resolve/main/valid.rar
   - https://papers.miccai.org/miccai-2024/677-Paper0518.html
   - https://api.crossref.org/works/10.1007/978-3-031-72111-3_55
-  confidence: 0.5
+  - https://raw.githubusercontent.com/yanchaoz/SegNeuron/main/README.md
+  - https://raw.githubusercontent.com/yanchaoz/SegNeuron/main/Train_and_Inference/supervised_provider.py
+  confidence: 0.55
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-10T22:52:25Z'
-notes: 'HF repo has two RAR archives: labeled.rar (2.35 GB) and valid.rar (0.59 GB),
-  card license MIT; the card has no other text. Archive contents could not be listed
-  (no RAR tool), so formats and annotation layout come from the SegNeuron GitHub README
-  (TIFF raw + *_MaskIns.tif pairs) and are unverified. MICCAI 2024 paper Table 1:
-  16 datasets (13 for development, 3 for evaluation), tangential resolution adjusted
-  to 6-9 nm, z 8-50 nm; 12 are public (ZFinch, ZFish, MitoEM, H01, Kasthuri, HBrain,
-  FIB25, Minnie, Pinky, FAFB, Basil, Harris) and 4 in-house; the MIT card licence
-  may not override the upstream licences. Many parts overlap datasets already in the
-  catalog. Voxel size 8x8x40 nm is the most common setting, not uniform. Organism
-  field left empty because it varies per sub-dataset; modality ssTEM chosen as the
-  largest group (mixed SBF-SEM/ATUM/FIB-SEM).'
+  annotations_verified: true
+  last_checked: '2026-10-11T00:15:00Z'
+notes: 'HF repo: labeled.rar (2.35 GB) + valid.rar (0.59 GB), card license MIT; upstream licences of the
+  12 public parts may differ. Paper Table 1: 16 datasets, xy adjusted to 6-9 nm. Many parts overlap catalog
+  datasets. enricher: RAR headers listed (152 + 31 TIFFs), labels verified. enricher: voxel size set to
+  null (was 8x8x40, the most common setting): sub-datasets differ (8x8x8 FIB-SEM to 6x6x50), see technical.notes.
+  enricher: modality now ssTEM, FIB-SEM, ssSEM, SBF-SEM from folder suffixes: -sstem = ssTEM, -fib = FIB-SEM,
+  -atum and Mira-* = ATUM-SEM (ssSEM), -sbem = SBF-SEM. Organism left empty: varies per folder (technical.notes).'
+technical:
+  method: header
+  inspected_at: '2026-10-11T00:15:00Z'
+  inspected_urls:
+  - https://huggingface.co/datasets/yanchaoz/EMNeuron/resolve/main/labeled.rar
+  - https://huggingface.co/datasets/yanchaoz/EMNeuron/resolve/main/valid.rar
+  bytes_downloaded: 869135
+  size_source: file-listing
+  layout:
+    tree: "EMNeuron/  (HuggingFace, 4 files, 2.9 GB; RAR5, not solid, 12.1 GB unpacked)\n  labeled.rar\
+      \  (2.35 GB; 152 TIFFs, 9.0 GB unpacked)\n    labeled/AxonEM[H]-atum/    {0..8}.tif + {0..8}_MaskIns.tif\n\
+      \    labeled/AxonEM[M]-sstem/   {0..8}.tif + {0..8}_MaskIns.tif\n    labeled/CREMI-sstem/      \
+      \ {0..2}.tif + _MaskIns\n    labeled/Fib-25-fib/        {0,1}.tif + _MaskIns     (1.4 GB)\n    labeled/Hemi-brain-fib/\
+      \    {0..5}.tif + _MaskIns    (2.5 GB)\n    labeled/J0126-sbem/        {0..32}.tif + _MaskIns\n\
+      \    labeled/Kasthuri-atum/     {0,1}.tif + _MaskIns\n    labeled/Mira-adwt/         {0..2}.tif\
+      \ + _MaskIns\n    labeled/Mira-fish/         {0..3}.tif + _MaskIns\n    labeled/Mira-scn/      \
+      \    {0..4}.tif + _MaskIns\n  valid.rar  (0.59 GB; 31 TIFFs, 3.1 GB unpacked)\n    valid/InDistribution/{FAFB-1,FAFB-2,FIB25-1,FIB25-2}/\
+      \  raw.tif, label.tif, label_0.tif\n    valid/InDistribution/Kstr/                             raw.tif,\
+      \ label.tif\n    valid/InDistribution/InDistribution/{FAFB-1,FAFB-2,FIB25-1,FIB25-2,Kstr}/  raw.tif,\
+      \ label.tif (copies)\n    valid/OutofDistribution/Harris/                        raw.tif, label.tif,\
+      \ label_0.tif\n    valid/OutofDistribution/{Ionsem,Microns[B]}/           raw.tif, label.tif\n \
+      \ README.md, .gitattributes"
+    n_files: 4
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: labeled/*/{[0-9],[0-9][0-9]}.tif
+    format: tiff
+    axes: zyx
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    lossy: null
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Axes zyx from the SegNeuron loader (supervised_provider.py reads each volume with
+      imageio.volread and crops [z, y, x] = [20, 128, 128] along axes 0, 1, 2). TIFF headers not read
+      (inside RAR).
+  - role: label
+    path_pattern: labeled/*/*_MaskIns.tif
+    format: tiff
+    axes: zyx
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    lossy: null
+    chunks: null
+    value_range: null
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing: N.tif <-> N_MaskIns.tif in the same folder (supervised_provider.py). Neuron
+      instance masks per the README (''raw/instance pairs''). Same grid assumed from the loader cropping
+      both with the same indices.'
+  - role: raw
+    path_pattern: valid/*/*/raw.tif
+    format: tiff
+    axes: zyx
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    lossy: null
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Validation volumes, one per folder; nested copies under valid/InDistribution/InDistribution/.
+  - role: label
+    path_pattern: valid/*/*/label.tif
+    format: tiff
+    axes: zyx
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    lossy: null
+    chunks: null
+    value_range: null
+    encoding: instance-ids
+    classes: null
+    alignment: unknown
+    alignment_notes: 'Pairing: raw.tif <-> label.tif in the same folder. label_0.tif (FAFB, FIB25, Harris)
+      is an undocumented second label file; in the nested copies label.tif has label_0.tif''s byte size.'
+  notes: 'Archives are RAR5 (compression method 3, not solid); file headers were walked with HTTP range
+    requests (869 KB read), so names and unpacked sizes are exact, but no TIFF could be opened (no RAR
+    decoder here): shape, dtype and compression unknown. TensorSwitch can''t read RAR members, so there
+    is no usable sample spec; both archives are direct, range-capable links. Size: file-listing of the
+    HF repo (2,939,142,789 B, compressed). Voxel size per sub-dataset (SegNeuron README table / paper
+    Table 1): Fib-25 & Hemi-brain 8x8x8, Kasthuri/Kstr 6x6x30, Mira-adwt (vEM1) 8x8x50, Mira-fish (vEM2)
+    8x8x30, Mira-scn (vEM3) 8x8x40, FAFB 8x8x40, FIB25 8x8x8, Harris 6x6x50, Ionsem (vEM4) 8x8x20, Microns[B]
+    (Basil) 8x8x40 nm; AxonEM[H], AxonEM[M], CREMI and J0126 are not in either table. The paper says xy
+    was adjusted to 6-9 nm, so files may be resampled from the originals. Organisms by source: Mira-adwt
+    rat (AD model rats), Mira-fish larval zebrafish (README citations); Fib-25, Hemi-brain, FAFB Drosophila;
+    Microns mouse (paper refs); others not stated in sources read.'
