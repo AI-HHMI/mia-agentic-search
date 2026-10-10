@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-6104336-ccrcc-lymphocyte-cell-boxes
 title: Clear cell renal cell carcinoma tissue images with bounding boxes for lymphocytes and other cells
 short_name: Renal carcinoma cell boxes (histology)
-description: 423 PNG image tiles (named like TCGA slide ids with 500x500 suffixes) from clear cell renal cell carcinoma
-  samples of The Cancer Genome Atlas, with a JSON file of bounding boxes and a class per cell (label 2 lymphocytes, label
-  1 all other cells).
+description: 423 PNG image tiles (named like TCGA slide ids with 500x500 suffixes) from clear cell renal
+  cell carcinoma samples of The Cancer Genome Atlas, with a JSON file of bounding boxes and a class per
+  cell (label 2 lymphocytes, label 1 all other cells).
 landing_url: https://zenodo.org/records/6104336
 doi: 10.5281/zenodo.6104336
 repository: Zenodo
@@ -37,8 +37,10 @@ annotations:
   types:
   - bounding-box
   - classification
-  coverage: unknown
-  format: single data.json (0.7 MB) with a bounding box and class label per cell (1 = other cells, 2 = lymphocytes)
+  coverage: dense
+  format: 'cell_recognition/data.json: one entry per PNG file name with "boxes" (lists of 4 pixel coordinates,
+    0-512) and "labels" (1 = other cell, 2 = lymphocyte); 26,462 boxes in total (23,559 label 2, 2,903
+    label 1)'
   source: unknown
 ml:
   tasks:
@@ -60,9 +62,72 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T14:25:00Z'
-notes: 'The zip listing shows 424 files: 423 PNGs (named img<N>_<x>x<y>.png or TCGA-<slide>-...-500x500.png) and cell_recognition/data.json
-  (0.7 MB, too large for the text preview, so box counts and its exact schema were not read). The record text says it
-  holds 426 PNG images, while the zip has 423, which was not reconciled. Staining is not stated (histology-WSI is chosen because the tiles come from TCGA tissue slides), magnification, pixel size and the annotation
-  procedure are not stated on the record; no paper is linked. TCGA images carry their own data-use terms; the record licence is
-  CC-BY-4.0.'
+  last_checked: '2026-10-10T14:14:41Z'
+notes: 'The zip listing shows 424 files: 423 PNGs (named img<N>_<x>x<y>.png or TCGA-<slide>-...-500x500.png)
+  and cell_recognition/data.json. The record text says it holds 426 PNG images, while the zip has 423,
+  which was not reconciled. Staining is not stated (histology-WSI is chosen because the tiles come from
+  TCGA tissue slides), magnification, pixel size and the annotation procedure are not stated on the record;
+  no paper is linked. TCGA images carry their own data-use terms; the record licence is CC-BY-4.0. enricher:
+  data.json read in full: 423 entries, one per PNG, 26,462 boxes; coverage set to dense (every image has
+  boxes; whether every cell is boxed is not stated).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "cell_recognition.zip  202.4 MB\n  cell_recognition/img<N>_<x>x<y>.png                 329 files\
+      \  (512x512 RGB)\n  cell_recognition/TCGA-<slide>-<x>-<y>-500x500.png    94 files  (500x500 RGBA)\n\
+      \  cell_recognition/data.json                           665,901 bytes (boxes + labels per image)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/6104336/files/cell_recognition.zip/content::cell_recognition/img17_55808x49152.png
+    - https://zenodo.org/api/records/6104336/files/cell_recognition.zip/content::cell_recognition/data.json
+    size_bytes: 1085260
+    description: One 512x512 RGB tile and the JSON file holding the boxes of all tiles
+  arrays:
+  - role: raw
+    path_pattern: cell_recognition.zip::cell_recognition/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: img*.png tiles are 512x512 RGB; TCGA-*-500x500.png tiles are 500x500 RGBA (probed
+      one of each).
+  - role: label
+    path_pattern: cell_recognition.zip::cell_recognition/data.json
+    format: json
+    axes: null
+    shape:
+    - 26462
+    - 5
+    shape_varies: false
+    dtype: unknown
+    compression: deflate
+    value_range: null
+    normalization: none
+    encoding: boxes-table
+    classes:
+    - id: 1
+      name: cells other than lymphocytes
+    - id: 2
+      name: lymphocytes
+    alignment: same-grid
+    alignment_notes: data.json is keyed by the PNG file name (all 423 keys match the 423 PNGs); each box
+      is 4 pixel coordinates in that tile (min 0, max 512). The coordinate order (x1,y1,x2,y2 or y1,x1,y2,x2)
+      is not documented.
+  notes: 'Exact listing of the single zip (424 members, 202,422,290 bytes; PNGs 202,189,769 bytes uncompressed).
+    The record description says 426 PNGs; the zip has 423, and data.json has exactly those 423 keys. Probed
+    img17_55808x49152.png (512x512x3 uint8) and a TCGA 500x500 tile (500x500x4 uint8, RGBA). Read data.json
+    in full: {"<png name>": {"boxes": [[a,b,c,d], ...], "labels": [...]}}, 26,462 boxes, labels 2 (23,559)
+    and 1 (2,903). shape [26462,5] counts box rows x (4 coordinates + label). Pixel values were not sampled
+    (tools/sample.py misread the PNG member as HDF5). Pixel size and magnification are not stated on the
+    record; no paper is linked. Zenodo answered range requests slowly (about 16 s each, one HTTP 504).'
