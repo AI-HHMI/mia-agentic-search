@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: zenodo-11121371-hepg2-spheroids-yolo
 title: Annotated dataset of HepG2 spheroids (YOLO format)
 short_name: HepG2 spheroid health detection (brightfield)
-description: 1,395 brightfield PNG images of HepG2 spheroids (5-day culture in SP5D plates, 4x, custom inverted microscope)
-  with YOLO-format boxes for 19,129 spheroids labelled Healthy (12,599) or Unhealthy (6,530), in train/val/test folders.
+description: 1,395 brightfield PNG images of HepG2 spheroids (5-day culture in SP5D plates, 4x, custom
+  inverted microscope) with YOLO-format boxes for 19,129 spheroids labelled Healthy (12,599) or Unhealthy
+  (6,530), in train/val/test folders.
 landing_url: https://zenodo.org/records/11121371
 doi: 10.5281/zenodo.11121371
 repository: Zenodo
@@ -18,9 +19,10 @@ imaging:
   dimensionality: 2D
   voxel_size_nm: null
   channels: 1
-  organism: []
-  sample: HepG2 liver cell spheroids grown 5 days in SP5D culture plates, imaged at 4x on a custom inverted microscope; some
-    spheroids exposed to a toxic compound
+  organism:
+  - Homo sapiens
+  sample: HepG2 liver cell spheroids grown 5 days in SP5D culture plates, imaged at 4x on a custom inverted
+    microscope; some spheroids exposed to a toxic compound
   labels_stains: []
 data:
   formats:
@@ -36,7 +38,8 @@ annotations:
   - bounding-box
   - classification
   coverage: dense
-  format: YOLO txt label files (one per image) plus a YOLO dataset yaml; classes Healthy and Unhealthy (class 0 None is declared in the yaml)
+  format: YOLO txt label files (one per image) plus a YOLO dataset yaml; classes Healthy and Unhealthy
+    (class 0 None is declared in the yaml)
   source: mixed
 ml:
   tasks:
@@ -52,15 +55,79 @@ provenance:
   discovered_at: '2026-10-10T06:41:04Z'
   evidence_urls:
   - https://zenodo.org/api/records/11121371
+  - https://www.cellosaurus.org/CVCL_0027
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T08:30:00Z'
-notes: 'Zip listing (peek_archive) shows 1,395 PNGs and 1,395 txt label files in train/val/test folders, a YOLO yaml and a .db file.
-  The yaml declares three classes (None, Healthy, Unhealthy). The Zenodo description says labelling was partly manual and partly
-  automatic (spheroids treated with a toxic compound were automatically labelled Unhealthy), hence source mixed, and states a
-  70/15/15 split, which I did not recount exactly. No paper is linked ("more details will be available in the corresponding
-  publication"), so none was read. Image dimensions and pixel size are not stated on the record. The yaml contains local Windows paths
-  that must be edited before training.'
+  last_checked: '2026-10-10T08:25:00Z'
+notes: 'Zip listing (peek_archive) shows 1,395 PNGs and 1,395 txt label files in train/val/test folders,
+  a YOLO yaml and a .db file. The yaml declares three classes (None, Healthy, Unhealthy). The Zenodo description
+  says labelling was partly manual and partly automatic (spheroids treated with a toxic compound were
+  automatically labelled Unhealthy), hence source mixed, and states a 70/15/15 split, which I did not
+  recount exactly. No paper is linked ("more details will be available in the corresponding publication"),
+  so none was read. Image dimensions and pixel size are not stated on the record. The yaml contains local
+  Windows paths that must be edited before training. enricher: organism Homo sapiens from Cellosaurus
+  CVCL_0027 (HepG2); images 2456x2054 RGB PNG (sample); YOLO rows read from a sample label.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                  1 file   8.8 GB  .zip\nzip contents:\nHepG2_spheroids_dataset.zip/HepG2_spheroids_dataset/\n\
+      \  datasetv5.yaml                    YOLO config (nc 3: None, Healthy, Unhealthy; Windows paths)\n\
+      \  test/images/   197 files   1.2 GB  .png\n  test/labels/   197 files 212.5 KB  .txt\n  train/images/\
+      \  965 files   6.1 GB  .png\n  train/labels/  965 files   1.1 MB  .txt\n  val/images/    233 files\
+      \   1.5 GB  .png\n  val/labels/    233 files 256.6 KB  .txt\n  (+1 .db OS metadata file)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/11121371/files/HepG2_spheroids_dataset.zip::HepG2_spheroids_dataset/test/images/Imaging_HepG2_KUG_Med5DPlate_PartiallyEmptied_Well1_114.png
+    - https://zenodo.org/records/11121371/files/HepG2_spheroids_dataset.zip::HepG2_spheroids_dataset/test/labels/Imaging_HepG2_KUG_Med5DPlate_PartiallyEmptied_Well1_114.txt
+    size_bytes: 7176722
+    description: one test image and its YOLO label file
+  arrays:
+  - role: raw
+    path_pattern: HepG2_spheroids_dataset.zip::HepG2_spheroids_dataset/*/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 2456
+    - 2054
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: png
+    value_range:
+    - 4
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB PNG (PIL mode RGB, samples not identical) from a colour camera on brightfield;
+      axes from the PIL decode (height, width, RGB).
+  - role: label
+    path_pattern: HepG2_spheroids_dataset.zip::HepG2_spheroids_dataset/*/labels/*.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: None
+    - id: 1
+      name: Healthy
+    - id: 2
+      name: Unhealthy
+    alignment: same-grid
+    alignment_notes: 'One YOLO .txt per image, same stem in the parallel labels/ folder (listing: 1,395
+      = 1,395): tab-separated <class> <x_center> <y_center> <width> <height>, normalised to the image
+      (sampled test file: class 1 rows). Classes from datasetv5.yaml and the Zenodo description.'
+  notes: 'Listing via Zenodo API + zip central directory (2,792 members; size confirmed). One test PNG
+    sampled (7,149,789 bytes): uint8 RGB 2456x2054x3, values 4-255 (one sample). Its label file (892 bytes)
+    read with peek_archive after Zenodo HTTP 504 retries. Voxel size not found; checked: PNG (no calibration
+    chunk reported), Zenodo API description ("4X magnification", custom inverted microscope, no um/px),
+    datasetv5.yaml, Europe PMC (description says the publication is forthcoming; none linked).'
