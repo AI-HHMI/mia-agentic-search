@@ -1,9 +1,11 @@
 schema_version: '1.2'
 id: zenodo-10908721-delivr-cfos-microglia-lsfm-patches
-title: DELiVR training data - VR-annotated light-sheet patches of c-Fos+ cells and microglia in cleared mouse brain
+title: DELiVR training data - VR-annotated light-sheet patches of c-Fos+ cells and microglia in cleared
+  mouse brain
 short_name: Cleared mouse brain c-Fos/microglia (light-sheet)
-description: Raw and ground-truth 3D patches (100x100x100 voxels, NIfTI) of cleared whole mouse brains imaged by light-sheet microscopy, with c-Fos+ nuclei and microglial
-  somata segmented in virtual reality; shipped inside the DELiVR code release on Zenodo.
+description: Raw and ground-truth 3D patches (100x100x100 voxels, NIfTI) of cleared whole mouse brains
+  imaged by light-sheet microscopy, with c-Fos+ nuclei and microglial somata segmented in virtual reality;
+  shipped inside the DELiVR code release on Zenodo.
 landing_url: https://zenodo.org/records/10908721
 doi: 10.5281/zenodo.10908721
 repository: Zenodo
@@ -22,10 +24,11 @@ imaging:
   - light-sheet
   dimensionality: 3D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism:
   - Mus musculus
-  sample: Cleared whole mouse brains (SHANEL protocol), c-Fos immunostaining with Alexa 647 and CX3CR1-GFP microglia labelled with an Atto647N anti-GFP nanobooster; patches sampled from whole-brain scans
+  sample: Cleared whole mouse brains (SHANEL protocol), c-Fos immunostaining with Alexa 647 and CX3CR1-GFP
+    microglia labelled with an Atto647N anti-GFP nanobooster; patches sampled from whole-brain scans
   labels_stains:
   - c-Fos
   - CX3CR1-GFP
@@ -40,9 +43,10 @@ data:
 annotations:
   present: true
   types:
-  - instance-segmentation
+  - semantic-segmentation
   coverage: dense
-  format: 'NIfTI (.nii.gz) patches under training_data/{cFos,microglia}/{raw,gt}/patchvolume_<id>_<n>.nii.gz; gt holds the cell masks'
+  format: 'NIfTI (.nii.gz) 100^3 patches: training_data/{cFos,microglia}/{raw,gt}/patchvolume_<id>_<n>.nii.gz;
+    gt is a binary cell mask (0/1) with the same file name as its raw patch'
   source: manual
 ml:
   tasks:
@@ -66,5 +70,82 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T20:45:00Z'
-notes: 'The Zenodo record is a code snapshot (delivr_cfos v1.0.0) whose zip holds training_data/: microglia raw+gt (160 .nii.gz each), cFos raw (48) and gt (41; pairing not confirmed), listed with peek_archive. Paper Methods: c-Fos brains on UltraMicroscope II, 1.625 um xy, 6 um z, 48 VR-annotated 100^3 patches (5,889 cells); microglia on Blaze 12x, 0.54 um xy, 161 patches (3,798 somata). Voxel size null: two sub-datasets differ. Annotated in VR (syGlass), manual. Code is MIT; record states CC-BY-4.0. Whole-brain scans (S-BIAD1019) are separate; GitHub copies not accessible here.'
+  last_checked: '2026-10-10T20:49:11Z'
+notes: 'The Zenodo record is a code snapshot (delivr_cfos v1.0.0) whose zip holds training_data/: microglia
+  raw+gt (160 .nii.gz each), cFos raw (48) and gt (41, all with a raw patch of the same name), listed
+  with peek_archive. Paper Methods: c-Fos brains on UltraMicroscope II, 1.625 um xy, 6 um z, 48 VR-annotated
+  100^3 patches (5,889 cells); microglia on Blaze 12x, 0.54 um xy, 161 patches (3,798 somata). Voxel size
+  null: two sub-datasets differ. Annotated in VR (syGlass), manual. Code is MIT; record states CC-BY-4.0.
+  Whole-brain scans (S-BIAD1019) are separate; GitHub copies not accessible here. enricher: gt masks are
+  binary (0/1) in both sampled patches, so types semantic-segmentation (was instance).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "erturklab/delivr_cfos-v1.0.0.zip  445,606,862 B (441 members; code snapshot)\n  erturklab-delivr_cfos-b12b003/\n\
+      \    training_data/cFos/raw/patchvolume_<id>_<n>.nii.gz        48\n    training_data/cFos/gt/patchvolume_<id>_<n>.nii.gz\
+      \         41  (each matches a raw name)\n    training_data/microglia/raw/patchvolume_<id>_<n>.nii.gz\
+      \  160\n    training_data/microglia/gt/patchvolume_<id>_<n>.nii.gz   160\n    README.md  LICENSE\
+      \  (code)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/10908721/files/erturklab/delivr_cfos-v1.0.0.zip/content::erturklab-delivr_cfos-b12b003/training_data/microglia/raw/patchvolume_1874_0.nii.gz
+    - https://zenodo.org/api/records/10908721/files/erturklab/delivr_cfos-v1.0.0.zip/content::erturklab-delivr_cfos-b12b003/training_data/microglia/gt/patchvolume_1874_0.nii.gz
+    size_bytes: 2418283
+    description: One microglia raw patch (100^3) and its binary mask (same file name in raw/ and gt/).
+  arrays:
+  - role: raw
+    path_pattern: erturklab-delivr_cfos-*/training_data/*/raw/*.nii.gz
+    format: nifti
+    axes: zyx
+    shape:
+    - 100
+    - 100
+    - 100
+    shape_varies: false
+    dtype: float64
+    compression: gzip
+    value_range:
+    - 213
+    - 65535
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 'Two sub-datasets: cFos/ (UltraMicroscope II, 1.625 um xy, 6 um z per the paper)
+      and microglia/ (Blaze 12x, 0.54 um xy per the paper); NIfTI pixdim is 1,1,1 with unknown units,
+      so the files carry no calibration. Raw values are integers stored as float64 (16-bit range).'
+  - role: label
+    path_pattern: erturklab-delivr_cfos-*/training_data/*/gt/*.nii.gz
+    format: nifti
+    axes: zyx
+    shape:
+    - 100
+    - 100
+    - 100
+    shape_varies: false
+    dtype: uint8
+    compression: gzip
+    value_range:
+    - 0
+    - 1
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: c-Fos+ nucleus (cFos/) or microglial soma (microglia/)
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: same patchvolume_<id>_<n>.nii.gz in raw/ and gt/ (all 41 cFos and
+      160 microglia gt names have a raw match; 7 cFos raw patches have no gt). gt dtype differs by subset:
+      cFos uint32, microglia uint8.'
+  notes: 'Zip index read with peek_archive zip_entries (the /content URL hides the .zip name from listing.py):
+    441 members, training_data 409 files, 431,581,098 B; whole zip 445,606,862 B = size_bytes. probe.py
+    on 4 members: NIfTI 100^3, gzip; raw float64, gt uint32 (cFos) / uint8 (microglia). The same 4 members
+    read with read_member + nibabel: cFos raw [213, 65535], microglia raw [1051, 49270] (integer values);
+    both gt {0, 1}, about 1.3-1.4% foreground; pixdim 1,1,1, units unknown (from one patch each). Download:
+    the zip and its members pass --download-check. Voxel size: the two subsets differ (paper Methods:
+    c-Fos 1.625 x 1.625 x 6 um; microglia 0.54 um xy), so voxel_size_nm stays null; NIfTI headers give
+    no calibration.'
+  inspected_at: '2026-10-10T20:49:11Z'
