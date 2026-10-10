@@ -31,7 +31,7 @@ data:
   formats:
   - nifti
   size_bytes: 2844513792
-  n_items: 960
+  n_items: 1088
   access: open
   download_url: https://zenodo.org/api/records/7195636/files/1channel.tar/content
   download_method: http
@@ -39,14 +39,13 @@ annotations:
   present: true
   types:
   - semantic-segmentation
-  - instance-segmentation
   coverage: dense
-  format: Nuclei label masks derived from Hoechst fluorescence images (EBImage-based pipeline); the method code reads NIfTI
+  format: NIfTI (.nii.gz) label masks in nnU-Net layout (labelsTr/labelsTs next to imagesTr/imagesTs, one dataset.json per task), float32, same 512x512 grid as the brightfield images
   source: automatic
 ml:
   tasks:
   - segmentation
-  splits_provided: false
+  splits_provided: true
   benchmark: null
   baseline_code_url: https://github.com/mgendarme/BriFiSeg
 license:
@@ -59,10 +58,113 @@ provenance:
   - https://zenodo.org/api/records/7195636
   - https://arxiv.org/pdf/2211.03072
   - https://github.com/mgendarme/BriFiSeg
-  confidence: 0.7
+  - https://zenodo.org/api/records/7195636/files/1channel.tar/content
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-10T12:13:30Z'
-notes: 'Zenodo record holds two tar archives: 1channel.tar (717 MB) and 3channels.tar (2.1 GB, three z-planes); the two cover the same images, so n_items (960 = 4 cell lines x 240) counts fields of view once, and size_bytes is the sum of both archives. peek_archive could not list the tar members, so the file names, exact format of images and labels, and the split were not verified from a listing; the NIfTI format is taken from the code repository README ("Nifti format were used to develop the method"), which is why annotations_verified is false. Ground truth is automatic (from Hoechst fluorescence, per the paper Methods), not manual, and the paper notes it degraded under drug treatments. Pixel size is not stated in the paper Methods or the Zenodo page. Sources checked: Zenodo record, arXiv paper full text (Methods), GitHub README.'
+  annotations_verified: true
+  last_checked: '2026-10-10T13:20:00Z'
+notes: 'Two tar archives on Zenodo: 1channel.tar (717 MB, one z-plane) and 3channels.tar (2.1 GB, three z-planes) cover the same fields of view. Ground truth is automatic (from Hoechst fluorescence, paper Methods) and degraded under drug treatments per the paper. enricher: annotations verified from nested-zip listings and samples; label masks are semantic (binary nucleus, or background/center/border in Task002), instances are derived by watershed/connected components, so instance-segmentation dropped from types. enricher: n_items 1088 = 4 cell-line tasks x (224 train + 48 test) in 1channel (was 960, the paper says 240 per cell line); splits provided (imagesTr/imagesTs). enricher: voxel size still not found (NIfTI pixdim 1.0 default, paper gives only 20x/0.75 objective and DS-Qi2 camera).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "1channel.tar  (717,413,376 B; tar of 5 zips)\n  1channel/Task001_A549.zip    143 MB  binary nucleus labels\n  1channel/Task002_A549.zip    144 MB  background/center/border labels\n  1channel/Task010_HELA.zip    151 MB\n  1channel/Task011_MCF7.zip    137 MB\n  1channel/Task015_RPE1.zip    142 MB\n    each zip: Task0NN_<LINE>/\n      dataset.json\n      imagesTr/  224 x <LINE>_NNN_0000.nii.gz\n      imagesTs/   48 x <LINE>_NNN_0000.nii.gz\n      labelsTr/  224 x <LINE>_NNN.nii.gz\n      labelsTs/   48 x <LINE>_NNN.nii.gz\n3channels.tar (2,127,100,416 B; tar of 5 zips)\n  3channels/Task006_A549.zip   426 MB\n  3channels/Task012_HELA.zip   446 MB\n  3channels/Task014_MCF7.zip   407 MB\n  3channels/Task016_RPE1.zip   421 MB\n  3channels/Task019_A549.zip   427 MB\n    each zip (Task006 listed): imagesTr 672 (= 224 x _0000/_0001/_0002),\n      imagesTs 144, labelsTr 224, labelsTs 48, dataset.json"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/7195636/files/1channel.tar/content
+    size_bytes: 717413376
+    description: Smallest self-contained download is 1channel.tar; the files are zips nested inside the tar (no direct per-file link). Inside, e.g. 1channel/Task010_HELA.zip -> imagesTr/HELA_001_0000.nii.gz + labelsTr/HELA_001.nii.gz.
+  arrays:
+  - role: raw
+    path_pattern: 1channel/Task*/images*/*_0000.nii.gz
+    format: nifti
+    axes: zyx
+    shape:
+    - 1
+    - 512
+    - 512
+    shape_varies: false
+    dtype: float32
+    compression: gzip
+    value_range:
+    - 7.85
+    - 253.7
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: single brightfield z-plane; NIfTI dims (x=512, y=512, z=1) written slowest-first; pixdim 1.0 (uncalibrated)
+  - role: label
+    path_pattern: 1channel/Task0{01,10,11,15}_*/labels*/*.nii.gz
+    format: nifti
+    axes: zyx
+    shape:
+    - 1
+    - 512
+    - 512
+    shape_varies: false
+    dtype: float32
+    compression: gzip
+    value_range:
+    - 0
+    - 1
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: 'nnU-Net pairing: labels*/<LINE>_NNN.nii.gz <-> images*/<LINE>_NNN_0000.nii.gz (Tr with Tr, Ts with Ts); identical affine. Task001 dataset.json lists 3 classes but its sampled label holds only {0,1}.'
+  - role: label
+    path_pattern: 1channel/Task002_A549/labels*/*.nii.gz
+    format: nifti
+    axes: zyx
+    shape:
+    - 1
+    - 512
+    - 512
+    shape_varies: false
+    dtype: float32
+    compression: gzip
+    value_range:
+    - 0
+    - 2
+    normalization: none
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: nucleus_center
+    - id: 2
+      name: nucleus_border
+    alignment: same-grid
+    alignment_notes: same pairing as above; classes from Task002 dataset.json, sample holds {0,1,2}
+  - role: raw
+    path_pattern: 3channels/Task*/images*/*_000[0-2].nii.gz
+    format: nifti
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: gzip
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: three z-planes stored as separate nnU-Net channel files _0000/_0001/_0002 (dataset.json modality R/G/B); headers not probed
+  - role: label
+    path_pattern: 3channels/Task*/labels*/*.nii.gz
+    format: nifti
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: gzip
+    normalization: none
+    encoding: unknown
+    alignment: same-grid
+    alignment_notes: 'Task006 dataset.json: background/nucleus; its labelsTr sizes and names match 1channel Task001. Task012-019 labels not inspected.'
+  notes: 'Listing: Zenodo API (2 tars, 2,844,513,792 B, complete). Tar members walked with range requests (tar headers), nested zip central directories read with range requests (custom script, requests only); ~2.1 MB read in total. Sampled 1channel Task001 image A549_001_0000 (float32 512x512x1, range 7.85-253.70, mean 177.4; one sample) and labelsTr/*_001 of all five 1channel tasks (float32; {0,1} in Task001/010/011/015, {0,1,2} in Task002). imagesTs names restart at _001 (48 files); 224+48 = 272 per task vs 240 per cell line in the paper, so test images may overlap train fields of view; not settled. Download: both tars are direct Zenodo files with range requests (download-check usable), but TensorSwitch cannot address a zip member inside a tar, so no per-file sample URL exists. Voxel size not found; checked: NIfTI header (pixdim 1.0 default), Zenodo API description, dataset.json files, arXiv paper Methods, GitHub README.'
