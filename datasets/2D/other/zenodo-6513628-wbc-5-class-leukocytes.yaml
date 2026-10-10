@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-6513628-wbc-5-class-leukocytes
 title: White blood cell images in five leukocyte classes for classification
 short_name: Leukocyte 5-class images (blood smear)
-description: 500 BMP images of white blood cells in five class folders (basophil, eosinophil, lymphocyte, monocyte, neutrophil),
-  100 images each. The record description only says "White Blood Cell Dataset"; file names with an "Aug__" prefix suggest
-  augmented copies.
+description: 500 BMP images of white blood cells in five class folders (basophil, eosinophil, lymphocyte,
+  monocyte, neutrophil), 100 images each. The record description only says "White Blood Cell Dataset";
+  file names with an "Aug__" prefix suggest augmented copies.
 landing_url: https://zenodo.org/records/6513628
 doi: 10.5281/zenodo.6513628
 repository: Zenodo
@@ -37,7 +37,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: class given by the folder name (Basophil, Eosinophil, Lymphocyte, Monocyte, Neutrophil; 100 images each)
+  format: 'class given by the folder name: Basophil/, Eosinophil/, Lymphocyte/, Monocyte/, Neutrophil/Neutrophil/
+    (100 BMP images each)'
   source: unknown
 ml:
   tasks:
@@ -59,9 +60,50 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T14:35:00Z'
-notes: 'Zip listing (peek_archive): 500 files, all .bmp, about 15.1 MB each (7.5 GB uncompressed, 5.98 GB zip), in five class
-  folders of 100 images each. Many file names start with "Aug__", so the images may be augmented versions rather than
-  original captures; the record does not say. BMP is not in the schema format list, hence "other". The record description
-  is only "White Blood Cell Dataset": microscope, stain, magnification, pixel size, image dimensions, how the images were
-  labelled and the source of the cells are not stated, and no paper is linked. The imaging modality is not stated, so modality is "other".'
+  last_checked: '2026-10-10T14:33:39Z'
+notes: 'Zip listing (peek_archive): 500 files, all .bmp, 498 of 15,116,598 bytes each (7.5 GB uncompressed,
+  5.98 GB zip), in five class folders of 100 images each. Many file names start with "Aug__", so the images
+  may be augmented versions rather than original captures; the record does not say. BMP is not in the
+  schema format list, hence "other". The record description is only "White Blood Cell Dataset": microscope,
+  stain, magnification, pixel size, image dimensions, how the images were labelled and the source of the
+  cells are not stated, and no paper is linked. The imaging modality is not stated, so modality is "other".
+  enricher: BMP headers: 2592x1944, 24-bit, uncompressed; the Neutrophil images sit one folder deeper
+  (Neutrophil/Neutrophil/).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "White Blood Cell.zip  5.98 GB (7.54 GB unpacked)\n  White Blood Cell/Basophil/            \
+      \    100 .bmp\n  White Blood Cell/Eosinophil/              100 .bmp\n  White Blood Cell/Lymphocyte/\
+      \              100 .bmp\n  White Blood Cell/Monocyte/                100 .bmp\n  White Blood Cell/Neutrophil/Neutrophil/\
+      \   100 .bmp\n  names: <letter><n>.bmp (146) or Aug__0_<n>.bmp (354)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/6513628/files/White%20Blood%20Cell.zip::White Blood Cell/Basophil/B1.bmp
+    size_bytes: 15116598
+    description: One basophil image (class from the folder name)
+  arrays:
+  - role: raw
+    path_pattern: White Blood Cell.zip::White Blood Cell/**/*.bmp
+    format: other
+    axes: yxs
+    shape:
+    - 1944
+    - 2592
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Windows BMP, 24 bits per pixel (BGR), uncompressed; 498 of 500 files are 2592x1944
+      (15,116,598 bytes); Monocyte/Aug__0_2443.bmp and Neutrophil/N66.bmp are smaller. Labels are the
+      class folder names.
+  notes: Exact zip index (500 members, all deflated BMPs, 7,540,906,440 bytes unpacked). Read the 54-byte
+    BMP headers of Basophil/B1.bmp (2592x1944, 24 bpp, BI_RGB, no resolution) and Neutrophil/Neutrophil/Aug__0_11.bmp
+    (same size; 3780 px/m, the 96 dpi default, not a calibration). tools/sample.py does not read BMP,
+    so pixel values were not sampled. 354 file names start with Aug__0_, which suggests augmented copies;
+    the record does not say. Pixel size, microscope and stain are not stated; no paper is linked.
