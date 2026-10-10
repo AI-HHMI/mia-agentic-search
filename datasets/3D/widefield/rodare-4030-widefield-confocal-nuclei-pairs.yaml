@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: rodare-4030-widefield-confocal-nuclei-pairs
 title: Correlated Widefield-confocal Microscopy Dataset
 short_name: Paired widefield and confocal nuclei z-stacks
-description: Registered pairs of widefield and confocal fluorescence z-stacks of Hoechst-stained A549 cell nuclei
-  (20x, 2048x2048 raw fields, 128x128 patches with 40 focal planes), provided as train, validation and test
-  arrays plus the raw TIFF stacks, for virtual optical sectioning and widefield-to-confocal reconstruction.
+description: Registered pairs of widefield and confocal fluorescence z-stacks of Hoechst-stained A549
+  cell nuclei (20x, 2048x2048 raw fields, 128x128 patches with 40 focal planes), provided as train, validation
+  and test arrays plus the raw TIFF stacks, for virtual optical sectioning and widefield-to-confocal reconstruction.
 landing_url: https://rodare.hzdr.de/record/4030
 doi: 10.14278/rodare.4030
 repository: other
@@ -42,7 +42,7 @@ data:
   formats:
   - tiff
   size_bytes: 73940290883
-  n_items: null
+  n_items: 72
   access: open
   download_url: https://rodare.hzdr.de/record/4030
   download_method: http
@@ -51,7 +51,8 @@ annotations:
   types:
   - restoration-pairs
   coverage: dense
-  format: 'Paired arrays in NumPy .npz files (train.npz, val.npz, test.npz; keys c_img confocal, w_img widefield, values 0-1) and registered raw widefield / confocal TIFF z-stacks'
+  format: Paired arrays in NumPy .npz files (train.npz, val.npz, test.npz; keys c_img confocal, w_img
+    widefield, values 0-1) and registered raw widefield / confocal TIFF z-stacks
   source: automatic
 ml:
   tasks:
@@ -71,10 +72,150 @@ provenance:
   - https://rodare.hzdr.de/api/records/2668
   - https://rodare.hzdr.de/record/4030
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11683148/fullTextXML
-  confidence: 0.7
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T04:00:00Z'
-notes: 'Version 2 of the Rodare record (concept DOI 10.14278/rodare.2667; v1 = rodare.2668, only the 6.3 GB confocal_widefield.npz test sample of 600 patches). v2 lists 6 files, 73.9 GB: Confocal-20x.zip, Widefield-20x.zip (listed: 2880 TIFFs of 8.4 MB in ZStep folders), train.npz, val.npz, test.npz, confocal_widefield.npz. Stacks are 2048x2048 px = 699 um per side (xy ~341.3 nm, computed from those two stated numbers); widefield z step 0.7 um, confocal 0.3 um, confocal 92 planes downsampled to the 40 widefield planes, so z is given as 700 nm. Nikon 20x, ImageXpress Confocal, ex 405 / em 452 nm. The record text describes only the 600-patch set (shape [600,128,128,40]); the split npz files and Confocal-20x.zip were not opened. The paper trains on simulated data and uses this set only as a prospective test. Pairs are paired acquisitions, not manual labels. Checked: Rodare record pages and API (v1, v2), Widefield zip listing, paper Methods and Data availability.'
+  last_checked: '2026-10-10T04:30:00Z'
+notes: 'Version 2 of the Rodare record (concept DOI 10.14278/rodare.2667; v1 = rodare.2668, only the 6.3
+  GB confocal_widefield.npz test sample of 600 patches). v2 lists 6 files, 73.9 GB: Confocal-20x.zip,
+  Widefield-20x.zip (listed: 2880 TIFFs of 8.4 MB in ZStep folders), train.npz, val.npz, test.npz, confocal_widefield.npz.
+  Stacks are 2048x2048 px = 699 um per side (xy ~341.3 nm, computed from those two stated numbers); widefield
+  z step 0.7 um, confocal 0.3 um, confocal 92 planes downsampled to the 40 widefield planes, so z is given
+  as 700 nm. Nikon 20x, ImageXpress Confocal, ex 405 / em 452 nm. The paper trains on simulated data and
+  uses this set only as a prospective test. Pairs are paired acquisitions, not manual labels. Checked:
+  Rodare record pages and API (v1, v2), Widefield zip listing, paper Methods and Data availability. enricher:
+  n_items 72 fields from zip listing (was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "4030/  (Rodare, 6 files, 73.9 GB; direct files at https://rodare.hzdr.de/record/4030/files/<name>)\n\
+      \  Widefield-20x.zip   15.6 GB\n    Widefield-20x/ZStep_{1..40}/220527-AY-H-Widefield-20x_<well>_s<site>.tif\
+      \   2880 TIFFs (72 fields x 40 planes), 8.4 MB each\n    Widefield-20x/*.sh, .ipynb_checkpoints/\
+      \   5 helper shell scripts\n  Confocal-20x.zip    22.8 GB\n    Confocal-20x/ZStep_{1..92}/220527-AY-H-Confocal-20x_<well>_s<site>.tif\
+      \     6624 TIFFs (72 fields x 92 planes), 8.4 MB each\n    Confocal-20x/*.sh, .ipynb_checkpoints/\
+      \    4 helper shell scripts\n  train.npz   23.5 GB   w.npy, c.npy  float32 (4473, 40, 128, 128)\n\
+      \  val.npz      2.9 GB   w.npy, c.npy  float32 (559, 40, 128, 128)\n  test.npz     2.9 GB   w.npy,\
+      \ c.npy  float32 (560, 40, 128, 128)\n  confocal_widefield.npz  6.3 GB   c_img.npy, w_img.npy  float64\
+      \ (600, 128, 128, 40)\nwells F04,F05,F07,F08,G04,G05,G07,G08 x sites s1-s9"
+    n_files: 6
+    listing_complete: true
+  sample:
+    urls:
+    - https://rodare.hzdr.de/record/4030/files/Widefield-20x.zip::Widefield-20x/ZStep_20/220527-AY-H-Widefield-20x_G05_s8.tif
+    - https://rodare.hzdr.de/record/4030/files/Confocal-20x.zip::Confocal-20x/ZStep_46/220527-AY-H-Confocal-20x_G05_s8.tif
+    size_bytes: 16805772
+    description: 'One 2048x2048 plane of field G05_s8: widefield ZStep_20 (raw) and confocal ZStep_46
+      (target, the central confocal plane).'
+  arrays:
+  - role: raw
+    path_pattern: Widefield-20x/ZStep_*/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 290
+    - 12447
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One 2D plane per file; a field's z-stack is the 40 files with the same name in ZStep_1..ZStep_40
+      (0.7 um step).
+  - role: target
+    path_pattern: Confocal-20x/ZStep_*/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 38
+    - 865
+    normalization: unknown
+    alignment: scaled
+    alignment_notes: Same field name as the widefield file (e.g. G05_s8); 92 confocal planes at 0.3 um
+      step in ZStep_1..ZStep_92 vs 40 widefield planes at 0.7 um, so z differs; the record page says confocal
+      stacks were downsampled from the central (46th) plane to 40 planes and xy drift corrected only for
+      the npz patches, not these raw TIFFs.
+  - role: raw
+    path_pattern: '{train,val,test}.npz'
+    format: other
+    axes: zyx
+    shape:
+    - 40
+    - 128
+    - 128
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range: null
+    normalization: rescaled
+    alignment: not-applicable
+    alignment_notes: NumPy .npz (stored zip); member w.npy = widefield patches, per-file shape (N, 40,
+      128, 128), N patches = 4473 train / 559 val / 560 test; the shape field gives one patch.
+  - role: target
+    path_pattern: '{train,val,test}.npz'
+    format: other
+    axes: zyx
+    shape:
+    - 40
+    - 128
+    - 128
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range: null
+    normalization: rescaled
+    alignment: same-grid
+    alignment_notes: Member c.npy = registered confocal patches, same shape as w.npy in the same file;
+      patch i of c pairs with patch i of w.
+  - role: raw
+    path_pattern: confocal_widefield.npz
+    format: other
+    axes: yxz
+    shape:
+    - 128
+    - 128
+    - 40
+    shape_varies: false
+    dtype: float64
+    compression: none
+    value_range: null
+    normalization: rescaled
+    alignment: not-applicable
+    alignment_notes: Member w_img.npy, 600 widefield patches, shape (600, 128, 128, 40), z last; the shape
+      field gives one patch.
+  - role: target
+    path_pattern: confocal_widefield.npz
+    format: other
+    axes: yxz
+    shape:
+    - 128
+    - 128
+    - 40
+    shape_varies: false
+    dtype: float64
+    compression: none
+    value_range: null
+    normalization: rescaled
+    alignment: same-grid
+    alignment_notes: Member c_img.npy, paired confocal patches, same shape as w_img.npy.
+  notes: 'Listing: tools/listing.py over all 6 files (zips expanded), 73,940,290,883 bytes, complete.
+    Raw TIFFs are single 2D uint16 planes (probe could not read deflated members; sampled with tools/sample.py):
+    widefield [290, 12447], confocal [38, 865] (one sample each). npz members read from their .npy headers
+    only (no data downloaded, no unpickling): train/val/test hold w.npy/c.npy float32, confocal_widefield.npz
+    holds w_img/c_img float64; the record page says npz values are normalized to 0-1. npz array shapes
+    are per patch (leading patch axis left out). The api/files/... URLs do not answer range requests;
+    the record/4030/files/<name> form does (206), so the sample uses that. Host rodare.hzdr.de is not
+    on the TensorSwitch allowlist. No single archive holds the whole dataset, so download_url stays the
+    landing page. Voxel size: z 700 nm applies to widefield and the npz patches; the raw confocal TIFFs
+    have a 300 nm z step (paper Methods).'
