@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-11101282-he-colorectal-lymph-node-nuclei
 title: H&E colorectal lymph node metastasis nuclei dataset
 short_name: Neoplastic nuclei classes (H&E colorectal LN)
-description: H&E image patches (224x224 px RGB, 40x) of nuclei from colorectal lymph node metastasis slides, stored as eight
-  NumPy arrays (PA1-PA8; PA1 holds 29,794 patches), with per-slide annotation files labelled neoplastic or non-neoplastic and
-  nuclear feature tables.
+description: H&E image patches (224x224 px RGB, 40x) of nuclei from colorectal lymph node metastasis slides,
+  stored as eight NumPy arrays (PA1-PA8; PA1 holds 29,794 patches), with per-slide annotation files labelled
+  neoplastic or non-neoplastic and nuclear feature tables.
 landing_url: https://zenodo.org/records/11101282
 doi: 10.5281/zenodo.11101282
 repository: Zenodo
@@ -21,16 +21,17 @@ imaging:
   channels: 3
   organism:
   - Homo sapiens
-  sample: H&E-stained colorectal lymph node metastasis slides (eight sets PA1-PA8), nucleus-centred 224x224 patches at 40x magnification
+  sample: H&E-stained colorectal lymph node metastasis slides (eight sets PA1-PA8), nucleus-centred 224x224
+    patches at 40x magnification
   labels_stains:
   - H&E
 data:
   formats:
   - other
   size_bytes: 25495949175
-  n_items: null
+  n_items: 169061
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/11101282
   download_method: http
 annotations:
   present: true
@@ -38,7 +39,8 @@ annotations:
   - instance-segmentation
   - classification
   coverage: dense
-  format: annotation.zip (annotation_PA<n>.json per set) and nuclei_feature.zip; images in image_array_PA<n>_patch_size=224.npy
+  format: 'annotation.zip: annotation/annotation_PA<n>.json, one entry per patch (case_id, slide_id, centroid_x/y,
+    contour x/y, class_id Neoplastic / Non-neoplastic); nuclei_feature.zip'
   source: unknown
 ml:
   tasks:
@@ -59,10 +61,76 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T08:00:00Z'
-notes: 'The Zenodo description is one line ("neoplastic/non-neoplastic, 224x224 pixels at 40x magnification ... will be updated
-  soon"); no paper is linked and none was found. Header of image_array_PA1 read by range request (shape 29794x224x224x3 uint8);
-  the other seven arrays were not opened, so n_items is null. annotation.zip lists annotation_PA1..PA8.json (peek_archive, 318.7 MB
-  uncompressed); the JSON contents and class names were not read. By analogy with the sibling record 11101664
-  the JSON probably holds contours and class ids, but this was not verified here. Pixel size, annotator and slide source
-  are not stated. NumPy data, so formats is other.'
+  last_checked: '2026-10-10T08:05:00Z'
+notes: 'The Zenodo description is one line ("neoplastic/non-neoplastic, 224x224 pixels at 40x magnification
+  ... will be updated soon"); no paper is linked and none was found. Header of image_array_PA1 read by
+  range request (shape 29794x224x224x3 uint8); annotation.zip lists annotation_PA1..PA8.json (peek_archive,
+  318.7 MB uncompressed); Pixel size, annotator and slide source are not stated. NumPy data, so formats
+  is other. enricher: n_items 169,061 from all eight npy headers; PA3 JSON parsed (Neoplastic/Non-neoplastic
+  contours in slide coordinates).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                       10 files  25.5 GB  .npy 8, .zip 2\n  image_array_PA<1-8>_patch_size=224.npy\
+      \   1.5-4.9 GB each, (N, 224, 224, 3) uint8\n    PA1 29794, PA2 24245, PA3 9792, PA4 17975, PA5\
+      \ 32846, PA6 15452, PA7 15595, PA8 23362\n  annotation.zip   24.1 MB\n    annotation/annotation_PA<1-8>.json\
+      \   (8 files, 318.7 MB uncompressed)\n  nuclei_feature.zip   23.4 MB\n    annotation.zip   (24.1\
+      \ MB; a nested zip, contents not opened)\n"
+    n_files: 10
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/11101282/files/image_array_PA3_patch_size=224.npy
+    - https://zenodo.org/records/11101282/files/annotation.zip::annotation/annotation_PA3.json
+    size_bytes: 1492406887
+    description: 'smallest set PA3: 9792 patches (1.47 GB .npy) and its annotation JSON (18.4 MB uncompressed)'
+  arrays:
+  - role: raw
+    path_pattern: image_array_PA[1-8]_patch_size=224.npy
+    format: other
+    axes: null
+    shape:
+    - 29794
+    - 224
+    - 224
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 31
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Eight NumPy .npy arrays (v1 header 128 bytes, C order, uint8), first axis = patch
+      count (PA1-PA8: 29794, 24245, 9792, 17975, 32846, 15452, 15595, 23362; shape shown is PA1). Axes
+      not stated (reads as patch, y, x, RGB).'
+  - role: label
+    path_pattern: annotation.zip::annotation/annotation_PA[1-8].json
+    format: json
+    axes: null
+    shape:
+    - 9792
+    - 6
+    shape_varies: true
+    dtype: unknown
+    compression: deflate
+    encoding: polygons
+    classes:
+    - id: Neoplastic
+      name: Neoplastic
+    - id: Non-neoplastic
+      name: Non-neoplastic
+    alignment: unknown
+    alignment_notes: 'annotation_PA<n>.json pairs with image_array_PA<n> (PA3: 9792 entries = 9792 patches;
+      pairing by index inferred from equal counts). Keys case_id, slide_id, centroid_x/y, contour {x,
+      y}, class_id; coordinates are whole-slide pixels of slides not in the deposit (shape shown is PA3).'
+  notes: 'Listing via Zenodo API (10 files, sizes exact) + zip central directories. All eight .npy headers
+    read by range request (1 KB each); PA3 patch 0 read (150,528 bytes): uint8 RGB, values 31-255 (one
+    patch). annotation_PA3.json read in full (18.4 MB): 9792 nuclei, Non-neoplastic 7984 / Neoplastic
+    1808, 16 slides. nuclei_feature.zip holds only a nested annotation.zip (24.1 MB), not opened. .npy
+    is not a format TensorSwitch reads. No single archive: data.download_url is the record page; direct
+    files are https://zenodo.org/records/11101282/files/<name>. Voxel size not found; checked: npy headers,
+    Zenodo API description ("40x magnification" only), annotation JSON keys, Europe PMC title/author search
+    (no paper). Annotation source not stated.'
