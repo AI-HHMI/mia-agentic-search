@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: empiar-12675-rat-brain-fib-sem-ai-masks
 title: Rat brain FIB-SEM volume with AI-generated region masks and a manual first-slice annotation
 short_name: Rat brain FIB-SEM with AI masks
-description: A 492-slice FIB-SEM image stack of rat brain tissue (50 nm pixels), deposited with a folder of 499 AI-generated
-  segmentation masks and one manual annotation of the first slice. From a study on AI-guided adaptive scanning for volume
-  electron microscopy.
+description: A 492-slice FIB-SEM image stack of rat brain tissue (5 nm pixels per EMPIAR, 50 Å), deposited with a folder of
+  499 AI-generated segmentation masks and one manual annotation of the first slice. From a study on AI-guided adaptive scanning
+  for volume electron microscopy.
 landing_url: https://www.ebi.ac.uk/empiar/EMPIAR-12675/
 doi: 10.6019/EMPIAR-12675
 repository: EMPIAR
@@ -22,8 +22,8 @@ imaging:
   - FIB-SEM
   dimensionality: 3D
   voxel_size_nm:
-    x: 50
-    y: 50
+    x: 5
+    y: 5
     z: null
   channels: 1
   organism:
@@ -33,6 +33,7 @@ imaging:
 data:
   formats:
   - tiff
+  - png
   size_bytes: 854011813
   n_items: 1
   access: open
@@ -43,7 +44,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: unknown
-  format: PNG masks, one per slice in Rat_Brain/mask (499 files), plus one PNG manual annotation of the first slice in Rat_Brain/labels
+  format: 'PNG: 499 AI-generated binary masks (0/255, 2000 x 1536 px) in Rat_Brain/mask (0002-0500.png); one manual binary
+    annotation of slice 1 (1549 x 1104, same grid as the frames) in Rat_Brain/labels/0001.png'
   source: mixed
 ml:
   tasks:
@@ -62,16 +64,94 @@ provenance:
   - https://www.ebi.ac.uk/empiar/EMPIAR-12675/
   - https://ftp.ebi.ac.uk/empiar/world_availability/12675/data/
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22Contextual+High-throughput+3D+Volume+Electron+Microscopy+Data+Acquisition+Using+Artificial+Intelligence%22&format=json&resultType=core&pageSize=3
-  confidence: 0.55
+  - https://ftp.ebi.ac.uk/empiar/world_availability/12675/12675.xml
+  confidence: 0.5
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T12:50:00Z'
-notes: 'EMPIAR API: one image set of 492 TIFF slices, 1549 x 1104 px, 8-bit, 50 nm pixel size; a second image set "annotation
-  by user" is one PNG (manual annotation of the first slice); the segmentation entry is described only as "AI-generated
-  segmentation" (Rat_Brain/mask). The file listing shows 499 mask PNGs against 492 frames, which was not reconciled. The
-  masks are automatic, so labels are not manually verified except for the first slice. What structure the masks mark is not
-  stated on the EMPIAR page; the paper abstract describes AI-derived masks of a targeted region of interest for adaptive
-  scanning. The paper is not open access (only the abstract was read), so z step, microscope settings and the class definition
-  are unknown. Total size is the HTTP-index estimate (about 854 MB).'
+  last_checked: '2026-10-10T13:45:00Z'
+notes: 'EMPIAR API: 492 TIFF slices, 1549 x 1104 px, 8-bit; a second image set is one PNG (manual annotation of slice 1);
+  the masks are described only as "AI-generated segmentation". What structure the masks mark is not stated; the abstract describes
+  AI-derived masks of a targeted region of interest for adaptive scanning. Paper not open access (abstract only), so z step
+  and class definition are unknown. enricher: pixel size 5 nm from EMPIAR pixel_width 50.0 (EMPIAR unit Å; was 50 nm). enricher:
+  masks are 0002-0500.png at 2000 x 1536 px, not the 1549 x 1104 frame grid, so they do not pair 1:1 with frames 0001-0492;
+  only labels/0001.png sits on the frame grid. enricher: formats add png (masks/labels).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "./                               995 files  854 MB (HTTP index, rounded)\n  12675.xml\n  data/Rat_Brain/frames/\
+      \     492 files  825 MB  0001.tif .. 0492.tif (+ Thumbs.db)\n  data/Rat_Brain/labels/       1 file    18 KB  0001.png\n\
+      \  data/Rat_Brain/mask/       499 files   26 MB  0002.png .. 0500.png (+ Thumbs.db)\n"
+    n_files: 995
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/empiar/world_availability/12675/data/Rat_Brain/frames/0001.tif
+    - https://ftp.ebi.ac.uk/empiar/world_availability/12675/data/Rat_Brain/labels/0001.png
+    size_bytes: 1696562
+    description: Slice 1 of the FIB-SEM stack and its manual binary annotation (the one label on the frame grid).
+  arrays:
+  - role: raw
+    path_pattern: data/Rat_Brain/frames/[0-9][0-9][0-9][0-9].tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1104
+    - 1549
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 7
+    - 241
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One single-page TIFF per z slice (492 slices); z is the file index.
+  - role: label
+    path_pattern: data/Rat_Brain/labels/0001.png
+    format: png
+    axes: yx
+    shape:
+    - 1104
+    - 1549
+    shape_varies: false
+    dtype: bool
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Manual annotation of slice 1 (EMPIAR: "Manual annotation by user on the first slice of volume"); pairs
+      with frames/0001.tif, same shape.'
+  - role: label
+    path_pattern: data/Rat_Brain/mask/[0-9][0-9][0-9][0-9].png
+    format: png
+    axes: yx
+    shape:
+    - 1536
+    - 2000
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes: null
+    alignment: unknown
+    alignment_notes: 'AI-generated masks 0002-0500.png (499) vs frames 0001-0492: counts and grid differ (2000 x 1536 vs 1549
+      x 1104; ratios 0.77 / 0.72, not uniform), so no 1:1 pairing or transform is documented. Likely acquisition-field masks
+      for adaptive scanning, but not stated.'
+  notes: 'Listing: EMPIAR HTTP index (FTP timed out), 995 files incl. 2 Thumbs.db, ~854,018,673 B with rounded sizes, so not
+    a confirmed size; EMPIAR 12675.xml states datasetSize 829.7 MB; size_bytes kept at the harvest value (HTTP index sum).
+    Probed frames/0001.tif (uint8, uncompressed, single page 1104 x 1549), mask/0002.png (uint8 2000 x 1536), labels/0001.png
+    (bool 1104 x 1549). Sampled frames/0002.tif (1,710,218 B: min 7, max 241, 222 unique values; one sample) and mask/0002.png
+    (21,949 B: values {0: 2,486,678, 255: 585,322}). Shape-based uncompressed estimate (not used): 2,379,077,328 B, dominated
+    by the PNG masks. Voxel size: x/y 5 nm from EMPIAR API/XML pixel_width 50.0 (Å, the EMPIAR unit); z not found; checked:
+    TIFF header (no calibration), EMPIAR API and 12675.xml, Europe PMC (not OA, abstract only), publisher page (HTTP 403).
+    No single archive: data.download_url stays the folder; direct files are listed under data/Rat_Brain/. Mask grid differs
+    from the frames, so the masks cannot be aligned without the paper.'
