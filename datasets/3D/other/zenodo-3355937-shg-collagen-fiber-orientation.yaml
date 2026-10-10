@@ -3,8 +3,8 @@ id: zenodo-3355937-shg-collagen-fiber-orientation
 title: 2D and 3D Segmentation of uncertain local collagen fiber orientations in SHG microscopy
 short_name: Collagen fiber orientation masks (SHG)
 description: 4,736 second harmonic generation (SHG) microscopy slices from 35 3D scans of mouse leg bones (wild-type and osteogenesis
-  imperfecta mice) with rough region masks for similar, dissimilar and not-of-interest collagen fiber orientations, plus
-  10 random cross-validation splits.
+  imperfecta mice) with rough region masks for similar, dissimilar and not-of-interest collagen fiber orientations, plus 10
+  random cross-validation splits.
 landing_url: https://zenodo.org/records/3355937
 doi: 10.5281/zenodo.3355937
 repository: Zenodo
@@ -43,7 +43,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: 'PNG ground-truth masks per slice (shg-masks.zip, 4736 files) with three classes: similar orientation (green), dissimilar orientation (red) and not of interest (blue)'
+  format: 'RGB PNG mask per slice (shg-masks.zip, 4736 files), one-hot colour per pixel: similar orientation = green, dissimilar
+    = red, not of interest = blue (Zenodo description)'
   source: manual
 ml:
   tasks:
@@ -69,8 +70,86 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T07:30:00Z'
-notes: 'Zenodo holds 5 zips (15.4 GB): shg-ce-de.zip (9.1 GB, 4736 contrast-enhanced and denoised PNG slices sorted by mouse, bone location and scan), shg-masks.zip (19 MB, 4736 mask PNGs),
-  shg-features.zip, shg-cross-splits.zip (10 random splits) and logs-predictions.zip (model logs and predictions, not data). Per the arXiv preprint: 35 scans of 6 mice (3 with osteogenesis imperfecta),
-  1000x1000 or 1024x1024 px slices covering 250 x 250 um, 78 to 214 slices per scan spaced 0.5 um; xy pixel size therefore ~244 to 250 nm and z 500 nm, but voxel size is left null because xy differs per scan. Labels are
-  rough regions (about 2% similar, 3% dissimilar, 95% not of interest), not pixel-exact. SHG is a nonlinear modality and the preprint does not name the microscope. The Springer version is not open access, the arXiv preprint was read. Checked: Zenodo record and API, both zip listings, preprint.'
+  last_checked: '2026-10-10T04:50:00Z'
+notes: 'Zenodo holds 5 zips (15.4 GB): shg-ce-de.zip (9.1 GB, 4736 contrast-enhanced and denoised PNG slices sorted by mouse,
+  bone location and scan), shg-masks.zip (19 MB, 4736 mask PNGs), shg-features.zip, shg-cross-splits.zip (10 random splits)
+  and logs-predictions.zip (model logs and predictions, not data). Per the arXiv preprint: 35 scans of 6 mice (3 with osteogenesis
+  imperfecta), 1000x1000 or 1024x1024 px slices covering 250 x 250 um, 78 to 214 slices per scan spaced 0.5 um; xy pixel size
+  therefore ~244 to 250 nm and z 500 nm, but voxel size is left null because xy differs per scan. Labels are rough regions
+  (about 2% similar, 3% dissimilar, 95% not of interest), not pixel-exact. SHG is a nonlinear modality and the preprint does
+  not name the microscope. Springer version not open access; arXiv preprint read. enricher: size confirmed by listing; slices
+  grey-as-RGB PNG, masks one-hot RGB, same grid.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "record 3355937  5 zips, 15,442,540,738 B (10,612 zip members)\n  shg-ce-de.zip (9.1 GB)          shg-ce-de/Mouse<n>_{wt,het}/<bone\
+      \ location>/<scan date_time>/image_<nnnn>.png   4736 slices, 35 scan folders (78-192 slices each)\n  shg-masks.zip (19\
+      \ MB)           shg-masks/<same path>/image_<nnnn>.png   4736 masks\n  shg-features.zip                shg-features/comb_feature/\
+      \ ... .gzipped_pickle (second-stage inputs)\n  shg-cross-splits.zip            shg-cross-splits/split<k>/{data,gt}/{training,validation,test}/\
+      \ .gzipped_pickle (10 splits)\n  logs-predictions.zip (2.4 GB)   logs-predictions/default/run.../ tensorboard logs,\
+      \ .h5 weights, .gzipped_pickle predictions\n"
+    n_files: 5
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/3355937/files/shg-ce-de.zip::shg-ce-de/Mouse27_wt/RTibiaUpperPart/180719_11-23-13/image_0089.png
+    - https://zenodo.org/records/3355937/files/shg-masks.zip::shg-masks/Mouse27_wt/RTibiaUpperPart/180719_11-23-13/image_0089.png
+    size_bytes: 2037722
+    description: 'One slice and its mask: Mouse27_wt/RTibiaUpperPart/180719_11-23-13/image_0089.png (zip members)'
+  arrays:
+  - role: raw
+    path_pattern: shg-ce-de.zip::shg-ce-de/*/*/*/image_*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1024
+    - 1024
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    value_range:
+    - 4
+    - 238
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: One PNG per z slice, slice index = image_<nnnn> in each scan folder; greyscale stored as RGB (the 3 samples
+      are identical). The preprint gives 1000x1000 or 1024x1024 px slices, so shapes vary between scans.
+  - role: label
+    path_pattern: shg-masks.zip::shg-masks/*/*/*/image_*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1024
+    - 1024
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: rgb-colors
+    classes:
+    - id: green
+      name: similar orientation
+    - id: red
+      name: dissimilar orientation
+    - id: blue
+      name: not of interest
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: shg-masks/<path>/image_<nnnn>.png pairs with shg-ce-de/<same path>/image_<nnnn>.png; same 1024x1024 grid
+      in the sample. Rough regions, not pixel-exact borders (preprint).
+  notes: 'Listing: Zenodo API + zip central directories (listing.py --expand-zips), complete with exact sizes. Probed and
+    sampled the pair Mouse27_wt/RTibiaUpperPart/180719_11-23-13/image_0089.png: raw 2,029,296 B member, uint8 RGB 1024x1024,
+    samples identical, min 4, max 238, mean 87 (one sample); the Zenodo description calls the slices "enhanced and denoised",
+    hence contrast-stretched. Mask 8,426 B member: channel values only 0 and 255, and the 255 count (1,048,576) equals the
+    pixel count, so exactly one colour channel is set per pixel (one-hot RGB). Voxel size not set: the preprint states 250
+    x 250 um fields at 1000x1000 or 1024x1024 px and 0.5 um between slices, so xy differs per scan and is not stated per scan;
+    checked Zenodo description, preprint, GitHub README. Splits and features are gzipped pickles (not opened, untrusted).
+    No single archive: data.download_url stays the record page; the zip members are directly fetchable.'
