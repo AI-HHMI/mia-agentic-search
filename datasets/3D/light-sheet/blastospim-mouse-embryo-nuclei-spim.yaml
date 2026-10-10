@@ -1,10 +1,12 @@
 schema_version: '1.2'
 id: blastospim-mouse-embryo-nuclei-spim
-title: 'BlastoSPIM 1.0 and 2.0: 3D nuclear instance segmentation ground truth for preimplantation mouse embryos (light-sheet)'
+title: 'BlastoSPIM 1.0 and 2.0: 3D nuclear instance segmentation ground truth for preimplantation mouse
+  embryos (light-sheet)'
 short_name: Mouse embryo nuclei instances (light-sheet)
-description: 653 light-sheet 3D images of H2B-miRFP720 preimplantation mouse embryos (573 in BlastoSPIM 1.0, 80 late-blastocyst
-  images in 2.0) with manually annotated 3D nuclear instance masks (18,336 nuclei), distributed as train / validation / low-SNR
-  test / moderate-SNR test zip archives of .npy image and mask arrays.
+description: 653 light-sheet 3D images of H2B-miRFP720 preimplantation mouse embryos (573 in BlastoSPIM
+  1.0, 80 late-blastocyst images in 2.0) with manually annotated 3D nuclear instance masks (18,336 nuclei),
+  distributed as train / validation / low-SNR test / moderate-SNR test zip archives of .npy image and
+  mask arrays.
 landing_url: https://users.flatironinstitute.org/~awatters/blastospim/html/main.html
 doi: null
 repository: LabWebsite
@@ -40,23 +42,25 @@ imaging:
   channels: 1
   organism:
   - Mus musculus
-  sample: Live preimplantation mouse embryos (zygote to late blastocyst) expressing the nuclear reporter H2B-miRFP720
+  sample: Live preimplantation mouse embryos (zygote to late blastocyst) expressing the nuclear reporter
+    H2B-miRFP720
   labels_stains:
   - H2B-miRFP720
 data:
   formats:
   - other
-  size_bytes: null
+  size_bytes: 60605540609
   n_items: 653
   access: open
-  download_url: null
+  download_url: https://users.flatironinstitute.org/~awatters/blastospim/html/main.html
   download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
   coverage: dense
-  format: Per-image .npy label volumes (masks/), plus a small crop .npy per image
+  format: Per-image .npy uint8 instance-ID volumes (<id>/masks/<id>_masks_0001.npy, same shape as <id>/images/<id>_image_0001.npy),
+    plus a scalar <id>/crop/<id>_crop_0001.npy
   source: manual
 ml:
   tasks:
@@ -81,12 +85,92 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-10T08:25:00Z'
+  last_checked: '2026-10-10T09:20:00Z'
 notes: 'Hosted on the Flatiron Institute project site as zips under ../sample/ (BlastoSPIM1_{train,val,test_lowSNR,test_modSNR}.zip
-  and BlastoSPIM2_*). Only BlastoSPIM1_val.zip was listed with peek_archive (2.39 GB compressed, 93 .npy files, 11.7 GB uncompressed):
-  per-sample folders with images/*_image_0001.npy, masks/*_masks_0001.npy and crop/*_crop_0001.npy; other zips not listed, total
-  size unknown. Formats other because .npy is not in the schema list. Voxel size 0.208 um xy and 2 um z per the dataset page; paper
-  states 0.208 um xy and equal z resolution to the Platynereis data. No license or terms for the data found on the dataset page
-  or paper (the preprint itself is CC-BY-ND 4.0, which is not a dataset license). Paper says raw images were annotated as .tiff
-  stacks with AnnotatorJ; the distributed archives are .npy. n_items = 653 annotated images (573 + 80). Paper also describes
-  10 spinning-disk confocal and other ground-truth sets, which are not confirmed as part of these downloads.'
+  and BlastoSPIM2_*). All 8 zips listed (1,882 .npy, 60.6 GB). Formats other because .npy is not in the
+  schema list. Voxel size 0.208 um xy and 2 um z per the dataset page; paper states 0.208 um xy and equal
+  z resolution to the Platynereis data. No license or terms for the data found on the dataset page or
+  paper (the preprint itself is CC-BY-ND 4.0, which is not a dataset license). Paper says raw images were
+  annotated as .tiff stacks with AnnotatorJ; the distributed archives are .npy. n_items = 653 annotated
+  images (573 + 80). Paper also describes 10 spinning-disk confocal and other ground-truth sets, which
+  are not confirmed as part of these downloads. enricher: masks are uint8 instance IDs on the image grid
+  (sample).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./ (sample/ folder)                        8 files   60.6 GB  .zip\n  BlastoSPIM1_{train,val,test_lowSNR,test_modSNR}.zip\n\
+      \  BlastoSPIM2_{train,val,test_lowSNR,test_modSNR}.zip\nzip contents (1,882 .npy members):\n  <id>/images/<id>_image_0001.npy\
+      \   uint16 (n_z, y, x), Fortran order\n  <id>/masks/<id>_masks_0001.npy    uint8 instance IDs, same\
+      \ shape\n  <id>/crop/<id>_crop_0001.npy      int64 scalar (136 B)\n  ids: F#_#, H#_#, M#_#, T#_#\
+      \ embryos/time points;\n  BlastoSPIM1_train O_#/ (x3) hold 2 images + 2 masks each, no crop\n  e.g.\
+      \ BlastoSPIM1_test_lowSNR.zip: 180 members, 3.32 GB compressed, 16.6 GB unpacked\n"
+    n_files: 8
+    listing_complete: true
+  sample:
+    urls:
+    - https://users.flatironinstitute.org/~awatters/blastospim/sample/BlastoSPIM1_test_lowSNR.zip::T1_003/images/T1_003_image_0001.npy
+    - https://users.flatironinstitute.org/~awatters/blastospim/sample/BlastoSPIM1_test_lowSNR.zip::T1_003/masks/T1_003_masks_0001.npy
+    size_bytes: 177079936
+    description: smallest image + mask pair (T1_003, BlastoSPIM1 low-SNR test; uncompressed member sizes)
+  arrays:
+  - role: raw
+    path_pattern: BlastoSPIM*.zip::*/images/*_image_0001.npy
+    format: other
+    axes: null
+    shape:
+    - 71
+    - 866
+    - 960
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 243
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: NumPy .npy v1, fortran_order True, deflated in the zip; shape shown is T1_003. Axis
+      order not stated in the files; the first axis (71) matches z at 2.0 um (paper uses scales 2.0x0.208x0.208
+      um, z first).
+  - role: label
+    path_pattern: BlastoSPIM*.zip::*/masks/*_masks_0001.npy
+    format: other
+    axes: null
+    shape:
+    - 71
+    - 866
+    - 960
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 4
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    n_ids_observed: 4
+    alignment: same-grid
+    alignment_notes: 'Same <id> folder pairs image and mask; shapes equal (T1_003: 71x866x960 both). Values
+      0 = background, 1..N = nuclei (T1_003: 4 nuclei, a 4-cell embryo). Ground truth drawn as a contour
+      per z-slice per nucleus (dataset page).'
+  - role: other
+    path_pattern: BlastoSPIM*.zip::*/crop/*_crop_0001.npy
+    format: other
+    axes: null
+    shape: []
+    shape_varies: null
+    dtype: int64
+    compression: deflate
+    alignment: unknown
+    alignment_notes: 'scalar int64 per image (T1_003: 1); meaning not documented.'
+  notes: 'Listing: the 8 zips linked from series.html (sample/ folder), read by range requests (1,882
+    members; size confirmed). Headers read for T1_003 image/mask/crop; image (118,053,248 B) and mask
+    (59,026,688 B) downloaded in full and measured: image uint16 values 0-243 (mean 118.9), mask uint8
+    IDs 0-4 (one sample). .npy is not a format TensorSwitch reads; host users.flatironinstitute.org is
+    not on its allowlist. Voxel size 0.208 um xy, 2.0 um z: dataset page and paper Methods. License: none
+    found (dataset page main/series/model pages, sample/ folder, paper full text; the preprint is CC-BY-ND
+    4.0, which covers the article). No single archive: download_url is the landing page; the eight zips
+    are at https://users.flatironinstitute.org/~awatters/blastospim/sample/.'
