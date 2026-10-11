@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: empiar-12581-mouse-brain-mitochondria-fib-sem
 title: SEM images of Mouse brain tissue sample
 short_name: Mouse brain mitochondria masks (FIB-SEM)
-description: 'Stack of 720 downsampled SEM slices (2048x1768, 8-bit, 80 nm pixels) of mouse brain tissue deposited by Thermo Fisher Scientific, with a per-slice mitochondria segmentation mask (Mask/NNNN_mask.tif) and a few sparse label PNGs for mitochondria, neurons and nuclei.'
+description: Stack of 720 downsampled SEM slices (2048x1768, 8-bit, 80 nm pixels) of mouse brain tissue
+  deposited by Thermo Fisher Scientific, with a per-slice mitochondria segmentation mask (Mask/NNNN_mask.tif)
+  and a few sparse label PNGs for mitochondria, neurons and nuclei.
 landing_url: https://www.ebi.ac.uk/empiar/EMPIAR-12581/
 doi: 10.6019/EMPIAR-12581
 repository: EMPIAR
@@ -27,8 +29,8 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 6505370986
-  n_items: 720
+  size_bytes: 6501704656
+  n_items: 721
   access: open
   download_url: https://ftp.ebi.ac.uk/empiar/world_availability/12581/data/
   download_method: http
@@ -37,8 +39,10 @@ annotations:
   types:
   - semantic-segmentation
   - organelle
-  coverage: unknown
-  format: Per-slice mitochondria mask TIFFs (frames/Mask/NNNN_mask.tif, uint8, LZW); sparse PNG labels for mitochondria, neurons and nuclei in labels/
+  coverage: dense
+  format: Per-slice binary mitochondria mask TIFFs (frames/Mask/NNNN_mask.tif, uint8 0/255, LZW), one
+    per raw slice; sparse 1-bit PNG labels for mitochondria, neurons and nuclei every 100th slice (labels/brain_<class>/NNNN.png);
+    RGB overlay TIFFs in frames/Visualization/
   source: unknown
 ml:
   tasks:
@@ -48,7 +52,7 @@ ml:
   baseline_code_url: null
 license:
   spdx: CC0-1.0
-  url: https://creativecommons.org/publicdomain/zero/1.0/
+  url: https://www.ebi.ac.uk/empiar/policies/
 provenance:
   discovered_by: harvest-repositories
   discovered_at: '2026-10-11T15:59:43Z'
@@ -57,10 +61,115 @@ provenance:
   - https://www.ebi.ac.uk/empiar/EMPIAR-12581/
   - https://ftp.ebi.ac.uk/empiar/world_availability/12581/
   - https://ftp.ebi.ac.uk/empiar/world_availability/12581/data/brain_downsampled/frames/Mask/0000_mask.tif
-  confidence: 0.6
+  - https://www.ebi.ac.uk/empiar/policies/
+  - https://ftp.ebi.ac.uk/empiar/world_availability/12581/12581.xml
+  confidence: 0.65
 verification:
   url_ok: true
-  license_found: false
+  license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T15:59:43Z'
-notes: 'Entry is unpublished (citation is the entry title only, no DOI). Total size 6.5 GB is from the HTTP index (rounded): frames 2.6 GB, Mask 74.1 MB, Visualization 3.8 GB (overlays), labels/ PNGs. EMPIAR lists experiment type FIB-SEM and category reconstructed volumes; slice spacing (z) is not stated. Pixel size 80 nm from the EMPIAR record. How the masks were made (manual vs AI) is not stated. CC0-1.0 comes from the EMPIAR search index (tools.sources) for this entry; the rendered entry page showed a blank License field when fetched, so license_found is false. Same depositor as EMPIAR-12674, a different dataset.'
+  last_checked: '2026-10-11T17:00:59Z'
+notes: 'Entry is unpublished (citation is the entry title only, no DOI). EMPIAR lists experiment type
+  FIB-SEM and category reconstructed volumes; slice spacing (z) is not stated anywhere checked, so z is
+  null. Pixel size 80 nm from the EMPIAR API/XML. How the masks were made (manual vs AI) is not stated;
+  annotations.source stays unknown. Same depositor as EMPIAR-12674, a different dataset. enricher: license
+  CC0-1.0 confirmed by EMPIAR policies page (''All data in EMPIAR is freely and publicly available ...
+  under the CC0 licence''); license_found true (was false). enricher: n_items 721 (frames 0000-0720 in
+  the index; EMPIAR states 720). enricher: coverage dense for Mask/ (one mask per slice); labels/ PNGs
+  are sparse (8 slices per class).'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "data/brain_downsampled/\n  frames/                 721 files  2.6 GB  .tif  (NNNN.tif, 0000-0720)\n\
+      \  frames/Mask/            721 files  74.1 MB .tif  (NNNN_mask.tif)\n  frames/Visualization/   721\
+      \ files  3.8 GB  .tif  (NNNN_segmentation.tif, RGB overlays)\n  labels/brain_mit/         8 files\
+      \  199.7 KB .png (0000,0100,...,0700)\n  labels/brain_neuron/      8 files  192.5 KB .png\n  labels/brain_nucleus/\
+      \     8 files  102.4 KB .png\n12581.xml"
+    n_files: 2187
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/empiar/world_availability/12581/data/brain_downsampled/frames/0100.tif
+    - https://ftp.ebi.ac.uk/empiar/world_availability/12581/data/brain_downsampled/frames/Mask/0100_mask.tif
+    size_bytes: 3721758
+    description: Raw slice 0100 (2048x1768 uint8, 3.6 MB) and its mitochondria mask 0100_mask.tif (100
+      KB).
+  arrays:
+  - role: raw
+    path_pattern: data/brain_downsampled/frames/[0-9][0-9][0-9][0-9].tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1768
+    - 2048
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: data/brain_downsampled/frames/Mask/[0-9][0-9][0-9][0-9]_mask.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1768
+    - 2048
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 255
+      name: mitochondria
+    alignment: same-grid
+    alignment_notes: 'One mask per raw slice: frames/Mask/NNNN_mask.tif pairs with frames/NNNN.tif (same
+      1768x2048 shape; sampled pair 0100). EMPIAR describes the Mask folder as ''Segmentation of mitochondria''.'
+  - role: label
+    path_pattern: data/brain_downsampled/labels/brain_*/[0-9][0-9][0-9][0-9].png
+    format: png
+    axes: yx
+    shape:
+    - 1768
+    - 2048
+    shape_varies: false
+    dtype: bool
+    compression: deflate
+    value_range:
+    - 0
+    - 1
+    normalization: none
+    encoding: binary
+    classes:
+    - id: null
+      name: mitochondria (brain_mit)
+    - id: null
+      name: neuron (brain_neuron)
+    - id: null
+      name: nucleus (brain_nucleus)
+    alignment: same-grid
+    alignment_notes: 'Sparse: one 1-bit PNG per class every 100th slice (0000-0700); labels/brain_<class>/NNNN.png
+      pairs with frames/NNNN.tif (same shape). Class from the folder name. brain_mit/0100.png covers 7.2%
+      of the slice vs 16.1% for Mask/0100_mask.tif (IoU 0.45), so the PNGs are not copies of the masks;
+      their role (training seeds?) is not documented.'
+  notes: 'Listed the EMPIAR HTTP index (FTP timed out): 2187 files, sizes rounded, so size_source estimated
+    (6,501,704,656 B summed from the index; EMPIAR states 6.0 GB). Probed frames/0000.tif (plain single-page
+    TIFF, uint8, uncompressed, 1768x2048), Mask/0000_mask.tif (uint8 LZW), Visualization/0000_segmentation.tif
+    (RGB, 884x1024) and labels/brain_mit/0000.png (1-bit grey). Sampled raw 0100.tif (0-255, p1 0, p99
+    249, 1.7% zeros: possibly contrast-stretched, so normalization unknown) and Mask/0100_mask.tif ({0,255},
+    16% foreground); value ranges are from one sample. PNG labels measured with a short script (161 KB):
+    bool, mit 7.2%, neuron 12.9%, nucleus 31.7% foreground on slice 0100. Voxel size: x/y 80 nm from EMPIAR
+    API pixel_width/pixel_height; z not found (checked: TIFF headers, EMPIAR API and XML, entry page,
+    Europe PMC full-text search for EMPIAR-12581, title search: no paper). No single archive: data.download_url
+    stays the folder; direct files are listed under data/brain_downsampled/. frames/Visualization/ holds
+    RGB overlay renderings (884x1024x3 uint8 LZW, half resolution) for viewing; not listed as an array.
+    Not download-ready: z spacing unknown; the volume is stored as one 2D TIFF per slice (planner plans
+    one slice); PNG slice labels not supported by the planner.'
