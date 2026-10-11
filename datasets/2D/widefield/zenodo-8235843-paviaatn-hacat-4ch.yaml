@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zenodo-8235843-paviaatn-hacat-4ch
 title: PaviaATN
 short_name: HaCaT 4-channel actin/tubulin/nuclei (widefield)
-description: 'PaviaATN: 62 four-channel fluorescence microscopy images (2720 x 2720) of human HaCaT keratinocytes
-  expressing GFP-tubulin, RFP-LifeAct and a FastFUCCI cell-cycle reporter, imaged on a Nikon Ti2 with a 100x silicon
-  oil objective. Channels label nuclei (two channels), actin and tubulin. Introduced for the muSplit image-decomposition
-  benchmark (ICCV 2023), where the separate channels serve as ground-truth targets for splitting superimposed structures.'
+description: 'PaviaATN: 62 four-channel fluorescence microscopy images (2720 x 2720) of human HaCaT keratinocytes expressing
+  GFP-tubulin, RFP-LifeAct and a FastFUCCI cell-cycle reporter, imaged on a Nikon Ti2 with a 100x silicon oil objective. Channels
+  label nuclei (two channels), actin and tubulin. Introduced for the muSplit image-decomposition benchmark (ICCV 2023), where
+  the separate channels serve as ground-truth targets for splitting superimposed structures.'
 landing_url: https://zenodo.org/records/8235843
 doi: 10.5281/zenodo.8235843
 repository: Zenodo
@@ -25,7 +25,10 @@ imaging:
   modality:
   - widefield
   dimensionality: 2D
-  voxel_size_nm: null
+  voxel_size_nm:
+    x: 65
+    y: 65
+    z: null
   channels: 4
   organism:
   - Homo sapiens
@@ -69,13 +72,44 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-11T15:55:00Z'
-notes: 'No manual labels: the usable training signal is the separate fluorescence channels (actin, tubulin, nuclei),
-  which the muSplit paper (ICCV 2023) sums to create superimposed inputs for learned image decomposition (three tasks:
-  Actin vs Tubulin, Actin vs Nuclei, Tubulin vs Nucleus), so this is a borderline fit for the usable criteria
-  and ml.tasks is other. Zenodo record and zip listing checked: PaviaATN.zip holds one multi-page TIFF
-  (OptiMEM100x014.tif, ~3.6 GB uncompressed), README.md and LICENSE.txt (CC BY 4.0). The record text says 62 images
-  of 2720 x 2720 with 4 channels; the TIFF page layout was not inspected. Pixel size is not stated in the README,
-  Zenodo record or the paper (arXiv v5 text, including supplement S.3), so voxel_size_nm is null. Optical mode is
-  stated as a Crest V3 spinning-disk confocal used in widefield mode. The paper splits 80/10/10 for its own experiments,
-  but the dataset ships no split files.'
+  last_checked: '2026-10-11T18:10:00Z'
+notes: 'No manual labels: the usable training signal is the separate fluorescence channels (actin, tubulin, nuclei), which
+  the muSplit paper (ICCV 2023) sums to create superimposed inputs for learned image decomposition (three tasks: Actin vs
+  Tubulin, Actin vs Nuclei, Tubulin vs Nucleus), so this is a borderline fit for the usable criteria and ml.tasks is other.
+  Zenodo record and zip listing checked: PaviaATN.zip holds one multi-page TIFF (OptiMEM100x014.tif, ~3.6 GB uncompressed),
+  README.md and LICENSE.txt (CC BY 4.0). Optical mode is stated as a Crest V3 spinning-disk confocal used in widefield mode.
+  The paper splits 80/10/10 for its own experiments, but the dataset ships no split files. enricher: voxel size 65 x 65 nm
+  from the TIFF''s ImageJ calibration (15.384615 px/um, unit micron; plausible for 100x widefield; README and paper give none;
+  was null). enricher: the TIFF holds 61 frames x 4 channels (ImageJ images=244), README says 62 images.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "PaviaATN.zip (2.31 GB)\n  PaviaATN/OptiMEM100x014.tif   3,610,548,855 bytes uncompressed (deflated in the zip)\n\
+      \  PaviaATN/README.md, PaviaATN/LICENSE.txt\n  (+1 OS metadata file)"
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: PaviaATN/OptiMEM100x014.tif
+    format: tiff
+    axes: tcyx
+    shape:
+    - 61
+    - 4
+    - 2720
+    - 2720
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ hyperstack (big-endian), images=244 channels=4 frames=61, finterval 120 s; channel order nuclei,
+      nuclei, actin, tubulin (README). The separate channels are the targets for the muSplit decomposition task.
+  notes: 'Listing: listing.py, Zenodo record + zip (1 file, 2,308,933,430 bytes; 4 members). Header: the TIFF is deflated
+    inside the zip, so probe.py cannot range-read it; the first 2 MB of the member were inflated by hand and the first IFD
+    parsed: 2720x2720, 16 bit, uncompressed, ImageJ 1.53q ''images=244 channels=4 frames=61 hyperstack=true unit=micron finterval=119.99'',
+    XResolution 15384615/1000000 px/um. 244 x 2720 x 2720 x 2 bytes = 3,610,265,600 matches the member size. No sample: the
+    only file is a 3.6 GB deflated member. No labels (decomposition targets only). Sample unit: none smaller than the whole
+    TIFF.'
