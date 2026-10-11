@@ -42,7 +42,7 @@ data:
   size_bytes: 102271302442
   n_items: 679
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/5549971
   download_method: http
 annotations:
   present: true
@@ -74,13 +74,103 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T01:40:00Z'
+  last_checked: '2026-10-11T02:02:36Z'
 notes: 'Part 2 of the DeepFoci deposit; part 1 (nuclei and colocalized foci in primary cultures,
-  10.5281/zenodo.4067741) is a separate record on main and differs in cell types and annotation. Listed zips:
-  cell_lines_U87 (1044 tif = 348 FOVs x 3 channels + 348 labels.json) and cell_lines_NHDF (993 tif = 331
-  FOVs x 3 channels + 331 labels.json); the record text also mentions mask.tif and control.png per FOV, but
-  neither appeared in the zip listings. Pixel size derived from the paper (90.0 x 67.2 um field of
-  1392 x 1040 px, z step 0.3 um, 100x NA 1.3 oil, Leica DM RXA with CSU-10 spinning disk); the dataset page
-  states no pixel size. Focus labels are points per channel
-  (gH2AX, 53BP1, colocalized); the paper says the cell-line foci were labeled manually in each channel. No
-  train/val/test split is provided; the paper used 5-fold cross-validation by experiment.'
+  10.5281/zenodo.4067741) is a separate record on main. Zips: cell_lines_U87 (348 FOVs x 3 channel TIFFs +
+  labels.json) and cell_lines_NHDF (331 FOVs); the record text also mentions mask.tif and control.png per FOV,
+  but neither is in the zips. Pixel size from the paper: "90.0 x 67.2 x 15 um xyz (1392 x 1040 x 50 px)", z step
+  0.3 um; it also gives 1.95 um = 30 px. The files are 1362 x 1010 px (probed), 30 px smaller in x and y than
+  stated, which fits a crop, not a resample (not stated). Labels: manual points per channel. No split; the
+  paper used 5-fold cross-validation. enricher: TIFF axes yxz (50 z slices stored as 50 samples per pixel).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "cell_lines_U87.zip   (52,703,928,690 B)\n  U87-MG/U87_{30 min,8h} PI/IR <dose>Gy_<time> PI/<nnnn>/\
+      \  348 FOV folders\n    data_gH2AX.tif  data_53BP1.tif  data_DAPI.tif  labels.json\ncell_lines_NHDF.zip\
+      \  (49,567,373,752 B)\n  NHDF/NHDF_{30min,8h} PI/IR <dose>Gy_<time> PI/<nnnn>/   331 FOV folders\n\
+      \    data_gH2AX.tif  data_53BP1.tif  data_DAPI.tif  labels.json\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5549971/files/cell_lines_U87.zip::U87-MG/U87_30 min PI/IR 1Gy_30min PI/0001/data_gH2AX.tif
+    - https://zenodo.org/records/5549971/files/cell_lines_U87.zip::U87-MG/U87_30 min PI/IR 1Gy_30min PI/0001/data_53BP1.tif
+    - https://zenodo.org/records/5549971/files/cell_lines_U87.zip::U87-MG/U87_30 min PI/IR 1Gy_30min PI/0001/data_DAPI.tif
+    - https://zenodo.org/records/5549971/files/cell_lines_U87.zip::U87-MG/U87_30 min PI/IR 1Gy_30min PI/0001/labels.json
+    size_bytes: 150194103
+    description: One U87 field of view (1 Gy, 30 min) with its three channel stacks and its focus point labels.
+  arrays:
+  - role: raw
+    path_pattern: '*/*/*/*/[0-9][0-9][0-9][0-9]/data_gH2AX.tif'
+    format: tiff
+    axes: yxz
+    shape:
+    - 1010
+    - 1362
+    - 50
+    shape_varies: null
+    dtype: uint16
+    compression: lzw
+    value_range:
+    - 81
+    - 239
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: gH2AX channel. Single-page TIFF with 50 samples per pixel (photometric 1); the paper's 50 optical
+      sections make the sample axis z.
+  - role: raw
+    path_pattern: '*/*/*/*/[0-9][0-9][0-9][0-9]/data_53BP1.tif'
+    format: tiff
+    axes: yxz
+    shape:
+    - 1010
+    - 1362
+    - 50
+    shape_varies: null
+    dtype: uint16
+    compression: lzw
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 53BP1 channel, same layout as data_gH2AX.tif (probed).
+  - role: raw
+    path_pattern: '*/*/*/*/[0-9][0-9][0-9][0-9]/data_DAPI.tif'
+    format: tiff
+    axes: yxz
+    shape:
+    - 1010
+    - 1362
+    - 50
+    shape_varies: null
+    dtype: uint16
+    compression: lzw
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: DAPI channel, same layout as data_gH2AX.tif (probed).
+  - role: label
+    path_pattern: '*/*/*/*/[0-9][0-9][0-9][0-9]/labels.json'
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: points-table
+    classes:
+    - id: points_gH2AX
+      name: gH2AX focus
+    - id: points_53BP1
+      name: 53BP1 focus
+    alignment: same-grid
+    alignment_notes: labels.json pairs with the three TIFFs in the same FOV folder. Keys points_gH2AX / points_53BP1, each a
+      list of [a, b, z] pixel coordinates; z is 12-37 of 50 slices. The first coordinate reaches 1035 (> 1010 rows), so it
+      is most likely x (inferred, not documented).
+  notes: 'Listing: Zenodo API + both zip central directories (2716 members), complete, exact sizes. Probed U87 FOV 0001
+    (1 Gy, 30 min) data_gH2AX / data_53BP1 / data_DAPI.tif: each uint16, LZW, one page of 1010 x 1362 with 50 samples per
+    pixel. Sampled data_gH2AX.tif (48,783,879 B): min 81, max 239, mean 101.7, hint 12-bit range (one sample). Read
+    labels.json (7,200 B): 279 gH2AX and 271 53BP1 points, no colocalized key in this file. NHDF labels.json not read
+    (Zenodo TLS error). Voxel size from the paper Methods (Europe PMC full text): 90.0 x 67.2 x 15 um for 1392 x 1040 x
+    50 px, z step 0.3 um. TIFF headers carry no calibration. data.download_url: two archives, so it stays the landing
+    page; the direct zips are cell_lines_U87.zip and cell_lines_NHDF.zip under zenodo.org/records/5549971/files/.'
