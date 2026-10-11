@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: s-biad3897-sparcs-sting-autophagy-single-cell-images
 title: SPARCS enables scalable recovery of complex image-based phenotypes for genetic screening
 short_name: SPARCS STING and autophagy single-cell images
-description: Single-cell image datasets from SPARCS CRISPR knockout screens in HeLa-STING and U2OS mCherry-LC3 cells
-  (spinning-disk confocal, 40x/20x, scPortrait .h5sc files), with separate training sets for a STING localisation
-  classifier and a binary autophagy classifier (wild-type vs ATG5 KO, stimulated vs unstimulated, time courses).
+description: Single-cell image datasets from SPARCS CRISPR knockout screens in HeLa-STING and U2OS mCherry-LC3 cells (spinning-disk
+  confocal, 40x/20x, scPortrait .h5sc files), with separate training sets for a STING localisation classifier and a binary
+  autophagy classifier (wild-type vs ATG5 KO, stimulated vs unstimulated, time courses).
 landing_url: https://www.ebi.ac.uk/biostudies/BioImages/studies/S-BIAD3897
 doi: 10.6019/S-BIAD3897
 repository: BioImageArchive
@@ -21,7 +21,7 @@ imaging:
   - spinning-disk
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Homo sapiens
   sample: HeLa Cas9 cells expressing STING-mNeon and mCherry-LC3, and U2OS Cas9 mCherry-LC3 cells, on PPS membrane slides
@@ -30,8 +30,8 @@ imaging:
   - mCherry-LC3
 data:
   formats:
-  - other
-  size_bytes: null
+  - hdf5
+  size_bytes: 7375183173992
   n_items: null
   access: open
   download_url: https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/897/S-BIAD3897/Files/
@@ -41,7 +41,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: per-file condition labels (genotype, stimulation, time point) in Autophagy.tsv and STING.tsv for the training/ folders
+  format: 'per-cell condition labels in each .h5sc (AnnData obs: treatment, genotype, batch, slide_id) and per-file conditions
+    in Autophagy.tsv / STING.tsv; each cell image also carries automatic nucleus and cytosol mask channels'
   source: unknown
 ml:
   tasks:
@@ -63,11 +64,74 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T12:45:00Z'
-notes: 'File listing: Autophagy/ and STING/ each hold screen/ and training/ folders of .h5sc (scPortrait single-cell
-  image files, 10-45 GB each); 8 training files per screen (e.g. wt vs ATG5 KO, stimulated or not; STING time points 0 h,
-  30 min, 1 h, 2 h). The labels are the experimental conditions listed per file in the TSVs; the page says these are
-  training data for the classifiers, but does not describe per-cell annotation, so source is unknown. Total size and
-  image count not computed (many TB). Imaging: Opera Phenix, 40x 0.75 NA air and 20x 0.8 NA air, 2x2 binning; pixel size
-  not stated. The related paper is not linked on the page and could not be read (bioRxiv preprint of the platform found
-  only by title, fetch rate-limited), so channels and the training-label definition rest on the BioStudies description.'
+  last_checked: '2026-10-11T12:20:00Z'
+notes: 'Autophagy/ and STING/ each hold screen/ and training/ folders of .h5sc files (scPortrait single-cell images, 7.8-47
+  GB each); training sets: 14 Autophagy files (wt vs ATG5 KO, stimulated or not) and 20 STING files (time points 0 h, 30 min,
+  1 h, 2 h). Labels are the experimental conditions per file (TSVs) and per cell (h5sc obs); the page does not describe per-cell
+  annotation, so source is unknown. Imaging: Opera Phenix, 40x 0.75 NA and 20x 0.8 NA air, 2x2 binning; pixel size not stated.
+  The related bioRxiv preprint could not be read (rate-limited). enricher: format HDF5 (scPortrait .h5sc, AnnData), was other;
+  3 image channels plus 2 automatic mask channels (Cellpose/fast marching per BIA); size from BIA file lists (was null).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "S-BIAD3897/Files/  (246 files, 7.38 TB)\n  Autophagy.json, Autophagy.tsv, STING.json, STING.tsv   per-file conditions\
+      \ (genotype, treatment time)\n  Autophagy/screen/      109 .h5sc   2.50 TB  Autophagy_screen_single_cell_images_2.2_<well>.h5sc\n\
+      \  Autophagy/training/     14 .h5sc   0.33 TB  ..._T_<batch>_<stim|unstim>_<wt|ATG5KO[_well]|screen>.h5sc\n  STING/screen/\
+      \           99 .h5sc   3.76 TB  STING_screen_single_cell_images_<n>.h5sc\n  STING/training/         20 .h5sc   0.79\
+      \ TB  STING_screen_single_cell_images_T0<1-5>.<0h|30min|1h|2h>.h5sc\n"
+    n_files: 246
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/897/S-BIAD3897/Files/Autophagy/training/Autophagy_screen_single_cell_images_T_2.3_unstim_screen.h5sc
+    - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/897/S-BIAD3897/Files/Autophagy.tsv
+    size_bytes: 7769461045
+    description: Smallest file (Autophagy training, unstimulated, 119,774 cells of 5x128x128) plus the per-file condition
+      table.
+  arrays:
+  - role: raw
+    path_pattern: '*/*/*.h5sc (obsm/single_cell_images)'
+    format: hdf5
+    axes: null
+    shape:
+    - 119774
+    - 5
+    - 128
+    - 128
+    shape_varies: true
+    dtype: float16
+    compression: other
+    value_range:
+    - 0.0
+    - 1.0
+    normalization: rescaled
+    alignment: not-applicable
+    alignment_notes: 'scPortrait h5sc (AnnData HDF5). Dims: cell index, channel, y, x (per the dataset attrs n_cells, n_channels,
+      image_size_y/x); the cell axis has no letter in the schema, so axes is null. Channels: 0 seg_all_nucleus (mask), 1 seg_all_cytosol
+      (mask), 2 Hoechst, 3 WGA-Alexa488 (Autophagy) or WGA-Alexa647 (STING), 4 mCherry (Autophagy) or hsSTING1-mNeon (STING).
+      Crops are 128x128 in the Autophagy training file probed and 320x320 in the STING one. Chunks 1x1xHxW, LZF compression.'
+  - role: label
+    path_pattern: '*/training/*.h5sc (obs/treatment)'
+    format: hdf5
+    axes: null
+    shape:
+    - 119774
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    normalization: unknown
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: Per-cell string labels, one row per cell in the same order as obsm/single_cell_images (obs/treatment,
+      e.g. '0h 250 nmol/L diABZI'; also obs/genotype, batch, slide_id, condition). The same conditions per file are in Autophagy.tsv
+      / STING.tsv (columns Files, Genotype, 600 nM Torin-1 or diABZI 250 nM).
+  notes: 'Listed Files/ (HTTP index, 246 files). Exact sizes from the BioStudies file lists Autophagy.json and STING.json
+    (242 .h5sc, 7,375,183,100,820 B) plus the 4 table files (73,172 B): 7,375,183,173,992 B; listing.py rated its own listing
+    ''estimated'' (rounded index sizes, FTP timed out), so size_source is page-stated. Read HDF5 metadata by range requests
+    with a scratch h5py script: Autophagy training T_2.3_unstim_screen (47.7 MB read) and STING training T01.0h (108.5 MB
+    read, incl. cells 0-2): float16 in [0, 1] in every channel (3 cells, one file); mask channels are not strictly binary
+    (many float values). Voxel size not found; checked: h5sc attrs (no pixel size), BioStudies API (no calibration; 40x 0.75
+    NA and 20x 0.8 NA, 2x2 binning, Opera Phenix), paper (bioRxiv 10.1101/2023.06.01.542416 full text rate-limited, HTTP 429).
+    No single archive: download_url stays Files/; every file is a direct https link.'
