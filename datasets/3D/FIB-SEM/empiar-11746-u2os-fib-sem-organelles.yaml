@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: empiar-11746-u2os-fib-sem-organelles
 title: FIB-SEM dataset of a human bone osteosarcoma epithelial cell (U2-OS) with organelle segmentations
 short_name: U2-OS cell organelle segmentation (FIB-SEM)
-description: Aligned and pre-processed FIB-SEM volume of a human U2-OS cell (1168 slices of 3394 x 1385 pixels, unsigned
-  byte TIFF) with a paired label volume of eight organelle classes (nuclear envelope, lipid droplets, lysosomes,
-  mitochondria, Golgi, endoplasmic reticulum, peroxisomes, other unclassified objects). Deposited as a reference
-  dataset for volume EM data sharing and reuse.
+description: Aligned and pre-processed FIB-SEM volume of a human U2-OS cell (1168 slices of 3394 x 1385
+  pixels, unsigned byte TIFF) with a paired label volume of eight organelle classes (nuclear envelope,
+  lipid droplets, lysosomes, mitochondria, Golgi, endoplasmic reticulum, peroxisomes, other unclassified
+  objects). Deposited as a reference dataset for volume EM data sharing and reuse.
 landing_url: https://www.ebi.ac.uk/empiar/EMPIAR-11746/
 doi: 10.6019/EMPIAR-11746
 repository: EMPIAR
@@ -49,9 +49,9 @@ annotations:
   - semantic-segmentation
   - organelle
   coverage: unknown
-  format: Label TIFF slices in data/Labels, one per image slice in data/Images (index 1 nuclear envelope, 2 lipid
-    droplets, 3 lysosomes, 4 mitochondria, 5 Golgi, 6 endoplasmic reticulum, 7 peroxisomes, 8 other unclassified
-    objects)
+  format: Label TIFF slices in data/Labels, one per image slice in data/Images (index 1 nuclear envelope,
+    2 lipid droplets, 3 lysosomes, 4 mitochondria, 5 Golgi, 6 endoplasmic reticulum, 7 peroxisomes, 8
+    other unclassified objects)
   source: mixed
 ml:
   tasks:
@@ -75,9 +75,90 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T20:30:00Z'
-notes: 'Voxel size from the EMPIAR API: pixel 25 A (2.5 nm) in x and y, Z-step 50 A (5 nm). Segmentations were made in
-  Microscopy Image Browser: lipid droplets, lysosomes and peroxisomes manually, nuclear envelope, Golgi, ER and
-  mitochondria with its deep learning tool (EMPIAR API description). The paper (Nat Cell Biol 2024) is not open
-  access; only the abstract was available via Europe PMC, so Methods were not read. Cross-referenced entry EMPIAR-11849
-  was not checked. Label file dtype/encoding not inspected. HTTP index total 5.6 GB (rounded), page states 5.2 GB.'
+  last_checked: '2026-10-11T21:22:00Z'
+notes: 'Voxel size from the EMPIAR API: pixel 25 A (2.5 nm) in x and y, Z-step 50 A (5 nm). Segmentations
+  were made in Microscopy Image Browser: lipid droplets, lysosomes and peroxisomes manually, nuclear envelope,
+  Golgi, ER and mitochondria with its deep learning tool (EMPIAR API description). The paper (Nat Cell
+  Biol 2024) is not open access; only the abstract was available via Europe PMC, so Methods were not read.
+  Cross-referenced entry EMPIAR-11849 was not checked. enricher: labels inspected (uint8 class IDs 0-8,
+  one LZW TIFF per slice, same grid as the images). HTTP index total 5.6 GB (rounded), page states 5.2
+  GB.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: 'Images/U2OS_cell_<nnnn>.tif          1168  (~5.5 GB, 3394x1385 uint8, uncompressed)
+
+      Labels/Labels_U2OS_cell_<nnnn>.tif   1168  (~94 MB, uint8 LZW)
+
+      '
+    n_files: 2336
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/empiar/world_availability/11746/data/Images/U2OS_cell_0600.tif
+    - https://ftp.ebi.ac.uk/empiar/world_availability/11746/data/Labels/Labels_U2OS_cell_0600.tif
+    size_bytes: 4782852
+    description: 'Section 600: one image slice and its label slice'
+  arrays:
+  - role: raw
+    path_pattern: Images/U2OS_cell_[0-9][0-9][0-9][0-9].tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1385
+    - 3394
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'One 2D TIFF per 5 nm section (1168; z = file number). EMPIAR: fused EsB/InLens 16-bit
+      images, aligned and processed in MIB; TIFF description lists crop, invert and arithmetic steps.'
+  - role: label
+    path_pattern: Labels/Labels_U2OS_cell_[0-9][0-9][0-9][0-9].tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1385
+    - 3394
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 8
+    normalization: unknown
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: nuclear envelope
+    - id: 2
+      name: lipid droplets
+    - id: 3
+      name: lysosomes
+    - id: 4
+      name: mitochondria
+    - id: 5
+      name: Golgi
+    - id: 6
+      name: endoplasmic reticulum
+    - id: 7
+      name: peroxisomes
+    - id: 8
+      name: other unclassified objects
+    alignment: same-grid
+    alignment_notes: Labels_<image name> pairs with Images/<image name>; same 1385x3394 grid and the same
+      MIB BoundingBox in both TIFF descriptions. Class indices from the EMPIAR entry; 0 = unlabelled (inferred,
+      79% of the sampled slice).
+  notes: 'Listing: tools/listing.py on the EMPIAR data folder (FTP timed out; HTTP index, rounded): 2336
+    files, ~5.6 GB, so size stays the EMPIAR-stated 5.2 GB. probe.py section 0600: image 1385x3394 uint8
+    uncompressed, label same shape uint8 LZW. sample.py section 0600 (4.7 MB + 80 KB): image range [0,255]
+    (p50 206), label values {0,1,2,4,5,6,8} (one slice). Voxel size 2.5x2.5x5 nm from the EMPIAR API (pixel
+    25 A, "Voxels: 0.0025 x 0.0025 x 0.005 um"), consistent with the MIB BoundingBox (8.48 um / 3394 px).
+    No archive: files are direct https links on ftp.ebi.ac.uk (usable).'
