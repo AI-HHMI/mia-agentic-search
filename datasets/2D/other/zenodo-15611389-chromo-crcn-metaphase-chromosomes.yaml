@@ -1,0 +1,134 @@
+schema_version: '1.2'
+id: zenodo-15611389-chromo-crcn-metaphase-chromosomes
+title: Chromo-CRCN
+short_name: Metaphase chromosome detection boxes (light)
+description: 519 images of cells in metaphase, each paired with a YOLO-format text file of bounding boxes
+  (single class 'Chromosome', normalised x_center, y_center, width, height) for detecting chromosomes.
+  Collected through a collaboration between CRCN-NE and UFRPE for cytogenetics research. A separate archive
+  holds discarded images that were too difficult to label.
+landing_url: https://zenodo.org/records/15611389
+doi: 10.5281/zenodo.15611389
+repository: Zenodo
+accession: '15611389'
+authors:
+- Costa Cordeiro HM
+- Cordeiro FR
+- Farias de Lima F
+- Hwang S
+- Melo da Silva L
+publications: []
+date_published: '2025-06-06'
+imaging:
+  modality:
+  - other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism: []
+  sample: Metaphase spreads (cells in metaphase) for cytogenetic chromosome analysis
+  labels_stains: []
+data:
+  formats:
+  - png
+  - tiff
+  size_bytes: 2856066357
+  n_items: 519
+  access: open
+  download_url: https://zenodo.org/records/15611389/files/yolo_dataset.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  coverage: dense
+  format: YOLO txt per image (class x_center y_center width height, normalised), single class 'Chromosome';
+    classes.txt and Label Studio notes.json
+  source: manual
+ml:
+  tasks:
+  - detection
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-11T18:46:48Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/15611389
+  - https://zenodo.org/records/15611389/files/yolo_dataset.zip
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-11T19:35:00Z'
+notes: 'Record text is short; no paper was found (Europe PMC / Crossref title search found nothing) and
+  the microscope, staining, magnification and pixel size are not stated on the Zenodo page or in the archive,
+  so modality is other (light microscopy of metaphase cells is implied but not confirmed), organism is
+  empty (not stated, presumably human cytogenetics) and voxel size is null. yolo_dataset.zip (2.08 GB,
+  1040 files) holds 519 PNG images (about 4 MB each), 519 YOLO txt label files, classes.txt and notes.json
+  (Label Studio export);  discarded.zip (0.78 GB, 137 TIFF files) holds images too hard to label and is
+  not counted in n_items. Size is the sum of both Zenodo files. enricher: the zip has images/ and labels/
+  train 259, val 129, test 131 (splits_provided now true); RGB (channels 3, was null); formats add tiff
+  (discarded.zip). The sampled val image has 46 boxes.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "yolo_dataset.zip (2.08 GB)\n  yolo_dataset/classes.txt (\"Chromosome\"), notes.json (Label\
+      \ Studio export info)\n  yolo_dataset/images/{train,val,test}/<n>.png   259 / 129 / 131\n  yolo_dataset/labels/{train,val,test}/<n>.txt\
+      \   259 / 129 / 131\ndiscarded.zip (0.78 GB)\n  discarded/<n> - <m>.tif   137 (images too hard to\
+      \ label; no labels)\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/15611389/files/yolo_dataset.zip::yolo_dataset/images/val/144.png
+    - https://zenodo.org/records/15611389/files/yolo_dataset.zip::yolo_dataset/labels/val/144.txt
+    size_bytes: 4010675
+    description: One validation image and its YOLO box file
+  arrays:
+  - role: raw
+    path_pattern: yolo_dataset.zip::yolo_dataset/images/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1536
+    - 2048
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 155
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB PNG (samples differ in the sample).
+  - role: label
+    path_pattern: yolo_dataset.zip::yolo_dataset/labels/*/*.txt
+    format: other
+    axes: null
+    shape:
+    - 46
+    - 5
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: Chromosome
+    alignment: same-grid
+    alignment_notes: 'YOLO txt with the image stem in the parallel labels/<split>/ folder: class x_center
+      y_center width height, normalised; val/144.txt has 46 boxes. Class from classes.txt and notes.json.'
+  notes: 'Listing: tools/listing.py --expand-zips on the Zenodo record: 2 zips, 2,856,066,357 bytes, complete,
+    exact; 1,040 + 137 members. Probed one PNG (1536x2048x3 uint8) and one discarded TIFF (1536x2048x3,
+    uncompressed); sampled val/144.png (4.0 MB): range [0,155], one sample. Read classes.txt, notes.json
+    and one label file. Voxel size not found; checked: PNG/TIFF headers, Zenodo record, notes.json; no
+    paper found by the harvester. download_url is yolo_dataset.zip (direct, usable).'
