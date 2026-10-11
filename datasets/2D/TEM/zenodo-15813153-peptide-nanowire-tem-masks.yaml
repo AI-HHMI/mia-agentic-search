@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zenodo-15813153-peptide-nanowire-tem-masks
 title: Peptide Nanowire Segmentation Dataset (TEM image patches with binary masks)
 short_name: Peptide nanowire segmentation (TEM)
-description: 3035 TEM image patches (512 x 512 px) of peptide nanowires in dispersed and networked morphologies, each
-  paired with a binary nanowire mask, split into 2135 training, 600 validation and 300 test patches. Built for the
-  WaveBiSeNet segmentation paper from 200 original TEM micrographs (100 dispersed, 100 network) imaged in the Emrick
-  group at UMass Amherst; masks come from HSV thresholding with morphological clean-up and SAM-assisted manual correction.
+description: 3035 TEM image patches (512 x 512 px) of peptide nanowires in dispersed and networked morphologies, each paired
+  with a binary nanowire mask, split into 2135 training, 600 validation and 300 test patches. Built for the WaveBiSeNet segmentation
+  paper from 200 original TEM micrographs (100 dispersed, 100 network) imaged in the Emrick group at UMass Amherst; masks
+  come from HSV thresholding with morphological clean-up and SAM-assisted manual correction.
 landing_url: https://zenodo.org/records/15813153
 doi: 10.5281/zenodo.15813153
 repository: Zenodo
@@ -29,6 +29,7 @@ imaging:
 data:
   formats:
   - png
+  - jpeg
   size_bytes: 649021070
   n_items: 3035
   access: open
@@ -62,5 +63,71 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T19:20:00Z'
-notes: 'Single 649 MB data.rar that peek_archive cannot list; a range read of its start showed data/test/label/0007.png, so labels are PNG. Image file extension not seen, png is assumed (enricher to confirm). Zenodo, Mendeley Data (10.17632/pptr5cgjb2.1, CC BY 4.0, adds code) and the paper agree on 3035 samples, split 2135/600/300. The paper says the 200 source micrographs come from the Lu/Montz/Emrick/Jayaraman peptide nanowire TEM set (Zenodo 6377141); this is the mask version cropped to patches and may overlap catalog record zenodo-7025602-nanowire-tem-morphology. Pixel size not stated on either page or in the paper Methods. Materials (peptide) TEM, not tissue.'
+  last_checked: '2026-10-11T19:18:33Z'
+notes: 'Single 649 MB data.rar that peek_archive cannot list; a range read of its start showed data/test/label/0007.png, so
+  labels are PNG. Zenodo, Mendeley Data (10.17632/pptr5cgjb2.1, CC BY 4.0, adds code) and the paper agree on 3035 samples,
+  split 2135/600/300. The paper says the 200 source micrographs come from the Lu/Montz/Emrick/Jayaraman peptide nanowire TEM
+  set (Zenodo 6377141); this is the mask version cropped to patches and may overlap catalog record zenodo-7025602-nanowire-tem-morphology.
+  Pixel size not stated on either page or in the paper Methods. Materials (peptide) TEM, not tissue. enricher: images are
+  JPEG (Mendeley dataset.tar, dataset/test/src/*.jpg), so formats png + jpeg (was png).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "zenodo.org/records/15813153: data.rar (649.0 MB, RAR; not listable with our tools)\nMendeley Data pptr5cgjb2 v1:\
+      \ dataset.tar (659.2 MB, uncompressed tar), WaveBiseNet.tar (code)\n  dataset/test/label/<NNNN>.png   binary masks (first\
+      \ tar members)\n  dataset/test/src/<NNNN>.jpg     TEM patches, same stems\n  dataset/{train,val}/...         (presumably\
+      \ the same label/ + src/ layout; not reached by range reads)\n  splits per Zenodo / paper: 2135 train / 600 val / 300\
+      \ test\n"
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: dataset/*/src/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Grey stored as RGB (channel 0 == channel 1 in the 4 test patches read).
+  - role: label
+    path_pattern: dataset/*/label/*.png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: nanowire
+    alignment: same-grid
+    alignment_notes: 'Same stem in label/ and src/ of each split (e.g. test/label/0007.png and test/src/0007.jpg), both 512
+      x 512. Paper: nanowire white, background black.'
+  notes: 'Zenodo listing: 1 file data.rar, 649,021,070 bytes, exact (size_bytes). RAR can''t be listed or read here, so I
+    range-read the uncompressed Mendeley copy (dataset.tar) instead: 6 MB in 3 range reads, walking the tar headers. test/label:
+    512x512 L PNGs with values {0,255} (38+ files read). test/src starts at byte 1,786,880; read 0007/0008/0024/0035.jpg:
+    512x512 RGB JPEG uint8, channels identical, 0-255, mean 137-155 (sample). The Zenodo RAR is assumed to have the same layout
+    (the harvester saw data/test/label/0007.png at its start). That isn''t verified, so listing_complete is false. Pixel size
+    not found; checked: image headers, Zenodo + Mendeley metadata, the paper full text (Europe PMC PMC12609667), and the upstream
+    Zenodo 6377141 description. Download: data.rar direct (usable, range requests), but TensorSwitch can''t open RAR or tar
+    members, so there is no per-file sample URL; the Mendeley tar returned 403 to download-check.'
