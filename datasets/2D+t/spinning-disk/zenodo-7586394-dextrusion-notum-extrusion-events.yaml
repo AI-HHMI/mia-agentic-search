@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: zenodo-7586394-dextrusion-notum-extrusion-events
 title: 'DeXtrusion: Automatic recognition of epithelial cell extrusion through machine learning in vivo'
 short_name: Drosophila notum extrusion events (spinning disk)
-description: Confocal movies of the Drosophila pupal notum epithelium (E-cadherin::GFP) with manually annotated xyt point ROIs for cell extrusion/death, cell division and sensory organ precursor (SOP) events, plus the control windows without events. Released as the training data of the DeXtrusion pipeline.
+description: Confocal movies of the Drosophila pupal notum epithelium (E-cadherin::GFP) with manually
+  annotated xyt point ROIs for cell extrusion/death, cell division and sensory organ precursor (SOP) events,
+  plus the control windows without events. Released as the training data of the DeXtrusion pipeline.
 landing_url: https://zenodo.org/records/7586394
 doi: 10.5281/zenodo.7586394
 repository: Zenodo
@@ -36,7 +38,7 @@ data:
   size_bytes: 11121653162
   n_items: 36
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/7586394
   download_method: http
 annotations:
   present: true
@@ -44,7 +46,8 @@ annotations:
   - points
   - classification
   coverage: sparse
-  format: 'Fiji .roi point files named frame-x-y, zipped per movie and event class (NNN_cell_death.zip, NNN_cell_division.zip, NNN_cell_sop.zip, NNN_nothing.zip)'
+  format: Fiji .roi point files named frame-x-y, zipped per movie and event class (NNN_cell_death.zip,
+    NNN_cell_division.zip, NNN_cell_sop.zip, NNN_nothing.zip)
   source: manual
 ml:
   tasks:
@@ -68,5 +71,74 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T22:10:00Z'
-notes: 'Zenodo record lists 172 files (11.1 GB): 44 .tif movies (001-036 plus 8 _aug temporally downsampled copies of 001 and 008-014) and per-movie ROI zips; peek_archive on 027_cell_death.zip shows 878 .roi files. The paper (Development 2023) states movies were rescaled to a reference scale of 0.275 um/pixel and 5 min/frame; whether the deposited movies are already at that scale was not stated, so the voxel size is the reference scale. Imaging: spinning-disc confocal (40x/100x) or Airyscan LSM880, z-projected. Paper reports 6700 extrusion events in the training set and 2320 in the test set, but the record gives no train/test file assignment, so splits_provided is false. No README in the file list.'
+  last_checked: '2026-10-11T22:55:00Z'
+notes: 'Zenodo record lists 172 files (11.1 GB): 44 .tif movies (001-036 plus 8 _aug temporally downsampled
+  copies of 001 and 008-014) and per-movie ROI zips; peek_archive on 027_cell_death.zip shows 878 .roi
+  files. The paper (Development 2023) states movies were rescaled to a reference scale of 0.275 um/pixel
+  and 5 min/frame; whether the deposited movies are already at that scale was not stated, so the voxel
+  size is the reference scale. Imaging: spinning-disc confocal (40x/100x) or Airyscan LSM880, z-projected.
+  Paper reports 6700 extrusion events in the training set and 2320 in the test set, but the record gives
+  no train/test file assignment, so splits_provided is false. No README in the file list. enricher: TIFF
+  headers carry no usable calibration (1 µm default or none); the paper: "we rescaled all our dataset
+  to the same temporal and spatial resolution of 5 min/frame and 0.275 µm/pixel", so 275 nm is kept.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "zenodo.org/records/7586394/   172 files, 11.1 GB\n  NNN.tif            36 movies 001-036 (tyx,\
+      \ uint16)\n  NNN_aug.tif        8 temporally downsampled copies (001, 008-014)\n  NNN[_aug]_cell_death.zip\
+      \      Fiji point ROIs <frame>-<y>-<x>.roi\n  NNN[_aug]_cell_division.zip\n  NNN[_aug]_cell_sop.zip\n\
+      \  NNN[_aug]_nothing.zip         control windows\n  score.png  comp_scores.png"
+    n_files: 172
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7586394/files/008.tif
+    - https://zenodo.org/records/7586394/files/008_cell_death.zip
+    size_bytes: 13681725
+    description: Movie 008 (39 frames, 297x590) and its cell-death point ROIs (40 .roi files).
+  arrays:
+  - role: raw
+    path_pattern: '[0-9][0-9][0-9]*.tif'
+    format: tiff
+    axes: tyx
+    shape:
+    - 39
+    - 297
+    - 590
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 44
+    - 2824
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ stacks, frames = t (001.tif has 60 frames). Rescaled to 0.275 µm/px and 5
+      min/frame per the paper.
+  - role: label
+    path_pattern: '[0-9][0-9][0-9]*_*.zip'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: deflate
+    encoding: points-table
+    classes:
+    - id: cell_death
+      name: cell extrusion / death
+    - id: cell_division
+      name: cell division
+    - id: cell_sop
+      name: sensory organ precursor
+    - id: nothing
+      name: no event (control)
+    alignment: same-grid
+    alignment_notes: NNN[_aug]_<class>.zip pairs with NNN[_aug].tif. Each zip holds one Fiji point ROI
+      per event, named <frame>-<coord>-<coord> (e.g. 0003-0141-0131.roi), in the movie's pixel grid.
+  notes: 'Listed all 172 Zenodo files (complete, exact sizes). Probed 001.tif (60x297x590, ImageJ calibration
+    1 µm/px, a default) and 008.tif (39x297x590, no calibration); sampled 008.tif (13.7 MB): uint16 [44,
+    2824], hint 12-bit detector range; value range from one sample. Listed 008_cell_death.zip (40 .roi).
+    Voxel size from the paper (reference scale 0.275 µm/pixel); headers do not state it. Download: per-file
+    Zenodo links, no single archive, so data.download_url is the record page.'
