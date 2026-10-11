@@ -23,10 +23,7 @@ imaging:
   modality:
   - confocal
   dimensionality: 3D
-  voxel_size_nm:
-    x: 125
-    y: 125
-    z: 240
+  voxel_size_nm: null
   channels: 3
   organism:
   - Arabidopsis thaliana
@@ -74,11 +71,110 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-11T20:40:00Z'
-notes: 'No license is stated in the BioStudies record, so spdx is unknown. Distinct from the wild-type atlas S-BSST475 (pending
-  PR) and the ino-5 mutant set S-BSST497: this study holds the WUSCHEL-reporter ovules (paper lists S-BSST475, S-BSST498,
-  S-BSST497 and aggregate S-BSST513 as separate datasets of the same eLife paper). pWUS_2xVenus.zip (165 files, 19 stack
-  folders: raw cell boundary, nuclei and pWUS stacks, PlantSeg prediction, segmented cells, mesh .mgxm, attribute CSVs, blob
-  meshes). Voxel size from the paper Methods: 0.24 µm slices, 0.063 x 0.063 µm in the finest stacks, some stacks captured
-  at 2x downsampled 0.125 x 0.125 x 0.24 µm; the coarser values are recorded and may not apply to every stack. Cell labels
-  were proofread manually in MorphoGraphX; some segmentation errors remain (paper). Channel count 3 is taken from the file names.'
+  last_checked: '2026-10-11T19:28:45Z'
+notes: 'No license in the BioStudies record, so spdx is unknown. Distinct from wild-type atlas S-BSST475 and ino-5 set S-BSST497
+  (same eLife paper). pWUS_2xVenus.zip: 165 files in 19 stack folders (cell boundary, nuclei and pWUS stacks, PlantSeg prediction,
+  segmented cells, .mgxm meshes, attribute CSVs). enricher: voxel_size_nm set to null (was 125x125x240): the paper Methods
+  give 63x63x240 nm for high-quality stacks and 125x125x240 nm for some 2x-downsampled ones, without saying which stack is
+  which; stack TIFF headers differ (e.g. 80x80x262 nm, 63x63x261 nm; technical.notes). Cell labels were proofread manually
+  in MorphoGraphX; some errors remain (paper). Labels: 17 *_Segmented_Cells, 788_Segmentation.tiff, 1044_predictions_gasp_average.tiff.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "S-BSST498/Files/pWUS_2xVenus.zip (11.76 GB, 165 members)\n  pWUS_<id>/   19 stacks: 773-777, 788-792, 798, 799,\
+      \ 803-805, 1044, 1046-1048\n    <id>_Cell_Boundary.tif      raw SR2200 cell-wall stack (19)\n    <id>_Nuclei.tif   \
+      \          raw TO-PRO-3 stack (19)\n    <id>_pWUS::2xVenus.tif      raw reporter stack (19)\n    <id>_Prediction.tiff\
+      \        PlantSeg boundary prediction (19)\n    <id>_Segmented_Cells.tif(f) 3D cell labels (17; 788_Segmentation.tiff,\
+      \ 1044_predictions_gasp_average.tiff)\n    <id>_Cell_Mesh.mgxm, <id>_Blobs.mgxm   MorphoGraphX meshes\n    <id>_Cell(s)_Attributes.csv,\
+      \ <id>_Blobs_Attributes.csv\n"
+    n_files: 165
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BSST/498/S-BSST498/Files/pWUS_2xVenus.zip::pWUS_790/790_Cell_Boundary.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BSST/498/S-BSST498/Files/pWUS_2xVenus.zip::pWUS_790/790_Nuclei.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BSST/498/S-BSST498/Files/pWUS_2xVenus.zip::pWUS_790/790_pWUS::2xVenus.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BSST/498/S-BSST498/Files/pWUS_2xVenus.zip::pWUS_790/790_Segmented_Cells.tiff
+    size_bytes: 414815107
+    description: 'Stack 790 (smallest): the three raw channel stacks and its 3D cell segmentation'
+  arrays:
+  - role: raw
+    path_pattern: '*.zip::pWUS_*/*_Cell_Boundary.tif'
+    format: tiff
+    axes: zyx
+    shape:
+    - 129
+    - 728
+    - 728
+    shape_varies: true
+    dtype: uint16
+    compression: unknown
+    value_range:
+    - 0
+    - 4095
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 'SR2200 cell-wall channel, one file per stack. 790: ZYX 129x728x728 uint16, 0-4095 (12-bit, as the paper
+      states).'
+  - role: raw
+    path_pattern: '*.zip::pWUS_*/*_Nuclei.tif'
+    format: tiff
+    axes: zyx
+    shape:
+    - 129
+    - 728
+    - 728
+    shape_varies: true
+    dtype: uint16
+    compression: unknown
+    value_range: null
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: TO-PRO-3 nuclei channel, same grid as Cell_Boundary (same uncompressed size per stack in the listing);
+      not sampled.
+  - role: raw
+    path_pattern: '*.zip::pWUS_*/*_pWUS::2xVenus.tif'
+    format: tiff
+    axes: zyx
+    shape:
+    - 129
+    - 728
+    - 728
+    shape_varies: true
+    dtype: uint16
+    compression: unknown
+    value_range: null
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: pWUS::2xVENUS:NLS reporter channel, same grid as Cell_Boundary; not sampled.
+  - role: label
+    path_pattern: '*.zip::pWUS_*/*_{Segmented_Cells,Segmentation,predictions_gasp_average}.tif*'
+    format: tiff
+    axes: zyx
+    shape:
+    - 129
+    - 728
+    - 728
+    shape_varies: true
+    dtype: uint16
+    compression: unknown
+    value_range:
+    - 0
+    - 353
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'One label stack per folder, paired by the <id>_ prefix. 790: same shape as Cell_Boundary (129x728x728),
+      352 IDs, 72% zero. 792 header: ImageJ ZYX 207x912x912 uint16 LZW with TIFF Orientation 4 (bottom-left), so readers that
+      ignore the tag see it mirrored; check raw/label orientation.'
+  notes: 'Listing: tools/listing.py --expand-zips on the BioStudies Files/ index: 1 zip, 165 members (index size rounded);
+    exact zip size 11,763,165,934 B from the BioStudies files API (page-stated). Members are deflated: probe.py read only
+    792_Segmented_Cells.tiff (LZW, imagej, 80.08x80.08x261.78 nm). sample.py on stack 790 (53 MB + 2.5 MB read): raw ZYX 129x728x728
+    uint16, 0-4095, mean 161; label same shape, 352 IDs (one sample). normalization none: 12-bit capture per paper, sample
+    in 0-4095. Voxel size varies per stack. Inflated first 64 KB of 5 Cell_Boundary headers (ImageJ, micron): 790 80.2x80.2x261.8
+    nm (129x728x728); 773 80.7x80.7x267.0 (271x1398x2752); 1048 80.2x80.2x284.2 (165x2088x2088); 799 63.2x63.2x261.3 (235x1984x1984);
+    788 80.2x80.2x261.8 (232x992x992). The paper gives 63x63x240 or 125x125x240 nm, which conflicts with the 80 nm headers,
+    so voxel_size_nm is null; per-stack sizes are in each TIFF header. Also in each folder: <id>_Prediction.tiff (PlantSeg
+    boundary prediction, not an array here since miao takes raw/labels only), .mgxm meshes and attribute CSVs.'
