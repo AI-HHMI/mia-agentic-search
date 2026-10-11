@@ -74,5 +74,45 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T09:03:49Z'
-notes: 'License conflict: the paper (Usage Notes) says CC BY-NC 4.0 and not for diagnostic model development, while the Hugging Face card says cc-by-4.0; the more restrictive CC BY-NC 4.0 is recorded. Patch count conflict: README and dataset_meta.json give 87,301 patches (13,200 TUM, 26,364 FIB, 4,776 INF, 22,023 NEC, 13,200 NOR, 1,540 REA, 6,198 STE) while the paper text says 140,000 (example numbers); the HF count is used. Seven zips (3.6 GB) listed via the HF API; 06_REA.zip checked with peek_archive (1,540 PNG). The paper also mentions 111 WSIs with tumor/non-tumor contours, not part of the HF release. Stain, scanner and pixel size in um are not stated, so labels_stains is empty and voxel_size_nm null.'
+  last_checked: '2026-10-11T09:55:48Z'
+notes: 'License conflict: the paper (Usage Notes) says CC BY-NC 4.0 and not for diagnostic model development, while the Hugging Face card says cc-by-4.0; the more restrictive CC BY-NC 4.0 is recorded. Patch count conflict: README and dataset_meta.json give 87,301 patches (13,200 TUM, 26,364 FIB, 4,776 INF, 22,023 NEC, 13,200 NOR, 1,540 REA, 6,198 STE) while the paper text says 140,000 (example numbers); the HF count is used. Seven zips (3.6 GB) listed via the HF API; 06_REA.zip checked with peek_archive (1,540 PNG). The paper also mentions 111 WSIs with tumor/non-tumor contours, not part of the HF release. Stain, scanner and pixel size in um are not stated, so labels_stains is empty and voxel_size_nm null. enricher: files listed, probed and sampled (PNG 150x150 RGB uint8); voxel size still not stated anywhere.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      huggingface.co/datasets/xtxx/HepatoBench (main)   10 files, 3.6 GB
+        .gitattributes  README.md  dataset_meta.json
+        01_TUM.zip   13200 png, 586.2 MB   (01_TUM_0.png ...)
+        02_FIB.zip   26364 png, 1.0 GB
+        03_INF.zip    4776 png, 228.6 MB
+        04_NEC.zip   22023 png, 853.1 MB
+        05_NOR.zip   13200 png, 564.3 MB
+        06_REA.zip    1540 png, 68.6 MB
+        07_STE.zip    6198 png, 264.6 MB
+    n_files: 10
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/xtxx/HepatoBench/resolve/main/06_REA.zip::06_REA_0.png
+    size_bytes: 44278
+    description: One 150x150 RGB PNG patch of class REA (biliary reaction); its label is the class given by the zip and file-name prefix.
+  arrays:
+  - role: raw
+    path_pattern: '0?_???.zip/0?_???_*.png'
+    format: png
+    axes: yxs
+    shape:
+    - 150
+    - 150
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'RGB colour patches (PNG colour type 2, samples differ). Labels are not separate files: each patch''s class is its zip and file-name prefix (01_TUM, 02_FIB, 03_INF, 04_NEC, 05_NOR, 06_REA, 07_STE), one class per patch. Members sit at the zip root.'
+  notes: 'Listing: HF tree API + zip central directories (tools/listing.py --expand-zips), 10 files, 87,301 PNG members, total 3,615,128,587 bytes, matches dataset_meta.json counts. Probed 06_REA_0.png and 06_REA_1.png (150x150x3 uint8, deflate); sampled 06_REA_0.png (44,200 bytes): value range 0-255 from that one sample, normalization not documented. Classes (README): TUM Tumor, FIB Fibrosis, INF Inflammation, NEC Necrosis, NOR Normal Tissue, REA Biliary Reaction, STE "Steroidal Degeneration" (paper: Steatosis). The paper says the official 7:2:1 partition is released, but no split file is in the HF repo. Voxel size not found; checked: PNG headers (no pHYs calibration reported), README, dataset_meta.json (pixel [150,150] only), paper full text (only "20x magnification"), PFM_Segmentation GitHub README. No single whole-dataset archive: seven per-class zips, direct via resolve/main/<NN_CLS>.zip (range requests OK).'
