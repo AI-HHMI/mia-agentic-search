@@ -21,24 +21,24 @@ imaging:
   - fluorescence-other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 34
   organism:
   - Homo sapiens
   sample: h1RPE7 retinal pigment epithelium cells, control and treated with IAA, rotenone, thapsigargin, H2O2 or NMDA
   labels_stains: []
 data:
   formats:
-  - other
+  - png
   size_bytes: 23226542012
   n_items: 341
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/21711396
   download_method: http
 annotations:
   present: true
   types:
   - semantic-segmentation
-  coverage: unknown
+  coverage: dense
   format: 'PNG cell mask next to each .mat image (same base name), e.g. IAA/Control/*.png and IAA/Treated/*.png'
   source: unknown
 ml:
@@ -65,7 +65,66 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T01:16:22Z'
-notes: 'Zip listings: 1 IAA (55 mat + 55 png), 2 Rotenone (52+52), 3 Thapsigargin (103+103), 4 H2O2 (52+52), 5 NMDA (79+79) = 341 image/mask pairs split Control/Treated, plus 6 Other.zip (2 .mat
-  protocol files). Each .mat is about 70 MB. Not stated in the record: how the masks were made, mask values, image dimensions, spectral channels, pixel size, microscope. The related paper is
-  not yet published or found (Europe PMC search failed), so no paper was read. The .mat internals (v5 or HDF5) were not inspected, hence format other.'
+  last_checked: '2026-10-11T02:42:04Z'
+notes: 'Zip listings: 1 IAA (55 mat + 55 png), 2 Rotenone (52+52), 3 Thapsigargin (103+103), 4 H2O2 (52+52), 5 NMDA (79+79) =
+  341 image/mask pairs split Control/Treated, plus 6 Other.zip (2 protocol .mat files). Not stated in the record: how the masks
+  were made, pixel size. The related paper is not yet published or found, so no paper was read. enricher: raw .mat files are
+  MATLAB 5.0 MAT-files (not a listed format; formats lists only the PNG masks); each holds struct HAC_Image with
+  imageStruct.data, a 1024 x 1024 x 34 double array (34 excitation/emission channels in the stored protocol), so channels 34
+  (was null). coverage: one binary cell mask per image, same 1024 x 1024 grid.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  6 zips 23,226,542,012 B (684 members)\n  1 IAA.zip  2 Rotenone.zip  3 Thapsigargin.zip  4 H2O2.zip  5 NMDA.zip\
+      \  (3.6-6.4 GB each)\n    <n> <Treatment>/{Control,Treated}/<name>.mat        ~75 MB each\n    <n> <Treatment>/{Control,Treated}/mask/<name>.png\
+      \   binary mask, same name\n  6 Other.zip  (103 MB): 6 Other/*-ProtocolRetinalCells.mat (2)\n"
+    n_files: 6
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/21711396/files/4%20H2O2.zip::4 H2O2/Control/CONTROL_H2O2_1.mat
+    - https://zenodo.org/records/21711396/files/4%20H2O2.zip::4 H2O2/Control/mask/CONTROL_H2O2_1.png
+    size_bytes: 75711203
+    description: One control H2O2 image (MAT v5, 34 channels) and its binary cell mask.
+  arrays:
+  - role: raw
+    path_pattern: '*.zip/*/*/*.mat'
+    format: other
+    axes: null
+    shape:
+    - 1024
+    - 1024
+    - 34
+    shape_varies: null
+    dtype: float64
+    compression: deflate
+    value_range:
+    - 1198
+    - 19121
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'MAT v5 variable HAC_Image (struct), field imageStruct.data: MATLAB dims 1024 x 1024 x 34, double (column-major,
+      so 34 is the slowest axis in memory); the struct also holds the acquisition protocol (34 excitation/emission pairs,
+      e.g. 345/414 nm) and hardware metadata. Stored in zlib-compressed MAT elements. Axis names not stated, so axes null.'
+  - role: label
+    path_pattern: '*.zip/*/*/mask/*.png'
+    format: png
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: bool
+    compression: deflate
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: mask/<name>.png pairs with <name>.mat in the parent folder by name; 1024 x 1024 = the first two dims of
+      imageStruct.data. Mask orientation relative to MATLAB row/column order not checked.
+  notes: 'Listing: Zenodo API + all 6 zip central directories (684 members), complete, exact sizes. Read 4 H2O2/Control/CONTROL_H2O2_1.mat
+    (75,710,549 B) in memory and parsed its MAT v5 element headers with a stdlib script (zlib + struct; nothing executed): one
+    struct HAC_Image {installStruct, projectStruct, imageStruct}; imageStruct.data double 1024 x 1024 x 34, min 1198, max 19121,
+    median 1710.5 (one sample). Masks CONTROL_H2O2_1.png and H2O2_300 UM_1.png: bool 1024 x 1024, 6,110 and 258,089 True pixels.
+    Voxel size not found; checked: MAT metadata (objective 40x/1.15 W and camera Nuvu hnu1024 listed, no image pixel size), Zenodo
+    record; no paper found. The MAT files also carry operator contact details in installStruct.registration.'
