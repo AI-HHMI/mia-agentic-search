@@ -1,0 +1,78 @@
+schema_version: '1.2'
+id: dataverseno-pujou2-refined-pannuke-monusac-cells
+title: Refined PanNuke-MoNuSAC cell segmentation and classification dataset (cross-relabeled H&E patches)
+short_name: Refined PanNuke+MoNuSAC cell types (H&E)
+description: 10,724 H&E-stained 256x256 px image patches (7,901 from PanNuke and 2,823 from MoNuSAC) with per-pixel cell-type
+  masks for seven classes (neoplastic, epithelial, lymphocyte, neutrophil, macrophage, dead, connective), obtained by cross-relabeling
+  the broad PanNuke inflammatory and MoNuSAC epithelial classes with ResNet50 classifiers.
+landing_url: https://doi.org/10.18710/PUJOU2
+doi: 10.18710/PUJOU2
+repository: other
+accession: null
+authors:
+- Nikita Shvetsov
+publications:
+- title: A lightweight and extensible cell segmentation and classification model for H&E-stained cancer whole slide images
+  doi: 10.1016/j.compbiomed.2025.111326
+  url: https://doi.org/10.1016/j.compbiomed.2025.111326
+date_published: '2025-12-19'
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: H&E-stained human cancer tissue patches (multiple organs) from PanNuke and MoNuSAC
+  labels_stains:
+  - H&E
+data:
+  formats:
+  - png
+  size_bytes: 1369539136
+  n_items: 10724
+  access: open
+  download_url: https://dataverse.no/api/access/datafile/265315
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - classification
+  coverage: dense
+  format: NumPy .npy masks (masks.zip), one per patch with the same base name as the PNG; README states shape (7,256,256)
+    binary channels per cell type
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  - classification
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-NC-SA-4.0
+  url: http://creativecommons.org/licenses/by-nc-sa/4.0
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-11T12:51:16Z'
+  evidence_urls:
+  - https://dataverse.no/api/datasets/:persistentId/?persistentId=doi:10.18710/PUJOU2
+  - https://dataverse.no/citation?persistentId=doi:10.18710/PUJOU2
+  - https://dataverse.no/api/access/datafile/267444
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1016%2Fj.compbiomed.2025.111326%22&format=json&resultType=core&pageSize=3
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-11T12:51:16Z'
+notes: Derived from PanNuke and MoNuSAC; this is a different label set (7 refined classes) from those source datasets, not
+  a mirror. Counts and structure come from the deposit README (10,724 PNG images and 10,724 .npy masks; peek_archive could
+  not read the zips because the server gives no size, so zip members were not listed). File names carry a fold index (f1-f3
+  etc.) which the README describes as the split used in experiments; exact fold assignment not verified. README describes
+  masks as (7,256,256) yet lists 8 values (0 background plus 7 types), so channel layout should be checked. Labels are model-refined
+  (ResNet50 relabeling of original manual annotations), hence source mixed. Pixel size not stated on the deposit; paper full
+  text is not open access (Europe PMC abstract only). Original PanNuke / MoNuSAC licences may impose additional terms. size_bytes
+  sums the two zips (1,321,043,666 + 48,495,470).
