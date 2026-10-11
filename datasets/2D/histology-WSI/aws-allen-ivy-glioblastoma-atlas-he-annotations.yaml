@@ -1,0 +1,69 @@
+schema_version: '1.2'
+id: aws-allen-ivy-glioblastoma-atlas-he-annotations
+title: Allen Ivy Glioblastoma Atlas (histology and ISH section images with anatomic feature annotations)
+short_name: Ivy glioblastoma histology tumor-feature masks
+description: Whole-slide images (about 18,000 x 15,000 px JPEGs, 0.5 um/pixel) of human glioblastoma tissue sections from the Ivy GAP resource, histology-stained sections and adjacent in situ hybridization sections, 31,857 primary images in 946 specimen folders. Each image comes with an annotation image of the anatomic tumor features (e.g. leading edge, infiltrating tumor, cellular tumor, pseudopalisading cells, microvascular proliferation) produced by a machine learning application trained on expert neuropathologist outlines, a boundary image, and for ISH sections an expression image.
+landing_url: https://registry.opendata.aws/allen-ivy-glioblastoma-atlas/
+doi: null
+repository: other
+accession: null
+authors:
+- Ralph B. Puchalski
+- Nameeta Shah
+- Jeremy Miller
+publications:
+- title: An anatomic transcriptional atlas of human glioblastoma
+  doi: 10.1126/science.aaf2666
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC6414061/
+date_published: null
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: human glioblastoma tumour tissue sections (41 patients, 42 tumours in the paper cohort), histology and ISH stained
+  labels_stains: []
+data:
+  formats:
+  - jpeg
+  size_bytes: 9364264063535
+  n_items: 31857
+  access: open
+  download_url: s3://allen-ivy-glioblastoma-atlas/
+  download_method: s3
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: one RGB JPEG annotation image per primary image (donor_<id>/specimen_<id>/annotation/<specimen>_<nn>_<section>_annotation.jpg), same pixel dimensions as the primary image; colour-to-class mapping not found in the files read
+  source: automatic
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: custom
+  url: http://www.alleninstitute.org/legal/terms-use/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-11T17:47:27Z'
+  evidence_urls:
+  - https://registry.opendata.aws/allen-ivy-glioblastoma-atlas/
+  - https://allen-ivy-glioblastoma-atlas.s3.us-west-2.amazonaws.com/?list-type=2
+  - https://allen-ivy-glioblastoma-atlas.s3.us-west-2.amazonaws.com/donor_10865/specimen_264712561/annotation/264712561_01_265851322_annotation.jpg
+  - https://allen-ivy-glioblastoma-atlas.s3.us-west-2.amazonaws.com/donor_10865/specimen_264712561/primary/264712561_01_265851322.jpg
+  - https://allen-ivy-glioblastoma-atlas.s3.us-west-2.amazonaws.com/specimen_metadata.json
+  - https://pmc.ncbi.nlm.nih.gov/articles/PMC6414061/
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-11T17:47:27Z'
+notes: 'S3 listing complete: 116,181 files, 9.36 TB (per specimen: annotation, boundary, primary JPEGs, 31,857 each, expression JPEGs 20,607, plus metadata JSON). Probed one primary and one annotation JPEG: both 18,176 x 15,104 RGB. Paper states 0.5 um/pixel; not stored in the JPEGs, so voxel size is null. H&E vs ISH split of the primary images and the annotation colour-to-class mapping were not established (docs site redirects to a forum). Registry: annotations by a machine learning process trained by physicians; paper: neuropathologist outlines plus ML for H&E (accuracy in Table S5, not read). License: Allen Institute terms of use.'
