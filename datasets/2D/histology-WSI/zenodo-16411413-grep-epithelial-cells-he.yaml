@@ -2,11 +2,12 @@ schema_version: '1.2'
 id: zenodo-16411413-grep-epithelial-cells-he
 title: GrEp dataset - epithelial cell classification in H&E (colorectal, endometrium, pancreas)
 short_name: GrEp epithelial nuclei classes (H&E histology)
-description: H&E histopathology tiles at 20x (0.5 um/pixel) in three sub-datasets - colorectal, endometrial and pancreatic
-  epithelium - released with the GrEp paper on graph-based refinement of epithelial cell classification. Each tile has a
-  MATLAB .mat file with nucleus centroids (inst_centroid) and a per-nucleus class (inst_type - normal epithelium,
-  malignant epithelium, other). The colorectal part includes subsets of Lizard and PanNuke tiles (folder names
-  Lizard_subset_train and Lizard_pannuke_subset_test); train and test folders are provided.
+description: H&E histopathology tiles at 20x (0.5 um/pixel) in three sub-datasets - colorectal, endometrial
+  and pancreatic epithelium - released with the GrEp paper on graph-based refinement of epithelial cell
+  classification. Each tile has a MATLAB .mat file with nucleus centroids (inst_centroid) and a per-nucleus
+  class (inst_type - normal epithelium, malignant epithelium, other). The colorectal part includes subsets
+  of Lizard and PanNuke tiles (folder names Lizard_subset_train and Lizard_pannuke_subset_test); train
+  and test folders are provided.
 landing_url: https://zenodo.org/records/16411413
 doi: 10.5281/zenodo.16411413
 repository: Zenodo
@@ -40,7 +41,7 @@ data:
   size_bytes: 1769193618
   n_items: 621
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/16411413
   download_method: http
 annotations:
   present: true
@@ -48,7 +49,8 @@ annotations:
   - points
   - classification
   coverage: dense
-  format: MATLAB .mat per tile with inst_centroid (Nx2 x,y nucleus coordinates) and inst_type (Nx1 class - 0 normal epithelium, 1 malignant epithelium, 2 other)
+  format: MATLAB .mat per tile with inst_centroid (Nx2 x,y nucleus coordinates) and inst_type (Nx1 class
+    - 0 normal epithelium, 1 malignant epithelium, 2 other)
   source: unknown
 ml:
   tasks:
@@ -71,11 +73,91 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T19:05:00Z'
-notes: 'Record read through the Zenodo API (zenodo.org/api/records/16411413) and zip listings with peek_archive (CRC.zip 1.40 GB,
-  Endometrium.zip 212 MB, Pancreas.zip 157 MB; three downloads, no single archive, so download_url is null). Counts come
-  from the listings - CRC 461 png + 19 tif, Endometrium 85 tif, Pancreas 56 tif (n_items 621 images, 620 .mat files). The
-  paper (Pattern Recognition, 10.1016/j.patcog.2025.112197) is not open access, so only the DOI metadata was read; staining,
-  annotation procedure, tile size and who annotated which sub-dataset are not stated in the Zenodo description, hence
-  annotations.source unknown. The CRC folder names indicate Lizard and PanNuke subsets, so part of the images and labels may
-  derive from those public datasets. Pixel size 0.5 um at 20x is from the Zenodo description. License is non-commercial.'
+  last_checked: '2026-10-11T19:45:00Z'
+notes: 'Record read through the Zenodo API (zenodo.org/api/records/16411413) and zip listings with peek_archive
+  (CRC.zip 1.40 GB, Endometrium.zip 212 MB, Pancreas.zip 157 MB; three downloads, no single archive, so
+  download_url is the record page). Counts come from the listings - CRC 461 png + 19 tif, Endometrium
+  85 tif, Pancreas 56 tif (n_items 621 images, 620 .mat files). The paper (Pattern Recognition, 10.1016/j.patcog.2025.112197)
+  is not open access, so only the DOI metadata was read; staining, annotation procedure, tile size and
+  who annotated which sub-dataset are not stated in the Zenodo description, hence annotations.source unknown.
+  The CRC folder names indicate Lizard and PanNuke subsets, so part of the images and labels may derive
+  from those public datasets. Pixel size 0.5 um at 20x is from the Zenodo description. License is non-commercial.
+  enricher: the probed Pancreas TIFF stores 0.486 um/px (ImageJ); the record keeps the documented 0.5
+  um.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "CRC.zip (1.40 GB)\n  CRC/Lizard_pannuke_subset_test/{images/*.png, centroids/*.mat}   17\n\
+      \  CRC/Lizard_subset_train/Partition<k>/{images,centroids}/          296 (3 partitions)\n  CRC/Lizard_subset_train/Test<k>/{images,centroids}/\
+      \               148 (3 folds)\n  CRC/TCGA_test/{images/*.tif, centroids/*.mat}                 \
+      \    19\nEndometrium.zip (212 MB): Endometrium/{Train,Val,...}/{images/*.tif, centroids/*.mat}\n\
+      Pancreas.zip (157 MB): Pancreas/{Train,Val,Test,Test/0_pancreatitis}/{images/*.tif, centroids/*.mat}\
+      \  21/12/17/6\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/16411413/files/Pancreas.zip::Pancreas/Val/images/grep_pdac_image20.tif
+    - https://zenodo.org/records/16411413/files/Pancreas.zip::Pancreas/Val/centroids/grep_pdac_image20.mat
+    size_bytes: 3032735
+    description: One pancreas validation tile and its centroid/class .mat
+  arrays:
+  - role: raw
+    path_pattern: '*.zip::*/**/images/*.tif'
+    format: tiff
+    axes: yxs
+    shape:
+    - 1000
+    - 1000
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB H&E tiles; probed Pancreas/Val/images/grep_pdac_image20.tif (ImageJ TIFF, 0.486
+      um/px stored).
+  - role: raw
+    path_pattern: CRC.zip::CRC/**/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 500
+    - 500
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB PNG tiles of the Lizard/PanNuke-derived CRC subsets (probed pannuke_1.png, 500x500).
+  - role: label
+    path_pattern: '*.zip::*/**/centroids/*.mat'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    encoding: points-table
+    classes:
+    - id: 0
+      name: normal epithelium
+    - id: 1
+      name: malignant epithelium
+    - id: 2
+      name: other
+    alignment: same-grid
+    alignment_notes: centroids/<stem>.mat next to images/<stem>.<ext> (e.g. grep_pdac_image20.tif / .mat);
+      inst_centroid (x, y) and inst_type per nucleus per the record; .mat contents not read this run.
+  notes: 'Listing: tools/listing.py --expand-zips on the Zenodo record: 3 zips, 1,769,193,618 bytes, complete,
+    exact. Probed one Pancreas TIFF (1000x1000x3 uint8, uncompressed, ImageJ unit um, 0.486 um/px) and
+    one CRC PNG (500x500x3). Reading the .mat members failed on repeated zenodo.org TLS EOF errors, so
+    no pixel values or label contents were read (method header). Voxel size: the record keeps 500 nm from
+    the Zenodo description; the TIFF header says 486 nm, a conflict noted here. No single archive: download_url
+    is now the record page (was null); the 3 zips are direct and usable.'
