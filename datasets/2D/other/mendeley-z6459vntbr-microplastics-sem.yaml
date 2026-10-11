@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: mendeley-z6459vntbr-microplastics-sem
 title: Microplastics_SEM
 short_name: Microplastics in SEM micrographs (masks)
-description: 237 scanning electron micrographs of microplastics from consumer products (fragments, beads and fibres)
-  with manually annotated pixel masks, released as a full semantic-segmentation set (image/label pairs),
-  instance-segmentation subsets for densely packed fibres, shape-classification crops and the original micrographs
-  with per-image acquisition settings.
+description: 237 scanning electron micrographs of microplastics from consumer products (fragments, beads
+  and fibres) with manually annotated pixel masks, released as a full semantic-segmentation set (image/label
+  pairs), instance-segmentation subsets for densely packed fibres, shape-classification crops and the
+  original micrographs with per-image acquisition settings.
 landing_url: https://data.mendeley.com/datasets/z6459vntbr/3
 doi: 10.17632/z6459vntbr.3
 repository: other
@@ -14,7 +14,8 @@ authors:
 - Bin Shi
 - Jane Howe
 publications:
-- title: Automatic quantification and classification of microplastics in scanning electron micrographs via deep learning
+- title: Automatic quantification and classification of microplastics in scanning electron micrographs
+    via deep learning
   doi: 10.1016/j.scitotenv.2022.153903
   url: https://doi.org/10.1016/j.scitotenv.2022.153903
 date_published: '2026-02-23'
@@ -25,8 +26,8 @@ imaging:
   voxel_size_nm: null
   channels: 1
   organism: []
-  sample: Microplastic particles (fragments, beads, 50 um to 1 mm) and fibres (about 10 um diameter) from daily supplies
-    in diverse polymer compositions; materials sample, no organism.
+  sample: Microplastic particles (fragments, beads, 50 um to 1 mm) and fibres (about 10 um diameter) from
+    daily supplies in diverse polymer compositions; materials sample, no organism.
   labels_stains: []
 data:
   formats:
@@ -44,8 +45,8 @@ annotations:
   - instance-segmentation
   - classification
   coverage: dense
-  format: 'Per-image label PNGs next to image PNGs in dataset1 (237 image/label pairs); instance-segmentation label_gray
-    PNGs and per-image counts .txt in dataset2; shape class by fibre / bead / fragment folder'
+  format: Per-image label PNGs next to image PNGs in dataset1 (237 image/label pairs); instance-segmentation
+    label_gray PNGs and per-image counts .txt in dataset2; shape class by fibre / bead / fragment folder
   source: manual
 ml:
   tasks:
@@ -65,17 +66,108 @@ provenance:
   - https://data.mendeley.com/public-api/datasets/z6459vntbr
   - https://raw.githubusercontent.com/benjamin3344/Microplastics_Unet/main/README.md
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1016%2Fj.scitotenv.2022.153903%22&format=json&resultType=core&pageSize=3
+  - https://data.mendeley.com/public-files/datasets/z6459vntbr/files/82433184-f173-4013-be29-70d7f42eabad/file_downloaded
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T14:50:00Z'
-notes: 'Mendeley file listing (public API): dataset1.zip 758 MB, dataset2.zip 113 MB, dataset3.zip 1.02 GB, result.zip 7 MB,
-  result_weights.zip 4.19 GB (model weights, not part of the image data; size_bytes counts dataset1-3 only). Zip contents
-  listed with peek_archive: dataset1 holds 237 image/label PNG pairs in [datasets_full]_Exp1_Exp4 plus a subset by shape
-  class; dataset2 holds instance-segmentation label_gray PNGs and counts; dataset3 holds the original SEM TIFFs (241) with
-  per-image .txt acquisition settings and ground-truth labels. The 237 micrograph count is from the paper abstract
-  (full text not open access, abstract only read). Pixel size and SEM model are not stated on the dataset page, README
-  or abstract; they may be in the per-image .txt settings files, not read. Modality is SEM, which the schema lacks, so
-  recorded as other. The download URL redirects to a signed S3 object, so no stable direct link is recorded.'
+  last_checked: '2026-10-11T15:20:00Z'
+notes: 'Mendeley file listing (public API): dataset1.zip 758 MB, dataset2.zip 113 MB, dataset3.zip 1.02
+  GB, result.zip 7 MB, result_weights.zip 4.19 GB (model weights, not part of the image data; size_bytes
+  counts dataset1-3 only). Zip contents listed with peek_archive: dataset1 holds 237 image/label PNG pairs
+  in [datasets_full]_Exp1_Exp4 plus a subset by shape class; dataset2 holds instance-segmentation label_gray
+  PNGs and counts; dataset3 holds the original SEM TIFFs (241) with per-image .txt acquisition settings
+  and ground-truth labels. The 237 micrograph count is from the paper abstract (full text not open access,
+  abstract only read). Modality is SEM, which the schema lacks, so recorded as other. The download URL
+  redirects to a signed S3 object, so no stable direct link is recorded. enricher: per-image .txt settings
+  in dataset3 are Hitachi SU5000 files with PixelSize varying by magnification (e.g. 992.19 at x100),
+  so voxel_size_nm stays null.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: 'dataset1.zip (758 MB), dataset2.zip (113 MB), dataset3.zip (1.02 GB), result.zip (7 MB), result_weights.zip
+      (4.19 GB, model weights)
+
+      dataset1/[datasets_full]_Exp1_Exp4/image/   237 .png  354 MB
+
+      dataset1/[datasets_full]_Exp1_Exp4/label/   237 .png  3.1 MB
+
+      dataset1/[datasets_subset]_Exp2/{bead,fibre_1,fibre_1crop,fibre_2,fibre_2crop,fragment_1,fragment_2}/{image,label}/  .png
+      pairs + counts_*.txt
+
+      dataset1/[fibre_1crop]_Exp3/{image,label_gray,label_color_map}/  101 .png each; label_VIA/{train,val,test}
+      .jpg + VIA .json; label_index/train&val/{image,label_uint8} 800 .png each
+
+      dataset1/{bead,fibre,fragment}/...  shape-class copies of the subsets
+
+      dataset2/  2051 files (instance segmentation: label_gray, label_color_map, label_VIA, label_index,
+      counts .txt)
+
+      dataset3/{bead,fibre,fragment}/original_image_*/  241 original SEM .tif + 248 per-image Hitachi
+      .txt settings, plus label copies
+
+      '
+    n_files: 5
+    listing_complete: true
+  sample:
+    urls:
+    - https://prod-dcd-datasets-public-files-eu-west-1.s3.eu-west-1.amazonaws.com/f8748b29-cb4a-4a83-9c62-957d5b04dddd::dataset1/[datasets_full]_Exp1_Exp4/image/Dove_men_acrylates_copolymer_microbeads_055.png
+    - https://prod-dcd-datasets-public-files-eu-west-1.s3.eu-west-1.amazonaws.com/f8748b29-cb4a-4a83-9c62-957d5b04dddd::dataset1/[datasets_full]_Exp1_Exp4/label/Dove_men_acrylates_copolymer_microbeads_055.png
+    size_bytes: 816000
+    description: One SEM micrograph (PNG) and its binary microplastic mask from the full semantic-segmentation
+      set
+  arrays:
+  - role: raw
+    path_pattern: dataset1.zip::dataset1/?datasets_full?_Exp1_Exp4/image/*.png
+    format: png
+    axes: yx
+    shape:
+    - 900
+    - 1280
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 29
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: dataset1.zip::dataset1/?datasets_full?_Exp1_Exp4/label/*.png
+    format: png
+    axes: yx
+    shape:
+    - 900
+    - 1280
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: microplastic
+    alignment: same-grid
+    alignment_notes: 'Pairs by identical file name in image/ and label/ (237 pairs). Some masks are 1-bit
+      PNG (polyester_85: bool), others 8-bit 0/255; the sampled 8-bit mask also has 11 stray pixels with
+      values 30-240 (anti-aliasing), so threshold at 128. PNGs are 1280x900, the original TIFFs in dataset3
+      1280x960 (data bar cropped).'
+  notes: 'Mendeley public API lists 5 files with exact sizes; members of dataset1-3 and result.zip listed
+    by range requests (7533 members). size_bytes is dataset1-3 (1,895,209,460 B, API sizes; result_weights.zip
+    4.19 GB of model weights and result.zip excluded); tools/listing.py cannot read Mendeley, so size_source
+    is page-stated. Probed image/label Dove_men_..._055 and polyester_85/91: 1280x900 grey PNG. Sampled
+    one pair (815 KB): raw uint8 min 29 max 255 mean 99; label {0: 1021388, 255: 130601, 11 stray pixels}.
+    Value range is from one sample. Direct files: the Mendeley file_downloaded links 302-redirect to unsigned
+    S3 objects on prod-dcd-datasets-public-files-eu-west-1.s3.eu-west-1.amazonaws.com (range requests
+    work); that host is not on TensorSwitch''s allowlist yet. data.download_url stays null because the
+    dataset is several zips (dataset1.zip = f8748b29-cb4a-4a83-9c62-957d5b04dddd, dataset2.zip = 7273062a-79e9-4131-8846-70feca40e7eb,
+    dataset3.zip = 16cdac70-97f7-4bea-8f76-70618ea68f38). Voxel size: per-image settings .txt (dataset3)
+    give Hitachi SU5000 PixelSize that differs by magnification, so no single value.'
