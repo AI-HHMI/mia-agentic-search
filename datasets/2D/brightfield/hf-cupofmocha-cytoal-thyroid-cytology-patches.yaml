@@ -2,7 +2,11 @@ schema_version: '1.2'
 id: hf-cupofmocha-cytoal-thyroid-cytology-patches
 title: Cyto-AL thyroid cytology labeled patches
 short_name: Thyroid cytology patches, 6 classes (brightfield)
-description: 27,496 RGB cytology image patches (224 x 224 px PNG) cut from 138 thyroid cytology whole-slide images collected 2021-2023, sorted into six class folders (1-6) that the paper describes as six categories annotated by three pathologists following the Bethesda system (TBSRTC). File names carry the slide id and the row/column of the patch in the whole-slide image. Released with the Cyto-AL active-learning code.
+description: 27,496 RGB cytology image patches (224 x 224 px PNG) cut from 138 thyroid cytology whole-slide
+  images collected 2021-2023, sorted into six class folders (1-6) that the paper describes as six categories
+  annotated by three pathologists following the Bethesda system (TBSRTC). File names carry the slide id
+  and the row/column of the patch in the whole-slide image. Released with the Cyto-AL active-learning
+  code.
 landing_url: https://huggingface.co/datasets/cupofmocha/cytoal-thyroid-cytology-labeled
 doi: null
 repository: HuggingFace
@@ -27,7 +31,7 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: 2294738638
+  size_bytes: 2294741132
   n_items: 27496
   access: open
   download_url: https://huggingface.co/datasets/cupofmocha/cytoal-thyroid-cytology-labeled
@@ -37,7 +41,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: one image-folder directory per class (dataset_final_6/1 ... dataset_final_6/6), one 224 x 224 PNG patch per file
+  format: one image-folder directory per class (dataset_final_6/1 ... dataset_final_6/6), one 224 x 224
+    PNG patch per file
   source: manual
 ml:
   tasks:
@@ -61,5 +66,79 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T18:02:17Z'
-notes: 'The Hugging Face card holds only the license (CC BY-NC 4.0). File listing via the Hub API: 27,496 PNG patches in class folders 1-6 (4,569 / 4,727 / 4,565 / 4,478 / 4,468 / 4,689), 2.29 GB; one patch probed: 224 x 224 RGB. Patch counts and the six-class, three-pathologist TBSRTC annotation come from the paper abstract on the IEEE SPS page (full text not open access, no DOI found), as does 138 WSIs; which TBSRTC category each folder number is, the stain, scanner, magnification and pixel size are not stated anywhere read, so voxel size is null. Organism is assumed human (thyroid cytology). No train/test split is provided.'
+  last_checked: '2026-10-11T18:45:00Z'
+notes: 'The Hugging Face card holds only the license (CC BY-NC 4.0). File listing via the Hub API: 27,496
+  PNG patches in class folders 1-6 (4,569 / 4,727 / 4,565 / 4,478 / 4,468 / 4,689), 2.29 GB; one patch
+  probed: 224 x 224 RGB. Patch counts and the six-class, three-pathologist TBSRTC annotation come from
+  the paper abstract on the IEEE SPS page (full text not open access, no DOI found), as does 138 WSIs;
+  which TBSRTC category each folder number is, the stain, scanner, magnification and pixel size are not
+  stated anywhere read, so voxel size is null. Organism is assumed human (thyroid cytology). No train/test
+  split is provided. enricher: the Cyto-AL code maps folder d to class d-1 and names the classes I-VI
+  (demo.py).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "README.md, .gitattributes\ndataset_final_6/\n  1/  4,569 png   (class I in the Cyto-AL code)\n\
+      \  2/  4,727 png   (II)\n  3/  4,565 png   (III)\n  4/  4,478 png   (IV)\n  5/  4,468 png   (V)\n\
+      \  6/  4,689 png   (VI)\n  file names: <slide id>_row_<y>_col_<x>.png or <slide id>_<x>_<y>_<i>_<j>.png\n"
+    n_files: 27498
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/cupofmocha/cytoal-thyroid-cytology-labeled/resolve/main/dataset_final_6/1/1020130_row_2240_col_12768.png
+    size_bytes: 81987
+    description: One class-1 (I) patch
+  arrays:
+  - role: raw
+    path_pattern: dataset_final_6/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 224
+    - 224
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 27
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB patches cut from whole-slide images; the slide id and patch position are in the
+      file name (parsed by the Cyto-AL dataloader).
+  - role: label
+    path_pattern: dataset_final_6/*/
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes:
+    - id: 1
+      name: I
+    - id: 2
+      name: II
+    - id: 3
+      name: III
+    - id: 4
+      name: IV
+    - id: 5
+      name: V
+    - id: 6
+      name: VI
+    alignment: not-applicable
+    alignment_notes: Patch class = folder number; Cyto-AL dataloader.py uses int(folder) - 1 and demo.py
+      names classes I-VI (TBSRTC categories per the paper abstract). Patches from one slide share the
+      slide id prefix, so split by slide.
+  notes: 'Listing: tools/listing.py on the Hugging Face repo: 27,498 files (27,496 PNG + README + .gitattributes),
+    2,294,741,132 bytes, complete, exact. Probed 1 PNG header (224x224 RGB) and sampled 1 patch (82 KB):
+    range [27,255], one sample. Read the Cyto-AL GitHub code (not run) for the class order. Voxel size
+    not found; checked: PNG headers, HF card and API, Cyto-AL README and code (convert_png.py reads OpenSlide
+    level 1, mpp not given), IEEE SPS abstract page. Full paper not open access. download_url stays the
+    repo page (many files, no archive); files are direct /resolve/main/ URLs.'
