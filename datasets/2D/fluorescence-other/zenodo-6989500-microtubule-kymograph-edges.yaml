@@ -13,13 +13,13 @@ authors:
 - Varun Kapoor
 - Daisuke Inoue
 publications: []
-date_published: null
+date_published: '2022-03-15'
 imaging:
   modality:
   - fluorescence-other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism: []
   sample: Microtubule kymographs (Fiji Multi Kymograph)
   labels_stains: []
@@ -27,7 +27,7 @@ data:
   formats:
   - tiff
   size_bytes: 5902544
-  n_items: null
+  n_items: 68
   access: open
   download_url: https://zenodo.org/records/6989500/files/Microtubule_edgedetector_training.zip
   download_method: http
@@ -53,15 +53,77 @@ provenance:
   evidence_urls:
   - https://zenodo.org/api/records/6989500
   - https://zenodo.org/records/6989500/files/Microtubule_edgedetector_training.zip
-  confidence: 0.55
+  confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T05:46:34Z'
-notes: 'Record has three zips: Microtubule_edgedetector_training.zip (5.9 MB, 136 TIFFs incl. a binary_mask/
-  folder; listing showed only the first 40 paths, so the image/mask split and exact pair count are unconfirmed),
-  plus a trained model (weights .h5, not data) and a Keras model archive. Images are kymographs derived
-  from time-lapse microscopy, not raw microscope frames. Microscope type, pixel size, organism, sample
-  and publication date not stated on the dataset page or file listing; no associated paper found in Europe
-  PMC/Crossref. Annotation by Varun Kapoor per the description (annotation method not stated).'
+  last_checked: '2026-10-11T05:54:59Z'
+notes: 'Record has three zips: Microtubule_edgedetector_training.zip (5.9 MB, 136 TIFFs: 68 Raw/ + 68
+  binary_mask/), plus a trained model (weights .h5, not data) and a Keras model archive. Images are kymographs
+  derived from time-lapse microscopy, not raw microscope frames. Microscope type, pixel size, organism,
+  sample and publication date not stated on the dataset page or file listing; no associated paper found
+  in Europe PMC/Crossref. Annotation by Varun Kapoor per the description (annotation method not stated).
+  enricher: n_items 68 pairs, channels 1, date 2022-03-15 from full zip listing/Zenodo API (were null).
+  enricher: binary_mask files hold integer IDs (76 values in one sample), not 0/1.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                                        1 files      5.9 MB  .zip\nzip contents:\n\
+      Microtubule_edgedetector_training.zip/\n  Raw/                                                 \
+      \    68 files     43.5 MB  .tif\n  binary_mask/                                             68 files\
+      \     21.8 MB  .tif"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/6989500/files/Microtubule_edgedetector_training.zip::Raw/01_exp_3.tif
+    - https://zenodo.org/records/6989500/files/Microtubule_edgedetector_training.zip::binary_mask/01_exp_3.tif
+    size_bytes: 960528
+    description: One kymograph (Raw/01_exp_3.tif) and its mask (binary_mask/01_exp_3.tif)
+  arrays:
+  - role: raw
+    path_pattern: '*.zip/Raw/*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 400
+    - 400
+    shape_varies: null
+    dtype: float32
+    compression: none
+    value_range:
+    - 0.0
+    - 255.0
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Single-page float32 TIFFs, 400x400 (2 files probed; all 68 Raw members are 640,272
+      B). Kymographs: one axis is position along the microtubule, the other time (which is which is not
+      documented); values are integers 0-255 stored as float32.'
+  - role: label
+    path_pattern: '*.zip/binary_mask/*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 400
+    - 400
+    shape_varies: null
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 111
+    encoding: unknown
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: Raw/<name>.tif pairs with binary_mask/<name>.tif (same 68 stems),
+      same 400x400 grid. Despite the folder name, the sampled mask has 76 distinct values (0-111, 97.5%
+      zero): likely one ID per edge segment, but the docs do not say, so encoding is unknown.'
+  notes: 'Listing: tools/listing.py --expand-zips on Microtubule_edgedetector_training.zip: 5,902,544
+    B (file-listing, complete), 136 TIFF members (65.3 MB uncompressed). The record''s other two zips
+    (microtubule_kymograph_segmentation.zip, UNETkymo_*.zip) hold only model weights/config/logs (peeked),
+    not data, so the dataset size is this one zip. Probed 2 raw + 1 mask header; sampled one pair (values
+    from that pair). Voxel size: not found; checked TIFF headers (no calibration), Zenodo API description,
+    zip listing (no README), no paper exists (harvester checked Europe PMC/Crossref). Organism not stated
+    anywhere checked.'
