@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: zenodo-4073519-simulated-pollen-slides
 title: Simulated pollen microscope slides for segmentation/bounding box regression and classification
 short_name: Simulated pollen slides (brightfield)
-description: 80,000 artificial 1280x1280 RGB pollen slide images (Chenopodium bonus-henricus, Corylus colurna, Urtica dioica, Secale cereale, plus mixed splits with dust and burst-pollen artifacts) generated from real pollen photographs. Labels are one monochrome JPG mask per image, bounding-box coordinates for every pollen grain (CSV) and class names.
+description: 80,000 artificial 1280x1280 RGB pollen slide images (Chenopodium bonus-henricus, Corylus colurna, Urtica dioica,
+  Secale cereale, plus mixed splits with dust and burst-pollen artifacts) generated from real pollen photographs. Labels are
+  one monochrome JPG mask per image, bounding-box coordinates for every pollen grain (CSV) and class names.
 landing_url: https://zenodo.org/records/4073519
 doi: 10.5281/zenodo.4073519
 repository: Zenodo
@@ -25,7 +27,8 @@ imaging:
   - Corylus colurna
   - Urtica dioica
   - Secale cereale
-  sample: Synthetic slides composed by a generator (github.com/seurig/slide-generator) from real pollen images taken from pollen.tstebler.ch, with simulated artifacts
+  sample: Synthetic slides composed by a generator (github.com/seurig/slide-generator) from real pollen images taken from
+    pollen.tstebler.ch, with simulated artifacts
   labels_stains: []
 data:
   formats:
@@ -33,7 +36,7 @@ data:
   size_bytes: 13033880261
   n_items: 80000
   access: open
-  download_url: https://zenodo.org/api/records/4073519/files/masks.zip/content
+  download_url: https://zenodo.org/records/4073519
   download_method: http
 annotations:
   present: true
@@ -42,7 +45,8 @@ annotations:
   - bounding-box
   - classification
   coverage: dense
-  format: Monochrome JPG masks (masks.zip, 80,000 files), bounding-box coordinates in CSV files (validation_data.zip, one CSV per split/class) and class names
+  format: Monochrome JPG masks (masks.zip, 80,000 files), bounding-box coordinates in CSV files (validation_data.zip, one
+    CSV per split/class) and class names
   source: automatic
 ml:
   tasks:
@@ -68,5 +72,81 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T19:29:16Z'
-notes: 'Synthetic data: slides are generated composites of real pollen photographs, not direct microscope acquisitions, so usefulness for real microscopy is limited. The slides archive is a split zip (slides.zip + slides.z01-z16, about 12 GB), not listed with peek_archive; masks.zip (80,000 JPG masks) and validation_data.zip (8 CSV files) were listed. The README states 1280x1280 RGB images and 80,000 per-image labels; no pixel size, objective or microscope is stated (the images are simulated), so voxel_size_nm is null. Authors list is from the Zenodo record; no paper is cited on the record or README.'
+  last_checked: '2026-10-11T19:38:03Z'
+notes: 'Synthetic data: slides are generated composites of real pollen photographs, not direct microscope acquisitions, so
+  usefulness for real microscopy is limited. The slides archive is a split zip (slides.zip + slides.z01-z16, about 12 GB),
+  not listed with peek_archive; masks.zip (80,000 JPG masks) and validation_data.zip (8 CSV files) were listed. The README
+  states 1280x1280 RGB images and 80,000 per-image labels; no pixel size, objective or microscope is stated (the images are
+  simulated), so voxel_size_nm is null. enricher: download_url set to the record page (was masks.zip, which is only the masks;
+  the data is 20 files). organisms: Chenopodium bonus-henricus = slides/Chenopodium/, Corylus colurna = slides/Corylus/, Urtica
+  dioica = slides/Urtica/, Secale cereale = slides/Secale/; the four *_split folders mix all four.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "zenodo.org/records/4073519 (20 files, 13.03 GB)\n  README.md\n  slides.zip + slides.z01-z16  split zip (17 parts,\
+      \ 734 MB each + 726 MB)\n    slides/{Chenopodium,Corylus,Secale,Urtica,bigger_pollen_split,equal_split,middle_pollen_split,smaller_pollen_split}/<split>_<n>.jpg\n\
+      \  masks.zip (559 MB)  masks/<split>_masks/<split>_mask_<n>.jpg\n  validation_data.zip (5.1 MB)  validation_data/<split>.csv\
+      \  (8 CSVs)\n  zip members in total: 160,008 (80,000 slides + 80,000 masks + 8 CSVs)\n"
+    n_files: 20
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: slides.zip::slides/*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1280
+    - 1280
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Synthetic RGB slides, 1280x1280 per the README (not read: the member data sits in the split-zip parts
+      .z01-.z16).'
+  - role: label
+    path_pattern: masks.zip::masks/*_masks/*_mask_*.jpg
+    format: jpeg
+    axes: yx
+    shape:
+    - 1280
+    - 1280
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: other
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Monochrome JPEG masks, one per slide (<split>_<n>.jpg -> <split>_masks/<split>_mask_<n>.jpg, as the
+      CSV mask column shows). Lossy: 220 grey values in the sampled mask (mostly 0), so threshold to get a binary mask.'
+  - role: label
+    path_pattern: validation_data.zip::validation_data/*.csv
+    format: csv
+    axes: null
+    shape:
+    - 1681
+    - 7
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: boxes-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Columns slide, class, x1, y1, x2, y2, mask (pixel corners in the slide). Chenopodium.csv: 1,681 rows.
+      Named validation_data; whether it covers every slide is not stated.'
+  notes: 'Listing: tools/listing.py --expand-zips on the Zenodo record: 20 files, 13,033,880,261 bytes, complete, exact; 160,008
+    zip members (the slides.zip central directory lists all 80,000 slides). Later listings failed on Zenodo TLS resets. Probed
+    masks/Urtica_masks/Urtica_mask_0.jpg: jpeg 1280x1280 uint8; sampled it: 0-255, 99.88% zero, 220 values (JPEG artifacts),
+    one sample. Read Chenopodium.csv with peek_archive (1,682 lines incl. header). Slides can''t be read or fetched one by
+    one: their data lives in the split parts slides.z01-z16, which zip::member can''t reach, so sample is null. Voxel size:
+    none; the slides are synthetic composites (README).'
