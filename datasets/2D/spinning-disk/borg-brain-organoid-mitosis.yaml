@@ -26,7 +26,7 @@ imaging:
   - confocal
   dimensionality: 2D
   voxel_size_nm: null
-  channels: 1
+  channels: 2
   organism:
   - Homo sapiens
   sample: on-chip human brain organoids (WIBR3 embryonic stem cells, nuclei tagged), live imaging, 40x objective, Oxford Dragonfly
@@ -36,7 +36,7 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: null
+  size_bytes: 324095750
   n_items: 262
   access: open
   download_url: https://github.com/awaisrauf/borg
@@ -68,14 +68,101 @@ provenance:
   - https://arxiv.org/abs/2406.19556
   - https://arxiv.org/pdf/2406.19556
   - https://github.com/awaisrauf/borg/tree/main/data/max_projection/images/train
+  - https://arxiv.org/html/2406.19556
+  - https://raw.githubusercontent.com/awaisrauf/borg/main/data/max_projection/organoid_coco_val.json
   confidence: 0.55
 verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-10T23:14:24Z'
-notes: 'No license for the data found in the repository (no LICENSE file; README has none); the CC BY-SA 4.0 shown on arXiv
-  belongs to the paper. Image count 262 frames is from the paper; train folder showed 100 PNGs on GitHub, listing incomplete.
-  Voxel/pixel size not stated in README or paper. Annotations are sparse points (paper: 737 instances) stored in COCO JSON;
-  coordinates/boxes not inspected. Both mean and max projection versions are provided, so n_items may count them separately.
-  Frames originally 654x588 px.'
+  last_checked: '2026-10-11T00:45:00Z'
+notes: 'No licence for the data found: no LICENSE file in the repository tree (shallow clone, commit e76abaab, 2024-12-02)
+  and none in the README; the CC BY-SA 4.0 shown on arXiv belongs to the paper. 262 frames, each as max and mean projection
+  (data/{max,mean}_projection, 223 train + 39 val). Annotations: 737 points stored as fixed 50x50 px boxes in COCO JSON (556
+  train, 181 val), four mitosis phases. Voxel/pixel size not stated in README, paper or PNG headers. enricher: channels 2
+  (paper: red nuclei, green cytoplasm; PNGs carry R and G, B empty) (was 1). enricher: size 324,095,750 bytes = data/ in the
+  git tree (was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "github.com/awaisrauf/borg  data/  528 files  324.1 MB (git ls-tree, exact sizes)\n  data/max_projection/organoid_coco_train.json\
+      \   135 KB (223 images, 556 boxes)\n  data/max_projection/organoid_coco_val.json      39 KB (39 images, 181 boxes)\n\
+      \  data/max_projection/images/train/  223 PNG  142.3 MB  phase_<n>_new_v<k>_frame_<ff>.png\n  data/max_projection/images/val/\
+      \     39 PNG   24.9 MB\n  data/mean_projection/organoid_coco_{train,val}.json  (identical to max_projection's)\n  data/mean_projection/images/train/\
+      \  223 PNG  133.2 MB\n  data/mean_projection/images/val/     39 PNG   23.4 MB\n  (repo also: README.md, .gitignore,\
+      \ imgs/ with 3 README figures)"
+    n_files: 528
+    listing_complete: true
+  sample:
+    urls:
+    - https://raw.githubusercontent.com/awaisrauf/borg/main/data/max_projection/images/val/phase_1_new_v1_frame_00.png
+    - https://raw.githubusercontent.com/awaisrauf/borg/main/data/max_projection/organoid_coco_val.json
+    size_bytes: 673883
+    description: One max-projection validation frame and the validation COCO annotation file
+  arrays:
+  - role: raw
+    path_pattern: data/max_projection/images/*/*.png
+    format: png
+    axes: yxc
+    shape:
+    - 588
+    - 654
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: '8-bit RGB PNG (IHDR colour type 2) holding 2 fluorescence channels: R = nuclei (red), G = cell body
+      (green) per paper, B all zero in the sample. Max projection of 3D frames.'
+  - role: raw
+    path_pattern: data/mean_projection/images/*/*.png
+    format: png
+    axes: yxc
+    shape:
+    - 588
+    - 654
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Mean projection of the same frames, same file names; same channel arrangement (B all zero in the sample).
+  - role: label
+    path_pattern: data/max_projection/organoid_coco_*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 1
+      name: Prophase
+    - id: 2
+      name: Metaphase
+    - id: 3
+      name: Anaphase
+    - id: 4
+      name: Telophase
+    alignment: same-grid
+    alignment_notes: 'COCO: images[].file_name (images/<split>/<name>.png, width 654, height 588) and annotations[].bbox [x,
+      y, w, h] in image pixels; every box is 50x50, centred on the expert point (paper). Same files serve mean_projection
+      (byte-identical JSONs).'
+  notes: 'Listed with a shallow git clone (git ls-tree -r -l; tools/listing.py does not read GitHub repos and the GitHub API
+    is not reachable from this session): data/ holds 528 files, 324,095,750 bytes. Sampled one max- and one mean-projection
+    val frame (634,523 B each, via tools/sample.py): uint8 588x654x3, range 0-255 (one sample; max frame R 1-255, G 58-128,
+    B 0; mean frame R and G 0-255, B 0). Read both COCO JSONs: 223/39 images, 556/181 boxes, all 50x50; train/val JSONs identical
+    between projections. PNGs carry no pHYs chunk. Voxel size not found; checked: PNG headers, README, arXiv full text (HTML;
+    40x objective, Dragonfly, no um/px), repository files. Download: per-file raw.githubusercontent.com links are usable;
+    GitHub archive zip returned 403 through this session''s proxy, so download_url stays the repository URL. Not download-ready:
+    2D, voxel size missing, licence unknown.'
