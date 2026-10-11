@@ -22,7 +22,7 @@ imaging:
   - other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism: []
   sample: Marine plankton and non-plankton particles (detritus, bubbles, fibers) imaged
     in flow by Imaging FlowCytobot, Northeast US Shelf
@@ -30,7 +30,7 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: 1576344309
+  size_bytes: 1576381365
   n_items: 97026
   access: open
   download_url: null
@@ -64,12 +64,66 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T04:09:26Z'
-notes: Counts, classes and split sizes from the dataset card; 155 classes include
-  non-plankton ROIs. Files are Parquet shards (10) with embedded PNG images; formats
-  lists png as the image encoding. Imaging Flow Cytobot is an in-flow imaging microscope,
-  filed as modality 'other'. No pixel size or magnification on the card (viewer shows
-  image widths 40-1,380 px); no related paper linked, only the trained model repo
-  and a Hugging Face citation DOI. Labels are class labels only (no masks or boxes).
-  Split is stratified per class, not per IFCB sample bin, so train and validation
-  can contain images from the same sample.
+  last_checked: '2026-10-11T04:52:00Z'
+notes: 'Counts, classes and split sizes from the dataset card; 155 classes include
+  non-plankton ROIs. Files are Parquet shards (10) with embedded PNG images; formats lists
+  png as the image encoding. Imaging Flow Cytobot is an in-flow imaging microscope, filed
+  as modality ''other''. No pixel size or magnification on the card (viewer shows image
+  widths 40-1,380 px); no related paper linked, only the trained model repo and a Hugging
+  Face citation DOI. Labels are class labels only (no masks or boxes). Split is stratified
+  per class, not per IFCB sample bin, so train and validation can contain images from the
+  same sample. enricher: size from HF file listing (13 files, was card byte count);
+  channels 1 from sampled PNG headers (8-bit grayscale). organism left empty: mixed
+  plankton community, taxa are the 155 classes.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      ./      .gitattributes, LICENSE (CC BY 4.0 text), README.md        3 files   37.1 KB
+      data/   train-0000[0-7].parquet, validation-0000[0-1].parquet     10 files   1.6 GB
+    n_files: 13
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/sosiklab/NES-plankton-IFCB-classifier-2022-dataset/resolve/main/data/train-00007.parquet
+    size_bytes: 46288845
+    description: Smallest Parquet shard (train-00007); each row holds one PNG image with its label, classname and ifcb_roi_pid
+  arrays:
+  - role: raw
+    path_pattern: data/*.parquet
+    format: png
+    axes: yx
+    shape:
+    - 53
+    - 122
+    shape_varies: true
+    dtype: uint8
+    compression: png
+    lossy: false
+    value_range:
+    - 20
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One grayscale PNG per row in the `image` column of the Parquet shards (stored as raw PNG bytes); sizes vary per ROI (sampled 122x53 to 355x195 px).
+  - role: label
+    path_pattern: data/*.parquet
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: Per-image class label in the same Parquet row as the image (`label` int ClassLabel index 0-154, `classname` string); the 155 class names are in the README dataset_info. Splits are the train-*/validation-* shards.
+  notes: 'Listing: Hugging Face API, 13 files, 1,576,381,365 B, complete. Read the first 256 KB of train-00007.parquet
+    (range request, twice): images are stored as uncompressed PNG byte strings; parsed 8 PNGs with a stdlib script: all
+    8-bit grayscale (colour type 0), no pHYs chunk, 122x53 to 355x195 px, values 20-255 across the 8 (first image 60-212).
+    value_range is from these 8 images only. Labels not decoded from Parquet (no Parquet reader in the allowed tools);
+    label schema from README and the HF datasets-server rows API. Voxel size not found; checked: dataset card, model card
+    (sosiklab/NES-plankton-IFCB-classifier-2022), LICENSE, PNG headers (no pHYs); no paper linked. Data come from several
+    IFCB instruments (IFCB010 etc.), so one pixel size cannot be assumed. Download: each Parquet shard is a direct link
+    (download-check usable, range requests); no single archive, so data.download_url stays null.'
