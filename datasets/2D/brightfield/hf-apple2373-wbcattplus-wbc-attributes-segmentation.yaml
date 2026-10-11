@@ -1,0 +1,150 @@
+schema_version: '1.2'
+id: hf-apple2373-wbcattplus-wbc-attributes-segmentation
+title: WBCAtt+ white blood cell attribute and segmentation dataset
+short_name: WBCAtt+ white blood cell attributes and masks
+description: 10,298 peripheral blood white blood cell images (from the PBC dataset; center-cropped to 360x360 px) annotated with 11 morphological attributes (113k image-level labels) and pixel-level semantic segmentation maps with five classes (red blood cells, cytoplasm, nucleus, platelets, vacuoles). Includes train/val/test attribute CSVs for the five WBC types (neutrophil, eosinophil, basophil, monocyte, lymphocyte).
+landing_url: https://huggingface.co/datasets/apple2373/wbcattplus
+doi: 10.57967/hf/8143
+repository: HuggingFace
+accession: null
+authors:
+- Satoshi Tsutsui
+- Winnie Pang
+- Shuting He
+- Bihan Wen
+publications:
+- title: 'WBCAtt+: Fine-Grained Pixel-Level Morphological Annotations for White Blood Cell Images'
+  doi: 10.48550/arXiv.2605.19692
+  url: https://arxiv.org/abs/2605.19692
+date_published: '2026-05-19'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: Normal peripheral blood smear white blood cells (PBC dataset images collected at the Hospital Clinic of Barcelona); 1,218 basophils, 3,117 eosinophils, 1,420 monocytes, 3,329 neutrophils, 1,214 lymphocytes
+  labels_stains:
+  - May-Grünwald-Giemsa
+data:
+  formats:
+  - jpeg
+  - png
+  size_bytes: 190348667
+  n_items: 10298
+  access: open
+  download_url: https://huggingface.co/datasets/apple2373/wbcattplus/resolve/main/pbcseg_final_v1.tar
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  - classification
+  coverage: dense
+  format: PNG semantic masks (<id>_ccrop_mask.png, uint8 class IDs 0-5) next to JPEG images (<id>_ccrop.jpg) inside pbcseg_final_v1.tar on Hugging Face; attributes as CSV (pbc_attr_v1_ccrop_{train,val,test,all}.csv, 11 attribute columns plus cell-type label and split) in the GitHub repo dataset_txt/
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  - classification
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/apple2373/wbcattplus
+license:
+  spdx: MIT
+  url: https://huggingface.co/datasets/apple2373/wbcattplus
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-11T09:09:41Z'
+  evidence_urls:
+  - https://huggingface.co/api/datasets/apple2373/wbcattplus
+  - https://huggingface.co/datasets/apple2373/wbcattplus/raw/main/README.md
+  - https://github.com/apple2373/wbcattplus
+  - https://arxiv.org/html/2605.19692
+  - https://raw.githubusercontent.com/apple2373/wbcattplus/main/README.md
+  - https://raw.githubusercontent.com/apple2373/wbcattplus/main/data/PBC/pbcseg_final_v1_viz.ipynb
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7182702/fullTextXML
+  - https://data.mendeley.com/public-api/datasets/snkd93bnjr
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-11T10:30:00Z'
+notes: 'Single 190 MB tar (pbcseg_final_v1.tar) on Hugging Face; attribute CSVs in the GitHub repo. Paper gives 6,169/1,030/3,099 train/val/test images (matches the CSV split column). Source images: PBC dataset (Mendeley 10.17632/snkd93bnjr.1, CC BY 4.0); the HF card states MIT. enricher: labels_stains May-Grunwald-Giemsa from the PBC paper (was empty). enricher: annotations.source mixed (was manual): paper says 2,000 masks were drawn manually, the rest predicted by a CNN and manually corrected; attributes are manual. enricher: description says 360x360 (images are center crops of the 360x363 PBC images per the GitHub notebook). Pixel size not stated in any source read, so voxel_size_nm stays null.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "wbcattplus/ (Hugging Face dataset repo, 4 files, 190.3 MB)\n  .gitattributes\n  README.md\n  teaser.jpg\n  pbcseg_final_v1.tar  (190,085,120 B)\n    pbcseg_final_v1/\n      <id>_ccrop.jpg       (10,298 images, e.g. EO_959517_ccrop.jpg)\n      <id>_ccrop_mask.png  (one mask per image)\nGitHub apple2373/wbcattplus dataset_txt/ (attribute annotations)\n  pbc_attr_v1_ccrop_train.csv\n  pbc_attr_v1_ccrop_val.csv\n  pbc_attr_v1_ccrop_test.csv\n  pbc_attr_v1_ccrop_all.csv"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/apple2373/wbcattplus/resolve/main/pbcseg_final_v1.tar
+    size_bytes: 190085120
+    description: The whole tar is the smallest direct unit (TensorSwitch cannot pull single members out of a tar); one pair is <id>_ccrop.jpg + <id>_ccrop_mask.png, ~13 KB + ~4 KB.
+  arrays:
+  - role: raw
+    path_pattern: pbcseg_final_v1.tar::pbcseg_final_v1/*_ccrop.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 360
+    - 360
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB colour JPEG (s = RGB samples).
+  - role: label
+    path_pattern: pbcseg_final_v1.tar::pbcseg_final_v1/*_ccrop_mask.png
+    format: png
+    axes: yx
+    shape:
+    - 360
+    - 360
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 4
+    normalization: none
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: others (background)
+    - id: 1
+      name: cytoplasm
+    - id: 2
+      name: nucleus
+    - id: 3
+      name: platelets
+    - id: 4
+      name: red blood cells
+    - id: 5
+      name: vacuoles
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: <id>_ccrop.jpg <-> <id>_ccrop_mask.png in the same folder; shapes match (360x360). Class map from the GitHub notebook pbcseg_final_v1_viz.ipynb.'
+  - role: label
+    path_pattern: dataset_txt/pbc_attr_v1_ccrop_*.csv
+    format: csv
+    axes: null
+    shape:
+    - 10298
+    - 15
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: other
+    alignment: not-applicable
+    alignment_notes: Per-image attribute table (img_name, label, 11 attribute columns, path, split); shape is of pbc_attr_v1_ccrop_all.csv; rows join to images by img_name. Hosted in the GitHub repo, not in the tar.
+  notes: 'Listing (tools/listing.py) of the Hugging Face repo: 4 files, 190,348,667 B, exact sizes; this is the DOI-registered dataset (10.57967/hf/8143). The 4 attribute CSVs live in the GitHub code repo (raw.githubusercontent.com Content-Length, uncompressed: train 817,934, val 134,844, test 407,952, all 1,360,334 B) and are not counted in size_bytes. Sample: first 4 MiB of the tar by range request (461 member headers: 234 png, 226 jpg); 2 jpg+mask pairs decoded. value_range is from these 2 pairs only; masks there held IDs {0,1,2,4}. all.csv has 10,298 rows (6,169 train / 1,030 val / 3,099 test). JPEG JFIF density 1:1 (no physical calibration). Voxel size not found; checked: JPEG/PNG headers, HF card, GitHub README and notebook, WBCAtt+ paper (arXiv HTML), PBC paper (Data in Brief, full text), PBC Mendeley record. Readiness: 2D is not covered by the miao layout yet; a member-level sample URL is not possible for a tar.'
