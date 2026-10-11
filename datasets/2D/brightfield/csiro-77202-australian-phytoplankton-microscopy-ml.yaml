@@ -2,11 +2,11 @@ schema_version: '1.2'
 id: csiro-77202-australian-phytoplankton-microscopy-ml
 title: Australian Phytoplankton Microscopy Machine Learning Dataset
 short_name: Phytoplankton cell detection and polygons (LM)
-description: Ten annotated light-microscopy datasets of cultured phytoplankton from the CSIRO Australian Phytoplankton
-  Microscopy Dataset (CAPMD) with expert segmentation polygons per cell, in YOLO detection format and COCO polygons. A
-  multi-species bright field set (630X, ten species, mostly harmful algal bloom taxa; 6,386 images, 15,591 annotations)
-  and nine Heterosigma akashiwo sets varying contrast mode (bright field, DIC, phase contrast), objective (200X, 400X, 630X,
-  1000X) and microscope, five with train/val/test splits and five held out for cross-condition evaluation.
+description: Ten annotated light-microscopy datasets of cultured phytoplankton from the CSIRO Australian Phytoplankton Microscopy
+  Dataset (CAPMD) with expert segmentation polygons per cell, in YOLO detection format and COCO polygons. A multi-species
+  bright field set (630X, ten species, mostly harmful algal bloom taxa; 6,386 images, 15,591 annotations) and nine Heterosigma
+  akashiwo sets varying contrast mode (bright field, DIC, phase contrast), objective (200X, 400X, 630X, 1000X) and microscope,
+  five with train/val/test splits and five held out for cross-condition evaluation.
 landing_url: https://data.csiro.au/collection/csiro:77202
 doi: 10.25919/h28a-fk98
 repository: other
@@ -29,6 +29,15 @@ imaging:
   channels: 3
   organism:
   - Heterosigma akashiwo
+  - Heterosigma carterae
+  - Chattonella marina
+  - Karenia mikimotoi
+  - Amphidinium carterae
+  - Prorocentrum minimum
+  - Gymnodinium catenatum
+  - Karlodinium ballantinum
+  - Alexandrium minutum
+  - Karlodinium veneficum
   sample: Live monocultures of microalgae strains from the Australian National Algae Culture Collection imaged in coverglass-bottom
     petriplates or on slides (Zeiss Axio Observer inverted and Zeiss Axio Plan upright microscopes); motile cells immobilised
     with 1% Tylose
@@ -47,8 +56,8 @@ annotations:
   - bounding-box
   - instance-segmentation
   coverage: dense
-  format: 'YOLO detection labels (per-image .txt plus data.yaml, train/val/test folders) for all ten datasets; COCO JSON
-    with segmentation polygons per dataset; MMDetection-format copy of the multi-species set'
+  format: YOLO detection labels (per-image .txt plus data.yaml, train/val/test folders) for all ten datasets; COCO JSON with
+    segmentation polygons per dataset; MMDetection-format copy of the multi-species set
   source: mixed
 ml:
   tasks:
@@ -67,15 +76,109 @@ provenance:
   - https://api.datacite.org/dois/10.25919/h28a-fk98
   - https://data.csiro.au/dap/ws/v2/collections/77202
   - https://data.csiro.au/dap/ws/v2/collections/77202/data
+  - https://data.csiro.au/dap/ws/v2/collections/77202/data/103764440
   confidence: 0.85
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T16:20:00Z'
+  last_checked: '2026-10-11T16:35:00Z'
 notes: 'From the CSIRO portal API record and file listing (25,926 files, 4.4 GB; the multi-species images are stored twice,
   under yolo/ and mmdet/). Unique images 9,738: ZAO_X630_BF 6,386 plus nine single-species sets of 233, 3, 154, 159, 82, 71,
   503, 12 and 2,135. JPG frames decoded from Zeiss CZI; one polygon per cell drawn in CVAT, manually at first and with SAM
-  later. The ten species of the multi-species set are not named in the text read, so organism lists only Heterosigma akashiwo.
-  Pixel size is not stated (magnification_scale.py not read). The record cites a companion paper without naming it and none
-  was found, so publications is empty. Training and scoring scripts are included. Non-commercial license (CC BY-NC 4.0).'
+  later. The record cites a companion paper without naming it and none was found, so publications is empty. Training and scoring
+  scripts are included. Non-commercial license (CC BY-NC 4.0). enricher: organism lists the 10 species of the README table
+  (was H. akashiwo only). organisms: all nine *_CS1197 sets = Heterosigma akashiwo; ZAO_X630_BF mixes the 10 species, one
+  strain per image (strain code in the file name, class id in data.yaml).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "README.md, requirements.txt, 10 *.py (training / scoring scripts)\ndatasets/yolo/<set>/data.yaml, {train,val,test}.txt\n\
+      datasets/yolo/<set>/{train,val,test}/images/*.JPG + labels/*.txt   (10 sets)\n  ZAO_X630_BF                 train 4050\
+      \ / val 907 / test 1429   (10 species)\n  ZAP_X1000_BF_NA_CS1197      train 1583 / val 327 / test 225\n  ZAO_X630_BF_NA_CS1197\
+      \       train 313 / val 74 / test 116\n  ZAO_X200_PC_NA_CS1197       train 105 / val 21 / test 28\n  ZAO_X400_DIC_NA_CS1197\
+      \      train 58 / val 11 / test 13\n  test only: ZAO_X200_BF 233, ZAO_X400_BF 159, ZAO_X400_PC 71, ZAO_X630_DIC 12,\
+      \ ZAO_X200_DIC 3 (all _NA_CS1197)\ndatasets/coco/<set>/{train,val,test}.json        COCO polygons, 21 files\ndatasets/mmdet/ZAO_X630_BF/images/*.JPG\
+      \ (6386, copy) + annotations/*.json"
+    n_files: 25926
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.csiro.au/dap/ws/v2/collections/77202/data/103772271
+    - https://data.csiro.au/dap/ws/v2/collections/77202/data/103773711
+    size_bytes: 164441
+    description: datasets/yolo/ZAO_X630_BF/test/images/ZAO_X630_BF_NA_CS1182_20211014T032712Z_001.JPG and its YOLO label .txt
+      (CSIRO DAP file links, redirect to presigned S3)
+  arrays:
+  - role: raw
+    path_pattern: datasets/yolo/*/{train,val,test}/images/*.JPG
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1040
+    - 1388
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB colour frames (samples differ); datasets/mmdet/ZAO_X630_BF/images holds the same 6,386 multi-species
+      images again
+  - role: label
+    path_pattern: datasets/yolo/*/{train,val,test}/labels/*.txt
+    format: other
+    axes: null
+    shape:
+    - 1
+    - 5
+    shape_varies: true
+    dtype: float32
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: CS1197 Heterosigma akashiwo
+    - id: 1
+      name: CS169-01 Heterosigma carterae
+    - id: 2
+      name: CS1182 Chattonella marina
+    - id: 3
+      name: CS1202 Karenia mikimotoi
+    - id: 4
+      name: CS383 Amphidinium carterae
+    - id: 5
+      name: CS881 Prorocentrum minimum
+    - id: 6
+      name: CS302-11 Gymnodinium catenatum
+    - id: 7
+      name: CS1203 Karlodinium ballantinum
+    - id: 8
+      name: CS323-01 Alexandrium minutum
+    - id: 9
+      name: CS1209 Karlodinium veneficum
+    alignment: same-grid
+    alignment_notes: 'YOLO txt, one line per cell: class x_center y_center width height, normalised to [0,1] of the image;
+      same stem as the image in the parallel labels/ folder. Single-species sets use only class 0.'
+  - role: label
+    path_pattern: datasets/coco/*/*.json
+    format: json
+    axes: null
+    shape: null
+    dtype: unknown
+    compression: none
+    encoding: polygons
+    alignment: same-grid
+    alignment_notes: COCO JSON per set and split, same 30,283 instances as the YOLO labels with a polygon each; file_name
+      resolves against datasets/yolo/<set>/<split>/images/ (README).
+  notes: 'Listing: CSIRO DAP API file list, 25,926 files, 4,401,309,239 bytes (complete, exact sizes). Read README.md, data.yaml
+    and magnification_scale.py (read, not run). Sample (one image, value_range from it): ZAO_X630_BF test image 1040x1388x3
+    uint8 [0,255], label 1 box line, class 2. Image shape for other platforms/magnifications not checked (ZAP 1000X files
+    are larger). Download: no single archive (the portal builds zips on request); each file has a stable DAP link that redirects
+    to a presigned S3 URL, usable but data.csiro.au is not on TensorSwitch''s allowlist. Voxel size not found; checked: README
+    (refers to the companion paper''s Table 1, not shipped), magnification_scale.py (only a 630/1000 ratio), JPEG EXIF not
+    decoded, CSIRO API record; companion paper not identified.'
