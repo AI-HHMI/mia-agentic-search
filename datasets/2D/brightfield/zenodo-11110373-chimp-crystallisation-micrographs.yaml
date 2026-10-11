@@ -37,7 +37,7 @@ imaging:
 data:
   formats:
   - jpeg
-  size_bytes: 206400000
+  size_bytes: 206420425
   n_items: 587
   access: open
   download_url: https://zenodo.org/records/11110373/files/chimp_detector_datasets.zip
@@ -74,10 +74,71 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T01:16:22Z'
-notes: 'Zip listing: VMXi_Detector_Datset (237 images, 1688 x 1352) and XChem detector dataset (350 images, 1024 x 1224), 587 JPEG + 587 .npz, plus
+  last_checked: '2026-10-11T02:21:37Z'
+notes: 'Zip listing: VMXi_Detector_Datset (237 images, 1688 x 1352) and XChem detector dataset (350 images, 1224 x 1024 w x h), 587 JPEG + 587 .npz, plus
   vmxi_detector_training/validation.csv and xchem_detector_training/validation.csv (4 CSV). Images have CLAHE histogram adjustment applied by the authors.
   Paper (bioRxiv preprint, full text read): VMXi split is 190 train / 47 validation; the XChem set was trained on further, so its split files are
   in the zip. Not a biological specimen: these are visible-light micrographs from an automated imager, so brightfield is the closest modality
   (the imager is a Rock Imager 1000; illumination mode is not stated in the dataset page). Pixel size is not stated in the record, listing or paper
-  text read. Class label names in the npz files were not inspected beyond the paper (crystals and drops).'
+  text read. enricher: npz class_labels are the strings crystal and drop (2 files read).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "chimp_detector_datasets.zip  (206,420,425 B, 1179 members)\n  VMXi_Detector_Datset/\n    images/<id>.jpg\
+      \        237\n    masks/<id>.npz         237\n    vmxi_detector_training.csv  vmxi_detector_validation.csv\n\
+      \  XChem_Detector_Dataset/\n    images/<name>.jpg      350\n    masks/<name>.npz       350\n    xchem_detector_training.csv\
+      \  xchem_detector_validation.csv\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/11110373/files/chimp_detector_datasets.zip::VMXi_Detector_Datset/images/18092300.jpg
+    - https://zenodo.org/records/11110373/files/chimp_detector_datasets.zip::VMXi_Detector_Datset/masks/18092300.npz
+    size_bytes: 526266
+    description: One VMXi micrograph and its npz with 11 instance masks (crystals and the drop).
+  arrays:
+  - role: raw
+    path_pattern: chimp_detector_datasets.zip/*/images/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1352
+    - 1688
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: RGB colour micrographs (channels differ); VMXi 1352 x 1688, XChem 1024 x 1224 (h x w, probed). CLAHE applied
+      by the authors (Zenodo description).
+  - role: label
+    path_pattern: chimp_detector_datasets.zip/*/masks/*.npz
+    format: other
+    axes: null
+    shape:
+    - 11
+    - 1352
+    - 1688
+    shape_varies: true
+    dtype: bool
+    compression: deflate
+    encoding: other
+    classes:
+    - id: crystal
+      name: crystal judged interesting/mountable
+    - id: drop
+      name: experimental drop
+    alignment: same-grid
+    alignment_notes: 'NumPy .npz (zipped) per image, same stem as the JPEG. Key masks = stack of boolean instance masks
+      (instances x h x w, one mask per object); key class_labels = one string per instance (crystal or drop).'
+  notes: 'Listing: Zenodo API + zip central directory (1179 members), complete, exact sizes. Probed 3 JPEGs (VMXi 18092300:
+    1352 x 1688 x 3; XChem d3_r2360716_ef, d3_r2342611_ef: 1024 x 1224 x 3, uint8). Sampled VMXi 18092300.jpg (484 KB): 0-255,
+    p50 162, channels not identical (one sample). Read 2 npz with np.load(allow_pickle=False): VMXi 18092300 masks (11, 1352,
+    1688) bool + class_labels [crystal, drop]; XChem d2_r761961_ef masks (1, 1024, 1224) + [crystal]. CSV split lists: VMXi
+    190 training lines, XChem validation 71 lines incl. header. npz is no listed array format, hence format other. Voxel size
+    not found; checked: JPEG headers (no calibration), Zenodo record/API description, paper (per the harvest, bioRxiv full text).'
