@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-7419283-pnn-pv-mouse-brain-atlas
 title: A brain-wide, annotated dataset of WFA-positive perineuronal nets and parvalbumin neurons in the adult mouse brain
 short_name: Mouse brain PNN and PV cell locations (widefield)
-description: Two-channel fluorescence images (WFA for perineuronal nets, parvalbumin) of coronal brain slices from 7 adult C57BL/6J
-  mice, with the (x, y) locations of detected PNNs and PV cells for each image, binary tissue masks, thumbnails, and files for
-  alignment of each slice to the Allen Brain Atlas CCFv3 (QuickNII, VisuAlign, displacement fields).
+description: Two-channel fluorescence images (WFA for perineuronal nets, parvalbumin) of coronal brain slices from 7 adult
+  C57BL/6J mice, with the (x, y) locations of detected PNNs and PV cells for each image, binary tissue masks, thumbnails,
+  and files for alignment of each slice to the Allen Brain Atlas CCFv3 (QuickNII, VisuAlign, displacement fields).
 landing_url: https://zenodo.org/records/7419283
 doi: 10.5281/zenodo.7419283
 repository: Zenodo
@@ -77,10 +77,103 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T13:14:25Z'
-notes: 'One 48.7 GB zip (79.2 GB uncompressed) with 7 mouse folders: 842 high-resolution TIFF images, 842 PNG tissue masks, 1,684
-  CSV location files (two per image, one per channel), 14 XML and 7 JSON alignment files. The Zenodo text says the CSVs hold the
-  locations of PNNs and PV cells detected in each image; the companion record (10.5281/zenodo.7886215) describes quality-controlled
-  predictions of deep learning cell-counting models, so the points are treated as automatic, not manual. Pixel size and microscope
-  are not stated on the Zenodo page or in the CC4B-info.xml read; the Cell Reports article is not open access, only its abstract
-  was read. The 842 TIFF count may include both channels per slice. Records of the same atlas appear in the continuing deposit 7886215.'
+  last_checked: '2026-10-11T15:05:00Z'
+notes: 'One 48.7 GB zip (79.2 GB uncompressed) with 7 mouse folders: 842 high-resolution TIFF images, 842 PNG tissue masks,
+  1,684 CSV location files (two per image, one per channel), 14 XML and 7 JSON alignment files. The Zenodo text says the CSVs
+  hold the locations of PNNs and PV cells detected in each image; the companion record (10.5281/zenodo.7886215) describes
+  quality-controlled predictions of deep learning cell-counting models, so the points are treated as automatic, not manual.
+  Pixel size and microscope are not stated on the Zenodo page or in the CC4B-info.xml read; the Cell Reports article is not
+  open access, only its abstract was read. Records of the same atlas appear in the continuing deposit 7886215. enricher: the
+  842 TIFFs are one file per channel (-C1 WFA/PNN, -C2 PV), 421 slices.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./ (1 file, 48,652,184,187 B, Zenodo API, exact)\n  rawData.zip (3389 members, 79.2 GB uncompressed)\n    <MOUSEID>/\
+      \ (7: AL1A, CC#A x3, CC#B x3)\n      <ID>-info.xml, <ID>-quicknii.xml, <ID>-visualign.json\n      hiRes/       <slice>-C1.tif,\
+      \ <slice>-C2.tif   (842 in all, ~6700x7600 uint8)\n      counts/      <slice>-cells_C1.csv, <slice>-cells_C2.csv  (x,y)\n\
+      \      masks/       <slice>-mask.png   (binary, ~1/5 scale)\n      thumbnails/  <slice>.png\n      dispFields/  displacement-field\
+      \ CSVs"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/7419283/files/rawData.zip/content::AL1A/hiRes/AL1A_002_A1_1-C1.tif
+    - https://zenodo.org/api/records/7419283/files/rawData.zip/content::AL1A/hiRes/AL1A_002_A1_1-C2.tif
+    - https://zenodo.org/api/records/7419283/files/rawData.zip/content::AL1A/counts/AL1A_002_A1_1-cells_C1.csv
+    - https://zenodo.org/api/records/7419283/files/rawData.zip/content::AL1A/counts/AL1A_002_A1_1-cells_C2.csv
+    size_bytes: 76830301
+    description: 'Slice AL1A_002_A1_1: WFA (C1) and PV (C2) images with their PNN and PV point tables.'
+  arrays:
+  - role: raw
+    path_pattern: '*/hiRes/*-C1.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 6669
+    - 7641
+    shape_varies: true
+    dtype: uint8
+    compression: packbits
+    value_range:
+    - 0
+    - 254
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Channel 1 = WFA (perineuronal nets) per the Zenodo description; single-page TIFF, no calibration (72
+      dpi default).
+  - role: raw
+    path_pattern: '*/hiRes/*-C2.tif'
+    format: tiff
+    axes: yx
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: Channel 2 = parvalbumin; <slice>-C2.tif pairs with <slice>-C1.tif (not probed).
+  - role: label
+    path_pattern: '*/counts/*-cells_C[12].csv'
+    format: csv
+    axes: null
+    shape:
+    - 586
+    - 2
+    shape_varies: true
+    dtype: float32
+    compression: none
+    encoding: points-table
+    classes:
+    - id: C1
+      name: perineuronal net (WFA)
+    - id: C2
+      name: parvalbumin cell
+    alignment: same-grid
+    alignment_notes: <slice>-cells_C<k>.csv holds x,y (float pixel coordinates) of the objects in <slice>-C<k>.tif; in the
+      sample the points span up to 6893 x 5794 inside the 7641 x 6669 image, so they are in hiRes pixels. 586 PNN rows and
+      568 PV rows for AL1A_002_A1_1.
+  - role: label
+    path_pattern: '*/masks/*-mask.png'
+    format: png
+    axes: yx
+    shape:
+    - 1334
+    - 1529
+    shape_varies: true
+    dtype: bool
+    compression: png
+    value_range:
+    - 0
+    - 1
+    encoding: binary
+    classes:
+    - id: 1
+      name: tissue (analysis region)
+    alignment: scaled
+    alignment_notes: Binary mask restricting the analysis; 1334x1529 vs the 6669x7641 image, i.e. 1/5 scale in both axes.
+  notes: 'Listing: Zenodo API (1 zip, exact) + central directory (3389 members). Sampled AL1A_002_A1_1-C1.tif (22.6 MB compressed:
+    6669x7641 uint8, packbits, 0-254), its two count CSVs and its mask (bool 1334x1529). Value ranges from this one slice;
+    C2 TIFF not opened. Voxel size not found; checked: TIFF tags (72 dpi default), AL1A-info.xml (mouse, channel names, slice
+    list), Zenodo description, paper (Cell Reports, not open access; no preprint in Europe PMC). dispFields and the QuickNII
+    / VisuAlign files register each slice to Allen CCFv3 (not used for alignment fields here).'
