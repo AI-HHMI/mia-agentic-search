@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zenodo-20758431-ti-ulc-steel-inclusions-bse
 title: Multimodal SEM dataset of non-metallic inclusions in Ti-ULC steel - BSE images and EDS compositions
 short_name: Ti-ULC steel inclusions (BSE-SEM + EDS)
-description: 3,849 backscattered-electron image patches of features found by automated SEM/EDS analysis of polished Ti-ULC steel,
-  each with its quantified EDS composition (17 elements, wt%) and a manually verified binary label saying whether the feature
-  is a true non-metallic inclusion or a false detection. Stored as WebDataset tar files with train (2,668), validation (563)
-  and test (618) splits. This is a materials-science SEM dataset, not biological material.
+description: 3,849 backscattered-electron image patches of features found by automated SEM/EDS analysis of polished Ti-ULC
+  steel, each with its quantified EDS composition (17 elements, wt%) and a manually verified binary label saying whether the
+  feature is a true non-metallic inclusion or a false detection. Stored as WebDataset tar files with train (2,668), validation
+  (563) and test (618) splits. This is a materials-science SEM dataset, not biological material.
 landing_url: https://zenodo.org/records/20758431
 doi: 10.5281/zenodo.20758431
 repository: Zenodo
@@ -29,7 +29,8 @@ imaging:
     z: null
   channels: 1
   organism: []
-  sample: Polished Ti-ULC steel samples, JEOL JSM-7200F FE-SEM, backscattered-electron detector, 15 kV, 400x, with Oxford Instruments EDS
+  sample: Polished Ti-ULC steel samples, JEOL JSM-7200F FE-SEM, backscattered-electron detector, 15 kV, 400x, with Oxford
+    Instruments EDS
   labels_stains: []
 data:
   formats:
@@ -44,7 +45,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: WebDataset tar per split; each sample has image.png (16-bit BSE patch), eds.json (wt% per element) and label.cls (1 true inclusion, 0 false)
+  format: WebDataset tar per split; each sample has image.png (16-bit BSE patch), eds.json (wt% per element) and label.cls
+    (1 true inclusion, 0 false)
   source: manual
 ml:
   tasks:
@@ -67,13 +69,69 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-11T20:35:00Z'
+  annotations_verified: true
+  last_checked: '2026-10-11T20:03:14Z'
 notes: 'Modality is backscattered-electron SEM, which the schema has no plain-SEM value for, so modality is other. Three tar
-  files (features_train_public.tar 24.8 MB, features_val_public.tar 5.2 MB, features_test_public.tar 5.8 MB) plus
-  metadata_public.json, so download_url is null and size_bytes is their sum. Sample counts come from metadata_public.json
-  (2668 / 563 / 618; true 2177 / 452 / 500, false 491 / 111 / 118). A range read of the validation tar showed the WebDataset
-  naming (val_000000.eds.json) but tar files cannot be listed with peek_archive, so label.cls and image.png were not seen
-  directly; they are described on the Zenodo page. Pixel size 0.33 um is stated on the Zenodo page. The paper (BHM, Springer)
-  is not open access; only its DOI record was read, so annotator details are only what the Zenodo page says (manual
-  verification using BSE morphology and EDS). Labels are per-feature true/false classes, not masks.'
+  files (features_train_public.tar 24.8 MB, features_val_public.tar 5.2 MB, features_test_public.tar 5.8 MB) plus metadata_public.json,
+  so download_url is null and size_bytes is their sum. Sample counts come from metadata_public.json (2668 / 563 / 618; true
+  2177 / 452 / 500, false 491 / 111 / 118). Pixel size 0.33 um is stated on the Zenodo page. The paper (BHM, Springer) is
+  not open access; only its DOI record was read, so annotator details are only what the Zenodo page says (manual verification
+  using BSE morphology and EDS). Labels are per-feature true/false classes, not masks. enricher: read the validation tar (563
+  image.png / label.cls / eds.json triples), so annotations_verified is now true.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "zenodo.org/records/20758431 (4 files, 35.7 MB)\n  metadata_public.json (split counts)\n  features_train_public.tar\
+      \ (24.8 MB)  train_NNNNNN.{image.png,label.cls,eds.json}  2,668 samples\n  features_val_public.tar   (5.2 MB)   val_NNNNNN.{...}\
+      \   563 samples (1,689 members)\n  features_test_public.tar  (5.8 MB)   test_NNNNNN.{...}  618 samples\n"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/20758431/files/features_val_public.tar
+    size_bytes: 5201920
+    description: The validation split (whole tar; TensorSwitch cannot fetch single tar members)
+  arrays:
+  - role: raw
+    path_pattern: features_*_public.tar::*.image.png
+    format: png
+    axes: yx
+    shape:
+    - 38
+    - 38
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 339
+    - 32758
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 16-bit greyscale (I;16) BSE patches of about 38-46 px per side, one per detected feature; range over
+      60 sampled patches.
+  - role: label
+    path_pattern: features_*_public.tar::*.label.cls
+    format: other
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: false detection
+    - id: 1
+      name: true non-metallic inclusion
+    alignment: not-applicable
+    alignment_notes: Text file with 0 or 1 per sample, same WebDataset key as the image; val counts 452 x 1, 111 x 0, which
+      match metadata_public.json.
+  notes: 'Listing: tools/listing.py on the Zenodo record: 4 files, 35,729,037 bytes, complete, exact. Downloaded the validation
+    tar (5,201,920 B, within budget) and read it in memory with tarfile, without extracting to disk: 1,689 members = 563 x
+    {image.png, label.cls, eds.json}; 60 PNGs are I;16 uint16, 38x38 to 46x46 px, values 339-32758; labels 452 x ''1'', 111
+    x ''0''. Voxel size 330 nm from the Zenodo page (kept; PNGs carry no calibration). Download: the 3 tars are direct (usable,
+    range requests); members are not individually fetchable (tar, not zip). eds.json per sample: wt% of 17 elements (C, N,
+    O, F, Na, Mg, Al, Si, S, K, Ca, Ti, Cr, Mn, Fe, La, Ce); not an array, so not listed in arrays.'
