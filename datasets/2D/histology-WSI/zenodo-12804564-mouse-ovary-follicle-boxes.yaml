@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zenodo-12804564-mouse-ovary-follicle-boxes
 title: Follicle counting in mouse ovarian images
 short_name: Mouse ovary follicle boxes (H&E sections)
-description: 643 H&E-stained sections of mouse ovaries from 92 mice (6 to 8 sections per mouse), digitised on a Panoramic
-  250 Flash slide scanner (about 0.12 um per pixel, brightfield) and cut into one very large TIFF per section. Each section
-  has JSON bounding-box annotations of primordial, primary and secondary follicles, plus per-slide scanner offset files and
-  merged annotation files, for follicle detection and counting.
+description: 643 H&E-stained sections of mouse ovaries from 92 mice (6 to 8 sections per mouse), digitised on a Panoramic 250 Flash
+  slide scanner (about 0.12 um per pixel, brightfield) and cut into one very large TIFF per section. Each section has JSON bounding-box
+  annotations of primordial, primary and secondary follicles, plus per-slide scanner offset files and merged annotation files, for follicle
+  detection and counting.
 landing_url: https://zenodo.org/records/12804564
 doi: 10.5281/zenodo.12804564
 repository: Zenodo
@@ -34,8 +34,8 @@ imaging:
   channels: 3
   organism:
   - Mus musculus
-  sample: mouse ovaries fixed in Bouin's solution, paraffin-embedded, serially sectioned at 4 um (every fifth section mounted),
-    H&E stained
+  sample: mouse ovaries fixed in Bouin's solution, paraffin-embedded, serially sectioned at 4 um (every fifth section mounted), H&E
+    stained
   labels_stains:
   - hematoxylin and eosin
 data:
@@ -44,15 +44,14 @@ data:
   size_bytes: 20371179327
   n_items: 643
   access: open
-  download_url: https://zenodo.org/api/records/12804564/files/ovary_cuts.zip/content
+  download_url: https://zenodo.org/records/12804564/files/ovary_cuts.zip
   download_method: http
 annotations:
   present: true
   types:
   - bounding-box
   coverage: dense
-  format: per-section JSON in roi_annotation/ with bbox [x, y, w, h] and category (0 PMF, 1 primary, 2 secondary), merged
-    all_annotations*.json
+  format: per-section JSON in roi_annotation/ with bbox [x, y, w, h] and category (0 PMF, 1 primary, 2 secondary), merged all_annotations*.json
   source: manual
 ml:
   tasks:
@@ -76,10 +75,73 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T23:16:22Z'
-notes: 'Zenodo record, zip listing (643 TIFF, 21.8 GB uncompressed; 643 per-section annotation JSON; 118 scanner offset JSON;
-  merged all_annotations*.json and annotations_test.json) and the 2018 paper (full text via Europe PMC) were read. Annotation
-  classes in a sample file: PMF (primordial), Primaire, Secondaire, with square boxes of 150 or 300 px. A scanner offset file
-  gives 0.1215 um per pixel (paper: 0.122 um, 40x objective). The record cites the 2018 paper, which used 24 mice and 1,454
-  sections, so this 92-mouse, 643-section release is newer or larger. Who drew the boxes and how annotations_test.json is
-  used are not stated on the record page.'
+  last_checked: '2026-10-11T01:50:00Z'
+notes: 'Zenodo record, zip listing (643 TIFF, 21.8 GB uncompressed; 643 per-section annotation JSON; 118 scanner offset JSON; merged
+  all_annotations*.json and annotations_test.json) and the 2018 paper (full text via Europe PMC) were read. Annotation classes in a
+  sample file: PMF (primordial), Primaire, Secondaire, with square boxes of 150 or 300 px. A scanner offset file gives 0.1215 um per
+  pixel (paper: 0.122 um, 40x objective). The record cites the 2018 paper, which used 24 mice and 1,454 sections, so this 92-mouse,
+  643-section release is newer or larger. Who drew the boxes and how annotations_test.json is used are not stated on the record page.
+  enricher: download_url set to the direct zip.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "ovary_cuts.zip  (20,371,179,327 B, 1,409 members)\n  01_ovary_cuts/ovaries_images/<mouse>_<ovary>/<mouse>_<ovary>__roi<n>.tif\
+      \   643 TIFFs, ~21.8 GB\n    (folders 0A_a ... 4A_h, 0C_a ..., <n>M<n>; 1-40 sections per folder)\n  01_ovary_cuts/roi_annotation/<folder>$<folder>__roi<n>$.json\
+      \   643 files  1.5 MB\n  01_ovary_cuts/roi_annotation_united/all_annotations{,_augmented,_with_depth}.json, annotations_test.json\n\
+      \  01_ovary_cuts/offset/<folder>.json   118 files (slide metadata: MicronPerPixel, size, tile offsets)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/12804564/files/ovary_cuts.zip::01_ovary_cuts/ovaries_images/1C_e/1C_e__roi7.tif
+    - https://zenodo.org/records/12804564/files/ovary_cuts.zip::01_ovary_cuts/roi_annotation/1C_e$1C_e__roi7$.json
+    size_bytes: 3210835
+    description: The smallest section image (6000x17000 RGB) and its box annotations (12 boxes)
+  arrays:
+  - role: raw
+    path_pattern: ovary_cuts.zip::01_ovary_cuts/ovaries_images/*/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 6000
+    - 17000
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Tiled (256x256) single-page JPEG TIFF, photometric 6 (YCbCr, i.e. RGB colour after decoding), so the sample axis
+      is s.
+  - role: label
+    path_pattern: ovary_cuts.zip::01_ovary_cuts/roi_annotation/*.json
+    format: json
+    axes: null
+    shape:
+    - 12
+    - 4
+    shape_varies: true
+    dtype: float64
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: PMF (primordial)
+    - id: 1
+      name: Primaire (primary)
+    - id: 2
+      name: Secondaire (secondary)
+    alignment: same-grid
+    alignment_notes: 'One COCO-like JSON per section (keys annotations, info, image, categories); bbox [x, y, w, h] in the pixel grid
+      of the TIFF with the same name: <folder>$<folder>__roi<n>$.json <-> ovaries_images/<folder>/<folder>__roi<n>.tif. Boxes are 150
+      or 300 px squares.'
+  notes: 'Exact Zenodo listing with zip index (1,409 members). Probed and sampled the smallest TIFF 1C_e__roi7 (3.2 MB compressed, 2.6
+    MB read): 6000x17000x3 uint8, min 0 max 255 mean 240 (mostly white background, p50 255, p1 73; one sample). Read its annotation
+    JSON (12 boxes) and offset/1C_e.json (MicronPerPixel 0.12155, BRIGHTFIELD). The TIFF header has no calibration; the record keeps
+    121.5 nm from the offset files. Class names from the categories in the sample annotation file.'
