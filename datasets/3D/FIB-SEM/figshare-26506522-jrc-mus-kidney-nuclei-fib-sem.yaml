@@ -37,7 +37,7 @@ imaging:
 data:
   formats:
   - ome-zarr
-  size_bytes: 2176056472130
+  size_bytes: 2176586258972
   n_items: 1
   access: open
   download_url: s3://janelia-cosem-datasets/jrc_mus-kidney/jrc_mus-kidney.zarr/recon-1/
@@ -49,7 +49,7 @@ annotations:
   coverage: dense
   format: multiscale OME-Zarr label array at recon-1/labels/inference/segmentations/nuc/ (s0 at 128 x 128 x 128
     nm)
-  source: mixed
+  source: proofread
 ml:
   tasks:
   - segmentation
@@ -73,7 +73,7 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T06:43:22Z'
+  last_checked: '2026-10-11T07:13:00Z'
 notes: 'Figshare record (CC BY 4.0, link-only file) and the bucket''s OME-Zarr metadata read: EM s0 zyx [22199,
   7976, 12287] |u1 at [8.0, 8.0, 8.0] nm; nucleus label s0 zyx [1387, 498, 767] <u2 at [128.0, 128.0, 128.0] nm,
   declared in the label .zattrs. Labels are Cellpose predictions with cursory manual corrections (Nuclei segmentations
@@ -81,4 +81,70 @@ notes: 'Figshare record (CC BY 4.0, link-only file) and the bucket''s OME-Zarr m
   s0 estimate (EM + label), not stated by the source. Organism inferred from the dataset name; sibling records exist
   for other volumes of the same release series, this one covers jrc_mus-kidney only. The same volume also appears
   in jrc-mus-kidney-cosem-fib-sem-organelles (COSEM organelle labels); this record is the separate nucleus-only
-  label release.'
+  label release. enricher: source proofread (was mixed; Cellpose + cursory manual corrections); size re-estimated
+  (label is uint16).'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "jrc_mus-kidney.zarr/recon-1/   (s3://janelia-cosem-datasets; chunk objects not listed)\n  em/fibsem-uint8/s0..s11\
+      \   8 nm, zyx 22199 x 7976 x 12287 uint8, zstd, chunks 64x128x128\n  labels/inference/segmentations/nuc/s0..s4\
+      \   128 nm, zyx 1387 x 498 x 767 uint16, zstd, chunks 64x64x64"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_mus-kidney/jrc_mus-kidney.zarr/recon-1/em/fibsem-uint8
+    - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_mus-kidney/jrc_mus-kidney.zarr/recon-1/labels/inference/segmentations/nuc
+    size_bytes: null
+    description: The EM OME-Zarr and the nucleus label OME-Zarr (chunked stores, read remotely); EM level s4 is
+      on the label s0 grid.
+  arrays:
+  - role: raw
+    path_pattern: jrc_mus-kidney.zarr/recon-1/em/fibsem-uint8
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 22199
+    - 7976
+    - 12287
+    shape_varies: false
+    dtype: uint8
+    compression: zstd
+    value_range:
+    - 0
+    - 206
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 12 levels, s0 scale 8 nm isotropic, translation 0. Value range from one central crop of level
+      s4 [173, 498, 383].
+  - role: label
+    path_pattern: jrc_mus-kidney.zarr/recon-1/labels/inference/segmentations/nuc
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 1387
+    - 498
+    - 767
+    shape_varies: false
+    dtype: uint16
+    compression: zstd
+    value_range:
+    - 0
+    - 494
+    normalization: unknown
+    encoding: instance-ids
+    classes:
+    - id: null
+      name: nucleus
+    alignment: scaled
+    alignment_notes: 5 levels; label s0 at 128 nm isotropic (16x the EM s0), translation 60 nm; same shape as EM
+      s4 (translation 60 nm). 46 distinct ids in a central crop [346, 249, 191].
+  notes: 'Probe: both stores'' .zattrs and every level''s .zarray (OME-Zarr multiscales, zarr v2). Sample (sample.py):
+    central crops of EM s4 [173, 498, 383] (uint8 0-206, p50 132, p99 186) and label s0 [346, 249, 191] (uint16
+    0-494, 46 distinct ids; label .zattrs cellmap annotation type instance_segmentation, absent 0, unknown 255).
+    Value ranges from those crops only. Same EM volume as datasets/3D/FIB-SEM/jrc-mus-kidney-cosem-fib-sem-organelles.yaml
+    on main (that record has the organelle crops; this one the nucleus inference labels). No complete listing (millions
+    of chunk objects). Download: chunked stores on the public janelia-cosem-datasets S3 bucket (HTTPS), read remotely;
+    no archive. size estimated (uncompressed): raw 1 x 22199x7976x12287 uint8 + label 1 x 1387x498x767 uint16 =
+    2,176,586,258,972 B (2.2 TB).'
