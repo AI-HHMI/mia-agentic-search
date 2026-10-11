@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zenodo-7660424-drosophila-embryo-wound-healing
 title: Videos of Embryonic Wound Healing in Drosophila and Wound Segmentation
 short_name: Drosophila embryo wound segmentation (confocal)
-description: Time-lapse confocal sequences of Drosophila embryos expressing GFP-tagged myosin II (sqhGFP) healing after a laser-induced
-  wound, imaged on an Olympus IXplore SpinSR10 with a 60x 1.42 NA objective, one frame per minute and about 120 frames per
-  sequence. Frames are max-projected, registered, cropped around the wound and downsampled to 128x128. Each sequence has a wound
-  segmentation (skeletonized) in a matching TIFF.
+description: Time-lapse confocal sequences of Drosophila embryos expressing GFP-tagged myosin II (sqhGFP) healing after a
+  laser-induced wound, imaged on an Olympus IXplore SpinSR10 with a 60x 1.42 NA objective, one frame per minute and about
+  120 frames per sequence. Frames are max-projected, registered, cropped around the wound and downsampled to 128x128. Each
+  sequence has a wound segmentation (skeletonized) in a matching TIFF.
 landing_url: https://zenodo.org/records/7660424
 doi: 10.5281/zenodo.7660424
 repository: Zenodo
@@ -65,10 +65,72 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T13:14:25Z'
-notes: 'Zip lists 124 TIFF files: 62 in Videos/ and 62 in Segmentations/, while the description says 61 sequences (44 train, 12
-  validation, 5 test); no split file ships, so splits_provided is false. Wounds were segmented with a custom U-Net-like network and
-  manually refined in napari, hence source mixed. The page states 4.6 um/pixel for the 1152x1152 frames, which is implausible for
-  a 60x objective (it would make the frame about 5 mm wide), and frames are later cropped to 256x256 and downsampled to 128x128, so
-  voxel_size_nm is null. No related publication is listed on the Zenodo record, and web searches under the author names found no
-  paper describing the dataset; whether the segmentations are binary masks or skeletons was not checked in the files.'
+  last_checked: '2026-10-11T14:55:00Z'
+notes: 'Zip lists 124 TIFF files: 62 in Videos/ and 62 in Segmentations/, while the description says 61 sequences (44 train,
+  12 validation, 5 test); no split file ships, so splits_provided is false. Wounds were segmented with a custom U-Net-like
+  network and manually refined in napari, hence source mixed. The page states 4.6 um/pixel for the 1152x1152 frames, which
+  is implausible for a 60x objective (it would make the frame about 5 mm wide), and frames are later cropped to 256x256 and
+  downsampled to 128x128, so voxel_size_nm is null. No related publication is listed on the Zenodo record, and web searches
+  under the author names found no paper describing the dataset; enricher: segmentations are binary 0/255 TIFFs with ~1% foreground
+  (thin wound outlines), sampled.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./ (1 file, 198,715,081 B, Zenodo API, exact)\n  Dataset.zip (124 TIFFs)\n    Videos/         62 x WH<nn>.tif /\
+      \ WHu<nn>.tif  (t x 128 x 128 uint16)\n    Segmentations/  62 x same names               (t x 128 x 128 uint8, 0/255)"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/7660424/files/Dataset.zip/content::Videos/WH21.tif
+    - https://zenodo.org/api/records/7660424/files/Dataset.zip/content::Segmentations/WH21.tif
+    size_bytes: 7939529
+    description: 'Sequence WH21: 160-frame video and its wound segmentation.'
+  arrays:
+  - role: raw
+    path_pattern: Videos/*.tif
+    format: tiff
+    axes: tyx
+    shape:
+    - 160
+    - 128
+    - 128
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 14
+    - 43033
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ TIFF whose header calls the 160 pages channels; the Zenodo page describes one frame per minute
+      (time-lapse), so the page axis is t. Frame count varies (160 in WH21, 159 in WHu07).
+  - role: label
+    path_pattern: Segmentations/*.tif
+    format: tiff
+    axes: tyx
+    shape:
+    - 160
+    - 128
+    - 128
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 255
+      name: wound (skeletonized segmentation)
+    alignment: same-grid
+    alignment_notes: Segmentations/<name>.tif pairs with Videos/<name>.tif; same t x 128 x 128 shape in both sampled pairs.
+      ImageJ header calls the pages slices; they are the same frames as the video. Palette-coloured TIFF (photometric 3),
+      values 0/255.
+  notes: 'Listing: Zenodo API (1 zip, exact) + central directory (62 videos, 62 segmentations). Probed and sampled WH21 and
+    WHu07 (videos + segmentations, ~15 MB inflated): uint16 videos 665-43033 / 14-273, uint8 masks 0/255 with 0.7-1% foreground.
+    Value ranges from these two sequences. Page axis set to t from the Zenodo description (time-lapse, 1 frame/min); the ImageJ
+    headers say channels (videos) and slices (masks). Voxel size: no calibration in the TIFF headers; the page''s 4.6 um/pixel
+    is for the original 1152x1152 frames before crop and 128x128 downsampling (and implausible for 60x), so left null. Frame
+    interval 1 min per the page.'
