@@ -1,0 +1,137 @@
+schema_version: '1.2'
+id: inrae-m8fodi-spruce-wood-confocal-3d-labels
+title: 'Data for: Expert-corrected segmentation of 3D confocal images of spruce wood cell walls provides a benchmarking dataset'
+short_name: Spruce wood cell walls 3D labels (confocal)
+description: 16 samples of 3D confocal autofluorescence images of pretreated spruce wood cell walls, each stored as an intensity
+  TIFF paired with its manually corrected segmentation label TIFF, in one zip with a README.
+landing_url: https://entrepot.recherche.data.gouv.fr/dataset.xhtml?persistentId=doi:10.57745/M8FODI
+doi: 10.57745/M8FODI
+repository: other
+accession: M8FODI
+authors:
+- Maxime Corre
+- Narcisse Dalko
+- Solmaz Hossein Khani
+- Bérangère Lebas
+- Anouck Habrant
+- Gabriel Paës
+publications: []
+date_published: '2026-08-27'
+imaging:
+  modality:
+  - confocal
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 621.4808646041788
+    y: 621.4808646041788
+    z: 300
+  channels: 1
+  organism:
+  - Picea
+  sample: Pretreated spruce wood cell walls, autofluorescence
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 5035310594
+  n_items: 16
+  access: open
+  download_url: https://entrepot.recherche.data.gouv.fr/api/access/datafile/767758
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  - instance-segmentation
+  coverage: dense
+  format: sampleNN/sampleNN_segmented.tif label volume next to sampleNN/sampleNN_intensity.tif, NN 01 to 16
+  source: proofread
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: etalab-2.0
+  url: https://spdx.org/licenses/etalab-2.0.html
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-11T16:55:00Z'
+  evidence_urls:
+  - https://api.datacite.org/dois/10.57745/m8fodi
+  - https://entrepot.recherche.data.gouv.fr/api/datasets/:persistentId/?persistentId=doi:10.57745/M8FODI
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-11T17:05:00Z'
+notes: 'One file, 3D_intensity_segmentation_dataset.zip (5.0 GB): README.txt and sample01 to sample16 folders, each with sampleNN_intensity.tif
+  (raw) and sampleNN_segmented.tif (labels). No paper was found (Europe PMC / Crossref title search). The page lists the Etalab
+  Open License 2.0. enricher: voxel size 621.48 x 621.48 x 300 nm from README.txt in the zip ("Unit: 1e-6 m, Voxel Size: X
+  = 0.6214808646041788, Y = 0.6214808646041788, Z = 0.3"), matching the label TIFF ImageJ calibration (was null). enricher:
+  organism Picea (genus; the page and README say spruce, species not stated; was empty). enricher: instance-segmentation added:
+  README says each cell wall has a distinct label, 91 ids in one sampled slice, background 1.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "3D_intensity_segmentation_dataset.zip (5.04 GB, stored, no compression)\n  3D_intensity_segmentation_dataset/README.txt\n\
+      \  3D_intensity_segmentation_dataset/sample{01..16}/sampleNN_intensity.tif   16 x 209,781,770 bytes\n  3D_intensity_segmentation_dataset/sample{01..16}/sampleNN_segmented.tif\
+      \   16 x 104,924,250 bytes"
+    n_files: 33
+    listing_complete: true
+  sample:
+    urls:
+    - https://entrepot.recherche.data.gouv.fr/api/access/datafile/767758::3D_intensity_segmentation_dataset/sample01/sample01_intensity.tif
+    - https://entrepot.recherche.data.gouv.fr/api/access/datafile/767758::3D_intensity_segmentation_dataset/sample01/sample01_segmented.tif
+    size_bytes: 314706020
+    description: sample01 raw intensity volume and its label volume (smallest unit; all 16 samples are the same size)
+  arrays:
+  - role: raw
+    path_pattern: 3D_intensity_segmentation_dataset/sample[0-9][0-9]/sample[0-9][0-9]_intensity.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 400
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'tifffile-written plain TIFF, ImageDescription {"shape": [400, 512, 512]} (pages = z); its XResolution
+      tag is a meaningless default'
+    value_range:
+    - 133
+    - 2108
+  - role: label
+    path_pattern: 3D_intensity_segmentation_dataset/sample[0-9][0-9]/sample[0-9][0-9]_segmented.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 400
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 1
+    - 96
+    encoding: instance-ids
+    classes:
+    - id: 1
+      name: background
+    alignment: same-grid
+    alignment_notes: same folder and stem (_intensity -> _segmented); ImageJ hyperstack, slices=400, 512x512, unit micrometer,
+      spacing 0.3, 1.60906 px/um (0.6215 um) = README voxel size
+  notes: 'Listing: zip central directory by range (Dataverse API lists this one file, 5,035,310,594 bytes; 33 members, stored).
+    Headers read by hand from the first 64 KB of each sample01 member (probe.py could not: this host''s HEAD size is wrong
+    behind the 303 redirect, and member reads got connection resets): intensity uint16 uncompressed, 400 pages of 512x512,
+    data contiguous (strip 336 + 400 x 524,288 = first trailing IFD); segmented ImageJ uint8, same layout. Sample: slice z=200
+    of each sample01 file read by range (512 KB + 256 KB): raw [133, 2108], p1/p50/p99 144/227/912; labels 91 ids in 1-96,
+    background 1 (167,711 px). value_range from that one slice. instance-ids: README (each cell wall a distinct label) and
+    the 91 ids in one slice.'
