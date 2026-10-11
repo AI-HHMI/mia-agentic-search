@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: zenodo-14189395-plant-root-ct-3dunet
 title: Training Data - Plant root segmentation using 3D-Unet
 short_name: Plant roots in soil CT segmentation (X-ray)
-description: X-ray micro-CT volumes of wheat, barley and maize roots growing in soil with matching root label volumes, used to train a
-  3D U-Net for root segmentation. The deposit has 29 image volumes with TIFF label volumes (scanned at ANSTO micro-CT, 6.5 um, or
-  an X-TEK XTH 225 system, 45 um), a summary spreadsheet and three PyTorch model files.
+description: X-ray micro-CT volumes of wheat, barley and maize roots growing in soil with matching root
+  label volumes, used to train a 3D U-Net for root segmentation. The deposit has 29 image volumes with
+  TIFF label volumes (scanned at ANSTO micro-CT, 6.5 um, or an X-TEK XTH 225 system, 45 um), a summary
+  spreadsheet and three PyTorch model files.
 landing_url: https://zenodo.org/records/14189395
 doi: 10.5281/zenodo.14189395
 repository: Zenodo
@@ -12,7 +13,8 @@ accession: null
 authors:
 - Richard Harwood
 publications:
-- title: 'DeepBranchAI: a transferable 3D segmentation model for branching networks (uses this dataset as an external fine-tuning set)'
+- title: 'DeepBranchAI: a transferable 3D segmentation model for branching networks (uses this dataset
+    as an external fine-tuning set)'
   doi: 10.3389/frai.2026.1862872
   url: https://doi.org/10.3389/frai.2026.1862872
 date_published: '2024-11-20'
@@ -34,14 +36,14 @@ data:
   size_bytes: 29507489467
   n_items: 29
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/14189395
   download_method: http
 annotations:
   present: true
   types:
   - semantic-segmentation
   coverage: dense
-  format: 'TIFF label volumes next to each image volume (NAME.label.tif or NAME.labels.tif)'
+  format: TIFF label volumes next to each image volume (NAME.label.tif or NAME.labels.tif)
   source: unknown
 ml:
   tasks:
@@ -64,10 +66,82 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T13:14:25Z'
-notes: 'Zenodo file list: 29 image volumes, 30 label files (the label recon_BARLEYWT_WW_S1_R1.label.tif has no image in the deposit although the
-  summary spreadsheet lists the image), the summary xlsx and three .pytorch models. The xlsx gives plant and scanner per file: wheat, barley and
-  maize roots; ANSTO microCT at 6.5 um (most files) and X-TEK XTH 225 at 45 um (maize ROI files), so voxel_size_nm is null as it differs by
-  file. Organism names are the xlsx common names mapped to species and are not stated as binomials. The Zenodo page has only a one-line description
-  and no listed paper; the DeepBranchAI paper (full text read) reports using 29 root volumes from this record, so it is cited as a user of
-  the data. Label origin is not described, so source is unknown. download_url is null because the data are many separate TIFF files.'
+  last_checked: '2026-10-11T16:20:00Z'
+notes: 'Zenodo file list: 29 image volumes, 30 label files (the label recon_BARLEYWT_WW_S1_R1.label.tif
+  has no image in the deposit although the summary spreadsheet lists the image), the summary xlsx and
+  three .pytorch models. The xlsx gives plant and scanner per file: wheat, barley and maize roots; ANSTO
+  microCT at 6.5 um (most files) and X-TEK XTH 225 at 45 um (maize ROI files), so voxel_size_nm is null
+  as it differs by file. The Zenodo page has only a one-line description and no listed paper; the DeepBranchAI
+  paper (full text read) reports using 29 root volumes from this record, so it is cited as a user of the
+  data. Label origin is not described, so source is unknown. download_url is null because the data are
+  many separate TIFF files. Organisms (xlsx): Zea mays = 07_top*, SPP_*, recon_sub_*corn*; Hordeum vulgare
+  = recon_BALDY*, recon_BARLEYWT*; Triticum aestivum = the other recon_* files (common names mapped to
+  species). Voxel size (xlsx): 45 um = 07_top*, SPP_*; 6.5 um = all others.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  (flat, 63 files)\n  <name>.tif                29 raw CT volumes (8 MB - 4.9 GB)\n  <name>.label.tif\
+      \ / <name>.labels.tif   30 label volumes\n  3D_Unet_Root_Segmentation_Training_Data_Summary.xlsx\n\
+      \  3D_Unet_Root_Model.pytorch, Phalempin_Unpublished_Example_Model .pytorch, Rootine_V2_Example_Model.pytorch"
+    n_files: 63
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/14189395/files/recon_W16_D_S1_R3.tif_matched.tif
+    - https://zenodo.org/records/14189395/files/recon_W16_D_S1_R3.tif_matched.labels.tif
+    size_bytes: 7875924
+    description: Smallest raw CT volume (153x254x359, wheat, ANSTO 6.5 um) and its root label volume
+  arrays:
+  - role: raw
+    path_pattern: '*[!sl].tif'
+    format: tiff
+    axes: zyx
+    shape:
+    - 153
+    - 254
+    - 359
+    shape_varies: true
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Plain multi-page TIFFs (LZW); the page axis is z (each file is a CT reconstruction
+      volume per the summary xlsx and the paper). SPP_P21_SCE2_C2_ROI_* are uncompressed tifffile-shaped
+      stacks (128x1750x1750).
+  - role: label
+    path_pattern: '*.label*.tif'
+    format: tiff
+    axes: zyx
+    shape:
+    - 153
+    - 254
+    - 359
+    shape_varies: true
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 1
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: root
+    alignment: same-grid
+    alignment_notes: 'Pairs by stem: <name>.tif with <name>.label.tif or <name>.labels.tif (palette TIFF,
+      values 0/1). Same shape in the sampled pair. recon_BARLEYWT_WW_S1_R1.label.tif has no raw volume
+      in the deposit.'
+  notes: 'Zenodo listing (tools/listing.py): 63 files, 29,507,489,467 B, file-listing (includes 3 x 49
+    MB models). Probed recon_W16_D_S1_R3 pair, recon_W16_D_S1_R2.tif (1641x1080 pages, LZW) and SPP_P21_SCE2_C2_ROI_1.labels.tif
+    (128x1750x1750, uncompressed); 07_top.tif_roi1.tif and recon_W16_D_S1_R2.label.tif gave no header
+    in time. Sampled the smallest pair (7.9 MB): raw uint8 0-255 (56 distinct values, mean 75.7), label
+    {0: 13,832,451, 1: 119,007}; value ranges from one sample. Voxel size differs by scanner (xlsx: ANSTO
+    microCT 6.5 um, X-TEK XTH 225 45 um), so imaging.voxel_size_nm stays null; per-file values are in
+    notes. Checked: TIFF headers (no calibration), xlsx, Zenodo API record, DeepBranchAI paper. Files
+    are individual direct links; no single archive.'
