@@ -37,7 +37,7 @@ data:
   size_bytes: 19809121872
   n_items: 1
   access: open
-  download_url: null
+  download_url: https://figshare.com/articles/dataset/FIB-SEM_data_from_i_Anaeramobea_flamelloides_i_BUSSELTON2_/24033777
   download_method: http
 annotations:
   present: true
@@ -67,7 +67,7 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T06:34:00Z'
+  last_checked: '2026-10-11T06:59:00Z'
 notes: 'Figshare API record (13 files: 8640_2.mrc 5.7 GB raw volume plus its ''_levels'' copy, ''Aligned 1780 of
   1780.tif'' 6.6 GB, a zip of 1,878 SEM slice images, and nine .ORSObject label files) and the Nature Communications
   paper (Europe PMC full text, Methods) read. Voxel size 6.7 x 6.7 x 7 nm is from the record description (''close
@@ -75,4 +75,97 @@ notes: 'Figshare API record (13 files: 8640_2.mrc 5.7 GB raw volume plus its ''_
   (DeepLabV3 ResNet50) then manually refined; plasma membrane manual, so source is mixed. Distinct from figshare-31894429
   (two high-pressure-frozen volumes). The ORSObject label files are a proprietary format and their label values
   were not inspected; the paper''s data availability statement was not found in the full text read. Not stated whether
-  8640_2_levels.mrc is a duplicate of 8640_2.mrc (same byte size).'
+  8640_2_levels.mrc is a duplicate of 8640_2.mrc (same byte size). enricher: MRC header says 6.744 x 6.744 x 70
+  nm; kept the descriptions 7 nm z.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "8640_2.mrc                            5,693,722,624 B  raw volume, 1780 x 1568 x 2040 (z, y, x), mode\
+      \ 0\n8640_2_levels.mrc                     5,693,722,624 B  same header as 8640_2.mrc\nAligned 1780 of 1780.tif\
+      \              6,558,614,895 B  ImageJ stack, 1780 x 1793 x 2055 uint8\nSEM Image - SliceImage 001 - 1878.zip\
+      \ 1,488,986,212 B  512 single-slice TIFFs (from SliceImage - 005.tif), 1615 x 2456 uint8\n<structure>.ORSObject\
+      \  x9             3.4-144 MB each  Dragonfly ORS label objects: 230718_Whole_cell_volume, granuels,\n    \
+      \                                                   hydrogenosomes_clean, Microtubules, Nucleus, other_prokaryotes,\n\
+      \                                                       Plasma_membrane, Symbiont_clean, Symbiont_membranes\n"
+    n_files: 13
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/42144306
+    - https://ndownloader.figshare.com/files/42144399
+    size_bytes: 5697116492
+    description: The raw MRC volume and the smallest label object (Nucleus.ORSObject); the raw is only offered as
+      whole 5.7-6.6 GB volumes.
+  arrays:
+  - role: raw
+    path_pattern: 8640_2.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 1780
+    - 1568
+    - 2040
+    shape_varies: false
+    dtype: int8
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: MRC mode 0 (int8 by MRC2014; header min/max/mean -128 / 83 / -31.9, so possibly uint8 written
+      as int8). Header voxel size 6.744 x 6.744 x 70 nm; the record description says 6.7 x 6.7 x 7 nm.
+  - role: raw
+    path_pattern: Aligned 1780 of 1780.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 1780
+    - 1793
+    - 2055
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ hyperstack (1780 slices), the registered stack before MRC conversion; 25 px taller and
+      15 px wider than 8640_2.mrc, so the MRC is likely a crop (not stated).
+  - role: label
+    path_pattern: '*.ORSObject'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    encoding: unknown
+    classes:
+    - id: null
+      name: whole cell volume
+    - id: null
+      name: dense granules
+    - id: null
+      name: hydrogenosomes
+    - id: null
+      name: microtubules
+    - id: null
+      name: nucleus
+    - id: null
+      name: other prokaryotes
+    - id: null
+      name: plasma membrane
+    - id: null
+      name: symbionts
+    - id: null
+      name: symbiosome membranes
+    alignment: unknown
+    alignment_notes: One Dragonfly ORSObject file per structure (binary, starts with ORSD and a UTF-16 registration
+      transform). Which raw grid they sit on is not stated; not decoded (proprietary).
+  notes: 'Figshare API: 13 files, 19,809,121,872 B (complete). Probed headers of both MRCs, the aligned TIFF and
+    one zip slice (005.tif); read the first 20 KB of Nucleus.ORSObject. Not sampled: the smallest raw file is 1.5
+    GB (zip) and labels are proprietary. The zip holds 512 TIFFs although it is named 001-1878, and its slices (1615
+    x 2456) are not the aligned grid. No single archive: data.download_url is the record page; direct per-file links
+    are ndownloader.figshare.com/files/<id> (all checked usable). Labels are ORSObject only, which TensorSwitch
+    cannot read; a human would need Dragonfly to export them.'
