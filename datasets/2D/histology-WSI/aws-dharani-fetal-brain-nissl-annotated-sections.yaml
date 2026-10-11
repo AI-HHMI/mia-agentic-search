@@ -1,0 +1,149 @@
+schema_version: '1.2'
+id: aws-dharani-fetal-brain-nissl-annotated-sections
+title: DHARANI developing human-brain atlas (Nissl and H&E sections, 14-24 gestational weeks)
+short_name: Fetal brain Nissl section atlas (histology)
+description: Whole-brain serial histology (Nissl and H&E, 20 um coronal and sagittal sections scanned
+  as large BigTIFFs) of five second-trimester human fetal brains (14-24 gestational weeks), 2,818 TIFFs
+  in the S3 bucket, with 466 sections annotated by anatomists as GeoJSON polygons of about 500 brain structures,
+  fibre tracts, ventricles and transient developmental structures (ontology.json), plus five 3D Nissl
+  reconstructions (NIfTI) registered to postmortem MRI.
+landing_url: https://registry.opendata.aws/dharani-brain-dataset/
+doi: null
+repository: other
+accession: null
+authors:
+- Ramya Verma
+- Mihail Bota
+- Keerthi Ram
+- Mohanasankar Sivaprakasam
+publications:
+- title: 'DHARANI: A 3D Developing Human-Brain Atlas Resource to Advance Neuroscience Internationally
+    Integrated Multimodal Imaging and High-Resolution Histology of the Second Trimester'
+  doi: 10.1002/cne.70006
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC11794986/
+date_published: null
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: postmortem fetal brains, 14-24 gestational weeks, 20 um sections stained with Nissl (cresyl
+    violet) or hematoxylin and eosin
+  labels_stains:
+  - Nissl
+  - hematoxylin and eosin
+data:
+  formats:
+  - tiff
+  size_bytes: 3065477030677
+  n_items: 2818
+  access: open
+  download_url: s3://dharani-fetal-brain-atlas/data2d/
+  download_method: s3
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: sparse
+  format: one GeoJSON FeatureCollection of polygons per annotated section (466 .json files next to the
+    TIFFs, e.g. Specimen_1_1009.json); structure names follow ontology/ontology.json
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-11T17:39:35Z'
+  evidence_urls:
+  - https://registry.opendata.aws/dharani-brain-dataset/
+  - https://dharani-fetal-brain-atlas.s3.us-west-2.amazonaws.com/?list-type=2
+  - https://dharani-fetal-brain-atlas.s3.us-west-2.amazonaws.com/data2d/specimen_1/Specimen_1_1009.tif
+  - https://dharani-fetal-brain-atlas.s3.us-west-2.amazonaws.com/data2d/specimen_1/Specimen_1_1009.json
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11794986/fullTextXML
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-11T18:45:00Z'
+notes: 'S3 listing complete (3,290 files, 3.07 TB): data2d/specimen_1..5 hold 2,818 TIFFs and 466 GeoJSON
+  files, data3d has five *_nisl_128mpp_rgb_masked.nii.gz, ontology/ontology.json. The registry page and
+  the paper say 5,132 sections; the bucket lists 2,818 TIFFs, so the full set is probably served only
+  on the brainportal (https://brainportal.humanbrain.in/publicview/index.html). Probed one TIFF: BigTIFF,
+  JPEG-compressed, tiled 2000 x 2000, uint8 RGB, 64000 x 64000 px with 6 pages (pyramid). Pixel size not
+  in the TIFF: the paper states 0.5 um/pixel scanning (TissueScope LE120) and 1 um/pixel for the released
+  annotated sections, so voxel size is left null. enricher: probed annotated TIFF 64000 px, unannotated
+  16000 px (paper: 1 vs 4 um/px). Only the 466 annotated sections have labels; the rest are unlabelled.
+  License CC BY 4.0 on the registry page and in the paper; the paper data statement also says data are
+  available from the corresponding author on request.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "s3://dharani-fetal-brain-atlas/   3,290 files, 3.07 TB\ndata2d/specimen_{1..5}/\n  Specimen_<n>_<section>.tif\
+      \    2,818  pyramidal BigTIFF, JPEG tiles 2000x2000\n     annotated (with .json): 63/90/69/124/120\
+      \ = 466, 0.46-12.7 GB each\n     others: 332/447/471/565/537 = 2,352, 15 MB-12.3 GB each\n  Specimen_<n>_<section>.json\
+      \     466  GeoJSON polygons (same stem as the TIFF)\ndata3d/FB{34,40,62,74,85}_nisl_128mpp_rgb_masked.nii.gz\
+      \   5\nontology/ontology.json           1\n"
+    n_files: 3290
+    listing_complete: true
+  sample:
+    urls:
+    - https://dharani-fetal-brain-atlas.s3.amazonaws.com/data2d/specimen_1/Specimen_1_43.tif
+    - https://dharani-fetal-brain-atlas.s3.amazonaws.com/data2d/specimen_1/Specimen_1_43.json
+    size_bytes: 460885147
+    description: Smallest annotated Nissl section (specimen 1, section 43) and its GeoJSON annotation
+  arrays:
+  - role: raw
+    path_pattern: data2d/specimen_*/Specimen_*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 64000
+    - 64000
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Pyramidal BigTIFF: page 0 is full resolution, the other pages are TIFF reduced-resolution
+      images (halving down to 2000 px); axes are for page 0 (RGB samples s). Probed annotated section
+      64000x64000 at level 0, 2 unannotated 16000x16000 (paper: 1 um/px vs 4 um/px; file sizes follow
+      the same split). XResolution tag 10 px/cm is a default.'
+  - role: label
+    path_pattern: data2d/specimen_*/Specimen_*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: polygons
+    classes: null
+    alignment: unknown
+    alignment_notes: GeoJSON FeatureCollection with a "rotation" key; one Polygon per structure, properties.data
+      gives id, name, acronym and colour from ontology/ontology.json (~500 structures). In Specimen_2_1675.json
+      x spans 20258-33525 and y -39667 to -26480, i.e. level-0 pixel units with y negated; the rotation
+      handling is not documented.
+  notes: 'Listing: tools/listing.py s3://dharani-fetal-brain-atlas/: 3,290 files, 3,065,477,030,677 bytes,
+    complete, exact. Probed 3 TIFF headers (Specimen_1_43 annotated, Specimen_1_10 and Specimen_2_409
+    unannotated) and read all page shapes of two with tifffile (range reads): pyramids of 6 and 4 levels.
+    Read Specimen_2_1675.json (45 KB, 4 polygons) and the ontology header. No pixel data sampled (smallest
+    annotated TIFF is 461 MB). Voxel size: paper (PMC11794986) states scanning at 0.5 um/px and "The 466
+    Nissl and the corresponding H&E sections are available at 1 um per pixel ... The remaining sections
+    are available at 4 um per pixel"; the bucket matches (64000 vs 16000 px, same extent), so voxel_size_nm
+    stays null for the mixed record. No single archive: download_url is the S3 prefix; objects are direct
+    https URLs.'
