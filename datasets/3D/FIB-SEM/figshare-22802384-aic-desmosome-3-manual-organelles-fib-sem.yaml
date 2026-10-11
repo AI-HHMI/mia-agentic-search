@@ -53,7 +53,7 @@ imaging:
 data:
   formats:
   - n5
-  size_bytes: null
+  size_bytes: 149933307044
   n_items: 1
   access: open
   download_url: s3://janelia-cosem-datasets/aic_desmosome-3/aic_desmosome-3.n5/
@@ -90,9 +90,72 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T06:39:15Z'
+  last_checked: '2026-10-11T07:08:00Z'
 notes: 'Figshare record (link-only file) and S3 listing read. EM at em/fibsem-uint8; main label group DSM-3_2-2_simple-seg
-  (2017 x 1001 x 1868, x y z, uint8, 4 nm); only a sub-region is labelled (partial). Paper Methods (PMC author manuscript):
+  (1868 x 1001 x 2017, x y z, uint8, 4 nm); only a sub-region is labelled (partial). Paper Methods (PMC author manuscript):
   ER, mitochondria, plasma membrane from COSEM network predictions; keratin, ribosomes, desmosome plaque from ilastik;
-  then proofread, microtubules and endosomes by hand, so source is mixed. *_pred groups are predictions. Label encodings
-  and total size not inspected. Nuclei-only labels of this volume are in figshare-26511841 (zarr).'
+  then proofread, microtubules and endosomes by hand, so source is mixed. *_pred groups are predictions. Nuclei-only
+  labels of this volume are in figshare-26511841 (zarr). enricher: label group shape corrected to x y z order from
+  N5 attributes; it holds semantic ids 0-7 (decoded chunks).'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "aic_desmosome-3.n5/\n  em/fibsem-uint8/s0..         4 nm, zyx 12101 x 3233 x 3736 uint8, blosc-zstd,\
+      \ chunks 64^3\n  lm/                          (light microscopy group, not inspected)\n  labels/DSM-3_2-2_simple-seg/s0..\
+      \   4 nm, zyx 2017 x 1001 x 1868 uint8, chunks 128^3, offset\n  labels/DSM-3_2-2_{COSEM-ER,COSEM-PM,COSEM-mito,DSM-ODP_filtered,PM}/\n\
+      \  labels/DSM-3_2-2_contacts_ER-KRT_ER-MT_{04,08,12,16,20}nm/   labels/DSM-3_2-2_ribosomes-{all,adjacent-or-touching-ER}/\n\
+      \  labels/DSM-3_tile2-2_ER-KRT-endo-MT_by-cell/   labels/{er,mito,pm}_{seg,pred}/\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://janelia-cosem-datasets.s3.amazonaws.com/aic_desmosome-3/aic_desmosome-3.n5/em/fibsem-uint8
+    - https://janelia-cosem-datasets.s3.amazonaws.com/aic_desmosome-3/aic_desmosome-3.n5/labels/DSM-3_2-2_simple-seg
+    size_bytes: null
+    description: The EM N5 multiscale group and the main proofread label group (chunked stores, read remotely).
+  arrays:
+  - role: raw
+    path_pattern: aic_desmosome-3.n5/em/fibsem-uint8
+    format: n5
+    axes: zyx
+    shape:
+    - 12101
+    - 3233
+    - 3736
+    shape_varies: false
+    dtype: uint8
+    compression: blosc
+    value_range:
+    - 21
+    - 190
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Multiscale s0..; s0 scale 4 nm, translate 0 (N5 attributes; N5 lists x,y,z, reversed here).
+      Value range from one 64^3 chunk.
+  - role: label
+    path_pattern: aic_desmosome-3.n5/labels/DSM-3_2-2_simple-seg
+    format: n5
+    axes: zyx
+    shape:
+    - 2017
+    - 1001
+    - 1868
+    shape_varies: false
+    dtype: uint8
+    compression: blosc
+    value_range:
+    - 0
+    - 7
+    normalization: unknown
+    encoding: semantic-ids
+    classes: null
+    alignment: offset
+    alignment_notes: Same 4 nm grid as the EM s0, translated by (z, y, x) 8068, 5656, 7472 nm = 2017, 1414, 1868
+      voxels (N5 transform). Values 0, 1, 3, 4, 5, 7 seen in 3 chunks (one empty); the id -> class map is not documented.
+  notes: 'S3 bucket listing per group (delimiter) only; a full chunk listing was not attempted (desmosome-2 stopped
+    at 50,000 files), so size is estimated. Probed N5 attributes of EM s0 and the main label group. Decoded 3 label
+    chunks and 1 EM chunk (N5 + blosc, about 233 KB). Only the main proofread label group is described as an array;
+    the other 19 label groups and lm/ are listed in the tree. Figshare holds only a link; data live on S3. Size
+    estimated (uncompressed): raw 1 x 12101x3233x3736 uint8 + label 1 x 2017x1001x1868 uint8 = 149,933,307,044 B
+    (149.9 GB); s0 levels of these two arrays only, so the full store is larger.'
