@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-20499199-3d-organoid-segmentation-widefield
 title: 3D Organoid Segmentation Dataset for High-Content Screening and Biomedical Image Analysis
 short_name: 3D breast organoid segmentation (volumes)
-description: 12 microscopy volumes of 3D breast-cell-line organoids (MCF10A, MCF7 and derived lines by file name) stored as
-  NIfTI, each paired with an expert-annotated 3D segmentation mask (Images/ and Masks/ folders, matching file identifiers),
-  released for training and benchmarking organoid segmentation.
+description: 12 microscopy volumes of 3D breast-cell-line organoids (MCF10A, MCF7 and derived lines by
+  file name) stored as NIfTI, each paired with an expert-annotated 3D segmentation mask (Images/ and Masks/
+  folders, matching file identifiers), released for training and benchmarking organoid segmentation.
 landing_url: https://zenodo.org/records/20499199
 doi: 10.5281/zenodo.20499199
 repository: Zenodo
@@ -39,7 +39,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: NIfTI (.nii.gz) mask volumes in Masks/, one per image volume in Images/
+  format: NIfTI (.nii.gz) uint8 mask volumes in Masks/<stem>_mask_iso.nii.gz, one per image volume Images/<stem>_iso.nii.gz,
+    same grid
   source: manual
 ml:
   tasks:
@@ -62,9 +63,71 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T10:30:00Z'
-notes: 'Zip listing: 12 Images/*.nii.gz and 12 matching Masks/*.nii.gz (<line>_no_apotome_<n>_processed_iso). Page gives
-  no microscope, staining, species or voxel size, so modality is other and Homo sapiens is inferred from the MCF7/MCF10A
-  names. Voxel size 1 um isotropic is from one NIfTI header (67x177x210, uint16); files look resampled, original grid not
-  stated. Source manual follows the page wording expert-annotated. Possibly related: Sohaib et al., 3D-Organoid-SwinNet
-  (PMC11970996, Zeiss apotome, MCF10A/MCF7/MDA-MB lines), not linked from the record and without data link, so not listed.'
+  last_checked: '2026-10-11T12:05:00Z'
+notes: 'Zip listing: 12 Images/*.nii.gz and 12 matching Masks/*.nii.gz (<line>_no_apotome_<n>_processed_iso).
+  Page gives no microscope, staining, species or voxel size, so modality is other and Homo sapiens is
+  inferred from the MCF7/MCF10A names. Voxel size 1 um isotropic is from one NIfTI header (67x177x210,
+  uint16); files look resampled, original grid not stated. Source manual follows the page wording expert-annotated.
+  Possibly related: Sohaib et al., 3D-Organoid-SwinNet (PMC11970996, Zeiss apotome, MCF10A/MCF7/MDA-MB
+  lines), not linked from the record and without data link, so not listed.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Dataset.zip   34,515,303 B (24 members)\n  Images/   12 x <line>_no_apotome_<n>_processed_iso.nii.gz\
+      \        uint16, 210x177x63-103 (x,y,z)\n  Masks/    12 x <line>_no_apotome_<n>_processed_mask_iso.nii.gz\
+      \   uint8, same shapes\n  (lines: AT1, Ca1D, DCIS, MCF7, MCF_7_4, MCF_10A)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/20499199/files/Dataset.zip/content::Images/MCF_10A_no_apotome_01_processed_iso.nii.gz
+    - https://zenodo.org/api/records/20499199/files/Dataset.zip/content::Masks/MCF_10A_no_apotome_01_processed_mask_iso.nii.gz
+    size_bytes: 1808432
+    description: One organoid volume (MCF_10A_no_apotome_01, 63x177x210 zyx) and its mask.
+  arrays:
+  - role: raw
+    path_pattern: Dataset.zip::Images/*_iso.nii.gz
+    format: nifti
+    axes: zyx
+    shape:
+    - 63
+    - 177
+    - 210
+    shape_varies: true
+    dtype: uint16
+    compression: gzip
+    value_range:
+    - 0
+    - 36732
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: Dataset.zip::Masks/*_mask_iso.nii.gz
+    format: nifti
+    axes: zyx
+    shape:
+    - 63
+    - 177
+    - 210
+    shape_varies: true
+    dtype: uint8
+    compression: gzip
+    value_range:
+    - 0
+    - 1
+    encoding: unknown
+    classes: null
+    n_ids_observed: 3
+    alignment: same-grid
+    alignment_notes: Images/<stem>_iso.nii.gz pairs with Masks/<stem>_mask_iso.nii.gz; all 12 pairs have
+      identical shapes and the same 0.001 mm spacing and zero origin.
+  notes: 'Listing: Zenodo API (one file, Dataset.zip, 34,515,303 B = size_bytes) and the zip index (24
+    members: 12 Images + 12 Masks). Downloaded the whole 34.5 MB zip once to measure every volume with
+    nibabel (deleted afterwards): images uint16, x,y always 210x177, z 63-103 slices, values 0-62477 over
+    all files (MCF_10A_01: 0-36732, p50 48); masks uint8, same shapes, values {0,1} in the sample and
+    {0,1,2} across all masks (label 2 in at least one mask: a second class or a second organoid; the page
+    does not say, so encoding unknown). NIfTI pixdim 0.001 with xyzt_units mm (= 1 um isotropic) in every
+    file; file names say *_processed_iso, so the volumes were resampled to isotropic and the original
+    grid is not stated.'
