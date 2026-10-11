@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: figshare-33238200-bm-cells49-bone-marrow-instances
 title: 'BM-Cells49: fine-grained 49-class instance segmentation of bone marrow blood cells'
 short_name: BM-Cells49 bone marrow cell instances (smears)
-description: '2,466 high-resolution (2736x1834) bone marrow smear images from 487 patients with several hematological disorders, with expert instance-segmentation annotations
-  for 49 cell types (erythroid, myeloid, lymphoid, monocyte, megakaryocyte and plasma-cell lineages) in COCO format and an official five-fold cross-validation split.'
+description: 2,466 high-resolution (2736x1834) bone marrow smear images from 487 patients with several hematological disorders,
+  with expert instance-segmentation annotations for 49 cell types (erythroid, myeloid, lymphoid, monocyte, megakaryocyte and
+  plasma-cell lineages) in COCO format and an official five-fold cross-validation split.
 landing_url: https://figshare.com/articles/dataset/BM-Cells49_A_Fine-Grained_Dataset_for_49-ClassInstance_Segmentation_of_Bone_Marrow_Blood_Cells/33238200
 doi: 10.6084/m9.figshare.33238200.v2
 repository: Figshare
@@ -37,7 +38,8 @@ annotations:
   - classification
   - bounding-box
   coverage: dense
-  format: 'COCO JSON (annotation.json, 302 MB) with 49 cell-type categories; five_fold_split.xlsx gives the cross-validation folds'
+  format: COCO JSON (annotation.json, 302 MB) with 49 cell-type categories; five_fold_split.xlsx gives the cross-validation
+    folds
   source: manual
 ml:
   tasks:
@@ -62,8 +64,57 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T17:50:00Z'
-notes: 'Single 586 MB zip listed with peek_archive: images/P0001..P0487 patient folders with 2,466 JPG images, annotation.json (302 MB) and five_fold_split.xlsx. The annotation
-  file was too large to read, so the 49 categories, the mask format and the instance counts are taken from the record description and not checked in the file.
-  No paper, stain, microscope, objective or pixel size found; the record has no related publication and a web search for the dataset name found none. Modality brightfield
-  is assumed from the smear images and not stated on the record. Annotators and annotation procedure are not described beyond "expert".'
+  last_checked: '2026-10-11T19:03:00Z'
+notes: 'Single 586 MB zip listed with peek_archive: images/P0001..P0487 patient folders with 2,466 JPG images, annotation.json
+  (302 MB) and five_fold_split.xlsx.  No paper, stain, microscope, objective or pixel size found; the record has no related
+  publication and a web search for the dataset name found none. Modality brightfield is assumed from the smear images and
+  not stated on the record. Annotators and annotation procedure are not described beyond "expert". enricher: the first 12.8
+  MB of annotation.json (inflated) show COCO images with bare file names and polygon segmentations; the 49 categories were
+  not reached.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "BMCELLS49.zip (586.0 MB, 2,468 members)\n  annotation.json        COCO, 302.2 MB uncompressed\n  five_fold_split.xlsx\n\
+      \  images/P0001..P0487/P<NNNN>_<k>.jpg   2,466 files, 581.0 MB"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/67498827::images/P0001/P0001_1.jpg
+    - https://ndownloader.figshare.com/files/67498827::annotation.json
+    size_bytes: null
+    description: one image plus the single COCO annotation file that covers all images (302 MB uncompressed)
+  arrays:
+  - role: raw
+    path_pattern: images/P*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1216
+    - 1824
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB colour; sizes vary (1824x1216 and 2736x1824 seen in annotation.json)
+  - role: label
+    path_pattern: annotation.json
+    format: json
+    axes: null
+    shape: null
+    dtype: unknown
+    compression: none
+    encoding: polygons
+    alignment: same-grid
+    alignment_notes: 'COCO: images[].file_name is the bare name (P0359_1.jpg), found under images/P0359/; segmentation as
+      pixel polygons'
+  notes: 'Listing: listing.py, figshare article + zip (585,982,169 bytes, 2,468 members). Sample: images/P0001/P0001_1.jpg
+    1216x1824x3 uint8 [0,255] (one sample). annotation.json is 25 MB compressed; the first 1 MB compressed (12.8 MB of JSON)
+    was inflated: images list with width/height, then annotations with polygon segmentation; categories not reached. Voxel
+    size not found; checked: JPEG header, figshare API, start of annotation.json; no paper linked.'
