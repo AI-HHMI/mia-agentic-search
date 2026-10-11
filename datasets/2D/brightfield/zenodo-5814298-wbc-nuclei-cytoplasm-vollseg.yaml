@@ -29,7 +29,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 157400000
+  size_bytes: 157367224
   n_items: 400
   access: open
   download_url: https://zenodo.org/records/5814298/files/WBC-20220103T064941Z-001.zip
@@ -40,7 +40,7 @@ annotations:
   - semantic-segmentation
   - instance-segmentation
   coverage: dense
-  format: 'TIFF masks: RealMask (400, labelled), BinaryMask (400); Cyto folder with 1200 TIFFs and WBC.npz / WBC_Cyto.npz arrays'
+  format: 'TIFF masks: RealMask (400, labelled), BinaryMask (400); Cyto folder with 1200 TIFFs (Raw, RealMask, BinaryMask) and WBC.npz / WBC_Cyto.npz arrays'
   source: manual
 ml:
   tasks:
@@ -64,8 +64,135 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T01:16:22Z'
-notes: 'LICENSE CONFLICT (recorded as custom): Zenodo states CC-BY-4.0 but says the data is taken from Mendeley w7cvnmn4c5, whose page states CC BY-NC 3.0; a reviewer should decide. Zip: WBC/Raw,
-  RealMask, BinaryMask (400 each), Cyto (1201 TIFF), 2 npz. Mendeley page: dataset 1 = 300 images 120x120 (Motic camera) and dataset 2 = 100 images 300x300
-  (CellaVision blog); ground truth drawn by experts (nuclei white, cytoplasm gray, background black). Pixel size, magnification not stated; paper full text is not
-  open access (abstract only). Mapping of the 400 files to the two sets and the Cyto contents were not inspected.'
+  last_checked: '2026-10-11T02:15:15Z'
+notes: 'LICENSE CONFLICT (recorded as custom): Zenodo states CC-BY-4.0 but says the data is taken from Mendeley w7cvnmn4c5,
+  whose page states CC BY-NC 3.0; a reviewer should decide. Mendeley page: dataset 1 = 300 images 120x120 (Motic camera),
+  dataset 2 = 100 images 300x300 (CellaVision blog); ground truth drawn by experts (nuclei white, cytoplasm gray, background
+  black). Pixel size and magnification not stated; paper full text not open access (abstract only). enricher: d1001-d1300 (300
+  files) and d2001-d2100 (100) match datasets 1 and 2 by count; probed d1001 is 120x120, d2071 and d2097 are 300x300. enricher: mask values read from
+  samples: RealMask 0/128/255 = background/cytoplasm/nucleus; BinaryMask 0/1 = whole cell; Cyto/RealMask 0/1 and
+  Cyto/BinaryMask 0/128 = cytoplasm only.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "WBC-20220103T064941Z-001.zip  (157,367,224 B, 2402 members)\n  WBC/Raw/d<nnnn>.tif          400  (d1001-d1300,\
+      \ d2001-d2100)\n  WBC/RealMask/d<nnnn>.tif     400\n  WBC/BinaryMask/d<nnnn>.tif   400\n  WBC/WBC.npz\
+      \  (262 MB unzipped)\n  WBC/Cyto/Raw/ RealMask/ BinaryMask/   400 each\n  WBC/Cyto/WBC_Cyto.npz  (262 MB unzipped)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5814298/files/WBC-20220103T064941Z-001.zip::WBC/Raw/d1001.tif
+    - https://zenodo.org/records/5814298/files/WBC-20220103T064941Z-001.zip::WBC/RealMask/d1001.tif
+    - https://zenodo.org/records/5814298/files/WBC-20220103T064941Z-001.zip::WBC/BinaryMask/d1001.tif
+    size_bytes: 231216
+    description: One 120x120 image (dataset 1) with its 3-class mask and its whole-cell binary mask.
+  arrays:
+  - role: raw
+    path_pattern: WBC-20220103T064941Z-001.zip/WBC/Raw/d*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 120
+    - 120
+    - 3
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB (photometric 2) stored as float32 with 0-255 values; 120x120 (d1001 probed) or 300x300 (d2071, d2097 probed).
+  - role: label
+    path_pattern: WBC-20220103T064941Z-001.zip/WBC/RealMask/d*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 120
+    - 120
+    shape_varies: true
+    dtype: float16
+    compression: none
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 128
+      name: cytoplasm
+    - id: 255
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: RealMask/d<n>.tif pairs with Raw/d<n>.tif by name, same y/x shape. Values 0/128/255 seen in d1001 and d2071;
+      class names from the Mendeley description (nuclei white, cytoplasm gray, background black).
+  - role: label
+    path_pattern: WBC-20220103T064941Z-001.zip/WBC/BinaryMask/d*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 120
+    - 120
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: Whole white cell (nucleus + cytoplasm) as 1; in d1001 the 2296 ones equal the RealMask 128 + 255 pixels.
+  - role: raw
+    path_pattern: WBC-20220103T064941Z-001.zip/WBC/Cyto/Raw/d*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 300
+    - 300
+    - 3
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range:
+    - 25
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Same file names as WBC/Raw/; whether the images are identical was not checked.
+  - role: label
+    path_pattern: WBC-20220103T064941Z-001.zip/WBC/Cyto/RealMask/d*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 300
+    - 300
+    shape_varies: true
+    dtype: int64
+    compression: none
+    encoding: binary
+    classes:
+    - id: 1
+      name: cytoplasm
+    alignment: same-grid
+    alignment_notes: Cytoplasm only (0/1); in d2097 and d1001 the ones equal the 128-valued pixels of Cyto/BinaryMask, and in
+      d1001 the 690 cytoplasm pixels of RealMask.
+  - role: label
+    path_pattern: WBC-20220103T064941Z-001.zip/WBC/Cyto/BinaryMask/d*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 300
+    - 300
+    shape_varies: true
+    dtype: float16
+    compression: none
+    encoding: binary
+    classes:
+    - id: 128
+      name: cytoplasm
+    alignment: same-grid
+    alignment_notes: Cytoplasm as 128, background 0 (d2097, d1001).
+  notes: 'Listing: Zenodo API + zip central directory (2402 members), complete, exact sizes. Probed Raw, RealMask and BinaryMask
+    of d1001 and d2071 and the Cyto files of d2097. Sampled (about 0.5 MB): Raw/d1001 (120x120x3 float32, 0-255), Raw/d2071
+    (300x300x3, 4-255), Cyto/Raw/d2097 (25-255); masks read with tifffile for unique values (one sample each). The two .npz
+    files (262 MB each unzipped) were not opened (np.load may need pickles). Voxel size not found; checked: TIFF headers (no
+    calibration), Zenodo record, Mendeley page (per the harvest), paper abstract (full text not open access).'
