@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: caltechdata-3yvt7-dm257-celegans-germline-nuclei
 title: Segmentation of C. elegans germline nuclei (Cellpose training data)
 short_name: C. elegans germline nuclei masks (confocal)
-description: 120 two-dimensional orthogonal views (xy, xz, yz) of DAPI-stained or synaptonemal-complex-labelled C. elegans distal germline z-stacks from four microscope types, with manually drawn nucleus instance masks and the Cellpose model trained on them.
+description: 120 two-dimensional orthogonal views (xy, xz, yz) of DAPI-stained or synaptonemal-complex-labelled
+  C. elegans distal germline z-stacks from four microscope types, with manually drawn nucleus instance masks and
+  the Cellpose model trained on them.
 landing_url: https://data.caltech.edu/records/3yvt7-dm257
 doi: 10.22002/3yvt7-dm257
 repository: other
@@ -20,20 +22,19 @@ imaging:
   - super-resolution
   - widefield
   dimensionality: 2D
-  voxel_size_nm:
-    x: 117
-    y: 117
-    z: null
+  voxel_size_nm: null
   channels: 1
   organism:
   - Caenorhabditis elegans
-  sample: Dissected or live C. elegans distal germlines, DAPI chromatin stain or fluorescent synaptonemal complex markers; slices rescaled to 0.117 um/pixel
+  sample: Dissected or live C. elegans distal germlines, DAPI chromatin stain or fluorescent synaptonemal complex
+    markers; 2D xy/xz/yz slices stored at their native pixel sizes (listed per file in TrainDataFiles.csv)
   labels_stains:
   - DAPI
   - synaptonemal complex markers
 data:
   formats:
   - tiff
+  - png
   size_bytes: 94046673
   n_items: 120
   access: open
@@ -44,12 +45,13 @@ annotations:
   types:
   - instance-segmentation
   coverage: dense
-  format: PNG masks (training/trainingData/masks/*_masks.png) paired with TIFF images; file list in TrainDataFiles.csv
+  format: PNG instance masks (training/trainingData/masks/<n>_<view>_masks.png) paired by name with TIFF images
+    (tifs/<n>_<view>.tif); TrainDataFiles.csv lists each pair with its view and x/y pixel size in um
   source: manual
 ml:
   tasks:
   - segmentation
-  splits_provided: true
+  splits_provided: false
   benchmark: null
   baseline_code_url: null
 license:
@@ -63,10 +65,80 @@ provenance:
   - https://data.caltech.edu/records/3yvt7-dm257/files/Cellpose_germlineNuclei-1.0_2023.zip
   - https://pmc.ncbi.nlm.nih.gov/articles/PMC10750166/
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10750166/fullTextXML
-  confidence: 0.85
+  - https://data.caltech.edu/api/records/3yvt7-dm257
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T04:33:32Z'
-notes: 'Zip listed via range requests: training/trainingData has 120 TIFF images and PNG masks, split 108 train / 12 test per the paper (the split is described in the paper and TrainDataFiles.csv, not by folders). Images are 70 xy, 26 xz and 24 yz slices cropped from z-stacks, so these are 2D views of 3D data. Microscopes: Zeiss AiryScan 880/980, Olympus spinning disk (50 um or SoRa disk), GE DeltaVision Elite; the first modality listed is an approximation. Voxel size: paper states all data rescaled to 0.117 um/pixel (original sizes not reported). CaltechDATA lists the record as Software with BSD-3-Clause; the paper itself is CC BY. Data also on GitHub (KoehlerLab/Cellpose_germlineNuclei), not read here.'
+  last_checked: '2026-10-11T05:00:00Z'
+notes: 'Zip has training/trainingData with 120 TIFF images and 120 PNG masks, plus code and the Cellpose model weights.
+  Images are 70 xy, 26 xz and 24 yz slices cropped from z-stacks (2D views of 3D data). Microscopes: Zeiss AiryScan
+  880/980, Olympus spinning disk, GE DeltaVision Elite; first modality is an approximation. The 108/12 train/test
+  split is made in the training notebook (train_test_split, random_state=666), not shipped as a file list. License:
+  CaltechDATA record and the zip''s LICENSE file are BSD-3-Clause (record typed Software); the paper is CC BY. enricher:
+  voxel size set to null (was 117x117): the files keep native pixel sizes that differ per file (TrainDataFiles.csv
+  xScale/yScale, um; e.g. 35.4, 33.9, 35.3, 64.6, 65, 108.3 nm for xy views; xz/yz views anisotropic, e.g. 5.08
+  x 33.9 nm); the 0.117 um/px of the paper is applied by the notebook at training time. enricher: formats + png
+  (masks); splits_provided false.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Cellpose_germlineNuclei-1.0_2023.zip  1 file, 94,046,673 bytes (262 members, 160,575,913 bytes unpacked)\n\
+      \  Cellpose_germlineNuclei-1.0_2023/\n    LICENSE, README.md, .gitignore, README_images/*.png (7)\n    Cellpose_germlineNuclei/\
+      \  acdcSegment.py, model weights (2 files, 26.6 MB)\n    training/  train notebook (.ipynb), train_requirements.txt\n\
+      \      trainingData/TrainDataFiles.csv\n      trainingData/tifs/<n>_{xy,xz,yz}.tif     120 files, 120.6 MB\n\
+      \      trainingData/masks/<n>_{xy,xz,yz}_masks.png  120 files, 13.0 MB"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.caltech.edu/records/3yvt7-dm257/files/Cellpose_germlineNuclei-1.0_2023.zip?download=1::Cellpose_germlineNuclei-1.0_2023/training/trainingData/tifs/63_xy.tif
+    - https://data.caltech.edu/records/3yvt7-dm257/files/Cellpose_germlineNuclei-1.0_2023.zip?download=1::Cellpose_germlineNuclei-1.0_2023/training/trainingData/masks/63_xy_masks.png
+    size_bytes: 71043
+    description: 'Smallest pair: 63_xy.tif (195x171 uint16) and its instance mask'
+  arrays:
+  - role: raw
+    path_pattern: Cellpose_germlineNuclei-1.0_2023/training/trainingData/tifs/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 642
+    - 804
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 39996
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Single-page ImageJ TIFFs, one grey channel; 2D xy, xz or yz views (view in the file name and
+      in TrainDataFiles.csv). Shapes vary (e.g. 642x804, 149x1996, 1564x149).
+  - role: label
+    path_pattern: Cellpose_germlineNuclei-1.0_2023/training/trainingData/masks/*_masks.png
+    format: png
+    axes: yx
+    shape:
+    - 642
+    - 804
+    shape_varies: true
+    dtype: uint16
+    compression: png
+    value_range: null
+    encoding: instance-ids
+    classes:
+    - id: null
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: 'Pairing: tifs/<n>_<view>.tif <-> masks/<n>_<view>_masks.png (also listed in TrainDataFiles.csv).
+      All 120 pairs have identical shapes. 99 masks are uint16, 21 uint8; 3-73 nucleus IDs per mask (0 = background).'
+  notes: 'Downloaded the whole zip (94,046,673 bytes; the dataset is this one file, size from the CaltechDATA files
+    API) and read all 120 TIFFs and masks locally: TIFFs uint16, uncompressed, single page, ImageJ headers, value
+    range 0-39996 over all files; masks PNG, same shape as their TIFF, instance IDs. tools/listing.py and peek_archive.py
+    could not read the zip remotely (the download URL redirects to a 60 s presigned caltech2.osn.mghpcc.org URL
+    that rejects HEAD), so zip-member sample URLs fail the remote zip index check; the whole zip is range-readable.
+    Voxel size: per-file pixel sizes from TrainDataFiles.csv (xScale/yScale, um), confirmed by the TIFF XResolution
+    of 0_xy.tif (28.265 px/um = 0.0354 um); no single value, so voxel_size_nm is null. Hosts data.caltech.edu (redirect
+    to caltech2.osn.mghpcc.org) not on the TensorSwitch allowlist. Normalization unknown (docs say nothing).'
