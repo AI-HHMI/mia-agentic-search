@@ -1,0 +1,146 @@
+schema_version: '1.2'
+id: zenodo-21704195-rock-thin-section-minerals
+title: Registered Angular Mineral Segmentation Dataset
+short_name: Rock thin-section mineral segmentation (PPL/XPL)
+description: Polarized-light microscopy images of 97 igneous and metamorphic rock thin sections (one plane-polarized and seven
+  cross-polarized images per section, registered so each group shares one mask) with pixel-level semantic masks for eight
+  mineral classes plus background; train/val split.
+landing_url: https://zenodo.org/records/21704195
+doi: 10.5281/zenodo.21704195
+repository: Zenodo
+accession: '21704195'
+authors:
+- Jiashun Zhu
+- Jie Yang
+publications: []
+date_published: '2026-02-14'
+imaging:
+  modality:
+  - other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism: []
+  sample: Rock thin sections (igneous and metamorphic), plane- and cross-polarized light
+  labels_stains: []
+data:
+  formats:
+  - jpeg
+  - png
+  size_bytes: 597730361
+  n_items: 776
+  access: open
+  download_url: https://zenodo.org/api/records/21704195/files/Registered%20Angular%20Mineral%20Segmentation%20Dataset.zip/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: PNG palette masks, uint8 class IDs 0-8 (0 = background), 1280x1024, one per thin-section group shared by its 8 images
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-11T14:51:57Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/21704195
+  - https://zenodo.org/api/records/21704195/files/README.md
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-11T16:22:00Z'
+notes: 'Modality is polarized-light (PPL/XPL) microscopy of rock thin sections, which has no schema value, so modality is
+  other. Derived from the Nanjing University Rock Thin Section Image Dataset (10.11922/sciencedb.j00001.00097); also on Figshare
+  and IEEE DataPort (10.21227/sa8g-wr95). Zip listing (peek_archive) and README: 776 JPEG images (1280x1024 RGB) and 97 PNG
+  masks in train/ and val/, plus dataset_composition.csv; the Zenodo description says 9,231 masks, but the zip holds 97 mask
+  files shared by the 8 registered images of each section (n_items is the image count, 776). Masks made with SAM and reviewed
+  by geologists (source mixed). Pixel size not stated on the Zenodo page or README. No paper cited on the Zenodo page. enricher:
+  channels 3 (RGB JPEG, README; was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Registered Angular Mineral Segmentation Dataset.zip (597.7 MB)\n  README.md, dataset_composition.csv          2\
+      \ files   30.6 KB\n  train/image/<group>_<1-8>.jpg             712 files  549.2 MB\n  train/mask/<group>.png       \
+      \              89 files    1.6 MB\n  val/image/<group>_<1-8>.jpg                64 files   50.6 MB\n  val/mask/<group>_1.png\
+      \                      8 files  164.4 KB"
+    n_files: 875
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/21704195/files/Registered%20Angular%20Mineral%20Segmentation%20Dataset.zip/content::train/image/Anorthosite-1_1.jpg
+    - https://zenodo.org/api/records/21704195/files/Registered%20Angular%20Mineral%20Segmentation%20Dataset.zip/content::train/mask/Anorthosite-1.png
+    size_bytes: 528394
+    description: PPL image Anorthosite-1_1.jpg and its group mask Anorthosite-1.png (train split)
+  arrays:
+  - role: raw
+    path_pattern: '{train,val}/image/*.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1024
+    - 1280
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 207
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB colour photomicrographs; suffix _1 = PPL, _2.._8 = XPL at 0-90 degrees in 15 degree steps (README)
+  - role: label
+    path_pattern: '{train,val}/mask/*.png'
+    format: png
+    axes: yx
+    shape:
+    - 1024
+    - 1280
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 3
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: olivine
+    - id: 2
+      name: pyroxene
+    - id: 3
+      name: plagioclase
+    - id: 4
+      name: alkali feldspar
+    - id: 5
+      name: quartz
+    - id: 6
+      name: biotite
+    - id: 7
+      name: muscovite
+    - id: 8
+      name: hornblende
+    alignment: same-grid
+    alignment_notes: 'one mask per thin-section group shared by its 8 registered images: train mask = image name without the
+      trailing _<index> (.png); val masks are named <group>_1.png although the README says <group>.png. Palette PNG, values
+      are class ids (README).'
+  notes: 'Listing: complete Zenodo listing with zip members (listing.py, 875 members, 597,730,361 bytes). Samples (one per
+    array kind, 1.35 MB): train Anorthosite-1_1.jpg 1024x1280x3 uint8 [0,207], mask {0,2,3}; val Dunite-3_2.jpg [0,255], mask
+    Dunite-3_1.png {0,1}; value_range from one sample. Pairing deviation: val/mask files carry a _1 suffix (8 files), train
+    masks do not. Voxel size not found; checked: JPEG/PNG headers (no calibration), Zenodo API description, README.md and
+    dataset_composition.csv in the zip, figshare copy 33122762, upstream ScienceDB record (JS-only page, no readable text);
+    no paper is cited. Organism not applicable (rock).'
