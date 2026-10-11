@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: leapmanlab-platelet-em-sbf-sem-dense-segmentation
 title: Platelet SBF-SEM volumes with dense 7-class organelle labels (Guay et al.)
 short_name: Platelet SBF-SEM dense organelle labels
-description: 'Labeled serial block-face SEM subvolumes of human blood platelets from
-  two donors with manual 7-class semantic labels (background, cell, mitochondrion,
-  alpha granule, canalicular vessel, dense granule, dense granule core): train 50x800x800,
-  evaluation 24x800x800 (donor 1) and a held-out test volume 121x609x400 (donor 2).'
+description: 'Labeled serial block-face SEM subvolumes of human blood platelets from two donors with manual
+  7-class semantic labels (background, cell, mitochondrion, alpha granule, canalicular vessel, dense granule,
+  dense granule core): train 50x800x800, evaluation 24x800x800 (donor 1) and a held-out test volume 121x609x400
+  (donor 2).'
 landing_url: https://leapmanlab.github.io/dense-cell/
 doi: null
 repository: LabWebsite
@@ -31,28 +31,27 @@ imaging:
     x: 10
     y: 10
     z: 40
-  channels: null
+  channels: 1
   organism:
   - Homo sapiens
-  sample: Human blood platelets from two donors (NIBIB/NIH with University of Arkansas
-    for Medical Sciences)
+  sample: Human blood platelets from two donors (NIBIB/NIH with University of Arkansas for Medical Sciences)
   labels_stains: []
 data:
   formats:
   - tiff
-  size_bytes: 180000000
+  size_bytes: 188671885
   n_items: 3
   access: open
-  download_url: null
-  download_method: other
+  download_url: https://www.dropbox.com/s/68yclbraqq1diza/platelet_data_1219.zip?dl=1
+  download_method: http
 annotations:
   present: true
   types:
   - semantic-segmentation
   - organelle
   coverage: dense
-  format: Label volumes with 7 classes (0-6) per split; per-cell and per-organelle
-    instance maps for train and eval (Hugging Face mirror packaging)
+  format: 'multipage TIFF label volumes (uint16, values 0-6) per split: train/eval/test-labels.tif; train-error-weights.tif
+    is a per-voxel weighting array'
   source: proofread
 ml:
   tasks:
@@ -70,21 +69,111 @@ provenance:
   - https://leapmanlab.github.io/dense-cell/
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7844272/fullTextXML
   - https://huggingface.co/datasets/MedOtter/3D-Platelet-EM/raw/main/README.md
-  confidence: 0.65
+  - https://www.dropbox.com/s/68yclbraqq1diza/platelet_data_1219.zip?dl=1
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: false
-  annotations_verified: false
-  last_checked: '2026-10-11T04:29:10Z'
-notes: 'Original release: the lab page links a Dropbox ZIP (platelet_data_1219.zip,
-  about 180 MB) with images, labels and a training error-weighting array; no license
-  or terms on that page, so license is unknown. The class scheme, volume sizes (50x800x800,
-  24x800x800, 121x609x400) and the 40x10x10 nm voxel size (z,y,x) come from the Hugging
-  Face mirror card MedOtter/3D-Platelet-EM (which says it follows the official distribution)
-  and the paper''s description of the subvolumes; the paper text read does not state
-  a voxel size (it says volumes were binned by 2 in x and y). The mirror also says
-  the released integer encoding swaps alpha granule and canalicular vessel relative
-  to the paper''s prose. The ZIP contents were not listed (Dropbox link, not opened),
-  so formats and file counts are taken from the mirror and unverified; labels are
-  manual (Amira, tool-assisted) and repeatedly expert-reviewed per the paper. n_items
-  counts the three volumes.'
+  annotations_verified: true
+  last_checked: '2026-10-11T04:35:34Z'
+notes: 'Original release: the lab page links a Dropbox ZIP (platelet_data_1219.zip, about 180 MB) with
+  images, labels and a training error-weighting array; no license or terms on that page, so license is
+  unknown. The class scheme, volume sizes (50x800x800, 24x800x800, 121x609x400) and the 40x10x10 nm voxel
+  size (z,y,x) come from the Hugging Face mirror card MedOtter/3D-Platelet-EM (which says it follows the
+  official distribution) and the paper''s description of the subvolumes; the paper text read does not
+  state a voxel size (it says volumes were binned by 2 in x and y). The mirror also says the released
+  integer encoding swaps alpha granule and canalicular vessel relative to the paper''s prose.  labels
+  are manual (Amira, tool-assisted) and repeatedly expert-reviewed per the paper. n_items counts the three
+  volumes. enricher: zip listed and eval pair sampled; size from the listing; download_url is the direct
+  Dropbox zip.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "platelet_data_1219.zip  188,671,885 bytes (Dropbox)\n  platelet_data/\n    train-images.tif\
+      \         64.0 MB   [50, 800, 800]\n    train-labels.tif          1.1 MB   [50, 800, 800] uint16\n\
+      \    train-error-weights.tif 256.0 MB\n    eval-images.tif          30.7 MB   [24, 800, 800] uint16\n\
+      \    eval-labels.tif           0.4 MB   [24, 800, 800] uint16\n    test-images.tif          59.0\
+      \ MB\n    test-labels.tif           0.4 MB\n  (sizes uncompressed; lab page also links example1-3_0105.zip)"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://www.dropbox.com/s/68yclbraqq1diza/platelet_data_1219.zip?dl=1::platelet_data/eval-images.tif
+    - https://www.dropbox.com/s/68yclbraqq1diza/platelet_data_1219.zip?dl=1::platelet_data/eval-labels.tif
+    size_bytes: 28692209
+    description: 'the eval split: one 24x800x800 image volume and its label volume'
+  arrays:
+  - role: raw
+    path_pattern: platelet_data/*-images.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 24
+    - 800
+    - 800
+    shape_varies: true
+    dtype: uint16
+    compression: unknown
+    value_range:
+    - 32772
+    - 51944
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One multipage TIFF per split (train 50, eval 24, test 121 slices per the mirror card);
+      tifffile reads the eval file as ZYX.
+  - role: label
+    path_pattern: platelet_data/*-labels.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 24
+    - 800
+    - 800
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 6
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: cell
+    - id: 2
+      name: mitochondrion
+    - id: 3
+      name: alpha granule
+    - id: 4
+      name: canalicular vessel
+    - id: 5
+      name: dense granule
+    - id: 6
+      name: dense granule core
+    alignment: same-grid
+    alignment_notes: '<split>-labels.tif pairs with <split>-images.tif, same shape. Class names from the
+      HF mirror card, which says the integer order of alpha granule (3) and canalicular vessel (4) is
+      swapped relative to the paper prose. Axes zyx: same shape as the ZYX image (probe: shaped TIFF,
+      axis order not stored).'
+  - role: other
+    path_pattern: platelet_data/train-error-weights.tif
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: unknown
+    alignment_notes: Per-voxel training error weighting array (lab page); not probed.
+  notes: 'Listing: tools/listing.py --expand-zips on the Dropbox ?dl=1 link (complete, 188,671,885 bytes,
+    7 TIFF members). Probed train/eval labels ([50|24, 800, 800] uint16 deflate). Sampled eval-images.tif
+    (28,260,064 bytes downloaded; 24x800x800 uint16, 32772-51944, mean 44128) and eval-labels.tif (432,145
+    bytes; values 0-6, 45 % background). Values from one sample. voxel size 10x10x40 nm stays from the
+    HF mirror card (~40 x 10 x 10 nm, z y x); not in the TIFF headers; the paper text read gives no value.
+    license not found; checked: lab page (no terms), zip member list (no LICENSE), HF mirror card (says
+    "nih-public-release" linking back to the lab page, which states none). Download links: zip and members
+    are range-readable but www.dropbox.com is not on the TensorSwitch allowlist.'
