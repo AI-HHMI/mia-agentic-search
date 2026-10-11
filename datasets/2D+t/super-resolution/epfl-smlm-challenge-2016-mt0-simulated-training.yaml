@@ -1,0 +1,141 @@
+schema_version: '1.2'
+id: epfl-smlm-challenge-2016-mt0-simulated-training
+title: SMLM Challenge 2016 simulated microtubule training datasets (MT0, public ground truth)
+short_name: Simulated SMLM microtubules, 2D/3D (STORM)
+description: Simulated Alexa647-like STORM image sequences of microtubules (MT0.N1/N2, low and high density)
+  in 2D, astigmatic, biplane and double-helix 3D modalities, released as training data for the 2016 EPFL
+  SMLM software challenge with public ground-truth molecule positions.
+landing_url: https://srm.epfl.ch/srm/dataset/challenge-3D-simulation/index.html
+doi: null
+repository: LabWebsite
+accession: null
+authors:
+- Daniel Sage
+- Thanh-An Pham
+- Hazen Babcock
+- Michael Unser
+- Seamus Holden
+publications:
+- title: 'Super-resolution fight club: assessment of 2D and 3D single-molecule localization microscopy
+    software'
+  doi: 10.1038/s41592-019-0364-4
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC6684258/
+date_published: '2016-06-07'
+imaging:
+  modality:
+  - super-resolution
+  dimensionality: 2D+t
+  voxel_size_nm:
+    x: 100
+    y: 100
+    z: null
+  channels: 1
+  organism: []
+  sample: Simulated microtubules (25 nm diameter) in a 6.4 x 6.4 x 1.5 um field of view; camera pixel
+    size 100 nm, 64 x 64 px
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 3389790250
+  n_items: 4
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - points
+  coverage: dense
+  format: 'CSV per training set in sample/: activations.csv (Ground-truth id, frame, xnano, ynano, znano,
+    intensity), positions.csv (x, y, z in nm) and per-frame statistics'
+  source: automatic
+ml:
+  tasks:
+  - detection
+  - super-resolution
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-11T04:28:50Z'
+  evidence_urls:
+  - https://srm.epfl.ch/srm/dataset/challenge-3D-simulation/index.html
+  - https://srm.epfl.ch/srm/dataset/challenge-3D-simulation/MT0.N1.LD/index.html
+  - https://pmc.ncbi.nlm.nih.gov/articles/PMC6684258/
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-11T04:46:21Z'
+notes: 'Covers the four training sets with public ground truth (MT0.N1/N2, LD/HD); contest sets (MT1-4,
+  ER1-2) have secret ground truth and are excluded. Only the MT0.N1.LD subpage was read in full: 19,996
+  frames, 64x64 px, 100 nm pixel, 16-bit TIFF zips (115-235 MB per modality), ground-truth CSVs listed;
+  the other three sets come from the overview table only. Simulated data. No license or terms found on
+  the dataset pages or in the paper''s availability statement. enricher: all four subpages listed (48
+  zips + 20 CSVs, 3.39 GB); n_items counts the 4 training sets; CSV columns read.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "srm.epfl.ch/srm/  68 files, 3,389,790,250 bytes\n  Data/challenge-3D-simulation/MT0.{N1,N2}.{LD,HD}/Data/\n\
+      \    sequence-<set>-<modality>-as-stack.zip   1 multipage tif each\n    sequence-<set>-<modality>-as-list.zip\
+      \    one tif per frame (LD 19,996 / HD 2,500)\n    modalities: 2D-Exp, AS-Exp, BP+250, BP-250, BP-Exp,\
+      \ DH-Exp  (12 zips per set)\n  dataset/challenge-3D-simulation/MT0.{N1,N2}.{LD,HD}/sample/\n   \
+      \ activations.csv, positions.csv, stats_activation_{fluos,frames,sumary}.csv"
+    n_files: 68
+    listing_complete: true
+  sample:
+    urls:
+    - https://srm.epfl.ch/srm/Data/challenge-3D-simulation/MT0.N1.HD/Data/sequence-MT0.N1.HD-2D-Exp-as-stack.zip::sequence-as-stack-MT0.N1.HD-2D-Exp.tif
+    - https://srm.epfl.ch/srm/dataset/challenge-3D-simulation/MT0.N1.HD/sample/activations.csv
+    size_bytes: 16592155
+    description: 'MT0.N1.HD 2D modality: 2,500-frame stack and its ground-truth activations table'
+  arrays:
+  - role: raw
+    path_pattern: MT0.*/Data/sequence-*-as-stack.zip
+    format: tiff
+    axes: tyx
+    shape:
+    - 2500
+    - 64
+    - 64
+    shape_varies: true
+    dtype: uint16
+    compression: unknown
+    value_range:
+    - 337
+    - 13312
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 'One multipage TIFF of camera frames per zip (tifffile reads ZYX; the pages are time
+      frames: 2,500 for HD, 19,996 for LD). The -as-list zips hold the same frames as single TIFFs. BP-Exp
+      zips are about twice the size of the others (contents not checked).'
+  - role: label
+    path_pattern: MT0.*/sample/activations.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: points-table
+    classes: null
+    alignment: transform-provided
+    alignment_notes: 'Columns: Ground-truth (emitter id), frame, xnano, ynano, znano, intensity; positions
+      in nm in the simulated 6.4 x 6.4 um field (100 nm camera pixels), so pixel = nm / 100. positions.csv
+      lists the x, y, z of each fluorophore. One sample/ folder per training set page.'
+  notes: 'Listing: tools/listing.py on all 68 file URLs of the four MT0 subpages (48 zips + 20 CSVs),
+    complete with exact sizes (3,389,790,250 bytes; 269,976 zip members). Sampled sequence-as-stack-MT0.N1.HD-2D-Exp.tif
+    from its zip (14,921,437 bytes): 2500x64x64 uint16, 337-13312, mean 815 (one sample); normalization
+    none inferred (simulated camera counts, no clipping). Read the first lines of MT0.N1.HD activations.csv
+    and positions.csv. voxel size 100 nm camera pixel stays from the dataset page; not in the TIFF header.
+    license not found; checked: dataset overview and four subpages, zip member names, paper availability
+    statement (harvest). Downloads: zips, members and CSVs are range-readable, but srm.epfl.ch is not
+    on the TensorSwitch allowlist; no single archive.'
