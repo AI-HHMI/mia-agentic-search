@@ -2,10 +2,11 @@ schema_version: '1.2'
 id: zenodo-15083188-glioma-c6-phase-contrast
 title: 'Glioma C6: a dataset for training and benchmarking cell segmentation'
 short_name: Glioma C6 cell segmentation (phase-contrast)
-description: 75 high-resolution phase-contrast microscopy images of rat C6 glioma cells with manually annotated
-  masks in COCO format (about 12,000 cell instances and 7,800 nuclei per the Zenodo record). The C6-spec subset
-  (45 images, 10x, 24 h) has train/valid/test splits and distinguishes Type A and Type B cells; the C6-gen subset
-  (30 images, 10x and 20x, 24 h or 72 h after seeding) has general cell instances and is meant to test generalization.
+description: 75 high-resolution phase-contrast microscopy images of rat C6 glioma cells with manually
+  annotated masks in COCO format (about 12,000 cell instances and 7,800 nuclei per the Zenodo record).
+  The C6-spec subset (45 images, 10x, 24 h) has train/valid/test splits and distinguishes Type A and Type
+  B cells; the C6-gen subset (30 images, 10x and 20x, 24 h or 72 h after seeding) has general cell instances
+  and is meant to test generalization.
 landing_url: https://zenodo.org/records/15083188
 doi: 10.5281/zenodo.15083188
 repository: Zenodo
@@ -28,15 +29,17 @@ imaging:
   - phase-contrast
   dimensionality: 2D
   voxel_size_nm: null
-  channels: 1
+  channels: 3
   organism:
   - Rattus norvegicus
-  sample: C6 glioma cell line (ATCC CCL-107) in culture, imaged on a BestScope BS-2092 with 10x and 20x objectives
+  sample: C6 glioma cell line (ATCC CCL-107) in culture, imaged on a BestScope BS-2092 with 10x and 20x
+    objectives
   labels_stains: []
 data:
   formats:
   - tiff
-  size_bytes: null
+  - png
+  size_bytes: 949444358
   n_items: 75
   access: open
   download_url: https://zenodo.org/records/15083188/files/dataset.zip
@@ -64,15 +67,95 @@ provenance:
   - https://zenodo.org/records/15083188
   - https://arxiv.org/html/2511.07286v1
   - https://arxiv.org/abs/2511.07286
+  - https://zenodo.org/api/records/15083188
   confidence: 0.85
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T18:30:00Z'
-notes: 'Pixel size is not stated on the Zenodo record or in the arXiv abstract/HTML text I read (paper only
-  available as a preprint, not in Europe PMC), so voxel_size_nm is null. Images are 8-bit 2592x1944 TIFFs; the
-  zip (945.5 MB, 79 files: 75 .tif + 4 COCO .json) was listed with peek_archive. Zenodo shows a newer version of
-  this record exists; this entry points at v1.1 (2025-03-25). size_bytes left null: the zip is 945.5 MB compressed,
-  1047.2 MB uncompressed. The Zenodo page lists about 12,000 cells and 7,800 nuclei; the split of nuclei between subsets is
-  not stated.'
+  last_checked: '2026-10-11T19:05:00Z'
+notes: 'Pixel size is not stated on the Zenodo record or in the arXiv abstract/HTML text I read (paper
+  only available as a preprint, not in Europe PMC), so voxel_size_nm is null. Images are 8-bit 2592x1944
+  TIFFs; the zip (945.5 MB, 79 files: 75 .tif + 4 COCO .json) was listed with peek_archive. Zenodo shows
+  a newer version of this record exists; this entry points at v1.1 (2025-03-25). The Zenodo page lists
+  about 12,000 cells and 7,800 nuclei; the split of nuclei between subsets is not stated. enricher: TIFFs
+  are RGB (3 samples, not identical in the sample; channels was 1); size_bytes from the Zenodo listing;
+  formats add png (spec_24h_10x_17.png preview).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "dataset.zip (945.5 MB)\n  dataset/spec/train/images/spec_24h_10x_<n>.tif   30   + anno_train.json\
+      \ (COCO)\n  dataset/spec/valid/images/spec_24h_10x_<n>.tif    4   + anno_valid.json\n  dataset/spec/test/images/spec_24h_10x_<n>.tif\
+      \    11   + anno_test.json\n  dataset/gen/images/gen_{24h_20x,72h_10x}_<n>.tif 30 (20 + 10) + anno_gen.json\n\
+      spec_24h_10x_17.png (3.9 MB, preview image)\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/15083188/files/dataset.zip::dataset/spec/valid/images/spec_24h_10x_43.tif
+    - https://zenodo.org/records/15083188/files/dataset.zip::dataset/spec/valid/anno_valid.json
+    size_bytes: 15590562
+    description: One Glioma C6-spec validation image and the COCO file of the validation split (4 images)
+  arrays:
+  - role: raw
+    path_pattern: dataset.zip::dataset/*/images/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 1944
+    - 2592
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: unknown
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB TIFF (tifffile axes YXS; samples differ), 2592 x 1944 px as stated on Zenodo.
+  - role: label
+    path_pattern: dataset.zip::dataset/spec/*/anno_*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: polygons
+    classes:
+    - id: 1
+      name: cellA
+    - id: 2
+      name: cellB
+    - id: 3
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: 'COCO polygons keyed by images[].file_name (e.g. spec_24h_10x_43.tif, 2592x1944).
+      Zenodo: Type A = spheroid cells (unattached or starting division), Type B = elongated growing cells.
+      anno_valid.json: 4 images, 1,435 objects (cellA 555, cellB 183, nucleus 697).'
+  - role: label
+    path_pattern: dataset.zip::dataset/gen/anno_gen.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: polygons
+    classes: null
+    alignment: same-grid
+    alignment_notes: COCO polygons for the gen subset; per Zenodo general cell instances only (no types,
+      no nuclei); not opened.
+  notes: 'Listing: tools/listing.py --expand-zips on the Zenodo record: 2 files (dataset.zip + preview
+    PNG), 949,444,358 bytes, complete, exact; 75 TIFF + 4 COCO JSON in the zip. probe.py could not read
+    the deflated TIFF members ("unpack requires a buffer of 2 bytes"); sample.py read gen_72h_10x_25.tif
+    (10.7 MB): 1944x2592x3 uint8, range [0,255] (p0.1 149, p99.9 234), one sample. Read anno_valid.json
+    (1.8 MB) with peek_archive.read_member. Voxel size not found; checked: TIFF via sample.py (no calibration
+    reported), Zenodo API description (objectives 10x/20x, image size in px only), arXiv 2511.07286 HTML
+    (by harvester; not re-read). download_url is the zip (direct, usable).'
