@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-7383295-kuvesg-cleared-cortex-vasculature
 title: KUVESG
 short_name: Mouse cortex vasculature masks (cleared, confocal)
-description: Confocal images of mouse cortex vasculature from 3DISCO-cleared brain slices (1 mm thick, THF/DBE clearing) imaged
-  on a Leica TCS SP8 multiphoton system, with the vessels labelled by premortem transcardial perfusion of gelatin-albumin-FITC.
-  The record provides 156 original JPEG images and 156 matching JPEG ground-truth images for vessel segmentation.
+description: Confocal images of mouse cortex vasculature from 3DISCO-cleared brain slices (1 mm thick, THF/DBE clearing) imaged on a
+  Leica TCS SP8 multiphoton system, with the vessels labelled by premortem transcardial perfusion of gelatin-albumin-FITC. The record
+  provides 156 original JPEG images and 156 matching JPEG ground-truth images for vessel segmentation.
 landing_url: https://zenodo.org/records/7383295
 doi: 10.5281/zenodo.7383295
 repository: Zenodo
@@ -37,7 +37,7 @@ data:
   size_bytes: 6179933
   n_items: 156
   access: open
-  download_url: https://zenodo.org/api/records/7383295/files/original.zip/content
+  download_url: https://zenodo.org/records/7383295/files/original.zip
   download_method: http
 annotations:
   present: true
@@ -67,10 +67,69 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T23:16:22Z'
-notes: 'Zenodo API record read and both zips listed with peek_archive: original.zip (156 JPEG, 3.4 MB) and ground_truth.zip (156
-  JPEG, 2.8 MB) with matching numbers 1.jpg, 2.jpg, ... The record description does not say who made the ground truth or how, whether
-  the ground truth is binary, the image size, pixel size, magnification, or whether the images are single optical sections or projections;
-  none was found in the Koç University research-data entry either. No associated paper was found in Europe PMC, Crossref or by web
-  search, so publications is empty. Classification of the annotation type as semantic-segmentation follows the dataset name and ground_truth
+  last_checked: '2026-10-11T01:05:00Z'
+notes: 'Zenodo API record read and both zips listed with peek_archive: original.zip (156 JPEG, 3.4 MB) and ground_truth.zip (156 JPEG,
+  2.8 MB) with matching numbers 1.jpg, 2.jpg, ... The record description does not say who made the ground truth or how, whether the
+  ground truth is binary, the image size, pixel size, magnification, or whether the images are single optical sections or projections;
+  none was found in the Koç University research-data entry either. No associated paper was found in Europe PMC, Crossref or by web search,
+  so publications is empty. Classification of the annotation type as semantic-segmentation follows the dataset name and ground_truth
   folder; the masks themselves were not opened. size_bytes is the sum of the two zips.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'original.zip/original/{1..156}.jpg          156 files  3.5 MB (uncompressed)
+
+      ground_truth.zip/ground_truth/{1..156}.jpg  156 files  3.2 MB (uncompressed)
+
+      '
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7383295/files/original.zip::original/80.jpg
+    - https://zenodo.org/records/7383295/files/ground_truth.zip::ground_truth/80.jpg
+    size_bytes: 81875
+    description: One confocal image and its ground-truth vessel mask (image 80)
+  arrays:
+  - role: raw
+    path_pattern: original.zip::original/*.jpg
+    format: jpeg
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 185
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: ground_truth.zip::ground_truth/*.jpg
+    format: jpeg
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: Pairing by file name (original/<n>.jpg <-> ground_truth/<n>.jpg). Same 512x512 grid. Masks are 0/255 stored as
+      lossy JPEG, so edge pixels take intermediate values (100 distinct values in one sample); threshold at 128 before use.
+  notes: 'Exact listing of both zips via the Zenodo API (2 files, 6,179,933 bytes; 312 zip members). Probed original/1.jpg and ground_truth/1.jpg:
+    512x512 uint8 greyscale JPEG. Sampled pair 80 (82 KB): raw min 0 max 185 mean 29 (one sample); mask 67% zeros, p1 0, p99 255 (binary
+    0/255 with JPEG artefacts). Pair 1 is nearly blank (raw max 7, mask all 0), so some images have no vessels. Classes are from the
+    dataset name and the ground_truth folder; the record states no class map. voxel size not found; checked: JPEG headers (no calibration),
+    Zenodo API record (description only), Koc University research-data entry, Europe PMC / Crossref / web search for a paper (none).
+    Annotation source not stated anywhere.'
