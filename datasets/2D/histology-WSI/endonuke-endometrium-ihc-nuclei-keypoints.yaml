@@ -1,0 +1,157 @@
+schema_version: '1.2'
+id: endonuke-endometrium-ihc-nuclei-keypoints
+title: 'EndoNuke: Nuclei Detection Dataset for Estrogen and Progesterone Stained IHC Endometrium Scans'
+short_name: Endometrium IHC nuclei keypoints (EndoNuke)
+description: Image tiles of 100 um x 100 um cut from immunohistochemistry (estrogen and progesterone) stained endometrium scans, with
+  every nucleus annotated as a keypoint (x, y, class) as stroma, epithelium or other. The archive holds 1,780 labelled tiles as PNG
+  with matching larger context images (9 times larger, unannotated), per-tile JSON metadata and label files, including subsets annotated
+  by several annotators for agreement analysis.
+landing_url: https://endonuke.ispras.ru/
+doi: null
+repository: LabWebsite
+accession: null
+authors: []
+publications:
+- title: 'EndoNuke: Nuclei Detection Dataset for Estrogen and Progesterone Stained IHC Endometrium Scans'
+  doi: 10.3390/data7060075
+  url: https://doi.org/10.3390/data7060075
+date_published: null
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: endometrium tissue sections immunohistochemically stained for estrogen and progesterone receptors
+  labels_stains:
+  - estrogen receptor IHC
+  - progesterone receptor IHC
+data:
+  formats:
+  - png
+  size_bytes: 2189657986
+  n_items: 1780
+  access: open
+  download_url: https://ispras.ru/conf/endonuke/data.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - points
+  coverage: dense
+  format: per-tile .txt with one line per nucleus (x, y, class 0 stroma / 1 epithelium / 2 other), JSON metadata and master YAML file
+    lists
+  source: manual
+ml:
+  tasks:
+  - detection
+  - classification
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/ispras/endometrium-dataset-analysis
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-10T23:16:22Z'
+  evidence_urls:
+  - https://endonuke.ispras.ru/
+  - https://ispras.ru/conf/endonuke/data.zip
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.3390%2Fdata7060075%22&format=json&resultType=core&pageSize=3
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-11T01:32:00Z'
+notes: 'Project page read and data.zip listed with peek_archive (2.19 GB, 7,428 files): 1,780 PNG in data/dataset/images, 1,780 PNG
+  in images_context, 2,020 label .txt files (more than tiles because some tiles have several annotators), 1,785 metadata JSON and 7
+  master YAML files. The page says more than 1,600 tiles; tiles with IDs up to 1,600 were manually filtered and higher IDs only by a
+  background script. The paper (Data, MDPI 2022, DOI from Europe PMC) could not be read: Europe PMC has no full text and the MDPI page
+  returned 403, so authors and the exact release date are left empty and pixel size, magnification and scanner are not stated on the
+  project page. The project page says the paper is under review. The dataset has no DOI of its own. Class 2 is other nuclei. No train/test
+  split is defined; master YAML files define subsets (bulk, agreement, unique).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "data.zip  (2,189,657,986 B, 7,428 members)\n  data/dataset/images/<n>.png               1,780 files  224.1 MB  (annotated\
+      \ tiles)\n  data/dataset/images_context/<n>.png       1,780 files  2.0 GB    (3x3 surrounding context)\n  data/dataset/labels/bulk/{ptg1-3,stud1-4}/<n>.txt\
+      \          1,740 files\n  data/dataset/labels/agreement/{hidden,posterior,preliminary}/{ptg1-3,stud1-4}/<n>.txt  280 files\n \
+      \ data/dataset/files_lists/{bulk,agreement/...}/<annotator>/{images,labels}.txt\n  data/dataset/metadata/<n>.json            1,785\
+      \ files  (slide name, top_left, size, annotators)\n  data/master_ymls/*.yaml                   7 files (subset definitions)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://ispras.ru/conf/endonuke/data.zip::data/dataset/images/1033.png
+    - https://ispras.ru/conf/endonuke/data.zip::data/dataset/labels/bulk/ptg1/1033.txt
+    size_bytes: 104000
+    description: Tile 1033 (200x200 RGBA PNG) and pathologist ptg1's keypoints for it
+  arrays:
+  - role: raw
+    path_pattern: data.zip::data/dataset/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 200
+    - 200
+    - 4
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 1
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGBA PNG tiles, 200x200 or 400x400 px (both seen; each tile covers 100x100 um per the project page). metadata/<n>.json
+      gives slide name, top_left and size at level 0 of the source .svs slide.
+  - role: raw
+    path_pattern: data.zip::data/dataset/images_context/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 600
+    - 600
+    - 4
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Unlabelled context around each tile (3x the side length; tile 1033 is 200 px, its context 600 px), same file number
+      as the tile.
+  - role: label
+    path_pattern: data.zip::data/dataset/labels/{bulk/*,agreement/*/*}/*.txt
+    format: csv
+    axes: null
+    shape:
+    - 155
+    - 3
+    shape_varies: true
+    dtype: int64
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: points-table
+    classes:
+    - id: 0
+      name: stroma
+    - id: 1
+      name: epithelium
+    - id: 2
+      name: other
+    alignment: same-grid
+    alignment_notes: One space-separated line per nucleus (x y class) in tile pixel coordinates; file <n>.txt belongs to images/<n>.png.
+      Folders name the annotator (ptg = pathologist, stud = student); some tiles have several annotators (agreement subsets).
+  notes: 'Exact listing of data.zip by range (7,428 members). Probed images 1033, 108, 129, 136, 171, 177 (200x200x4) and 1620 (400x400x4),
+    all RGBA uint8 PNG; 174 of 1,780 tiles are over 250 KB, i.e. likely 400 px. Sampled tile 1033 (102 KB): min 1 max 255 mean 132 (one
+    sample). Read metadata/1033.json, labels/bulk/ptg1/1033.txt (155 points: 109 class 0, 46 class 2) and master_ymls/bulk.yaml. Class
+    names from the project page. voxel size not set: tiles are 100x100 um but 200 or 400 px, so pixel size differs by slide (no single
+    value); checked: PNG headers (no pHYs), project page, the paper (MDPI 403; Europe PMC no full text), GitHub ispras/endometrium-dataset-analysis
+    README (none stated). Host ispras.ru is not on the TensorSwitch allowlist.'
