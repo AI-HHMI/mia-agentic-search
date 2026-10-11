@@ -24,7 +24,7 @@ imaging:
 data:
   formats:
   - jpeg
-  size_bytes: 16200000
+  size_bytes: 367190282
   n_items: 1368
   access: open
   download_url: https://zenodo.org/records/10839527/files/uFTIR_curated_square.v5-uftir_curated_square_2024-03-14.coco-segmentation.zip
@@ -58,8 +58,63 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T01:16:22Z'
+  last_checked: '2026-10-11T02:32:46Z'
 notes: 'Zip listing: 1368 JPEG + train/_annotations.coco.json (5.6 MB) + two Roboflow README files (README.dataset.txt gives license CC BY 4.0 and the Roboflow project uftir-particles/uftir_curated_square).
   All images are in a single train folder, no validation or test split. Images are small (about 12 KB each on average). Not a biological specimen: visible-light micrographs of filters used for
   micro-FTIR microplastic analysis, so brightfield is the closest modality (illumination not stated). Pixel size, magnification, number of annotated particles and annotator are not stated. No paper is linked
-  in the Zenodo record; the record also holds trained weights (.pth, not opened). Category names in the COCO file were not inspected.'
+  in the Zenodo record; the record also holds trained weights (.pth, not opened). enricher: COCO file read: one category particle (id 1, under supercategory
+  particles), 33,806 polygons; size_bytes is now the exact record total incl. the 351 MB weights file (zip alone 16,172,951 B).
+  coverage: 1346 of 1368 images carry at least one particle polygon (median 21, max 77); 22 have none.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  2 files 367,190,282 B\n  neuralNetWeights_V3.pth   (351,017,331 B, Faster R-CNN weights, not opened)\n  uFTIR_curated_square.v5-uftir_curated_square_2024-03-14.coco-segmentation.zip\
+      \  (16,172,951 B)\n    README.dataset.txt  README.roboflow.txt\n    train/<n>_jpg.rf.<hash>.jpg   1368\n    train/_annotations.coco.json\
+      \  (5.6 MB)\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/10839527/files/uFTIR_curated_square.v5-uftir_curated_square_2024-03-14.coco-segmentation.zip::train/96_jpg.rf.edd62429d6107d2f0e3ccd39b6527361.jpg
+    - https://zenodo.org/records/10839527/files/uFTIR_curated_square.v5-uftir_curated_square_2024-03-14.coco-segmentation.zip::train/_annotations.coco.json
+    size_bytes: 5630932
+    description: One 256 x 255 image and the single COCO file that holds the polygons of all images.
+  arrays:
+  - role: raw
+    path_pattern: uFTIR_curated_square.v5-uftir_curated_square_2024-03-14.coco-segmentation.zip/train/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 255
+    - 256
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 79
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB, 255-256 x 255-256 px (COCO width/height of all 1368 images).
+  - role: label
+    path_pattern: uFTIR_curated_square.v5-uftir_curated_square_2024-03-14.coco-segmentation.zip/train/_annotations.coco.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    encoding: polygons
+    classes:
+    - id: 1
+      name: particle
+    alignment: same-grid
+    alignment_notes: COCO annotations (image_id -> images[].file_name) with polygon segmentation and bbox in pixel coordinates of
+      each image; 33,806 annotations, all category 1.
+  notes: 'Listing: Zenodo API + zip central directory (1371 members), complete, exact sizes. Read train/_annotations.coco.json
+    (5,622,436 B) and one image in memory (fsspec zip): categories particles (id 0, supercategory) and particle (id 1); 1368 images,
+    sizes 255/256 x 255/256; 33,806 polygon annotations, all particle. Image 96_jpg.rf.edd6...jpg: RGB uint8 255 x 256, 79-255, channels
+    differ (one sample). README.dataset.txt: Roboflow project uftir-particles/uftir_curated_square, License CC BY 4.0. Voxel size
+    not found; checked: JPEG header, COCO info, both READMEs, Zenodo record description; no paper linked.'
