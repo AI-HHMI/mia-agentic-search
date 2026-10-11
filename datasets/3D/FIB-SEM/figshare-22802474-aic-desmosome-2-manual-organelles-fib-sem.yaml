@@ -53,7 +53,7 @@ imaging:
 data:
   formats:
   - n5
-  size_bytes: null
+  size_bytes: 47458896036
   n_items: 1
   access: open
   download_url: s3://janelia-cosem-datasets/aic_desmosome-2/aic_desmosome-2.n5/
@@ -90,9 +90,83 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T06:39:15Z'
+  last_checked: '2026-10-11T07:03:00Z'
 notes: 'Figshare record (link-only file) and S3 listing read. EM at em/fibsem-uint8; main label group DSM-2_WG_simple-seg_DSM-ER-KRT-PM-endo
   (3217 x 447 x 1584, x y z, uint8, 8 nm); only a sub-region is labelled (partial). Paper Methods (PMC author manuscript):
   ER, mitochondria, plasma membrane from COSEM network predictions; keratin, ribosomes, desmosome plaque from ilastik;
-  then proofread, microtubules and endosomes by hand, so source is mixed. *_pred groups are predictions. Label encodings
-  and total size not inspected.'
+  then proofread, microtubules and endosomes by hand, so source is mixed. *_pred groups are predictions. enricher:
+  main label group holds semantic ids 0-5 (decoded chunks); size estimated from shapes.'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "aic_desmosome-2.n5/\n  em/fibsem-uint8/s0..         8 nm, zyx 6566 x 1302 x 5285 uint8, blosc-zstd, chunks\
+      \ 64^3\n  labels/DSM-2_WG_simple-seg_DSM-ER-KRT-PM-endo/s0..s7   8 nm, zyx 1584 x 447 x 3217 uint8, chunks\
+      \ 128^3, offset\n  labels/DSM-2_WG_COSEM_ER_SEG/  DSM-2_WG_COSEM_PM/  DSM-2_WG_DSM-ODP_filtered/  DSM-2_WG_split-by-cell_ER-KRT-endo/\n\
+      \  labels/{ecs,endo,er-mem,er,mito-mem,mito,nucleus,pm,vesicle-mem,vesicle}_{seg,pred}/   (er_seg s0: 4 nm,\
+      \ zyx 13132 x 2604 x 10570, gzip)\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://janelia-cosem-datasets.s3.amazonaws.com/aic_desmosome-2/aic_desmosome-2.n5/em/fibsem-uint8
+    - https://janelia-cosem-datasets.s3.amazonaws.com/aic_desmosome-2/aic_desmosome-2.n5/labels/DSM-2_WG_simple-seg_DSM-ER-KRT-PM-endo
+    size_bytes: null
+    description: The EM N5 multiscale group and the main proofread label group (chunked stores, read remotely).
+  arrays:
+  - role: raw
+    path_pattern: aic_desmosome-2.n5/em/fibsem-uint8
+    format: n5
+    axes: zyx
+    shape:
+    - 6566
+    - 1302
+    - 5285
+    shape_varies: false
+    dtype: uint8
+    compression: blosc
+    value_range:
+    - 75
+    - 144
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Multiscale s0..; s0 scale 8 nm, translate 0 (N5 attributes, axes listed x,y,z, reversed here).
+      Value range from one 64^3 chunk.
+  - role: label
+    path_pattern: aic_desmosome-2.n5/labels/DSM-2_WG_simple-seg_DSM-ER-KRT-PM-endo
+    format: n5
+    axes: zyx
+    shape:
+    - 1584
+    - 447
+    - 3217
+    shape_varies: false
+    dtype: uint8
+    compression: blosc
+    value_range:
+    - 0
+    - 5
+    normalization: unknown
+    encoding: semantic-ids
+    classes:
+    - id: null
+      name: desmosome
+    - id: null
+      name: ER
+    - id: null
+      name: keratin
+    - id: null
+      name: plasma membrane
+    - id: null
+      name: endosomes
+    alignment: offset
+    alignment_notes: Same 8 nm grid as the EM s0, translated by (z, y, x) 26112, 5832, 1384 nm = 3264, 729, 173
+      voxels (N5 transform). Values 0-5 in 3 central chunks; class names from the group name, the id order is not
+      documented.
+  notes: 'S3 listing of aic_desmosome-2.n5 stopped at 50,000 chunk files (incomplete), so size is estimated. Probed
+    N5 attributes of EM s0, the main label group and er_seg (4 nm, on a 2x finer grid). Decoded 3 central label
+    chunks and 1 EM chunk (N5 + blosc, about 230 KB). Only the main proofread label group is described as an array;
+    the other 24 label groups (COSEM *_seg / *_pred predictions, per-cell splits) are listed in the tree. Figshare
+    holds only a link (data.janelia.org); data live on S3. Size estimated (uncompressed): raw 1 x 6566x1302x5285
+    uint8 + label 1 x 1584x447x3217 uint8 = 47,458,896,036 B (47.5 GB); s0 levels of these two arrays only, so the
+    full store (24 more label groups, er_seg alone 4 nm) is larger.'
