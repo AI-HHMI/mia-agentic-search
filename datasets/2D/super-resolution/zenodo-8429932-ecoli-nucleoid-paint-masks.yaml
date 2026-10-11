@@ -1,0 +1,137 @@
+schema_version: '1.2'
+id: zenodo-8429932-ecoli-nucleoid-paint-masks
+title: E. coli nucleoid segmentation in PAINT super-resolution images (ROIs with manual masks, CARE model)
+short_name: E. coli nucleoid masks (PAINT super-resolution)
+description: Super-resolved PAINT (JF646-Hoechst) images of fixed Escherichia coli cells (strain NO34,
+  MreBsw-sfGFP) grown in LB and treated with different antibiotics for 0-60 min, supplied as 224 raw ROI
+  images with matching manually drawn nucleoid segmentation masks (184 train, 40 test), together with
+  the trained ZeroCostDL4Mic CARE 2D segmentation model and its quality-control outputs.
+landing_url: https://zenodo.org/records/8429932
+doi: 10.5281/zenodo.8429932
+repository: Zenodo
+accession: null
+authors:
+- Christoph Spahn
+- Mike Heilemann
+publications:
+- title: Transertion and cell geometry organize the Escherichia coli nucleoid during rapid growth
+  doi: 10.1101/2023.10.16.562172
+  url: https://api.biorxiv.org/details/biorxiv/10.1101/2023.10.16.562172
+date_published: '2023-10-13'
+imaging:
+  modality:
+  - super-resolution
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Escherichia coli
+  sample: Fixed E. coli cells (strain NO34, MreBsw-sfGFP) treated with antibiotics for 0-60 min; DNA labelled
+    with transiently binding JF646-Hoechst (PAINT)
+  labels_stains:
+  - JF646-Hoechst
+data:
+  formats:
+  - tiff
+  size_bytes: 170745049
+  n_items: 224
+  access: open
+  download_url: https://zenodo.org/api/records/8429932/files/DNA_Segmentation_Data_and_CARE_Model.zip/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: Mask TIFFs paired by file name with the raw ROI TIFFs in Data/Mask_ROIs and Data/Raw_ROIs (train
+    and test folders)
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/CKSpahn/Bacterial_image_analysis
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-11T19:10:00Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/8429932
+  - https://zenodo.org/records/8429932
+  - https://api.biorxiv.org/details/biorxiv/10.1101/2023.10.16.562172
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-11T19:40:00Z'
+notes: 'Zip listed with peek_archive: Data/Raw_ROIs and Data/Mask_ROIs each hold 184 train + 40 test TIFFs,
+  plus a CARE_Model folder. The Zenodo text says the model used 736 paired 256 px patches; the paper Methods
+  say 50 annotated images, with masks drawn manually in Fiji. Pixel size of the PAINT renderings is not
+  stated on the Zenodo page or in the paper, so voxel_size_nm is null. Paper read in full from bioRxiv.
+  enricher: masks are binary 0/255 uint8, 1024 x 1024, same grid as the raw ROI (one pair sampled).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "DNA_Segmentation_Data_and_CARE_Model.zip (170.6 MB)\n  Data/Raw_ROIs/{train,test}/<cond>_<t>min_m<k>_ROI_<n>.tif\
+      \    184 / 40\n  Data/Mask_ROIs/{train,test}/<same name>.tif                 184 / 40\n  Data/Mask_ROIs/Text.txt\
+      \ (empty), lossCurvePlots.png\n  CARE_Model/  config, weights, rawdata.npz, logs, Quality Control\
+      \ (165 files + 40 predictions)\n+ 1 preview PNG on the record\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/8429932/files/DNA_Segmentation_Data_and_CARE_Model.zip::Data/Raw_ROIs/test/Azide_0min_m1_ROI_2.tif
+    - https://zenodo.org/records/8429932/files/DNA_Segmentation_Data_and_CARE_Model.zip::Data/Mask_ROIs/test/Azide_0min_m1_ROI_2.tif
+    size_bytes: 2099230
+    description: One test ROI (azide, 0 min) and its nucleoid mask
+  arrays:
+  - role: raw
+    path_pattern: DNA_Segmentation_Data_and_CARE_Model.zip::Data/Raw_ROIs/*/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 230
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ TIFF, photometric palette (a display LUT; the values are rendered PAINT intensities,
+      91% zeros in the sample). No calibration in the header.
+  - role: label
+    path_pattern: DNA_Segmentation_Data_and_CARE_Model.zip::Data/Mask_ROIs/*/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: nucleoid (DNA)
+    alignment: same-grid
+    alignment_notes: 'Same file name in Mask_ROIs/<split>/ as in Raw_ROIs/<split>/; identical 1024x1024
+      shape; sampled mask values {0: 1,020,036, 255: 28,540}.'
+  notes: 'Listing: tools/listing.py --expand-zips on the Zenodo record: 2 files, 170,745,049 bytes, complete,
+    exact (first attempt hit a zenodo.org TLS EOF). Probed and sampled one raw/mask pair (test/Azide_0min_m1_ROI_2,
+    75 KB read): raw uint8 [0,230], mask binary 0/255; one sample. Text.txt in Mask_ROIs is empty. Voxel
+    size not found; checked: TIFF headers (ImageJ min/max only, no spacing), Zenodo description, paper
+    (bioRxiv, read in full by the harvester). download_url is the zip (direct).'
