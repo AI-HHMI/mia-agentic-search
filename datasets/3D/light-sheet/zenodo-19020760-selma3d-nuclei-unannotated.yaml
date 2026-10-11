@@ -2,9 +2,8 @@ schema_version: '1.2'
 id: zenodo-19020760-selma3d-nuclei-unannotated
 title: Selma3D 2024 brain cell nuclei subsampled unannotated 3D patches
 short_name: SELMA3D unannotated brain nuclei (light-sheet)
-description: 1000 unannotated 3D patches (250x250x250 voxels) of cell nuclei in cleared
-  whole-brain light-sheet volumes, sampled evenly (250 each) from the four nuclei
-  samples of the SELMA3D 2024 challenge training subset without annotations. Intended
+description: 1000 unannotated 3D patches (250x250x250 voxels) of cell nuclei in cleared whole-brain light-sheet volumes, sampled
+  evenly (250 each) from the four nuclei samples of the SELMA3D 2024 challenge training subset without annotations. Intended
   for self-supervised learning of 3D light-sheet segmentation.
 landing_url: https://zenodo.org/records/19020760
 doi: 10.5281/zenodo.19020760
@@ -22,7 +21,7 @@ imaging:
     x: 540
     y: 540
     z: 5000
-  channels: null
+  channels: 1
   organism:
   - Homo sapiens
   sample: Cleared human brain tissue, cell nuclei channel (SELMA3D 2024)
@@ -62,11 +61,47 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-11T13:43:29Z'
-notes: 'Unannotated by design (self-supervised use). Zip listing via peek_archive:
-  1000 patch_*.nii.gz in Nuclei/patches/sample1-4 plus 4 extraction_metadata.json.
-  Voxel size is taken from the source BioStudies study S-BIAD1197 (nuclei: 0.54 um
-  x/y nominal resolution, 5 um z step); whether patches were resampled is not stated.
-  Organism (Homo sapiens for nuclei images) also from S-BIAD1197. Associated paper
-  (Zenodo 10.5281/zenodo.10991463) full text not retrievable, so not listed. Single
-  32 GB zip.'
+  last_checked: '2026-10-11T14:30:00Z'
+notes: 'Unannotated by design (self-supervised use). Zip listing via peek_archive: 1000 patch_*.nii.gz in Nuclei/patches/sample1-4
+  plus 4 extraction_metadata.json. Voxel size is taken from the source BioStudies study S-BIAD1197 (nuclei: 0.54 um x/y nominal
+  resolution, 5 um z step); whether patches were resampled is not stated. Organism (Homo sapiens for nuclei images) also from
+  S-BIAD1197. Associated paper (Zenodo 10.5281/zenodo.10991463) full text not retrievable, so not listed. Single 32 GB zip.
+  enricher: channels 1 (single-channel float32 patches, sampled; was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./ (1 file, 31,938,899,277 B, Zenodo API, exact)\n  Nuclei.zip (1004 members, 32.2 GB uncompressed)\n    Nuclei/patches/\n\
+      \      sample1/ .. sample4/  each 250 x patch_NNNN.nii.gz (~32-35 MB) + extraction_metadata.json"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/19020760/files/Nuclei.zip/content::Nuclei/patches/sample1/patch_0000.nii.gz
+    size_bytes: 32154966
+    description: 'One 250^3 float32 patch from nuclei sample 1 (no labels: the dataset is unannotated).'
+  arrays:
+  - role: raw
+    path_pattern: Nuclei/patches/sample*/patch_*.nii.gz
+    format: nifti
+    axes: zyx
+    shape:
+    - 250
+    - 250
+    - 250
+    shape_varies: false
+    dtype: float32
+    compression: gzip
+    value_range:
+    - 603
+    - 33769
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Patches are crops of the S-BIAD1197 nuclei volumes; extraction_metadata.json gives patch_size [250,250,250],
+      250 patches per sample, seeds and an Otsu foreground ratio of 0.8, but no patch positions.
+  notes: 'Listing: Zenodo API (1 zip, exact) plus the zip''s central directory (1000 .nii.gz, 4 json). Probed patch_0000 of
+    sample1 (8 MB read). Sampled sample1/patch_0000 and sample3/patch_0000 (64 MB with nibabel): 250x250x250 float32, integer
+    values 678-23857 and 603-33769 (two samples), no zeros; values look like 16-bit intensities stored as float, but the deposit
+    doesn''t say whether they were rescaled. NIfTI header has a default 1.0 spacing with unknown units (sform identity), so
+    it holds no calibration. Voxel size 0.54x0.54x5 um is the record''s value from S-BIAD1197 (nuclei acquisition); the deposit
+    doesn''t say whether the patches were resampled. No labels by design (self-supervised).'
