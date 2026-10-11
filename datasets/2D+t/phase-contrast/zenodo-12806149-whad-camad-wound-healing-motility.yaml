@@ -36,7 +36,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 12637600000
+  size_bytes: 12637595885
   n_items: 5586
   access: open
   download_url: https://zenodo.org/api/records/12806149/files/whad_camad.zip/content
@@ -46,7 +46,7 @@ annotations:
   types:
   - semantic-segmentation
   coverage: partial
-  format: 'PNG masks mirroring the image folders (whad/masks/..., camad/images/expN/masks/) and ImageJ ROI zips (camad/rois/)'
+  format: PNG masks mirroring the image folders (whad/masks/..., camad/images/expN/masks/) and ImageJ ROI zips (camad/rois/)
   source: unknown
 ml:
   tasks:
@@ -71,7 +71,106 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T13:14:25Z'
-notes: 'Zip listing (6,940 files): 5,586 TIFF files (WHAD images 5,510 files under whad/images/MCF7 and MCF10A, CAMAD 96 images), 1,301 PNG masks (WHAD 1,206 for MCF7 and MCF10A,
-  CAMAD 96), 16 ROI zips and 16 AVI videos (CAMAD); n_items counts TIFF files including a few macOS ._ stubs. Masks cover only part
-  of the WHAD frames. Annotation procedure is not stated: the GitHub README only says ImageJ ROI files can be converted to masks, so source is unknown. The README states CAMAD uses MCF7 cells but video file names mention 231, so organism is limited to Homo sapiens. Pixel size and microscope are not stated on the Zenodo page, README or the Crossref record; the IEEE Data Descriptions paper has no open full text.'
+  last_checked: '2026-10-11T15:00:00Z'
+notes: 'Zip listing (6,940 files): 5,586 TIFF files (WHAD images 5,510 files under whad/images/MCF7 and MCF10A, CAMAD 96 images),
+  1,301 PNG masks (WHAD 1,206 for MCF7 and MCF10A, CAMAD 96), 16 ROI zips and 16 AVI videos (CAMAD); n_items counts TIFF files
+  including a few macOS ._ stubs. Masks cover only part of the WHAD frames. Annotation procedure is not stated: the GitHub
+  README only says ImageJ ROI files can be converted to masks, so source is unknown. The README states CAMAD uses MCF7 cells
+  but video file names mention 231, so organism is limited to Homo sapiens. Pixel size and microscope are not stated on the
+  Zenodo page, README or the Crossref record; the IEEE Data Descriptions paper has no open full text. enricher: size_bytes
+  from the Zenodo listing (was a rounded value).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./ (1 file, 12,637,595,885 B, Zenodo API, exact)\n  whad_camad.zip (6940 members)\n    whad/images/MCF10A/exp#/[part_I|part_II/]<C61|CC|N61|NC>/<P#|p#>/*_t<TT>_ch00.tif\
+      \   ~1,750 frames (1920x1440 uint8)\n    whad/images/MCF7/exp#/..., MCF7/inf1/exp#/<condition>/*.tif (+7 .avi)     \
+      \       ~3,760 frames\n    whad/masks/<same tree, subset of folders>/<image stem>_mask.png                  1,206 PNG\
+      \ (+1 zip)\n    camad/images/exp1..16/images/exp<N>_<k>.tif                                       96 (2568x1912 uint8)\n\
+      \    camad/images/exp1..16/masks/exp<N>_<k>.png                                        96\n    camad/rois/exp<N>_roi.zip\
+      \ (16 ImageJ ROI sets), camad/videos/*.avi (16, 1.4 GB)"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/12806149/files/whad_camad.zip/content::whad/images/MCF10A/exp1/part_I/C61/P1/PartI_Mark_and_Find_001_plenti_shCYR61_set1_pos1027_t00_ch00.tif
+    - https://zenodo.org/api/records/12806149/files/whad_camad.zip/content::whad/masks/MCF10A/exp1/part_I/C61/P1/PartI_Mark_and_Find_001_plenti_shCYR61_set1_pos1027_t00_ch00_mask.png
+    size_bytes: 2773284
+    description: One WHAD MCF10A frame (t00) and its mask.
+  arrays:
+  - role: raw
+    path_pattern: whad/images/**/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1440
+    - 1920
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range:
+    - 9
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One single-page TIFF per frame; time point in the name (_tNN_), one folder per position. Leica Mark_and_Find
+      export.
+  - role: label
+    path_pattern: whad/masks/**/*_mask.png
+    format: png
+    axes: yx
+    shape:
+    - 1440
+    - 1920
+    shape_varies: null
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: whad/masks/<path>/<stem>_mask.png pairs with whad/images/<path>/<stem>.tif; same 1440x1920 shape in the
+      sample. Only some folders have masks. Which value marks the wound vs. the cell sheet is not documented (71% of pixels
+      are 255 in the sample).
+  - role: raw
+    path_pattern: camad/images/exp*/images/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1912
+    - 2568
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range:
+    - 13
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ 1.53c single-page TIFF, no calibration.
+  - role: label
+    path_pattern: camad/images/exp*/masks/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1912
+    - 2568
+    shape_varies: null
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: camad/images/expN/masks/expN_k.png pairs with camad/images/expN/images/expN_k.tif; same shape in the
+      sample (3% foreground). camad/rois/expN_roi.zip hold the ImageJ ROIs (not opened).
+  notes: 'Listing: Zenodo API (1 zip, exact) + central directory (6940 members). Sampled one WHAD MCF10A frame + mask and
+    one CAMAD image + mask (1.8 MB compressed, zipfile + tifffile/PIL): shapes and dtypes above, masks {0,255}. Value ranges
+    from these samples. Voxel size not settled: the WHAD MCF10A TIFF tags give XResolution 4294967295/194951 px per cm (=
+    0.454 um/px), but only for that subset and no document states it; CAMAD TIFFs have no calibration; the Zenodo page, GitHub
+    README and Crossref record (per harvester) give none. Subsets differ in frame size, so voxel_size_nm stays null. No README
+    inside the zip.'
