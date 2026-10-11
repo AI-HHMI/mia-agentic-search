@@ -1,10 +1,12 @@
 schema_version: '1.2'
 id: dataverseno-tla01u-ibdcolepi-colon-epithelium-wsi
-title: 140 HE and 111 CD3-stained colon biopsies of active and inactive inflammatory bowel disease with epithelium annotated (IBDColEpi)
+title: 140 HE and 111 CD3-stained colon biopsies of active and inactive inflammatory bowel disease with
+  epithelium annotated (IBDColEpi)
 short_name: IBDColEpi colon biopsy epithelium (HE, CD3 WSI)
-description: 251 whole-slide images of human colon biopsies (140 HE, 111 CD3 immunostained, from IBD patients and controls)
-  scanned at 40x, with pathologist-reviewed pixel-level epithelium segmentation annotations as TIFF masks and QuPath projects,
-  plus patch datasets with train/validation/test splits and trained models.
+description: 251 whole-slide images of human colon biopsies (140 HE, 111 CD3 immunostained, from IBD patients
+  and controls) scanned at 40x, with pathologist-reviewed pixel-level epithelium segmentation annotations
+  as TIFF masks and QuPath projects, plus patch datasets with train/validation/test splits and trained
+  models.
 landing_url: https://doi.org/10.18710/TLA01U
 doi: 10.18710/TLA01U
 repository: other
@@ -32,7 +34,8 @@ imaging:
   channels: 3
   organism:
   - Homo sapiens
-  sample: FFPE colon mucosa biopsies, 140 HE and 111 CD3 (DAB, haematoxylin counterstain) immunostained, IBD patients and symptomatic controls
+  sample: FFPE colon mucosa biopsies, 140 HE and 111 CD3 (DAB, haematoxylin counterstain) immunostained,
+    IBD patients and symptomatic controls
   labels_stains:
   - hematoxylin and eosin
   - CD3 immunohistochemistry
@@ -49,7 +52,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: TIFF masks (TIFF-annotations.zip, one per WSI), QuPath project annotations, and patch image/label pairs
+  format: TIFF masks (TIFF-annotations.zip, one per WSI), QuPath project annotations, and patch image/label
+    pairs
   source: mixed
 ml:
   tasks:
@@ -73,12 +77,74 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T11:20:00Z'
+  last_checked: '2026-10-11T12:30:00Z'
 notes: 'Hosted at DataverseNO (API files: WSI_part_01-10.zip of .ndpi slides 3.9-9.8 GB each, TIFF-annotations.zip,
-  qupath-project-annotations.zip, patch-dataset-HE.zip, patch-dataset-CD3.zip, trained-models.zip, 80.6 GB in total); a
-  Zenodo record 14803380 carries only the README. Slides scanned with a Hamamatsu NanoZoomer S360 at 40x; pixel size not
-  stated in the README or paper, so voxel size is null. Split: HE 104 train/val and 36 test WSIs, CD3 90 and 21; 3% of train
-  patches go to validation. Annotation was pathologist-checked, built by active learning (model predictions corrected in
-  QuPath), hence mixed. Slides are .ndpi, so formats is other. Landing page HTML returned 403 to a script; the DataverseNO
-  API record was read instead. Dataverse metadata states CC0 1.0 (version 2, 2023). The Google Drive mirror named in the
-  description was not used.'
+  qupath-project-annotations.zip, patch-dataset-HE.zip, patch-dataset-CD3.zip, trained-models.zip, 80.6
+  GB in total); a Zenodo record 14803380 carries only the README. Slides scanned with a Hamamatsu NanoZoomer
+  S360 at 40x; pixel size not stated in the README or paper, so voxel size is null. Split: HE 104 train/val
+  and 36 test WSIs, CD3 90 and 21; 3% of train patches go to validation. Annotation was pathologist-checked,
+  built by active learning (model predictions corrected in QuPath), hence mixed. Slides are .ndpi, so
+  formats is other. Landing page HTML returned 403 to a script; the DataverseNO API record was read instead.
+  Dataverse metadata states CC0 1.0 (version 2, 2023). The Google Drive mirror named in the description
+  was not used.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "doi:10.18710/TLA01U (DataverseNO, 16 files, 80,588,649,755 B)\n  00_README.txt\n  WSI_part_01.zip\
+      \ .. WSI_part_10.zip   3.97-9.79 GB each; part_01: 25 x ID-<n>_<HE|CD3>_<active|inactive>.ndpi (stored)\n\
+      \  TIFF-annotations.zip      1.62 GB  251 x ID-<n>_<stain>_<state>.tiff (stored)\n  qupath-project-annotations.zip\
+      \  0.92 GB  1007 files: data/<n>/data.qpdata, server.json, summary.json, thumbnail.jpg, classifiers/classes.json,\
+      \ project.qpproj\n  patch-dataset-HE.zip      8.76 GB  (not listed)\n  patch-dataset-CD3.zip   \
+      \  7.96 GB  (not listed)\n  trained-models.zip        1.42 GB  (not listed)\n"
+    n_files: 16
+    listing_complete: true
+  sample:
+    urls:
+    - https://dataverse.no/api/access/datafile/114441::ID-10_CD3_active.ndpi
+    - https://dataverse.no/api/access/datafile/114457::ID-10_CD3_active.tiff
+    size_bytes: 86099263
+    description: One CD3 slide (ID-10_CD3_active.ndpi, 84 MB) and its epithelium mask TIFF; host dataverse.no
+      is not on the TensorSwitch allowlist.
+  arrays:
+  - role: raw
+    path_pattern: WSI_part_*.zip::*.ndpi
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Hamamatsu NDPI whole-slide images (header not read: the remote read timed out).'
+  - role: label
+    path_pattern: TIFF-annotations.zip::*.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 9216
+    - 15360
+    shape_varies: true
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 1
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: epithelium
+    alignment: unknown
+    alignment_notes: TIFF-annotations.zip::ID-<n>_<stain>_<state>.tiff pairs with WSI_part_*.zip::ID-<n>_<stain>_<state>.ndpi
+      by stem. The mask is a 6-level pyramid (9216x15360 down to 288x480) with no calibration (10 px/cm
+      default); its level-0 grid relative to the NDPI level 0 was not checked.
+  notes: 'Listing: DataverseNO API (16 files, exact sizes, sum = size_bytes). Zip indexes read with a
+    scratch range-request reader (requests only; the presigned S3 URLs reject HEAD, so peek_archive/probe
+    could not open them): WSI_part_01 25 .ndpi, TIFF-annotations 251 .tiff, qupath-project-annotations
+    1007 files; all members stored (no zip compression). Sampled TIFF-annotations::ID-103_CD3_inactive.tiff
+    (892 KB, whole member): pyramid of 6 LZW pages, level 0 9216x15360 uint8, values {0,1} (one sample).
+    NDPI header not read (remote tifffile parse timed out), so raw shape/dtype unknown. Patch datasets
+    and trained models not listed. Pixel size not stated (README, paper; mask TIFF uncalibrated).'
