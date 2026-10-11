@@ -1,0 +1,234 @@
+schema_version: '1.2'
+id: zenodo-22832866-octo-larva-em-evaluation
+title: Octo evaluation dataset - ground truth for neurons, mitochondria, glia and synapses in a Drosophila L1 larva EM volume
+short_name: Octo Drosophila larva EM ground truth
+description: Ground-truth evaluation sub-volumes from Octo, an isotropic (8 nm) whole-CNS electron microscopy volume of a
+  second L1 Drosophila larva. Four subsets - neuron instance segmentation (27 cutout locations in 256-voxel blocks), mitochondria
+  instance segmentation and glia semantic segmentation over one sub-region (AL, z 300-502, CLAHE-enhanced), and synaptic cleft
+  plus pre/post-synaptic partner annotations in three cubes in CREMI HDF5 format.
+landing_url: https://zenodo.org/records/22832866
+doi: 10.5281/zenodo.22832866
+repository: Zenodo
+accession: '22832866'
+authors:
+- Samia Mohinta
+- Daniel Franco-Barranco
+publications: []
+date_published: '2026-09-18'
+imaging:
+  modality:
+  - other
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 8
+    y: 8
+    z: 8
+  channels: 1
+  organism:
+  - Drosophila melanogaster
+  sample: Whole central nervous system of a second L1 larva (Octo volume); evaluation cutouts from several brain regions including
+    the antennal lobe and the calyx
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  - hdf5
+  size_bytes: 8004642226
+  n_items: 360
+  access: open
+  download_url: https://zenodo.org/api/records/22832866/files/Evaluation%20data.zip/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - semantic-segmentation
+  - synapse
+  coverage: partial
+  format: TIFF label volumes (neuron and mitochondria instance IDs, binary glia mask) paired with raw TIFF; CREMI-format HDF5
+    cubes with cleft labels and pre/post-synaptic site annotations
+  source: proofread
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: Used to benchmark automatic segmentation of neurons, mitochondria, glia and synapses on Octo
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-11T18:15:29Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/22832866
+  - https://zenodo.org/api/records/22832866/files/Evaluation%20data.zip/content
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-11T19:50:38Z'
+notes: Read through the Zenodo API (description gives the folder layout) and a peek_archive listing of Evaluation data.zip
+  (8.0 GB, 15.0 GB uncompressed, 719 files - 714 .tif, 2 .tiff and 3 .hdf; the two CLAHE raw sub-volumes are 403 MB each and
+  the three synapse cubes total 7.9 GB). n_items 360 = about 356 neuron raw/label block pairs (inferred from the tif count)
+  + 1 mitochondria/glia sub-region + 3 synapse cubes. The EM technique (FIB-SEM, ssTEM, etc.) of the Octo volume is not named
+  on the record, hence modality other; no publication is listed yet (the record says citation in progress), so none is cited
+  and no paper was read. The record says the labels were first generated automatically and then automatically or manually
+  proofread, so source is proofread and some labels are only partly manual. The subsets are small cutouts meant for evaluation,
+  not a full annotated volume.
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "zenodo.org/records/22832866: Evaluation data.zip (8.00 GB, 719 members)\n  Evaluation data/\n    Neurons/raw/raw_x<a>-<b>_y<c>-<d>_z<e>-<f>.tif\
+      \       356 blocks 256^3 (5.99 GB), 27 locations\n    Neurons/labels/label_x<a>-<b>_y<c>-<d>_z<e>-<f>.tif  356 (307\
+      \ MB)\n    Mitochondria/raw/raw_octo_AL_z300-502_clahe.tiff     403 MB\n    Mitochondria/labels/octo_AL_z300-502_clahe_instance.tif\
+      \  4.4 MB\n    Glia/raw/raw_octo_AL_z300-502_clahe.tiff             403 MB (same name and size as Mitochondria/raw)\n\
+      \    Glia/labels/test_octo_AL_z300-502_glia_semantic.tif  6.4 MB\n    Synapses/OCTO_cube{1,2}_v2_..., OCTO_cube3_calyx_v2_...\
+      \ .hdf  3 CREMI HDF5 (7.93 GB)\n"
+    n_files: 719
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/22832866/files/Evaluation%20data.zip::Evaluation data/Neurons/raw/raw_x11162-11418_y10374-10630_z6000-6256.tif
+    - https://zenodo.org/records/22832866/files/Evaluation%20data.zip::Evaluation data/Neurons/labels/label_x11162-11418_y10374-10630_z6000-6256.tif
+    size_bytes: 17925333
+    description: One 256^3 neuron cutout block (raw + instance labels)
+  arrays:
+  - role: raw
+    path_pattern: Evaluation data.zip::Evaluation data/Neurons/raw/raw_*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 256
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: unknown
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ header says CYX (256 channels), but the file name gives a 256-slice z range (z6000-6256) and the
+      docs say blocks are tiled along Z, so the axes are zyx.
+  - role: label
+    path_pattern: Evaluation data.zip::Evaluation data/Neurons/labels/label_*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 256
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 205
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same x/y/z suffix as the raw block; one ID per neuron (docs). Header CYX like the raw; 206 values in
+      the sampled block, 13% zero.
+  - role: raw
+    path_pattern: Evaluation data.zip::Evaluation data/Mitochondria/raw/*.tiff
+    format: tiff
+    axes: zyx
+    shape:
+    - 202
+    - 1269
+    - 1572
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: CLAHE-enhanced AL sub-region z300-502 (docs); deflated member not read; shape from the matching label;
+      the file is identical in name and size to Glia/raw.
+  - role: label
+    path_pattern: Evaluation data.zip::Evaluation data/Mitochondria/labels/*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 202
+    - 1269
+    - 1572
+    shape_varies: false
+    dtype: uint32
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Instance IDs, 0 = background (docs). 202 slices = z300-502, so the axes are zyx (tifffile shaped layout,
+      no axes stored).
+  - role: raw
+    path_pattern: Evaluation data.zip::Evaluation data/Glia/raw/*.tiff
+    format: tiff
+    axes: zyx
+    shape:
+    - 202
+    - 1269
+    - 1572
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: Same CLAHE sub-volume as Mitochondria/raw.
+  - role: label
+    path_pattern: Evaluation data.zip::Evaluation data/Glia/labels/*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 202
+    - 1269
+    - 1572
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Glia vs background (docs: all glia share one value); 202 slices = z300-502.'
+  - role: raw
+    path_pattern: Evaluation data.zip::Evaluation data/Synapses/*.hdf (volumes/raw)
+    format: hdf5
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: CREMI-format cube; dataset name from the Zenodo description; not opened (2.5 GB members).
+  - role: label
+    path_pattern: Evaluation data.zip::Evaluation data/Synapses/*.hdf (volumes/labels/clefts)
+    format: hdf5
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    encoding: unknown
+    classes: null
+    alignment: same-grid
+    alignment_notes: Synaptic clefts (CREMI); annotations/* hold pre/post-synaptic sites and partners (docs).
+  notes: 'Listing: tools/listing.py --expand-zips on the Zenodo record: 1 zip, 8,004,642,226 bytes, complete, exact; 719 members.
+    Probed: neuron label block ImageJ CYX 256x256x256 uint16 deflate; mito label 202x1269x1572 uint32 and glia label uint8
+    (shaped, no axes); raw TIFFs and HDF5 are deflated/large members probe.py couldn''t read. Sampled one neuron block pair
+    (16.7 MB + 1.0 MB): raw uint8 0-255 mean 132; label 206 IDs (one sample). Axes zyx from file-name z ranges + docs, not
+    from the CYX headers. HDF5 axes not stated (CREMI convention not re-read this run). Voxel size 8x8x8 nm from the Zenodo
+    description; not checked in headers. Mitochondria/Glia raw are CLAHE-enhanced (docs).'
