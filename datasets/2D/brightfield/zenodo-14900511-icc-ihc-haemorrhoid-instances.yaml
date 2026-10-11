@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: zenodo-14900511-icc-ihc-haemorrhoid-instances
 title: Segmented ICC Dataset in IHC-Stained Haemorrhoidal Disease Specimens
 short_name: Cajal cell IHC instance masks (brightfield)
-description: 40 histopathology tiles (2048 x 2048 px JPEG) from anal canal wall specimens of patients with grade III-IV
-  haemorrhoidal disease, immunostained for CD117 (c-Kit) to show interstitial cells of Cajal, with a COCO annotation
-  file holding 1871 polygon masks and boxes of the cells (single class 'icc').
+description: 40 histopathology tiles (2048 x 2048 px JPEG) from anal canal wall specimens of patients
+  with grade III-IV haemorrhoidal disease, immunostained for CD117 (c-Kit) to show interstitial cells
+  of Cajal, with a COCO annotation file holding 1871 polygon masks and boxes of the cells (single class
+  'icc').
 landing_url: https://zenodo.org/records/14900511
 doi: 10.5281/zenodo.14900511
 repository: Zenodo
@@ -15,8 +16,8 @@ authors:
 - Svirskis Š
 - Groma V
 publications:
-- title: Utilisation of Deep Neural Networks for Estimation of Cajal Cells in the Anal Canal Wall of Patients with Advanced
-    Haemorrhoidal Disease Treated by LigaSure Surgery
+- title: Utilisation of Deep Neural Networks for Estimation of Cajal Cells in the Anal Canal Wall of Patients
+    with Advanced Haemorrhoidal Disease Treated by LigaSure Surgery
   doi: 10.3390/cells14070550
   url: https://doi.org/10.3390/cells14070550
 date_published: '2025-02-20'
@@ -25,10 +26,11 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Homo sapiens
-  sample: Formalin-fixed paraffin-embedded anal canal (haemorrhoid) tissue sections, CD117 IHC with DAB and Mayer's haematoxylin
+  sample: Formalin-fixed paraffin-embedded anal canal (haemorrhoid) tissue sections, CD117 IHC with DAB
+    and Mayer's haematoxylin
   labels_stains:
   - CD117
   - DAB
@@ -46,8 +48,8 @@ annotations:
   types:
   - instance-segmentation
   coverage: dense
-  format: COCO JSON (Annotations.coco.json) with polygon segmentation, bbox and area per cell; one class 'icc'; 1871 annotations
-    over 40 images
+  format: COCO JSON (Annotations.coco.json) with polygon segmentation, bbox and area per cell; one class
+    'icc'; 1871 annotations over 40 images
   source: manual
 ml:
   tasks:
@@ -73,9 +75,67 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T19:50:00Z'
-notes: 'Pixel size, scanner and magnification are not stated on the Zenodo page or in the paper (patches taken from WSIs
-  at maximum magnification), so voxel size is null. Zenodo says "segmentation masks"; the COCO file has 40 images and 1871
-  polygon annotations (checked), while the paper trains YOLOv11n-obb oriented boxes on 160 tiles of 1024 x 1024 cut from these
-  40 patches (376 training / 32 validation images after augmentation); no split is shipped in the record. Images.zip holds
-  40 JPEG files (30.jpg etc.). Annotated by a single evaluator (paper limitations). Size is the sum of the two Zenodo files.'
+  last_checked: '2026-10-11T20:12:00Z'
+notes: 'Pixel size, scanner and magnification are not stated on the Zenodo page or in the paper (patches
+  taken from WSIs at maximum magnification), so voxel size is null. Zenodo says "segmentation masks";
+  the COCO file has 40 images and 1871 polygon annotations (checked), while the paper trains YOLOv11n-obb
+  oriented boxes on 160 tiles of 1024 x 1024 cut from these 40 patches (376 training / 32 validation images
+  after augmentation); no split is shipped in the record. Images.zip holds 40 JPEG files (30.jpg etc.).
+  Annotated by a single evaluator (paper limitations). Size is the sum of the two Zenodo files. enricher:
+  channels null -> 3 (RGB JPEG, sampled).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Images.zip (81.7 MB)\n  <n>.jpg   40  (2048x2048 RGB, flat, e.g. 30.jpg)\nAnnotations.coco.json\
+      \ (358.6 KB)\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/14900511/files/Images.zip::30.jpg
+    - https://zenodo.org/records/14900511/files/Annotations.coco.json
+    size_bytes: 2415220
+    description: One 2048x2048 RGB tile and the COCO file covering all 40 tiles
+  arrays:
+  - role: raw
+    path_pattern: Images.zip::*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 2048
+    - 2048
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB JPEG (samples differ); COCO lists all 40 images as 2048x2048.
+  - role: label
+    path_pattern: Annotations.coco.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    normalization: unknown
+    encoding: polygons
+    classes:
+    - id: 1
+      name: icc
+    alignment: same-grid
+    alignment_notes: One COCO file for all tiles; polygons + bbox keyed by images[].file_name (e.g. 14.jpg)
+      = the zip member names. Category 0 is the Roboflow-style superclass (unused). 40 images, 1871 annotations.
+  notes: 'Listing: tools/listing.py --expand-zips on the Zenodo record: 2 files, 82,051,894 bytes, complete,
+    exact; Images.zip holds 40 jpg at its root. probe.py on Images.zip::30.jpg: 2048x2048x3 uint8 jpeg.
+    sample.py on 30.jpg (2.05 MB): range [0,255] (p0.1 22, p50 195, p99 255; one sample; 255 is the bright
+    background, so normalization left unknown). sample.py could not parse the COCO JSON (unsupported format);
+    read it directly (358.6 KB): categories {0: icc superclass, 1: icc}, 40 images all 2048x2048, 1871
+    annotations. Voxel size not found; checked: JPEG header (no calibration), Zenodo API description,
+    paper full text PMC11989036 (only "2048 x 2048", "obtained at maximum magnification"; no scanner or
+    pixel size). Images.zip is a direct, usable download (range requests).'
