@@ -1,13 +1,12 @@
 schema_version: '1.2'
 id: s-biad2491-phenocycler-ffpe-mesmer-cell-annotation
-title: Large-scale Quantitative Assessment of Tissue Preparation and Staining Conditions
-  for Robust Multiplexed Imaging of FFPE Tissue Samples
+title: Large-scale Quantitative Assessment of Tissue Preparation and Staining Conditions for Robust Multiplexed
+  Imaging of FFPE Tissue Samples
 short_name: FFPE PhenoCycler 27-plex cell masks and labels
-description: 'Annotation subset of a multi-site multiplexed-imaging study: 48 cropped
-  fields of view (2 per slide, 24 FFPE human tissue slides from one site) of 27-plex
-  PhenoCycler-Fusion immune-panel images as OME-TIFF, with Mesmer whole-cell segmentation
-  masks and GeoJSON polygons, per-slide single-cell marker tables (h5ad) and manual
-  cell-phenotype cluster annotations.'
+description: 'Annotation subset of a multi-site multiplexed-imaging study: 48 cropped fields of view (2
+  per slide, 24 FFPE human tissue slides from one site) of 27-plex PhenoCycler-Fusion immune-panel images
+  as OME-TIFF, with Mesmer whole-cell segmentation masks and GeoJSON polygons, per-slide single-cell marker
+  tables (h5ad) and manual cell-phenotype cluster annotations.'
 landing_url: https://www.ebi.ac.uk/biostudies/BioImages/studies/S-BIAD2491
 doi: 10.6019/S-BIAD2491
 repository: BioImageArchive
@@ -23,12 +22,15 @@ imaging:
   modality:
   - fluorescence-other
   dimensionality: 2D
-  voxel_size_nm: null
-  channels: null
+  voxel_size_nm:
+    x: 500
+    y: 500
+    z: null
+  channels: 14
   organism:
   - Homo sapiens
-  sample: FFPE human tissue slides stained with a 27-plex immune panel on the PhenoCycler-Fusion
-    (BIDMC-Harvard slides 1-24, two cropped fields of view each)
+  sample: FFPE human tonsil sections (BIDMC-Harvard slides 1-24, two cropped 5500x7000 fields of view
+    each) stained with a 27-plex immune panel on the PhenoCycler-Fusion
   labels_stains: []
 data:
   formats:
@@ -36,7 +38,7 @@ data:
   size_bytes: 81639111787
   n_items: 48
   access: open
-  download_url: null
+  download_url: https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/491/S-BIAD2491/Files/Annotation/
   download_method: http
 annotations:
   present: true
@@ -44,9 +46,9 @@ annotations:
   - instance-segmentation
   - classification
   coverage: dense
-  format: Mesmer segmentation masks (Annotation/input/Mesmer_mask/*.tiff, 48), GeoJSON
-    cell polygons (48), per-slide h5ad marker tables, and Annotation/output/cluster_annotations.json
-    with manual cell-phenotype cluster assignments
+  format: Mesmer segmentation masks (Annotation/input/Mesmer_mask/*.tiff, 48), GeoJSON cell polygons (48),
+    per-slide h5ad marker tables, and Annotation/output/cluster_annotations.json with manual cell-phenotype
+    cluster assignments
   source: mixed
 ml:
   tasks:
@@ -54,7 +56,7 @@ ml:
   - classification
   splits_provided: false
   benchmark: null
-  baseline_code_url: null
+  baseline_code_url: https://github.com/SizunJiangLab/Benchmarking_tissue_preparation
 license:
   spdx: CC0-1.0
   url: https://creativecommons.org/publicdomain/zero/1.0/
@@ -64,18 +66,94 @@ provenance:
   evidence_urls:
   - https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD2491
   - https://www.ebi.ac.uk/biostudies/files/S-BIAD2491/Annotation.json
+  - https://raw.githubusercontent.com/SizunJiangLab/Benchmarking_tissue_preparation/main/Master_metadata_Mesmer.csv
+  - https://raw.githubusercontent.com/SizunJiangLab/Benchmarking_tissue_preparation/main/preprocessing/README.md
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T21:46:42Z'
-notes: 'Only the Annotation.json file list is described here (457 files, 81.6 GB:
-  48 OME-TIFF FOV crops, 48 Mesmer masks and overlays, 48 GeoJSON, 24 h5ad, SVG phenotype
-  maps, cluster_annotations.json). The study has other file lists (Initial_Optimization,
-  Validation and supplementary experiments) with raw multiplexed images and no labels,
-  not included. Masks come from Mesmer (automatic); cell phenotype clusters were assigned
-  by PhenoGraph clustering followed by manual annotation, so source is mixed. Pixel
-  size and image dimensions are not stated on the study page. No publication is cited
-  on the study. download_url is null (files under biostudies/files/S-BIAD2491/). Checked
-  study record and the Annotation file list.'
+  last_checked: '2026-10-11T23:00:00Z'
+notes: 'Only the Annotation file list is described (457 files, 81.6 GB: 48 OME-TIFF FOV crops, 48 Mesmer
+  masks, 48 overlays, 48 GeoJSON, 24 h5ad, SVG phenotype maps, cluster_annotations.json). Other study
+  file lists (Initial_Optimization, Validation, supplementary) hold raw multiplexed images without labels.
+  Masks are Mesmer (automatic); phenotypes are PhenoGraph clusters named by manual annotation (cluster_annotations.json
+  maps cluster ids to cell types per slide), so source is mixed. No publication cited on the study. enricher:
+  voxel size 500 nm from the code repo: Master_metadata_Mesmer.csv lists Pixel_Size 0.5 for all 24 annotated
+  slides, and its preprocessing README gives image_mpp = 0.50 "Microns per pixel" (was null). FOVs are
+  unresampled crops (FOV coordinates span 7000x5500 px). enricher: channels 14 (OME-XML of the crops;
+  the full panel is 27-plex); tissue tonsil per the study biosample.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "ftp.ebi.ac.uk/biostudies/fire/S-BIAD/491/S-BIAD2491/Files/Annotation/   457 files, 81.6 GB\n\
+      \  input/\n    ometiff/        slide<N>_FOV<1|2>.ome.tiff                 48  (0.79-1.0 GB, 14x5500x7000)\n\
+      \    Mesmer_mask/    segmentation_mask_<N>_FOV<1|2>.tiff        48  (154-169 MB)\n    Mesmer_overlay/\
+      \ overlay_<N>_FOV<1|2>.tiff                  48  (RGB)\n    geojson/        <N>_<1|2>.geojson  \
+      \                        48\n    h5ad/           slide_<NN>_adata.h5ad                      24\n\
+      \  output/\n    cluster_annotations.json\n    slide_<NN>_adata/   <N>_<k>.svg x6, clustering_results/<uuid>.csv,\
+      \ clustering_stash/<uuid>.pickle, geojson/<uuid>/<N>_<1|2>.geojson"
+    n_files: 457
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/491/S-BIAD2491/Files/Annotation/input/ometiff/slide10_FOV1.ome.tiff
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/491/S-BIAD2491/Files/Annotation/input/Mesmer_mask/segmentation_mask_10_FOV1.tiff
+    size_bytes: 1016900976
+    description: 'One FOV (slide 10, FOV1): 14-channel OME-TIFF and its Mesmer whole-cell mask.'
+  arrays:
+  - role: raw
+    path_pattern: input/ometiff/slide*_FOV?.ome.tiff
+    format: ome-tiff
+    axes: cyx
+    shape:
+    - 14
+    - 5500
+    - 7000
+    shape_varies: null
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 65062
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Tiled (256x256) BigTIFF. OME channels: Cytokeratin, CD138, CD31, Pax5, FoxP3, CD68,
+      CD20, CD15, CD11c, CD11b, CD8, CD4, CD3, DAPI. No PhysicalSize in the OME-XML.'
+  - role: label
+    path_pattern: input/Mesmer_mask/segmentation_mask_*_FOV?.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 5500
+    - 7000
+    shape_varies: null
+    dtype: int32
+    compression: none
+    value_range:
+    - 0
+    - 171787
+    encoding: instance-ids
+    alignment: same-grid
+    alignment_notes: segmentation_mask_<N>_FOV<k>.tiff pairs with slide<N>_FOV<k>.ome.tiff (file list
+      "Source Image"); YX shapes match, the raw adds the channel axis. 0 = background, one id per cell.
+  - role: label
+    path_pattern: output/cluster_annotations.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    encoding: other
+    alignment: not-applicable
+    alignment_notes: Per slide, PhenoGraph cluster id -> cell type name (e.g. B cells, CD8+ T cells, Macrophages,
+      Tregs, Epithelial, Artifacts). Cells link to clusters via output/slide_<NN>_adata/clustering_results/*.csv
+      and the updated GeoJSON.
+  notes: 'File tree and sizes from the study Annotation.json file list (457 files); tools/listing.py does
+    not read BioStudies, so size_source is page-stated (Annotation subset only). Probed slide10_FOV1.ome.tiff,
+    its mask and overlay. Sampled pages 0 and 7 of the OME-TIFF (88.8 MB; [0, 65062]) and the whole mask
+    (154 MB; int32, 171,788 distinct values, max 171787); value ranges from one sample. Clustering .pickle
+    files not opened (untrusted). Download: per-file links on ftp.ebi.ac.uk (https), no archive. Mesmer_overlay/
+    (RGB uint8 5500x7000x3 visualisations) not described as an array.'
