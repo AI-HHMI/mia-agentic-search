@@ -1,0 +1,146 @@
+schema_version: '1.2'
+id: zenodo-22130319-plagioclase-cold-cl-ssl
+title: 'PlagNetPlus: Reproducibility Data and Model Artifacts for Self-Supervised Plagioclase Crystal Texture Analysis'
+short_name: Plagioclase cold-CL crystal images (SSL)
+description: Cold-cathodoluminescence (cold-CL) images of plagioclase crystals from volcanic rocks (Aegina, Fish Canyon Tuff, Methana, Mount St
+  Helens, Caraci), with raw scans, PlagNet segmentation resources and a unified dataset of 123,264 segmented crystal images (five locations, 27 samples)
+  with train/validation/test splits, released for self-supervised representation learning (SimCLR, SimSiam, SwAV, DeepCluster).
+landing_url: https://zenodo.org/records/22130319
+doi: 10.5281/zenodo.22130319
+repository: Zenodo
+accession: '22130319'
+authors:
+- Alexander Robert John Stringer
+publications: []
+date_published: '2026-08-27'
+imaging:
+  modality:
+  - other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: null
+  organism: []
+  sample: Plagioclase crystals in volcanic rock thin sections (Aegina, Fish Canyon Tuff, Methana, Mount St Helens, Caraci)
+  labels_stains: []
+data:
+  formats:
+  - png
+  - jpeg
+  size_bytes: 11364221312
+  n_items: 123264
+  access: open
+  download_url: https://zenodo.org/records/22130319
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: unknown
+  format: 'Per-crystal masked PNG images (label_NNNN in file names) and label maps from the PlagNet segmentation model, in the unified V1/V2 datasets and segmentation resources'
+  source: automatic
+ml:
+  tasks:
+  - self-supervised
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-11T01:16:22Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/22130319
+  - https://zenodo.org/records/22130319/files/README.md
+  - https://zenodo.org/records/22130319/files/MANIFEST.csv
+  - https://zenodo.org/records/22130319/files/01_source_imagery.tar.gz
+  - https://zenodo.org/records/22130319/files/03_unified_crystal_datasets.tar.gz
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-11T02:18:41Z'
+notes: 'Four tar.gz archives (11.4 GB, MANIFEST.csv): 01 source imagery, 02 segmentation resources, 03 unified crystal
+  datasets (V2: 91,357 train / 14,919 val / 16,988 test = 123,264 images), 04 SSL run artifacts (not opened). Cold-CL
+  (cathodoluminescence) is not a schema modality, hence other. Masks come from a trained PlagNet model (README: verified), not
+  manual labels. Pixel size and instrument not stated. MSc project release, no linked paper. enricher: the heads of archives
+  01-03 were streamed: 01 holds raw cold-CL tiles (JPG, 2076 x 3088 RGB) and the Aegina crops; 02 holds per-tile instance label
+  maps (clean_instance_labels_uint16.png, same 2076 x 3088 grid); 03 holds the masked crystal crops (RGB PNG, background 0).
+  coverage: instance maps for the non-Aegina tiles only; completeness per tile not stated.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  7 files 11,364,221,312 B (Zenodo API)\n  README.md  MANIFEST.csv  SHA256SUMS\n  01_source_imagery.tar.gz\
+      \  (3.9 GB)\n    non_aeg_raw_plag/<location>/<sample>/<sample>_<row>_<col>.JPG   raw cold-CL tiles\n    extracted_plags/\
+      \  Aegina crystal crops (12,345 PNG per README)\n  02_segmentation_resources.tar.gz  (1.1 GB)\n    dataset_linkage/interim/non_aegina_clean_labels_v1/<nn>__<location>__<sample>/<location>/<tile>/clean_instance_labels_uint16.png\n\
+      \  03_unified_crystal_datasets.tar.gz  (4.6 GB)\n    ssl_non_aegina_v1/ ssl_fct_6861_original_v1/ ssl_aegina_compat_v1/\
+      \ ssl_unified_v1/ ssl_unified_v2/ frozen_metadata/\n      .../images_masked/<location>/<sample>/<nn>__<loc>__<sample>__<tile>__label_<nnnn>.png\n\
+      \  04_reported_ssl_run_artifacts.tar.gz  (1.7 GB, not opened)\n"
+    n_files: 7
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: 01_source_imagery.tar.gz/01_source_imagery/non_aeg_raw_plag/*/*/*.JPG
+    format: jpeg
+    axes: yxs
+    shape:
+    - 2076
+    - 3088
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Raw cold-CL scan tiles named <sample>_<row>_<col>.JPG (3 Caraci tiles read).
+  - role: label
+    path_pattern: 02_segmentation_resources.tar.gz/02_segmentation_resources/dataset_linkage/interim/non_aegina_clean_labels_v1/*/*/*/clean_instance_labels_uint16.png
+    format: png
+    axes: yx
+    shape:
+    - 2076
+    - 3088
+    shape_varies: null
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 129
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: One instance map per tile folder named like the raw tile (e.g. M83-7-1-II-no_overlap_00014_00002); same
+      2076 x 3088 grid as the raw JPG tiles. Pairing by tile name is inferred from the names; the raw tiles of these exact
+      folders were not read.
+  - role: raw
+    path_pattern: 03_unified_crystal_datasets.tar.gz/03_unified_crystal_datasets/*/images_masked/*/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 156
+    - 156
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 175
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Masked square crop of one crystal (label_<nnnn> = its instance id in the tile), pixels outside the crystal
+      set to 0 (64-78% zeros in 6 crops); 57-286 px wide in the crops read. These are the SSL training images.
+  notes: 'Listing: Zenodo API (7 files, exact sizes). The archives are tar.gz, so their members cannot be listed or fetched by
+    range; the tree inside them is from the streamed heads and the READMEs. Streamed the first 40 MB of 03, 25 MB of 02 and 31 MB of 01
+    (about 97 MB in total) to read member names, the three archive READMEs, 6 masked crops (RGB uint8, 0-85 to 0-175), 3 raw
+    JPG tiles (2076 x 3088 RGB, 0-235/0-255) and 10 instance maps (uint16, max IDs 0-129). Value ranges from these samples
+    only. No sample unit: tar.gz members are not directly fetchable (probe: "::member given but the URL is not a zip").
+    Voxel size not found; checked: JPG/PNG headers, Zenodo record, the release README and the 3 archive READMEs; no paper.'
