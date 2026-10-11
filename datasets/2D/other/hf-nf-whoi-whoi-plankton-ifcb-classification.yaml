@@ -2,10 +2,9 @@ schema_version: '1.2'
 id: hf-nf-whoi-whoi-plankton-ifcb-classification
 title: 'WHOI-Plankton (Hugging Face mirror): expert-labeled IFCB plankton images'
 short_name: WHOI plankton IFCB classification (HF mirror)
-description: 'Hugging Face copy of the WHOI-Plankton benchmark: 956,867 Imaging FlowCytobot
-  images of plankton labeled by experts into 100 classes, stored as Parquet with train
-  (669,806), validation (95,686) and test (191,375) splits; sourced from the WHOI
-  institutional repository record 10.1575/1912/7341.'
+description: 'Hugging Face copy of the WHOI-Plankton benchmark: 956,867 Imaging FlowCytobot images of
+  plankton labeled by experts into 100 classes, stored as Parquet with train (669,806), validation (95,686)
+  and test (191,375) splits; sourced from the WHOI institutional repository record 10.1575/1912/7341.'
 landing_url: https://huggingface.co/datasets/nf-whoi/whoi-plankton
 doi: null
 repository: HuggingFace
@@ -16,8 +15,8 @@ authors:
 - Emily E. Peacock
 - Heidi M. Sosik
 publications:
-- title: WHOI-Plankton - A Large Scale Fine Grained Visual Recognition Benchmark Dataset
-    for Plankton Classification
+- title: WHOI-Plankton - A Large Scale Fine Grained Visual Recognition Benchmark Dataset for Plankton
+    Classification
   doi: 10.48550/arXiv.1510.00745
   url: https://arxiv.org/abs/1510.00745
 date_published: null
@@ -28,13 +27,13 @@ imaging:
   voxel_size_nm: null
   channels: null
   organism: []
-  sample: Marine plankton imaged in flow by Imaging FlowCytobot (Martha's Vineyard
-    Coastal Observatory per the paper)
+  sample: Marine plankton imaged in flow by Imaging FlowCytobot (Martha's Vineyard Coastal Observatory
+    per the paper)
   labels_stains: []
 data:
   formats:
-  - other
-  size_bytes: 27333159816
+  - png
+  size_bytes: 18240347161
   n_items: 956867
   access: open
   download_url: null
@@ -67,15 +66,60 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-11T04:23:16Z'
-notes: 'Mirror: the card only says ''From https://hdl.handle.net/10.1575/1912/7341''
-  (WHOI repository, which returned 403 in this run, so the original record, license
-  and file list were not read). Counts are from the HF viewer and API: 956,867 rows
-  in 19 Parquet files (669,806 / 95,686 / 191,375), 100 class names, plus a 27 GB
-  whoi-plankton.tar.gz in the repo; total repo size 27.3 GB. The paper (arXiv 1510.00745)
-  states over 3.4 million images in 70 classes from the Martha''s Vineyard Coastal
-  Observatory, so this mirror is a different subset or version; not reconciled. No
-  license on the HF card or arXiv page (arXiv license covers the paper only). Image
-  encoding inside the Parquet is not stated on the card, so formats is ''other'' (Parquet).
-  Pixel size not stated. Another mirror (project-oceania/whoi-plankton, MIT per tags)
-  is gated and was not readable.'
+  last_checked: '2026-10-11T04:54:42Z'
+notes: 'Mirror: the card only says ''From https://hdl.handle.net/10.1575/1912/7341'' (WHOI repository,
+  which returned 403 in this run, so the original record, license and file list were not read). Counts
+  are from the HF viewer and API: 956,867 rows in 19 Parquet files (669,806 / 95,686 / 191,375), 100 class
+  names, plus a 27 GB whoi-plankton.tar.gz in the repo; total repo size 18.2 GB per the file listing (the
+  HF storage figure was 27.3 GB). The paper (arXiv 1510.00745) states over 3.4 million images in 70 classes
+  from the Martha''s Vineyard Coastal Observatory, so this mirror is a different subset or version; not
+  reconciled. No license on the HF card or arXiv page (arXiv license covers the paper only). Pixel size
+  not stated. Another mirror (project-oceania/whoi-plankton, MIT per tags) is gated and was not readable.
+  enricher: formats png (the tar.gz holds class folders of IFCB PNGs; was other).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "./  22 files, 18,240,347,161 bytes\n  README.md, .gitattributes\n  whoi-plankton.tar.gz   9,142,067,061\
+      \ bytes\n    consolidated_plankton/<class>/IFCB<n>_<yyyy>_<doy>_<hhmmss>_<roi>.png   (+ macOS ._\
+      \ files)\n  data/{train,validation,test}-000NN-of-000MM.parquet   13 / 2 / 4 shards, 9,098,273,854\
+      \ bytes\n    columns image (Image), label (ClassLabel, 100 names); 669,806 / 95,686 / 191,375 rows"
+    n_files: 22
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: consolidated_plankton/*/*.png
+    format: png
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'One PNG per IFCB region of interest (13-89 KB in the first members read), folder
+      = class. The same images are in the Parquet shards (datasets-server first row: 130 x 70 px).'
+  - role: label
+    path_pattern: data/*.parquet
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: Class label column (ClassLabel with 100 names) next to the image column in each Parquet
+      row; in the tar.gz the class is the folder name.
+  notes: 'Listing: tools/listing.py on the HF repo (complete, 18,240,347,161 bytes; 22 files). Streamed
+    the first 3.4 MB of whoi-plankton.tar.gz and read tar headers only: consolidated_plankton/<class>/
+    folders with PNG files (plus macOS ._ entries). datasets-server /info: features image + label (100
+    names), split sizes. Parquet not opened (no reader here). No pixel values measured. voxel size not
+    found; checked: HF card, datasets-server, tar member names; the WHOI repository (hdl 10.1575/1912/7341)
+    answered with a captcha page. license not found; checked: HF card, datasets-server info, WHOI handle
+    (captcha). Downloads: tar.gz and Parquet shards are direct HF files; no small sample unit (images
+    sit in a 9 GB tar.gz or in Parquet).'
