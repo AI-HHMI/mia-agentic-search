@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: figshare-30928907-pemdefect-1107-sem-defects
 title: PEMDefect-1107 SEM defect localization dataset for PEM fuel cell materials
 short_name: PEMDefect-1107 fuel-cell SEM defect boxes
-description: 'SEM images of polymer electrolyte (proton-exchange membrane) fuel cell materials with single-class "defect" bounding boxes in YOLO format: 1,107 images
-  in train (1,045), validation (31) and test (31) folders, released for defect localization and object detection benchmarking.'
+description: 'SEM images of polymer electrolyte (proton-exchange membrane) fuel cell materials with single-class "defect"
+  bounding boxes in YOLO format: 1,107 images in train (1,045), validation (31) and test (31) folders, released for defect
+  localization and object detection benchmarking.'
 landing_url: https://figshare.com/articles/dataset/PEM-DefectLoc-9K/30928907
 doi: 10.6084/m9.figshare.30928907.v4
 repository: Figshare
@@ -58,9 +59,66 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T17:20:00Z'
-notes: 'Single zip yolo_format.zip (265.9 MB; 1107 .jpg, 1107 .txt, dataset.yaml) listed with peek_archive. The record text says PNG but the zip holds JPG;
-  images are 640x640 grayscale per the description. SEM is stated by the dataset.yaml comment and tags; no SEM value in the modality enum, so other. No paper, microscope,
-  pixel size, annotation procedure or source of the images found on the record or zip (no publication linked); the file names (e.g. nav10001a3.jpg) suggest the
-  images were compiled from other sources, provenance unknown. The record says augmentation was applied to the training split only, so the 1,045 training images
-  may include augmented copies. The figshare title is PEM-DefectLoc-9K while the description calls it PEMDefect-1107.'
+  last_checked: '2026-10-11T18:42:00Z'
+notes: 'Single zip yolo_format.zip (265.9 MB; 1107 .jpg, 1107 .txt, dataset.yaml) listed with peek_archive. The record text
+  says PNG but the zip holds JPG; images are 640x640 grayscale per the description. SEM is stated by the dataset.yaml comment
+  and tags; no SEM value in the modality enum, so other. No paper, microscope, pixel size, annotation procedure or source
+  of the images found on the record or zip (no publication linked); the file names (e.g. nav10001a3.jpg) suggest the images
+  were compiled from other sources, provenance unknown. The record says augmentation was applied to the training split only,  The
+  figshare title is PEM-DefectLoc-9K while the description calls it PEMDefect-1107. enricher: 1,008 of the 1,045 training
+  images are augmented copies (_aug in the name); val and test (31 each) are not. modality: conventional SEM (EM family),
+  other only for lack of a plain SEM value.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "yolo_format.zip (265.9 MB, 2,215 members)\n  yolo_format/dataset.yaml                 nc 1, names ['defect'], img_size\
+      \ 640\n  yolo_format/train/images/*.jpg  1045     labels/*.txt 1045   (1,008 named *_augNNN)\n  yolo_format/val/images/*.jpg\
+      \      31     labels/*.txt   31\n  yolo_format/test/images/*.jpg     31     labels/*.txt   31"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/60662549::yolo_format/train/images/1_0005g_aug000.jpg
+    - https://ndownloader.figshare.com/files/60662549::yolo_format/train/labels/1_0005g_aug000.txt
+    size_bytes: null
+    description: one training image and its YOLO label file
+  arrays:
+  - role: raw
+    path_pattern: yolo_format/{train,val,test}/images/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 640
+    - 640
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 35
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: greyscale stored as RGB (samples identical in the sample); 640 x 640 (dataset.yaml img_size)
+  - role: label
+    path_pattern: yolo_format/{train,val,test}/labels/*.txt
+    format: other
+    axes: null
+    shape:
+    - 11
+    - 5
+    shape_varies: true
+    dtype: float32
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: defect
+    alignment: same-grid
+    alignment_notes: YOLO lines class x_center y_center width height, normalised; same stem as the image in the parallel labels/
+      folder
+  notes: 'Listing: listing.py, figshare article + zip (265,887,352 bytes, 2,215 members). dataset.yaml read (Kaggle export,
+    ''Duplicate augmentations removed''). Sample: train 1_0005g_aug000.jpg 640x640x3 uint8 [35,255], channels identical (one
+    sample); its label 11 boxes of class 0. Voxel size not found; checked: JPEG headers, figshare API, dataset.yaml; no paper
+    linked, and the images were resized to 640 px from sources of unknown provenance.'
