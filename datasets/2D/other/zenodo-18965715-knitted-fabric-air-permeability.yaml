@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: zenodo-18965715-knitted-fabric-air-permeability
 title: Microscopic Image Dataset for Air-Permeability Classification of Patterned Knitted Fabrics
 short_name: Knitted fabric microscope images, 12 classes
-description: About 900 RGB JPEG microscope images (1000x, 2 MP digital microscope) of 45 patterned flat-knitted acrylic fabrics, each
-  labelled by the filename with one of 12 air-permeability classes (A to L, derived from ISO 9237 measurements). The deposit has the
-  images (data.rar), code with train/val/test annotation files and a pre-trained VGG19 model (codes.rar).
+description: About 900 RGB JPEG microscope images (1000x, 2 MP digital microscope) of 45 patterned flat-knitted
+  acrylic fabrics, each labelled by the filename with one of 12 air-permeability classes (A to L, derived
+  from ISO 9237 measurements). The deposit has the images (data.rar), code with train/val/test annotation
+  files and a pre-trained VGG19 model (codes.rar).
 landing_url: https://zenodo.org/records/18965715
 doi: 10.5281/zenodo.18965715
 repository: Zenodo
@@ -28,7 +29,7 @@ imaging:
 data:
   formats:
   - jpeg
-  size_bytes: 89377548
+  size_bytes: 609026293
   n_items: 900
   access: open
   download_url: https://zenodo.org/api/records/18965715/files/data.rar/content
@@ -38,7 +39,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: Image-level class (A-L) encoded in the file name; train.txt, val.txt and test.txt in codes.rar list paths and labels
+  format: Image-level class (A-L) per fabric; file names and folders give the fabric code (e.g. d4x4-40/d4x4-40-1.jpg),
+    and train.txt, val.txt and test.txt in codes.rar list paths and labels
   source: manual
 ml:
   tasks:
@@ -61,10 +63,46 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-11T13:14:25Z'
-notes: 'Non-biological sample (textile) imaged with a 1000x, 2 MP digital microscope; no schema modality fits so modality is other. The
-  archives are RAR files, which peek_archive cannot list, so the image count (900: 730 training and 170 test samples, Table 4 of the
-  paper, full text read) and the JPEG format come from the paper, not from a file listing; annotations_verified is false. Labels are 12
-  air-permeability classes defined by a textile specialist from measured values and encoded in file names (a4x4-40-1.jpg style). The
-  fabrics are coded by zigzag angle (a, w, s). Pixel size and calibration are not stated. Fivefold cross-validation was used in the
-  paper; the shipped files are train.txt, val.txt and test.txt.'
+  last_checked: '2026-10-11T16:05:00Z'
+notes: 'Non-biological sample (textile) imaged with a 1000x, 2 MP digital microscope; no schema modality
+  fits so modality is other. Labels are 12 air-permeability classes defined by a textile specialist from
+  measured values. The fabrics are coded by zigzag angle (a, w, s). Pixel size and calibration are not
+  stated. Fivefold cross-validation was used in the paper; the shipped files are train.txt, val.txt and
+  test.txt. enricher: data.rar headers list 900 JPEGs in 45 fabric folders named with the internal codes
+  d/g/nz (= a/w/s per README); class labels are only in codes.rar (not read), so annotations_verified
+  stays false. size_bytes is now the Zenodo listing total (was data.rar only).'
+technical:
+  method: metadata-only
+  size_source: file-listing
+  layout:
+    tree: 'data.rar (89.4 MB)   data/<fabric>/<fabric>-<n>.jpg   900 .jpg in 45 folders x 20 (d|g|nz){4x4,6x6,8x8,10x10,12x12}-{40,50,60}
+
+      codes.rar (519.6 MB) scripts, train.txt / val.txt / test.txt, kumaslar.pth (VGG19 weights)  (not
+      listed)
+
+      README.md'
+    n_files: 3
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: data.rar::data/*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB JPEGs per the paper ("stored in RGB JPG format", 2 MP microscope); 85-113 KB
+      each. Class is image-level, from the split files in codes.rar.
+  notes: 'Zenodo listing (tools/listing.py): 3 files, 609,026,293 B, file-listing. The data are RAR archives,
+    which no tool here reads remotely; data.rar (89.4 MB) was downloaded once and its RAR5 headers walked
+    with a scratch script: 900 JPEGs (45 folders x 20), all compressed (method 3), so no image could be
+    decoded without an unrar tool and the pixel shape and dtype were not measured. codes.rar (520 MB,
+    mostly model weights) was not downloaded, so train/val/test.txt were not read. TensorSwitch cannot
+    pull members out of RAR, so there is no usable sample spec; data.download_url (data.rar) is direct.
+    Voxel size not found; checked: README.md, Zenodo API record, paper full text (1000x, 2 MP digital
+    microscope, no pixel size).'
