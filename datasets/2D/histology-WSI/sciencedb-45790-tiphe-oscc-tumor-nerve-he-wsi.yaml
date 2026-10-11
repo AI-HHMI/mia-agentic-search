@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: sciencedb-45790-tiphe-oscc-tumor-nerve-he-wsi
 title: 'TIPHE: Tumor Innervation Phenotypes H&E Dataset for Oral Squamous Cell Carcinoma'
 short_name: TIPHE OSCC tumor and nerve segmentation (H&E WSI)
-description: 85 de-identified H&E whole-slide images of oral squamous cell carcinoma with pixel-level annotations of tumor epithelium
-  and nerve structures, PNI-positive nerve masks and valid-region masks, plus N1/N2/N3 tumor-nerve relationship categories, clinical
-  metadata, label definitions and predefined five-fold WSI-level partitions.
+description: 85 de-identified H&E whole-slide images of oral squamous cell carcinoma with pixel-level
+  annotations of tumor epithelium and nerve structures, PNI-positive nerve masks and valid-region masks,
+  plus N1/N2/N3 tumor-nerve relationship categories, clinical metadata, label definitions and predefined
+  five-fold WSI-level partitions.
 landing_url: https://www.scidb.cn/detail?dataSetId=d364c63af4584fa59fc7451d6043d8fa
 doi: 10.57760/sciencedb.45790
 repository: other
@@ -45,18 +46,19 @@ imaging:
   - H&E
 data:
   formats:
-  - other
+  - png
   size_bytes: 102971789837
   n_items: 85
   access: open
   download_url: null
-  download_method: other
+  download_method: http
 annotations:
   present: true
   types:
   - semantic-segmentation
   coverage: dense
-  format: pixel-level masks of tumor epithelium, nerve structures, PNI-positive nerves and valid regions; N1-N3 tumor-nerve categories
+  format: palette PNG masks per case (tumor, nerve N1-N3, PNI for 31 cases, GrandQC valid-region codes);
+    pixel index = class id per metadata/label_mapping.csv
   source: unknown
 ml:
   tasks:
@@ -73,13 +75,135 @@ provenance:
   evidence_urls:
   - https://www.scidb.cn/detail?dataSetId=d364c63af4584fa59fc7451d6043d8fa
   - https://api.datacite.org/dois/10.57760/sciencedb.45790
+  - https://china.scidb.cn/download?fileId=039a24e8a1d440fa259f4b483161fab8
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-11T05:50:00Z'
-notes: The ScienceDB page is rendered client-side, so everything here comes from the DataCite record (description, CC BY 4.0 license,
-  102,971,789,837 bytes in 9 files, issued 2026-08-12); no file listing was seen, so WSI and mask file formats are unknown (formats other),
-  and no pixel size, scanner or annotator information is stated there. No associated paper is listed in the record (publications empty),
-  so none was read. The annotation source (manual versus assisted) is not stated (unknown). 85 WSIs per the description.
+  annotations_verified: true
+  last_checked: '2026-10-11T04:21:39Z'
+notes: 'The ScienceDB page is rendered client-side, so everything here comes from the DataCite record
+  (description, CC BY 4.0 license, 102,971,789,837 bytes in 9 files, issued 2026-08-12); no pixel size,
+  scanner or annotator information is stated there. No associated paper is listed in the record (publications
+  empty), so none was read. The annotation source (manual versus assisted) is not stated (unknown). 85
+  WSIs per the description. enricher: formats png (masks; the WSIs are MRXS, which has no schema value)
+  from the release README; the release also holds LICENSE_REVIEW_REQUIRED.txt ("License was intentionally
+  not provided; human review required before release"), which conflicts with the CC BY 4.0 on DataCite.'
+technical:
+  method: header
+  size_source: page-stated
+  layout:
+    tree: "V1/  9 files, 102,971,789,837 bytes (ScienceDB file API)\n  UPLOAD_README.md, package_manifest.tsv\
+      \ (case UUID -> package), SHA256SUMS_upload.txt\n  TIPHE_deidentified_metadata.tar  100 KB\n   \
+      \ TIPHE_deidentified/{README.md, CITATION.cff, LICENSE_REVIEW_REQUIRED.txt, VERSION.txt, SHA256SUMS.txt}\n\
+      \    TIPHE_deidentified/metadata/{dataset_summary,label_mapping,clinical_metadata,predefined_folds}.csv\n\
+      \  TIPHE_deidentified_cases_part01-05.tar   ~20.4-20.7 GB each, uncompressed tar, 85 cases\n   \
+      \ TIPHE_deidentified/cases/<case_uuid>/\n      <case_uuid>_he_wsi.tar               MRXS slide +\
+      \ MRXS data files\n      <case_uuid>_tumor_mask.png           85\n      <case_uuid>_nerve_mask.png\
+      \           85\n      <case_uuid>_pni_mask.png             31 (PNI-positive cases)\n      <case_uuid>_valid_region_mask.png\
+      \    85"
+    n_files: 9
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: TIPHE_deidentified/cases/*/*_he_wsi.tar
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One tar per case holding an MRXS (3DHISTECH) slide and its data folder (README);
+      0.33-6.4 GB per case. Not opened.
+  - role: label
+    path_pattern: TIPHE_deidentified/cases/*/*_tumor_mask.png
+    format: png
+    axes: yx
+    shape:
+    - 28007
+    - 17411
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: Background
+    - id: 1
+      name: Tumor
+    alignment: unknown
+    alignment_notes: 'Palette PNG (colour type 3, 8 bit); index = class_id of label_mapping.csv. Case
+      00c33fbc...: 17411 x 28007 px (w x h). Same case UUID as the WSI; the scale relative to the MRXS
+      level 0 is not stated.'
+  - role: label
+    path_pattern: TIPHE_deidentified/cases/*/*_nerve_mask.png
+    format: png
+    axes: yx
+    shape:
+    - 28007
+    - 17411
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: Background
+    - id: 1
+      name: N1
+    - id: 2
+      name: N2
+    - id: 3
+      name: N3
+    alignment: unknown
+    alignment_notes: 'Palette PNG; N1 tumor cells within a nerve bundle, N2 direct tumor-nerve contact,
+      N3 nerve without tumor contact (label_mapping.csv). Case 00c33fbc...: 17411 x 28007 px, same grid
+      as its tumor mask.'
+  - role: label
+    path_pattern: TIPHE_deidentified/cases/*/*_pni_mask.png
+    format: png
+    axes: yx
+    shape: null
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: Background
+    - id: 1
+      name: PNI
+    alignment: unknown
+    alignment_notes: Only for the 31 PNI-positive cases (README); not probed.
+  - role: other
+    path_pattern: TIPHE_deidentified/cases/*/*_valid_region_mask.png
+    format: png
+    axes: yx
+    shape:
+    - 49324
+    - 21015
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: none
+    alignment: unknown
+    alignment_notes: 'Greyscale PNG of GrandQC codes 0-7 (0/1 retained tissue, 2-6 artifacts, 7 background);
+      a QC mask, not a learning target (README). Case 00c33fbc...: 21015 x 49324 px, a different grid
+      from its tumor/nerve masks.'
+  notes: 'File list from the ScienceDB file API (V1, 9 files summing to the DataCite size). Read UPLOAD_README.md,
+    package_manifest.tsv, SHA256SUMS_upload.txt and the 100 KB metadata tar (README, label_mapping.csv,
+    dataset_summary.csv, LICENSE_REVIEW_REQUIRED.txt; SHA256SUMS lists 85 _he_wsi.tar and 286 png). Walked
+    the tar headers of cases_part01.tar by range requests (about 32 KB read) and read the PNG headers
+    of one case: tumor and nerve masks palette PNG 17411x28007, valid-region mask greyscale 21015x49324.
+    voxel size not found; checked: release README, metadata CSVs, DataCite; the MRXS Slidedat.ini sits
+    inside a nested per-case tar and was not read. Mask-to-WSI scale not stated, so alignment unknown.
+    Downloads: each package is direct at https://china.scidb.cn/download?fileId=<id> (ranges work), host
+    not on the TensorSwitch allowlist; masks sit inside 20 GB tars, so no small sample.'
