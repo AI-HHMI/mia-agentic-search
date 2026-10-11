@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: empiar-13714-platynereis-2dpf-full-body-ssem
 title: Full body vEM stack of the 2-day-old Platynereis dumerilii larva
 short_name: Platynereis 2 dpf whole-larva serial-section SEM
-description: Whole-body serial-section SEM (array tomography) volume of a 2-day-old Platynereis dumerilii larva, 6,400
-  sections of 30 nm at 3 nm pixels, with TrakEM2 alignment, CATMAID image tiles and CATMAID manual reconstructions of some
-  cells plus a body outline mesh.
+description: Whole-body serial-section SEM (array tomography) volume of a 2-day-old Platynereis dumerilii larva, 6,400 sections
+  of 30 nm at 3 nm pixels, with TrakEM2 alignment, CATMAID image tiles and CATMAID manual reconstructions of some cells plus
+  a body outline mesh.
 landing_url: https://www.ebi.ac.uk/empiar/EMPIAR-13714/
 doi: 10.6019/EMPIAR-13714
 repository: EMPIAR
@@ -40,7 +40,7 @@ annotations:
   types:
   - skeleton
   coverage: sparse
-  format: CATMAID neuron/cell reconstruction export (JSON) and body outline mesh (STL)
+  format: CATMAID project export (JSON, Django fixture with neuron/skeleton classes) and body outline mesh (STL)
   source: manual
 ml:
   tasks:
@@ -67,11 +67,78 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T12:30:00Z'
-notes: 'Directory listing: raw_data (tiles by section range), alignment_TrakEM2, catmaid (export JSON 51 MB, image tiles, mesh
-  volumes). Only some cells are reconstructed ("Some cells were manually reconstructed in catmaid"), so coverage is sparse;
+  last_checked: '2026-10-11T11:55:00Z'
+notes: 'Directory listing: raw_data (tiles by section range), alignment_TrakEM2, catmaid (export JSON 51 MB, image tiles,
+  mesh volumes). Only some cells are reconstructed ("Some cells were manually reconstructed in catmaid"), so coverage is sparse;
   the number of reconstructed cells is not stated. Acquisition per INFO yaml: Zeiss Gemini 500, in-lens detector, 1.5 kV,
-  3 nm pixel, 30 nm sections; tile dimensions and layouts vary by section range, bit depth 8 or 16 (EMPIAR page). Some
-  raw images in the middle of the stack are corrupted (corrupt_file_list_.txt); the aligned CATMAID tiles (jpg) are
-  unaffected. No paper is linked (EMPIAR citation is the entry itself). 37.1 TB total per the EMPIAR page. License CC0
-  from the EMPIAR policies page.'
+  3 nm pixel, 30 nm sections; tile dimensions and layouts vary by section range, bit depth 8 or 16 (EMPIAR page). Some raw
+  images in the middle of the stack are corrupted (corrupt_file_list_.txt); the aligned CATMAID tiles (jpg) are unaffected.
+  No paper is linked (EMPIAR citation is the entry itself). 37.1 TB total per the EMPIAR page. License CC0 from the EMPIAR
+  policies page. enricher: tiles probed/sampled; voxel size confirmed from INFO yaml.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "ftp.ebi.ac.uk/empiar/world_availability/13714/data/  (37.1 TB per EMPIAR; not listed in full)\n  INFO-Ben-EMPIAR.yaml,\
+      \ README-Ben.txt, Serial_SEM_datasheet_OX23-2_BEN.ods, corrupt_file_list_.txt\n  raw_data/                       91\
+      \ section-range folders (1-120/ ... 6373-6400/)\n    1-120/NNNN_.tif               120 files, 33.8 GB (1x1 layout, one\
+      \ tile per section)\n    121-264/NNNN_01.tif, _02.tif  2x1 layout, ~400 MB per tile; layout varies by range (INFO yaml)\n\
+      \  alignment_TrakEM2/\n    OX23-2_BEN_project_190220_elastic_cropped_ROI.xml   2.7 GB TrakEM2 project with transforms\n\
+      \  catmaid/\n    catmaid-export-pid-26-2026-04-05-18-56.json   51 MB CATMAID project export (skeletons)\n    catmaid_instructions.txt\n\
+      \    catmaid_image_tiles/<section>.zip   6,398 zips; e.g. 10.zip: 8,526 JPEG tiles <section>/<row>_<col>_<zoom>.jpg,\
+      \ 1024x1024\n    catmaid_mesh_volumes/Ben-outline.stl  body outline mesh\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/empiar/world_availability/13714/data/raw_data/1-120/0001_.tif
+    - https://ftp.ebi.ac.uk/empiar/world_availability/13714/data/catmaid/catmaid-export-pid-26-2026-04-05-18-56.json
+    size_bytes: 58431767
+    description: Smallest raw section (section 1, one 2422x2162 uint8 tile) plus the CATMAID export that holds all skeletons;
+      the skeletons live in the aligned CATMAID stack space, not on the raw tile grid.
+  arrays:
+  - role: raw
+    path_pattern: raw_data/*/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 8956
+    - 6187
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 254
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Unaligned microscope tiles, one or more per section (layout 1x1 to 2x2 with 8% overlap per INFO yaml);
+      file NNNN_[NN].tif = section number. Single-page plain TIFFs (probed 0001_.tif 2422x2162, 0010_.tif 8956x6187). EMPIAR
+      says bit depth varies between 8 and 16 bit; both probed tiles are uint8.
+  - role: label
+    path_pattern: catmaid/catmaid-export-pid-26-*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    normalization: unknown
+    encoding: graph
+    classes: null
+    alignment: transform-provided
+    alignment_notes: 'CATMAID Django-fixture export of project 26 (records of model catmaid.class, catmaid.relation, ...;
+      class names include neuron and skeleton). Cells were reconstructed in CATMAID on the aligned image stack, so node coordinates
+      are in CATMAID project space; mapping them onto raw_data tiles needs the TrakEM2 transforms in alignment_TrakEM2/. Body
+      outline mesh: catmaid/catmaid_mesh_volumes/Ben-outline.stl.'
+  notes: 'Listed the top folders, raw_data/ (91 range folders), raw_data/1-120/ (120 files, 33.8 GB, HTTP index sizes), catmaid/
+    and catmaid_image_tiles/ (6,398 zips); a full listing of 37.1 TB was not attempted, so size stays page-stated (EMPIAR
+    API dataset_size 37.1 TB). Probed raw 0010_.tif and catmaid 10.zip::10/10_14_1.jpg; sampled raw 0001_.tif (5.26 MB): uint8
+    2422x2162, min 0 max 254, mean 16.9, 45% zeros (one sample). Read the first 3 KB of the CATMAID export (range request);
+    number of skeletons not counted. Voxel size 3x3x30 nm from INFO-Ben-EMPIAR.yaml (pixel_size: 3 nm, thickness: 30 nm);
+    the EMPIAR API pixel_width 3.0 is nominally Angstrom, which conflicts with the INFO yaml, so the INFO yaml wins. No single
+    archive: data.download_url stays the data/ folder; all files are direct https on ftp.ebi.ac.uk (range requests work).
+    Labels are skeletons in CATMAID project space, not voxel masks; turning them into a label volume needs the CATMAID stack
+    geometry and is not settled here. Corrupted raw sections listed in corrupt_file_list_.txt. CATMAID image tiles (aligned
+    stack the skeletons refer to): catmaid/catmaid_image_tiles/<section>.zip, members <section>/<row>_<col>_<zoom>.jpg, 1024x1024
+    uint8 JPEG (probed 10.zip::10/10_14_1.jpg); not listed as an array because the miao layout has only raw/labels.'
