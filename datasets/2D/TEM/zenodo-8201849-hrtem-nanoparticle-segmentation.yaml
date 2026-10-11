@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zenodo-8201849-hrtem-nanoparticle-segmentation
 title: Segmented high-resolution transmission electron microscopy images of nanoparticles
 short_name: HRTEM nanoparticle segmentation (TEM)
-description: 407 raw high-resolution TEM camera images of crystalline Au, Ag and CdSe nanoparticles on amorphous carbon or
-  SiN substrates, each with a hand-labelled segmentation map, plus 13 curated, machine-learning-ready datasets of 512x512
-  image patches with matching label patches (HDF5 keys 'images' and 'labels'). Images span magnifications, electron doses
-  and nanoparticle diameters (2.2-20 nm).
+description: 407 raw high-resolution TEM camera images of crystalline Au, Ag and CdSe nanoparticles on
+  amorphous carbon or SiN substrates, each with a hand-labelled segmentation map, plus 13 curated, machine-learning-ready
+  datasets of 512x512 image patches with matching label patches (HDF5 keys 'images' and 'labels'). Images
+  span magnifications, electron doses and nanoparticle diameters (2.2-20 nm).
 landing_url: https://zenodo.org/records/8201849
 doi: 10.5281/zenodo.8201849
 repository: Zenodo
@@ -15,8 +15,8 @@ authors:
 - Rangel DaCosta L
 - Scott M
 publications:
-- title: Generalization Across Experimental Parameters in Machine Learning Analysis of High Resolution Transmission Electron
-    Microscopy Datasets
+- title: Generalization Across Experimental Parameters in Machine Learning Analysis of High Resolution
+    Transmission Electron Microscopy Datasets
   doi: 10.48550/arXiv.2306.11853
   url: https://arxiv.org/abs/2306.11853
 date_published: '2023-07-31'
@@ -42,8 +42,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: Label patches in *_Labels.h5 (key 'labels', 512x512), matched to *_Images.h5 (key 'images'); raw-image segmentation
-    maps are in the per-session zips
+  format: Label patches in *_Labels.h5 (key 'labels', 512x512), matched to *_Images.h5 (key 'images');
+    raw-image segmentation maps are in the per-session zips
   source: manual
 ml:
   tasks:
@@ -63,17 +63,81 @@ provenance:
   - https://arxiv.org/abs/2306.11853
   - https://arxiv.org/pdf/2306.11853
   - https://zenodo.org/records/8201849/files/2023_01_23_5nm_CdSe_nanoparticles_on_UTC.zip
+  - https://zenodo.org/records/8201849/files/README.md
+  - https://zenodo.org/records/8201849/files/Processed_datasets_metadata.csv
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T18:55:00Z'
-notes: 'Materials-science TEM data (not biological). Pixel size is not one value: the paper states 0.02-0.042 nm/pixel
-  depending on magnification (Zenodo description: 0.02-0.042 nm/pixel), so voxel_size_nm is null. Images were recorded
-  on a TEAM 0.5 aberration-corrected microscope at 300 kV with a Gatan OneView camera (4096x4096), labelled by hand in
-  Labelbox by a single labeller (paper Methods). Zenodo listing: 13 processed dataset pairs (Images/Labels .h5, 512x512
-  patches) and per-session zips with raw .dm3 images (one zip inspected: 81 files incl. dm3, jpeg, png). n_items is the
-  raw image count from the description; the patch counts were not read. No fixed train/test split files; each processed
-  dataset is built from a single imaging session. Raw data is also mirrored on Foundry ML / NERSC (not used). Total
-  size is the sum of the Zenodo file listing.'
+  last_checked: '2026-10-11T19:30:00Z'
+notes: 'Materials-science TEM data (not biological). Pixel size is not one value: the paper states 0.02-0.042
+  nm/pixel depending on magnification (Zenodo description: 0.02-0.042 nm/pixel), so voxel_size_nm is null.
+  Images were recorded on a TEAM 0.5 aberration-corrected microscope at 300 kV with a Gatan OneView camera
+  (4096x4096), labelled by hand in Labelbox by a single labeller (paper Methods). Zenodo listing: 13 processed
+  dataset pairs (Images/Labels .h5, 512x512 patches) and per-session zips with raw .dm3 images (one zip
+  inspected: 81 files incl. dm3, jpeg, png). n_items is the raw image count from the description. No fixed
+  train/test split files; each processed dataset is built from a single imaging session. Raw data is also
+  mirrored on Foundry ML / NERSC (not used). Total size is the sum of the Zenodo file listing. enricher:
+  Processed_datasets_metadata.csv lists 3,154 patches in 13 sets, pixel size 0.02 (10 sets), 0.026, 0.033,
+  0.042.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "README.md, Processed_datasets_metadata.csv, raw_data_metadata.csv\n<material>_<size>_<mag>kx_<dose>e_..._Images.h5\
+      \   13  key 'images' [N,512,512] float64\n<same stem>_Labels.h5                             13 \
+      \ key 'labels' [N,512,512] float32\n  N per set 88-430, 3,154 patches in all (metadata CSV)\n<date>_<size>_<material>_nanoparticles_on_<substrate>.zip\
+      \   11 raw sessions (.dm3 + previews), 0.69-4.1 GB\n"
+    n_files: 40
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/8201849/files/Au_5nm_260kx_450e_Std_UTC_FFCorr_Team05_Images.h5
+    - https://zenodo.org/records/8201849/files/Au_5nm_260kx_450e_Std_UTC_FFCorr_Team05_Labels.h5
+    size_bytes: 276828160
+    description: 'Smallest processed set (Au 5 nm, 260kx, 88 patches): image and label HDF5'
+  arrays:
+  - role: raw
+    path_pattern: '*_Images.h5 (images)'
+    format: hdf5
+    axes: null
+    shape:
+    - 88
+    - 512
+    - 512
+    shape_varies: true
+    dtype: float64
+    compression: none
+    value_range: null
+    normalization: standardized
+    alignment: not-applicable
+    alignment_notes: N x 512 x 512 patches cut sequentially from preprocessed 4098 x 4098 images (README);
+      first axis = patch index, not z, so axes are left null. normalization from the README ("x-ray removal,
+      flat field correction, standardization, and then patching").
+  - role: label
+    path_pattern: '*_Labels.h5 (labels)'
+    format: hdf5
+    axes: null
+    shape:
+    - 88
+    - 512
+    - 512
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: unknown
+    classes: null
+    alignment: same-grid
+    alignment_notes: Labels.h5 with the same stem as Images.h5 (pairs listed in Processed_datasets_metadata.csv);
+      identical [N,512,512] header shape, patch i of labels belongs to patch i of images. The CSV has
+      a "% Pixels in Particle Class" column (particle vs background).
+  notes: 'Listing: tools/listing.py on the Zenodo record: 40 files, 33,690,074,287 bytes, complete, exact
+    (session zips not expanded: zenodo.org TLS EOF errors this run). Probed the smallest Images/Labels
+    pair (HDF5 headers: images [88,512,512] float64, labels [88,512,512] float32, contiguous, uncompressed).
+    sample.py failed twice on zenodo.org TLS EOF, so no values were read. Read README.md and Processed_datasets_metadata.csv.
+    Voxel size: the metadata CSV gives Pixel Size per set (0.02, 0.026, 0.033, 0.042; unit not in the
+    CSV, the Zenodo description says nm/pixel), so voxel_size_nm stays null. No single archive: download_url
+    stays the record; the h5 files are direct and usable.'
