@@ -1,0 +1,149 @@
+schema_version: '1.2'
+id: zenodo-17335417-s3d-dendritic-spines-two-photon
+title: S3D dataset - dendritic spine detection in 2D and depth-tracking (two-photon, mouse auditory cortex)
+short_name: S3D dendritic spine boxes and IDs (two-photon)
+description: Two-photon in vivo image stacks of dendrites from mouse auditory cortex, saved as PNG layers,
+  with 2D bounding boxes around dendritic spines and a spine ID that tracks each spine across layers within
+  a volume. Provided as train, valid and test folders with one CSV of annotations per split.
+landing_url: https://zenodo.org/records/17335417
+doi: 10.5281/zenodo.17335417
+repository: Zenodo
+accession: '17335417'
+authors:
+- Altuğ Kamacıoğlu
+- Pamela Osuna Vargas
+- Dominik Aschauer
+- Simon Rumpel
+- Matthias Kaschube
+publications:
+- title: 'SynapFlow: A Modular Framework Towards Large-Scale Analysis of Dendritic Spines'
+  doi: 10.48550/arXiv.2509.18926
+  url: https://arxiv.org/abs/2509.18926
+date_published: '2025-10-12'
+imaging:
+  modality:
+  - two-photon
+  dimensionality: 3D+t
+  voxel_size_nm:
+    x: 107.5
+    y: 107.5
+    z: 500
+  channels: 1
+  organism:
+  - Mus musculus
+  sample: Dendrites in the auditory cortex of GFP-M transgenic mice, chronic in vivo imaging (two timepoints
+    per field of view)
+  labels_stains:
+  - GFP
+data:
+  formats:
+  - png
+  size_bytes: 980592717
+  n_items: 3558
+  access: open
+  download_url: https://zenodo.org/api/records/17335417/files/S3D.zip/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  - tracking
+  coverage: dense
+  format: 'CSV per split (S3D/annotations/{train,valid,test}.csv) with columns filename, xmin, ymin, xmax,
+    ymax, id: 2D boxes per layer image and a spine ID linking the same spine across layers'
+  source: manual
+ml:
+  tasks:
+  - detection
+  - tracking
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/pamelaosuna/SynapFlow
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-11T06:55:29Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/17335417
+  - https://zenodo.org/records/17335417
+  - https://arxiv.org/html/2509.18926v1
+  - https://raw.githubusercontent.com/pamelaosuna/SynapFlow/main/README.md
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-11T08:50:00Z'
+notes: 'Zip listing (peek_archive): 3,558 PNG layer images (train 2,676, valid 551, test 331) and 3 annotation
+  CSVs; file names encode field of view, timepoint (tp1/tp2) and layer. Voxel size 0.1075 x 0.1075 x 0.5
+  um comes from the arXiv HTML of the paper (Datasets section: "Each voxel measures approximately 0.1075
+  x 0.1075 um x 0.5 um"; enricher re-read the full HTML). The paper says S3D was re-annotated from the
+  labels of Vogel et al. with tighter boxes, spines directly on top of or below the dendrite were excluded,
+  and annotators are not named. The paper does not state a dataset license; CC-BY-4.0 is from the Zenodo
+  record. Counts of volumes, mice and timepoints per split are not stated in the paper main text (supplement
+  not read).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "S3D.zip/S3D/   (980,592,717 B zip, 3,561 members)\n  annotations/  train.csv 762,022 B, valid.csv\
+      \ 95,568 B, test.csv 77,778 B\n  train/  2676 .png  897.1 MB  (121 volumes = fov x timepoint, 92\
+      \ fovs)\n  valid/   551 .png  190.3 MB  (22 volumes, 15 fovs)\n  test/    331 .png  116.3 MB  (16\
+      \ volumes, 12 fovs)\n  file names: s3d_fov<NNN>_tp<1|2>_layer<NNN>.png (one PNG per depth layer)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/17335417/files/S3D.zip/content::S3D/valid/s3d_fov112_tp2_layer026.png
+    - https://zenodo.org/api/records/17335417/files/S3D.zip/content::S3D/annotations/valid.csv
+    size_bytes: 538578
+    description: 'One depth layer of a validation volume and the validation boxes CSV (rows for that layer:
+      filename = s3d_fov112_tp2_layer026.png).'
+  arrays:
+  - role: raw
+    path_pattern: S3D.zip/S3D/*/s3d_fov[0-9][0-9][0-9]_tp[12]_layer[0-9][0-9][0-9].png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'One 512x512 PNG per depth layer; a volume is all layers of one s3d_fov<NNN>_tp<T>
+      in layer order (0.5 um apart). Some PNGs are greyscale, others RGB with three identical samples
+      (s3d_fov082_tp1_layer010: samples_identical true), i.e. grey stored as RGB (axes yxs, s).'
+  - role: label
+    path_pattern: S3D.zip/S3D/annotations/*.csv
+    format: csv
+    axes: null
+    shape:
+    - 1136
+    - 6
+    shape_varies: true
+    dtype: float64
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: null
+      name: dendritic spine
+    alignment: same-grid
+    alignment_notes: 'One CSV per split; one row per 2D box in pixel coordinates of the PNG named in "filename"
+      (xmin, ymin, xmax, ymax) plus "id", a spine identity shared by the boxes of the same spine across
+      layers of a volume (depth tracking). Column order differs: train/valid start with id, test ends
+      with it. Shape given for valid.csv (1136 boxes, 285 images, 17 volumes, 198 spine ids); test.csv
+      883 boxes, 179 images, 14 volumes, 195 ids.'
+  notes: 'listing.py (Zenodo record, zip expanded): 1 file, 980,592,717 B exact, 3,561 members (3,558
+    PNG, 3 CSV). Probes: train/s3d_fov018_tp1_layer041.png 512x512 uint8 grey, s3d_fov082_tp1_layer010.png
+    512x512x3 RGB. Samples: fov018 layer041 values 0-255, mean 14.8, p50 6, p99 189; fov082 layer010 0-159,
+    mean 11.8, samples identical (grey as RGB). One sample each. valid.csv and test.csv read in full;
+    train.csv only its first 200 KB (peek limit). Not every PNG has boxes (valid: 285 of 551 images).
+    Voxel size 107.5x107.5x500 nm from the paper Datasets section. 3D+t record (two timepoints per fov):
+    not convertible by the miao layout yet.'
