@@ -17,7 +17,7 @@ imaging:
   - phase-contrast
   dimensionality: 2D
   voxel_size_nm: null
-  channels: 1
+  channels: null
   organism:
   - Rattus norvegicus
   sample: C6 glioma cells (ATCC CCL-107) in culture
@@ -28,7 +28,7 @@ data:
   size_bytes: 40678001
   n_items: 30
   access: open
-  download_url: https://zenodo.org/records/15395623/files/glioma_mini.zip
+  download_url: https://zenodo.org/api/records/15395623/files/glioma_mini.zip/content
   download_method: http
 annotations:
   present: true
@@ -56,14 +56,72 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-11T04:40:00Z'
-notes: 'Details come from the Zenodo landing page; the zip could not be listed (SSL error from the sandbox
-  proxy on zenodo.org file downloads), so the mask files and 25/5 split are as described on the page,
-  not seen in a listing. Pixel size is not stated on the MiniGlioma or parent pages. The paper cited on
-  the parent page (Malashin et al. 2025, Glioma C6: A Novel Dataset for Training and Benchmarking Cell
-  Segmentation) has no DOI there, so it is not listed in publications and its text was not read. Parent
-  record zenodo.org/records/15083188 (Glioma C6 dataset, 75 images, COCO annotations, 945 MB) contains
-  C6-spec and C6-gen; this record is a small separate deposit of 30 images with binary masks, per its
-  page the C6-gen subset. Authors are listed on the parent page (Malashin, Pashkevich, Ilyukhin, Volkov,
-  Yachnaya, Denisov, Mikhalkova), not on the MiniGlioma page.'
+  annotations_verified: true
+  last_checked: '2026-10-11T04:44:19Z'
+notes: 'Details come from the Zenodo landing page; the zip was listed by the enricher (25 train + 5 valid
+  image/mask pairs). Pixel size is not stated on the MiniGlioma or parent pages. The paper cited on the
+  parent page (Malashin et al. 2025, Glioma C6: A Novel Dataset for Training and Benchmarking Cell Segmentation)
+  has no DOI there, so it is not listed in publications and its text was not read. Parent record zenodo.org/records/15083188
+  (Glioma C6 dataset, 75 images, COCO annotations, 945 MB) contains C6-spec and C6-gen; this record is
+  a small separate deposit of 30 images with binary masks, per its page the C6-gen subset. Authors are
+  listed on the parent page (Malashin, Pashkevich, Ilyukhin, Volkov, Yachnaya, Denisov, Mikhalkova), not
+  on the MiniGlioma page. enricher: channels null (images are stored as 3-sample RGB; whether the samples
+  are identical was not checked, was 1); download_url is the Zenodo API content link.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "record 15395623  2 files, 40,678,001 bytes\n  glioma_mini.zip   26,505,795 bytes, 60 members\n\
+      \    train/images/gen_{24h_20x,72h_10x}_NN.tif        25\n    train/masks/gen_{24h_20x,72h_10x}_NN_mask.tif\
+      \    25\n    valid/images/...tif                               5\n    valid/masks/..._mask.tif \
+      \                         5\n  gen_24h_20x_01.tif  14,172,206 bytes (1181x3000x4 RGBA, standalone)"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/15395623/files/glioma_mini.zip/content::valid/images/gen_72h_10x_26.tif
+    - https://zenodo.org/api/records/15395623/files/glioma_mini.zip/content::valid/masks/gen_72h_10x_26_mask.tif
+    size_bytes: 1296212
+    description: one validation image and its mask
+  arrays:
+  - role: raw
+    path_pattern: '*/images/*.tif'
+    format: tiff
+    axes: yxs
+    shape:
+    - 512
+    - 704
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: lzw
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Single-page RGB TIFF (photometric 2, 3 samples; s axis). gen_72h_10x_26.tif is LZW-compressed,
+      gen_24h_20x_19.tif uncompressed, so compression varies.
+  - role: label
+    path_pattern: '*/masks/*_mask.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 704
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range: null
+    encoding: binary
+    classes:
+    - id: 255
+      name: cell
+    alignment: same-grid
+    alignment_notes: <stem>_mask.tif in the parallel masks/ folder, same 512x704 grid; 255 = cell, 0 =
+      background per the Zenodo page.
+  notes: 'Listing: tools/listing.py --expand-zips (complete, 40,678,001 bytes; 60 zip members). Probed
+    valid/images/gen_72h_10x_26.tif (512x704x3 uint8, LZW), valid/images/gen_24h_20x_19.tif (same shape,
+    uncompressed), its mask (512x704 uint8, plain) and the standalone gen_24h_20x_01.tif (1181x3000x4
+    RGBA). tools/sample.py failed on the zip members (OSError, file signature not found), and zenodo.org
+    file requests hit intermittent SSL EOF errors, so no values were measured; method header. voxel size
+    not found; checked: TIFF headers (no calibration seen), Zenodo record and parent record 15083188 descriptions
+    (harvest). Downloads: zip and members are usable with range requests (probe --download-check).'
