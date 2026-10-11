@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: sciencedb-17922-cryocrab-cryoem-foundation
 title: 'CryoCRAB: A Large-scale Curated and Filterable Dataset for Cryo-EM Foundation Model Pre-training'
 short_name: CryoCRAB cryo-EM foundation pre-training set
-description: Motion-corrected cryo-EM micrographs (full, odd-frame and even-frame averages for denoising pairs) and preprocessed HDF5
-  micrographs curated from 746 EMPIAR datasets (152,385 movie sets, about 200 images per EMPIAR entry), with estimated background
-  images and JSON metadata that link to the original EMPIAR movies. Released for pre-training cryo-EM foundation models and for
-  denoising.
+description: Motion-corrected cryo-EM micrographs (full, odd-frame and even-frame averages for denoising
+  pairs) and preprocessed HDF5 micrographs curated from 746 EMPIAR datasets (152,385 movie sets, about
+  200 images per EMPIAR entry), with estimated background images and JSON metadata that link to the original
+  EMPIAR movies. Released for pre-training cryo-EM foundation models and for denoising.
 landing_url: https://www.scidb.cn/detail?dataSetId=14986b67bc4b4816b777c8d378925dc7
 doi: 10.57760/sciencedb.17922
 repository: other
@@ -31,7 +31,8 @@ imaging:
   voxel_size_nm: null
   channels: null
   organism: []
-  sample: Single-particle cryo-EM micrographs of 746 different proteins re-processed from public EMPIAR depositions
+  sample: Single-particle cryo-EM micrographs of 746 different proteins re-processed from public EMPIAR
+    depositions
   labels_stains: []
 data:
   formats:
@@ -41,7 +42,7 @@ data:
   n_items: 152385
   access: open
   download_url: null
-  download_method: other
+  download_method: http
 annotations:
   present: true
   types:
@@ -68,15 +69,89 @@ provenance:
   - https://github.com/Dylan8527/CryoCRAB
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12145456/fullTextXML
   - https://api.crossref.org/works/10.1038/s41597-025-05179-2
+  - https://china.scidb.cn/download?fileId=2c7a617922b57b21fd96c1523a48f343
   confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-11T05:00:00Z'
-notes: The ScienceDB page is rendered client-side, so license (CC BY 4.0), size (13,396,912,628,447 bytes, 2,986 files) and dates come
-  from the DataCite record, and contents from the paper's Data Records section; no file listing was seen. The paper gives 12.18 TB for
-  micrographs plus metadata and says raw movies (86.2 TB) are not uploaded but linked through EMPIAR FTP paths in the JSON metadata. Image
-  counts are the 152,385 movie sets of the abstract (about 200 per EMPIAR entry). Pixel size varies per EMPIAR source and is not
-  aggregated (null). The data are re-processed copies of EMPIAR images; the GitHub code is GPL-3.0 and the article is CC BY-NC-ND,
-  but the dataset record states CC BY 4.0. No manual annotations exist; the odd/even splits are the training signal for denoising.
+  last_checked: '2026-10-11T04:08:49Z'
+notes: 'The ScienceDB page is rendered client-side, so license (CC BY 4.0), size (13,396,912,628,447 bytes,
+  2,986 files) and dates come from the DataCite record, and contents from the paper''s Data Records section;
+  no file listing was seen. The paper gives 12.18 TB for micrographs plus metadata and says raw movies
+  (86.2 TB) are not uploaded but linked through EMPIAR FTP paths in the JSON metadata. Image counts are
+  the 152,385 movie sets of the abstract (about 200 per EMPIAR entry). Pixel size varies per EMPIAR source
+  and is not aggregated (null). The data are re-processed copies of EMPIAR images; the GitHub code is
+  GPL-3.0 and the article is CC BY-NC-ND, but the dataset record states CC BY 4.0. No manual annotations
+  exist; the odd/even splits are the training signal for denoising. enricher: file tree read via the ScienceDB
+  file API; download_method http (per-file direct links).'
+technical:
+  method: header
+  size_source: page-stated
+  layout:
+    tree: "V3/  (latest version; V1, V2 also listed)  13.4 TB per DataCite\n  CryoCRAB/, cryocrab/   \
+      \     (empty in the API listing)\n  empiar_<n>/                 one folder per EMPIAR source (first\
+      \ 100 of the listing shown by the API)\n    empiar_<n>.json             per-micrograph metadata\
+      \ (7.6 MB for 10002)\n    micrograph.tar.gz           <idx>_empiar_<n>_full.mrc + _diff.mrc   (13.4\
+      \ GB for 10002)\n    micrograph_h5.tar.gz        <idx>_empiar_<n>_full_diff.h5           (6.3 GB\
+      \ for 10002)\n    background.tar.gz           <idx>_empiar_<n>_background.mrc         (0.4 MB for\
+      \ 10002)\n  raw movies: not uploaded; JSON points to ftp.ebi.ac.uk/empiar/world_availability/<n>/data/"
+    n_files: 2986
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: empiar_*/micrograph/*_full.mrc
+    format: mrc
+    axes: yx
+    shape:
+    - 4096
+    - 4096
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Full-frame motion-corrected micrograph per movie, packed in micrograph.tar.gz; shape
+      and pixel size per micrograph in empiar_<n>.json (10002: 4096x4096, 1.77 A). 2 bytes per pixel from
+      st_size; MRC mode not read.'
+  - role: target
+    path_pattern: empiar_*/micrograph/*_diff.mrc
+    format: mrc
+    axes: yx
+    shape:
+    - 4096
+    - 4096
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: Paired diff micrograph (odd/even frame split per the paper), same shape and pixel
+      size as _full in the JSON metadata; pair shares the <idx>_empiar_<n> stem.
+  - role: other
+    path_pattern: empiar_*/micrograph_h5/*_full_diff.h5
+    format: hdf5
+    axes: null
+    shape:
+    - 2592
+    - 2592
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: scaled
+    alignment_notes: 'Resampled copy of the full/diff pair in one HDF5 per micrograph (10002: 2592x2592
+      at 2.797 A, downfactor 0.633 per the JSON); dataset names not read.'
+  notes: 'File tree from the ScienceDB file API (POST gin-sdb-filetree childrenFileListByPath; its paging
+    repeated the first 100 entries, so the listing is partial). Read the first 3 KB of empiar_10002.json
+    by range request: per-micrograph optics (Falcon I, Polara 300, psize 1.77 A), paths of full/diff MRC,
+    h5 and background, and shapes. Members are inside tar.gz, so no headers or samples were read; method
+    header means file-level metadata only. voxel size not set: pixel size differs per EMPIAR source (stated
+    per micrograph in each empiar_<n>.json, e.g. 1.77 A for 10002), h5 copies are resampled. Downloads:
+    each file has a direct link https://china.scidb.cn/download?fileId=<id> (range requests work), but
+    china.scidb.cn is not on the TensorSwitch allowlist. No single archive and no small sample unit: the
+    smallest raw/target pair sits in a multi-GB tar.gz, so sample is null.'
