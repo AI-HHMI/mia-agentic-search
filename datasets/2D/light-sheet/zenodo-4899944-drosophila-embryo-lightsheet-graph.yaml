@@ -3,8 +3,8 @@ id: zenodo-4899944-drosophila-embryo-lightsheet-graph
 title: Drosophila embryo light-sheet frontal slices with superpixels, edge maps and expert cell annotations for instance segmentation
 short_name: Drosophila embryo light-sheet cell slices
 description: 317 frontal slices of light-sheet microscopy images of Drosophila embryos (307 for training without labels, 10 validation
-  slices with expert ground-truth cell annotations), distributed as HDF5 files with the raw image, superpixel map, PlantSeg edge map and graph
-  features with edge labels, released for training instance segmentation with a stateless actor-critic on high-level priors.
+  slices with expert ground-truth cell annotations), distributed as HDF5 files with the raw image, superpixel map, PlantSeg edge map
+  and graph features with edge labels, released for training instance segmentation with a stateless actor-critic on high-level priors.
 landing_url: https://zenodo.org/records/4899944
 doi: 10.5281/zenodo.4899944
 repository: Zenodo
@@ -37,14 +37,15 @@ data:
   size_bytes: 4952046961
   n_items: 317
   access: open
-  download_url: https://zenodo.org/api/records/4899944/files/leptin_dataset.zip/content
+  download_url: https://zenodo.org/records/4899944/files/leptin_dataset.zip
   download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
   coverage: sparse
-  format: 'HDF5: gt dataset (cell labels) and graph gt_edge_weights, only for the 10 validation images; train images have raw, superpixels (sp), PlantSeg edge map (ps_edge) and sp_edge'
+  format: 'HDF5: gt dataset (cell labels) and graph gt_edge_weights, only for the 10 validation images; train images have raw, superpixels
+    (sp), PlantSeg edge map (ps_edge) and sp_edge'
   source: manual
 ml:
   tasks:
@@ -68,11 +69,66 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T00:19:01Z'
-notes: 'Zenodo record (CC BY 4.0, one 4.95 GB zip, open) and the zip listing: 634 HDF5 files under v4_dwtrsd/ with train/ (307 pix_data and
-  graph_data files) and val/ (10 of each). Per the record description the val files add ground-truth labels (gt) and edge labels; train files have raw
-  image, superpixels and edge maps only. The paper (arXiv 2107.02600, PDF text read): 317 Drosophila embryo images from Bhide et al. (2020),
-  10 with expert annotations used as test data; the cell segmentation dataset is released on Zenodo. Microscope settings, pixel size and the annotation
-  procedure are not stated in the record or in the paper text read (the paper refers to Bhide et al. 2020), so voxel_size_nm is null. Only 10 slices
-  carry ground truth, so this is mainly a weakly-supervised/prior-based training set; the data are preprocessed (superpixel and graph files) rather
-  than only raw images.'
+  last_checked: '2026-10-11T03:12:00Z'
+notes: 'Zenodo record (CC BY 4.0, one 4.95 GB zip, open) and the zip listing: 634 HDF5 files under v4_dwtrsd/ with train/ (307 pix_data
+  and graph_data files) and val/ (10 of each). Per the record description the val files add ground-truth labels (gt) and edge labels;
+  train files have raw image, superpixels and edge maps only. The paper (arXiv 2107.02600, PDF text read): 317 Drosophila embryo images
+  from Bhide et al. (2020), 10 with expert annotations used as test data; the cell segmentation dataset is released on Zenodo. Microscope
+  settings, pixel size and the annotation procedure are not stated in the record or in the paper text read (the paper refers to Bhide
+  et al. 2020), so voxel_size_nm is null. Only 10 slices carry ground truth, so this is mainly a weakly-supervised/prior-based training
+  set; the data are preprocessed (superpixel and graph files) rather than only raw images.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "leptin_dataset.zip  (4,952,046,961 B, 634 members)\n  v4_dwtrsd/train/pix_data/pix_<n>.h5      307 files  (raw, node_labeling,\
+      \ ps_edge, sp_edge)\n  v4_dwtrsd/train/graph_data/graph_<n>.h5  307 files\n  v4_dwtrsd/val/pix_data/pix_<n>.h5        10 files\
+      \   (+ gt)\n  v4_dwtrsd/val/graph_data/graph_<n>.h5    10 files\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/4899944/files/leptin_dataset.zip::v4_dwtrsd/val/pix_data/pix_122.h5
+    size_bytes: 16620752
+    description: One validation slice with raw image, superpixels, edge maps and ground-truth cell labels in one HDF5 file
+  arrays:
+  - role: raw
+    path_pattern: leptin_dataset.zip::v4_dwtrsd/{train,val}/pix_data/pix_*.h5 (raw)
+    format: hdf5
+    axes: null
+    shape:
+    - 749
+    - 692
+    shape_varies: null
+    dtype: float64
+    compression: none
+    value_range:
+    - 0.0
+    - 1.0
+    normalization: rescaled
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: leptin_dataset.zip::v4_dwtrsd/val/pix_data/pix_*.h5 (gt)
+    format: hdf5
+    axes: null
+    shape:
+    - 749
+    - 692
+    shape_varies: null
+    dtype: int64
+    compression: none
+    value_range:
+    - 0
+    - 246
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: gt is in the same HDF5 file as raw (val only), same 749x692 grid; 115 distinct ids in pix_122. Train files have
+      no gt. Other datasets per file (node_labeling superpixels, ps_edge PlantSeg edge map, sp_edge) are derived inputs, not labels.
+  notes: 'Exact Zenodo listing with zip index. Read two whole HDF5 members (29 MB): val/pix_122.h5 and train/pix_0.h5, each 749x692
+    datasets raw (float64, 0-1), node_labeling (float32, 484 ids), ps_edge (float32), sp_edge (float64); val adds gt (int64, 115 ids;
+    one sample). node_labeling and ps_edge had identical statistics in both files (not investigated). axes null: 2D datasets without
+    an axis attribute. voxel size not found; checked: HDF5 attributes (none), Zenodo record, paper text (per the record notes; it refers
+    to Bhide et al. 2020).'
