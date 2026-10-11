@@ -1,0 +1,147 @@
+schema_version: '1.2'
+id: zenodo-17063876-mammal-hair-scale-sem
+title: 'SimCLR-Enhanced MammalHairNet: Advancing Species Identification Through Hair Scale Classification'
+short_name: Mammal guard hair scale SEM images (species)
+description: 9,953 scanning electron microscope images of mammalian guard hair scales from 33 species
+  (JEOL JSM-IT300), labelled by species, with raw, segmented-and-augmented and test image sets, a hair
+  segmentation annotated set (seg.tar), and trained classification and SimCLR models. Eight small species
+  are used only for self-supervised pretraining in the paper.
+landing_url: https://zenodo.org/records/17063876
+doi: 10.5281/zenodo.17063876
+repository: Zenodo
+accession: null
+authors:
+- Zhihui Liu
+publications:
+- title: 'SimCLR-enhanced MammalHairNet: advancing species identification through hair scale classification'
+  doi: 10.1093/cz/zoaf063
+  url: https://doi.org/10.1093/cz/zoaf063
+date_published: '2025-09-05'
+imaging:
+  modality:
+  - other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: Guard hairs from museum, zoo and wild-collected mammals, cleaned and metal-coated
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 42567588548
+  n_items: 9953
+  access: open
+  download_url: https://zenodo.org/records/17063876
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  - semantic-segmentation
+  coverage: partial
+  format: Species label by folder name (one folder per species); seg.tar holds MATLAB Image Labeler ground
+    truth (gTruth_20241112.mat) with PixelLabelData_1/Label_<n>.png masks
+  source: manual
+ml:
+  tasks:
+  - classification
+  - segmentation
+  - self-supervised
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-11T13:14:25Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/17063876
+  - https://zenodo.org/api/records/17063876/files/2025_85_720_per25.zip/content
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13500162/fullTextXML
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-11T16:30:00Z'
+notes: 'Scanning electron microscopy of animal hair; the schema has no plain SEM value, so modality is
+  other. Ten files: ori_all_training.tar (18.5 GB, raw images outside the test set), 2025_85_720 tar/zip
+  variants (augmented training sets after SAM-based background removal, 25/30/50 percent subsets), 2025_15_100.tar
+  (test set), seg.tar (segmentation models and annotated data), and three model zips; size_bytes is the
+  sum of all files. Only 2025_85_720_per25.zip was listed (4,500 TIFFs in species folders, e.g. Raccoon_dog);
+  The paper (full text read) states 9,953 valid images, 33 species (19 with several individuals, 14 from
+  one), train/test split by individual, and no pixel size; the species list is in its Supplementary Table
+  S1, which was not read, so organism is empty. enricher: seg.tar headers show gTruth_20241112.mat and
+  PixelLabelData_1/Label_<n>.png masks; paper: 1,144 images manually labelled (hair regions, scale bars)
+  for training and 250 for evaluating segmentation.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'ori_all_training.tar (18.5 GB)   raw training images (not walked)
+
+      2025_85_720.tar (7.8 GB), 2025_85_720_per30.tar (2.3 GB), 2025_85_720_per50.tar (3.9 GB)   augmented
+      training sets
+
+      2025_85_720_per25.zip (1.6 GB)   2025_85_720_per25/<Species>/<Species>_<n>.tif   4500 .tif, 25 folders
+      x 180
+
+      2025_15_100.tar (1.07 GB)        test set
+
+      seg.tar (3.09 GB)   seg/gTruth_20241112.mat, seg/{UNet,SegNet,DeepLabV3plus,SAM}/ (MATLAB models,
+      .mlx), seg/PixelLabelData_1/Label_<n>.png, ...
+
+      model_resnet_efficientnet_vit.zip, model_resnet_efficientnet_vit_from_scratch.zip, model_fintuning.zip   models'
+    n_files: 10
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/17063876/files/2025_85_720_per25.zip::2025_85_720_per25/Tiger/Tiger_65.tif
+    size_bytes: 141254
+    description: One background-removed SEM hair image (species = folder name)
+  arrays:
+  - role: raw
+    path_pattern: 2025_85_720_per25.zip::2025_85_720_per25/*/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 961
+    - 961
+    shape_varies: true
+    dtype: uint8
+    compression: packbits
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Single-page grey TIFFs, square, size varies (961x961, 1841x1841 probed); species
+      from the folder name.
+  - role: label
+    path_pattern: seg.tar::seg/PixelLabelData_1/Label_*.png
+    format: png
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    encoding: semantic-ids
+    classes: null
+    alignment: unknown
+    alignment_notes: 'MATLAB Image Labeler pixel-label PNGs (4-13 KB); the image each label belongs to
+      is recorded in gTruth_20241112.mat, not by file name. Classes per the paper: hair regions and scale
+      bars (ids not read).'
+  notes: 'Zenodo listing (tools/listing.py): 10 files, 42,567,588,548 B, file-listing. 2025_85_720_per25.zip
+    index: 4500 TIFFs (25 species x 180). Probed Tiger_65 and Tiger_154 (961x961 and 1841x1841 uint8,
+    PackBits, single page); sampled Tiger_65 (141 KB): min 0, max 255, mean 73.8, std 23.0 (one sample).
+    The tars are uncompressed, so the first 31 headers of seg.tar were read by range requests: gTruth_20241112.mat,
+    MATLAB UNet/SegNet/DeepLabV3plus models and .mlx scripts, then PixelLabelData_1/Label_<n>.png masks;
+    the rest of seg.tar and the other tars were not walked (thousands of headers). The label PNGs were
+    not decoded. TensorSwitch cannot pull members out of tar, so only the zip gives a sample spec. Voxel
+    size not found; checked: TIFF headers (no calibration), Zenodo API record, paper full text (no pixel
+    size; images carry scale bars).'
