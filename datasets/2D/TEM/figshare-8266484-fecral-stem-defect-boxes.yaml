@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: figshare-8266484-fecral-stem-defect-boxes
 title: Data for "Multi Defect Detection and Analysis of Electron Microscopy Images with Deep Learning"
 short_name: Irradiated FeCrAl STEM defect boxes (TEM)
-description: 165 manually labelled STEM images of neutron-irradiated FeCrAl ferritic alloys with bounding boxes for dislocation-loop and black-dot defects, used to train a Faster R-CNN defect detector. Each image was labelled by at least two groups of researchers in ImageJ; images and box files are provided together with a CSV of the plotted results.
+description: 165 manually labelled STEM images of neutron-irradiated FeCrAl ferritic alloys with bounding
+  boxes for dislocation-loop and black-dot defects, used to train a Faster R-CNN defect detector. Each
+  image was labelled by at least two groups of researchers in ImageJ; images and box files are provided
+  together with a CSV of the plotted results.
 landing_url: https://figshare.com/articles/dataset/Data_for_Multi_Defect_Detection_and_Analysis_of_Electron_Microscopy_Images_with_Deep_Learning_/8266484
 doi: 10.6084/m9.figshare.8266484
 repository: Figshare
@@ -14,6 +17,9 @@ publications:
 - title: Multi Defect Detection and Analysis of Electron Microscopy Images with Deep Learning
   doi: 10.48550/arXiv.2108.08883
   url: https://arxiv.org/abs/2108.08883
+- title: Multi defect detection and analysis of electron microscopy images with deep learning
+  doi: 10.1016/j.commatsci.2021.110576
+  url: https://doi.org/10.1016/j.commatsci.2021.110576
 date_published: '2021-01-18'
 imaging:
   modality:
@@ -38,12 +44,13 @@ annotations:
   - bounding-box
   - classification
   coverage: dense
-  format: 'one .txt file per image in bounding_boxes/, one box per line: class index followed by four coordinates (e.g. "0 65.54 908.52 194.54 975.52")'
+  format: 'one .txt file per image in bounding_boxes/, one box per line: class index followed by four
+    coordinates (e.g. "0 65.54 908.52 194.54 975.52")'
   source: manual
 ml:
   tasks:
   - detection
-  splits_provided: false
+  splits_provided: true
   benchmark: null
   baseline_code_url: https://github.com/uw-cmg/multitype-defect-detection
 license:
@@ -56,10 +63,78 @@ provenance:
   - https://api.figshare.com/v2/articles/8266484
   - https://ndownloader.figshare.com/files/26094725
   - https://arxiv.org/pdf/2108.08883
+  - https://raw.githubusercontent.com/uw-cmg/multitype-defect-detection/master/README.md
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T22:35:00Z'
-notes: 'DataSetFinal.zip (peek_archive): images/ (165 jpg) and bounding_boxes/ (txt, a few duplicate-named copies); FigsFinal.zip holds figures only. Paper: 165 STEM images, random 12-image test subset not marked in the archive, training set augmented to 918 by the authors (not included). Pixel size ranges 0.14-0.87 nm/pixel (paper SI), not given per image, so null. Classes per paper: open loops (single/double ring), closed elliptical loops, closed dots; class-index mapping unconfirmed. Modality TEM as schema has no STEM. Cites the arXiv preprint; journal version not located.'
+  last_checked: '2026-10-11T22:40:00Z'
+notes: 'DataSetFinal.zip: images/ (165 jpg, 1024x1024 greyscale) and bounding_boxes/ (165 txt, a few "-
+  Copy" names), plus allimages.txt (165), trainimages.txt (153) and testimages.txt (12). FigsFinal.zip
+  holds figures, tables and a second copy of the dataset. enricher: splits_provided true (was false):
+  the 12-image test subset is listed in DataSetFinal/testimages.txt. enricher: journal version added (Comput.
+  Mater. Sci. 2021, doi 10.1016/j.commatsci.2021.110576, named in the code README). Pixel size ranges
+  0.14-0.87 nm/pixel (paper SI), not given per image, so null. Classes per paper: open loops, closed elliptical
+  loops, closed dots; box files use class indices 0-2, mapping unconfirmed; the training code reads them
+  from a folder named Data3TypesYminXminYmaxXmax10, hinting at the coordinate order (not documented).
+  Modality TEM as the schema has no STEM.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "figshare 8266484   2 files, 124.9 MB\n  DataSetFinal.zip   42.9 MB\n    DataSetFinal/\n   \
+      \   images/           165 .jpg   (1024x1024, L)\n      bounding_boxes/   165 .txt   <class> <4 coords>\
+      \ per line\n      allimages.txt  trainimages.txt (153)  testimages.txt (12)\n  FigsFinal.zip   \
+      \   82.0 MB\n    FigShare/DataSet/{images,bounding_boxes}/   copy of the dataset\n    FigShare/Figures/Figure#/\
+      \  FigShare/Tables/Table#/"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/26094725::DataSetFinal/images/grid1_roi1_500kx_0p5nm_haadf1_0013.jpg
+    - https://ndownloader.figshare.com/files/26094725::DataSetFinal/bounding_boxes/grid1_roi1_500kx_0p5nm_haadf1_0013.txt
+    size_bytes: 149902
+    description: One STEM image and its box file (32 boxes, classes 0-2).
+  arrays:
+  - role: raw
+    path_pattern: DataSetFinal/images/*.jpg
+    format: jpeg
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 2
+    - 254
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Greyscale (mode L) JPEGs; the second sampled image is also 1024x1024 ([1, 255]).
+  - role: label
+    path_pattern: DataSetFinal/bounding_boxes/*.txt
+    format: other
+    axes: null
+    shape:
+    - 32
+    - 5
+    shape_varies: true
+    dtype: float32
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: class 0 (mapping unconfirmed)
+    - id: 1
+      name: class 1 (mapping unconfirmed)
+    - id: 2
+      name: class 2 (mapping unconfirmed)
+    alignment: same-grid
+    alignment_notes: '<stem>.txt pairs with images/<stem>.jpg; one box per line: class index then four
+      pixel coordinates (can be slightly negative at the border). Shape is [boxes, 5] for the sample.'
+  notes: 'Listed both figshare files and the zips (695 members). Read 2 JPEGs from the zip by range (338
+    KB; tools/sample.py does not open members of ndownloader URLs without a .zip suffix) and the box file
+    and split lists with peek_archive. Value ranges from one sample each. Voxel size not found per image;
+    checked: figshare API, zip contents, paper (range only), code README and dataset loader.'
