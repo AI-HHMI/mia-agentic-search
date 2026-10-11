@@ -36,7 +36,7 @@ imaging:
 data:
   formats:
   - other
-  size_bytes: 17080881727
+  size_bytes: 17081409793
   n_items: 4920
   access: open
   download_url: https://ndownloader.figshare.com/files/49738839
@@ -44,7 +44,7 @@ data:
 annotations:
   present: true
   types:
-  - other
+  - points
   coverage: dense
   format: 'ANNOTATED folder: per-field CSV files (absent when no bacilli) plus marking BMP images distinguishing
     bacillus, bacilli cluster and undefined artifacts'
@@ -70,9 +70,88 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T06:29:07Z'
-notes: Figshare API record and the 'folders directory' PDF read; the first entries of the tar.gz were listed (ODS/Annotated
-  ODS/ANNOTATIONS/<field>/ImageAnnotation/*.csv). CSV columns and the exact marking colour code were not inspected.
-  No paper is cited on the record (Europe PMC/Crossref title search found none). Pixel size not stated. Sibling
-  of the DDS2 patch set (figshare 27209658) and of ODS1 (focal stacks); this record covers only the EDF images and
-  labels. Image format is BMP, which has no schema enum, hence formats other.
+  last_checked: '2026-10-11T06:58:00Z'
+notes: 'Figshare API record and the ''folders directory'' PDF read; the first entries of the tar.gz were listed
+  (ODS/Annotated ODS/ANNOTATIONS/<field>/ImageAnnotation/*.csv). enricher: CSV rows are <class b|bc|u>,<x>,<y> (annotations.types
+  other -> points); marking BMPs are RGB overlays. No paper is cited on the record (Europe PMC/Crossref title search
+  found none). Pixel size not stated. Sibling of the DDS2 patch set (figshare 27209658) and of ODS1 (focal stacks);
+  this record covers only the EDF images and labels. Image format is BMP, which has no schema enum, hence formats
+  other.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "ODS2.tar.gz  17,080,881,727 B\n  ODS2/Annotated ODS2/ANNOTATIONS/S01TR1EDF..S15TR2EDF/ImageAnnotation/S??TR?EDFTnnn.csv\
+      \  (1,136 csv, only fields with bacilli)\n  ODS2/Annotated ODS2/MARKS/S01TR1EDFM..S15TR2EDFM/S??TR?EDFMnnn.bmp\
+      \  (marking images, 1388x1040 RGB, 4,330,614 B each)\n  ODS2/S01TR1EDF..S15TR2EDF/S??TR?EDFTnnn.bmp  (EDF\
+      \ images; path per the folders-directory PDF, not reached in the stream)\nODS2 - folders directory.pdf  145,740\
+      \ B\nFigure of ilustration datasets.png  382,326 B\n"
+    n_files: 3
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: ODS2/S*EDF/S*EDFT*.bmp
+    format: other
+    axes: yxs
+    shape:
+    - 1040
+    - 1388
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: EDF true-colour BMP, 1388 x 1040 px, 24 bit (Figshare description); 164 tiles per tile region,
+      2 regions per slide, slides 1-15. Not sampled (far into the 17 GB tar.gz).
+  - role: label
+    path_pattern: ODS2/Annotated ODS2/ANNOTATIONS/*/ImageAnnotation/*.csv
+    format: csv
+    axes: null
+    shape:
+    - 18
+    - 3
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: points-table
+    classes:
+    - id: b
+      name: bacillus
+    - id: bc
+      name: bacilli cluster
+    - id: u
+      name: undefined artifacts
+    alignment: same-grid
+    alignment_notes: 'One CSV per field with bacilli, rows <class>,<x>,<y> in pixels (max x 1313, max y 849 in 4
+      samples). Pairs by stem: S01TR1EDFT022.csv <-> S01TR1EDFT022.bmp. Class letters b/bc/u match the three marking
+      classes named in the folders-directory PDF.'
+  - role: label
+    path_pattern: ODS2/Annotated ODS2/MARKS/*/S*EDFM*.bmp
+    format: other
+    axes: yxs
+    shape:
+    - 1040
+    - 1388
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 151
+    - 255
+    normalization: unknown
+    encoding: other
+    alignment: same-grid
+    alignment_notes: 'Marking image: the EDF field with bacillus / cluster / artifact marks drawn on it (3,081 distinct
+      colours in one sample), one per field: S01TR1EDFM001.bmp <-> S01TR1EDFT001.bmp. Not a clean label mask.'
+  notes: 'Figshare API: 3 files, 17,081,409,793 B (complete; size_bytes now includes the PDF and PNG). The tar.gz
+    has no index: streamed the first 50 MB (1,235 members: all 1,136 annotation CSVs and the start of MARKS); sampled
+    4 CSVs and 2 marking BMPs (value range from these only). EDF image folder layout taken from the folders-directory
+    PDF. BMP is not a schema format (formats other). No sample unit: every file sits in the one 17 GB tar.gz, which
+    TensorSwitch cannot open member by member. Voxel size not found; checked: Figshare description, folders-directory
+    PDF, BMP headers, paper search (none found).'
