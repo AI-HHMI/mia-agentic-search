@@ -4,8 +4,8 @@ title: Segmentation of brain ultrastructures in 3D electron microscopy
 short_name: Rat white and gray matter ultrastructure (SBEM)
 description: Serial block-face SEM volumes of rat brain, 10 white matter samples (corpus callosum and cingulum of sham-operated
   and traumatic-brain-injury rats, each at low resolution 50 nm isotropic and high resolution 15 x 15 x 50 nm) and 6 gray
-  matter samples (somatosensory cortex layer VI), with automatic segmentations of myelin, myelinated axons and (low
-  resolution) cell nuclei produced by the ACSON, DeepACSON and gACSON pipelines.
+  matter samples (somatosensory cortex layer VI), with automatic segmentations of myelin, myelinated axons and (low resolution)
+  cell nuclei produced by the ACSON, DeepACSON and gACSON pipelines.
 landing_url: https://etsin.fairdata.fi/dataset/f8ccc23a-1f1a-4c98-86b7-b63652a809c3
 doi: 10.23729/bad417ca-553f-4fa6-ae0a-22eddd29a230
 repository: other
@@ -25,10 +25,7 @@ imaging:
   modality:
   - SBF-SEM
   dimensionality: 3D
-  voxel_size_nm:
-    x: 15
-    y: 15
-    z: 50
+  voxel_size_nm: null
   channels: 1
   organism:
   - Rattus norvegicus
@@ -42,7 +39,7 @@ data:
   n_items: 26
   access: open
   download_url: null
-  download_method: api
+  download_method: other
 annotations:
   present: true
   types:
@@ -74,12 +71,96 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T15:40:00Z'
-notes: 'Metax file listing (89 files, 107.8 GB): per sample folder, White matter EM has <id>.h5 images (HM = high resolution
-  15 x 15 x 50 nm, 15 um cube, about 0.3-0.5 GB; LM = low resolution 50 x 50 x 50 nm, 200 x 100 x 65 um, 5-11 GB), plus _myelin.mat,
-  _myelinated_axons.mat and LM _nucleus.mat segmentations; Gray matter EM has .mat image volumes (HM, 15 x 15 x 50 nm) with
-  _myelin.mat and _myelinated_axons.mat. n_items 26 = 20 white matter volumes (10 samples x 2 resolutions) + 6 gray matter
-  volumes. The labels are automatic (ACSON / DeepACSON / gACSON), not manually proofread; the paper reports expert evaluation
-  of 50 low-resolution patches. voxel_size_nm gives the high-resolution setting; low-resolution volumes are 50 x 50 x 50 nm.
-  The .mat files were not opened (whether they are HDF5-based v7.3 is not stated); the README.docx in the dataset was not read.
-  No direct download URL was found: files are served through the Fairdata (IDA) service.'
+  last_checked: '2026-10-11T15:58:00Z'
+notes: 'Metax listing: 89 files, 107.8 GB. White matter EM/<sample>/: HM_<id>.h5 (high res, 15x15x50 nm, 0.3-0.5 GB) and LM_<id>.h5
+  (low res, 50x50x50 nm, 5-11 GB) with _myelin.mat, _myelinated_axons.mat and LM _nucleus.mat; Gray matter EM/<sample>/: HM_*.mat
+  images (15x15x50 nm) with _myelin.mat and _myelinated_axons.mat. n_items 26 = 20 white + 6 gray matter volumes. Labels automatic
+  (ACSON / DeepACSON / gACSON). enricher: voxel_size_nm set to null (was 15x15x50): subsets differ, HM 15x15x50 nm, LM 50x50x50
+  nm (Metax description). enricher: download_method other (was api): Fairdata IDA download service, no direct file URLs.'
+technical:
+  method: metadata-only
+  size_source: file-listing
+  layout:
+    tree: "Gray matter EM/                 6 folders, 18 files\n  <Sham|TBI>_<n>_<ipsi|contra>/  HM_<n>_<date>_<side>.mat\
+      \ (240-285 MB), *_myelin.mat, *_myelinated_axons.mat\nWhite matter EM/                 README.docx + 10 folders, 71\
+      \ files\n  <Sham|TBI>_<n>_<ipsi|contra>/  HM_<n>_<side>.h5 (0.31-0.50 GB), HM_*_myelin.mat, HM_*_myelinated_axons.mat,\n\
+      \                                 LM_<n>_<side>.h5 (4.8-11.2 GB), LM_*_myelin.mat, LM_*_myelinated_axons.mat, LM_*_nucleus.mat\n\
+      \  (TBI_28_ipsi: LM myelin file named mat_LM_28_ipsi_myelin.mat)"
+    n_files: 89
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: White matter EM/*/HM_*.h5
+    format: hdf5
+    axes: null
+    shape: null
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: not-applicable
+  - role: raw
+    path_pattern: White matter EM/*/LM_*.h5
+    format: hdf5
+    axes: null
+    shape: null
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: not-applicable
+  - role: raw
+    path_pattern: Gray matter EM/*/HM_*_[0-9][0-9][0-9][0-9][0-9][0-9]_{ipsi,contra}.mat
+    format: other
+    axes: null
+    shape: null
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: not-applicable
+  - role: label
+    path_pattern: '*/*/*_myelin.mat'
+    format: other
+    axes: null
+    shape: null
+    dtype: unknown
+    compression: unknown
+    encoding: unknown
+    classes:
+    - id: null
+      name: myelin
+    alignment: unknown
+    alignment_notes: 'one label file per image volume, same stem plus _myelin (TBI_28_ipsi LM: mat_ prefix); grid relation
+      not inspected'
+  - role: label
+    path_pattern: '*/*/*_myelinated_axons.mat'
+    format: other
+    axes: null
+    shape: null
+    dtype: unknown
+    compression: unknown
+    encoding: unknown
+    classes:
+    - id: null
+      name: myelinated axon
+    alignment: unknown
+    alignment_notes: same stem plus _myelinated_axons; per the record these are instance labels (not verified in files)
+  - role: label
+    path_pattern: White matter EM/*/LM_*_nucleus.mat
+    format: other
+    axes: null
+    shape: null
+    dtype: unknown
+    compression: unknown
+    encoding: unknown
+    classes:
+    - id: null
+      name: cell nucleus
+    alignment: unknown
+    alignment_notes: low-resolution white matter only, same stem plus _nucleus
+  notes: 'Metadata only: files are on Fairdata IDA and are served only through the Fairdata download service (token per request);
+    download.fairdata.fi gave no usable public endpoint (authorize/requests 404), so no header could be probed and no direct
+    URL exists. Size and tree from the complete Metax file listing (89 files, 107,767,034,325 bytes). .mat label/image files:
+    MATLAB version (v7.3 = HDF5) not known. voxel size: HM 15x15x50 nm, LM 50x50x50 nm (Metax description); record value null
+    because subsets differ. Download search: Metax API (no download links), Etsin page (download via Fairdata service only),
+    DeepACSON GitHub README (no data links). Smallest unit: White matter EM/Sham_25_contra/HM_25_contra.h5 + HM_25_contra_myelin.mat
+    + HM_25_contra_myelinated_axons.mat (339,187,288 bytes); sample left null because it has no direct URL.'
