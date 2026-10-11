@@ -1,12 +1,12 @@
 schema_version: '1.2'
 id: harvard-dvn-nvucw8-gastric-intestinal-metaplasia-wsi
-title: 'Supplemented Data for: Towards automatizing detection and quantification of intestinal metaplasia: a multi-expert comparative
-  study'
+title: 'Supplemented Data for: Towards automatizing detection and quantification of intestinal metaplasia: a multi-expert
+  comparative study'
 short_name: Gastric intestinal metaplasia H&E WSIs, polygons
 description: Whole-slide images (.svs) of H&E-stained gastric biopsies from two Colombian cohorts (149 asymptomatic volunteers
-  and 56 patients, five biopsies per case, scanned at 40x, 0.255 um per pixel) with ASAP XML polygon annotations of regions with
-  intestinal metaplasia and of the five stomach regions, plus 256 x 256 px image patches from annotated regions, split into
-  control and metaplasia folders.
+  and 56 patients, five biopsies per case, scanned at 40x, 0.255 um per pixel) with ASAP XML polygon annotations of regions
+  with intestinal metaplasia and of the five stomach regions, plus 256 x 256 px image patches from annotated regions, split
+  into control and metaplasia folders.
 landing_url: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NVUCW8
 doi: 10.7910/DVN/NVUCW8
 repository: other
@@ -19,10 +19,7 @@ imaging:
   modality:
   - histology-WSI
   dimensionality: 2D
-  voxel_size_nm:
-    x: 255
-    y: 255
-    z: null
+  voxel_size_nm: null
   channels: 3
   organism:
   - Homo sapiens
@@ -33,7 +30,7 @@ imaging:
 data:
   formats:
   - svs
-  - png
+  - jpeg
   size_bytes: 226888637513
   n_items: 261
   access: open
@@ -45,7 +42,7 @@ annotations:
   - semantic-segmentation
   coverage: partial
   format: 'ASAP .xml polygon annotations named like each slide: label IM for intestinal metaplasia regions and numeric labels
-    1 to 5 for the stomach region; patch zips (256 x 256) with control and metaplasia folders'
+    1 to 5 for the stomach region; JPEG patch zips (256 x 256) with control and metaplasia folders'
   source: manual
 ml:
   tasks:
@@ -63,16 +60,70 @@ provenance:
   evidence_urls:
   - https://dataverse.harvard.edu/api/datasets/:persistentId/?persistentId=doi:10.7910/DVN/NVUCW8
   - https://dataverse.harvard.edu/api/access/datafile/11802180
-  confidence: 0.8
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T17:50:00Z'
+  last_checked: '2026-10-11T17:35:00Z'
 notes: 'Dataverse file listing: 528 files, 226.9 GB. images/URK has 149 .svs with 149 .xml, images/HUN has 112 .svs with 112
   .xml (n_items 261 slide files); the description speaks of 205 WSIs (five biopsies per case), which does not match the 261
   files and is not resolved. Patches: patches/HUN and patches/URK, three zips each (control part a and b, metaplasia; 0.1
   to 1.7 GB, not opened). The annotated regions are drawn by the most experienced of three pathologists and include stroma
   and surrounding tissue besides metaplastic glands (description). One XML was read to confirm ASAP polygon annotations. The
-  linked paper (multi-expert comparative study) was not found in Europe PMC or Crossref. Pixel size 0.255 um (255 nm) is stated in the
-  dataset description.'
+  linked paper (multi-expert comparative study) was not found in Europe PMC or Crossref. enricher: voxel_size_nm set to null
+  (was 255 nm): the description says 0.255 um at x40, but SVS headers say MPP 0.127505 at AppMag 80 (H010-1, H026-1, H052-1,
+  U063) and 0.265018 at AppMag 40 (U140), so scans differ. enricher: formats svs + jpeg (patches are JPEG, was png).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "images/URK/U<NNN>.svs + U<NNN>.xml          149 + 149   153.6 GB\nimages/HUN/H<NNN>-<k>.svs + .xml            \
+      \   112 + 112    67.4 GB\npatches/URK/URK_control_part_a.zip, URK_control_part_b.zip, URK_metaplasia.zip   3.47 GB\n\
+      patches/HUN/HUN_control_part_a.zip, HUN_control_part_b.zip, HUN_metaplasia.zip   2.40 GB\n  zip members: .../<Control|Metaplasia>/<slide>/<region\
+      \ 1-5>/<slide>_40x_512px_x<X>_y<Y>.jpg (256x256 px)"
+    n_files: 528
+    listing_complete: true
+  sample:
+    urls:
+    - https://dataverse.harvard.edu/api/access/datafile/11787595
+    - https://dataverse.harvard.edu/api/access/datafile/11800015
+    size_bytes: 117244961
+    description: smallest slide U140.svs and its ASAP annotation U140.xml
+  arrays:
+  - role: raw
+    path_pattern: images/*/*.svs
+    format: svs
+    axes: yxs
+    shape:
+    - 29416
+    - 41740
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg2000
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Aperio SVS, tiled 256x256, J2K; 7-8 TIFF pages = pyramid levels and associated images, not z (shape is
+      page 0 of U140)
+  - role: label
+    path_pattern: images/*/*.xml
+    format: other
+    axes: null
+    shape: null
+    dtype: unknown
+    compression: none
+    encoding: polygons
+    classes:
+    - id: IM
+      name: intestinal metaplasia
+    - id: 1-5
+      name: stomach region (antrum, incisura, corpus curvatures; description)
+    alignment: same-grid
+    alignment_notes: ASAP XML polygons with the slide stem (U140.svs <-> U140.xml), coordinates in level-0 pixels
+  notes: 'Listing: Dataverse API, 528 files, 226,888,637,513 bytes (complete). Patch zips listed: HUN_metaplasia 8,247 jpg,
+    URK_metaplasia 30,677, HUN_control_part_a 79,026. Headers (probe.py, about 1.5 MB each): U140.svs page 0 29416x41740x3
+    uint8 J2K, AppMag 40, MPP 0.265018; H010-1, H026-1, H052-1, U063: AppMag 80, MPP 0.127505. Sample: one patch H034-1_40x_512px_x2560_y13312.jpg
+    256x256x3 uint8 (name says 512px, file is 256 px). U140.xml read: ASAP polygons. Voxel size: docs 0.255 um at x40 vs headers
+    0.1275 um (x80) / 0.265 um (x40); the docs value does not fit the full-resolution level of most slides, so null. No single
+    archive: download_url stays null, per-file links come from the Dataverse API.'
