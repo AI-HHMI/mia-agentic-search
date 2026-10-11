@@ -2,7 +2,12 @@ schema_version: '1.2'
 id: aws-allen-ivy-glioblastoma-atlas-he-annotations
 title: Allen Ivy Glioblastoma Atlas (histology and ISH section images with anatomic feature annotations)
 short_name: Ivy glioblastoma histology tumor-feature masks
-description: Whole-slide images (about 18,000 x 15,000 px JPEGs, 0.5 um/pixel) of human glioblastoma tissue sections from the Ivy GAP resource, histology-stained sections and adjacent in situ hybridization sections, 31,857 primary images in 946 specimen folders. Each image comes with an annotation image of the anatomic tumor features (e.g. leading edge, infiltrating tumor, cellular tumor, pseudopalisading cells, microvascular proliferation) produced by a machine learning application trained on expert neuropathologist outlines, a boundary image, and for ISH sections an expression image.
+description: Whole-slide images (about 18,000 x 15,000 px JPEGs, 0.5 um/pixel) of human glioblastoma tissue
+  sections from the Ivy GAP resource, histology-stained sections and adjacent in situ hybridization sections,
+  31,857 primary images in 946 specimen folders. Each image comes with an annotation image of the anatomic
+  tumor features (e.g. leading edge, infiltrating tumor, cellular tumor, pseudopalisading cells, microvascular
+  proliferation) produced by a machine learning application trained on expert neuropathologist outlines,
+  a boundary image, and for ISH sections an expression image.
 landing_url: https://registry.opendata.aws/allen-ivy-glioblastoma-atlas/
 doi: null
 repository: other
@@ -24,7 +29,8 @@ imaging:
   channels: 3
   organism:
   - Homo sapiens
-  sample: human glioblastoma tumour tissue sections (41 patients, 42 tumours in the paper cohort), histology and ISH stained
+  sample: human glioblastoma tumour tissue sections (41 patients, 42 tumours in the paper cohort), histology
+    and ISH stained
   labels_stains: []
 data:
   formats:
@@ -39,7 +45,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: one RGB JPEG annotation image per primary image (donor_<id>/specimen_<id>/annotation/<specimen>_<nn>_<section>_annotation.jpg), same pixel dimensions as the primary image; colour-to-class mapping not found in the files read
+  format: one RGB JPEG annotation image per primary image (donor_<id>/specimen_<id>/annotation/<specimen>_<nn>_<section>_annotation.jpg),
+    same pixel dimensions as the primary image; colour-to-class mapping not found in the files read
   source: automatic
 ml:
   tasks:
@@ -60,10 +67,85 @@ provenance:
   - https://allen-ivy-glioblastoma-atlas.s3.us-west-2.amazonaws.com/donor_10865/specimen_264712561/primary/264712561_01_265851322.jpg
   - https://allen-ivy-glioblastoma-atlas.s3.us-west-2.amazonaws.com/specimen_metadata.json
   - https://pmc.ncbi.nlm.nih.gov/articles/PMC6414061/
+  - https://allen-ivy-glioblastoma-atlas.s3.amazonaws.com/section_metadata.json
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T17:47:27Z'
-notes: 'S3 listing complete: 116,181 files, 9.36 TB (per specimen: annotation, boundary, primary JPEGs, 31,857 each, expression JPEGs 20,607, plus metadata JSON). Probed one primary and one annotation JPEG: both 18,176 x 15,104 RGB. Paper states 0.5 um/pixel; not stored in the JPEGs, so voxel size is null. H&E vs ISH split of the primary images and the annotation colour-to-class mapping were not established (docs site redirects to a forum). Registry: annotations by a machine learning process trained by physicians; paper: neuropathologist outlines plus ML for H&E (accuracy in Table S5, not read). License: Allen Institute terms of use.'
+  last_checked: '2026-10-11T18:55:00Z'
+notes: 'S3 listing complete: 116,181 files, 9.36 TB (per specimen: annotation, boundary, primary JPEGs,
+  31,857 each, expression JPEGs 20,607, plus metadata JSON). Probed one primary and one annotation JPEG:
+  both 18,176 x 15,104 RGB. Paper states 0.5 um/pixel; not stored in the JPEGs, so voxel size is null.
+  The annotation colour-to-class mapping were not established (docs site redirects to a forum). Registry:
+  annotations by a machine learning process trained by physicians; paper: neuropathologist outlines plus
+  ML for H&E (accuracy in Table S5, not read). License: Allen Institute terms of use. enricher: section_metadata.json
+  gives treatment per section (ISH 22,166, H&E 12,670, RNA-seq 1,116 sub-images) and per-image resolution
+  (mostly 0.4945-0.504, some 0.9887).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "s3://allen-ivy-glioblastoma-atlas/   116,181 files, 9.36 TB\ndonor_metadata.json, specimen_metadata.json,\
+      \ section_metadata.json (58.6 MB)\ndonor_<id>/specimen_<id>/          43 donors, 947 specimens\n\
+      \  primary/<spec>_<nn>_<sub_image>.jpg                31,857   4.48 TB\n  annotation/<spec>_<nn>_<sub_image>_annotation.jpg\
+      \  31,857   0.24 TB\n  boundary/<spec>_<nn>_<sub_image>_boundary.jpg      31,857   4.36 TB\n  expression/<spec>_<nn>_<sub_image>_expression.jpg\
+      \  20,607   0.29 TB (ISH only)\n"
+    n_files: 116181
+    listing_complete: true
+  sample:
+    urls:
+    - https://allen-ivy-glioblastoma-atlas.s3.amazonaws.com/donor_14734/specimen_300820971/primary/300820971_294_301585392.jpg
+    - https://allen-ivy-glioblastoma-atlas.s3.amazonaws.com/donor_14734/specimen_300820971/annotation/300820971_294_301585392_annotation.jpg
+    size_bytes: 44172799
+    description: Smallest H&E section in section_metadata.json (7808 x 9408 px) and its annotation image
+  arrays:
+  - role: raw
+    path_pattern: donor_*/specimen_*/primary/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 9408
+    - 7808
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 24
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB section images, H&E or ISH (treatment per section_data_set in section_metadata.json,
+      which also lists width, height and resolution per sub_image).
+  - role: label
+    path_pattern: donor_*/specimen_*/annotation/*_annotation.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 9408
+    - 7808
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: rgb-colors
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Same stem + _annotation; same shape as the primary image in the sample. Colour-coded
+      regions saved as lossy JPEG (256 values per channel in the sample, so colours must be snapped to
+      a palette). Main colours in the sampled H&E annotation: magenta (208,0,208) 75 %, green (0,208,0)
+      16 %, near-white 8 %, orange-red (240,48,0) 0.5 %; the colour-to-structure table was not found.'
+  notes: 'Listing: tools/listing.py s3://allen-ivy-glioblastoma-atlas/ (--max-files 200000): 116,181 files,
+    9,364,264,063,535 bytes, complete, exact. Read section_metadata.json (20,470 section data sets, 35,952
+    sub-images listed with primary/annotation/boundary[/expression] keys; the bucket has 31,857 primary
+    files). Sampled the smallest H&E sub-image pair (44.2 MB): primary range [24,255], RGB colour; annotation
+    same shape. Value ranges from that one pair. Boundary and expression JPEGs not inspected. Voxel size:
+    section_metadata.json gives a per-image resolution (unit not stated; 0.4945, 0.4994, 0.497, 0.504,
+    0.5016, 0.5011 and 0.9887 occur, -1 for 1,116 RNA-seq images); with several values and no unit it
+    is left null. Paper full text not open in Europe PMC. No single archive: download_url is the bucket;
+    objects are direct https URLs.'
