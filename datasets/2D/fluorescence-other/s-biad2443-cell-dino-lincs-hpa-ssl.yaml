@@ -2,12 +2,12 @@ schema_version: '1.2'
 id: s-biad2443-cell-dino-lincs-hpa-ssl
 title: 'Cell-DINO: Self-Supervised Image-based Embeddings for Cell Fluorescent Microscopy'
 short_name: LINCS Cell Painting and HPA single cells (SSL)
-description: 'Reprocessed fluorescence images from two public sources, packaged for training deep learning models
-  (Cell-DINO / DINO self-supervised vision transformers): (1) LINCS Cell Painting images of A549 cells treated
-  with 1,571 compounds at 6 doses, compressed with DeepProfiler and cropped into 128x128 px single-cell in-context
-  PNG crops, delivered as one tar per plate; (2) Human Protein Atlas (HPA) confocal images: 512 px whole fields
-  of view as TIFF and fixed-size masked single-cell PNG crops, with CSV tables giving the expert protein-localization
-  labels (28 compartment classes) and cell type for each image, and pretrain / evaluation / train / test splits.'
+description: 'Reprocessed fluorescence images from two public sources, packaged for training deep learning models (Cell-DINO
+  / DINO self-supervised vision transformers): (1) LINCS Cell Painting images of A549 cells treated with 1,571 compounds at
+  6 doses, compressed with DeepProfiler and cropped into 128x128 px single-cell in-context PNG crops, delivered as one tar
+  per plate; (2) Human Protein Atlas (HPA) confocal images: 512 px whole fields of view as TIFF and fixed-size masked single-cell
+  PNG crops, with CSV tables giving the expert protein-localization labels (28 compartment classes) and cell type for each
+  image, and pretrain / evaluation / train / test splits.'
 landing_url: https://www.ebi.ac.uk/biostudies/BioImages/studies/S-BIAD2443
 doi: 10.6019/S-BIAD2443
 repository: BioImageArchive
@@ -48,8 +48,8 @@ annotations:
   types:
   - classification
   coverage: unknown
-  format: 'HPA: CSV tables with per-image multi-label protein localization (28 classes) and cell type, plus train/test
-    and pretrain/evaluation split lists. LINCS: no labels in the study; plate/well/site only in the directory tree.'
+  format: 'HPA: CSV tables with per-image multi-label protein localization (28 classes) and cell type, plus train/test and
+    pretrain/evaluation split lists. LINCS: no labels in the study; plate/well/site only in the directory tree.'
   source: manual
 ml:
   tasks:
@@ -77,13 +77,102 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T14:10:00Z'
-notes: 'Very large: 148 files, 1.43 TB (136 LINCS plate tars of about 8-10 GB each, about 1.14 TB; HPA tar.gz archives
-  of 57 GB (512 px whole images) and 204 GB (single-cell crops)). Image counts are not stated on the study page.
-  Listed formats are PNG (single-cell crops, read from the first members of one LINCS tar) and TIFF (HPA whole images,
-  named in Master_fovHPA_512.csv); the HPA tar.gz contents were not opened. Released for self-supervised
-  training; the study page says "for training deep learning models" and the linked preprint (DINO on single cells)
-  trains without annotations and evaluates with HPA localization labels. The study has a DOI 10.6019/S-BIAD2443.
-  Pixel size and channel count not stated on the study page or in the preprint text read; the LINCS PNG crops
-  are 128x128 px per the study page. Source datasets: LINCS Cell Painting (Way et al. 2022, Phenix Opera, 20x/1.0 NA
-  water) and Human Protein Atlas (confocal).'
+  last_checked: '2026-10-11T14:40:00Z'
+notes: 'Very large: 148 files, 1.43 TB (136 LINCS plate tars of about 8-10 GB each, about 1.14 TB; HPA tar.gz archives of
+  57 GB (512 px whole images) and 204 GB (single-cell crops)). Image counts are not stated on the study page. Listed formats
+  are PNG (single-cell crops, read from the first members of one LINCS tar) and TIFF (HPA whole images, named in Master_fovHPA_512.csv);
+  the HPA tar.gz contents were not opened. Released for self-supervised training; the study page says "for training deep learning
+  models" and the linked preprint (DINO on single cells) trains without annotations and evaluates with HPA localization labels.
+  The study has a DOI 10.6019/S-BIAD2443. Pixel size and channel count not stated on the study page or in the preprint text
+  read; the LINCS PNG crops are 128x128 px per the study page. Source datasets: LINCS Cell Painting (Way et al. 2022, Phenix
+  Opera, 20x/1.0 NA water) and Human Protein Atlas (confocal).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "Files/ (148 files, 1,426,563,336,942 B per the study's file-list.json)\n  file-list.json, file-list.tsv\n  LINCS/\
+      \  136 x SQ000148NN.tar (~8-10 GB, uncompressed tar) + sc-metadata.csv.gz (647 MB)\n    <plate>/<well>/<site>/<n>@<x>x<y>.png\
+      \   single-cell crops (160x960 grey PNG in the sample)\n  HPA/  Master_HPA_FOV_512.tar.gz (61.6 GB) -> 512_whole_images/*.tiff\
+      \ (512x512x4)\n        fixed_size_masked_single_cells_HPA.tar.gz (218.5 GB) -> fixed_size_masked_single_cells_HPA/*.png\
+      \ (512x512 RGBA)\n        Master_fovHPA_512.csv, whole_images_512_{train,test}.csv, whole_images_names[_deduplicated].csv,\n\
+      \        fixed_size_masked_single_cells_{for_sc,evaluation_20240507,pretrain_20240507}.csv, varied_size_masked_single_cells_pretrain_20240507.csv"
+    n_files: 148
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: LINCS/SQ*/*/*/*.png
+    format: png
+    axes: yx
+    shape:
+    - 160
+    - 960
+    shape_varies: null
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Members of the LINCS/<plate>.tar archives. The study page says 128x128 px single-cell in-context crops;
+      the sampled PNGs are 160x960 greyscale, probably channels tiled side by side (not documented).
+  - role: raw
+    path_pattern: HPA/512_whole_images/*.tiff
+    format: tiff
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 4
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Members of HPA/Master_HPA_FOV_512.tar.gz. Plain TIFF, photometric RGB with 4 samples per pixel (presumably
+      the 4 HPA stains; mapping not stated). Master_fovHPA_512.csv: org_size 2048x2048, so resized to 512.'
+  - role: raw
+    path_pattern: HPA/fixed_size_masked_single_cells_HPA/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 4
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Members of HPA/fixed_size_masked_single_cells_HPA.tar.gz; RGBA PNG, one masked single cell per file.
+  - role: label
+    path_pattern: HPA/Master_fovHPA_512.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'One row per HPA whole image (Path column = 512_whole_images/<ID>.tiff): protein_location list, 28 boolean
+      localization columns and one-hot cell-line columns (71 columns). The single-cell CSVs (pretrain / evaluation / for_sc)
+      carry the same kind of labels per crop (file column), with 19 merged localization classes plus cell line. LINCS crops
+      have no labels.'
+  notes: 'Listing: the study''s own file-list.json (148 files, exact sizes, 1,426,563,336,942 B). tools/listing.py fell back
+    to the HTTP index (rounded), so size_source is page-stated. Streamed the first members of LINCS/SQ00014812.tar (3 PNGs,
+    112 KB), Master_HPA_FOV_512.tar.gz (3 TIFFs, 1.9 MB) and fixed_size_masked_single_cells_HPA.tar.gz (3 PNGs, 1.0 MB): shapes
+    and dtypes above, values 0-255 (one sample each). Read the CSV headers by range request. No small direct sample: the images
+    exist only inside 8-10 GB tars and 62/219 GB tar.gz archives (TensorSwitch addresses zip members, not tar members), so
+    sample is null and data.download_url stays the Files/ folder; the tars and CSVs are direct https files on ftp.ebi.ac.uk
+    (download-check usable). Voxel size not found; checked: study page (LINCS: Phenix Opera 20x/1.0 NA, no pixel size), TIFF/PNG
+    headers (none), CSVs (HPA org_size 2048x2048 resized to 512, so pixel size changed). Channel count differs between LINCS
+    and HPA, so imaging.channels stays null.'
