@@ -37,7 +37,7 @@ imaging:
 data:
   formats:
   - ome-zarr
-  size_bytes: 27982146014546
+  size_bytes: 27982572029092
   n_items: 1
   access: open
   download_url: s3://janelia-cosem-datasets/jrc_fly-mb-z0419-20/jrc_fly-mb-z0419-20.zarr/recon-1/
@@ -49,7 +49,7 @@ annotations:
   coverage: dense
   format: multiscale OME-Zarr label array at recon-1/labels/inference/segmentations/nuc/ (s0 at 128 x 128 x 128
     nm)
-  source: mixed
+  source: proofread
 ml:
   tasks:
   - segmentation
@@ -73,10 +73,75 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T06:42:50Z'
+  last_checked: '2026-10-11T07:10:00Z'
 notes: 'Figshare record (CC BY 4.0, link-only file) and the bucket''s OME-Zarr metadata read: EM s0 zyx [25909,
   18000, 30000] <u2 at [4.0, 4.0, 4.0] nm; nucleus label s0 zyx [809, 562, 937] <u2 at [128.0, 128.0, 128.0] nm,
   declared in the label .zattrs. Labels are Cellpose predictions with cursory manual corrections (Nuclei segmentations
   in jrc_fly-mb-z0419-20 using Cellpose 3.0.9 with cursory manual corrections.), hence source mixed. Size is the
   uncompressed s0 estimate (EM + label), not stated by the source. Organism inferred from the dataset name; sibling
-  records exist for other volumes of the same release series, this one covers jrc_fly-mb-z0419-20 only.'
+  records exist for other volumes of the same release series, this one covers jrc_fly-mb-z0419-20 only. enricher:
+  source proofread (was mixed; Cellpose + cursory manual corrections); size re-estimated (label is uint16).'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "jrc_fly-mb-z0419-20.zarr/recon-1/   (s3://janelia-cosem-datasets; chunk objects not listed)\n  em/fibsem-uint16/s0..s7\
+      \   4 nm, zyx 25909 x 18000 x 30000 uint16, zstd, chunks 64x64x64\n  labels/inference/segmentations/nuc/s0..s5\
+      \   128 nm, zyx 809 x 562 x 937 uint16, zstd, chunks 64x64x64"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_fly-mb-z0419-20/jrc_fly-mb-z0419-20.zarr/recon-1/em/fibsem-uint16
+    - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_fly-mb-z0419-20/jrc_fly-mb-z0419-20.zarr/recon-1/labels/inference/segmentations/nuc
+    size_bytes: null
+    description: The EM OME-Zarr and the nucleus label OME-Zarr (chunked stores, read remotely); EM level s5 is
+      on the label s0 grid.
+  arrays:
+  - role: raw
+    path_pattern: jrc_fly-mb-z0419-20.zarr/recon-1/em/fibsem-uint16
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 25909
+    - 18000
+    - 30000
+    shape_varies: false
+    dtype: uint16
+    compression: zstd
+    value_range:
+    - 0
+    - 2670
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 8 levels, s0 scale 4 nm isotropic, translation 0. Value range from one central crop of level
+      s5 [404, 281, 234].
+  - role: label
+    path_pattern: jrc_fly-mb-z0419-20.zarr/recon-1/labels/inference/segmentations/nuc
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 809
+    - 562
+    - 937
+    shape_varies: false
+    dtype: uint16
+    compression: zstd
+    value_range:
+    - 0
+    - 608
+    normalization: unknown
+    encoding: instance-ids
+    classes:
+    - id: null
+      name: nucleus
+    alignment: scaled
+    alignment_notes: 6 levels; label s0 at 128 nm isotropic (32x the EM s0), translation 56 nm; same shape as EM
+      s5 (translation 62 nm). 12 distinct ids in a central crop [404, 281, 234].
+  notes: 'Probe: both stores'' .zattrs and every level''s .zarray (OME-Zarr multiscales, zarr v2). Sample (sample.py):
+    central crops of EM s5 [404, 281, 234] (uint16 0-2670, p50 1115, p99 1838; hint: 12-bit detector range) and
+    label s0 [404, 281, 234] (uint16 0-608, 12 distinct values: instance ids). Value ranges from those crops only.
+    The label .zattrs here carries no cellmap annotation block (the sibling volumes say instance_segmentation).
+    No complete listing (millions of chunk objects). Download: chunked stores on the public janelia-cosem-datasets
+    S3 bucket (HTTPS), read remotely; no archive. size estimated (uncompressed): raw 1 x 25909x18000x30000 uint16
+    + label 1 x 809x562x937 uint16 = 27,982,572,029,092 B (28.0 TB).'
