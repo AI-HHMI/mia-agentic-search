@@ -62,10 +62,42 @@ provenance:
   - https://data.mendeley.com/datasets/yfp5sfj47m/4
   - https://data.mendeley.com/public-api/datasets/yfp5sfj47m
   - https://arxiv.org/abs/2607.12750
+  - https://arxiv.org/pdf/2607.12750
   confidence: 0.65
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-11T09:16:50Z'
-notes: 'The v4 landing page (published 2026-06-24) states CC BY-NC-ND 4.0 and lists no files; the Mendeley API lists version 5 (published 2026-09-15) with five RAR archives (CRC_Grade__1__Well_Diff, CRC_Grade__2__Mod_Diff, CRC_Grade__3__Poorly_Diff, Mixed_Normal_Tumoral_Colon, Normal_Colon; 479.8 MB total) and no license field. The RAR contents were not listed (peek_archive supports zip only), so annotations_verified is false; labels are class folders per the naming convention. Class counts: 860 G1, 712 G2, 327 G3, 8 normal, 7 mixed. Pixel size is not stated. Patient-level (not image-level) splits are not provided; the project site databiox.com hosts the latest version.'
+  annotations_verified: true
+  last_checked: '2026-10-11T10:30:00Z'
+notes: 'Files exist only in Mendeley version 5 (2026-09-15): five RAR archives (CRC_Grade__1__Well_Diff, CRC_Grade__2__Mod_Diff, CRC_Grade__3__Poorly_Diff, Mixed_Normal_Tumoral_Colon, Normal_Colon; 479,765,925 bytes per the API); the cited v4 page lists no files. License conflict: v4 (landing page and API) states CC BY-NC-ND 4.0, the v5 API record with the files states CC BY-NC 4.0; kept v4''s value, needs human review. Labels are class folders and file names ([Sample]_CRC_[G1-3]_[archive no.]_[mag]_[index].jpg). Class counts: 860 G1, 712 G2, 327 G3, 8 normal, 7 mixed. Pixel size is not stated (paper gives only 96 DPI). No patient-level splits. enricher: annotations_verified true (class folders/file names seen in all five archives'' RAR headers).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "CRC_Grade__1__Well_Diff.rar   225,298,684 B  (860 jpg; CRC_Grade__1__Well_Diff/{4x,10x,20x,40x}/NN_CRC_G1_<archive>_<mag>_<i>.jpg)\nCRC_Grade__2__Mod_Diff.rar    171,611,447 B  (712 jpg; CRC_Grade__2__Mod_Diff/<mag>/NN_CRC_G2_...jpg)\nCRC_Grade__3__Poorly_Diff.rar  76,915,779 B  (327 jpg; CRC_Grade__3__Poorly_Diff/<mag>/NN_CRC_G3_...jpg)\nMixed_Normal_Tumoral_Colon.rar  3,028,183 B\n  Mixed_Normal_Tumoral_Colon/M1.jpg .. M6.jpg, M7_with_Annotation.jpg\nNormal_Colon.rar                2,911,832 B\n  Normal_Colon/{4x,10x,20x,40x}/0{1,2}_Normal_<mag>_1.jpg"
+    n_files: 5
+    listing_complete: false
+  sample:
+    urls:
+    - https://prod-dcd-datasets-public-files-eu-west-1.s3.eu-west-1.amazonaws.com/ec411105-6baa-4f8e-8951-25ee95ce6a25
+    size_bytes: 2911832
+    description: 'Normal_Colon.rar (RAR5): 8 RGB JPEGs, 2 normal-tissue specimens at 4x/10x/20x/40x; label = class folder'
+  arrays:
+  - role: raw
+    path_pattern: '**/*.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 800
+    - 800
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 1
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'RGB colour (3 samples per pixel, channels differ). Image-level class label from the archive/folder name: Grade I, Grade II, Grade III, Normal, Mixed normal/tumoral.'
+  notes: 'Sizes from the Mendeley public API (v5 files[].size, exact for all 5 archives; tools/listing.py could not read them: data.mendeley.com redirects to S3 and S3 listing is 403). Archives are RAR5 (no RAR extractor available); members listed with a stdlib RAR5 header parser: Normal_Colon (8 jpg) and Mixed_Normal_Tumoral_Colon (7 jpg) fully, first member of each grade archive via a 4 KB range request; grade archive member counts are the documented counts, not listed. Sample: Normal_Colon/4x/01_Normal_4x_1.jpg (stored uncompressed in the RAR, carved and decoded): RGB uint8 800x800, value_range from this one image. Paper: all images RGB JPEG 800x800, 24-bit, 96 DPI. Labels: image-level class from archive/folder name and the G1/G2/G3/Normal token in file names; no label files. Mixed M7_with_Annotation.jpg has the same byte size as M6.jpg (likely M6 with drawn annotation; not decoded). Voxel size not found; checked: JPEG header (no DPI/calibration in the sampled file), Mendeley API v4/v5 description, arXiv paper full text (Table 1 gives only 96 DPI), databiox.com. Download: data.mendeley.com file_downloaded links redirect (302) to prod-dcd-datasets-public-files-eu-west-1.s3.eu-west-1.amazonaws.com objects (range requests OK, host not on TensorSwitch allowlist); RAR is not readable by TensorSwitch. No single archive for the whole dataset, so download_url stays the landing page.'
