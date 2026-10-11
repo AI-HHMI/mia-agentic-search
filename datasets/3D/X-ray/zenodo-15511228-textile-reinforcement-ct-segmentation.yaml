@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: zenodo-15511228-textile-reinforcement-ct-segmentation
 title: Torch3Dseg - Dataset
 short_name: Textile reinforcement CT yarn segmentation (X-ray)
-description: Annotated sub-volumes (height x 256 x 256 voxels) of in-situ X-ray computed tomography scans of dry multilayer textile
-  reinforcements under compaction, with semantic labels for background/matrix, weft and fill yarns (plus yarn instance maps in
-  some files), stored as NRRD and HDF5 for training a 3D-UNet. Eight labelled volumes plus two trained checkpoints are in the archive.
+description: Annotated sub-volumes (height x 256 x 256 voxels) of in-situ X-ray computed tomography scans
+  of dry multilayer textile reinforcements under compaction, with semantic labels for background/matrix,
+  weft and fill yarns (plus yarn instance maps in some files), stored as NRRD and HDF5 for training a
+  3D-UNet. Eight labelled volumes plus two trained checkpoints are in the archive.
 landing_url: https://zenodo.org/records/15511228
 doi: 10.5281/zenodo.15511228
 repository: Zenodo
@@ -12,7 +13,8 @@ accession: null
 authors:
 - Christian Düreth
 publications:
-- title: Analysis of the Compaction Behavior of Textile Reinforcements in Low-Resolution In-Situ CT Scans via Machine-Learning and Descriptor-Based Methods
+- title: Analysis of the Compaction Behavior of Textile Reinforcements in Low-Resolution In-Situ CT Scans
+    via Machine-Learning and Descriptor-Based Methods
   doi: 10.48550/arXiv.2508.10943
   url: https://arxiv.org/abs/2508.10943
 date_published: '2025-05-25'
@@ -34,7 +36,7 @@ data:
   size_bytes: 1655171819
   n_items: 8
   access: open
-  download_url: https://zenodo.org/api/records/15511228/files/285-10_layer.zip/content
+  download_url: https://zenodo.org/records/15511228/files/285-10_layer.zip
   download_method: http
 annotations:
   present: true
@@ -42,7 +44,7 @@ annotations:
   - semantic-segmentation
   - instance-segmentation
   coverage: dense
-  format: 'HDF5 (volume, labels, masks, instances) and 3D Slicer NRRD label volumes (*.seg.nrrd) per sub-volume'
+  format: HDF5 (volume, labels, masks, instances) and 3D Slicer NRRD label volumes (*.seg.nrrd) per sub-volume
   source: mixed
 ml:
   tasks:
@@ -65,9 +67,115 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T13:14:25Z'
-notes: 'Non-biological sample (technical textile reinforcement) imaged by X-ray micro-CT. Zip lists 31 files: 8 .vol.nrrd with 8 .seg.nrrd
-  labels, 6 *.train.h5 and 4 *.eval.h5 files (train/eval split by file name), 2 .seg.h5, two PyTorch checkpoints and a machine-data
-  xlsx. The paper (arXiv 2508.10943, read) gives 20.22 um per voxel, three classes labelled in 3D Slicer with model-assisted pre-labels
-  corrected by hand, hence source mixed; the Zenodo text says only the .h5 files are used for training. n_items counts the eight labelled
-  sub-volumes. The Zenodo record is titled Torch3Dseg and the record text lists several layer zips, but only 285-10_layer.zip is attached.'
+  last_checked: '2026-10-11T15:55:00Z'
+notes: 'Non-biological sample (technical textile reinforcement) imaged by X-ray micro-CT. Zip lists 31
+  files: 8 .vol.nrrd with 8 .seg.nrrd labels, 6 *.train.h5 and 4 *.eval.h5 files (train/eval split by
+  file name), 2 .seg.h5, two PyTorch checkpoints and a machine-data xlsx. The paper (arXiv 2508.10943,
+  read) gives 20.22 um per voxel, three classes labelled in 3D Slicer with model-assisted pre-labels corrected
+  by hand, hence source mixed; the Zenodo text says only the .h5 files are used for training. n_items
+  counts the eight labelled sub-volumes. The Zenodo record is titled Torch3Dseg and the record text lists
+  several layer zips, but only 285-10_layer.zip is attached. enricher: HDF5 volumeinfo says VoxelSize
+  0.020618 (mm), the paper 20.22 um; kept the paper value.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "285-10_layer.zip (1.66 GB, 31 members)\n  285-10_layer/285_10_layer_machine_data.xlsx\n  285-10_layer/{best,last}_checkpoint.pytorch\
+      \   (2 x 110 MB)\n  285-10_layer/285-10_layer_0[0-3]/285_10-layer_0?_?/   8 sub-volume folders,\
+      \ each:\n    *.vol.nrrd (raw, ~66 MB), *.seg.nrrd (3D Slicer segmentation, ~1.2 MB)\n    *.vol.seg.train.h5\
+      \ (6) / *.vol.seg.eval.h5 (4) / *.vol.seg.h5 (2): volume, labels, masks, instances, volumeinfo/"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/15511228/files/285-10_layer.zip::285-10_layer/285-10_layer_01/285_10-layer_01_3/285_10-layer_01_3.vol.seg.eval.h5
+    size_bytes: 66521807
+    description: 'One labelled sub-volume (600x256x256): raw volume, semantic labels, masks and yarn instances
+      in one HDF5 file'
+  arrays:
+  - role: raw
+    path_pattern: 285-10_layer.zip::285-10_layer/285-10_layer_0*/285_10-layer_0*/*.vol.seg.*.h5 (volume)
+    format: hdf5
+    axes: null
+    shape:
+    - 600
+    - 256
+    - 256
+    shape_varies: true
+    dtype: int16
+    compression: gzip
+    value_range:
+    - 160
+    - 11129
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: 285-10_layer.zip::285-10_layer/285-10_layer_0*/285_10-layer_0*/*.vol.seg.*.h5 (labels)
+    format: hdf5
+    axes: null
+    shape:
+    - 600
+    - 256
+    - 256
+    shape_varies: true
+    dtype: uint8
+    compression: gzip
+    value_range:
+    - 0
+    - 2
+    normalization: unknown
+    encoding: semantic-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Same file and shape as volume. Values 0, 1, 2 (three classes per the paper: background/matrix,
+      weft and fill yarns; the id-to-name mapping is not stated in the file).'
+  - role: label
+    path_pattern: 285-10_layer.zip::285-10_layer/285-10_layer_0*/285_10-layer_0*/*.vol.seg.*.h5 (instances)
+    format: hdf5
+    axes: null
+    shape:
+    - 600
+    - 256
+    - 256
+    shape_varies: true
+    dtype: int16
+    compression: gzip
+    value_range:
+    - 0
+    - 88
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Yarn instance ids (89 values in the sample), same grid as volume; the matching *.seg.nrrd
+      holds the same ids (int16, 600x256x256, gzip, Slicer segments named weft/...).
+  - role: label
+    path_pattern: 285-10_layer.zip::285-10_layer/285-10_layer_0*/285_10-layer_0*/*.vol.seg.*.h5 (masks)
+    format: hdf5
+    axes: null
+    shape:
+    - 3
+    - 600
+    - 256
+    - 256
+    shape_varies: true
+    dtype: bool
+    compression: gzip
+    value_range:
+    - 0
+    - 1
+    normalization: unknown
+    encoding: one-hot
+    classes: null
+    alignment: same-grid
+    alignment_notes: One-hot masks of the three semantic classes (first axis), same grid as volume.
+  notes: 'Zenodo listing (tools/listing.py): 1 file, 1,655,171,819 B, file-listing; zip index: 31 members
+    (8 vol.nrrd, 8 seg.nrrd, 12 h5, 2 checkpoints, 1 xlsx). probe.py reads only 8 MB of a zip member and
+    sample.py does not read HDF5/NRRD inside zips, so a scratch script (h5py, numpy) downloaded 285_10-layer_01_3.seg.nrrd
+    (0.98 MB) and .vol.seg.eval.h5 (65.9 MB): datasets volume int16 600x256x256 (160-11129), labels uint8
+    {0,1,2}, masks bool 3x600x256x256, instances int16 0-88, all gzip chunks 38x32x32, plus volumeinfo/
+    (VoxelSizeX/Y/Z 0.020618, SizeX/Y 2200, SizeZ 600: the full scan the crop came from). NRRD space directions
+    are identity (uncalibrated). Value ranges from one file. Axis order of the HDF5 arrays is not stated
+    (shape 600x256x256 matches the stated height x 256 x 256), so axes stay null. Voxel size 20.22 um
+    from the paper; the HDF5 says 20.618 um.'
