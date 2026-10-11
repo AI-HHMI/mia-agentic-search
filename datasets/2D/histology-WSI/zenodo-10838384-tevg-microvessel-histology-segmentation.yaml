@@ -1,0 +1,200 @@
+schema_version: '1.2'
+id: zenodo-10838384-tevg-microvessel-histology-segmentation
+title: Histological Dataset for Microvascular Segmentation of Tissue-Engineered Vascular Grafts
+short_name: Sheep vascular graft H&E microvessel masks
+description: 1,401 H&E patches (3000 x 3000 px, JPEG) selected from 104 whole slide images of biodegradable
+  tissue-engineered vascular grafts implanted in the carotid arteries of 20 sheep, each annotated with
+  binary masks for nine histological features (arteriole lumen, media and adventitia, venule lumen and
+  wall, capillary lumen and wall, immune cells, nerve trunks). A 5-fold subject-wise cross-validation
+  split is provided.
+landing_url: https://zenodo.org/records/10838384
+doi: 10.5281/zenodo.10838384
+repository: Zenodo
+accession: '10838384'
+authors:
+- Danilov V
+- Laptev V
+- Klyshnikov K
+- Kutikhin A
+- Ovcharenko E
+publications:
+- title: ML-driven segmentation of microvascular features during histological examination of tissue-engineered
+    vascular grafts
+  doi: 10.3389/fbioe.2024.1411680
+  url: https://doi.org/10.3389/fbioe.2024.1411680
+date_published: '2024-04-01'
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Ovis aries
+  sample: Regenerated carotid artery wall with implanted biodegradable tissue-engineered vascular grafts,
+    H&E stained
+  labels_stains:
+  - hematoxylin
+  - eosin
+data:
+  formats:
+  - jpeg
+  - png
+  size_bytes: 38164200743
+  n_items: 1401
+  access: open
+  download_url: https://zenodo.org/records/10838384/files/source_data.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: 'PNG per patch: mask/ (uint8 semantic class IDs 0-9, 0 = background) and mask_color/ (RGB colour-coded);
+    metadata.csv in source_data.zip lists one box per object with class_id, class_name and split'
+  source: proofread
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/ViacheslavDanilov/histology_segmentation
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-11T18:46:48Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/10838384
+  - https://zenodo.org/records/10838384/files/fold_3.zip
+  - https://zenodo.org/records/10838384/files/source_data.zip
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.3389%2Ffbioe.2024.1411680%22&format=json&resultType=core&pageSize=3
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11233802/fullTextXML
+  confidence: 0.85
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-11T20:25:00Z'
+notes: 'Source slides were scanned on a Vision Slide Assist scanner (West Medica, Perm, Russia), 104 WSIs
+  of about 135,000 x 123,000 px on average; pixel size is not stated on the Zenodo page or in the paper
+  text read, so voxel size is null. Two pathologists annotated independently and a senior pathologist
+  verified every mask (Zenodo description), so source is proofread. source_data.zip (6.36 GB) holds all
+  1401 JPEG patches with their 2802 PNG masks (mask and mask_color) and metadata.csv; fold_1..fold_5.zip
+  (6.36 GB each) re-package the same 1401 patches into train/test folders (16 / 4 sheep per fold). Per-class
+  patch counts per fold are in the Zenodo description (Table 1). enricher: size_bytes 6.36 GB -> 38,164,200,743
+  (complete Zenodo listing, 9 files incl. the 5 fold zips; source_data.zip alone has every unique patch);
+  channels -> 3; mask/ PNGs are one semantic-ID mask, not binary per feature.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "source_data.zip (6.36 GB)\n  source_data/img/<slide>_<tile>.jpg        1401  (6.52 GB, 3000x3000\
+      \ RGB)\n  source_data/mask/<slide>_<tile>.png       1401  (33.7 MB, class IDs)\n  source_data/mask_color/<slide>_<tile>.png\
+      \ 1401  (74.9 MB, RGB)\n  source_data/metadata.csv\nfold_1.zip .. fold_5.zip (6.36 GB each)\n  fold_<k>/{train,test}/{img,mask,mask_color}/\
+      \  (same 1401 patches, subject-wise split)\n+ 3 preview images (2 png, 1 jpg)\n"
+    n_files: 9
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/10838384/files/source_data.zip::source_data/img/001_0007.jpg
+    - https://zenodo.org/records/10838384/files/source_data.zip::source_data/mask/001_0007.png
+    size_bytes: 3835159
+    description: One 3000x3000 H&E patch and its class-ID mask
+  arrays:
+  - role: raw
+    path_pattern: source_data.zip::source_data/img/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 3000
+    - 3000
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB JPEG; metadata.csv gives 3000x3000 per patch.
+  - role: label
+    path_pattern: source_data.zip::source_data/mask/*.png
+    format: png
+    axes: yx
+    shape:
+    - 3000
+    - 3000
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 7
+    normalization: unknown
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: Arteriole lumen
+    - id: 2
+      name: Arteriole media
+    - id: 3
+      name: Arteriole adventitia
+    - id: 4
+      name: Venule lumen
+    - id: 5
+      name: Venule wall
+    - id: 6
+      name: Capillary lumen
+    - id: 7
+      name: Capillary wall
+    - id: 8
+      name: Immune cells
+    - id: 9
+      name: Nerve trunks
+    alignment: same-grid
+    alignment_notes: Same stem as the image (img/001_0007.jpg <-> mask/001_0007.png), same 3000x3000 grid.
+      IDs = metadata.csv class_id (sample values {0,6,7} match the capillary rows for 001_0007). Background
+      0 inferred from the sample (99% of pixels).
+  - role: label
+    path_pattern: source_data.zip::source_data/mask_color/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 3000
+    - 3000
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    normalization: unknown
+    encoding: rgb-colors
+    classes: null
+    alignment: same-grid
+    alignment_notes: Colour-coded version of mask/, same stem; colour table not documented.
+  - role: label
+    path_pattern: source_data.zip::source_data/metadata.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    normalization: unknown
+    encoding: boxes-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'One row per object: image_name, slide, tile, x1,y1,x2,y2, area, class_id, class_name,
+      split.'
+  notes: 'Listing: tools/listing.py --expand-zips on the Zenodo record: 9 files, 38,164,200,743 bytes,
+    complete, exact, 25,219 zip members; source_data.zip: 1401 jpg + 1401 mask png + 1401 mask_color png
+    + metadata.csv. fold_k.zip repeat the same patches in train/test folders. sample.py: img/001_0007.jpg
+    3000x3000x3 uint8, range [0,255] (p50 234; bright background, one sample); mask/001_0007.png 3000x3000
+    uint8 L, values {0,6,7}; mask_color/001_0007.png 3000x3000x3, 7 unique values. Class map from metadata.csv.
+    Voxel size not found; checked: JPEG/PNG headers (none), Zenodo API description (Vision Slide Assist
+    scanner, WSI size in px only), paper full text PMC11233802, GitHub README ViacheslavDanilov/histology_segmentation.
+    source_data.zip and its members are direct, usable downloads.'
