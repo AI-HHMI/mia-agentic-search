@@ -34,10 +34,10 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 261600000
+  size_bytes: 261559496
   n_items: 1
   access: open
-  download_url: https://zenodo.org/records/13903500/files/imaging.zip
+  download_url: https://zenodo.org/records/13903500
   download_method: http
 annotations:
   present: true
@@ -68,8 +68,70 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T01:16:22Z'
+  last_checked: '2026-10-11T02:46:15Z'
 notes: 'One embryo (C1 of the Science paper), 117 timepoints; imaging.tif 466.7 MB uncompressed and segmentation.tif 466.9 MB (zip files 258.3 and 3.3 MB). Processing from
   the record: acquired at 0.208 um lateral / 1.338 um axial, then binned and rescaled to 0.832 um isotropic, which is the voxel size given here. Segmentation is the output of
   Cellpose, not manually corrected (record states it is an example of segmentable and trackable data); no tracks are provided. Paper full text is not open access
-  in Europe PMC (abstract only).'
+  in Europe PMC (abstract only). enricher: ImageJ headers of both TIFFs state spacing 0.832 micron and XResolution
+  1.201923 px/um, confirming 832 nm. Segmentation IDs are not tracked: 1127 distinct IDs over 117 frames.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  2 files 261,559,496 B\n  imaging.zip       (258,283,055 B)\n    imaging.tif       466,729,064 B  ImageJ hyperstack\
+      \ TZYX 117 x 123 x 127 x 127 uint16\n  segmentation.zip  (3,276,441 B)\n    segmentation.tif  466,903,383 B  same\
+      \ shape, uint16 instance labels\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/13903500/files/imaging.zip::imaging.tif
+    - https://zenodo.org/records/13903500/files/segmentation.zip::segmentation.tif
+    size_bytes: 933632447
+    description: The whole dataset (one time-lapse and its segmentation); no smaller file exists.
+  arrays:
+  - role: raw
+    path_pattern: imaging.zip/imaging.tif
+    format: tiff
+    axes: tzyx
+    shape:
+    - 117
+    - 123
+    - 127
+    - 127
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 1626
+    - 11503
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ hyperstack (frames=117, slices=123), axes TZYX from the ImageJ header; spacing 0.832 um.
+  - role: label
+    path_pattern: segmentation.zip/segmentation.tif
+    format: tiff
+    axes: tzyx
+    shape:
+    - 117
+    - 123
+    - 127
+    - 127
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 1158
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same shape, axes and 0.832 um spacing as imaging.tif (ImageJ headers). 0 = background; 1127 distinct IDs
+      across 117 frames, so IDs are per-frame instances, not tracks (record states Cellpose output).
+  notes: 'Listing: Zenodo API + both zip central directories, complete, exact sizes. Both TIFFs are deflated zip members, so
+    probe.py could not read them by range; headers read by streaming the start of each member (tifffile): ImageJ 1.54f,
+    images=14391, slices=123, frames=117, spacing 0.832, unit micron, uncompressed 16-bit. Sampled both files in full
+    (258,282,883 + 3,276,259 B downloaded): imaging 1626-11503, p50 1731, p99.9 4019; segmentation 0-1158, 85% zeros, 1127
+    distinct IDs. Voxel size 832 nm confirmed from the headers. Two archives (imaging, segmentation), so data.download_url is the
+    landing page (was imaging.zip); both zips are direct Zenodo file URLs.'
