@@ -1,0 +1,159 @@
+schema_version: '1.2'
+id: zenodo-7635510-cerebellum-parallel-fibers-sssem
+title: P7 mouse cerebellum ssSEM molecular layer
+short_name: Cerebellum parallel fiber masks (ssSEM)
+description: Training data for the CellWalker 2D-UNet segmentation notebook, cut from a serial-section SEM volume of the mouse
+  cerebellar molecular layer. The zip holds 85 EM slices with matching manual segmentation masks (seg, seg_eroded and seg_membrane
+  variants), a 7-slice test set (em_test, seg_test with eroded and membrane variants) and a folder of 2010 images of the test-set
+  predictions (ml_segmentation_test_1), plus the VAST volume and segmentation files (.vsv / .vsseg) the slices were exported
+  from.
+landing_url: https://zenodo.org/records/7635510
+doi: 10.5281/zenodo.7635510
+repository: Zenodo
+accession: '7635510'
+authors:
+- Harshavardhan Khare
+publications:
+- title: 'CellWalker: a user-friendly and modular computational pipeline for morphological analysis of microscopy images'
+  doi: 10.1093/bioinformatics/btad710
+  url: https://doi.org/10.1093/bioinformatics/btad710
+date_published: '2023-02-13'
+imaging:
+  modality:
+  - ssSEM
+  dimensionality: 3D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Mus musculus
+  sample: P7 mouse cerebellum, molecular layer (parallel fibers)
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: 287286794
+  n_items: 92
+  access: open
+  download_url: https://zenodo.org/records/7635510/files/parallel_fiber_segmentation.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - semantic-segmentation
+  coverage: dense
+  format: PNG mask slices per variant folder (seg, seg_eroded, seg_membrane, and the test equivalents) named like the EM slices
+    (img_s1455.png); the VAST project files (.vsv volume, .vsseg segmentation) are also included
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/utraf-pasteur-institute/CellWalker-notebooks
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-11T15:33:44Z'
+  evidence_urls:
+  - https://zenodo.org/records/7635510
+  - https://zenodo.org/api/records/7635510
+  - https://zenodo.org/records/7635510/files/parallel_fiber_segmentation.zip
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10713108/fullTextXML
+  - https://github.com/utraf-pasteur-institute/Cellwalker-notebooks
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-11T18:28:00Z'
+notes: 'Voxel/pixel size is not stated on the Zenodo record, in the zip (coordinates.txt only says "Exported at mip3") or
+  in the CellWalker paper; the Zenodo record 7594891 for the source volume gives no resolution either. The CellWalker paper
+  (Methods: manual ground truth annotation by the authors, 2D UNet trained on it) describes the training workflow, but the
+  Zenodo record does not cite it, so the link is by the record''s own description. Checked: Zenodo page and API record, zip
+  listing (peek_archive), CellWalker full text, CellWalker-notebooks GitHub page. The 2010 prediction images in ml_segmentation_test_1
+  are model outputs, not ground truth; n_items counts the 85 + 7 EM slices. enricher: seg/ and seg_eroded/ hold instance ids
+  (44 values in img_s1370), seg_membrane/ is binary 0/255, so instance-segmentation added; size_bytes from the Zenodo listing
+  (287,286,794; was 301,300,000).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "parallel_fiber_segmentation.zip (287.3 MB, 2,390 members)\n  coordinates.txt\n  em/img_s1370..s1454.png (85)  \
+      \      seg/, seg_eroded/, seg_membrane/  (85 each, same names)\n  em_test/img_s1455..s1461.png (7)    seg_test/, seg_test_eroded/,\
+      \ seg_test_membrane/ (7 each)\n  em_test_pred/ (7), seg_eroded_bw_examples/ (4)\n  ml_segmentation_test_1/  em/ (1001),\
+      \ pred/ (1001), pred_labeled_colored/ (5),\n                           coordinates.txt, *_em.vsv (145 MB), *_seg_semantic.vsseg\
+      \ (313 MB)"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7635510/files/parallel_fiber_segmentation.zip::em/img_s1370.png
+    - https://zenodo.org/records/7635510/files/parallel_fiber_segmentation.zip::seg/img_s1370.png
+    size_bytes: 152727
+    description: one EM slice and its instance mask (train)
+  arrays:
+  - role: raw
+    path_pattern: '{em,em_test}/img_s*.png'
+    format: png
+    axes: yx
+    shape:
+    - 400
+    - 400
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 1
+    - 199
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: palette PNG slices of one sub-volume, consecutive z indices s1370-s1454 (train) and s1455-s1461 (test),
+      exported at VAST mip3
+  - role: label
+    path_pattern: '{seg,seg_test}/img_s*.png'
+    format: png
+    axes: yx
+    shape:
+    - 400
+    - 400
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 89
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    alignment: same-grid
+    alignment_notes: same file name as the EM slice; seg_eroded/ (same ids, eroded) and seg_membrane/ (binary 0/255 membranes)
+      are variants with the same names
+  - role: label
+    path_pattern: '{seg_membrane,seg_test_membrane}/img_s*.png'
+    format: png
+    axes: yx
+    shape:
+    - 400
+    - 400
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 255
+      name: membrane
+    alignment: same-grid
+    alignment_notes: same file name as the EM slice
+  notes: 'Listing: listing.py, Zenodo record + zip (287,286,794 bytes, 2,390 members). Probe: em PNG 400x400 uint8 palette;
+    seg_eroded PNG gray. Sample (one slice each, value_range from it): em/img_s1370 [1,199] p50 120; seg 45 values 0-89 (instance
+    ids); seg_eroded same 45 values; seg_membrane {0,255}. The 85 train slices are consecutive (s1370-s1454), so the PNGs
+    stack into one 85x400x400 sub-volume. ml_segmentation_test_1 holds 1001 EM slices with model predictions (not ground truth)
+    and VAST files. Voxel size not found; checked: PNG headers (no calibration), coordinates.txt (VAST export box, mip3),
+    Zenodo record; harvester checked the CellWalker paper and source record 7594891.'
