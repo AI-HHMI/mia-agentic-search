@@ -3,8 +3,8 @@ id: zenodo-117997-cd34-crc-vessel-counts
 title: Validation data set for automatic blood vessel segmentation in colorectal cancer histology (IHC)
 short_name: CD34 colorectal cancer vessel counts (IHC)
 description: 100 RGB histology image patches (1000 x 1000 px, 0.50 µm/px, 20x, Aperio ScanScope) of formalin-fixed paraffin-embedded
-  human colorectal adenocarcinoma (primary tumours and liver metastases) immunostained for CD34 (DAB) with haematoxylin
-  counterstain, with a table of blood vessel counts per image from three blinded observers plus an automatic count.
+  human colorectal adenocarcinoma (primary tumours and liver metastases) immunostained for CD34 (DAB) with haematoxylin counterstain,
+  with a table of blood vessel counts per image from three blinded observers plus an automatic count.
 landing_url: https://zenodo.org/records/117997
 doi: 10.5281/zenodo.117997
 repository: Zenodo
@@ -29,7 +29,8 @@ imaging:
   channels: 3
   organism:
   - Homo sapiens
-  sample: FFPE human colorectal adenocarcinoma (primary tumours and liver metastases), CD34 immunostaining with DAB and haematoxylin counterstain
+  sample: FFPE human colorectal adenocarcinoma (primary tumours and liver metastases), CD34 immunostaining with DAB and haematoxylin
+    counterstain
   labels_stains:
   - CD34
   - DAB
@@ -47,7 +48,8 @@ annotations:
   types:
   - counts
   coverage: sparse
-  format: 'raw_blood_vessel_counts.csv (semicolon-separated columns: file name, counts by observers 1-3, automatic count) for CD34_img_001-100.tif; no pixel masks'
+  format: 'raw_blood_vessel_counts.csv (semicolon-separated columns: file name, counts by observers 1-3, automatic count)
+    for CD34_img_001-100.tif; no pixel masks'
   source: manual
 ml:
   tasks:
@@ -72,9 +74,64 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T21:30:00Z'
+  last_checked: '2026-10-11T19:41:20Z'
 notes: 'Despite the title (blood vessel segmentation validation), the labels are per-image vessel counts, not masks: three
   blinded observers and one automatic count per image (checked in the CSV). The cited paper (Oncotarget 2015, hotspot detection)
-  does not describe this 100-patch set in the text read, so the pixel size (0.50 µm/px, 20x, Aperio ScanScope) and sample details
-  are from the Zenodo description. The zip holds 100 TIFF files (CD34_img_001..100.tif, about 3 MB each). Size is the sum
-  of the two Zenodo files. Useful as a counting / vessel-detection benchmark; no train/test split.'
+  does not describe this 100-patch set in the text read, so the pixel size (0.50 µm/px, 20x, Aperio ScanScope) and sample
+  details are from the Zenodo description. The zip holds 100 TIFF files (CD34_img_001..100.tif, about 3 MB each). Size is
+  the sum of the two Zenodo files. Useful as a counting / vessel-detection benchmark; no train/test split.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "zenodo.org/records/117997 (2 files, 270.9 MB)\n  CD34_Images_CRC_1000x1000.zip  CD34_img_001.tif ... CD34_img_100.tif\
+      \  (100 files, 300.0 MB uncompressed, no folders)\n  raw_blood_vessel_counts.csv  (3,076 B; ';'-separated: file name,\
+      \ observer 1-3, auto count)\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/117997/files/CD34_Images_CRC_1000x1000.zip::CD34_img_001.tif
+    - https://zenodo.org/records/117997/files/raw_blood_vessel_counts.csv
+    size_bytes: 3006512
+    description: One CD34 patch and the count table for all patches
+  arrays:
+  - role: raw
+    path_pattern: CD34_Images_CRC_1000x1000.zip::CD34_img_*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 1000
+    - 1000
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: packbits
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Plain single-page RGB TIFF (photometric 2, samples differ); no calibration in the header.
+  - role: label
+    path_pattern: raw_blood_vessel_counts.csv
+    format: csv
+    axes: null
+    shape:
+    - 100
+    - 6
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: One row per image (file name = TIFF member name) with vessel counts by observers 1-3 and an automatic
+      count; trailing ";" gives an empty 6th column. 100 data rows (CD34_img_001-100) plus a header.
+  notes: 'Listing: tools/listing.py --expand-zips on the Zenodo record: 2 files, 270,943,307 bytes, complete, exact; 100 TIFF
+    members. Probed CD34_img_001.tif: plain RGB TIFF 1000x1000x3 uint8 packbits, no resolution tags. Sampled it (2.8 MB):
+    0-255, mean 183, samples differ (one sample). Read the whole CSV (3 KB). Voxel size 500 nm from the Zenodo description
+    (''All images are RGB, 0.50 um per pixel ... magnification 20x''); the TIFF headers carry none. Download: the zip is direct
+    (usable, range requests) and is download_url; the CSV is a separate file.'
