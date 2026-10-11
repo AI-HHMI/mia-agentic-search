@@ -1,0 +1,134 @@
+schema_version: '1.2'
+id: github-shenggan-bccd-blood-cell-detection
+title: 'BCCD: Blood Cell Count and Detection dataset'
+short_name: BCCD blood cell detection (brightfield)
+description: 364 JPEG microscope images of blood smears (640x480) with Pascal VOC XML bounding boxes for
+  red blood cells, white blood cells and platelets, with train/val/test split lists. A widely used small
+  object-detection benchmark, restructured into VOC format by the maintainer.
+landing_url: https://github.com/Shenggan/BCCD_Dataset
+doi: null
+repository: GitHub
+accession: null
+authors:
+- Shenggan
+publications: []
+date_published: null
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism: []
+  sample: Blood smear images (RBC, WBC, platelets)
+  labels_stains: []
+data:
+  formats:
+  - jpeg
+  size_bytes: null
+  n_items: 364
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  coverage: dense
+  format: Pascal VOC XML (one per image; classes RBC, WBC, Platelets) plus CSV export
+  source: manual
+ml:
+  tasks:
+  - detection
+  splits_provided: true
+  benchmark: BCCD
+  baseline_code_url: null
+license:
+  spdx: MIT
+  url: https://raw.githubusercontent.com/Shenggan/BCCD_Dataset/master/LICENSE
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-11T03:36:42Z'
+  evidence_urls:
+  - https://github.com/Shenggan/BCCD_Dataset
+  - https://raw.githubusercontent.com/Shenggan/BCCD_Dataset/master/LICENSE
+  - https://raw.githubusercontent.com/Shenggan/BCCD_Dataset/master/BCCD/Annotations/BloodImage_00000.xml
+  - https://raw.githubusercontent.com/Shenggan/BCCD_Dataset/master/BCCD/ImageSets/Main/train.txt
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-11T04:28:39Z'
+notes: 'Well-known benchmark. README states 364 JPEGs (640x480) with VOC XML; split lists in BCCD/ImageSets/Main
+  have 205 train, 87 val, 72 test lines (trainval 292), read from the repository. Images and annotations
+  originate from the cosmicad and akshaylamba GitHub repositories per the README; the README gives no
+  paper, microscope, magnification, pixel size or organism (blood presumed human but not stated), so those
+  are left empty. Not independently checked: image file count in the folder listing (GitHub API was not
+  accessible), annotation completeness (Roboflow reports 187 missing labels in the original release, per
+  search result, not fetched). A YOLO-format derivative exists on Mendeley Data (10.17632/jrwz8dpm9k.1,
+  CC BY 4.0) and a Roboflow re-release; this record is the original VOC release. enricher: channels 3
+  (RGB JPEG).'
+technical:
+  method: sample
+  size_source: unknown
+  layout:
+    tree: "BCCD_Dataset/  (GitHub repo, per README; listing not available here)\n  BCCD/\n    Annotations/BloodImage_00XYZ.xml\
+      \   364  Pascal VOC\n    JPEGImages/BloodImage_00XYZ.jpg    364  640x480 RGB\n    ImageSets/Main/{train,val,test,trainval}.txt\
+      \   205 / 87 / 72 / 292 ids\n  dataset/mxnet/, scripts/ (split.py, visualize.py), example.jpg, LICENSE,\
+      \ README.md\n  releases: .rec files for mxnet"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://raw.githubusercontent.com/Shenggan/BCCD_Dataset/master/BCCD/JPEGImages/BloodImage_00000.jpg
+    - https://raw.githubusercontent.com/Shenggan/BCCD_Dataset/master/BCCD/Annotations/BloodImage_00000.xml
+    size_bytes: null
+    description: one image and its VOC XML (19 RBC, 1 WBC boxes)
+  arrays:
+  - role: raw
+    path_pattern: BCCD/JPEGImages/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 480
+    - 640
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 107
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB colour blood-smear images (samples differ), 640x480 per README and probe.
+  - role: label
+    path_pattern: BCCD/Annotations/*.xml
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: boxes-table
+    classes:
+    - id: null
+      name: RBC
+    - id: null
+      name: WBC
+    - id: null
+      name: Platelets
+    alignment: same-grid
+    alignment_notes: Pascal VOC XML per image with the same stem; <bndbox> xmin ymin xmax ymax in pixels
+      of the 640x480 image; class in <name>.
+  notes: 'Listing not possible here: tools/listing.py does not read GitHub repos, and api.github.com,
+    the archive zip (403) and git clone are not reachable for this repository from this environment. Layout
+    and counts from the README; split sizes from ImageSets/Main via raw.githubusercontent.com. Probed
+    and sampled BloodImage_00000.jpg (23,302 bytes): 480x640x3 uint8 RGB, 107-255, mean 181.7 (one sample).
+    Its XML: 19 RBC and 1 WBC boxes. voxel size not found; checked: README, VOC XML (no calibration),
+    JPEG header; the upstream cosmicad/akshaylamba repos were not read. No single archive reachable (GitHub
+    archive 403 here; releases hold mxnet .rec files); direct files via raw.githubusercontent.com/Shenggan/BCCD_Dataset/master/<path>.
+    Size estimate incomplete: images 364 x 480x640x3 uint8 = 335,462,400 bytes uncompressed, but the XML
+    tables have no shape, so size_bytes stays null.'
