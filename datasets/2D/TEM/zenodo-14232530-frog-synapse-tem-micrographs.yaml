@@ -1,0 +1,162 @@
+schema_version: '1.2'
+id: zenodo-14232530-frog-synapse-tem-micrographs
+title: Electron micrographs of synapses in frogs
+short_name: Frog synapse micrographs, unlabeled (TEM)
+description: 12 HDF5 stacks of transmission electron micrographs of frog (Rana pipiens) neuromuscular
+  synapses, split into a train_unlabeled folder (10 files) and a test folder (2 files); the raw image
+  is stored in the internal dataset "raw". Re-release of images from Rizzoli and Betz 2004, used for unsupervised
+  domain adaptation of synaptic vesicle segmentation in SynapseNet. No annotations are included.
+landing_url: https://zenodo.org/records/14232530
+doi: 10.5281/zenodo.14232530
+repository: Zenodo
+accession: '14232530'
+authors:
+- Constantin Pape
+publications:
+- title: 'SynapseNet: Deep learning for automatic synapse reconstruction'
+  doi: 10.1091/mbc.e24-11-0519
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC12483319/
+date_published: null
+imaging:
+  modality:
+  - TEM
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 3.01
+    y: 3.01
+    z: null
+  channels: 1
+  organism:
+  - Rana pipiens
+  sample: Frog cutaneous pectoris muscle neuromuscular synapses, glutaraldehyde/OsO4 fixed, Epon embedded,
+    80-90 nm sections; a fraction of vesicles labeled with photo-oxidised diaminobenzidine
+  labels_stains:
+  - uranyl acetate
+  - diaminobenzidine
+data:
+  formats:
+  - hdf5
+  size_bytes: 218086524
+  n_items: 12
+  access: open
+  download_url: https://zenodo.org/api/records/14232530/files/frog.zip/content
+  download_method: http
+annotations:
+  present: false
+  types: []
+  coverage: unknown
+  format: null
+  source: unknown
+ml:
+  tasks:
+  - self-supervised
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/computational-cell-analytics/synapse-net
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-12T20:40:00Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/14232530
+  - https://zenodo.org/records/14232530
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12483319/fullTextXML
+  confidence: 0.55
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: false
+  last_checked: '2026-10-12T21:35:18Z'
+notes: 'No labels: the record describes train_unlabeled images for unsupervised domain adaptation and
+  test images for qualitative evaluation. The paper (Methods, Frog) states 402 micrographs and pixel size
+  3.01 nm; the Zenodo record holds 12 stacks. In the paper, domain adaptation on these data degraded the
+  segmentation, since the initial network found few vesicles in this low-contrast data. Images were scanned
+  from film negatives (CM-10 Philips microscope, 2.69x enlargement, 300 dpi). Sibling SynapseNet records
+  are zenodo-14236382, zenodo-14254111, zenodo-14232607 and zenodo-14330011. Usability rests on use as
+  unlabeled data for self-supervised/domain-adaptation training only. enricher: the .h5 files also hold
+  labels/membrane (binary) and labels/vesicles (values 0-2, <0.04% of voxels) datasets, undocumented;
+  annotations left absent pending review.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "frog.zip   218.1 MB, 12 members\n  train_unlabeled/block*.h5   10 files, 8.4-27.1 MB each\n\
+      \  test/block*.h5               2 files (block10U3A_four.h5, block30UB_five.h5)\n  each .h5: raw,\
+      \ labels/membrane, labels/vesicles (same shape, gzip-chunked)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/14232530/files/frog.zip::test/block10U3A_four.h5
+    size_bytes: 22531502
+    description: One test stack (raw and both label datasets in one HDF5 file)
+  arrays:
+  - role: raw
+    path_pattern: frog.zip::*/block*.h5 (raw)
+    format: hdf5
+    axes: null
+    shape:
+    - 23
+    - 1022
+    - 1166
+    shape_varies: true
+    dtype: uint8
+    compression: gzip
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Stack of 2D micrographs (the paper uses these data for 2D domain adaptation; sections
+      are 80-90 nm, images scanned from film); the leading axis is not named in the file. Shapes differ
+      per file (test block10U3A_four [23, 1022, 1166], train block30UB_two [24, 1024, 1250]).
+  - role: label
+    path_pattern: frog.zip::*/block*.h5 (labels/membrane)
+    format: hdf5
+    axes: null
+    shape:
+    - 23
+    - 1022
+    - 1166
+    shape_varies: true
+    dtype: uint32
+    compression: gzip
+    value_range:
+    - 0
+    - 1
+    normalization: none
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Undocumented label dataset: the Zenodo record and paper describe these data as unlabeled
+      (train) and qualitatively evaluated (test); same grid as raw.'
+  - role: label
+    path_pattern: frog.zip::*/block*.h5 (labels/vesicles)
+    format: hdf5
+    axes: null
+    shape:
+    - 23
+    - 1022
+    - 1166
+    shape_varies: true
+    dtype: uint32
+    compression: gzip
+    value_range:
+    - 0
+    - 2
+    normalization: none
+    encoding: unknown
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Undocumented label dataset: the Zenodo record and paper describe these data as unlabeled
+      (train) and qualitatively evaluated (test); same grid as raw.'
+  notes: 'Zenodo API lists frog.zip, 218,086,524 bytes (complete); its 12 .h5 members listed. Probed two
+    members by reading them whole (deflated): each holds raw (uint8), labels/membrane and labels/vesicles
+    (uint32), same shape, gzip, no attributes. Read both with h5py (43 MB, repo zip reader): test/block10U3A_four.h5
+    raw [23, 1022, 1166] 0-255 (p1-p99 34-255); membrane {0,1}, 43.5% foreground, all 23 slices; vesicles
+    values {0,1,2}, 0.037% non-zero. train_unlabeled/block30UB_two.h5 raw [24, 1024, 1250]; membrane 16.7%
+    foreground; vesicles 0.004% non-zero. Neither the record nor the paper documents these label datasets;
+    the vesicle masks are far too sparse to be complete vesicle annotations, so they are not counted as
+    annotations. Axes not stated in the files or docs. download_url (the API content link) checked usable.'
