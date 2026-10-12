@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zenodo-21068509-sbf-sem-golgi-nuclei-cell-models
 title: Test datasets for Golgi Orientation plugin of Microscopy Image Browser
 short_name: Cell, nucleus and Golgi segmentation (SBF-SEM)
-description: Four downsampled serial block-face SEM volumes (isotropic 80 nm voxels, Amira Mesh) with MIB segmentation models.
-  Three cropped-cell volumes (BStem01-03) each carry a multi-material model for cell outline, nucleus and Golgi apparatus;
-  one complete volume carries three model files with consistent cell, Golgi and nucleus labels. Example data for the Golgi
-  Orientation plugin of Microscopy Image Browser.
+description: Four downsampled serial block-face SEM volumes (isotropic 80 nm voxels, Amira Mesh) with
+  MIB segmentation models. Three cropped-cell volumes (BStem01-03) each carry a multi-material model for
+  cell outline, nucleus and Golgi apparatus; one complete volume carries three model files with consistent
+  cell, Golgi and nucleus labels. Example data for the Golgi Orientation plugin of Microscopy Image Browser.
 landing_url: https://zenodo.org/records/21068509
 doi: 10.5281/zenodo.21068509
 repository: Zenodo
@@ -28,12 +28,12 @@ imaging:
     z: 80
   channels: 1
   organism: []
-  sample: Serial block-face SEM volumes of cells for Golgi orientation analysis (file names refer to Crypt4 and PK4605 samples);
-    tissue and species are not stated on the Zenodo page
+  sample: Serial block-face SEM volumes of cells for Golgi orientation analysis (file names refer to Crypt4
+    and PK4605 samples); tissue and species are not stated on the Zenodo page
   labels_stains: []
 data:
   formats:
-  - other
+  - hdf5
   size_bytes: 276204226
   n_items: 4
   access: open
@@ -46,9 +46,9 @@ annotations:
   - instance-segmentation
   - organelle
   coverage: dense
-  format: MIB .model files (multi-material labels). Cropped cells - one model per crop with materials 1 cell outline, 2 nucleus,
-    3 Golgi apparatus; complete volume - three models (cell outlines, Golgi objects, nuclei, up to 65535 materials each) with
-    matching cell indices
+  format: MIB .model files (multi-material labels). Cropped cells - one model per crop with materials
+    1 cell outline, 2 nucleus, 3 Golgi apparatus; complete volume - three models (cell outlines, Golgi
+    objects, nuclei, up to 65535 materials each) with matching cell indices
   source: unknown
 ml:
   tasks:
@@ -71,11 +71,105 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-12T21:52:00Z'
-notes: 'Both zips listed with peek_archive: 01_Cropped_cells_80nm.zip holds three .am volumes (8.7-11.4 MB) with one Labels_*.model
-  each, and 02_Complete_models_80nm.zip holds one 377.7 MB .am volume with three Labels_*.model files; each also contains
-  a GolgiOrientation.mat/.xls result file. Formats are Amira Mesh (.am) and MIB .model, neither in the format list, so formats
-  is other. The volumes are downsampled versions of the plugin paper data, so they are small example data rather than a
-  full training set. The description does not name the reference publication or say how the segmentations were made (manual
-  or automatic), nor the species or tissue, so organism is empty and annotation source is unknown; no paper was cited on the
-  page and a title search did not identify it. Total 4 volumes, 276 MB.'
+  last_checked: '2026-10-12T21:48:31Z'
+notes: 'Both zips listed with peek_archive: 01_Cropped_cells_80nm.zip holds three .am volumes (8.7-11.4
+  MB) with one Labels_*.model each, and 02_Complete_models_80nm.zip holds one 377.7 MB .am volume with
+  three Labels_*.model files; each also contains a GolgiOrientation.mat/.xls result file. The volumes
+  are downsampled versions of the plugin paper data, so they are small example data rather than a full
+  training set. The description does not name the reference publication or say how the segmentations were
+  made (manual or automatic), nor the species or tissue, so organism is empty and annotation source is
+  unknown; no paper was cited on the page and a title search did not identify it. Total 4 volumes, 276
+  MB. enricher: formats other -> hdf5: the MIB .model files are MATLAB 7.3 MAT files (HDF5, label volume
+  imOut); the raw .am volumes are Amira Mesh, not in the format list.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "01_Cropped_cells_80nm.zip   25.2 MB\n  01_Cropped_cells_80nm/BStem0{1,2,3}/180817_Crypt4_R01_Crop_1_bin80nm.am\
+      \          raw crop (Amira Mesh)\n  01_Cropped_cells_80nm/BStem0{1,2,3}/Labels_180817_Crypt4_R01_Crop_1_bin80nm.model\
+      \  MIB model\n  01_Cropped_cells_80nm/Results/GolgiOrientation.{mat,xls}\n02_Complete_models_80nm.zip\
+      \   251.0 MB\n  02_Complete_models_80nm/190616_PK4605_R01_80nm.am                              \
+      \   raw volume (377.7 MB)\n  02_Complete_models_80nm/Labels_190616_PK4605_R01_80nm_{CellOutlines,Golgi,Nuclei}_as_objects.model\n\
+      \  02_Complete_models_80nm/Results/GolgiOrientation.{mat,xls}\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/21068509/files/01_Cropped_cells_80nm.zip::01_Cropped_cells_80nm/BStem01/180817_Crypt4_R01_Crop_1_bin80nm.am
+    - https://zenodo.org/records/21068509/files/01_Cropped_cells_80nm.zip::01_Cropped_cells_80nm/BStem01/Labels_180817_Crypt4_R01_Crop_1_bin80nm.model
+    size_bytes: 11727021
+    description: 'Cropped cell BStem01: raw volume and its 3-material MIB model'
+  arrays:
+  - role: raw
+    path_pattern: 0[12]_*_80nm.zip::*/*.am
+    format: other
+    axes: zyx
+    shape:
+    - 327
+    - 192
+    - 181
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: Binary little-endian Amira Mesh, byte lattice 181 x 192 x 327 (x y z, Amira order,
+      x fastest). The MIB history in the header records contrast normalization, a gamma/min-max stretch
+      and uint16 -> uint8 conversion, drift alignment and resampling.
+  - role: label
+    path_pattern: 01_Cropped_cells_80nm.zip::*/BStem0[1-3]/Labels_*.model (imOut)
+    format: hdf5
+    axes: null
+    shape:
+    - 327
+    - 181
+    - 192
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 3
+    normalization: none
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: cell outline
+    - id: 2
+      name: nucleus
+    - id: 3
+      name: Golgi apparatus
+    alignment: same-grid
+    alignment_notes: MIB model (MATLAB 7.3 MAT = HDF5), dataset imOut; pairs with the .am in the same
+      BStem folder. h5py shows [327, 181, 192], i.e. MATLAB [192 181 327] (height, width, depth) stored
+      column-major, the same grid as the raw lattice; axis names not stated in the file. Classes from
+      the Zenodo description.
+  - role: label
+    path_pattern: 02_Complete_models_80nm.zip::*/Labels_*_as_objects.model (imOut)
+    format: hdf5
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: none
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Three models for the complete volume (cell outlines, Golgi objects, nuclei), up to
+      65535 materials each; "Labels are consistent across all three files so that matching index values
+      identify the same cell" (Zenodo). Not opened (large).
+  notes: 'Zenodo API lists 2 zips, 276,204,226 bytes (complete); both central directories listed (14 members).
+    Read BStem01 raw (.am, 11.4 MB uncompressed): AmiraMesh BINARY-LITTLE-ENDIAN 2.1, Lattice 181 192
+    327, byte data, values 0-255, mean 123.4, p1-p99 63-255, 1.4% at 255; one sample. Read its .model
+    (MAT 7.3/HDF5): imOut [327, 181, 192] uint8, values 0-3 (92% background), plus modelMaterialNames
+    (3), BoundingBox and 290 measurement labels. The three BStem crops share one file name but differ
+    in size (8.7-11.4 MB). The 02 complete volume and its models were not opened. Voxel size 80 x 80 x
+    80 nm is from the Zenodo description; the .am BoundingBox is in um. No single archive (two zips);
+    download_url stays the 02 zip.'
