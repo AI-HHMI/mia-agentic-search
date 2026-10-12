@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: ctc-phc-c2dh-u373
 title: Cell Tracking Challenge PhC-C2DH-U373 (glioblastoma-astrocytoma U373 cells)
 short_name: U373 glioblastoma cell tracking (phase contrast)
-description: 2D+t phase-contrast time-lapse of glioblastoma-astrocytoma U373 cells on a polyacrylamide substrate from the Cell Tracking Challenge, with two training sequences (01, 02) of 115 frames each and tracking (TRA) and segmentation (SEG) reference annotations; test sequences are released separately.
+description: 2D+t phase-contrast time-lapse of glioblastoma-astrocytoma U373 cells on a polyacrylamide
+  substrate from the Cell Tracking Challenge, with two training sequences (01, 02) of 115 frames each
+  and tracking (TRA) and segmentation (SEG) reference annotations; test sequences are released separately.
 landing_url: http://celltrackingchallenge.net/2d-datasets/
 doi: null
 repository: LabWebsite
@@ -40,7 +42,9 @@ annotations:
   - tracking
   - instance-segmentation
   coverage: partial
-  format: TIFF label masks (01_GT/SEG with 15 frames and 02_GT/SEG with 19 frames, 01_GT/TRA and 02_GT/TRA on all 115 frames plus man_track.txt); also 01_ST/02_ST silver SEG and 01_ERR_SEG/02_ERR_SEG imperfect masks
+  format: TIFF label masks (01_GT/SEG with 15 frames and 02_GT/SEG with 19 frames, 01_GT/TRA and 02_GT/TRA
+    on all 115 frames plus man_track.txt); also 01_ST/02_ST silver SEG and 01_ERR_SEG/02_ERR_SEG imperfect
+    masks
   source: unknown
 ml:
   tasks:
@@ -65,5 +69,93 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-12T18:30:00Z'
-notes: 'Custom CTC terms (datasets page): cite the Nature Methods paper and acknowledge the Cell Tracking Challenge; other uses need permission, cloning of datasets or reference annotations is forbidden. Training zip (43.5 MB, 956 members, listing checked): sequences 01 and 02, 115 tif frames each; GT/SEG is gold and sparse (15 and 19 frames), GT/TRA covers all frames, ST silver SEG and ERR_SEG on all frames. Nikon microscope, Plan Fluor DLL 20x/0.5, pixel 0.65 um and 15 min frame interval from the CTC 2D dataset page. The Nature Methods paper full text is not open access via Europe PMC, so annotation procedure was not verified and source is left unknown.'
+  last_checked: '2026-10-12T19:25:00Z'
+notes: 'Custom CTC terms (datasets page): cite the Nature Methods paper and acknowledge the Cell Tracking
+  Challenge; other uses need permission, cloning of datasets or reference annotations is forbidden. Training
+  zip (43.5 MB, 956 members, listing checked): sequences 01 and 02, 115 tif frames each; GT/SEG is gold
+  and sparse (15 and 19 frames), GT/TRA covers all frames, ST silver SEG and ERR_SEG on all frames. Nikon
+  microscope, Plan Fluor DLL 20x/0.5, pixel 0.65 um and 15 min frame interval from the CTC 2D dataset
+  page. The Nature Methods paper full text is not open access via Europe PMC, so annotation procedure
+  was not verified and source is left unknown. Coverage: gold SEG on 15 (01) and 19 (02) of 115 frames;
+  TRA, ST and ERR_SEG on every frame.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "PhC-C2DH-U373.zip/PhC-C2DH-U373/\n  01/           115 files   20.8 MB  .tif  (t000-t114)\n\
+      \  01_ERR_SEG/   115 files    2.4 MB  .tif\n  01_GT/SEG/     15 files  312.1 KB  .tif  (man_seg001,\
+      \ 005, ...)\n  01_GT/TRA/    116 files    1.8 MB  .tif 115 + man_track.txt\n  01_ST/SEG/    115\
+      \ files    2.4 MB  .tif  (silver truth)\n  02/           115 files   19.1 MB  .tif\n  02_ERR_SEG/\
+      \   115 files    2.2 MB  .tif\n  02_GT/SEG/     19 files  364.8 KB  .tif\n  02_GT/TRA/    116 files\
+      \    1.8 MB  .tif 115 + man_track.txt\n  02_ST/SEG/    115 files    2.2 MB  .tif"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.celltrackingchallenge.net/training-datasets/PhC-C2DH-U373.zip::PhC-C2DH-U373/01/t001.tif
+    - https://data.celltrackingchallenge.net/training-datasets/PhC-C2DH-U373.zip::PhC-C2DH-U373/01_GT/SEG/man_seg001.tif
+    size_bytes: 204930
+    description: Frame 1 of sequence 01 (520x696 uint8) and its gold-truth segmentation (uint16)
+  arrays:
+  - role: raw
+    path_pattern: PhC-C2DH-U373/0[12]/t*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 520
+    - 696
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 29
+    - 185
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One single-page TIFF per time point (both sequences 520x696).
+  - role: label
+    path_pattern: PhC-C2DH-U373/0[12]_{GT,ST}/SEG/man_seg*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 520
+    - 696
+    shape_varies: false
+    dtype: uint16
+    compression: lzw
+    value_range:
+    - 0
+    - 6
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: man_segNNN.tif pairs with tNNN.tif by frame number; GT (gold) on a subset of frames,
+      ST (silver) on all; sampled pair has the same shape.
+  - role: label
+    path_pattern: PhC-C2DH-U373/0[12]_GT/TRA/man_track[0-9]*.tif
+    format: tiff
+    axes: yx
+    shape: null
+    shape_varies: false
+    dtype: uint16
+    compression: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Tracking markers per frame (CTC format), not probed.
+  - role: label
+    path_pattern: PhC-C2DH-U373/0[12]_GT/TRA/man_track.txt
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: int64
+    compression: none
+    encoding: tracks-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: Space-separated rows "label start end parent" (first rows 1 0 114 0, 2 0 114 0).
+  notes: 'Listing (tools/listing.py --expand-zips): 956 members, exact sizes, 43,454,399 B. Probe: 01/t000.tif
+    and 02/t000.tif 520x696 uint8 LZW. Sample: 01/t001.tif 29-185; 01_GT/SEG/man_seg001.tif uint16 0-6
+    (6 cells + background). Values from one sample. ERR_SEG masks (imperfect masks to link) not probed.
+    Voxel size 650 nm from the CTC 2D page ("Pixel size (microns): 0.65 x 0.65").'
