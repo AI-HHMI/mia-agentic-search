@@ -3,8 +3,8 @@ id: hf-siuseven-cmfi-17-poterioochromonas-pseudomasks
 title: CMFI-17 v1.0 - Poterioochromonas malhamensis microscopy fields with pseudo-instance masks
 short_name: Microalgae time-course with pseudo-instance masks
 description: 4,996 RGB microscopy fields (1360x1024 JPEG) of a Poterioochromonas malhamensis time course under light/dark
-  regimes (17 conditions, three biological replicates), each paired with a uint16 pseudo-instance mask generated with
-  Cellpose. Train/validation/test splits (3,990/503/503) are provided.
+  regimes (17 conditions, three biological replicates), each paired with a uint16 pseudo-instance mask generated with Cellpose.
+  Train/validation/test splits (3,990/503/503) are provided.
 landing_url: https://huggingface.co/datasets/SiuSeven/cmfi-17-v1-0
 doi: null
 repository: HuggingFace
@@ -29,7 +29,7 @@ data:
   size_bytes: 532058484
   n_items: 4996
   access: open
-  download_url: null
+  download_url: https://huggingface.co/datasets/SiuSeven/cmfi-17-v1-0
   download_method: http
 annotations:
   present: true
@@ -46,21 +46,88 @@ ml:
   baseline_code_url: null
 license:
   spdx: CC-BY-4.0
-  url: https://huggingface.co/datasets/SiuSeven/cmfi-17-v1-0/resolve/main/README.md
+  url: https://huggingface.co/datasets/SiuSeven/cmfi-17-v1-0/resolve/main/LICENSE_DATA.txt
 provenance:
   discovered_by: harvest-websearch
   discovered_at: '2026-10-12T07:40:00Z'
   evidence_urls:
   - https://huggingface.co/datasets/SiuSeven/cmfi-17-v1-0/resolve/main/README.md
   - https://huggingface.co/api/datasets/SiuSeven/cmfi-17-v1-0?blobs=true
+  - https://huggingface.co/datasets/SiuSeven/cmfi-17-v1-0/resolve/main/LICENSE_DATA.txt
   confidence: 0.55
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-12T07:40:00Z'
-notes: Masks are Cellpose pseudo-labels, not human-adjudicated ground truth (the card says the Cellpose revision and thresholds
-  are unrecorded). Imaging modality, magnification and pixel size are not stated on the card (EXIF names an Olympus DP80
-  camera), so modality is other and voxel size is null. No paper or DOI is listed. A 1024x1024 center-cropped derivative
-  exists at SiuSeven/cmfi-17-1024 (same masks, not a separate dataset). Counts and size come from the Hugging Face file
-  listing (3,990 + 503 + 503 image/mask pairs).
+  last_checked: '2026-10-12T08:30:00Z'
+notes: 'Masks are Cellpose pseudo-labels, not human-adjudicated ground truth (the card says the Cellpose revision and thresholds
+  are unrecorded). Imaging modality, magnification and pixel size are not stated on the card (EXIF names an Olympus DP80 camera),
+  so modality is other and voxel size is null. No paper or DOI is listed. A 1024x1024 center-cropped derivative exists at
+  SiuSeven/cmfi-17-1024 (same masks, not a separate dataset). Counts and size come from the Hugging Face file listing (3,990
+  + 503 + 503 image/mask pairs). enricher: license url -> LICENSE_DATA.txt (CC BY 4.0); download_url = dataset page (10,009
+  files, no archive); voxel size still not stated anywhere checked.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./   10,009 files, 532.1 MB (Hugging Face listing, exact sizes)\n  README.md, LICENSE_DATA.txt, .gitattributes\n\
+      \  canonical/   fov_manifest.parquet, splits.parquet, metadata.json (7.5 MB)\n  metadata/    11 files: json reports,\
+      \ csv, checksums.sha256, parquet (3.6 MB)\n  data/train/images/       3990 .jpg (347.6 MB)\n  data/train/masks/    \
+      \    3990 .png (68.3 MB)\n  data/validation/images/   503 .jpg (43.9 MB)\n  data/validation/masks/    503 .png (8.7\
+      \ MB)\n  data/test/images/         503 .jpg (43.8 MB)\n  data/test/masks/          503 .png (8.6 MB)"
+    n_files: 10009
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/SiuSeven/cmfi-17-v1-0/resolve/main/data/train/images/pm_tc_000bd8bef8ef1d1e.jpg
+    - https://huggingface.co/datasets/SiuSeven/cmfi-17-v1-0/resolve/main/data/train/masks/pm_tc_000bd8bef8ef1d1e.png
+    size_bytes: 111002
+    description: 'One training field: RGB JPEG and its uint16 PNG pseudo-instance mask (same observation_id).'
+  arrays:
+  - role: raw
+    path_pattern: data/*/images/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1024
+    - 1360
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'RGB colour (s = 3 samples). Card: original 1360x1024 RGB JPEG bytes with EXIF removed losslessly; a
+      scale-bar annotation sits in the bottom-right corner (card: canonical crop x0=168, y0=0, 1024x1024 excludes it).'
+  - role: label
+    path_pattern: data/*/masks/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1024
+    - 1360
+    shape_varies: false
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 51
+    normalization: unknown
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    - id: null
+      name: cell (Cellpose pseudo-instance)
+    alignment: same-grid
+    alignment_notes: 'Pairing: data/<split>/images/<observation_id>.jpg <-> data/<split>/masks/<observation_id>.png. Same
+      1024x1360 grid as the image. Card: background ID 0, source instance IDs are sparse and preserved.'
+  notes: 'Listing (listing.py): 10,009 files, 532,058,484 B, complete, exact sizes. Probe: train image pm_tc_000bd8bef8ef1d1e.jpg
+    1024x1360x3 uint8 JPEG; its mask .png 1024x1360 uint16 gray, deflate. Sample (sample.py, 111,002 B): image 0-255 (p1 81,
+    p50 109, p99 148), mask 0-51, 45 distinct ids, 94.6% background. Value ranges from this one pair only. Voxel size not
+    found; checked: JPEG/PNG headers (EXIF stripped per card), README, LICENSE_DATA.txt, canonical/metadata.json, metadata/feature_schema.json
+    (units in pixels only), the derived SiuSeven/cmfi-17-1024 card, HF API card data; no paper or code repository is linked.
+    Download: per-file Hugging Face resolve URLs (direct, range requests); no single archive.'
