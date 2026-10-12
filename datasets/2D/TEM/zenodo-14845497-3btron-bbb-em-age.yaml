@@ -1,0 +1,138 @@
+schema_version: '1.2'
+id: zenodo-14845497-3btron-bbb-em-age
+title: 3BTRON dataset - electron microscopy of mouse blood-brain barrier capillaries labelled by age group
+short_name: Mouse blood-brain barrier capillaries (TEM)
+description: 359 transmission electron micrographs of brain capillaries (blood-brain barrier) from 23 C57Bl/6J mice, 161 from
+  aged and 198 from young animals, taken in the corpus callosum, hippocampus and prefrontal cortex, with sex and brain region
+  per image and a train/test split (324/35). A further 52 unlabelled images come from 3 middle-age female mice. Released as
+  NumPy arrays with the 3BTRON paper on age classification of BBB ultrastructure.
+landing_url: https://zenodo.org/records/14845497
+doi: 10.5281/zenodo.14845497
+repository: Zenodo
+accession: '14845497'
+authors:
+- Isabel Bravo-Ferrer
+- Katrine Gaasdal-Bech
+- Nan Fletcher-Lloyd
+- Payam Barnaghi
+- Blanca Diaz-Castro
+publications:
+- title: '3BTRON: A Blood-Brain Barrier Recognition Network'
+  doi: 10.1038/s42003-025-08453-6
+  url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12227728/fullTextXML
+date_published: '2025-02-10'
+imaging:
+  modality:
+  - TEM
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Mus musculus
+  sample: Ultrathin (60 nm) sections of perfusion-fixed mouse brain showing cross-sections of capillaries, imaged on a JEOL
+    TEM-1400 Plus
+  labels_stains:
+  - lead citrate
+  - uranyl acetate
+data:
+  formats:
+  - other
+  size_bytes: 571972703
+  n_items: 411
+  access: open
+  download_url: https://zenodo.org/api/records/14845497/files/data.zip/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  coverage: dense
+  format: NumPy .npy files per split - np_images.npy, labels.npy (young or aged), features.npy (sex and brain region), plus
+    information/single_image_targets.csv
+  source: unknown
+ml:
+  tasks:
+  - classification
+  splits_provided: true
+  benchmark: ResNet50 transfer-learning baseline reported in the paper
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-11T18:15:29Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/14845497
+  - https://zenodo.org/api/records/14845497/files/data.zip/content
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12227728/fullTextXML
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-11T19:58:26Z'
+notes: 'The single data.zip (572 MB, 17 files, 809.6 MB uncompressed) holds only NumPy arrays - binary/{train,test}/ with
+  np_images.npy, labels.npy and features.npy, a combined binary/ set, middle_age/ (np_images.npy and features.npy for the
+  52 unlabelled images) and information/single_image_targets.csv - so the format is other (numpy) and the original image files
+  and their pixel size are not in the deposit. The label is the animal age group (aged mean 577 d, young mean 98 d), not a
+  per-image expert annotation, so annotations.source is unknown. n_items is 359 labelled plus 52 unlabelled arrays. Magnification
+  and pixel size are not stated in the paper text read ("nanometre scale"; magnifications chosen to frame each capillary),
+  and the arrays may have been resized. enricher: channels 1 (was 3): np_images.npy are (N, 512, 512) float32; splits are
+  324 train / 36 test (360 labelled).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "zenodo.org/records/14845497: data.zip (572.0 MB, 809.6 MB uncompressed)\n  data/binary/{np_images,labels,features}.npy\
+      \        360 images (all labelled)\n  data/binary/train/{np_images,labels,features}.npy  324\n  data/binary/test/{np_images,labels,features}.npy\
+      \   36\n  data/middle_age/{np_images,features}.npy           52 (no labels)\n  data/information/single_image_targets.csv\
+      \          path,label,sex,region,age\n  .DS_Store files\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/14845497/files/data.zip::data/binary/test/np_images.npy
+    - https://zenodo.org/records/14845497/files/data.zip::data/binary/test/labels.npy
+    size_bytes: 37749280
+    description: 'The test split: 36 images and their age labels'
+  arrays:
+  - role: raw
+    path_pattern: data.zip::data/*/*np_images.npy
+    format: other
+    axes: null
+    shape:
+    - 324
+    - 512
+    - 512
+    shape_varies: true
+    dtype: float32
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'NumPy stacks (npy v1.0, C order) of 512x512 single-channel images, first axis = image index: binary
+      360, train 324, test 36, middle_age 52. Float32, so the original micrographs were converted (and probably resized).'
+  - role: label
+    path_pattern: data.zip::data/binary/*labels.npy
+    format: other
+    axes: null
+    shape:
+    - 324
+    shape_varies: true
+    dtype: int64
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    encoding: semantic-ids
+    classes: null
+    alignment: not-applicable
+    alignment_notes: One age-group label per image (index-aligned with np_images.npy). Which integer means young or aged is
+      not stated; single_image_targets.csv has label Aged/Young per image path. features.npy (N, 5) float32 holds per-image
+      covariates (sex, region per the record).
+  notes: 'Listing: tools/listing.py on the Zenodo record: 1 file, 571,972,703 bytes, exact. The npy headers of all 13 .npy
+    members were read by inflating their first bytes (allow_pickle not used): shapes/dtypes in arrays. Reading pixel values
+    failed on repeated Zenodo TLS resets, so there''s no value range. Read single_image_targets.csv head (path,label,sex,region,age).
+    Pixel size not found; checked: Zenodo description, paper full text (harvester; PMC12227728 says only nanometre scale,
+    magnification chosen per capillary), npy headers (no metadata). The arrays carry no calibration and may be resized. Download:
+    data.zip direct (usable, range requests); members usable as zip::member.'
