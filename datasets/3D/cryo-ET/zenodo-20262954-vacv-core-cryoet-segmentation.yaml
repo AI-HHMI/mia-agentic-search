@@ -38,9 +38,9 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: 032_original_ground_truth.mrc (uint16, same 250x464x464 grid as the tomogram, values 0-255)
-    and 032_original_generated_mask_0_1.mrc (0/1 mask); HDF5 copy 032_original.hdf5 with raw/label datasets
-    expected by the training config
+  format: '032_original_ground_truth.mrc (uint16, same 250x464x464 grid as the tomogram, binary: values
+    0 and 255) and 032_original_generated_mask_0_1.mrc (float32, header range 0-1); 032_original.hdf5
+    holds only a raw dataset'
   source: unknown
 ml:
   tasks:
@@ -62,11 +62,127 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-12T20:14:34Z'
+  last_checked: '2026-10-12T21:17:45Z'
 notes: 'Zenodo API record, README and mrc headers were read (probe: tomogram float32 250x464x464, ground
   truth uint16 same shape). Only one tomogram (032) is included; no paper is linked and the description
   is one line, so voxel size (MRC header cell is 0), acquisition details, annotation procedure and the
-  exact label values are not stated. Label values 0-255 are not explained; mask_list.csv lists ''032_original,0,1''.
-  The training config reads HDF5 with raw/label internal paths. Also ships a trained 3D U-Net checkpoint
-  (best_checkpoint.pytorch) and predictions (032_original_predictions.h5), which are model outputs, not
-  labels.'
+  exact label values are not stated. mask_list.csv lists ''032_original,0,1''. The training config reads
+  HDF5 with raw/label internal paths, but 032_original.hdf5 holds only raw. Also ships a trained 3D U-Net
+  checkpoint (best_checkpoint.pytorch) and predictions (032_original_predictions.h5), which are model
+  outputs, not labels. enricher: ground truth sampled in full: binary, values 0 and 255.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: '032_original.mrc                      215.3 MB  tomogram
+
+      032_original_ground_truth.mrc         107.6 MB  ground-truth mask
+
+      032_original_generated_mask_0_1.mrc   215.3 MB  0/1 mask
+
+      032_original.hdf5                     215.3 MB  raw copy (dataset "raw")
+
+      032_original_predictions.h5           200.7 MB  model predictions
+
+      best_checkpoint.pytorch                49.0 MB  trained 3D U-Net
+
+      README.md, mask_list.csv, train_config.yaml, test_config.yaml, 2 notebooks
+
+      '
+    n_files: 12
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/20262954/files/032_original.mrc
+    - https://zenodo.org/records/20262954/files/032_original_ground_truth.mrc
+    size_bytes: 322946048
+    description: The one tomogram and its ground-truth mask (the whole dataset is this one pair)
+  arrays:
+  - role: raw
+    path_pattern: 032_original.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 250
+    - 464
+    - 464
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - -891.141
+    - 472.507
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Tomogram; value range from the MRC header min/max (mean 191.27). Header voxel size
+      is 0.
+  - role: label
+    path_pattern: 032_original_ground_truth.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 250
+    - 464
+    - 464
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 255
+      name: VACV core / palisade layer
+    - id: 0
+      name: background
+    alignment: same-grid
+    alignment_notes: Same 250x464x464 grid and file stem as the tomogram; class name from the README ("segmentation
+      of Vaccinia virus palisade layers").
+  - role: label
+    path_pattern: 032_original_generated_mask_0_1.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 250
+    - 464
+    - 464
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - 0.0
+    - 1.0
+    normalization: none
+    encoding: unknown
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same grid as the tomogram; header min 0, max 1, mean 0.0216 (ground truth foreground
+      fraction is 0.0264), so it is not a plain rescale of the ground truth; how it was generated is not
+      stated.
+  - role: raw
+    path_pattern: 032_original.hdf5 (raw)
+    format: hdf5
+    axes: null
+    shape:
+    - 464
+    - 464
+    - 250
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: HDF5 copy of the tomogram for the pytorch-3dunet test config; stored with the axes
+      reversed relative to the MRC (464x464x250); axis names not stated. It has no label dataset.
+  notes: 'Zenodo API lists 12 files, 1,003,292,926 bytes (complete). Probed all four volumes (MRC/HDF5
+    headers). Sampled 032_original_ground_truth.mrc in full (107.6 MB): uint16, values {0: 17467344, 255:
+    473990}, so binary; one sample. Tomogram and 0/1 mask value ranges are the MRC header min/max, not
+    sampled (215 MB each, over the sample file limit). 032_original_predictions.h5 (model output) not
+    probed (SSL errors from Zenodo). Voxel size not found; checked: MRC headers (voxel size 0), Zenodo
+    API record (one-line description, no related identifiers), README, train/test configs, paper search:
+    the closest paper (Liu et al. 2024, doi 10.1038/s41594-024-01218-5, same first author) gives tilt-series
+    pixel sizes of 1.372, 1.56 and 2.653 A but does not cite this record or say which tilt series or binning
+    this tomogram uses. No single archive; the files are individual direct downloads.'
