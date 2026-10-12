@@ -1,11 +1,12 @@
 schema_version: '1.2'
 id: zenodo-11353017-zebrafish-dorsal-aorta-contours
-title: Annotated and processed 3D confocal microscopy images of dorsal aorta in wild-type and Endoglin-deficient zebrafish embryos at 48 hpf and 72 hpf
+title: Annotated and processed 3D confocal microscopy images of dorsal aorta in wild-type and Endoglin-deficient zebrafish
+  embryos at 48 hpf and 72 hpf
 short_name: Zebrafish aorta endothelial contours (confocal)
 description: 3D confocal stacks of the dorsal aorta of Pecam1-EGFP zebrafish embryos (7 wild-type and 6 Endoglin-deficient
-  embryos imaged at 48 and 72 hpf, 26 Imaris files) with manually annotated 3D endothelial cell contours placed
-  on the Pecam1-EGFP cell junctions. A second archive holds two wild-type embryos at 72 hpf with repeated contour
-  annotation and manually outlined Dextran Texas Red angiogram cross-sections of the vessel lumen.
+  embryos imaged at 48 and 72 hpf, 26 Imaris files) with manually annotated 3D endothelial cell contours placed on the Pecam1-EGFP
+  cell junctions. A second archive holds two wild-type embryos at 72 hpf with repeated contour annotation and manually outlined
+  Dextran Texas Red angiogram cross-sections of the vessel lumen.
 landing_url: https://zenodo.org/records/11353017
 doi: 10.5281/zenodo.11353017
 repository: Zenodo
@@ -18,9 +19,8 @@ authors:
 - Salim Abdelilah-Seyfried
 - Wilhelm Huisinga
 publications:
-- title: Novel mathematical approach to accurately quantify 3D endothelial cell morphology and vessel geometry based
-    on fluorescently marked endothelial cell contours - Application to the dorsal aorta of wild-type and Endoglin-deficient
-    zebrafish embryos
+- title: Novel mathematical approach to accurately quantify 3D endothelial cell morphology and vessel geometry based on fluorescently
+    marked endothelial cell contours - Application to the dorsal aorta of wild-type and Endoglin-deficient zebrafish embryos
   doi: 10.1371/journal.pcbi.1011924
   url: https://doi.org/10.1371/journal.pcbi.1011924
 date_published: '2024-06-08'
@@ -29,27 +29,28 @@ imaging:
   - confocal
   dimensionality: 3D
   voxel_size_nm: null
-  channels: 2
+  channels: null
   organism:
   - Danio rerio
-  sample: dorsal aorta of whole zebrafish embryos at 48 and 72 hpf, wild-type and Endoglin-deficient, mounted laterally in agarose
+  sample: dorsal aorta of whole zebrafish embryos at 48 and 72 hpf, wild-type and Endoglin-deficient, mounted laterally in
+    agarose
   labels_stains:
   - Pecam1-EGFP (endothelial cell junctions)
   - Dextran Texas Red (angiography, validation data)
 data:
   formats:
-  - other
-  size_bytes: 4129301000
+  - hdf5
+  size_bytes: 4129301736
   n_items: 28
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/11353017
   download_method: http
 annotations:
   present: true
   types:
   - other
   coverage: partial
-  format: manually placed 3D point sequences (cell contours, vessel cross-section outlines) stored inside the Imaris .ims files
+  format: Imaris Measurement Points (3D positions in um) per cell, stored as XML in each .ims file (HDF5 dataset Scene8/Data)
   source: manual
 ml:
   tasks:
@@ -66,17 +67,76 @@ provenance:
   evidence_urls:
   - https://zenodo.org/api/records/11353017
   - https://zenodo.org/records/11353017/files/eng_wt_data.zip
+  - https://zenodo.org/records/11353017/files/wt_angiogram_data.zip
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11392406/fullTextXML
-  confidence: 0.6
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-12T02:20:00Z'
-notes: 'Two zip archives: eng_wt_data.zip (26 .ims files, 3.47 GB, listed with peek_archive) and wt_angiogram_data.zip
-  (0.66 GB; contents not listed, described as 2 wild-type 72 hpf images). Total n_items = 26 + 2. Voxel size not stated on
-  the Zenodo page or paper Methods (LSM 780, 20x objective); it is probably in the .ims headers. Annotation is a set of
-  3D polylines embedded in Imaris files, not label masks, so it is useful for contour/vessel-geometry tasks, not directly
-  for mask segmentation. Zenodo notes the contour coordinates inside the .ims files are slightly less precise than the
-  exact ones in a separate repository (zenodo 10549101). Imaris .ims is HDF5-based but this was not verified, hence
-  formats: other. Channels: 2 inferred from the Pecam1-EGFP and Dextran Texas Red labels.'
+  annotations_verified: true
+  last_checked: '2026-10-12T03:10:00Z'
+notes: 'Two zips: eng_wt_data.zip (26 .ims, analysis data: 7 wt + 6 Endoglin-deficient embryos at 48/72 hpf) and wt_angiogram_data.zip
+  (2 .ims, validation data, wt 72 hpf). Annotation = 3D contour points per cell inside the Imaris files, not masks; Zenodo
+  says these coordinates are slightly less precise than those in zenodo 10549101. Paper Methods: LSM 780, 20x objective (the
+  .ims header says LensPower 40). enricher: formats hdf5 (.ims opened with h5py; was other); channels null (2 in embryo21_72hpf:
+  Pecam1-EGFP + T PMT; header channel counts differ between files; was 2); voxel size stays null: .ims headers differ between
+  files (see technical.notes); size from Zenodo file listing.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  2 zips, 4,129,301,736 B (28 .ims, 4.3 GB uncompressed)\n  eng_wt_data.zip  3.47 GB\n    eng_wt_data/embryoNN_{48,72}hpf_pecamEGFP_DA.ims\
+      \  26 files (83-233 MB)\n  wt_angiogram_data.zip  0.66 GB\n    wt_angiogram_data/Embryo06_72hpf.ims  441.6 MB\n    wt_angiogram_data/Embryo08_72hpf.ims\
+      \  233.5 MB\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/11353017/files/eng_wt_data.zip::eng_wt_data/embryo21_72hpf_pecamEGFP_DA.ims
+    size_bytes: 83284183
+    description: smallest .ims (wt or Eng-def embryo 21 at 72 hpf); image channels and the contour annotation are in the same
+      file
+  arrays:
+  - role: raw
+    path_pattern: eng_wt_data.zip/eng_wt_data/*.ims (DataSet/ResolutionLevel 0/TimePoint 0/Channel 0/Data)
+    format: hdf5
+    axes: zyx
+    shape:
+    - 32
+    - 512
+    - 2048
+    shape_varies: true
+    dtype: uint16
+    compression: gzip
+    value_range:
+    - 0
+    - 3657
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Channel 0 = Pecam1-EGFP (488 nm ex). Imaris pads y to 512; valid region is ImageSizeY=400 (x 2048, z
+      32 in this file).
+  - role: label
+    path_pattern: eng_wt_data.zip/eng_wt_data/*.ims
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    encoding: polygons
+    classes:
+    - id: null
+      name: endothelial cell contour
+    alignment: transform-provided
+    alignment_notes: 'Imaris scene XML stored in the HDF5 dataset Scene8/Data of each .ims: <Point Position="x y z"> in um
+      per cell (groups: annotated, +enriched, +spline, +projected cell outlines; plus orientation axes). Voxel index = (position
+      - ExtMin) / voxel size from DataSetInfo/Image. Same file as the raw image.'
+  notes: 'Sample: embryo21_72hpf .ims (83.9 MB) inflated and opened with h5py (own script, tools/sample.py does not read .ims).
+    Image attrs: X 2048, Y 400, Z 32, Unit um, ExtMax 212.548/41.5133/32, PixelType Gray16, 2 channels (Pecam1-EGFP, T PMT);
+    value_range from the middle z slice of channel 0 only. Scene8 XML: 36 cells, 14,385 points. Voxel size from Imaris extents
+    / sizes, read from the start of every member: 25 of 26 eng_wt files 103.78 x 103.78 x 1000 nm; embryo01_48hpf 103.78 x
+    103.78 x 1081.83 nm; both wt_angiogram files 129.73 x 129.73 x 762.4 nm. Not one shared value, so imaging.voxel_size_nm
+    stays null (paper and Zenodo state none). Only channel 0 described as raw; other channels vary per file. Direct files:
+    the two zips (Zenodo API), usable for TensorSwitch with range requests. TensorSwitch has no Imaris scene reader, so the
+    contours need custom extraction.'
