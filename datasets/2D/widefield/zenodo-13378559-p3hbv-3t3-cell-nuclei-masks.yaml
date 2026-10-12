@@ -63,10 +63,102 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-12T16:30:00Z'
-notes: 'Zip listing (8,895 members): 75 raw .tif (250 MB) in folders by film concentration (1.0-3.0 %) and sample, with
-  4,365 cell_masks and 4,408 nuclei_masks .png files (a few folders use cell_mask/). The description says images were
-  taken on a Leica DMI8 fluorescence microscope with 20x in the file names; image size, pixel size and annotation method
-  (manual vs. tool-assisted) are not stated, and the tif header could not be read remotely, so voxel size is null and
-  annotation source is recorded as unknown. No paper is linked on the record and none
-  was found; the record has no related identifiers. Mask counts differ slightly between cells and nuclei per image.'
+  last_checked: '2026-10-12T18:10:00Z'
+notes: 'Zip listing (8,895 members): 75 raw .tif (250 MB) in folders by film concentration (1.0-3.0 %) and sample, with 4,365
+  cell_masks and 4,408 nuclei_masks .png files (a few folders use cell_mask/). The description says images were taken on a
+  Leica DMI8 fluorescence microscope with 20x in the file names; image size, pixel size and annotation method (manual vs.
+  tool-assisted) are not stated, and the TIFF header has no usable calibration, so voxel size is null and annotation source
+  is recorded as unknown. No paper is linked on the record and none was found; the record has no related identifiers. Mask
+  counts differ slightly between cells and nuclei per image. enricher: raw TIFFs are RGB composites (FITC green + DAPI blue,
+  LZW, 1440x1920x3); masks are one binary PNG per cell or nucleus.'
+technical:
+  method: sample
+  inspected_at: '2026-10-12T18:10:00Z'
+  inspected_urls:
+  - https://zenodo.org/records/13378559/files/P3HBV_scan_masks.zip::P3HBV_scan_masks/1.0/3/2-1_Image043_ch00.tif
+  - https://zenodo.org/records/13378559/files/P3HBV_scan_masks.zip::P3HBV_scan_masks/1.0/3/cell_masks/17.png
+  bytes_downloaded: 1224282
+  size_source: file-listing
+  layout:
+    tree: "P3HBV_scan_masks.zip (131.8 MB, 8,895 members)\n  P3HBV_scan_masks/\n    1.0/ 1.5/ 2.0/ 2.5/ 3.0/          film\
+      \ concentration (%), 75 samples in total\n      <sample n>/\n        <name>_ch00.tif               raw RGB image, e.g.\
+      \ 2-1_Image043_ch00.tif\n        cell_masks/<k>.png            one binary mask per cell (4,365 in total; a few folders\
+      \ use cell_mask/)\n        nuclei_masks/<k>.png          one binary mask per nucleus (4,408 in total)\n"
+    n_files: 8895
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/13378559/files/P3HBV_scan_masks.zip::P3HBV_scan_masks/1.0/3/2-1_Image043_ch00.tif
+    - https://zenodo.org/records/13378559/files/P3HBV_scan_masks.zip::P3HBV_scan_masks/1.0/3/cell_masks/17.png
+    - https://zenodo.org/records/13378559/files/P3HBV_scan_masks.zip::P3HBV_scan_masks/1.0/3/nuclei_masks/17.png
+    size_bytes: null
+    description: 'Sample 1.0/3: raw RGB TIFF with one cell mask and the nucleus mask of the same index.'
+  arrays:
+  - role: raw
+    path_pattern: P3HBV_scan_masks.zip::P3HBV_scan_masks/*/*/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 1440
+    - 1920
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Plain single-page RGB TIFF (photometric 2): FITC (green) and DAPI (blue) merged; samples differ.'
+  - role: label
+    path_pattern: P3HBV_scan_masks.zip::P3HBV_scan_masks/*/*/cell_mask*/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1440
+    - 1920
+    shape_varies: null
+    dtype: uint8
+    compression: png
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 255
+      name: cell
+    alignment: same-grid
+    alignment_notes: One binary PNG per cell in the sample folder next to its raw TIFF (one raw per folder); stacking the
+      masks gives instance IDs. Same 1440x1920 grid as the raw (sampled).
+  - role: label
+    path_pattern: P3HBV_scan_masks.zip::P3HBV_scan_masks/*/*/nuclei_masks/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1440
+    - 1920
+    shape_varies: null
+    dtype: uint8
+    compression: png
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 255
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: One binary PNG per nucleus; file index k presumably matches cell_masks/k.png (same names seen in the
+      listing; not documented).
+  notes: 'Listing of the single zip is complete (8,895 members, exact sizes). Probe of 1.0/3/2-1_Image043_ch00.tif: plain
+    TIFF, 1440x1920x3 uint8, LZW, photometric RGB, no calibration. Sample: raw [0, 255] (130 unique values; full range used),
+    cell mask 17.png binary {0: 2,738,455, 255: 26,345}; values from one image. Voxel size not found; checked: TIFF header,
+    Zenodo description (Leica DMI8, LAS X, no pixel size), no paper linked. Annotation method not stated, so annotations.source
+    stays unknown.'
