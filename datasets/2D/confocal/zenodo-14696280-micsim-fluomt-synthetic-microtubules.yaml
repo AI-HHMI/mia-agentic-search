@@ -2,10 +2,11 @@ schema_version: '1.2'
 id: zenodo-14696280-micsim-fluomt-synthetic-microtubules
 title: 'MicSim_FluoMT: synthetic confocal-like images of fluorescent microtubules with binary masks'
 short_name: Synthetic microtubule segmentation (confocal-like)
-description: Two synthetic datasets (easy and hard) of 1,192 noisy confocal-like fluorescence images each, mimicking
-  the astral microtubule network of C. elegans zygotes (simulated with Cytosim, rendered with ConfocalGN), with
-  matching binary ground-truth microtubule masks. In the hard set fluorescence fades toward microtubule ends; both
-  share the same ground truth. Built to train and benchmark microtubule segmentation networks.
+description: Two synthetic datasets (easy and hard) of 1,192 noisy confocal-like fluorescence images each,
+  mimicking the astral microtubule network of C. elegans zygotes (simulated with Cytosim, rendered with
+  ConfocalGN), with matching binary ground-truth microtubule masks. In the hard set fluorescence fades
+  toward microtubule ends; both share the same ground truth. Built to train and benchmark microtubule
+  segmentation networks.
 landing_url: https://zenodo.org/records/14696279
 doi: 10.5281/zenodo.14696280
 repository: Zenodo
@@ -16,7 +17,8 @@ authors:
 - Yousef El Mourabit
 - Achraf Ait Laydi
 publications:
-- title: A novel attention mechanism for noise-adaptive and robust segmentation of microtubules in microscopy images
+- title: A novel attention mechanism for noise-adaptive and robust segmentation of microtubules in microscopy
+    images
   doi: 10.1186/s12859-026-06514-z
   url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13543471/fullTextXML
 date_published: '2025-01-20'
@@ -25,17 +27,17 @@ imaging:
   - confocal
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism:
   - Caenorhabditis elegans
-  sample: synthetic images (Cytosim simulation of C. elegans zygote astral microtubules rendered with ConfocalGN);
-    not real microscope images
+  sample: synthetic images (Cytosim simulation of C. elegans zygote astral microtubules rendered with
+    ConfocalGN); not real microscope images
   labels_stains:
   - simulated fluorescent microtubules
 data:
   formats:
   - tiff
-  size_bytes: 223000000
+  size_bytes: 223005543
   n_items: 2384
   access: open
   download_url: https://zenodo.org/records/14696280
@@ -68,11 +70,74 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-12T11:35:27Z'
-notes: 'Synthetic (simulated) images, not real microscopy; included because they have exact ground truth and are
-  released for training segmentation models. Zenodo files dataset_easy.zip (112.8 MB) and dataset_hard.zip (110.2
-  MB). peek_archive of dataset_easy.zip (via record 14696280): 1,192 report_NNNN.noisy.tiff + 1,192 report_NNNN.binary.tiff
-  (~0.45 MB each); dataset_hard.zip was not listed (page says same ground truth, same count). Pixel size, image
-  dimensions and train/val/test split are not stated on the Zenodo page or in the paper text read (Supplemental
-  Material 1A not read). n_items = 2 x 1,192 images. The real-image counterpart (MicReal_FluoMT, zenodo 15852660)
-  is a separate record in the catalog.'
+  last_checked: '2026-10-12T12:12:23Z'
+notes: 'Synthetic (simulated) images, not real microscopy; included because they have exact ground truth
+  and are released for training segmentation models. Zenodo files dataset_easy.zip and dataset_hard.zip,
+  1,192 noisy/binary TIFF pairs each; the binaries are byte-identical between easy and hard (checked every
+  50th). Paper: 953 train / 119 validation / 120 test images, but no split file is deposited (splits_provided
+  false). Pixel size and train split membership not stated on the Zenodo page or in the paper main text
+  (Supplemental Material 1A not read). n_items = 2 x 1,192 images. The real-image counterpart (MicReal_FluoMT,
+  zenodo 15852660) is a separate record. enricher: channels 1 (was null), size_bytes exact from Zenodo
+  API (was 223 MB rounded).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "dataset_easy.zip (112,823,240 B; 1,074,413,084 B uncompressed)\n  dataset_easy/report_NNNN.noisy.tiff\
+      \    1192 files (0000..1191)\n  dataset_easy/report_NNNN.binary.tiff   1192 files\n  dataset_easy/.DS_Store,\
+      \ __MACOSX/      macOS metadata\ndataset_hard.zip (110,182,303 B; same layout under dataset_hard/)"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/14696280/files/dataset_easy.zip/content::dataset_easy/report_0000.binary.tiff
+    size_bytes: 450674
+    description: Binary mask report_0000 (easy set); its image is https://zenodo.org/api/records/14696280/files/dataset_easy.zip/content::dataset_easy/report_0000.noisy.tiff,
+      whose download check hit HTTP 504 three times in this run, so it is not listed as checked
+  arrays:
+  - role: raw
+    path_pattern: dataset_*.zip::dataset_*/report_*.noisy.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 666
+    - 666
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: dataset_*.zip::dataset_*/report_*.binary.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 666
+    - 666
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: microtubule
+    alignment: same-grid
+    alignment_notes: report_NNNN.binary.tiff pairs with report_NNNN.noisy.tiff in the same folder; identical
+      666x666 shape in all 2,384 pairs. Easy and hard sets share the same binaries.
+  notes: 'Zenodo range requests returned HTTP 504 for most of the run (listing.py and peek_archive failed
+    on dataset_hard), so I downloaded both zips once (222.0 MB) and read every TIFF with tifffile: all
+    4,768 are single-page 666x666 uint8, uncompressed, minisblack, no resolution tags. Sample report_0001:
+    noisy easy [0, 255] mean 9.1, hard [0, 255] mean 8.6; binary {0, 255}. Size: Zenodo API file sizes
+    (exact). Voxel size not found: checked TIFF tags, Zenodo description, paper main text (Europe PMC);
+    Supplemental Material 1A (ConfocalGN parameters) not read. Two archives, so data.download_url stays
+    the record page; direct files: Zenodo API /files/dataset_{easy,hard}.zip/content.'
