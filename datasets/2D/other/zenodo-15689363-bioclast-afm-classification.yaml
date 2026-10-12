@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-15689363-bioclast-afm-classification
 title: Bioclast Classification in Atomic Force Microscopy Images
 short_name: Bioclast AFM images with taxon labels (AFM)
-description: 229 atomic force microscopy TIFF images of sedimentary bioclasts labelled by taxonomic group (Echinoderm,
-  Bryozoan, Red algae, Mollusk, Foraminifera), with five cross-validation split CSVs (image name, class, train/valid set).
-  Companion data of the BioclastClassification code repository.
+description: 229 atomic force microscopy TIFF images of sedimentary bioclasts labelled by taxonomic group
+  (Echinoderm, Bryozoan, Red algae, Mollusk, Foraminifera), with five cross-validation split CSVs (image
+  name, class, train/valid set). Companion data of the BioclastClassification code repository.
 landing_url: https://zenodo.org/records/15689363
 doi: 10.5281/zenodo.15689363
 repository: Zenodo
@@ -29,7 +29,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 63174364
+  size_bytes: 63213824
   n_items: 229
   access: open
   download_url: https://zenodo.org/api/records/15689363/files/images.zip/content
@@ -63,12 +63,78 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-12T11:05:00Z'
-notes: 'The Zenodo record has no description, so most details come from the file listing: images.zip holds 229 TIFFs (269
-  MB uncompressed, names like "Echinoderm047.tif" or "Mollusk (28).tif"), and split0.csv lists 229 rows: Echinoderm 50, Bryozoan
-  48, Red algae 46, Mollusk 44, Foraminifera 41, with 183 train and 46 valid in split0 (the other four splits are the same size
-  and were not opened). The only repository text is a one-line GitHub README ("Models for the Analysis of Bioclasts in
-  Sedimentary Images"); a Europe PMC / Crossref title search found no paper, so scan size, pixel size, instrument and how
-  labels were assigned are not stated in any source checked (Zenodo record, file listing, GitHub README, paper search), and
-  annotations.source is unknown. The images are atomic force microscopy images per the record title; there is no AFM value in
-  the modality enum, hence other. The image classes are taxonomic groups of the bioclasts, so organism is left empty.'
+  last_checked: '2026-10-12T11:32:33Z'
+notes: 'The Zenodo record has no description. images.zip holds 229 TIFFs (names like Echinoderm047.tif
+  or "Mollusk (28).tif"); split0.csv lists 229 rows: Echinoderm 50, Bryozoan 48, Red algae 46, Mollusk
+  44, Foraminifera 41 (183 train, 46 valid). GitHub README is one line; no paper found (Europe PMC / Crossref),
+  so scan size, pixel size, instrument and labelling method are not stated; annotations.source unknown.
+  AFM per the record title; no AFM value in the modality enum, hence other (not EM, light or X-ray). Classes
+  are taxonomic groups of skeletal carbonate grains, so organism is left empty. enricher: size_bytes now
+  includes the five split CSVs (was the zip only).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "images.zip (63,174,364 B; 229 members, 269,252,148 B uncompressed)\n  images/<Class><NNN>.tif\
+      \ or images/<Class> (<N>).tif   229 .tif\n    Echinoderm 50, Bryozoan 48, Red algae 46, Mollusk\
+      \ 44, Foraminifera 41 (split0.csv)\nsplit0.csv .. split4.csv   5 x 7,892 B   nombre_foto, clase,\
+      \ set"
+    n_files: 6
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/15689363/files/images.zip/content::images/Echinoderm050.tif
+    - https://zenodo.org/api/records/15689363/files/split0.csv/content
+    size_bytes: 522236
+    description: One AFM image and the split table that labels it (class per file name)
+  arrays:
+  - role: raw
+    path_pattern: images.zip::images/*.tif
+    format: tiff
+    axes: yx
+    shape: null
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 65535
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: Single-page greyscale ImageJ TIFFs, about 508x508 (132 files) or about 1015-1020
+      px square (97 files); no spatial calibration. ImageJ Info names the source scan, mostly height-retrace
+      (…HtR.tif) or ZSensor-retrace (…ZSR.tif) channels.
+  - role: label
+    path_pattern: split[0-4].csv
+    format: csv
+    axes: null
+    shape:
+    - 229
+    - 3
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes:
+    - id: Echinoderm
+      name: Echinoderm
+    - id: Bryozoan
+      name: Bryozoan
+    - id: Red algae
+      name: Red algae
+    - id: Mollusk
+      name: Mollusk
+    - id: Foraminifera
+      name: Foraminifera
+    alignment: not-applicable
+    alignment_notes: 'Per-image class label: nombre_foto = file name in images/, clase = class, set =
+      train/valid. The class is also the file-name prefix.'
+  notes: 'Zenodo range requests returned HTTP 504 (peek_archive failed, listing.py saw the zip as one
+    file named content), so I downloaded images.zip once (63.2 MB) and read every member with tifffile:
+    229 uint16 single-page TIFFs, uncompressed, photometric minisblack, ImageJ 1.53e. Every image spans
+    exactly 0..65535 (min 0 and max 65535 in all 229), so normalization is contrast-stretched (inferred
+    from the full-range fill; the source scans were exported per image). No XResolution tag in the files;
+    voxel size not found: checked TIFF tags, ImageJ metadata, Zenodo record (no description), GitHub README,
+    Europe PMC/Crossref title searches (no paper). Size = zip + 5 split CSVs (Zenodo API file sizes).'
