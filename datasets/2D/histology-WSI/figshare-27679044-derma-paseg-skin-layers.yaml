@@ -18,6 +18,7 @@ date_published: '2024-11-12'
 imaging:
   modality:
   - histology-WSI
+  - brightfield
   dimensionality: 2D
   voxel_size_nm: null
   channels: 3
@@ -61,9 +62,109 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-12T09:25:00Z'
+  last_checked: '2026-10-12T08:16:26Z'
 notes: 'Read the Figshare API record and its flat file list of 127 files (64 plain JPG, 31 -PAS JPG, 32 PNG masks, 901 MB). Names show
   unstained and PAS-stained images and blended_final/blended_test JPGs (presumably the virtually stained images, not stated per
   file). No paper is cited on the record and a title search found none, so microscope, magnification, pixel size, organism (skin;
   species not stated) and who drew the masks are unknown. The description says 32 unstained slides but only 31 PAS files are listed.
-  Image sizes were not opened. Coverage is dense per the five-class description; mask type read from the description.'
+  Image sizes were not opened. Coverage is dense per the five-class description. enricher: masks are RGB colour-coded PNGs, 5 colours
+  in a sample (colour-to-class map not documented); modality brightfield added (description); images same size as their mask.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  127 files, 901.4 MB (flat Figshare article; .jpg 95, .png 32)\n  <case>.jpg                 32 unstained WSIs\
+      \ (e.g. HC23-00605-A1-1.jpg, 4-36 MB)\n  <case>-PAS.jpg             31 chemically PAS-stained (no RA23-01998-A1-1-PAS.jpg)\n\
+      \  <case>.blended_final.jpg   \\ 32 virtually stained (GAN)\n  <case>.blended_test.jpg    /\n  <case>.png  \
+      \               32 RGB colour-coded layer masks\n"
+    n_files: 127
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/50391171
+    - https://ndownloader.figshare.com/files/50391093
+    size_bytes: 4317427
+    description: WC23-00664-A1.jpg (unstained, 3000x7000 RGB) and its mask WC23-00664-A1.png, the smallest pair.
+  arrays:
+  - role: raw
+    path_pattern: '*[0-9].jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 3000
+    - 7000
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Unstained brightfield WSIs (description); shapes vary per slide (3000x7000 to 8200x13000 seen).
+  - role: target
+    path_pattern: '*-PAS.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 3000
+    - 7000
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    alignment: same-grid
+    alignment_notes: Chemically PAS-stained image of the same slide (<case>-PAS.jpg next to <case>.jpg); same shape for
+      WC23-00664-A1. Registration between unstained and stained scans not documented.
+  - role: other
+    path_pattern: '*.blended_*.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 3000
+    - 7000
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    alignment: same-grid
+    alignment_notes: Virtually stained images (dual contrastive GAN, per description; file names blended_final / blended_test,
+      not explained). Same shape as the unstained image for WC23-00664-A1.
+  - role: label
+    path_pattern: '*.png'
+    format: png
+    axes: yxs
+    shape:
+    - 3000
+    - 7000
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: rgb-colors
+    classes:
+    - id: null
+      name: background
+    - id: null
+      name: dermis
+    - id: null
+      name: epidermis
+    - id: null
+      name: keratin
+    - id: null
+      name: dermal-epidermal junction
+    alignment: same-grid
+    alignment_notes: 'Pairing: <case>.png is the mask of <case>.jpg (same base name). Shapes identical for WC23-00664-A1
+      (3000x7000) and WC23-00407-A1 (8200x13000). Colours seen in one mask: (0,0,0) 57.8%, (190,255,0) 17.3%, (112,48,160)
+      15.9%, (224,224,224) 6.7%, (255,172,255) 2.4%; which colour is which class is not documented.'
+  notes: 'Figshare API listing: 127 files, 901,403,213 B, complete, exact sizes. Probes (headers): unstained, PAS and
+    blended JPEGs and PNG masks are 8-bit RGB (yxs), 3000x7000 for WC23-00664-A1, 8200x13000 for WC23-00407-A1. Sample
+    (WC23-00664-A1 pair, 4.3 MB, one sample): unstained JPEG 0..255, median 255 (white background); mask has 5 RGB colours
+    = 5 classes, mapping not stated. Voxel size not found; checked: JPEG/PNG headers, Figshare API description, Europe PMC
+    and Crossref searches for a paper (none; only an unrelated H&E skin dataset by the same authors). Organism not stated
+    (case-coded clinical slides). No whole-dataset archive in the Figshare API; download_url stays the landing page, the
+    direct per-file links are ndownloader.figshare.com/files/<id> from the API.'
