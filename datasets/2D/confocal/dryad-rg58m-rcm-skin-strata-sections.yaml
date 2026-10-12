@@ -2,10 +2,11 @@ schema_version: '1.2'
 id: dryad-rg58m-rcm-skin-strata-sections
 title: Reflectance confocal microscopy en-face skin sections labelled by anatomical strata
 short_name: Skin RCM en-face sections by strata (confocal)
-description: En-face sections from in-vivo reflectance confocal microscopy (Vivascope 1500) depth stacks of human forearm
-  skin, each section labelled by a dermatologist as one of four anatomical strata (stratum corneum, viable epidermis,
-  dermal-epidermal junction, papillary dermis). 16,144 labelled sections from 308 stacks of 54 participants in two age
-  groups, supplied as uint8 arrays at 500x500 and 250x250 pixels plus a metadata table.
+description: En-face sections from in-vivo reflectance confocal microscopy (Vivascope 1500) depth stacks
+  of human forearm skin, each section labelled by a dermatologist as one of four anatomical strata (stratum
+  corneum, viable epidermis, dermal-epidermal junction, papillary dermis). 16,144 labelled sections from
+  308 stacks of 54 participants in two age groups, supplied as uint8 arrays at 500x500 and 250x250 pixels
+  plus a metadata table.
 landing_url: https://datadryad.org/dataset/doi:10.5061/dryad.rg58m
 doi: 10.5061/dryad.rg58m
 repository: Dryad
@@ -32,7 +33,8 @@ imaging:
   channels: 1
   organism:
   - Homo sapiens
-  sample: In-vivo dorsal and volar forearm skin of 54 volunteers (ages 20-30 and 50-70), en-face optical sections at 2 um depth spacing
+  sample: In-vivo dorsal and volar forearm skin of 54 volunteers (ages 20-30 and 50-70), en-face optical
+    sections at 2 um depth spacing
   labels_stains: []
 data:
   formats:
@@ -40,19 +42,21 @@ data:
   size_bytes: 5045394916
   n_items: 16144
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/4997933/files/sections_500.hdf5
   download_method: http
 annotations:
   present: true
   types:
   - classification
   coverage: dense
-  format: per-section stratum label (4 classes) in metadata.csv; images in sections_500.hdf5 and sections_250.hdf5 (dataset 'sections', N x rows x columns uint8)
+  format: per-section stratum label in metadata.csv column 'strata' (0-3), one row per section in HDF5
+    axis-0 order; images in sections_500.hdf5 and sections_250.hdf5 (dataset 'sections', N x rows x columns
+    uint8)
   source: manual
 ml:
   tasks:
   - classification
-  splits_provided: false
+  splits_provided: true
   benchmark: null
   baseline_code_url: null
 license:
@@ -65,16 +69,98 @@ provenance:
   - https://datadryad.org/api/v2/datasets/doi%3A10.5061%2Fdryad.rg58m
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1371%2Fjournal.pone.0153208%22&format=json&resultType=core&pageSize=3
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC4835045/fullTextXML
-  confidence: 0.6
+  - https://zenodo.org/api/records/4997933
+  - https://zenodo.org/records/4997933/files/README_for_metadata.txt
+  confidence: 0.85
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-12T07:50:00Z'
-notes: 'Dryad API lists metadata.csv (388 KB), README_for_metadata.txt, sections_500.hdf5 (4.04 GB) and sections_250.hdf5
-  (1.01 GB). Dryad file downloads return 403 to this client, so the HDF5 and CSV contents were not opened; counts and labels
-  come from the paper (16,144 labelled sections, 308 stacks, 54 participants; labelled twice by one dermatologist, second
-  labelling used as ground truth; paper test split of 18 held-out participants is not shipped as a file). Pixel size: original
-  1000x1000 px over 500x500 um (0.5 um/px), the 500x500 file is 2x down-sampled (1 um/px, used in voxel_size_nm) and the 250x250
-  file 4x (2 um/px). Stack z spacing 2 um. The README table of metadata columns was not read, so the label column name is not
-  confirmed.'
+  annotations_verified: true
+  last_checked: '2026-10-12T08:09:06Z'
+notes: 'Dryad API lists metadata.csv (388 KB), README_for_metadata.txt, sections_500.hdf5 (4.04 GB) and
+  sections_250.hdf5 (1.01 GB); Dryad downloads return 403 to scripts, Zenodo 4997933 mirrors the same
+  DOI with identical file sizes and direct links. Paper: 16,144 labelled sections, 308 stacks, 54 participants;
+  labelled twice by one dermatologist, second labelling used as ground truth. Pixel size: README states
+  a 500 x 500 um field of view, so 1 um/px in the 500x500 file (voxel_size_nm) and 2 um/px in the 250x250
+  file; sections 2 um apart in depth. enricher: README read (labels = metadata.csv strata 0-3, testing
+  column = test split, so splits_provided true); annotations_verified true; download_url = Zenodo sections_500.hdf5
+  (was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  4 files, 5.05 GB (Zenodo 4997933 mirror of the Dryad record)\n  sections_500.hdf5     \
+      \   4,036,002,144 B  /sections  16144 x 500 x 500 uint8\n  sections_250.hdf5        1,009,002,144\
+      \ B  /sections  16144 x 250 x 250 uint8\n  metadata.csv               388,235 B  participant, stack,\
+      \ age, phototype, testing, bodysite, strata\n  README_for_metadata.txt      2,393 B\n"
+    n_files: 4
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: sections_500.hdf5 (sections)
+    format: hdf5
+    axes: null
+    shape:
+    - 16144
+    - 500
+    - 500
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 11
+    - 177
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'README: axis 0 = individual en-face sections (rows of metadata.csv, grouped by stack),
+      axes 1-2 = image rows and columns. Not one volume: sections from 308 stacks are concatenated.'
+  - role: raw
+    path_pattern: sections_250.hdf5 (sections)
+    format: hdf5
+    axes: null
+    shape:
+    - 16144
+    - 250
+    - 250
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: scaled
+    alignment_notes: Same sections as sections_500.hdf5 at half the resolution (README).
+  - role: label
+    path_pattern: metadata.csv
+    format: csv
+    axes: null
+    shape:
+    - 16144
+    - 7
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range:
+    - 0
+    - 3
+    encoding: other
+    classes:
+    - id: 0
+      name: stratum corneum
+    - id: 1
+      name: viable epidermis
+    - id: 2
+      name: dermal-epidermal junction
+    - id: 3
+      name: papillary dermis
+    alignment: same-grid
+    alignment_notes: Row i labels section i of both HDF5 files (README); column 'strata' is the class,
+      'testing' marks the test split.
+  notes: 'Zenodo listing (record 4997933, same DOI as Dryad, CC0): 4 files, 5,045,394,916 B, exact sizes
+    (matches the record). Probes: sections_500.hdf5 and sections_250.hdf5 each hold one dataset /sections,
+    uint8, contiguous, uncompressed, no attributes (16144x500x500 and 16144x250x250). Sample: section
+    8000 of sections_500.hdf5 read over HTTP with a scratch script (h5py on fsspec; sample.py timed out
+    on this contiguous file): 11..177, mean 49, no zeros or saturation (one section only). README_for_metadata.txt
+    and the head of metadata.csv read: per-section labels, not masks. HDF5 axes left null: the README
+    names them sections, rows, columns, not z/y/x. Download: all four Zenodo links usable with range requests;
+    the Dryad file links return 403 to scripts.'
