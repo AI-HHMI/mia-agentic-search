@@ -1,0 +1,155 @@
+schema_version: '1.2'
+id: zenodo-21397038-alge10-dendrite-xray-tomography
+title: 'Tomoscopic AlGe10 Dendrite Segmentation: time-resolved X-ray tomograms of solidification with
+  nnU-Net segmentations'
+short_name: AlGe10 solidification dendrites (X-ray tomography)
+description: Time-resolved synchrotron X-ray tomograms (TOMCAT, SLS; one tomogram per second) of dendrite
+  and pore evolution during AlGe10 alloy solidification at five cooling rates (60 tomograms each), with
+  300 segmented tomograms (background, interdendritic space, pores, dendrites) produced by an nnU-Net
+  whose weights are included.
+landing_url: https://zenodo.org/records/21397038
+doi: 10.5281/zenodo.21397038
+repository: Zenodo
+accession: '21397038'
+authors:
+- Paul Hans Kamm
+- Francisco García-Moreno
+publications: []
+date_published: '2026-07-16'
+imaging:
+  modality:
+  - X-ray
+  dimensionality: 3D+t
+  voxel_size_nm:
+    x: 2750
+    y: 2750
+    z: 2750
+  channels: 1
+  organism: []
+  sample: AlGe10 (aluminium-germanium) alloy during solidification at cooling rates of 1, 2, 4, 6 and
+    20 K/s, imaged at the TOMCAT beamline (SLS)
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 44089022737
+  n_items: 300
+  access: open
+  download_url: https://zenodo.org/records/21397038
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: 'segmented_time_series.zip: one uint8 label TIFF (280 x 528 x 528) plus a JSON (spacing) per
+    tomogram; classes from dataset.json: 0 background, 1 Matrix, 2 Pore, 3 Dendrite; nnU-Net model weights
+    in dendrite_segmentation_model.zip'
+  source: automatic
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-12T20:17:39Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/21397038
+  - https://zenodo.org/records/21397038/files/time_series_1Kps.zip
+  - https://zenodo.org/records/21397038/files/segmented_time_series.zip
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11468671/fullTextXML
+  confidence: 0.5
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-12T21:25:03Z'
+notes: 'Zenodo API record and zip listings read (time_series_1Kps.zip: 60 raw 156 MB TIFFs + JSON; segmented_time_series.zip:
+  300 label TIFFs + 303 JSONs; model zip: nnU-Net 3d_fullres checkpoint). Segmentations are model predictions
+  (description: segmented using the provided nnU-Net weights), not manual labels, hence source automatic;
+  no paper linked. Alloy solidification, not biological. enricher: voxel size 2750 nm (was null): the
+  per-tomogram JSON spacing is [2.75, 2.75, 2.75] without unit; the same authors'' TOMCAT tomoscopy paper
+  (doi 10.1002/adma.202104659) states ''effective pixel size was 2.75 um'' for this setup, with AlGe10
+  tomograms of 528 x 280 px and 11,801 tomograms, matching these files. All five rate zips listed: 60
+  tomograms each.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "time_series_{1,2,4,6,20}Kps.zip   8.5-8.7 GB each\n  time_series/AlGe10_<rate>Kps_<NNNNN>_0001.tif\
+      \   60 raw tomograms per rate (156 MB each)\n  time_series/AlGe10_<rate>Kps_<NNNNN>.json       60\
+      \ spacing files per rate\nsegmented_time_series.zip   618.5 MB\n  segmented_time_series/AlGe10_<rate>Kps_<NNNNN>.tif\
+      \    300 label volumes\n  segmented_time_series/AlGe10_<rate>Kps_<NNNNN>.json   300 spacing files\n\
+      \  segmented_time_series/{dataset,plans,predict_from_raw_data_args}.json\ndendrite_segmentation_model.zip\
+      \   234.0 MB   nnU-Net 3d_fullres fold_0 checkpoint\n<NNNNN> = 00001, 00201, ..., 11801 (every 200th\
+      \ tomogram)\n"
+    n_files: 7
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/21397038/files/time_series_1Kps.zip::time_series/AlGe10_1Kps_01801_0001.tif
+    - https://zenodo.org/records/21397038/files/segmented_time_series.zip::segmented_time_series/AlGe10_1Kps_01801.tif
+    size_bytes: 156728817
+    description: Tomogram 01801 of the 1 K/s series and its segmentation
+  arrays:
+  - role: raw
+    path_pattern: time_series_*Kps.zip::time_series/AlGe10_*Kps_[0-9][0-9][0-9][0-9][0-9]_0001.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 280
+    - 528
+    - 528
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 50396
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One reconstructed tomogram per file, one file per second of each cooling-rate series;
+      tifffile reads the series as ZYX.
+  - role: label
+    path_pattern: segmented_time_series.zip::segmented_time_series/AlGe10_*Kps_[0-9][0-9][0-9][0-9][0-9].tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 280
+    - 528
+    - 528
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 3
+    normalization: none
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: Matrix
+    - id: 2
+      name: Pore
+    - id: 3
+      name: Dendrite
+    alignment: same-grid
+    alignment_notes: 'Pairing: raw AlGe10_<rate>Kps_<NNNNN>_0001.tif <-> label AlGe10_<rate>Kps_<NNNNN>.tif
+      (nnU-Net channel suffix dropped; 300 of 300 pair up in the listing). Same 280x528x528 grid; label
+      pages are z (280 pages, nnU-Net Tiff3DIO volumes per dataset.json; the raw series reads as ZYX).
+      Class names from dataset.json.'
+  notes: 'Zenodo API lists 7 files, 44,089,022,737 bytes (complete); all zip central directories listed
+    (1,210 members). Sampled raw time_series_1Kps.zip::AlGe10_1Kps_01801_0001.tif (140.6 MB compressed;
+    280x528x528 uint16, min 0, max 50396, p1-p99 6664-39892) and its label (280x528x528 uint8, values
+    {0: 8906140, 1: 10604524, 2: 3877, 3: 339}); one sample. The label TIFF header gives no axis order
+    (shaped layout, 280 pages); zyx follows the raw series and the nnU-Net Tiff3DIO reader named in dataset.json.
+    Per-tomogram JSONs: {"spacing": [2.75, 2.75, 2.75]}, no unit. Raw probe by header failed (deflated
+    zip member), so the shape and dtype come from the sample. No single archive: five 8.6 GB raw zips
+    plus the segmentation zip, all direct; download_url stays the record page.'
