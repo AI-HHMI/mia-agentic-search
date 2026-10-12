@@ -29,7 +29,7 @@ imaging:
 data:
   formats:
   - hdf5
-  size_bytes: null
+  size_bytes: 4506403515
   n_items: 3
   access: open
   download_url: null
@@ -38,9 +38,9 @@ annotations:
   present: true
   types:
   - skeleton
-  - semantic-segmentation
+  - instance-segmentation
   coverage: sparse
-  format: Axon skeletons as NPZ graphs (training, validation); voxel-wise labels as HDF5 for a 200^3 training region
+  format: Axon skeletons as NPZ graphs (training, validation); voxel-wise axon instance IDs as HDF5 (volumes/labels) for a 200^3 training region
   source: manual
 ml:
   tasks:
@@ -58,10 +58,77 @@ provenance:
   - https://ar5iv.labs.arxiv.org/html/2302.03819
   - https://xpress.grand-challenge.org
   - https://github.com/htem/xpress-challenge-files/releases/tag/v1.0
-  confidence: 0.6
+  - https://github.com/htem/xpress-challenge-files/releases/download/v1.0/xpress-training-raw.h5
+  - https://github.com/htem/xpress-challenge-files/releases/download/v1.0/xpress-training-voxel-labels.h5
+  - https://storage.googleapis.com/lee-pacureanu_data-exchange_us-storage/xray-challenge/training-raw/info
+  confidence: 0.65
 verification:
   url_ok: true
   license_found: false
-  annotations_verified: false
-  last_checked: '2026-10-12T03:14:11Z'
-notes: 'Files are GitHub release v1.0 assets of github.com/htem/xpress-challenge-files (8 assets: training raw + voxel labels, validation raw, test raw as HDF5; training/validation skeletons as NPZ), per the challenge page; the asset list itself could not be fetched, so sizes and exact names are unverified. No data license stated on the challenge page, paper or GitHub repo (only Grand Challenge general terms). Voxel size 33.3 nm is after upsampling from 100 nm raw acquisition. Skeleton-annotated sub-volumes are 1100^3 (train/test) and 700^3 (validation); test labels are withheld. Full paper text not retrievable via tools/paper.py (not in Europe PMC/Crossref); read via ar5iv HTML. Authors not recorded.'
+  annotations_verified: true
+  last_checked: '2026-10-12T04:10:00Z'
+notes: 'Files: 6 GitHub release v1.0 assets of htem/xpress-challenge-files linked from the challenge page (no single archive). No data license stated on the challenge page, paper or GitHub repo (only Grand Challenge general terms). Voxel size 33.3 nm per paper (HDF5 attrs say resolution 33); upsampled from 100 nm raw acquisition. Coverage: skeletons in 1100^3 (train/test) and 700^3 (validation) sub-volumes; voxel labels only in a 200^3 crop of the training volume at offset 16500 nm (voxel 500,500,500); test labels withheld. Annotation: manual (WebKnossos tracing). enricher: size 4.5 GB from file listing (was null); annotation type semantic -> instance-segmentation (sample: 51 axon IDs); annotations verified.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  6 files  4.5 GB  .h5 4, .npz 2\n  xpress-training-raw.h5            1.53 GB\n  xpress-training-voxel-labels.h5   1.9 MB\n  xpress-validation-raw.h5          1.51 GB\n  xpress-test-raw.h5                1.46 GB\n  XPRESS_training_skels.npz         2.5 MB\n  XPRESS_validation_skels.npz       0.5 MB"
+    n_files: 6
+    listing_complete: true
+  sample:
+    urls:
+    - https://github.com/htem/xpress-challenge-files/releases/download/v1.0/xpress-training-raw.h5
+    - https://github.com/htem/xpress-challenge-files/releases/download/v1.0/xpress-training-voxel-labels.h5
+    size_bytes: 1534407796
+    description: Training raw volume (1.5 GB, the smallest raw file that has voxel labels) plus its 200^3 voxel-label crop
+  arrays:
+  - role: raw
+    path_pattern: xpress-*-raw.h5 (volumes/raw)
+    format: hdf5
+    axes: null
+    shape:
+    - 1200
+    - 1200
+    - 1200
+    shape_varies: false
+    dtype: uint8
+    compression: other
+    value_range:
+    - 0
+    - 250
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Training, validation and test raw; HDF5 dataset volumes/raw, attrs offset [0,0,0], resolution [33,33,33]. LZF compression.
+  - role: label
+    path_pattern: xpress-training-voxel-labels.h5 (volumes/labels)
+    format: hdf5
+    axes: null
+    shape:
+    - 200
+    - 200
+    - 200
+    shape_varies: false
+    dtype: uint32
+    compression: other
+    value_range:
+    - 0
+    - 149452
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    alignment: offset
+    alignment_notes: 'Voxel labels for xpress-training-raw.h5 only: attrs offset [16500,16500,16500] nm at resolution 33 nm = raw voxels [500:700] on every axis (same grid, cropped). Neuroglancer copy on GCS has voxel_offset [500,500,500]. LZF compression.'
+  - role: label
+    path_pattern: XPRESS_*_skels.npz
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    encoding: graph
+    classes: null
+    alignment: unknown
+    alignment_notes: Axon skeletons (directed graphs, WebKnossos tracings) for the training and validation raw volumes; NPZ not opened (would need numpy loading; members not readable with peek_archive).
+  notes: 'Listing: 6 release assets with exact sizes (4,506,403,515 bytes). Headers probed for training raw and labels; sample: central crop 300x300x600 of training raw (60.8 MB) and the whole label file (1.9 MB); value ranges are from this one sample. Compression is HDF5 LZF (no schema enum; recorded as other). Axes: HDF5 attrs give isotropic resolution but not the axis order, so axes stay null. Validation/test raw shapes (1200^3 uint8) from the GCS neuroglancer info files, not probed. A neuroglancer precomputed mirror exists at gs://lee-pacureanu_data-exchange_us-storage/xray-challenge/{training-raw,validation-raw,test-raw,xpress-training-voxel-labels}. No single-archive download: the six files are direct GitHub release assets (data.download_url left null).'
