@@ -23,10 +23,7 @@ imaging:
   modality:
   - other
   dimensionality: 3D
-  voxel_size_nm:
-    x: 9
-    y: 9
-    z: 20
+  voxel_size_nm: null
   channels: 1
   organism: []
   sample: 'Synthetic data: procedurally generated neuron geometries rendered with 3D diffusion models; the base setting is
@@ -36,9 +33,9 @@ data:
   formats:
   - zarr
   size_bytes: 3000000000000
-  n_items: null
+  n_items: 165
   access: open
-  download_url: s3://nisb
+  download_url: https://s3.nexus.mpcdf.mpg.de/nisb/
   download_method: s3
 annotations:
   present: true
@@ -66,14 +63,87 @@ provenance:
   - https://doi.org/10.17617/1.R2MM-1H33
   - https://s3.nexus.mpcdf.mpg.de/nisb/base/train/seed0/data.zarr/img/.zarray
   - https://s3.nexus.mpcdf.mpg.de/nisb/base/train/seed0/data.zarr/seg/.zarray
+  - https://s3.nexus.mpcdf.mpg.de/nisb/liconn/train/seed0/data.zarr/img/.zarray
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-11T22:50:51Z'
-notes: 'Synthetic: labels are generated before the images (noise-free), modality ''other''. Nine settings (e.g. base, train_100,
-  liconn, multichannel), generally 5 train/1 val/1 test cubes of 27 um (3000x3000x1350 voxels at 9x9x20 nm; liconn at 12 nm
-  z), so n_items is null. Public S3 bucket listing checked: per cube data.zarr (img uint8, seg uint16) plus skeleton.pkl (a
-  pickle: do not unpickle). Size is the page''s ''about 3 TB''. No paper yet (page says details will follow). Multichannel
-  setting has 8 channels.'
+  last_checked: '2026-10-12T00:55:00Z'
+notes: 'Synthetic: labels are generated before the images (noise-free), modality other. Nine settings, 165 cubes (base, liconn,
+  multichannel, neg_guidance, no_touch_thick, pos_guidance, slice_perturbed, touching_thin: 5 train/1 val/1 test each; train_100:
+  100/1/1; counted from the bucket listing). Per cube data.zarr (img uint8, seg uint16) plus skeleton.pkl (a pickle: do not
+  unpickle). Size is the pages about 3 TB. No paper yet. Organism: none (synthetic; base setting modelled on zebra finch EM
+  j0126). enricher: voxel size set to null (was 9x9x20): settings differ, page: 9x9x20 nm for all except liconn 9x9x12 nm
+  (3000x3000x2250). Multichannel setting has 8 channels (img zarr shape [...,8]); liconn imitates LICONN expansion microscopy,
+  the rest imitate EM. enricher: download_url changed from s3://nisb (would resolve to AWS) to the MPCDF endpoint stated on
+  the page.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "s3.nexus.mpcdf.mpg.de/nisb/  (~3 TB, page)\n  {base,liconn,multichannel,neg_guidance,no_touch_thick,pos_guidance,slice_perturbed,touching_thin}/\n\
+      \    train/seed<i>/  5 cubes   val/seed<i>/  1   test/seed<i>/  1\n  train_100/  train/ 100 cubes, val/ 1, test/ 1\n\
+      \  per cube seed<i>/:\n    data.zarr/  (zarr v2)\n      img/   uint8 [3000,3000,1350,1] (liconn z 2250, multichannel\
+      \ c 8), chunks 256^3 x c, blosc-lz4\n      seg/   uint16 [3000,3000,1350], chunks 256^3, blosc-lz4\n    skeleton.pkl\
+      \  (~111 MB, pickle; GT skeletons for evaluation)"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://s3.nexus.mpcdf.mpg.de/nisb/base/train/seed0/data.zarr/img
+    - https://s3.nexus.mpcdf.mpg.de/nisb/base/train/seed0/data.zarr/seg
+    size_bytes: null
+    description: one base training cube (zarr arrays img + seg, 3000x3000x1350 voxels; read a crop remotely, chunks 256^3)
+  arrays:
+  - role: raw
+    path_pattern: '*/*/seed*/data.zarr/img'
+    format: zarr
+    axes: xyzc
+    shape:
+    - 3000
+    - 3000
+    - 1350
+    - 1
+    shape_varies: true
+    dtype: uint8
+    compression: blosc
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Axis order x, y, z, channel per the page (data['img'].shape is "x, y, z, (channel)"). liconn cubes are
+      3000x3000x2250x1, multichannel 3000x3000x1350x8.
+  - role: label
+    path_pattern: '*/*/seed*/data.zarr/seg'
+    format: zarr
+    axes: xyz
+    shape:
+    - 3000
+    - 3000
+    - 1350
+    shape_varies: true
+    dtype: uint16
+    compression: blosc
+    value_range:
+    - 0
+    - 323
+    normalization: none
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    - id: null
+      name: neuron (one id per instance)
+    alignment: same-grid
+    alignment_notes: 'Pairing: img and seg are sibling arrays in the same data.zarr; full shapes match (base seed0: [3000,3000,1350]
+      vs [3000,3000,1350,1]). The page says each image cube comes with the dense segmentation used to create it.'
+  notes: 'Listing: bucket structure listed with S3 delimiter queries (9 settings, 165 seed folders); chunks not enumerated
+    (~3 TB, hundreds of thousands of objects), so no file-listing size. Probed .zarray of base, liconn and multichannel cubes;
+    no .zattrs (no stored scale). Sampled base/train/seed0 central crops: img [375,375,337,1] uint8 0-255 (mean 150, p1/p99
+    70/218), seg [187,375,337] uint16 0-323, 77 ids, 15% zero (ranges from one sample; seg crop smaller because of the sample
+    budget, 94.7 MB read). Host s3.nexus.mpcdf.mpg.de is not on the TensorSwitch fetch allowlist. Voxel size not set: page
+    gives 9x9x20 nm except liconn 9x9x12 nm; per-setting conversion would need it from the page. Axes from the page (xyz order,
+    not zyx). skeleton.pkl not opened (pickle). TensorSwitch planner: zarr sample specs must end in .zarr, so arrays inside
+    the data.zarr group (img, seg) are not matched; this needs planner support for group members.'
