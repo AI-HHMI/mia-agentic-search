@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: empiar-10070-muscle-mitochondria-fib-sem
 title: Focused Ion Beam-Scanning Electron Microscopy of mitochondrial reticulum in murine skeletal muscle
 short_name: Skeletal muscle mitochondria meshes (FIB-SEM)
-description: FIB-SEM volume (291 slices, aligned, binned 3x in x and y) through mouse skeletal muscle tissue, with
-  segmented 3D surface meshes (STL) of mitochondria, myofibrils, nucleus, red blood cell and blood vessel used for
-  the figures of the mitochondrial reticulum study.
+description: FIB-SEM volume (291 slices, aligned, binned 3x in x and y) through mouse skeletal muscle
+  tissue, with segmented 3D surface meshes (STL) of mitochondria, myofibrils, nucleus, red blood cell
+  and blood vessel used for the figures of the mitochondrial reticulum study.
 landing_url: https://www.ebi.ac.uk/empiar/EMPIAR-10070/
 doi: 10.6019/EMPIAR-10070
 repository: EMPIAR
@@ -26,13 +26,14 @@ imaging:
   - FIB-SEM
   dimensionality: 3D
   voxel_size_nm:
-    x: 50
-    y: 50
+    x: 15
+    y: 15
     z: 15
   channels: null
   organism:
   - Mus musculus
-  sample: Murine skeletal muscle tissue (paravascular region); aligned FIB-SEM stack, z thickness ~15 nm
+  sample: Murine skeletal muscle tissue (paravascular region); FIB-SEM at 5x5x15 nm, binned 3x3 in x/y
+    to 15 nm isotropic voxels
   labels_stains: []
 data:
   formats:
@@ -49,7 +50,7 @@ annotations:
   - instance-segmentation
   coverage: partial
   format: STL surface meshes per structure (Figure1/, Figure2/), made with ImageJ/TrakEM2
-  source: manual
+  source: mixed
 ml:
   tasks:
   - segmentation
@@ -69,15 +70,99 @@ provenance:
   - https://ftp.ebi.ac.uk/empiar/world_availability/10070/data/Figure1/
   - https://ftp.ebi.ac.uk/empiar/world_availability/10070/data/Figure2/
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22Mitochondrial+reticulum+for+cellular+energy+distribution+in+muscle%22&format=json&resultType=core&pageSize=3
+  - https://pmc.ncbi.nlm.nih.gov/articles/PMC6988728/
+  - https://ftp.ebi.ac.uk/empiar/world_availability/10070/10070.xml
   confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-12T13:35:00Z'
-notes: 'One volume (b3talongmusc20130301.mrc, 741 MB, 291 slices, x/y binned 3x to 50 nm, z ~15 nm per the EMPIAR record).
-  Annotations are STL surface meshes of selected structures for the paper figures (not exhaustive dense labels);
-  EMPIAR says they were rendered/segmented with ImageJ/TrakEM2, so source is recorded as manual. Paper full text
-  is not open access (Europe PMC lists no full text; only the abstract was read), so organism Mus musculus comes from
-  the EMPIAR title and abstract and no further Methods details (staining, sample prep) were checked. License CC0
-  from the EMPIAR page badge. Sources checked: landing page, EMPIAR API record, FTP listing, paper abstract.'
+  last_checked: '2026-10-12T14:03:19Z'
+notes: 'One volume (b3talongmusc20130301.mrc, 777 MB, 291 slices). Annotations are STL surface meshes
+  of selected structures for the paper figures (not dense labels). License CC0 from the EMPIAR page badge.
+  enricher: voxel size 15x15x15 nm from paper Methods (PMC6988728) and MRC header (was 50x50x15: EMPIAR
+  pixelWidth is in Angstrom). enricher: annotations.source mixed per paper Methods: whole-image segmentation
+  by median filter + manually set thresholds and ImageJ outlier removal; individual mitochondria manually
+  traced in TrakEM2 by two observers. Which STL came from which method is not stated (AutoMinusMito.stl
+  suggests the thresholded one). enricher: the STL meshes are not voxel labels; their alignment to the
+  MRC grid is not stated.'
+technical:
+  method: sample
+  inspected_at: '2026-10-12T14:03:19Z'
+  inspected_urls:
+  - https://ftp.ebi.ac.uk/empiar/world_availability/10070/data/b3talongmusc20130301.mrc
+  - https://ftp.ebi.ac.uk/empiar/world_availability/10070/data/Figure2/Mito1.stl
+  - https://ftp.ebi.ac.uk/empiar/world_availability/10070/data/Figure1/SurfaceMitoWhite.stl
+  - https://ftp.ebi.ac.uk/empiar/world_availability/10070/10070.xml
+  bytes_downloaded: 2934069
+  size_source: page-stated
+  layout:
+    tree: "10070/  (EMPIAR, 20 files, 1.58 GB)\n  10070.xml                          5.7 KB  EMPIAR metadata\n\
+      \  data/\n    b3talongmusc20130301.mrc       777.4 MB  aligned FIB-SEM volume\n    Figure1/  5 .stl\
+      \  279.2 MB\n      SurfaceMitoWhite.stl, SurfaceMyofibrilsGrey.stl, SurfaceNucleusCyan.stl,\n  \
+      \    SurfaceRBCRed.stl, SurfaceVesselMagenta.stl\n    Figure2/  13 .stl  524.0 MB\n      Mito1.stl\
+      \ ... Mito10.stl, MyoMito.stl, Myocyte.stl, AutoMinusMito.stl (476.7 MB)"
+    n_files: 20
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/empiar/world_availability/10070/data/b3talongmusc20130301.mrc
+    - https://ftp.ebi.ac.uk/empiar/world_availability/10070/data/Figure2/Mito1.stl
+    size_bytes: 779009783
+    description: The one raw volume (the whole dataset has only one) and the smallest single-mitochondrion
+      mesh.
+  arrays:
+  - role: raw
+    path_pattern: data/*.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 291
+    - 1595
+    - 1675
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 39
+    - 160
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'MRC mode 0 (int8 by MRC2014), but the values are unsigned: read as uint8 the middle
+      slice is smooth (39-160, mean 100), read as int8 it wraps. Paper: 8-bit images. EMPIAR lists voxelType
+      32 BIT FLOAT, which the file does not match.'
+  - role: label
+    path_pattern: data/Figure*/*.stl
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: other
+    classes:
+    - id: Mito
+      name: mitochondria
+    - id: Myofibrils
+      name: myofibrils
+    - id: Nucleus
+      name: nucleus
+    - id: RBC
+      name: red blood cell
+    - id: Vessel
+      name: blood vessel
+    - id: Myocyte
+      name: myocyte
+    alignment: unknown
+    alignment_notes: Binary STL surface meshes ("Binary STL created by ImageJ 3D Viewer"), one file per
+      structure; structure = file name. Mesh coordinate units/origin relative to the MRC grid are not
+      stated, so they need rasterizing and registering before use as voxel labels.
+  notes: 'Listing: EMPIAR HTTP index (FTP timed out) plus HEAD of all 20 files: 1,580,627,678 B exactly
+    (EMPIAR states 1.5 GB; size_source kept page-stated because listing.py reported rounded sizes). MRC
+    header: shape 291x1595x1675, mode 0, cell/sampling voxel 15x15x15 nm. Range-read the middle z slice
+    (2,671,625 B): uint8 39-160, mean 100.3, p1 73, p99 129 (one slice). STL header read (300 B). Voxel
+    size 15 nm isotropic from paper Methods (PMC6988728: 5x5x15 nm acquisition, binned 3x3 in x/y to 15
+    nm) and the MRC header; the former 50x50 nm came from EMPIAR pixelWidth 50, which is in Angstrom (=
+    the 5 nm pre-binning pixel). Download: the MRC and every STL are direct files (usable); no single
+    archive, so data.download_url stays the data/ folder.'
