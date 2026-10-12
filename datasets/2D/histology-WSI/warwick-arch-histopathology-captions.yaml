@@ -1,0 +1,147 @@
+schema_version: '1.2'
+id: warwick-arch-histopathology-captions
+title: ARCH histopathology image-caption dataset (textbooks and PubMed articles)
+short_name: ARCH histopathology image captions
+description: Histopathology figure images extracted from pathology textbooks (books_set, 4,270 PNG) and
+  PubMed articles (pubmed_set, 3,309 images), each with its text caption (dense diagnostic and morphological
+  descriptions) in a captions.json, released as a multiple instance captioning dataset for pretraining
+  pathology representations.
+landing_url: https://warwick.ac.uk/fac/cross_fac/tia/data/arch
+doi: null
+repository: LabWebsite
+accession: null
+authors:
+- Jevgenij Gamper
+- Nasir Rajpoot
+publications:
+- title: 'Multiple Instance Captioning: Learning Representations from Histopathology Textbooks and Articles'
+  doi: 10.48550/arXiv.2103.05121
+  url: https://arxiv.org/abs/2103.05121
+date_published: null
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism: []
+  sample: Histopathology figures (various stains including H&E and IHC, many tissue types and pathologies)
+    taken from textbooks and PubMed articles
+  labels_stains: []
+data:
+  formats:
+  - png
+  - jpeg
+  size_bytes: 5754542808
+  n_items: 7579
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - other
+  coverage: dense
+  format: captions.json per zip (books_set maps figure_id, panel letter, caption and image uuid; pubmed_set
+    maps caption and image uuid), images in an images folder
+  source: unknown
+ml:
+  tasks:
+  - self-supervised
+  - other
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-NC-SA-4.0
+  url: http://creativecommons.org/licenses/by-nc-sa/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-12T17:19:29Z'
+  evidence_urls:
+  - https://warwick.ac.uk/fac/cross_fac/tia/data/arch
+  - https://warwick.ac.uk/fac/cross_fac/tia/data/arch/books_set.zip
+  - https://warwick.ac.uk/fac/cross_fac/tia/data/arch/pubmed_set.zip
+  - https://export.arxiv.org/api/query?search_query=ti:%22Multiple+Instance+Captioning%22&max_results=2
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-12T19:10:00Z'
+notes: 'Training signal is text captions (multiple instance captioning), not masks or boxes; the paper
+  proposes pretraining on them for transfer to pathology tasks. Zips listed with peek_archive: books_set.zip
+  (5.28 GB, 4,270 PNG, captions.json, README) and pubmed_set.zip (478.8 MB, 3,272 JPG plus 37 PNG, captions.json,
+  README). Both READMEs state CC BY-NC-SA 4.0, research use only. Download page warns the dataset size
+  in the paper differs from the downloadable data due to an error. Pixel size, organisms and stains were
+  not given per image, and the images are figures from published works, so magnification varies. Only
+  the arXiv abstract was read for the paper. No single archive URL: two zips, so download_url is left
+  null.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "books_set.zip (5.28 GB)\n  books_set/            captions.json, README.md\n  books_set/images/\
+      \     4270 files  5.3 GB  .png  (<uuid>.png)\npubmed_set.zip (478.8 MB)\n  pubmed_set/         \
+      \  captions.json, README.md\n  pubmed_set/images/    3309 files  490.1 MB  .jpg 3272, .png 37"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://warwick.ac.uk/fac/cross_fac/tia/data/arch/pubmed_set.zip::pubmed_set/images/a97abc1d-58ae-4a90-965d-ecb7fd353c7a.jpg
+    - https://warwick.ac.uk/fac/cross_fac/tia/data/arch/pubmed_set.zip::pubmed_set/captions.json
+    size_bytes: 826483
+    description: One PubMed figure image (450x600 RGB JPEG) and the pubmed_set captions file (captions
+      keyed by image uuid)
+  arrays:
+  - role: raw
+    path_pattern: books_set/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 404
+    - 504
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Textbook figure panels; RGB or RGBA (891x1190x4 also seen), size varies.
+  - role: raw
+    path_pattern: pubmed_set/images/*.{jpg,png}
+    format: jpeg
+    axes: yxs
+    shape:
+    - 450
+    - 600
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 14
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: PubMed figure images, mostly JPEG (37 PNG); size varies (450x600, 480x600 seen).
+  - role: label
+    path_pattern: '*/captions.json'
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'Text captions, not spatial labels: entries keyed by index with caption and uuid
+      (= image file stem); books_set adds figure_id (bag) and letter (instance in the bag, or single),
+      per README.'
+  notes: 'Listing (tools/listing.py --expand-zips) covers both zips: 7,585 members, exact sizes, total
+    5,754,542,808 B. Probe: books PNGs 404x504x3 and 891x1190x4 uint8; PubMed JPEGs 450x600x3 and 480x600x3.
+    Sample: one PubMed JPEG 14-255 (one sample). Voxel size not applicable/not found: images are figures
+    from textbooks and articles at varying magnification, with no calibration; checked: PNG/JPEG headers,
+    README.md, landing page, arXiv abstract. Download links are direct with range requests, but host warwick.ac.uk
+    is not on the TensorSwitch allowlist. Two zips, no single archive, so download_url stays null.'
