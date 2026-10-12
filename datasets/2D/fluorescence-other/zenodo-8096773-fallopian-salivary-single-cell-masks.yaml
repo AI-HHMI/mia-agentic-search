@@ -36,7 +36,7 @@ data:
   - png
   - tiff
   size_bytes: 13519917
-  n_items: 42
+  n_items: 40
   access: open
   download_url: https://zenodo.org/records/8096773/files/datasets.zip
   download_method: http
@@ -69,10 +69,107 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-12T10:40:00Z'
+  last_checked: '2026-10-12T08:30:00Z'
 notes: 'Zip index read (range requests): datasets/fallopian has 31 images and 31 masks, datasets/salivary 11 and 11; the paper describes 10 salivary
   images (1,058 cells, 600x800, 3 channels) and 17 fallopian crops of at least 256x256 (1,818 cells in 8 source images), so the zip
   holds more files than the paper text counts and n_items follows the zip. Pixel size, microscope and stain details are not given in
   the paper (it cites Mund et al., Nat Biotechnol 2022); salivary modality is partly IHC, so fluorescence-other is the nearest modality.
   Annotation by a field expert per the paper. Further zips in the record (pix2pix models 6.2 GB, StyleGAN2-ada models 1.6 GB, synthetic
-  training sets 1.0 GB) are generated data and models, not counted in the size.'
+  training sets 1.0 GB) are generated data and models, not counted in the size. enricher: n_items 40 (was 42; zip has
+  30 fallopian + 10 salivary image/mask pairs, 80 files); masks are uint16 instance ids (sampled).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "datasets.zip  13.5 MB (80 files, 27.3 MB uncompressed)\n  datasets/fallopian/images/  30 .png  (e.g. Tumor_06798_02.png)\n\
+      \  datasets/fallopian/masks/   30 .tiff (same stems)\n  datasets/salivary/images/   10 .png  (e.g. p2_wA1_t1_m726_c0_z2_l1_o0_12.png)\n\
+      \  datasets/salivary/masks/    10 .tiff (same stems)\n"
+    n_files: 80
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: datasets/fallopian/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 185
+    - 115
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Fluorescence (membrane and nuclei) crops stored as RGB PNG; crop sizes vary (paper - 8 images split
+      into 30 parts).
+  - role: label
+    path_pattern: datasets/fallopian/masks/*.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 185
+    - 115
+    shape_varies: true
+    dtype: uint16
+    compression: packbits
+    value_range:
+    - 0
+    - 9
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    alignment: same-grid
+    alignment_notes: 'Pairing: masks/<stem>.tiff for images/<stem>.png (same stem; 30 of each; seen for the sampled pair, Tumor_08022_S1 and lowercase tumor_04649_S1).
+      Sampled pair: same 185x115 grid; 9 cell ids + 0.'
+  - role: raw
+    path_pattern: datasets/salivary/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 800
+    - 600
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 4
+    - 254
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Salivary gland tumour section, nuclei and tumour-marker IHC (paper), RGB PNG.
+  - role: label
+    path_pattern: datasets/salivary/masks/*.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 800
+    - 600
+    shape_varies: null
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 130
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    alignment: same-grid
+    alignment_notes: 'Pairing: masks/<stem>.tiff for images/<stem>.png. Sampled mask p2_wA1_t1_m726_c0_z2_l1_o0_12.tiff:
+      800x600 like its image, 131 values (0 + 130 cell ids). ImageJ TIFF.'
+  notes: 'Listing (listing.py --expand-zips): datasets.zip 13,519,917 B, 80 members, complete. Probes: fallopian PNG
+    185x115x3 uint8 / mask 185x115 uint16 packbits; salivary PNG 800x600x3 uint8 / mask 800x600 uint16 ImageJ, uncompressed.
+    Samples (one per subset): fallopian image 0..255 (p50 47), mask 0..9; salivary image 4..254 (p50 179), mask 0..130,
+    131 unique = instance ids (paper - one label per cell, boundaries by a field expert). Fallopian = fluorescence,
+    salivary = IHC (paper), both Homo sapiens. Voxel size not found; checked: PNG/TIFF headers (no calibration), Zenodo
+    record (per harvester), CRMeth paper full text (PMC10545934; no pixel size), upstream Mund et al. 2022 Nat Biotechnol
+    (not open access in Europe PMC). Other zips in the record (models, synthetic data) not inspected. sample left null:
+    the smallest pair (datasets.zip::datasets/fallopian/{images/Tumor_06798_02.png,masks/Tumor_06798_02.tiff}, 50,208
+    B) was read with range requests at 08:25Z, but probe.py --download-check got HTTP 504 from Zenodo 08:28-09:04Z, so it
+    is not confirmed; a later run should recheck and set it.'
