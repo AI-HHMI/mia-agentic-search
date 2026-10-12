@@ -24,9 +24,9 @@ imaging:
   - FIB-SEM
   dimensionality: 3D
   voxel_size_nm:
-    x: 8
-    y: 8
-    z: 8
+    x: 10
+    y: 10
+    z: 10
   channels: 1
   organism:
   - Drosophila melanogaster
@@ -36,7 +36,7 @@ data:
   formats:
   - hdf5
   - png
-  size_bytes: null
+  size_bytes: 1359222000
   n_items: 3
   access: open
   download_url: null
@@ -45,8 +45,9 @@ annotations:
   present: true
   types:
   - instance-segmentation
-  format: 'HDF5 groundtruth.h5 (gzip-compressed) with datasets ''stack'' (z,y,x supervoxel labels) and ''transforms''
-    (supervoxel-to-body mapping); oversegmented_stack_labels.h5 alongside'
+  format: HDF5 groundtruth.h5 (gzip-compressed file) with datasets 'stack' (z,y,x supervoxel IDs) and
+    'transforms' (supervoxel-to-body table); training_sample2 also has oversegmented_stack_labels.h5;
+    validation GT also has 'synapse-annotations'
   coverage: dense
   source: proofread
 ml:
@@ -70,15 +71,118 @@ provenance:
   - https://www.janelia.org/node/45303
   - https://arxiv.org/pdf/1905.06236
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1073%2Fpnas.1509820112%22&format=json&resultType=core&pageSize=3
-  confidence: 0.55
+  - https://raw.githubusercontent.com/janelia-flyem/neuroproof_examples/master/training_sample1/README.txt
+  - https://raw.githubusercontent.com/janelia-flyem/neuroproof_examples/master/training_sample2/README.txt
+  - https://raw.githubusercontent.com/janelia-flyem/neuroproof_examples/master/validation_sample/README.txt
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-12T15:40:00Z'
-notes: 'Linked to FIB-25 by the Janelia FlyEM release page (same dataset as medulla7column; ground truth not
-  pixel-perfect; training2 = 250^3, val = 500^3 voxels). Voxel size uncertain: arXiv 1905.06236 says FIB-25
-  was imaged at 8 nm but its 520^3 and 250^3 training subvolumes are at 10 nm; the repo does not state it.
-  LICENSE.txt is a Creative Commons public licence text without a named version, recorded as custom.
-  Ground-truth files seen in a listing only for training_sample2; sizes not shown. PNAS paper not open
-  access (abstract only). The 100 GB FIB-25 raw tar has no ground truth or stated licence; not covered.'
+  last_checked: '2026-10-12T16:05:00Z'
+notes: 'Linked to FIB-25 by the Janelia FlyEM release page (same dataset as medulla7column; ground truth
+  not pixel-perfect). LICENSE.txt is a Creative Commons public licence text without a named version, recorded
+  as custom. PNAS paper not open access (abstract only). The 100 GB FIB-25 raw tar has no ground truth
+  or stated licence; not covered. training_sample1 has raw only (used for ilastik boundary training).
+  enricher: voxel size 10x10x10 nm from the per-sample README.txt files (''isotropic resolution of 10nm'';
+  was 8x8x8).'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "github.com/janelia-flyem/neuroproof_examples (master @ ce839e1, 2016-03-07)  1035 files\n \
+      \ LICENSE.txt  README.md\n  training_sample1/                      raw only\n    README.txt\n  \
+      \  grayscale_maps/iso.2600.png ... iso.2849.png     250 (250x250 uint8)\n    results/boundary_classifier_ilastik.ilp\
+      \          31.6 MB\n  training_sample2/\n    README.txt\n    grayscale_maps/iso.2600.png ... iso.2849.png\
+      \     250 (250x250 uint8)\n    groundtruth.h5.gz                                1.2 MB\n    oversegmented_stack_labels.h5.gz\
+      \                 1.6 MB\n    boundary_prediction.h5.gz                        80.0 MB\n    results/mito_aware.xml.gz\
+      \  nomito_aware.h5.gz    12.6 MB, 8.2 MB\n  validation_sample/\n    README.txt\n    grayscale_maps/iso.03490.png\
+      \ ... iso.04009.png   520 (520x520 uint8)\n    groundtruth.h5.gz                               \
+      \ 14.5 MB\n    oversegmented_stack_labels.h5.gz                 18.1 MB\n    results/graph.json\
+      \  segmentation.h5.gz           6.9 MB, 12.3 MB"
+    n_files: 1035
+    listing_complete: true
+  sample:
+    urls:
+    - https://raw.githubusercontent.com/janelia-flyem/neuroproof_examples/master/training_sample2/grayscale_maps/iso.2600.png
+    - https://raw.githubusercontent.com/janelia-flyem/neuroproof_examples/master/training_sample2/groundtruth.h5.gz
+    size_bytes: 1294649
+    description: First grayscale slice of training_sample2 and its ground-truth HDF5 (gzip-compressed
+      file; the whole 250^3 label volume). The full raw volume is the 250 PNGs iso.2600-2849.png.
+  arrays:
+  - role: raw
+    path_pattern: training_sample[12]/grayscale_maps/iso.*.png
+    format: png
+    axes: yx
+    shape:
+    - 250
+    - 250
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 44
+    - 213
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One 8-bit grey PNG per z slice, 250 per sample; z order = file number (iso.2600-2849).
+  - role: raw
+    path_pattern: validation_sample/grayscale_maps/iso.*.png
+    format: png
+    axes: yx
+    shape:
+    - 520
+    - 520
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One 8-bit grey PNG per z slice, 520 slices; z order = file number (iso.03490-04009).
+      Probed, not sampled.
+  - role: label
+    path_pattern: training_sample2/groundtruth.h5.gz (stack)
+    format: hdf5
+    axes: zyx
+    shape:
+    - 250
+    - 250
+    - 250
+    shape_varies: false
+    dtype: int32
+    compression: none
+    value_range:
+    - 0
+    - 21316
+    encoding: instance-ids
+    alignment: same-grid
+    alignment_notes: Neuron ground truth for training_sample2/grayscale_maps (250 slices of 250x250, z,y,x
+      per README). 'stack' holds 21,317 supervoxel IDs; 'transforms' (21317x2 int64) maps them to 526
+      bodies, so body IDs = transforms applied to stack. File is gzip-wrapped (.h5.gz) and must be gunzipped
+      first.
+  - role: label
+    path_pattern: validation_sample/groundtruth.h5.gz (stack)
+    format: hdf5
+    axes: zyx
+    shape:
+    - 520
+    - 520
+    - 520
+    shape_varies: false
+    dtype: int64
+    compression: none
+    encoding: instance-ids
+    alignment: same-grid
+    alignment_notes: Neuron ground truth for validation_sample/grayscale_maps (520 slices of 520x520).
+      'transforms' is the identity (2084 bodies), so 'stack' values are body IDs. Also holds a 'synapse-annotations'
+      dataset (not inspected). File is gzip-wrapped (.h5.gz).
+  notes: 'size estimated (uncompressed): raw 500 x 250x250 uint8 + raw 520 x 520x520 uint8 + label 1 x
+    250x250x250 int32 + label 1 x 520x520x520 int64 = 1,359,222,000 B (1.4 GB). Not counted: oversegmentations,
+    boundary prediction, classifiers and results (non-PNG files total 193.2 MB compressed, from HTTP Content-Length).
+    File list from a git tree of master (1035 files); exact sizes known only for the non-PNG files and
+    294 PNGs, so no file-listing size. Sampled: one training_sample2 PNG (value_range from that slice
+    only), training_sample2 groundtruth.h5 and oversegmented_stack_labels.h5, validation groundtruth.h5.
+    All .h5 files are whole-file gzip (.h5.gz); datasets inside are uncompressed and unchunked, so they
+    must be gunzipped before HDF5 reading. No single direct archive: GitHub archive zip returned 403 here;
+    files are direct on raw.githubusercontent.com. Voxel size 10 nm isotropic from the three sample README.txt
+    files.'
