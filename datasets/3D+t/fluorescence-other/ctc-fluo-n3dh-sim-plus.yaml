@@ -74,7 +74,7 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-12T10:20:00Z'
+  last_checked: '2026-10-12T11:23:38Z'
 notes: 'Training zip listed with tools/listing.py (exact size 3,397,344,596 B, 922 members): 01/ 150 tif
   (1.6 GB); 01_GT/SEG 150; 01_GT/TRA 150 + man_track.txt; 01_ERR_SEG 150; 02/ 80 tif (1.6 GB); 02_GT/SEG
   80; 02_GT/TRA 80 + txt; 02_ERR_SEG 80. Voxel size, microscope, time step and description from the CTC
@@ -84,3 +84,100 @@ notes: 'Training zip listed with tools/listing.py (exact size 3,397,344,596 B, 9
   are secret. Well-known benchmark; confidence kept moderate given permission-based terms. Differs from
   the existing 2D record zenodo-15608207-ctc-fluo-n2dh-sim-plus and the real-cell CTC 3D records: a separate
   simulated 3D CTC dataset with its own zip.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "training-datasets/Fluo-N3DH-SIM+.zip (3.4 GB, 922 members)\n  Fluo-N3DH-SIM+/\n    01/    \
+      \      150 .tif  t000..t149             1.6 GB\n    01_ERR_SEG/  150 .tif  maskNNN             \
+      \ 108.6 MB\n    01_GT/SEG/   150 .tif  man_segNNN           108.6 MB\n    01_GT/TRA/   150 .tif\
+      \  man_trackNNN + man_track.txt  108.6 MB\n    02/           80 .tif  t000..t079             1.6\
+      \ GB\n    02_ERR_SEG/   80 .tif                       108.5 MB\n    02_GT/SEG/    80 .tif      \
+      \                 108.5 MB\n    02_GT/TRA/    80 .tif + man_track.txt       108.5 MB"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.celltrackingchallenge.net/training-datasets/Fluo-N3DH-SIM+.zip::Fluo-N3DH-SIM+/01/t000.tif
+    - https://data.celltrackingchallenge.net/training-datasets/Fluo-N3DH-SIM+.zip::Fluo-N3DH-SIM+/01_GT/SEG/man_seg000.tif
+    size_bytes: 11023828
+    description: First time point of sequence 01 and its ground-truth segmentation mask (tNNN.tif pairs
+      with man_segNNN.tif)
+  arrays:
+  - role: raw
+    path_pattern: Fluo-N3DH-SIM+/0[12]/t*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 59
+    - 349
+    - 639
+    shape_varies: null
+    dtype: uint16
+    compression: unknown
+    value_range:
+    - 68
+    - 280
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One volume per time point. Shape from 01/t000 (sample); 02/t000 is a larger member
+      (19.9 MB vs 10.4 MB), so 02 frames are probably larger (not read).
+  - role: label
+    path_pattern: Fluo-N3DH-SIM+/0[12]_GT/SEG/man_seg*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 59
+    - 349
+    - 639
+    shape_varies: null
+    dtype: uint16
+    compression: lzw
+    value_range:
+    - 0
+    - 10
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: man_segNNN.tif pairs with tNNN.tif of the same sequence by frame number; identical
+      shapes (sampled). Ids match man_track.txt labels.
+  - role: label
+    path_pattern: Fluo-N3DH-SIM+/0[12]_GT/TRA/man_track*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 59
+    - 349
+    - 639
+    shape_varies: null
+    dtype: uint16
+    compression: lzw
+    value_range: null
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Tracking markers per frame, same shape as the raw volume (01_GT/TRA/man_track000
+      probed).
+  - role: label
+    path_pattern: Fluo-N3DH-SIM+/0[12]_GT/TRA/man_track.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: tracks-table
+    classes: null
+    alignment: not-applicable
+    alignment_notes: CTC lineage table "L B E P" (label, begin, end, parent); 82 rows in 01, 118 in 02.
+  notes: 'Listing: zip central directory, exact sizes, 922 members. Probed 01_GT/SEG/man_seg000 and 01_GT/TRA/man_track000:
+    plain multi-page uint16 LZW TIFFs [59, 349, 639]; the raw tNNN.tif members are deflated in the zip,
+    so probe.py could not read their header (compression unknown). Page axis recorded as z: the CTC table
+    lists this as 3D+t, one volume per time point (0.2 um z step). Sample 01/t000 + man_seg000: raw [68,
+    280], p1 82, p50 92, p99 141 (one sample); mask 7 values (0 + 6 cells, max id 10). Encoding instance-ids
+    per the CTC annotations page (synthetic data: exact masks for all cells, also used as tracking markers).
+    The label sample failed once (connection reset) and succeeded on retry.'
