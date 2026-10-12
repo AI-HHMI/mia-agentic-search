@@ -3,8 +3,8 @@ id: figshare-32626302-pbi-ct-liver-nuclei
 title: Phase-contrast X-ray CT of unstained liver tissue with nuclei segmentation labels
 short_name: Liver nuclei labels (phase-contrast X-ray CT)
 description: Two non-overlapping 300x300x300 voxel volumes of interest (VOI 1 and VOI 2) from laboratory
-  propagation-based phase-contrast X-ray CT of intact, unstained liver tissue, each with a matching nuclei segmentation
-  label volume. Released with a study on nuclei-based 3D cell quantification.
+  propagation-based phase-contrast X-ray CT of intact, unstained liver tissue, each with a matching nuclei
+  segmentation label volume. Released with a study on nuclei-based 3D cell quantification.
 landing_url: https://figshare.com/articles/dataset/32626302
 doi: 10.5522/04/32626302.v1
 repository: Figshare
@@ -12,7 +12,8 @@ accession: '32626302'
 authors:
 - Michela Esposito
 publications:
-- title: An imaging framework for nuclei-based three-dimensional cell quantification in intact tissue using phase-contrast x-ray CT
+- title: An imaging framework for nuclei-based three-dimensional cell quantification in intact tissue
+    using phase-contrast x-ray CT
   doi: 10.1088/1361-6560/aeadec
   url: https://doi.org/10.1088/1361-6560/aeadec
 date_published: '2026-06-10'
@@ -23,7 +24,8 @@ imaging:
   voxel_size_nm: null
   channels: 1
   organism: []
-  sample: Intact unstained liver tissue imaged by laboratory propagation-based phase-contrast X-ray CT at cellular resolution
+  sample: Intact unstained liver tissue imaged by laboratory propagation-based phase-contrast X-ray CT
+    at cellular resolution
   labels_stains: []
 data:
   formats:
@@ -31,14 +33,15 @@ data:
   size_bytes: 111491340
   n_items: 2
   access: open
-  download_url: null
+  download_url: https://figshare.com/articles/dataset/32626302
   download_method: http
 annotations:
   present: true
   types:
   - semantic-segmentation
   coverage: dense
-  format: 'VOI1_nuclei_segmented.tif and VOI2_nuclei_segmented.tif: 300x300x300 uint8 palette-mapped LZW TIFF label volumes, same grid as VOI1_CT.tif / VOI2_CT.tif'
+  format: 'VOI1_nuclei_segmented.tif and VOI2_nuclei_segmented.tif: 300x300x300 uint8 palette LZW TIFF
+    binary masks (0 background, 1 nuclei), same grid as VOI1_CT.tif / VOI2_CT.tif'
   source: unknown
 ml:
   tasks:
@@ -55,15 +58,81 @@ provenance:
   evidence_urls:
   - https://api.figshare.com/v2/articles/32626302
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22An+imaging+framework+for+nuclei-based+three-dimensional+cell+quantification+in+intact+tissue+using+phase-contrast+X-ray+CT%22&format=json&resultType=core&pageSize=3
-  confidence: 0.55
+  - https://api.crossref.org/works/10.1088/1361-6560/aeadec
+  confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-12T07:30:00Z'
-notes: 'Four TIFFs on Figshare (total 111 MB). probe.py header reads: VOI*_CT.tif are 300x300x300 uint16 ImageJ stacks
-  (axes zyx), VOI*_nuclei_segmented.tif are 300x300x300 uint8 palette TIFFs with LZW compression (values are indices;
-  whether labels are binary or per-nucleus ids was not checked). No voxel size in the TIFF headers, on the Figshare page or in
-  the paper abstract; the full text is not open access (Europe PMC, journal Physics in Medicine and Biology), so voxel size,
-  species of the liver tissue and how the segmentation was produced (manual, deep learning or classical) are unknown.
-  Only two volumes of 27 million voxels each.'
+  last_checked: '2026-10-12T07:51:42Z'
+notes: 'Four TIFFs on Figshare (total 111 MB). probe.py header reads: VOI*_CT.tif are 300x300x300 uint16
+  ImageJ stacks (axes zyx), VOI*_nuclei_segmented.tif are 300x300x300 uint8 palette TIFFs with LZW compression.
+  No voxel size in the TIFF headers, on the Figshare page or in the paper abstract; the full text is not
+  open access (Europe PMC, journal Physics in Medicine and Biology), so voxel size, species of the liver
+  tissue and how the segmentation was produced (manual, deep learning or classical) are unknown. Only
+  two volumes of 27 million voxels each. enricher: sampled VOI1; masks are binary {0,1}, annotations_verified
+  true; download_url = landing page (4 separate files).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  4 files, 111.5 MB (.tif)\n  VOI1_CT.tif                54,041,475 B\n  VOI1_nuclei_segmented.tif\
+      \   1,642,098 B\n  VOI2_CT.tif                54,041,475 B\n  VOI2_nuclei_segmented.tif   1,766,292\
+      \ B\n"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/65428113
+    - https://ndownloader.figshare.com/files/65428104
+    size_bytes: 55683573
+    description: 'VOI1_CT.tif and VOI1_nuclei_segmented.tif: one 300^3 CT volume and its nuclei mask.'
+  arrays:
+  - role: raw
+    path_pattern: VOI[12]_CT.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 300
+    - 300
+    - 300
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 1
+    - 65535
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: VOI[12]_nuclei_segmented.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 300
+    - 300
+    - 300
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 1
+    encoding: binary
+    classes:
+    - id: 1
+      name: nuclei
+    alignment: same-grid
+    alignment_notes: VOI<n>_nuclei_segmented.tif is the nuclei segmentation of VOI<n>_CT.tif (Figshare
+      description); identical 300x300x300 shape. The label is a plain palette TIFF without an axis tag;
+      its 300 pages are taken as z because the description calls it the segmentation of the volume of
+      interest and the paired CT is an ImageJ z-stack (slices=300) of the same shape.
+  notes: 'Figshare listing: 4 files, 111,491,340 B, complete. Probes: VOI1_CT.tif ImageJ TIFF, 300 slices,
+    zyx 300x300x300 uint16, uncompressed, no calibration; VOI1_nuclei_segmented.tif plain multi-page palette
+    TIFF (photometric 3), 300 pages of 300x300 uint8, LZW. Sample (VOI1 pair, 55.7 MB, values from one
+    sample): CT 1..65535, mean 34,076 (p1 11,096, p99 55,766); mask {0: 12,083,919, 1: 1,416,081} = binary,
+    10.5% nuclei. Voxel size not found: TIFF headers uncalibrated; Figshare description gives none; paper
+    (10.1088/1361-6560/aeadec, CC-BY per Crossref) could not be read: Europe PMC returned 503, the IOP
+    page is bot-protected, not on arXiv; Crossref abstract states no voxel size. Organism of the liver
+    tissue also not stated in the abstract.'
