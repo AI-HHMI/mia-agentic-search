@@ -27,10 +27,7 @@ imaging:
   modality:
   - cryo-ET
   dimensionality: 3D
-  voxel_size_nm:
-    x: 1.37
-    y: 1.37
-    z: 1.37
+  voxel_size_nm: null
   channels: null
   organism:
   - Homo sapiens
@@ -40,7 +37,7 @@ data:
   formats:
   - mrc
   - tiff
-  size_bytes: null
+  size_bytes: 174200000000
   n_items: 17
   access: open
   download_url: null
@@ -50,7 +47,7 @@ annotations:
   types:
   - points
   coverage: dense
-  format: STAR files with refined GEM2 particle coordinates (6.85 Angstrom/px), in the tomogram imagesets
+  format: RELION STAR points tables (rlnMicrographName, rlnPixelSize, rlnCoordinateX/Y/Z at 6.85 A/px), one per acquisition in tomograms/
   source: mixed
 ml:
   tasks:
@@ -59,18 +56,67 @@ ml:
   benchmark: null
   baseline_code_url: null
 license:
-  spdx: unknown
-  url: null
+  spdx: CC0-1.0
+  url: https://www.ebi.ac.uk/empiar/faq
 provenance:
   discovered_by: harvest-literature
   discovered_at: '2026-10-12T04:10:00Z'
   evidence_urls:
   - https://www.ebi.ac.uk/empiar/api/entry/EMPIAR-11561
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10703698/fullTextXML
-  confidence: 0.6
+  - https://www.ebi.ac.uk/empiar/faq
+  - https://ftp.ebi.ac.uk/empiar/world_availability/11561/data/README.md
+  - https://ftp.ebi.ac.uk/empiar/world_availability/11561/data/211206/tomograms/TS_016.mrc_aretomo.mrc
+  - https://ftp.ebi.ac.uk/empiar/world_availability/11561/data/211206/tomograms/211206.star
+  confidence: 0.75
 verification:
   url_ok: true
-  license_found: false
-  annotations_verified: false
-  last_checked: '2026-10-12T04:10:00Z'
-notes: 'Five acquisitions, each with micrographs (TIFF movies, 8-10 frames), tilt series and tomograms (32-bit float MRC, binned 4x): pixel size 3.425 A (tomograms 13.7 A = 1.37 nm; dataset 3 is 3.370 A / 13.48 A = 1.348 nm). Total size 174.2 GB per EMPIAR. Annotations: STAR files of GEM2 particle coordinates per the EMPIAR entry; the paper says coordinates came from DeePiCt detection followed by subtomogram-averaging refinement (so a mix of automatic and manual curation); the STAR files themselves were not opened and no segmentations are listed. EMPIAR API record shows no explicit license (not stated in the content read). The paper (Nature Methods 2023, CC-BY) Data availability points to EMPIAR-11561 and EMD-18194. Only about 17 tomograms, so it is a small training set.'
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-12T04:25:00Z'
+notes: 'Five acquisitions (data/211206, 220330, 220504, 220506, 220720), each with TIFF movies, MRC tilt series and 4x-binned float32 MRC tomograms. Voxel sizes differ: tomograms 13.7 A = 1.37 nm in 211206/220330/220506/220720 (16 tomograms); 13.4804 A = 1.348 nm in 220504 (1 tomogram), per EMPIAR API and README, so voxel_size_nm is null. Annotations: 123 GEM2 particle coordinates in 5 STAR files; paper Methods: DeePiCt CNN detections curated (60 kept) plus 63 added manually after visual inspection, refined by subtomogram averaging (source mixed). No segmentations. Size 174.2 GB as stated by EMPIAR. enricher: license CC0-1.0 from EMPIAR FAQ (was unknown); voxel size set null (was 1.37, not shared by all tomograms); annotations verified.'
+technical:
+  method: header
+  size_source: page-stated
+  layout:
+    tree: "data/\n  README.md\n  <acq>/   (x5: 211206, 220330, 220504, 220506, 220720)\n    data/        CountRef.mrc, defects.tif, frames/ (TIFF movies), mdoc/\n    alignment/   TS_###.mrc/ (TS_###.mrc.st, .rawtlt, .aln, .xf), mdoc_edited/\n    tomograms/   <acq>.star + TS_*.mrc_aretomo.mrc (2.7 GB each; 2/3/1/5/6 per acquisition)"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/empiar/world_availability/11561/data/211206/tomograms/TS_016.mrc_aretomo.mrc
+    - https://ftp.ebi.ac.uk/empiar/world_availability/11561/data/211206/tomograms/211206.star
+    size_bytes: 2943425838
+    description: One tomogram of acquisition 211206 and the STAR file with that acquisition's particle coordinates
+  arrays:
+  - role: raw
+    path_pattern: data/*/tomograms/*_aretomo.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 500
+    - 1440
+    - 1022
+    shape_varies: true
+    dtype: float32
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'AreTomo WBP tomograms, 4x binned. 1022x1440x500 (x,y,z) except 220504: 958x926x500 per EMPIAR API. Header voxel size 1.37 nm (TS_016).'
+  - role: label
+    path_pattern: data/*/tomograms/*.star
+    format: other
+    axes: null
+    shape:
+    - 9
+    - 5
+    shape_varies: true
+    dtype: float64
+    compression: none
+    encoding: points-table
+    classes:
+    - id: null
+      name: GEM2 particle
+    alignment: scaled
+    alignment_notes: 'One STAR per acquisition; rows pair to tomograms by rlnMicrographName (TS_016_aretomo.mrc -> TS_016.mrc_aretomo.mrc). Coordinates are in pixels at 6.85 A/px (rlnPixelSize), i.e. 2x the tomogram voxel grid (13.7 A): divide by 2 for tomogram voxels. Rows per file: 9, 20, 21, 23, 50.'
+  notes: 'Listing: the EBI HTTP indexes of data/ and each tomograms/ folder were read (tools/listing.py timed out on the full tree via FTP and got a 403 deeper in alignment/), so the listing is not complete and the size is EMPIAR''s stated 174.2 GB. Tomograms: 17 x ~2.7-2.9 GB. Probed TS_016 header (MRC, float32, zyx 500x1440x1022, 1.37 nm, uncompressed, 64 kB extended header). The 211206.star was read in full (814 B). No sample download: a tomogram (2.9 GB) is over the 500 MB budget. No single archive: files are direct HTTPS on ftp.ebi.ac.uk (per-file).'
