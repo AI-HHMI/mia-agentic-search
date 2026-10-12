@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zenodo-15570004-bluvision-haustoria-gus-yolo
 title: Example datasets for BluVision Haustoria
 short_name: Cereal GUS cells and haustoria (brightfield)
-description: Training, validation and test sets from the BluVision Haustoria pipeline for cereal-powdery mildew
-  infection assays. Brightfield tiles of GUS-stained barley/wheat leaf epidermis come as two YOLOv5/v8 object-detection
-  sets (1,503 images with GUS-positive cell boxes, and 1,968 images with haustoria boxes), plus a CNN classification
-  set of about 8,950 cropped cells split into gus (without haustoria) and hau (with haustoria) folders.
+description: Training, validation and test sets from the BluVision Haustoria pipeline for cereal-powdery mildew infection
+  assays. Brightfield tiles of GUS-stained barley/wheat leaf epidermis come as two YOLOv5/v8 object-detection sets (1,503
+  images with GUS-positive cell boxes, and 1,968 images with haustoria boxes), plus a CNN classification set of about 8,950
+  cropped cells split into gus (without haustoria) and hau (with haustoria) folders.
 landing_url: https://zenodo.org/records/15570004
 doi: 10.5281/zenodo.15570004
 repository: Zenodo
@@ -22,7 +22,7 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Hordeum vulgare
   - Triticum aestivum
@@ -41,14 +41,15 @@ data:
 annotations:
   present: true
   types:
-  - bounding-box
+  - instance-segmentation
   - classification
   coverage: dense
-  format: YOLO v5/v8 PyTorch text labels (one .txt per image, Roboflow export) for the detection sets; image-level
-    class from folder name (gus/hau) for the CNN set
+  format: 'YOLOv5/v8 segmentation text labels (one .txt per image, Roboflow export): per line a class id and a normalized
+    polygon (x1 y1 x2 y2 ...), single class gus or hau per set; image-level class from folder name (gus/hau) for the CNN set'
   source: manual
 ml:
   tasks:
+  - segmentation
   - detection
   - classification
   splits_provided: true
@@ -70,5 +71,101 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-12T16:10:00Z'
-notes: 'Zip listing (15,971 members): gus_training_set_yolo train/valid/test = 1052/301/150 images with YOLO .txt labels (class gus); haustoria_training_set_yolo 1378/394/196 images with labels (class hau); haustoria_training_set_cnn gus/ 4,530 and hau/ 4,428 png crops; yolo_models are weights, not data. n_items = 1,503 + 1,968 + 8,958. Paper not open access: only the abstract was read (Europe PMC). Species per set, pixel size, scanner and magnification are not stated on the Zenodo page, zip READMEs or abstract, so voxel size is null. Roboflow export marks its project license Private; the Zenodo record states CC-BY-4.0, used here.'
+  last_checked: '2026-10-12T17:52:00Z'
+notes: 'Zip listing (15,971 members): gus_training_set_yolo train/valid/test = 1052/301/150 images with YOLO .txt polygon
+  labels (class gus); haustoria_training_set_yolo 1378/394/196 images with labels (class hau); haustoria_training_set_cnn
+  gus/ 4,530 and hau/ 4,428 png crops; yolo_models are weights, not data. n_items = 1,503 + 1,968 + 8,958. Paper not open
+  access: only the abstract was read (Europe PMC). Species per set, pixel size, scanner and magnification are not stated on
+  the Zenodo page, zip READMEs or abstract, so voxel size is null. Roboflow export marks its project license Private; the
+  Zenodo record states CC-BY-4.0, used here. enricher: label files read: they are YOLO segmentation polygons, not boxes, so
+  types = instance-segmentation + classification (was bounding-box + classification); channels 3 (RGB JPEG, sampled).'
+technical:
+  method: sample
+  inspected_at: '2026-10-12T17:52:00Z'
+  inspected_urls:
+  - https://zenodo.org/records/15570004/files/supplementary_data.zip::supplementary_data/gus_training_set_yolo/test/images/chunk_0_15_png.rf.95986ae2eaa2fdf162d6071ceb7c1696.jpg
+  - https://zenodo.org/records/15570004/files/supplementary_data.zip::supplementary_data/gus_training_set_yolo/test/labels/chunk_0_15_png.rf.95986ae2eaa2fdf162d6071ceb7c1696.txt
+  - https://zenodo.org/records/15570004/files/supplementary_data.zip::supplementary_data/haustoria_training_set_yolo/valid/images/cropped_best126_png.rf.08386df1f7fe4bc45b1ea24162b48987.jpg
+  - https://zenodo.org/records/15570004/files/supplementary_data.zip::supplementary_data/haustoria_training_set_yolo/valid/labels/cropped_best126_png.rf.08386df1f7fe4bc45b1ea24162b48987.txt
+  - https://zenodo.org/records/15570004/files/supplementary_data.zip::supplementary_data/haustoria_training_set_cnn/hau/cropped_stack_000d2662-84e5-4637-86e1-4d9ca312e70a.png
+  - https://zenodo.org/records/15570004/files/supplementary_data.zip::supplementary_data/supplemental_data_protocol.txt
+  bytes_downloaded: 435562
+  size_source: file-listing
+  layout:
+    tree: "supplementary_data.zip (1.31 GB, 15,971 members)\n  supplementary_data/\n    supplemental_data_protocol.txt\n \
+      \   gus_training_set_yolo/        data.yaml (nc 1, names [gus]), README.dataset.txt\n      {train,valid,test}/images/*.jpg\
+      \   1052 / 301 / 150\n      {train,valid,test}/labels/*.txt   same stems (YOLO polygons)\n    haustoria_training_set_yolo/\
+      \  data.yaml (nc 1, names [hau]), README.dataset.txt\n      {train,valid,test}/images/*.jpg   1378 / 394 / 196\n   \
+      \   {train,valid,test}/labels/*.txt\n    haustoria_training_set_cnn/\n      gus/*.png   4,530 cell crops (no haustorium)\n\
+      \      hau/*.png   4,428 cell crops (with haustorium)\n    yolo_models/{gus_model,haustoria_model}/  training curves,\
+      \ args.yaml, weights/*.pt\n"
+    n_files: 15971
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/15570004/files/supplementary_data.zip::supplementary_data/gus_training_set_yolo/test/images/chunk_0_15_png.rf.95986ae2eaa2fdf162d6071ceb7c1696.jpg
+    - https://zenodo.org/records/15570004/files/supplementary_data.zip::supplementary_data/gus_training_set_yolo/test/labels/chunk_0_15_png.rf.95986ae2eaa2fdf162d6071ceb7c1696.txt
+    size_bytes: null
+    description: One GUS test tile (2048x2048 RGB JPEG) and its YOLO polygon label file.
+  arrays:
+  - role: raw
+    path_pattern: supplementary_data.zip::supplementary_data/*_training_set_yolo/*/images/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 2048
+    - 2048
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    lossy: true
+    chunks: null
+    value_range:
+    - 2
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'RGB colour brightfield (GUS stain; channels differ, samples_identical false). GUS tiles 2048x2048; haustoria
+      tiles are smaller crops (valid cropped_best126: 112x328).'
+  - role: label
+    path_pattern: supplementary_data.zip::supplementary_data/*_training_set_yolo/*/labels/*.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: polygons
+    classes:
+    - id: 0
+      name: gus (gus set) / hau (haustoria set)
+    alignment: same-grid
+    alignment_notes: 'Pairing: same stem in images/ and labels/ of the same split. Coordinates normalized to [0, 1] of the
+      image width/height (YOLO segmentation format).'
+  - role: raw
+    path_pattern: supplementary_data.zip::supplementary_data/haustoria_training_set_cnn/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 150
+    - 350
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: png
+    lossy: false
+    chunks: null
+    value_range:
+    - 4
+    - 218
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Classification crops; the class is the folder name (gus = without haustoria, hau = with haustoria, per
+      protocol).
+  notes: 'Listing of the one zip is complete (15,971 members, exact sizes). Sampled one GUS test tile (2048x2048x3 uint8,
+    [2, 255]), one haustoria valid tile (112x328x3, [26, 233]) and one CNN crop (150x350x3, [4, 218]); values from single
+    files. Read two label .txt files: lines are class id + polygon vertices, so the sets are instance segmentation. README.dataset.txt
+    says Roboflow license undefined / data.yaml says Private; the Zenodo record states CC-BY-4.0 (kept). Voxel size not found;
+    checked: JPEG/PNG headers, Zenodo record, protocol txt, data.yaml, READMEs, paper abstract (full text not open access).
+    .pt weights are not data and were not opened.'
