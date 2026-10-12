@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: czcdp-10304-celegans-lift-out-membrane-masks-cryoet
 title: Membrane segmentations of denoised C. elegans serial lift-out cryo-ET tomograms (CZ portal 10304)
 short_name: C. elegans tomogram membrane masks (cryo-ET)
-description: Membrane segmentation masks for 99 denoised cryo-electron tomograms of Caenorhabditis elegans from serial lift-out
-  experiments, produced by denoising, MemBrain-seg (3D U-Net) prediction and manual post-processing.
+description: Membrane segmentation masks for 99 denoised cryo-electron tomograms of Caenorhabditis elegans
+  from serial lift-out experiments, produced by denoising, MemBrain-seg (3D U-Net) prediction and manual
+  post-processing.
 landing_url: https://cryoetdataportal.czscience.com/depositions/10304
 doi: null
 repository: other
@@ -31,7 +32,7 @@ data:
   formats:
   - mrc
   - ome-zarr
-  size_bytes: null
+  size_bytes: 373712689152
   n_items: 99
   access: open
   download_url: https://cryoetdataportal.czscience.com/depositions/10304
@@ -42,7 +43,7 @@ annotations:
   - semantic-segmentation
   coverage: dense
   format: SegmentationMask per tomogram (*_segmentationmask.mrc and .zarr), membrane class
-  source: mixed
+  source: proofread
 ml:
   tasks:
   - segmentation
@@ -65,10 +66,87 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-12T01:20:00Z'
-notes: 'API: 99 annotations in 99 runs, object ''membrane'', all at VoxelSpacing7.560 A (0.756 nm), methodType ''hybrid''
-  (denoising + MemBrain-seg + manual post-processing; extent of manual correction not stated). The tomograms belong to portal
-  deposition 10004''s dataset. Portal GraphQL API (annotations filtered by depositionId) gives the counts, organisms and voxel
-  spacings; the per-annotation S3 metadata JSON gives method, software, shape type and authors. No publication or DOI is listed
-  for the deposition on the portal, so publications is empty and no paper was read. License: the portal''s data submission
-  policy states that published data is available under CC0. Download is via the portal/S3 per run. Files were not opened.'
+  last_checked: '2026-10-12T00:55:45Z'
+notes: 'API: 99 annotations in 99 runs, object ''membrane'', all at VoxelSpacing7.560 A (0.756 nm), methodType
+  ''hybrid'' (denoising + MemBrain-seg + manual post-processing; extent of manual correction not stated).
+  The tomograms belong to portal deposition 10004''s dataset. API counts, organisms, voxel spacings; S3
+  metadata JSON: method, software, authors. No publication or DOI is listed for the deposition on the
+  portal, so publications is empty and no paper was read. License: the portal''s data submission policy
+  states that published data is available under CC0. Download is via the portal/S3 per run. enricher:
+  size from the API file sizes (MRC tomograms + MRC masks); voxel size 7.56 A confirmed in MRC headers
+  (all 99 runs, API). enricher: annotations.source proofread (MemBrain-seg prediction + manual post-processing,
+  API methodType hybrid; was mixed).'
+technical:
+  method: header
+  inspected_at: '2026-10-12T00:55:45Z'
+  inspected_urls:
+  - https://graphql.cryoetdataportal.czscience.com/graphql
+  - https://files.cryoetdataportal.cziscience.com/10004/Position_515/Reconstructions/VoxelSpacing7.560/Tomograms/100/Position_515.mrc
+  - https://files.cryoetdataportal.cziscience.com/10004/Position_515/Reconstructions/VoxelSpacing7.560/Annotations/102/membrane-1.0_segmentationmask.mrc
+  bytes_downloaded: 524288
+  size_source: page-stated
+  layout:
+    tree: "deposition 10304 adds masks to 99 runs of portal dataset 10004:\n  10004/<run>/Reconstructions/VoxelSpacing7.560/\n\
+      \    Tomograms/100/<run>.mrc, <run>.zarr                  raw tomogram, 450x1024x1024 float32\n\
+      \    Annotations/102/membrane-1.0_segmentationmask.mrc, .zarr (+ .json metadata)\n    Annotations/100/cytosolic_ribosome-1.0_point.ndjson\
+      \  deposition 10004 (separate record)"
+    n_files: 198
+    listing_complete: false
+  sample:
+    urls:
+    - https://files.cryoetdataportal.cziscience.com/10004/Position_515/Reconstructions/VoxelSpacing7.560/Tomograms/100/Position_515.mrc
+    - https://files.cryoetdataportal.cziscience.com/10004/Position_515/Reconstructions/VoxelSpacing7.560/Annotations/102/membrane-1.0_segmentationmask.mrc
+    size_bytes: 3774875648
+    description: 'Run Position_515 of dataset 10004: one 7.56 A tomogram (MRC) and its membrane mask (MRC);
+      all tomograms have the same size.'
+  arrays:
+  - role: raw
+    path_pattern: 10004/*/Reconstructions/VoxelSpacing7.560/Tomograms/100/*.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 450
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: float32
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Raw (processing 'raw') tomograms of portal dataset 10004; deposition 10304 adds only
+      the masks. The masks were made on denoised tomograms (portal description); the denoised volumes
+      are not in this deposition.
+  - role: label
+    path_pattern: 10004/*/Reconstructions/VoxelSpacing7.560/Annotations/*/membrane-1.0_segmentationmask.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 450
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: float32
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: binary
+    classes:
+    - id: 1
+      name: membrane
+    alignment: same-grid
+    alignment_notes: Mask MRC has the tomogram's shape (450x1024x1024 zyx) and voxel spacing (7.56 A,
+      same VoxelSpacing folder); float32 MRC, header min/max 0/1 (binary); also OME-Zarr int8, blosc-lz4,
+      chunks 256^3, 3 levels.
+  notes: 'Portal GraphQL (annotations of deposition 10304 with their tomograms and files): 99 annotations,
+    99 tomograms; voxel spacings 7.56 A x99. Tomogram shapes (zyx): 450x1024x1024 x99. MRC headers (probe.py,
+    256 KB each) of the sample run 10004/Position_515: VoxelSpacing7.560/Tomograms/100/Position_515.mrc:
+    float32 450x1024x1024 zyx, header min/max/mean -6.075e+05, 3.832e+05, 1.304e+04, VoxelSpacing7.560/Annotations/102/membrane-1.0_segmentationmask.mrc:
+    float32 450x1024x1024 zyx, header min/max/mean 0, 1, 0.03726; voxel size in each header equals the
+    folder''s VoxelSpacing. Size = API fileSize of the 99 MRC tomograms (186,856,344,576 B) + annotation
+    files in mrc/ndjson (186,856,344,576 B); OME-Zarr copies add 199,046,963,752 B. value_range not measured
+    (no sample download); header stats only. Raw tomogram float32, header min/max -607489/383249 (not
+    normalized).'
