@@ -52,8 +52,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: Python pickle files (expert1/2/3) with per-glomerulus scores from three pathologists; class labels
-    0-3 plus Excluded; optional cross-validation split files
+  format: Python pickle files (expert1/2/3) with per-glomerulus scores from three pathologists; class
+    labels 0-3 plus Excluded; optional cross-validation split files
   source: manual
 ml:
   tasks:
@@ -77,11 +77,75 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-13T17:50:00Z'
+  last_checked: '2026-10-13T18:45:00Z'
 notes: 'Zip listing (peek_archive): 3,928 PNG patches under glomeruli/glomeruli-patches/slide_NN/ plus
-  3 pickle files (expert1-3). The pickle contents were not opened (untrusted); the per-expert scores
-  are described on the record page. The paper is not open access (Europe PMC abstract only), so pixel
-  size, magnification, scanner and the exact split files are not stated on the record page or in the
-  abstract; voxel size left null. Patch size 512 px inferred from the crop coordinates in file names.
-  The record page mentions optional split files, but none appear in the zip listing, so splits_provided
-  is false.'
+  3 pickle files (expert1-3). The pickle contents were not opened (untrusted); the per-expert scores are
+  described on the record page. The paper is not open access (Europe PMC abstract only), so pixel size,
+  magnification, scanner and the exact split files are not stated on the record page or in the abstract;
+  voxel size left null. Patch size 512 px inferred from the crop coordinates in file names. The record
+  page mentions optional split files, but none appear in the zip listing, so splits_provided is false.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "KidneyAI-Dataset.zip  1,770,094,951 B (3,931 members, 1.77 GB unpacked)\n  glomeruli/expert1.pickle,\
+      \ expert2.pickle, expert3.pickle   ~0.4 MB each\n  glomeruli/glomeruli-patches/slide_NN/   30 slide\
+      \ folders, 3,928 PNG\n    slide_NN-<idx>-<x0>_<y0>_<x1>_<y1>.png   512x512 RGB crops (WSI pixel\
+      \ coordinates)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/17456927/files/KidneyAI-Dataset.zip/content::glomeruli/glomeruli-patches/slide_04/slide_04-12-3902_17118_4414_17630.png
+    - https://zenodo.org/api/records/17456927/files/KidneyAI-Dataset.zip/content::glomeruli/expert1.pickle
+    size_bytes: null
+    description: One glomerulus patch and the first expert score file (zip members).
+  arrays:
+  - role: raw
+    path_pattern: glomeruli/glomeruli-patches/slide_*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 22
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: glomeruli/expert*.pickle
+    format: other
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    encoding: unknown
+    classes:
+    - id: 0
+      name: Normal
+    - id: 1
+      name: Mild
+    - id: 2
+      name: Moderate
+    - id: 3
+      name: Severe
+    - id: null
+      name: Excluded
+    alignment: not-applicable
+    alignment_notes: 'Per-image class scores, one file per pathologist; presumably keyed by patch name
+      (not verified: pickle not opened).'
+  notes: 'Listing: Zenodo files API (one zip, 1,770,094,951 B exact = size_bytes) and its index (peek_archive):
+    3,928 PNG in 30 slide folders + 3 expert*.pickle. Sampled slide_04-12-3902_17118_4414_17630.png (432
+    KB): 512x512x3 uint8 RGB, values 22-255 (one sample). Patch file names carry the WSI pixel box (x0_y0_x1_y1,
+    512 px). The Zenodo description says annotations are JSON, but the zip holds pickle files only; they
+    were not unpickled (untrusted), so the label structure is unverified. Class names from the Zenodo
+    description. Voxel size not found; checked: Zenodo record/description, zip index, PNG header (no calibration);
+    the JASN paper is not open access (Europe PMC abstract only). sample.py needed the records/<id>/files/<name>.zip
+    URL form (the API /content URL is not seen as a zip).'
