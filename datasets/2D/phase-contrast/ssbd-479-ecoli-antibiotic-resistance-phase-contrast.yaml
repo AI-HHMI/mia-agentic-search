@@ -27,7 +27,7 @@ imaging:
   - phase-contrast
   dimensionality: 2D
   voxel_size_nm: null
-  channels: 3
+  channels: 1
   organism:
   - Escherichia coli
   sample: Live E. coli K-12 MDS42 parental strain and 10 laboratory-evolved antibiotic-resistant strains, cultured without
@@ -73,11 +73,61 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-13T19:55:37Z'
+  last_checked: '2026-10-13T21:25:00Z'
 notes: 'SSBD repository page states CC BY 4.0 (database page too). dataset.json/manifest: 2,991 TIFFs, raw_image 90,428,565,996
   B (the source/ zips, 10.4 GB, repeat them). Probed one TIFF: uint16 RGB, 1944x2592x3, uncompressed. Pixel size not stated
   (paper gives only 100x objective, Leica ICC50 W camera, 2592x1944 px, 96 px/inch), voxel_size_nm null. Labels are only the
   strain in the file names (parental P vs 10 resistant strains, 3 culture dates, ~20 images per line); the paper segments
   cells with the pretrained Omnipose, no manual masks are released with the images. The paper cites a figshare collection
   (10.6084/m9.figshare.c.7757147) with only cell contours and features, not images. Not opened: image contents beyond one
-  header; label semantics inferred from folder names plus paper Methods, so annotations_verified false.'
+  header; label semantics inferred from folder names plus paper Methods, so annotations_verified false. enricher: channels
+  1 (was 3; RGB samples identical in a sampled TIFF).'
+technical:
+  method: sample
+  inspected_at: '2026-10-13T21:25:00Z'
+  inspected_urls:
+  - https://ssbd.riken.jp/data/479-Ikebe-MorphResDL/raw_image/AMK_20220511_P_0001/P_0001.tif
+  - https://ndownloader.figshare.com/files/53414759
+  bytes_downloaded: 30495700
+  size_source: page-stated
+  layout:
+    tree: "479-Ikebe-MorphResDL/  (SSBD, 5,982 files, 100.8 GB per dataset.json)\n  raw_image/<DRUG>_<date>_<line>_<nnnn>/<line>_<nnnn>.tif\
+      \   2,991 TIFFs, ~30.2 MB each (90.4 GB)\n      <DRUG> = AMK AZM CFIX CP CPFX CPZ DOXY ENX NM TP; <line> = <DRUG>1..4\
+      \ or P (parental)\n      3 culture dates per drug, ~20 images per line and date\n  source/<same name>.zip          \
+      \                          2,991 zips repeating the TIFFs (10.4 GB)\n  dataset.json, raw_image-manifest.txt, .tree/*.json"
+    n_files: 5982
+    listing_complete: false
+  sample:
+    urls:
+    - https://ssbd.riken.jp/data/479-Ikebe-MorphResDL/raw_image/AMK_20220511_P_0001/P_0001.tif
+    size_bytes: 30233556
+    description: One parental-strain (P) image from the first AMK culture date; its class label is the folder name.
+  arrays:
+  - role: raw
+    path_pattern: raw_image/*/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 1944
+    - 2592
+    - 3
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 19018
+    - 61166
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Plain single-page RGB TIFF (photometric 2). The 3 samples are identical in the sampled file (grey stored
+      as RGB), so s is kept as written. Image-level class = <line> in the folder name (P = parental, <DRUG>n = resistant line
+      n); no label files.
+  notes: 'value_range from one sample (P_0001.tif, 160 unique values). Size from SSBD dataset.json (raw_image only; source/
+    zips repeat the data), not a tools/listing.py listing. Voxel size not found; checked: TIFF header (no calibration), SSBD
+    page (XY/Z scale "-"), paper Methods (only 100x objective, 96 pixels/inch, 2592x1944 px), figshare contours (pixel coordinates).
+    The paper''s figshare collection 10.6084/m9.figshare.c.7757147 has contour.zip (169.9 MB, 307,460 CSVs, image_x,image_y
+    pixel contours of Omnipose-segmented cells, folders like contour/2022-06-01/20220411_CPFX/P/P_0011/contour/0040.csv);
+    its dates do not match the SSBD folder names, so not added as a label array. No whole-dataset archive: per-image TIFFs
+    and zips on ssbd.riken.jp (not on the TensorSwitch allowlist).'
