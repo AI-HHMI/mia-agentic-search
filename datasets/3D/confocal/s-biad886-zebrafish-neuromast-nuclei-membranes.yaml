@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: s-biad886-zebrafish-neuromast-nuclei-membranes
 title: Cell shape analysis of zebrafish lateral line neuromasts
 short_name: Zebrafish neuromast nuclei+membranes (confocal)
-description: 3D Airyscan confocal images of lateral line neuromasts in 5 dpf zebrafish larvae (membrane-tagged GFP, DRAQ5 nuclear
-  dye, plus knock-in reporters for hair cells, dorsoventral and peripheral cells), each with model-predicted nucleus and membrane
-  structure-segmentation masks (Allen Cell and Structure Segmenter models).
+description: 3D Airyscan confocal images of lateral line neuromasts in 5 dpf zebrafish larvae (membrane-tagged
+  GFP, DRAQ5 nuclear dye, plus knock-in reporters for hair cells, dorsoventral and peripheral cells),
+  each with model-predicted nucleus and membrane structure-segmentation masks (Allen Cell and Structure
+  Segmenter models).
 landing_url: https://www.ebi.ac.uk/biostudies/BioImages/studies/S-BIAD886
 doi: 10.6019/S-BIAD886
 repository: BioImageArchive
@@ -14,7 +15,8 @@ authors:
 - Isabel A. Cruz
 - David W. Raible
 publications:
-- title: Spherical harmonics analysis reveals cell shape-fate relationships in zebrafish lateral line neuromasts
+- title: Spherical harmonics analysis reveals cell shape-fate relationships in zebrafish lateral line
+    neuromasts
   doi: 10.1242/dev.202251
   url: https://doi.org/10.1242/dev.202251
 date_published: '2024-01-01'
@@ -22,11 +24,15 @@ imaging:
   modality:
   - confocal
   dimensionality: 3D
-  voxel_size_nm: null
-  channels: null
+  voxel_size_nm:
+    x: 49.568
+    y: 49.568
+    z: 222.408
+  channels: 3
   organism:
   - Danio rerio
-  sample: Live 5 dpf zebrafish larvae, anterior lateral line neuromasts, imaged on a Zeiss LSM 880 Airyscan with a 40x/1.2 W objective
+  sample: Live 5 dpf zebrafish larvae, anterior lateral line neuromasts, imaged on a Zeiss LSM 880 Airyscan
+    with a 40x/1.2 W objective
   labels_stains:
   - Tg(-8.0cldnb:LY-EGFP) membrane GFP
   - DRAQ5 nuclear dye
@@ -34,18 +40,19 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: null
-  n_items: null
+  size_bytes: 8256331912
+  n_items: 3
   access: open
   download_url: https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/886/S-BIAD886/Files/
-  download_method: ftp
+  download_method: http
 annotations:
   present: true
   types:
   - semantic-segmentation
   coverage: dense
-  format: per-neuromast TIFF masks (<name>_n_<genotype>_struct_segmentation.tiff for nuclei, <name>_m_<genotype>_struct_segmentation.tiff
-    for membranes)
+  format: per-neuromast float32 TIFF probability maps (0..1), <name>_n_<genotype>_struct_segmentation.tiff
+    for nuclei and <name>_m_<genotype>_struct_segmentation.tiff for membranes, on the grid of the aligned
+    TIFF
   source: automatic
 ml:
   tasks:
@@ -64,16 +71,108 @@ provenance:
   - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/886/S-BIAD886/Files/
   - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/886/S-BIAD886/Files/claudin_atoh/20220813_1_wt/20220813_1-M2_wt/
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10905750/fullTextXML
-  confidence: 0.6
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/886/S-BIAD886/Files/claudin_atoh/20220813_1_wt/20220813_1-OP1_wt/20220813_1-OP1_wt.czi
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-13T11:30:00Z'
-notes: 'Files per neuromast (e.g. 20220813_1-M2_wt): the raw .czi (about 1.5 GB), a drift-corrected .tiff (about 363 MB) and two
-  *_struct_segmentation.tiff masks (nuclei "n", membranes "m", about 499 MB each). The masks are outputs of the Segmenter models
-  trained in the paper (iterative deep-learning workflow), not the manually corrected instance labels described in the paper,
-  so annotations.source is automatic. Number of neuromast images, total size and voxel size are not stated on the study page,
-  the one file folder listed or the paper Methods (full text read); the BioStudies file lists were not retrievable. The paper
-  gives the instrument (LSM 880 Airyscan, 40x/1.2 W) but no voxel size. Study lists ~45 fish specimens with several neuromasts
-  imaged per fish. Only a single genotype folder was listed in full.'
+  last_checked: '2026-10-13T11:53:07Z'
+notes: 'enricher: voxel size 49.568 x 49.568 x 222.408 nm from the CZI Scaling metadata of all three neuromasts
+  (was null); the study holds 3 neuromasts (M2, O2, OP1 of fish 20220813_1, wt), n_items 3; masks are
+  probability maps. Files per neuromast (e.g. 20220813_1-M2_wt): the raw .czi (about 1.5 GB), a drift-corrected
+  .tiff (about 363 MB) and two *_struct_segmentation.tiff masks (nuclei "n", membranes "m", about 499
+  MB each). The masks are outputs of the Segmenter models trained in the paper (iterative deep-learning
+  workflow), not the manually corrected instance labels described in the paper, so annotations.source
+  is automatic. The paper gives the instrument (LSM 880 Airyscan, 40x/1.2 W) but no voxel size. The study
+  page lists ~45 fish; only these 3 neuromasts are deposited.'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "S-BIAD886/Files/ (14 files, 8,256,331,912 B by per-file Content-Length)\n  File lists/20220813_1.{tsv,json}\n\
+      \  claudin_atoh/20220813_1_wt/20220813_1-<M2|O2|OP1>_wt/\n    <name>_wt.czi                    \
+      \     original (6 ch, 1.19-1.57 GB)\n    <name>_wt.tiff                        aligned OME-TIFF,\
+      \ 3 ch (315-381 MB)\n    <name>_n_wt_struct_segmentation.tiff  nuclei probability (395-523 MB)\n\
+      \    <name>_m_wt_struct_segmentation.tiff  membrane probability"
+    n_files: 14
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/886/S-BIAD886/Files/claudin_atoh/20220813_1_wt/20220813_1-OP1_wt/20220813_1-OP1_wt.tiff
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/886/S-BIAD886/Files/claudin_atoh/20220813_1_wt/20220813_1-OP1_wt/20220813_1-OP1_n_wt_struct_segmentation.tiff
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/886/S-BIAD886/Files/claudin_atoh/20220813_1_wt/20220813_1-OP1_wt/20220813_1-OP1_m_wt_struct_segmentation.tiff
+    size_bytes: 1105847234
+    description: 'Neuromast OP1 (smallest, 90 z): aligned 3-channel OME-TIFF and its nucleus and membrane
+      maps.'
+  arrays:
+  - role: raw
+    path_pattern: claudin_atoh/*/*/*_wt.tiff
+    format: ome-tiff
+    axes: czyx
+    shape:
+    - 3
+    - 90
+    - 1048
+    - 1048
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 2364
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: OME axes czyx; z is 90 (OP1) or 119 (M2, O2). The .czi beside it is the 6-channel
+      original on the same 1048x1048xZ grid.
+  - role: label
+    path_pattern: claudin_atoh/*/*/*_n_*_struct_segmentation.tiff
+    format: tiff
+    axes: zyx
+    shape:
+    - 90
+    - 1048
+    - 1048
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range:
+    - 0
+    - 1
+    encoding: probability
+    classes:
+    - id: null
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: <name>_n_wt_struct_segmentation.tiff pairs with <name>_wt.tiff in the same folder.
+      tifffile shape metadata [1, Z, 1048, 1048]; its Z pages equal the raw's z count, so pages are z
+      (singleton leading axis dropped).
+  - role: label
+    path_pattern: claudin_atoh/*/*/*_m_*_struct_segmentation.tiff
+    format: tiff
+    axes: zyx
+    shape:
+    - 90
+    - 1048
+    - 1048
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range:
+    - 0
+    - 1
+    encoding: probability
+    classes:
+    - id: null
+      name: membrane
+    alignment: same-grid
+    alignment_notes: <name>_m_wt_struct_segmentation.tiff pairs with <name>_wt.tiff; same layout as the
+      nucleus maps.
+  notes: 'Listing: HTTP index (FTP timed out) + BioStudies file list (12 data files) + exact Content-Length
+    per file; size_source is ''estimated'' only because listing.py could not confirm it (sizes are exact).
+    Probes: aligned OME-TIFF czyx [3,90|119,1048,1048] uint16 deflate (no PhysicalSize in OME-XML); masks
+    plain float32 uncompressed, tifffile shape [1,Z,1048,1048]. CZI XML (range-read): Gray16, 6 channels,
+    Scaling X=Y=4.9568e-08 m, Z=2.2241e-07 m in M2, O2 and OP1. Samples (one each): raw OP1 pages 0 and
+    135: 0..2364 (12-bit range); nucleus map pages 45/60 and membrane page 45: float 2e-6..1.0, ~1e6 unique
+    values, so probability maps (threshold not given). tools/sample.py failed on the float mask (ValueError),
+    read with tifffile page by page instead.'
