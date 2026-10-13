@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: air-ug-plasmodium-phonecamera-boxes
 title: Annotated malaria image dataset (smartphone-microscope), Makerere AIR Lab
 short_name: Malaria thick smear, smartphone (brightfield)
-description: 1182 thick blood smear images taken with a 3D-printed smartphone adapter on a light microscope (Field stain,
-  x1000), with bounding boxes around 7245 malaria parasites (plasmodium), as XML files, from the Makerere University AI Lab
-  (Uganda).
+description: 1182 thick blood smear images taken with a 3D-printed smartphone adapter on a light microscope (Field
+  stain, x1000), with bounding boxes around 7245 malaria parasites (plasmodium), as XML files, from the Makerere
+  University AI Lab (Uganda).
 landing_url: https://air.ug/microscopy/
 doi: null
 repository: LabWebsite
@@ -29,24 +29,27 @@ imaging:
   channels: 3
   organism:
   - Homo sapiens
-  sample: Thick blood smears stained with Field stain, x1000 magnification, imaged with a smartphone on a 3D-printed microscope
-    adapter; Mulago National Referral Hospital samples (Makerere University). P. falciparum is shown in a paper figure; species
-    not stated for the whole set.
-  labels_stains: []
+  sample: Thick blood smears stained with Field stain, x1000 magnification, imaged with a smartphone on a 3D-printed
+    microscope adapter; Mulago National Referral Hospital samples (Makerere University). P. falciparum is shown
+    in a paper figure; species not stated for the whole set.
+  labels_stains:
+  - Field stain
 data:
   formats:
   - jpeg
   size_bytes: 123917296
   n_items: 1182
   access: open
-  download_url: http://air.ug/downloads/plasmodium-phonecamera.zip
+  download_url: https://air.ug/downloads/plasmodium-phonecamera.zip
   download_method: http
 annotations:
   present: true
   types:
   - bounding-box
   coverage: dense
-  format: 'One Pascal-VOC-style XML per image: object label (plasmodium) and bndbox xmin/ymin/xmax/ymax'
+  format: 'One Pascal VOC-style XML per image (plasmodium-phonecamera/plasmodium-phone-NNNN.xml, same stem as the
+    JPEG): one <object> per box with <label> and <bndbox> xmin/ymin/xmax/ymax in pixels (float); no <size> element.
+    Images without objects have an XML with no <object> (234 of 1182).'
   source: manual
 ml:
   tasks:
@@ -70,10 +73,75 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-13T12:50:00Z'
-notes: 'The paper states 7245 plasmodium objects in 1182 images. Zip listed with peek_archive (jpg + one XML per image, folder
-  named after the set). Counts of objects and images in the description come from the project page and the 2016 paper (Annotation
-  section). Pixel size, phone model and image resolution not stated on the project page, in the zip listing or in the paper;
-  no train/test split is shipped (the paper used a random 50/50 patch split). Licence CC BY 4.0 from the project page footer;
-  a third-party mirror (Dataset Ninja) says CC0 1.0 for the combined set, the source page wins. Sibling sets on the same page:
-  plasmodium-images (own PR), and the other two phone-camera sets.'
+  last_checked: '2026-10-13T14:00:00Z'
+notes: 'The paper states 7245 plasmodium objects in 1182 images. Zip listed with peek_archive (jpg + one XML per
+  image, folder named after the set). Counts of objects and images in the description come from the project page
+  and the 2016 paper (Annotation section). Pixel size and phone model not stated on the project page, in the zip
+  listing or in the paper; no train/test split is shipped (the paper used a random 50/50 patch split). Licence CC
+  BY 4.0 from the project page footer; a third-party mirror (Dataset Ninja) says CC0 1.0 for the combined set, the
+  source page wins. Sibling sets on the same page: plasmodium-images (own PR), and the other two phone-camera sets.
+  enricher: XML sizes in the zip listing show boxes in 948 of 1182 XMLs (234 empty, 239 B; checked on 0900).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://air.ug/downloads/plasmodium-phonecamera.zip
+  - https://air.ug/downloads/plasmodium-phonecamera.zip::plasmodium-phonecamera/plasmodium-phone-0001.jpg
+  - https://air.ug/downloads/plasmodium-phonecamera.zip::plasmodium-phonecamera/plasmodium-phone-0002.jpg
+  - https://air.ug/downloads/plasmodium-phonecamera.zip::plasmodium-phonecamera/plasmodium-phone-0001.xml
+  bytes_downloaded: 103421
+  size_source: file-listing
+  layout:
+    tree: "plasmodium-phonecamera.zip   123,917,296 B\n  plasmodium-phonecamera/\n    plasmodium-phone-NNNN.jpg\
+      \  1182 files\n    plasmodium-phone-NNNN.xml  1182 files (948 with boxes, 234 without: 239 B)\n"
+    n_files: 2364
+    listing_complete: true
+  sample:
+    urls:
+    - https://air.ug/downloads/plasmodium-phonecamera.zip::plasmodium-phonecamera/plasmodium-phone-0001.jpg
+    - https://air.ug/downloads/plasmodium-phonecamera.zip::plasmodium-phonecamera/plasmodium-phone-0001.xml
+    size_bytes: 105201
+    description: Image 0001 and its XML (6 boxes), paired by the same stem.
+  arrays:
+  - role: raw
+    path_pattern: plasmodium-phonecamera.zip/plasmodium-phonecamera/plasmodium-phone-*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 750
+    - 750
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    lossy: true
+    chunks: null
+    value_range:
+    - 0
+    - 197
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: plasmodium-phonecamera.zip/plasmodium-phonecamera/plasmodium-phone-*.xml
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    encoding: boxes-table
+    classes:
+    - id: plasmodium
+      name: plasmodium
+    alignment: same-grid
+    alignment_notes: 'plasmodium-phonecamera/plasmodium-phone-NNNN.xml pairs with plasmodium-phonecamera/plasmodium-phone-NNNN.jpg.
+      Box coordinates are pixels of the JPEG (no <size> element to cross-check). Label strings: plasmodium in all
+      6 non-empty XMLs read (0001, 0002, 0100, 0500, 1000, 1150; 0900 empty).'
+  notes: 'Listing: zip central directory (exact sizes), 2364 members, 1182 JPEG + 1182 XML. JPEG probe of 0001/0002:
+    750x750x3 uint8 RGB (yxs). Raw value_range from one sample (0001.jpg; RGB channels differ). XML read with peek_archive
+    (sample.py does not parse XML). Box/empty counts from XML member sizes: 239 B XMLs have no <object> (verified
+    on the files read), every larger one read had boxes. Host air.ug is not on the TensorSwitch fetch allowlist
+    (links otherwise usable: https, range requests). Pixel size not found; checked: JPEG header, XML, project page,
+    2016 paper (MLR / arXiv), no README in the zip.'
