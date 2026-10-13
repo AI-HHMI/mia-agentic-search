@@ -1,0 +1,153 @@
+schema_version: '1.2'
+id: zenodo-23045328-cross-material-sem-microstructure-masks
+title: Cross-Material Few-Shot Segmentation for Generalizable Microstructure Analysis
+short_name: Metal microstructure SEM segmentation masks
+description: Training and test archives of SEM micrographs of metals and coatings (Al-Zn, EBC, Inconel
+  718, MetalDAM steel, Ni superalloy, UHCS) as PNG image/mask pairs, one folder per material and phase
+  target (e.g. cementite, ferrite, cracks, carbides, twin grains), with cropped, augmented and held-out
+  test images.
+landing_url: https://zenodo.org/records/23045328
+doi: 10.5281/zenodo.23045328
+repository: Zenodo
+accession: null
+authors:
+- Jiayi Tian
+publications: []
+date_published: '2026-09-29'
+imaging:
+  modality:
+  - other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: null
+  organism: []
+  sample: Scanning electron microscopy images of metallic microstructures and coatings (Al-Zn cooling,
+    environmental barrier coating, Inconel 718, MetalDAM steel, Ni-based superalloy, ultrahigh carbon
+    steel)
+  labels_stains: []
+data:
+  formats:
+  - png
+  - tiff
+  - jpeg
+  size_bytes: 5008231950
+  n_items: null
+  access: open
+  download_url: https://zenodo.org/records/23045328/files/train.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: binary PNG mask (0/255), one per image, same file name in parallel image*/mask* folders; one
+    folder per material and target phase (class_id.txt lists 15 targets, ids 0-14; inconel718_* folders
+    are extra)
+  source: unknown
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-13T17:45:39Z'
+  evidence_urls:
+  - https://zenodo.org/records/23045328
+  - https://zenodo.org/records/23045328/files/test.zip
+  - https://zenodo.org/records/23045328/files/train.zip
+  - https://zenodo.org/api/records/23045328
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-13T19:05:00Z'
+notes: 'Zenodo page gives no description, modality, materials or paper. Zip listings: test.zip (619 MB)
+  holds testsem/<material>/{image_cropped,mask_cropped} with 526 PNG image/mask pairs over 18 folders;
+  train.zip (4.4 GB, 30,656 files) holds trainSemData_swin_384/<material>/{image,mask,*_cropped,*_aug,*_test}
+  over 20 folders, plus 269 tif, 142 jpg and 17 .py files. SEM is inferred from the folder name testsem
+  and the material names; the page does not state the instrument. Annotation source and pixel size are
+  not stated. Folder names (MetalDAM, UHCS, EBC, Inconel718) suggest the data compile public micrograph
+  sets, so the original licenses (for example UHCS is CC BY-SA 3.0 on NIST) may differ from the CC BY
+  4.0 on this record. The related study (same title) was not found by WebSearch. enricher: size 5,008,231,950
+  B = exact sum of the two Zenodo files; formats + tiff, jpeg (originals in train image/ folders); masks
+  sampled: binary 0/255.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "test.zip   619,221,704 B (1,052 PNG)\n  testsem/<target>/{image_cropped,mask_cropped}/*.png\
+      \      18 target folders, 526 pairs\ntrain.zip  4,389,010,246 B (30,656 members)\n  trainSemData_swin_384/class_id.txt\
+      \                       15 targets (0 Al-Zn_cooling ... 14 UHCS_Widman)\n  trainSemData_swin_384/*.py\
+      \                               augmentation scripts (not run)\n  trainSemData_swin_384/<target>/\
+      \                          20 target folders\n    image/ (*.tif | *.jpg | *.png originals), mask/*.png\n\
+      \    image_cropped/, mask_cropped/                          crops\n    img_aug/, mask_aug/     \
+      \                               augmented crops\n    img_test/, mask_test/                     \
+      \             contrast/bright/flip/affine variants\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/23045328/files/test.zip::testsem/UHCS_ferrite/image_cropped/uhcs0006_random_4.png
+    - https://zenodo.org/records/23045328/files/test.zip::testsem/UHCS_ferrite/mask_cropped/uhcs0006_random_4.png
+    size_bytes: 1155433
+    description: One UHCS ferrite test crop and its binary mask (test.zip members).
+  arrays:
+  - role: raw
+    path_pattern: testsem/*/image_cropped/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1024
+    - 1024
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 3
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Grey SEM stored as RGB (samples_identical true in the sample).
+  - role: label
+    path_pattern: testsem/*/mask_cropped/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'testsem/<target>/image_cropped/<name>.png <-> testsem/<target>/mask_cropped/<name>.png
+      (same name); the target phase is the folder name. Train zip: image*/<name> <-> mask*/<name> per
+      target.'
+  - role: raw
+    path_pattern: trainSemData_swin_384/*/image/*
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Original micrographs, tif / jpg / png by material; masks in the sibling mask/ folder
+      (counts differ for some targets).
+  notes: 'Listing: Zenodo API (2 zips, exact sizes) and both zip indexes (peek_archive; test 1,052 PNG,
+    train 30,656 members incl. 269 tif, 142 jpg, 17 .py). Sampled test UHCS_ferrite uhcs0006_random_4:
+    image 1024x1024x3 uint8, 3-255, the 3 samples identical (grey as RGB); mask 1024x1024 uint8 binary
+    {0,255}, 17% foreground; shapes match. Crops are 1024 px in the sample; train folder name says 384.
+    class_id.txt names 15 targets. Voxel size not found; checked: Zenodo record (one-line description),
+    zip indexes, PNG headers; no paper found. Sub-sets come from different microscopes and magnifications
+    (file names like 45kx_SE_15kV, 15kx_3kv), so one voxel size would not apply.'
