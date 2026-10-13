@@ -1,0 +1,136 @@
+schema_version: '1.2'
+id: osf-xmury-omnipose-worm-combined
+title: Omnipose worm dataset (C. elegans from Open Worm Movement and BBBC010 with instance masks)
+short_name: C. elegans worm segmentation (brightfield)
+description: 'worm training and test sets from the Omnipose project: cropped brightfield frames of C. elegans taken from the
+  Wormpose/Open Worm Movement time-lapse and from BBBC010 live/dead images, packed into ensemble images and manually annotated
+  with instance masks; 60 train and 60 test images.'
+landing_url: https://osf.io/xmury/
+doi: null
+repository: OSF
+accession: xmury-worm
+authors:
+- Kevin J. Cutler
+- Carsen Stringer
+- Teresa W. Lo
+- Luca Rappez
+- Nicholas Stroustrup
+- S. Brook Peterson
+- Paul A. Wiggins
+- Joseph D. Mougous
+publications:
+- title: 'Omnipose: a high-precision morphology-independent solution for bacterial cell segmentation'
+  doi: 10.1038/s41592-022-01639-4
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC9636021/
+date_published: '2022-08-11'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Caenorhabditis elegans
+  sample: C. elegans, low-resolution frames from the Wormpose/Open Worm Movement time-lapse (c_elegans_wormpose_*) and BBBC010
+    live/dead assay images (celegans_bbc010_*), cropped and packed into ensemble images
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 147812570
+  n_items: 301
+  access: open
+  download_url: https://api.osf.io/v2/nodes/xmury/files/osfstorage/62f581dd5775130708f251d6/
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: <name>_masks.tif instance masks next to each <name>.tif image; train folder also holds precomputed <name>_flows.tif
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/kevinjohncutler/omnipose
+license:
+  spdx: CC-BY-NC-3.0
+  url: https://creativecommons.org/licenses/by-nc/3.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-13T22:31:40Z'
+  evidence_urls:
+  - https://api.osf.io/v2/nodes/xmury/
+  - https://osf.io/download/hvku3/
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9636021/fullTextXML
+  - https://api.osf.io/v2/nodes/xmury/files/osfstorage/62f581dd5775130708f251d6/
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-13T23:00:00Z'
+notes: 'Sibling of osf-xmury-omnipose-bact-phase (same OSF project xmury, folder datasets/worm). Overlaps in source images
+  with the catalogued bbbc010-celegans-live-dead (BBBC010) but is a different dataset: crops of BBBC010 plus Wormpose frames
+  with new Omnipose-assisted manual instance masks. OSF API listing: 301 files, 147,812,570 B; train 60 images each with _masks.tif
+  and _flows.tif, test 60 image/mask pairs. Licence: paper says derived files are CC BY-NC 3.0 (project-root license.txt);
+  source images are under their own licences. Pixel size not stated; left null. enricher: listing, headers and a sample pair
+  checked; pixel size not stated here or on the BBBC010 page.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "datasets/worm/ (OSF project xmury)\n  train/<src>_<k>.tif + <src>_<k>_masks.tif + <src>_<k>_flows.tif   60 triples\n\
+      \  test/<src>_<k>.tif + <src>_<k>_masks.tif   60 pairs\n  <src> = celegans_bbc010 (BBBC010 crops) or c_elegans_wormpose\
+      \ (Open Worm Movement frames)\n300 .tif + 1 .DS_Store = 301 files, 147,812,570 B\n"
+    n_files: 301
+    listing_complete: true
+  sample:
+    urls:
+    - https://osf.io/download/62f5c3b90beb5f0573b0b63e/
+    - https://osf.io/download/62f5c3b721d7ec0845c726a3/
+    size_bytes: 113086
+    description: test/celegans_bbc010_73.tif and its _masks.tif (the smallest pair).
+  arrays:
+  - role: raw
+    path_pattern: '{train,test}/*[0-9].tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 331
+    - 150
+    shape_varies: true
+    dtype: uint16
+    compression: packbits
+    value_range:
+    - 70
+    - 65057
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '{train,test}/*_masks.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 331
+    - 150
+    shape_varies: true
+    dtype: uint16
+    compression: packbits
+    value_range:
+    - 0
+    - 6
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: <name>_masks.tif sits beside <name>.tif; identical shapes in the probed pair.
+  notes: 'Listing of datasets/worm by a scratch script over the OSF API (paginated, exact per-file sizes; tools/listing.py
+    has no OSF support, so size_source is page-stated). 120 image/mask pairs (60 train, 60 test) + 60 *_flows.tif (precomputed
+    flow targets, train only; not listed as an array) + 1 .DS_Store. Image names end in a digit, so *[0-9].tif excludes masks
+    and flows. Probes: single-page plain TIFFs, uint16, packbits, yx (331x150, 348x349). Sample celegans_bbc010_73: raw 70..65057,
+    27,632 values; mask 0..6, 7 values (instance IDs per the paper; consecutive). Value ranges from one pair. Pixel size not
+    found; checked: TIFF headers, paper Methods (crops packed into ensemble images, no scale stated), OSF wiki home, the catalogued
+    BBBC010 record (no pixel size either). Two upstream sources, so one value may not apply to all files.'
