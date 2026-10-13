@@ -1,0 +1,209 @@
+schema_version: '1.2'
+id: zenodo-5092850-covid-if-vero-e6-cell-annotations
+title: 'Covid-IF training data: cell segmentation and infection labels in SARS-CoV-2 immunofluorescence of Vero
+  E6 cells'
+short_name: SARS-CoV-2 infected Vero E6 cells (widefield)
+description: Ground-truth data for a high-throughput immunofluorescence assay of SARS-CoV-2 antibodies. Widefield
+  images of Vero E6 cells (Hoechst, serum/antibody and dsRNA virus-marker channels) with manually corrected cell
+  instance masks and per-cell infected / non-infected annotations, used to train a boundary-prediction U-Net and
+  tune infected-cell classification.
+landing_url: https://zenodo.org/records/5092850
+doi: 10.5281/zenodo.5092850
+repository: Zenodo
+accession: '5092850'
+authors:
+- Constantin Pape
+publications:
+- title: Microscopy-based assay for semi-quantitative detection of SARS-CoV-2 specific antibodies in human sera
+  doi: 10.1002/bies.202000257
+  url: https://doi.org/10.1002/bies.202000257
+date_published: '2021-07-12'
+imaging:
+  modality:
+  - widefield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Chlorocebus sabaeus
+  sample: Vero E6 cells infected with SARS-CoV-2 (BavPat1/2020), fixed and immunostained in 96-well plates
+  labels_stains:
+  - Hoechst (nuclei)
+  - patient serum antibodies (AlexaFluor 488 / 568 / 647 secondary antibodies)
+  - anti-dsRNA (infected cells)
+data:
+  formats:
+  - hdf5
+  size_bytes: 514374248
+  n_items: 49
+  access: open
+  download_url: https://zenodo.org/records/5092850/files/covid-if-groundtruth.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - classification
+  coverage: dense
+  format: HDF5 files (gt_image_NNN.h5) inside covid-if-groundtruth.zip; per the paper, cell label masks corrected
+    in BigCat from an ilastik-based initial segmentation, and each cell labelled infected / non-infected.
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  - classification
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-13T08:40:00Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/5092850
+  - https://zenodo.org/api/records/13220124/files/rdf.yaml/content
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7883048/fullTextXML
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1002%2Fbies.202000257%22&format=json&resultType=core&pageSize=3
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-13T10:40:00Z'
+notes: 'Found via the bioimage.io record ilastik/covid_if_training_data (Zenodo 13220124), whose rdf.yaml points
+  to this Zenodo record. The zip lists 49 HDF5 files (gt_image_000.h5 ...); the paper says manual annotations cover
+  10 images, so how the 49 files relate to those 10 images is not confirmed. Pixel size is not stated in the paper
+  (Nikon Ti2, Plan Apo lambda 20x/0.75, Andor iXon DU-888 EM-CCD; four channels: Hoechst, AF488, AF568, AF647/DyLight650).
+  The paper also names BioImage Archive S-BIAD24 (raw images and pipeline outputs); that entry was not fetched here
+  and is not part of this record. enricher: HDF5 contents inspected (3 raw channels, cell/nucleus instance labels,
+  infected labels), see technical; channels 3 as stored (was 4, the acquired channels).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  1 file, 514,374,248 bytes\n  covid-if-groundtruth.zip  (49 members, 517.7 MB)\n    gt_image_000.h5\
+      \ ... gt_image_048.h5   5.0-11.1 MB each\n      raw/{marker,nuclei,serum_IgG}/s0       uint16 1024x1024\n\
+      \      labels/cells/s0, labels/nuclei/s0      instance ids\n      labels/infected/nuclei/s0              0/1/2\n\
+      \      tables/infected_labels/{cells,columns,visible}"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5092850/files/covid-if-groundtruth.zip::gt_image_007.h5
+    size_bytes: 5020778
+    description: 'one ground-truth file: 3 raw channels, cell and nucleus instance labels, infected labels (smallest
+      member)'
+  arrays:
+  - role: raw
+    path_pattern: gt_image_*.h5 (raw/nuclei/s0)
+    format: hdf5
+    axes: null
+    shape:
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: uint16
+    compression: gzip
+    value_range:
+    - 490
+    - 10833
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: Hoechst nuclei channel. 2D plane, 256x256 gzip chunks; no axis or scale attributes (only napari
+      display attrs such as ContrastLimits).
+  - role: raw
+    path_pattern: gt_image_*.h5 (raw/serum_IgG/s0)
+    format: hdf5
+    axes: null
+    shape:
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: uint16
+    compression: gzip
+    value_range:
+    - 1021
+    - 10135
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: serum IgG channel. 2D plane, 256x256 gzip chunks; no axis or scale attributes (only napari
+      display attrs such as ContrastLimits).
+  - role: raw
+    path_pattern: gt_image_*.h5 (raw/marker/s0)
+    format: hdf5
+    axes: null
+    shape:
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: uint16
+    compression: gzip
+    value_range:
+    - 628
+    - 36347
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: marker channel (dsRNA per the record's stains). 2D plane, 256x256 gzip chunks; no axis or scale
+      attributes (only napari display attrs such as ContrastLimits).
+  - role: label
+    path_pattern: gt_image_*.h5 (labels/cells/s0)
+    format: hdf5
+    axes: null
+    shape:
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: int64
+    compression: gzip
+    value_range:
+    - 0
+    - 486
+    normalization: unknown
+    encoding: instance-ids
+    alignment: same-grid
+    alignment_notes: Same 1024x1024 grid as the raw channels in the same file; 486 cell ids in the sample.
+  - role: label
+    path_pattern: gt_image_*.h5 (labels/nuclei/s0)
+    format: hdf5
+    axes: null
+    shape:
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: int32
+    compression: gzip
+    value_range:
+    - 0
+    - 493
+    normalization: unknown
+    encoding: instance-ids
+    alignment: same-grid
+    alignment_notes: Same grid; 493 nucleus ids in the sample.
+  - role: label
+    path_pattern: gt_image_*.h5 (labels/infected/nuclei/s0)
+    format: hdf5
+    axes: null
+    shape:
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: int64
+    compression: gzip
+    value_range:
+    - 0
+    - 2
+    normalization: unknown
+    encoding: semantic-ids
+    alignment: same-grid
+    alignment_notes: Same grid; values 0/1/2 (meaning of 1 vs 2 not documented in the files). Per-cell infected
+      label also in tables/infected_labels/cells (columns label_id, infected_label).
+  notes: 'Listing: tools/listing.py --expand-zips on the Zenodo record (complete: 1 file, 514,374,248 bytes, 49
+    HDF5 members). Read gt_image_007.h5 in full (5,020,778 B, smallest member) with h5py from the zip member (tools/probe.py
+    could not open the member): raw/{marker,nuclei,serum_IgG}/s0 uint16 1024x1024, labels/cells/s0 int64 (487 values),
+    labels/nuclei/s0 int32 (494 values), labels/infected/nuclei/s0 int64 {0,1,2}, tables/infected_labels (487 rows).
+    Value ranges from this one file. normalization none inferred (uint16 within detector range, no clipping). This
+    file holds 3 raw channels, while the paper describes 4 acquired channels. Axes not set: the HDF5 attributes
+    do not state them. voxel size not found; checked: HDF5 attributes (none), Zenodo description, paper (record
+    notes: not stated).'
