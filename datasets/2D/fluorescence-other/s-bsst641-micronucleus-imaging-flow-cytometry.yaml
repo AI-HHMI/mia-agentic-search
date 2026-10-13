@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: s-bsst641-micronucleus-imaging-flow-cytometry
 title: 'In support of: Inter-laboratory automation of the in vitro micronucleus assay using imaging flow cytometry and deep learning'
 short_name: Micronucleus cell classes (imaging flow cytometry)
-description: 'Human-scored single-cell images from the cytokinesis-block micronucleus assay in TK6 cells, acquired on Amnis
-  ImageStreamX imaging flow cytometers (two-channel 16-bit TIFFs: nuclear fluorescence and brightfield). About 4,960 test
-  images are sorted into nine class folders (mononucleates, binucleates, trinucleates, quadranucleates, each with or without
-  micronuclei, and other/unscorable), shipped with the pretrained DeepFlow classifier and MATLAB/Python training code.'
+description: 'Human-scored single-cell images from the cytokinesis-block micronucleus assay in TK6 cells, acquired on Amnis ImageStreamX
+  imaging flow cytometers (64x64 16-bit TIFFs with three channels: brightfield, nuclear fluorescence and darkfield, each rescaled to
+  0-255). About 4,960 test images are sorted into nine class folders (mononucleates, binucleates, trinucleates, quadranucleates, each
+  with or without micronuclei, and other/unscorable), shipped with the pretrained DeepFlow classifier and MATLAB/Python training code.'
 landing_url: https://www.ebi.ac.uk/biostudies/studies/S-BSST641
 doi: null
 repository: BioImageArchive
@@ -25,11 +25,11 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: 2
+  channels: 3
   organism:
   - Homo sapiens
-  sample: Fixed TK6 human B lymphoblastoid cells from the cytokinesis-block micronucleus assay after carbendazim or MMS exposure;
-    nuclei and micronuclei stained with DRAQ5 or Hoechst 33342; Amnis ImageStreamX, 40x objective
+  sample: Fixed TK6 human B lymphoblastoid cells from the cytokinesis-block micronucleus assay after carbendazim or MMS exposure; nuclei
+    and micronuclei stained with DRAQ5 or Hoechst 33342; Amnis ImageStreamX, 40x objective
   labels_stains:
   - DRAQ5
   - Hoechst 33342
@@ -46,9 +46,9 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: One folder per human-assigned class under TEST_Pretrained_DeepFlow_neural_network/Test_images (Binucleates, Binucleates
-    with MN, Mononucleates, Mononucleates with MN, Trinucleates, Trinucleates with MN, Quadranucleates, Quadranucleates with
-    MN, Other or Unscorable)
+  format: One folder per human-assigned class under TEST_Pretrained_DeepFlow_neural_network/Test_images (Binucleates, Binucleates with
+    MN, Mononucleates, Mononucleates with MN, Trinucleates, Trinucleates with MN, Quadranucleates, Quadranucleates with MN, Other or
+    Unscorable)
   source: manual
 ml:
   tasks:
@@ -57,8 +57,8 @@ ml:
   benchmark: null
   baseline_code_url: null
 license:
-  spdx: unknown
-  url: null
+  spdx: custom
+  url: https://ftp.ebi.ac.uk/biostudies/fire/S-BSST/641/S-BSST641/Files/BIOSTUDIES.zip
 provenance:
   discovered_by: harvest-literature
   discovered_at: '2026-10-13T03:00:00Z'
@@ -66,17 +66,59 @@ provenance:
   - https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BSST641
   - https://www.ebi.ac.uk/biostudies/files/S-BSST641/BIOSTUDIES.zip
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8380241/fullTextXML
-  confidence: 0.6
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BSST/641/S-BSST641/Files/BIOSTUDIES.zip
+  confidence: 0.75
 verification:
   url_ok: true
-  license_found: false
+  license_found: true
   annotations_verified: true
-  last_checked: '2026-10-13T03:00:00Z'
-notes: 'Single 2.8 GB zip (peek_archive: 5,167 files). The nine class folders under TEST_Pretrained_DeepFlow_neural_network/Test_images
-  hold 4,959 two-channel TIFFs (2592/142/1299/59/730/105/6/119/7 per class); n_items counts these images. The zip also holds
-  an example raw .rif (1.36 GB) and .cif files, MATLAB/Python pipeline code and a pretrained model; the training-set folders
-  under Pipeline_*/4_Human_annotated_data contain only empty class folders (.DS_Store), so the training images are not in
-  the deposit. The paper says five thousand human-scored images were used for cross-validation. Imaging used a 40x objective
-  on ImageStreamX; pixel size is not stated on the BioStudies page or in the paper text, so voxel_size_nm is null. The BioStudies
-  record states no data license (only the article is CC BY 4.0), hence license unknown. Images are cropped single cells
-  from imaging flow cytometry rather than tissue microscopy.'
+  last_checked: '2026-10-13T03:10:00Z'
+notes: 'Single 2.8 GB zip (5,167 members). The nine class folders under TEST_Pretrained_DeepFlow_neural_network/Test_images hold 4,959
+  TIFFs (2592/142/1299/59/730/105/6/119/7 per class); n_items counts these. The zip also holds an example .rif/.cif, MATLAB/Python code
+  and a pretrained model; the training-set class folders are empty, so training images are not deposited. Pixel size is not stated on
+  the BioStudies page or in the paper, so voxel_size_nm is null. enricher: license custom from LICENSE.rtf in the zip (MIT-style permission
+  text written for "the Software", plus "The source publication is acknowledged by citation"); was unknown. enricher: channels 3 (was
+  2): brightfield, nuclear fluorescence, darkfield per the extraction script; the test reader uses the first two.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "BIOSTUDIES.zip/BIOSTUDIES/   5,167 members, 2.8 GB\n  LICENSE.rtf\n  Pipeline_MATLAB/ Pipeline_Python/   example .rif (1.4\
+      \ GB) + .cif (260 MB), extraction/training/test code\n  TEST_Pretrained_DeepFlow_neural_network/\n    Pretrained_deepflow_model/*.mat\n\
+      \    Test_images/<class>/*.tif   4,959 TIFFs (64x64x3 uint16)\n      Binucleates 2592, Binucleates with MN 142, Mononucleates\
+      \ 1299, Mononucleates with MN 59,\n      Other or Unscorable 730, Quadranucleates 105, Quadranucleates with MN 6,\n      Trinucleates\
+      \ 119, Trinucleates with MN 7"
+    n_files: 5167
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BSST/641/S-BSST641/Files/BIOSTUDIES.zip::BIOSTUDIES/TEST_Pretrained_DeepFlow_neural_network/Test_images/Binucleates/TK6
+      CON B 12Sep19_4_3376.tif
+    size_bytes: 24956
+    description: One 64x64x3 single-cell TIFF from the Binucleates class folder (class = folder name).
+  arrays:
+  - role: raw
+    path_pattern: BIOSTUDIES/TEST_Pretrained_DeepFlow_neural_network/Test_images/*/*.tif
+    format: tiff
+    axes: yxc
+    shape:
+    - 64
+    - 64
+    - 3
+    shape_varies: false
+    dtype: uint16
+    compression: packbits
+    value_range:
+    - 0
+    - 255
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: 'Class label = parent folder name (9 classes). Channels c: 0 brightfield, 1 nuclear fluorescence (DRAQ5 or Hoechst
+      33342), 2 darkfield, per A_Extract_cif_to_tif.m; samples are distinct (photometric RGB in the header, but channels). Each channel
+      padded to 64x64 and min-max rescaled to 0-255, stored as uint16.'
+  notes: 'Listed the whole zip (complete, exact sizes, 2,816,438,052 bytes). Probed 2 Binucleates TIFFs: 64x64x3 uint16, packbits, plain
+    single page, photometric 2. Sampled 1 (sample.py, 10 KB) plus 3 more via a short read (71 KB): every channel spans exactly 0-255,
+    matching the per-channel min-max renormalisation in the extraction script; value range from these samples. Voxel size not found;
+    checked: TIFF headers (no calibration), BioStudies API, LICENSE/scripts in the zip, paper full text (Methods: ImageStreamX 40x objective,
+    no pixel size); the .cif header could not be read (deflated member). Download: BIOSTUDIES.zip is a direct archive with range requests;
+    sample is a zip member.'
