@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: air-ug-intestinal-parasites-phonecamera-boxes
 title: Annotated intestinal parasites image dataset (smartphone-microscope), Makerere AIR Lab
 short_name: Parasite eggs in stool, smartphone (brightfield)
-description: 1217 wet-preparation stool images (x400) taken with a 3D-printed smartphone adapter on a light microscope, with
-  bounding boxes around 162 parasite eggs (hookworm, Taenia, Hymenolepis nana), as XML files, from the Makerere University
-  AI Lab (Uganda).
+description: 1217 wet-preparation stool images (x400) taken with a 3D-printed smartphone adapter on a light microscope,
+  with bounding boxes around 162 parasite eggs (hookworm, Taenia, Hymenolepis nana), as XML files, from the Makerere
+  University AI Lab (Uganda).
 landing_url: https://air.ug/microscopy/
 doi: null
 repository: LabWebsite
@@ -29,8 +29,8 @@ imaging:
   channels: 3
   organism:
   - Homo sapiens
-  sample: Wet preparations of stool in normal saline, x400 magnification, imaged with a smartphone on a 3D-printed microscope
-    adapter; eggs of hookworm, Taenia and Hymenolepis nana.
+  sample: Wet preparations of stool in normal saline, x400 magnification, imaged with a smartphone on a 3D-printed
+    microscope adapter; eggs of hookworm, Taenia and Hymenolepis nana.
   labels_stains: []
 data:
   formats:
@@ -38,14 +38,16 @@ data:
   size_bytes: 459292601
   n_items: 1217
   access: open
-  download_url: http://air.ug/downloads/intestinalparasites-phonecamera.zip
+  download_url: https://air.ug/downloads/intestinalparasites-phonecamera.zip
   download_method: http
 annotations:
   present: true
   types:
   - bounding-box
   coverage: dense
-  format: One Pascal-VOC-style XML per image with object bndbox coordinates
+  format: 'One Pascal VOC-style XML per image (intestinalparasites-phonecamera/intestinalparasites-phone-NNNN.xml,
+    same stem as the JPEG): one <object> per box with <label> and <bndbox> xmin/ymin/xmax/ymax in pixels (float);
+    no <size> element. Images without objects have an XML with no <object> (1070 of 1217).'
   source: manual
 ml:
   tasks:
@@ -69,10 +71,77 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-13T12:50:00Z'
-notes: 'Only 162 egg objects across 1217 images, so most images contain few or no annotated eggs. Zip listed with peek_archive
-  (jpg + one XML per image, folder named after the set). Counts of objects and images in the description come from the project
-  page and the 2016 paper (Annotation section). Pixel size, phone model and image resolution not stated on the project page,
-  in the zip listing or in the paper; no train/test split is shipped (the paper used a random 50/50 patch split). Licence
-  CC BY 4.0 from the project page footer; a third-party mirror (Dataset Ninja) says CC0 1.0 for the combined set, the source
-  page wins. Sibling sets on the same page: plasmodium-images (own PR), and the other two phone-camera sets.'
+  last_checked: '2026-10-13T14:00:00Z'
+notes: 'Only 162 egg objects across 1217 images, so most images contain no annotated eggs. Zip listed with peek_archive
+  (jpg + one XML per image, folder named after the set). Counts of objects and images in the description come from
+  the project page and the 2016 paper (Annotation section). Pixel size and phone model not stated on the project
+  page, in the zip listing or in the paper; no train/test split is shipped (the paper used a random 50/50 patch
+  split). Licence CC BY 4.0 from the project page footer; a third-party mirror (Dataset Ninja) says CC0 1.0 for
+  the combined set, the source page wins. Sibling sets on the same page: plasmodium-images (own PR), and the other
+  two phone-camera sets. enricher: XML sizes in the zip listing show boxes in 147 of 1217 XMLs (1070 empty, 214-217
+  B; checked on 0002, 0565).'
+technical:
+  method: sample
+  inspected_urls:
+  - https://air.ug/downloads/intestinalparasites-phonecamera.zip
+  - https://air.ug/downloads/intestinalparasites-phonecamera.zip::intestinalparasites-phonecamera/intestinalparasites-phone-0001.jpg
+  - https://air.ug/downloads/intestinalparasites-phonecamera.zip::intestinalparasites-phonecamera/intestinalparasites-phone-0002.jpg
+  - https://air.ug/downloads/intestinalparasites-phonecamera.zip::intestinalparasites-phonecamera/intestinalparasites-phone-0001.xml
+  bytes_downloaded: 404215
+  size_source: file-listing
+  layout:
+    tree: "intestinalparasites-phonecamera.zip   459,292,601 B\n  intestinalparasites-phonecamera/\n    intestinalparasites-phone-NNNN.jpg\
+      \  1217 files\n    intestinalparasites-phone-NNNN.xml  1217 files (147 with boxes, 1070 without: 214-217 B)\n"
+    n_files: 2434
+    listing_complete: true
+  sample:
+    urls:
+    - https://air.ug/downloads/intestinalparasites-phonecamera.zip::intestinalparasites-phonecamera/intestinalparasites-phone-0001.jpg
+    - https://air.ug/downloads/intestinalparasites-phonecamera.zip::intestinalparasites-phonecamera/intestinalparasites-phone-0001.xml
+    size_bytes: 414137
+    description: Image 0001 and its XML (1 box), paired by the same stem.
+  arrays:
+  - role: raw
+    path_pattern: intestinalparasites-phonecamera.zip/intestinalparasites-phonecamera/intestinalparasites-phone-*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1224
+    - 1632
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    lossy: true
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: intestinalparasites-phonecamera.zip/intestinalparasites-phonecamera/intestinalparasites-phone-*.xml
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    encoding: boxes-table
+    classes:
+    - id: Hookworm
+      name: hookworm egg
+    alignment: same-grid
+    alignment_notes: 'intestinalparasites-phonecamera/intestinalparasites-phone-NNNN.xml pairs with intestinalparasites-phonecamera/intestinalparasites-phone-NNNN.jpg.
+      Box coordinates are pixels of the JPEG (no <size> element to cross-check). Label strings: Hookworm in 10 non-empty
+      XMLs read (0001, 0168, 0239, 0354, 0449, 0685, 0835, 0941, 1097; 0565 empty); Taenia / H. nana label strings
+      not seen.'
+  notes: 'Listing: zip central directory (exact sizes), 2434 members, 1217 JPEG + 1217 XML. JPEG probe of 0001/0002:
+    1224x1632x3, 1161x2064x3 uint8 RGB (yxs). Raw value_range from one sample (0001.jpg; RGB channels differ). XML
+    read with peek_archive (sample.py does not parse XML). Box/empty counts from XML member sizes: 214-217 B XMLs
+    have no <object> (verified on the files read), every larger one read had boxes. Host air.ug is not on the
+    TensorSwitch fetch allowlist (links otherwise usable: https, range requests). Pixel size not found; checked:
+    JPEG header, XML, project page, 2016 paper (MLR / arXiv), no README in the zip.'
