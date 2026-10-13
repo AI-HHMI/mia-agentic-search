@@ -1,0 +1,136 @@
+schema_version: '1.2'
+id: osf-xmury-omnipose-worm-high-res
+title: Omnipose worm_high_res dataset (high-resolution C. elegans brightfield images with instance masks)
+short_name: C. elegans high-res segmentation (brightfield)
+description: 'worm_high_res training and test sets from the Omnipose project: high-resolution brightfield micrographs of wild-type
+  C. elegans (QZ0) on agar pads, each with a manually annotated instance mask, split into train (48) and test (11) folders.'
+landing_url: https://osf.io/xmury/
+doi: null
+repository: OSF
+accession: xmury-worm_high_res
+authors:
+- Kevin J. Cutler
+- Carsen Stringer
+- Teresa W. Lo
+- Luca Rappez
+- Nicholas Stroustrup
+- S. Brook Peterson
+- Paul A. Wiggins
+- Joseph D. Mougous
+publications:
+- title: 'Omnipose: a high-precision morphology-independent solution for bacterial cell segmentation'
+  doi: 10.1038/s41592-022-01639-4
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC9636021/
+date_published: '2022-08-11'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Caenorhabditis elegans
+  sample: Wild-type C. elegans (QZ0) on 0.3% agar pads, brightfield channel of an Andor Dragonfly spinning disk on a Nikon
+    TiE2, 15x (10x/0.25 NA objective with 1.5x camera magnification)
+  labels_stains: []
+data:
+  formats:
+  - png
+  - tiff
+  size_bytes: 2273520396
+  n_items: 169
+  access: open
+  download_url: https://api.osf.io/v2/nodes/xmury/files/osfstorage/62f5c47a0beb5f0573b0b78b/
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: <n>_masks.png instance masks next to each <n>.png image; train folder also holds precomputed <n>_flows.tif
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/kevinjohncutler/omnipose
+license:
+  spdx: CC-BY-NC-3.0
+  url: https://creativecommons.org/licenses/by-nc/3.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-13T22:31:40Z'
+  evidence_urls:
+  - https://api.osf.io/v2/nodes/xmury/
+  - https://osf.io/download/hvku3/
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9636021/fullTextXML
+  - https://api.osf.io/v2/nodes/xmury/files/osfstorage/62f5c47a0beb5f0573b0b78b/
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-13T23:00:00Z'
+notes: 'Sibling of osf-xmury-omnipose-bact-phase (same OSF project xmury, folder datasets/worm_high_res); the images are original
+  to this work. OSF API listing: 169 files, 2,273,520,396 B; train 48 images each with _masks.png and _flows.tif, test 11
+  image/mask pairs. Paper: each field imaged as a 7-frame z stack (about 85 um span); Data Availability calls the shared files
+  minimum projection brightfield images. Licence: project-root license.txt (CC BY-NC 3.0), applied by location. Pixel size
+  not stated; left null. enricher: listing, headers and samples checked; pixel size still not stated (paper, OSF wiki, headers).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "datasets/worm_high_res/ (OSF project xmury)\n  train/<n>.png + <n>_masks.png + <n>_flows.tif   48 triples\n  test/<n>.png\
+      \ + <n>_masks.png   11 pairs\n166 image/mask/flow files + 3 .DS_Store = 169 files, 2,273,520,396 B (mostly *_flows.tif)\n"
+    n_files: 169
+    listing_complete: true
+  sample:
+    urls:
+    - https://osf.io/download/etdmw/
+    - https://osf.io/download/62f5c63c2331f107e1b0f576/
+    size_bytes: 349929
+    description: train/59.png and train/59_masks.png (the smallest pair).
+  arrays:
+  - role: raw
+    path_pattern: '{train,test}/*[0-9].png'
+    format: png
+    axes: yx
+    shape:
+    - 1653
+    - 1316
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 211
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '{train,test}/*_masks.png'
+    format: png
+    axes: yx
+    shape:
+    - 1653
+    - 1316
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: <n>_masks.png sits beside <n>.png; identical shapes in both probed pairs (1653x1316 for 50, 658x654 for
+      59).
+  notes: 'Listing of datasets/worm_high_res by a scratch script over the OSF API (paginated, exact per-file sizes; tools/listing.py
+    has no OSF support, so size_source is page-stated). 59 image/mask pairs (48 train, 11 test) + 48 *_flows.tif (precomputed
+    flow targets, train only; not listed as an array; they make up most of the 2.27 GB) + 3 .DS_Store. Image names are integers,
+    so *[0-9].png excludes masks. Probe of 50.png/50_masks.png: grey uint8 PNG 1653x1316. Sample 59: raw uint8 658x654, 0..211,
+    145 values; mask uint8 {0,255} (one worm). 50_masks.png has 3 distinct values with 255 present, so instance IDs are not
+    consecutive integers; encoding instance-ids per the paper (manual instance masks). Value ranges from samples. Pixel size
+    not found; checked: PNG headers (probe reports no calibration), paper Methods (only x15 magnification, 10x/0.25 NA, 1.5x
+    camera magnification), OSF wiki home, OSF project root.'
