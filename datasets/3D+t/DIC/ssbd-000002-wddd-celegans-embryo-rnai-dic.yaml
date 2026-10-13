@@ -45,7 +45,7 @@ imaging:
   labels_stains: []
 data:
   formats:
-  - other
+  - hdf5
   size_bytes: 1745823002329
   n_items: 187
   access: open
@@ -86,12 +86,80 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-13T19:47:58Z'
-notes: 'SSBD project 2-Kyoda-WormEmbryoRNAi (ssbd-repos-000002); repository page states CC BY-SA 4.0 (the 2013 paper is CC
-  BY-NC, an article licence). Counts from the SSBD page and dataset.json: 187 image datasets (1.5 TB), 186 quantitative datasets
-  (136 GB); the 2013 paper reports 50 wild-type and 136 RNAi sets, the project was updated in 2020. size_bytes = raw_image
-  (33,660 files, 1,599,634,244,340 B) + raw_bdml (372 files, 146,188,757,989 B), excluding the source/ and bdml/ zip bundles
-  that repeat the data (listing total 3.42 TB). Voxel size 0.105 um XY, 0.5 um Z and 40 s step from the SSBD page; paper:
-  66 focal planes, 600x600 px. Raw images are .ipm (not a schema format, so other); annotations are BDML/bd5 numeric tracking
-  data, not label images. Nuclei detected and tracked automatically, errors corrected manually (paper Methods): proofread.
-  Image files were not opened. Different from the diSPIM C. elegans set zenodo-6460375.'
+  last_checked: '2026-10-13T21:10:00Z'
+notes: 'SSBD project 2-Kyoda-WormEmbryoRNAi (ssbd-repos-000002); repository page states CC BY-SA 4.0 (paper CC BY-NC is the
+  article licence). Counts from the SSBD page and dataset.json: 187 image datasets (1.5 TB), 186 quantitative datasets (136
+  GB); the 2013 paper reports 50 wild-type and 136 RNAi sets. size_bytes = raw_image (33,660 files, 1,599,634,244,340 B) +
+  raw_bdml (372 files, 146,188,757,989 B), excluding the source/ and bdml/ zip bundles that repeat the data (listing total
+  3.42 TB). Voxel size 0.105 um XY, 0.5 um Z and 40 s step from the SSBD page; paper: 66 focal planes, 600x600 px. Raw images
+  are .ipm (custom binary, no schema format); annotations are BDML/bd5 numeric tracking data, not label images. Nuclei detected
+  and tracked automatically, errors corrected manually (paper Methods): proofread. Different from the diSPIM C. elegans set
+  zenodo-6460375. enricher: formats [hdf5] (bd5 tracking files; was other), raw .ipm stay custom.'
+technical:
+  method: header
+  inspected_at: '2026-10-13T21:10:00Z'
+  inspected_urls:
+  - https://ssbd.riken.jp/data/ssbd-000002/raw_image/RNAi_B0336.10_040518_01/img0000.ipm
+  - https://ssbd.riken.jp/data/ssbd-000002/raw_bdml/RNAi_B0336.10_040518_01/RNAi_B0336.10_040518_01_bd5.h5
+  - https://ssbd.riken.jp/data/ssbd-000002/raw_bdml/RNAi_B0336.10_040518_01/RNAi_B0336.10_040518_01_bdml3.0.xml
+  bytes_downloaded: 4096
+  size_source: page-stated
+  layout:
+    tree: "ssbd-000002/  (SSBD, 34,544 files, 3.42 TB per dataset.json)\n  raw_image/<embryo>/img0000.ipm ... img0179.ipm\
+      \   187 embryos x 180 timepoints, 47,523,299 B each (1.60 TB)\n  raw_bdml/<embryo>/<embryo>_bd5.h5                186\
+      \ tracking files (~0.7 GB each)\n  raw_bdml/<embryo>/<embryo>_bdml3.0.xml           BDML metadata (~2 KB)\n  source/<embryo>.zip\
+      \                              326 zips repeating the raw images (1.67 TB)\n  bdml/<embryo>_bdml3.0.zip            \
+      \            186 zips repeating raw_bdml (5.2 GB)\n  dataset.json, raw_image-manifest.txt, raw_bdml-manifest.txt, .tree/*.json"
+    n_files: 34544
+    listing_complete: false
+  sample:
+    urls:
+    - https://ssbd.riken.jp/data/ssbd-000002/raw_image/RNAi_B0336.10_040518_01/img0000.ipm
+    - https://ssbd.riken.jp/data/ssbd-000002/raw_bdml/RNAi_B0336.10_040518_01/RNAi_B0336.10_040518_01_bd5.h5
+    size_bytes: 806764159
+    description: 'Embryo RNAi_B0336.10_040518_01: first timepoint stack (img0000.ipm, 66 planes 600x600) and the embryo''s
+      bd5 tracking file (all 180 timepoints).'
+  arrays:
+  - role: raw
+    path_pattern: raw_image/*/img*.ipm
+    format: other
+    axes: null
+    shape:
+    - 66
+    - 600
+    - 600
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One .ipm file per timepoint (img0000-img0179, 40 s apart). Big-endian header "3.5a" (3,299 B) gives 600
+      x 600 px and 66 planes; file size = 3,299 + 600*600*66*2 B, so 16-bit uncompressed (inferred). Plane order inside the
+      file not stated, axes left null.
+  - role: label
+    path_pattern: raw_bdml/*/*_bd5.h5 (data/*/object/0)
+    format: hdf5
+    axes: null
+    shape:
+    - 9691
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: points-table
+    classes: null
+    alignment: unknown
+    alignment_notes: 'One bd5 file per embryo, pairs with raw_image/<same embryo>/. data/<t>/object/0 per timepoint (t = 0,
+      1, ...): compound table, fields ID, t, entity, sID, x, y, z, label (coordinates stored as strings); 9,691 rows at t=0
+      = points of nuclear-region outlines. Coordinate units/origin not checked against the image grid.'
+  notes: 'Header-level only: IPM is a custom binary format the tools cannot read, so no sample was decoded (4,096 B range
+    read of img0000.ipm; the probe read 23.6 MB of bd5 HDF5 headers). Size: data.size_bytes is raw_image + raw_bdml from SSBD
+    dataset.json (per-file sizes in .tree/*.json), not a tools/listing.py listing. Voxel size 0.105 um XY, 0.5 um Z stated
+    on the SSBD page. No single direct archive: per-embryo zips under source/ (~5 GB each) and per-file URLs; host ssbd.riken.jp
+    is not on the TensorSwitch allowlist. Dimensionality 3D+t is not covered by the miao layout yet. SSBD also serves the
+    images via OMERO (not checked).'
