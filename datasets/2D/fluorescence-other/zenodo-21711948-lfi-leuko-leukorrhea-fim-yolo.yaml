@@ -2,11 +2,11 @@ schema_version: '1.2'
 id: zenodo-21711948-lfi-leuko-leukorrhea-fim-yolo
 title: LFI-Leuko - fluorescent immunoassay microscopy images of leukorrhea with YOLO boxes
 short_name: Leukorrhea FIM cell detection (fluorescence)
-description: De-identified clinical fluorescent immunoassay microscopy (FIM) images for automated leukorrhea
-  testing, annotated with YOLO bounding boxes for 12 clinically significant categories including epithelial
-  cells, bacteria and fungi. Annotations were validated by senior pathologists with a double-blind
-  cross-validation protocol. The images are split by target morphology and scale into three archives (hyphae,
-  large-size targets, small-size targets), each with train / val / test folders.
+description: De-identified clinical fluorescent immunoassay microscopy (FIM) images for automated leukorrhea testing,
+  annotated with YOLO bounding boxes for 12 clinically significant categories including epithelial cells, bacteria
+  and fungi. Annotations were validated by senior pathologists with a double-blind cross-validation protocol. The
+  images are split by target morphology and scale into three archives (hyphae, large-size targets, small-size targets),
+  each with train / val / test folders.
 landing_url: https://zenodo.org/records/21711948
 doi: 10.5281/zenodo.21711948
 repository: Zenodo
@@ -22,7 +22,7 @@ imaging:
   - fluorescence-other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Homo sapiens
   sample: Clinical gynecological (leukorrhea) specimens imaged by fluorescent immunoassay microscopy
@@ -30,7 +30,7 @@ imaging:
 data:
   formats:
   - jpeg
-  size_bytes: 6162644193
+  size_bytes: 6162642293
   n_items: 7244
   access: open
   download_url: https://zenodo.org/records/21711948
@@ -61,12 +61,121 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-13T09:25:00Z'
-notes: 'Listed all three zips with peek_archive: HyphaeDataset 532 JPEG + 533 txt (train 372, val 80, test 80;
-  classes.txt = Hyphae), LargeSizeTargetDataset 2,747 JPEG + 2,748 txt, SmallSizeTargetDataset 3,965 JPEG + 3,966
-  txt (7,244 images in total; the txt files are the YOLO labels plus one classes.txt each). The classes.txt of
-  the large and small archives could not be read (Zenodo range requests failed), so the 12 category names and
-  per-class counts are not recorded. Image resolution, pixel size, imaging system and a paper were not found on
-  the record (no related publication listed); modality is fluorescence from the Fluorescent Immunoassay
-  Microscopy description. Species set to Homo sapiens for the clinical gynecological specimens. License CC BY-NC
-  4.0 as stated on the record.'
+  last_checked: '2026-10-13T10:55:00Z'
+notes: 'Listed all three zips: HyphaeDataset 532 JPEG + 532 labels (train 372, val 80, test 80), LargeSizeTargetDataset
+  2,747 + 2,747, SmallSizeTargetDataset 3,965 + 3,965 (7,244 images in total), plus one classes.txt each. Image
+  resolution, pixel size, imaging system and a paper were not found on the record (no related publication listed);
+  modality is fluorescence from the Fluorescent Immunoassay Microscopy description. Species set to Homo sapiens
+  for the clinical gynecological specimens. License CC BY-NC 4.0 as stated on the record. enricher: classes.txt
+  read for all archives (13 names, see technical.arrays); channels 3 (RGB JPEG); size from the full listing.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  3 files, 6,162,642,293 bytes (14,491 zip members)\n  HyphaeDataset.zip           294 MB\n    HyphaeDataset/classes.txt\n\
+      \    HyphaeDataset/{train,val,test}/images/scanAB[...].jpg     372 / 80 / 80\n    HyphaeDataset/{train,val,test}/labels/scanAB[...].txt\
+      \     same stems\n  LargeSizeTargetDataset.zip  2.5 GB\n    LargeSizeTargetDataset/classes.txt\n    LargeSizeTargetDataset/{train,val,test}/{images,labels}/\
+      \  1,923 / 412 / 412\n  SmallSizeTargetDataset.zip  3.4 GB\n    SmallSizeTargetDataset/classes.txt\n    SmallSizeTargetDataset/{train,val,test}/{images,labels}/\
+      \  2,776 / 594 / 595"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/21711948/files/HyphaeDataset.zip::HyphaeDataset/test/images/scanAB[0,25,6,1,4,7,32210,1533,1000].jpg
+    - https://zenodo.org/records/21711948/files/HyphaeDataset.zip::HyphaeDataset/test/labels/scanAB[0,25,6,1,4,7,32210,1533,1000].txt
+    size_bytes: 174256
+    description: smallest Hyphae test image and its YOLO label (1 box)
+  arrays:
+  - role: raw
+    path_pattern: '*Dataset/*/images/*.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 2048
+    - 3072
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB JPEGs, mostly dark background (mean 4.8 in the sample). File names scanAB[...] contain
+      brackets and commas.
+  - role: label
+    path_pattern: HyphaeDataset/*/labels/*.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    normalization: unknown
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: Hyphae
+    alignment: same-grid
+    alignment_notes: YOLO txt (class x_center y_center width height, normalised) with the same stem as HyphaeDataset/<split>/images/<stem>.jpg;
+      class ids index HyphaeDataset/classes.txt.
+  - role: label
+    path_pattern: LargeSizeTargetDataset/*/labels/*.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    normalization: unknown
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: EpithelialCells
+    - id: 1
+      name: ParabasalCells
+    - id: 2
+      name: Leukocytes
+    - id: 3
+      name: Trichomonas
+    - id: 4
+      name: ClueCells
+    alignment: same-grid
+    alignment_notes: YOLO txt (class x_center y_center width height, normalised) with the same stem as LargeSizeTargetDataset/<split>/images/<stem>.jpg;
+      class ids index LargeSizeTargetDataset/classes.txt.
+  - role: label
+    path_pattern: SmallSizeTargetDataset/*/labels/*.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    normalization: unknown
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: Spores
+    - id: 1
+      name: Blastospores
+    - id: 2
+      name: Pseudohyphae
+    - id: 3
+      name: Bacteria
+    - id: 4
+      name: Cocci
+    - id: 5
+      name: LacticAcidBacilli
+    - id: 6
+      name: Campylobacter
+    alignment: same-grid
+    alignment_notes: YOLO txt (class x_center y_center width height, normalised) with the same stem as SmallSizeTargetDataset/<split>/images/<stem>.jpg;
+      class ids index SmallSizeTargetDataset/classes.txt.
+  notes: 'Listing: tools/listing.py --expand-zips on all 3 Zenodo zips (complete: 6,162,642,293 bytes, 14,491 members;
+    7,244 JPEG + 7,244 label txt + 3 classes.txt). Sampled HyphaeDataset/test/images/scanAB[0,25,6,1,4,7,32210,1533,1000].jpg
+    (122,223 B transferred): 2048x3072x3 uint8 RGB, range 0-255, mean 4.8 (one sample); its label has 1 Hyphae box.
+    Read the three classes.txt: 1 + 5 + 7 = 13 names, while the Zenodo description says 12 categories (not resolved).
+    No single archive: data.download_url keeps the record page; the direct files are the three files/<name>.zip
+    links. voxel size not found; checked: JPEG header (no calibration), Zenodo description, classes.txt; no paper
+    is linked.'
