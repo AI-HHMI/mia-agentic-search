@@ -1,0 +1,166 @@
+schema_version: '1.2'
+id: s-biad1654-zebrafish-palmskin-size-classes
+title: Palmskin multicolour confocal images of zebrafish larval skin cells with body-size classes and
+  Cellpose cell segmentations
+short_name: Zebrafish palmskin skin cells (confocal)
+description: 722 confocal z-stack images (1024 x 1024 px, 3 laser lines, 465 x 465 um field) of palmskin-labelled
+  superficial epithelial cells in the trunk skin of 361 zebrafish larvae (7-12 dpf, two images per fish),
+  each larva labelled with a body-size class (small / medium / large, from k-means on bright-field trunk
+  area), plus Cellpose cell segmentations (fine-tuned on 231 manually refined images) and pre-built train
+  / validation / test deep-learning crops split by fish.
+landing_url: https://www.ebi.ac.uk/biostudies/bioimages/studies/S-BIAD1654
+doi: 10.6019/S-BIAD1654
+repository: BioImageArchive
+accession: S-BIAD1654
+authors:
+- Sheng-Ru Yang
+- Michael Liaw
+- Andy C. Wei
+- Chen-Hui Chen
+publications:
+- title: Deep learning models link local cellular features with whole-animal growth dynamics in zebrafish
+  doi: 10.26508/lsa.202503319
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC12095864/
+date_published: '2025-02-19'
+imaging:
+  modality:
+  - confocal
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 454.5455
+    y: 454.5455
+    z: null
+  channels: 3
+  organism:
+  - Danio rerio
+  sample: live zebrafish larvae (7-12 dpf) mounted in agarose, trunk skin around the anal protrusion,
+    anterior and posterior positions
+  labels_stains:
+  - palmskin multicolour fluorescent markers
+data:
+  formats:
+  - tiff
+  - png
+  size_bytes: 88260543817
+  n_items: 722
+  access: open
+  download_url: https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/654/S-BIAD1654/Files/AISEC.data/
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  - instance-segmentation
+  coverage: unknown
+  format: size class (small/medium/large) per larva in ml_dataset.csv / datasplit_2022.csv and in the
+    train/valid/test fish folders of dl_datasets.zip; per image, Cellpose/SLIC results in raw_data.zip
+    as .seg1/.seg2 .pkl plus RGB-rendered .png (seg*a, seg*al, seg*o, seg*ol)
+  source: mixed
+ml:
+  tasks:
+  - classification
+  - segmentation
+  splits_provided: true
+  benchmark: Random-forest and Vision Transformer size-class prediction from skin-cell images (paper)
+  baseline_code_url: https://github.com/DANTA-HOJA/AI_SEC
+license:
+  spdx: CC0-1.0
+  url: https://creativecommons.org/publicdomain/zero/1.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-13T18:05:00Z'
+  evidence_urls:
+  - https://www.ebi.ac.uk/biostudies/bioimages/studies/S-BIAD1654
+  - https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD1654
+  - https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD1654/files?start=0&length=100
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/654/S-BIAD1654/Files/AISEC.data/dl_datasets.zip
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/654/S-BIAD1654/Files/AISEC.data/raw_data.zip
+  - https://pmc.ncbi.nlm.nih.gov/articles/PMC12095864/
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/654/S-BIAD1654/Files/AISEC.data.tsv
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-13T18:45:00Z'
+notes: 'Six zips under AISEC.data/: raw_data 28.9 GB (722 image folders), dl_datasets 35.2 GB (train/valid/test
+  crops by fish), ml_datasets 49 KB, models (3 zips, not data). Paper: 722 images from 361 larvae; size
+  classes by k-means on bright-field trunk area; fish-wise split 260/29/72; Leica SP8 25x/0.95, 1024x1024
+  px, 2 um z sections. Cellpose Cyto3 fine-tuned on 231 manually refined images, applied to the rest (source
+  mixed). License CC0 (BioStudies). enricher: dimensionality 3D -> 2D: the deposit holds only single-plane
+  1024x1024 max projections / per-channel images, no z-stacks (raw_data.zip listing). enricher: voxel
+  size 454.5455 nm xy from the ImageJ TIFF calibration (2.2 px/um), matching a 465 um field over 1024
+  px (was null). enricher: formats + png (Cellpose/SLIC renderings).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "AISEC.data.json, AISEC.data.tsv                       1,082 B\nAISEC.data/\n  raw_data.zip\
+      \     28,935,760,156 B   52,190 members\n    {Data}_Processed/{20240219_fixmm3d}_Academia_Sinica_i722/\n\
+      \      data.csv, datasplit_2022.csv, split_count.log\n      Clustered_File/SURF3C_KMeansORIG_RND2022/\
+      \  (k-means size classes, datasplit csv)\n      {m222_m222_ku15}_PalmSkin_preprocess/   722 '<date>_<batch>_palmskin_<n>dpf\
+      \ - SeriesNNN_fish_<n>_{A,P}_RGB/' (+ +---delete/)\n        03_RGB_direct_max_zproj.tif        \
+      \   1024x1024x3 uint8\n        NN_ch_{B,G,R}_*.tif, NN_RGB_*.tif     per-channel / filtered / fused\
+      \ 1024x1024 images\n        CenterCropped/03_RGB_direct_max_zproj.W512_H1024.tif\n        MetaImage/\
+      \  intermediate filtered images\n        Cellpose/03_RGB_direct_max_zproj.cp_231_palmskin_CH00_M10/\
+      \  .seg1/.seg2 .pkl, .seg*{a,al,o,ol}.png, .ana.toml\n        FakeImage_v2/  random_color / color_less\
+      \ / cell_less renderings\n      {autothres_triangle}_BrightField_analyze/  per-fish bright-field\
+      \ TIFFs + trunk masks, csv\n  dl_datasets.zip  ~35.2 GB   ~491,700 members: {Dataset}_DL/RND2022/.../<image\
+      \ type>/W256_H256/{train,valid,test}/fish_<n>_{A,P}/ (CRPS128_SF14/ crops), .tiff\n  ml_datasets.zip\
+      \  48,557 B\n  bfseg_models.zip, cellpose_models.zip, dl_models.zip  (models)\n"
+    n_files: 544001
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/654/S-BIAD1654/Files/AISEC.data/raw_data.zip::{Data}_Processed/{20240219_fixmm3d}_Academia_Sinica_i722/{m222_m222_ku15}_PalmSkin_preprocess/20220610_CE001_palmskin_8dpf
+      - Series001_fish_1_A_RGB/CenterCropped/03_RGB_direct_max_zproj.W512_H1024.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/654/S-BIAD1654/Files/AISEC.data/raw_data.zip::{Data}_Processed/{20240219_fixmm3d}_Academia_Sinica_i722/{m222_m222_ku15}_PalmSkin_preprocess/20220610_CE001_palmskin_8dpf
+      - Series001_fish_1_A_RGB/Cellpose/03_RGB_direct_max_zproj.cp_231_palmskin_CH00_M10/03_RGB_direct_max_zproj.cp_231_palmskin_CH00_M10.seg1a.png
+    size_bytes: 1790795
+    description: One centre-cropped RGB max projection (fish 1, anterior) and its Cellpose/SLIC rendering,
+      as raw_data.zip members.
+  arrays:
+  - role: raw
+    path_pattern: raw_data.zip::*_PalmSkin_preprocess/*_RGB/CenterCropped/03_RGB_direct_max_zproj.W512_H1024.tif
+    format: tiff
+    axes: yxc
+    shape:
+    - 1024
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: raw_data.zip::*_PalmSkin_preprocess/*_RGB/Cellpose/*/*.seg1a.png
+    format: png
+    axes: yxs
+    shape:
+    - 1024
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    encoding: unknown
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Same folder pairing: <image>_RGB/CenterCropped/03_RGB_direct_max_zproj.W512_H1024.tif
+      <-> <image>_RGB/Cellpose/03_RGB_direct_max_zproj.cp_231_palmskin_CH00_M10/*.seg1a.png; shapes match
+      (1024x512). The PNG is an RGB rendering (148 distinct values in the sample), not label IDs; the
+      segmentation itself is in the .seg1/.seg2 .pkl files (pickle, not read).'
+  notes: 'Listing: tools/listing.py over the 8 files with zips expanded: 544,001 members, 88,260,543,817
+    B exact (file-listing; was 88,260,542,735 without the json/tsv). Probed raw_data.zip members: 00_ch_B_direct.tif
+    1024x1024 uint8, ImageJ, unit micron, 454.5455 nm/px; 03_RGB_direct_max_zproj.tif 1024x1024x3 uint8
+    RGB. Sampled (1.68 MB): CenterCropped W512_H1024 tif 1024x512x3 uint8, 0-255 (one sample, full range,
+    likely stretched); seg1a.png 1024x512x3 uint8, 148 values. Raw axes yxc: the 3 samples are the 3 laser
+    channels (B 448, G 514, R 552 nm; separate ch_B/G/R files exist), not identical. Size-class labels
+    (classification) live in datasplit_2022.csv and the dl_datasets folder layout. Cellpose instance masks
+    are only in .pkl (untrusted, not unpickled). No single archive for the whole dataset: download_url
+    is the AISEC.data/ folder; members fetch from raw_data.zip by range.'
