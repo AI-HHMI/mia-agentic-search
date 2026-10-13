@@ -1,0 +1,151 @@
+schema_version: '1.2'
+id: zenodo-22293818-micoscan-amf-instance-seg
+title: MicoScan Dataset — LabelMe UPS Annotations for Arbuscular Mycorrhizal Fungi Instance Segmentation
+short_name: Mycorrhizal fungi structure boxes (microscopy)
+description: Microscopy images of arbuscular mycorrhizal fungi with per-image bounding-box annotations
+  (the LabelMe polygons are not in the export) for three structures (arbuscules, vesicles, hyphae), captured
+  on a Zeiss Axioskop AX10 with an Axiocam 202 mono at 200x at the Universidad Politecnica Salesiana,
+  Guayaquil; used to train a Mask R-CNN colonisation detector. The record text lists 567 annotation records
+  (526 with an image) and 3,703 instances.
+landing_url: https://zenodo.org/records/22293818
+doi: 10.5281/zenodo.22293818
+repository: Zenodo
+accession: '22293818'
+authors:
+- Oscar Emilio Chancay Rodriguez
+- Anthony Joseph Alava Reyes
+publications: []
+date_published: '2026-09-04'
+imaging:
+  modality:
+  - other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: null
+  organism: []
+  sample: Arbuscular mycorrhizal fungal colonisation structures (arbuscules, vesicles, hyphae) in microscope
+    images from the Universidad Politecnica Salesiana (UPS), Guayaquil, Ecuador
+  labels_stains: []
+data:
+  formats:
+  - jpeg
+  - png
+  size_bytes: 7069027920
+  n_items: 610
+  access: open
+  download_url: https://zenodo.org/api/records/22293818/files/DATASET%20MICOSCAN.zip/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  coverage: unknown
+  format: 'Per-image JSON in dataset_final_export/annotations (610): image, width, height, source (labelme
+    / amfinder_caml) and instances [{class_id, class_name, bbox [x0,y0,x1,y1] px, has_mask}]; classes
+    1 arbuscule, 2 vesicle, 3 hypha (metadata json). No polygon or mask data is in the zip despite has_mask;
+    AMFinder entries are 126 px tile boxes. README: LabelMe annotations made manually with SAM2.'
+  source: mixed
+ml:
+  tasks:
+  - detection
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/AnthonylAava021/MicoScan
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-13T09:50:00Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/22293818
+  confidence: 0.5
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-13T11:36:41Z'
+notes: 'enricher: annotation JSONs read (2 LabelMe, 1 AMFinder): only boxes + class, no polygons, so types
+  instance-segmentation -> bounding-box and task segmentation -> detection. Harvest: the numbers disagree:
+  Zenodo text gives 567 JSON records, 3,703 instances and an 80/10/10 split; the zip holds 610 images
+  + 610 JSONs, and its README gives 3,867 records (2,217 LabelMe, 1,650 AMFinder 126 px tiles) and 22,022
+  / 19,340 / 2,017 instances, citing AMFinder (doi 10.5281/zenodo.5578920) as a source; amfinder_* / *_Keyence_Nbenth_*
+  names point to re-used AMFinder data (related catalog record zenodo-5118948). No split files. Modality,
+  organism and pixel size not stated; no paper found. Checked: Zenodo record, zip listing, README, metadata
+  json, 3 annotation JSONs.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Zenodo 22293818: DATASET MICOSCAN.zip (7,069,027,920 B; 1,222 members)\ndataset_final_export/\n\
+      \  README.md, metadata/dataset_metadata.json (classes, sources, stats)\n  images/       610 (430\
+      \ png + 180 jpg), 55 named amfinder_*, rest labelme_*; up to 100 MB each\n  annotations/  610 json,\
+      \ same stem as the image"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/22293818/files/DATASET%20MICOSCAN.zip/content::dataset_final_export/images/labelme_CNN1_Keyence_Nbenth_myc_7_r0000_c0013.jpg
+    - https://zenodo.org/api/records/22293818/files/DATASET%20MICOSCAN.zip/content::dataset_final_export/annotations/labelme_CNN1_Keyence_Nbenth_myc_7_r0000_c0013.json
+    size_bytes: 230050
+    description: One 768x768 LabelMe-source tile and its box JSON.
+  arrays:
+  - role: raw
+    path_pattern: dataset_final_export/images/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 768
+    - 768
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 180 jpg; sizes vary (768x768 tiles, AMFinder 504x504, whole images up to ~100 MB).
+  - role: raw
+    path_pattern: dataset_final_export/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 768
+    - 768
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 430 png; 768x768 patches seen (labelme_*_patch*_x*_y*.png).
+  - role: label
+    path_pattern: dataset_final_export/annotations/*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: boxes-table
+    classes:
+    - id: 1
+      name: arbuscule
+    - id: 2
+      name: vesicle
+    - id: 3
+      name: hypha
+    alignment: same-grid
+    alignment_notes: annotations/<stem>.json names its image (images/<stem>.jpg|png); bbox in image pixels
+      [x0,y0,x1,y1].
+  notes: 'Complete listing (Zenodo API + zip directory). Samples (by range): labelme jpg 768x768x3 uint8
+    0..255 mean 220; labelme png patch 768x768x3 0..255 mean 171. JSONs: boxes only; has_mask true for
+    LabelMe entries but no mask/polygon files or fields exist in the export. AMFinder tiles 504x504, 126
+    px box grid. Voxel size not found; checked: image headers, README, metadata json, Zenodo description
+    (200x, Axiocam 202), no paper; GitHub code repo not readable from this session.'
