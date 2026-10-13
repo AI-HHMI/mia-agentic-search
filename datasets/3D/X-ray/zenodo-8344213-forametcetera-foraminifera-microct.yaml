@@ -3,9 +3,9 @@ id: zenodo-8344213-forametcetera-foraminifera-microct
 title: 'ForametCeTera: micro-CT scans of individual benthic foraminifera and non-foraminiferan material'
 short_name: ForametCeTera foraminifera micro-CT (X-ray)
 description: 436 3D micro-CT volumes of individual specimens (288 benthic foraminifera from four species and 148
-  pieces of non-foraminiferan material), segmented out of 11 group-scans, together with the reconstructed
-  2D cross-section stacks and 3D group-scan volumes. Intended for developing segmentation and classification
-  methods for CT scans of sediment core samples.
+  pieces of non-foraminiferan material), segmented out of 11 group-scans, together with the reconstructed 2D cross-section
+  stacks and 3D group-scan volumes. Intended for developing segmentation and classification methods for CT scans
+  of sediment core samples.
 landing_url: https://zenodo.org/records/8344213
 doi: 10.5281/zenodo.8344213
 repository: Zenodo
@@ -48,8 +48,8 @@ annotations:
   - instance-segmentation
   coverage: dense
   format: Individual specimens segmented from each group-scan by intensity thresholding and exported as separate
-    .nrrd density volumes, grouped by species or non-foraminiferan material (Specimens folder); the species
-    label comes from the group-scan the specimen was cut from.
+    .nrrd density volumes, grouped by species or non-foraminiferan material (Specimens folder); the species label
+    comes from the group-scan the specimen was cut from.
   source: automatic
 ml:
   tasks:
@@ -68,19 +68,91 @@ provenance:
   - https://zenodo.org/records/8344213
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11183234/fullTextXML
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1038%2Fs41597-024-03476-w%22&format=json&resultType=core&pageSize=3
-  confidence: 0.55
+  confidence: 0.6
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-13T08:10:00Z'
-notes: 'Source: Zenodo record and the open-access Scientific Data paper (Europe PMC full text; Methods, Data
-  Records). 15 um is the stated scan resolution (Neoscan N80 FP micro-CT, 67 kV, 0.5 mm Al filter), taken
-  as isotropic voxel size. The 3D group-scans and specimens are .nrrd volumes (not in the schema format
-  list); the reconstructed cross-sections are 8-bit PNG stacks, so formats lists png only. The zip
-  (4.5 GB) could not be listed (server refuses range requests), so the folder layout (Group_scans, Specimens,
-  Reconstructions) is taken from the paper, not verified. Labels are species/non-foraminifera group membership
-  plus automatic threshold segmentation of individual specimens, not manual pixel annotation. Raw projections
-  (332 GB) are only available on request and are not part of the download. This is micro-CT of individual
-  specimens rather than light/electron microscopy; confidence reflects that. Species counts per group
-  are in Table 2 of the paper.'
+  annotations_verified: true
+  last_checked: '2026-10-13T09:25:00Z'
+notes: 'Source: Zenodo record and the open-access Scientific Data paper (Europe PMC full text; Methods, Data Records).
+  15 um is the stated scan resolution (Neoscan N80 FP micro-CT, 67 kV, 0.5 mm Al filter), isotropic. Group-scans
+  and specimens are .nrrd volumes (not in the schema format list); the reconstructed cross-sections are 8-bit PNG
+  stacks, so formats lists png only. Labels are species/non-foraminifera group membership plus automatic threshold
+  segmentation of individual specimens, not manual pixel annotation. Raw projections (332 GB) are only available
+  on request. Species counts per group are in Table 2 of the paper. enricher: zip listed, layout confirmed (Group-scans,
+  Reconstructions, Specimens); voxel size confirmed by NeoScan .log "Pixel Size (um)=15.000025"; organisms per folder
+  in technical.notes.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  1 file, 4,528,865,950 bytes\n  ForametCeTera.zip  (18,044 members)\n    ForametCeTera/\n      Group-scans/Group-scan_<id>.nrrd\
+      \          11 files   2.3 GB\n      Reconstructions/<id>/<id>_<8 digits>.png  17,586 PNG + 11 .log (one folder\
+      \ per group-scan)\n        A1.2 1931, A2.2 999, B1.3/B2.2/B3.2 5412, C1.2 2424, D1.2 1406,\n        D2.2 769,\
+      \ γ1.2 1069, θ1.2 1298, θ2.2 2278\n      Specimens/<id>/<id>-specimen-<n>.nrrd     436 files  ~100 MB\n  \
+      \      A1.2 27, A2.2 10, B* 111, C1.2 47, D1.2 45, D2.2 48, γ1.2 55, θ1.2 50, θ2.2 43\n  <id>: A1.2 A2.2 B1.3\
+      \ B2.2 B3.2 C1.2 D1.2 D2.2 γ1.2 θ1.2 θ2.2"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/8344213/files/ForametCeTera.zip::ForametCeTera/Reconstructions/A2.2/A2.2_00000838.png
+    size_bytes: 125979
+    description: one reconstructed cross-section of group-scan A2.2 (the first section, mostly empty); a whole group-scan
+      stack is ~1,000 such PNGs, or one .nrrd in Group-scans/
+  arrays:
+  - role: raw
+    path_pattern: ForametCeTera/Reconstructions/*/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1008
+    - 1008
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 23
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: One PNG per reconstructed cross-section; each folder is one group-scan stack (z = file index,
+      First/Last Section in the folder .log). Image Width/Height 1008 for A2.2 per its .log; other scans may differ.
+  - role: raw
+    path_pattern: ForametCeTera/Group-scans/*.nrrd
+    format: other
+    axes: null
+    shape:
+    - 997
+    - 1008
+    - 1008
+    shape_varies: true
+    dtype: uint8
+    compression: gzip
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: 'NRRD (not in the schema format list) built from the PNG stack of the same id by stack.py;
+      header of Group-scan_A2.2.nrrd: type uint8, dimension 3, sizes 997 1008 1008 (NRRD lists the fastest axis
+      first), encoding gzip, no spacing field.'
+  - role: other
+    path_pattern: ForametCeTera/Specimens/*/*.nrrd
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: cropped
+    alignment_notes: Density volumes of individual specimens cut out of the group-scan with the same id by intensity
+      thresholding (segment.ipynb); the class (species or non-foraminiferan material) is the folder id, per paper
+      Table 2. No offsets into the group-scan are stored in the listing.
+  notes: 'Listing: tools/listing.py --expand-zips on the Zenodo record (complete: 1 file, 4,528,865,950 bytes, 18,044
+    zip members). Sampled Reconstructions/A2.2/A2.2_00000838.png (125,979 bytes): 1008x1008 uint8, range 0-23, 86%
+    zeros (first section, one sample). Read the NRRD header of Group-scan_A2.2.nrrd and Reconstructions/A2.2/A2.2_.log
+    (NeoScan): Pixel Size (um)=15.000025, "Minimum/Maximum for CS to Image Conversion" 0.09/0.9 (paper: only intensities
+    0.09-0.9 retained, so contrast-stretched). The specimen NRRD header could not be read (Zenodo connection resets),
+    so its shape/dtype stay open. NRRD is not a schema format and TensorSwitch has no NRRD reader as far as the
+    record says; the PNG stacks are the convertible raw data. Organisms per paper Table 2: A* Alveolinella quoyi,
+    B* Operculina ammonoides, C1.2 Marginopora santoensis, D* Baculogypsinoides sphaerulata, γ/θ non-foraminiferan
+    material; only Alveolinella quoyi is in NCBI Taxonomy under that name, so imaging.organism is left empty.'
