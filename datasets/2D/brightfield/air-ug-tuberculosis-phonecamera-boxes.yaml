@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: air-ug-tuberculosis-phonecamera-boxes
 title: Annotated tuberculosis image dataset (smartphone-microscope), Makerere AIR Lab
 short_name: TB bacilli in sputum, smartphone (brightfield)
-description: Sputum smear images (Ziehl-Neelsen stain, x1000) taken with a 3D-printed smartphone adapter on a light microscope,
-  with bounding boxes around tuberculosis bacilli, as XML files, from the Makerere University AI Lab (Uganda). The paper reports
-  3734 bacilli in 928 images.
+description: Sputum smear images (Ziehl-Neelsen stain, x1000) taken with a 3D-printed smartphone adapter on a light
+  microscope, with bounding boxes around tuberculosis bacilli, as XML files, from the Makerere University AI Lab
+  (Uganda). The paper reports 3734 bacilli in 928 images.
 landing_url: https://air.ug/microscopy/
 doi: null
 repository: LabWebsite
@@ -29,23 +29,26 @@ imaging:
   channels: 3
   organism:
   - Homo sapiens
-  sample: Fresh sputum smears stained with Ziehl-Neelsen (ZN), x1000 magnification, imaged with a smartphone on a 3D-printed
-    microscope adapter; target objects are Mycobacterium tuberculosis bacilli.
-  labels_stains: []
+  sample: Fresh sputum smears stained with Ziehl-Neelsen (ZN), x1000 magnification, imaged with a smartphone on
+    a 3D-printed microscope adapter; target objects are Mycobacterium tuberculosis bacilli.
+  labels_stains:
+  - Ziehl-Neelsen
 data:
   formats:
   - jpeg
   size_bytes: 478042435
   n_items: 1265
   access: open
-  download_url: http://air.ug/downloads/tuberculosis-phonecamera.zip
+  download_url: https://air.ug/downloads/tuberculosis-phonecamera.zip
   download_method: http
 annotations:
   present: true
   types:
   - bounding-box
   coverage: dense
-  format: One Pascal-VOC-style XML per image with object bndbox coordinates
+  format: 'One Pascal VOC-style XML per image (tuberculosis-phonecamera/tuberculosis-phone-NNNN.xml, same stem as
+    the JPEG): one <object> per box with <label> and <bndbox> xmin/ymin/xmax/ymax in pixels (float); no <size> element.
+    Images without objects have an XML with no <object> (47 of 1265).'
   source: manual
 ml:
   tasks:
@@ -69,11 +72,76 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-13T12:50:00Z'
-notes: 'The zip holds 1265 images while the paper and project page cite 928 images with annotations (3734 bacilli); the extra
-  images are probably unannotated, which was not checked. Zip listed with peek_archive (jpg + one XML per image, folder named
-  after the set). Counts of objects and images in the description come from the project page and the 2016 paper (Annotation
-  section). Pixel size, phone model and image resolution not stated on the project page, in the zip listing or in the paper;
-  no train/test split is shipped (the paper used a random 50/50 patch split). Licence CC BY 4.0 from the project page footer;
-  a third-party mirror (Dataset Ninja) says CC0 1.0 for the combined set, the source page wins. Sibling sets on the same page:
-  plasmodium-images (own PR), and the other two phone-camera sets.'
+  last_checked: '2026-10-13T14:00:00Z'
+notes: 'The zip holds 1265 images while the paper and project page cite 928 images with annotations (3734 bacilli);
+  see the enricher line. Zip listed with peek_archive (jpg + one XML per image, folder named after the set). Counts
+  of objects and images in the description come from the project page and the 2016 paper (Annotation section). Pixel
+  size and phone model not stated on the project page, in the zip listing or in the paper; no train/test split is
+  shipped (the paper used a random 50/50 patch split). Licence CC BY 4.0 from the project page footer; a third-party
+  mirror (Dataset Ninja) says CC0 1.0 for the combined set, the source page wins. Sibling sets on the same page:
+  plasmodium-images (own PR), and the other two phone-camera sets. enricher: XML sizes in the zip listing show boxes
+  in 1218 of 1265 XMLs (47 empty, 239 B; checked on 0040), more than the 928 annotated images the paper cites.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://air.ug/downloads/tuberculosis-phonecamera.zip
+  - https://air.ug/downloads/tuberculosis-phonecamera.zip::tuberculosis-phonecamera/tuberculosis-phone-0001.jpg
+  - https://air.ug/downloads/tuberculosis-phonecamera.zip::tuberculosis-phonecamera/tuberculosis-phone-0002.jpg
+  - https://air.ug/downloads/tuberculosis-phonecamera.zip::tuberculosis-phonecamera/tuberculosis-phone-0001.xml
+  bytes_downloaded: 405859
+  size_source: file-listing
+  layout:
+    tree: "tuberculosis-phonecamera.zip   478,042,435 B\n  tuberculosis-phonecamera/\n    tuberculosis-phone-NNNN.jpg\
+      \  1265 files\n    tuberculosis-phone-NNNN.xml  1265 files (1218 with boxes, 47 without: 239 B)\n"
+    n_files: 2530
+    listing_complete: true
+  sample:
+    urls:
+    - https://air.ug/downloads/tuberculosis-phonecamera.zip::tuberculosis-phonecamera/tuberculosis-phone-0001.jpg
+    - https://air.ug/downloads/tuberculosis-phonecamera.zip::tuberculosis-phonecamera/tuberculosis-phone-0001.xml
+    size_bytes: 411304
+    description: Image 0001 and its XML (12 boxes), paired by the same stem.
+  arrays:
+  - role: raw
+    path_pattern: tuberculosis-phonecamera.zip/tuberculosis-phonecamera/tuberculosis-phone-*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1224
+    - 1632
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    lossy: true
+    chunks: null
+    value_range:
+    - 3
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: tuberculosis-phonecamera.zip/tuberculosis-phonecamera/tuberculosis-phone-*.xml
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    encoding: boxes-table
+    classes:
+    - id: TBbacillus
+      name: tuberculosis bacillus
+    alignment: same-grid
+    alignment_notes: 'tuberculosis-phonecamera/tuberculosis-phone-NNNN.xml pairs with tuberculosis-phonecamera/tuberculosis-phone-NNNN.jpg.
+      Box coordinates are pixels of the JPEG (no <size> element to cross-check). Label strings: TBbacillus in all
+      8 XMLs read (0001, 0002, 0100, 0500, 0900, 1000, 1150, 1200); 0040 is empty.'
+  notes: 'Listing: zip central directory (exact sizes), 2530 members, 1265 JPEG + 1265 XML. JPEG probe of 0001/0002:
+    1224x1632x3 uint8 RGB (yxs). Raw value_range from one sample (0001.jpg; RGB channels differ). XML read with
+    peek_archive (sample.py does not parse XML). Box/empty counts from XML member sizes: 239 B XMLs have no <object>
+    (verified on the files read), every larger one read had boxes. Host air.ug is not on the TensorSwitch fetch
+    allowlist (links otherwise usable: https, range requests). Pixel size not found; checked: JPEG header, XML,
+    project page, 2016 paper (MLR / arXiv), no README in the zip.'
