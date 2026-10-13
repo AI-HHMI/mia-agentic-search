@@ -2,10 +2,8 @@ schema_version: '1.2'
 id: idr0138-mouse-embryo-seqfish-cell-masks
 title: Integration of spatial and single-cell transcriptomic data elucidates mouse organogenesis (idr0138)
 short_name: Mouse embryo seqFISH with cell masks (confocal)
-description: 'seqFISH imaging of sagittal sections of E8.5 (8-12 somite) C57BL/6J mouse embryos: 2,912 OME-Zarr fields of
-  view (2048x2048 px, 4 channels, 6 z-slices) across the hybridisation rounds of two embryo experiments, with cell segmentation
-  masks (about 2,000 per field) stored as mask ROIs in the IDR. Segmentation used membrane stains (cadherins/beta-catenin)
-  with Ilastik Multicut.'
+description: 'seqFISH imaging of sagittal sections of E8.5 (8-12 somite) C57BL/6J mouse embryos: 2,912 OME-Zarr fields of view (2048x2048 px, 4 channels, 6 z-slices) across the hybridisation rounds of two
+  embryo experiments, with cell segmentation masks (about 2,000 per field) stored as mask ROIs in the IDR. Segmentation used membrane stains (cadherins/beta-catenin) with Ilastik Multicut.'
 landing_url: https://idr.openmicroscopy.org/webclient/?show=project-2951
 doi: 10.17867/10000198
 repository: IDR
@@ -21,29 +19,31 @@ imaging:
   modality:
   - spinning-disk
   dimensionality: 3D
-  voxel_size_nm: null
+  voxel_size_nm:
+    x: 110
+    y: 110
+    z: 4000
   channels: 4
   organism:
   - Mus musculus
-  sample: 20 um sagittal sections of E8.5 C57BL/6J mouse embryos, hydrogel-cleared; channels A647, A488, Cy3B and DAPI per
-    hybridisation round
+  sample: 20 um sagittal sections of E8.5 C57BL/6J mouse embryos, hydrogel-cleared; channels A647, A488, Cy3B and DAPI per hybridisation round
   labels_stains:
   - DAPI
   - seqFISH probes (387 genes)
 data:
   formats:
   - ome-zarr
-  size_bytes: null
+  size_bytes: 500000000000
   n_items: 2912
   access: open
-  download_url: null
-  download_method: api
+  download_url: https://ftp.ebi.ac.uk/pub/databases/IDR/idr0138-lohoff-seqfish/20210917-Globus/ngff/
+  download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
   coverage: dense
-  format: per-image cell mask ROIs in the IDR (about 2,000 per field of view in sampled images)
+  format: 'OME-Zarr labels inside each image store: labels/cells (uint32 instance ids) and labels/nuclei (uint8), at 4x lower xy resolution; also ROIs in OMERO'
   source: mixed
 ml:
   tasks:
@@ -62,17 +62,89 @@ provenance:
   - https://raw.githubusercontent.com/IDR/idr0138-lohoff-seqfish/master/experimentA/idr0138-experimentA-annotation.csv
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8763645/fullTextXML
   - https://idr.openmicroscopy.org/api/v0/m/projects/2951/datasets/
+  - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0138-lohoff-seqfish/20210917-Globus/
+  - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0138-lohoff-seqfish/20210917-Globus/ngff/TimEmbryos-102219/HybCycle_0/MMStack_Pos0.ome.zarr/.zattrs
+  - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0138-lohoff-seqfish/20210917-Globus/ngff/TimEmbryos-102219/HybCycle_0/MMStack_Pos0.ome.zarr/labels/.zattrs
   confidence: 0.7
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-13T00:38:57Z'
-notes: Image count (2,912) is the sum over the 64 IDR datasets (one per hybridisation round) of the study; the same fields
-  of view recur across rounds, and mask ROIs were seen on sampled images of the first, middle and last datasets (e.g. 2320
-  and 1967 masks per image), not on every image. Masks come from semi-automatic segmentation (membrane stains aligned to the
-  first round with DAPI, Ilastik probability maps, Multicut; 2D labels per z-slice) per the paper Methods, hence source mixed.
-  Study file gives the total as about 0.5 TB (not an exact byte count), so size_bytes left null. Pixel size, z-step and objective
-  of the seqFISH imaging are not stated in the study file or the paper Methods read (the 10x/6.74 um z-step in the paper refers
-  to separate Zeiss 880 tile scans); the imaging method "spinning disk confocal" is from the study file. The paper says raw
-  image data are available on request, but the IDR deposit holds the OME-Zarr images openly.
+  annotations_verified: true
+  last_checked: '2026-10-13T02:05:00Z'
+notes: 'Image count (2,912) is the sum over the 64 IDR datasets (one per hybridisation round) of the study; the same fields of view recur across rounds. Masks come from semi-automatic segmentation (membrane
+  stains aligned to the first round with DAPI, Ilastik probability maps, Multicut; 2D labels per z-slice) per the paper Methods, hence source mixed. Study file gives the total as about 0.5 TB (not an exact
+  byte count). Objective of the seqFISH imaging is not stated in the study file or the paper Methods read (the 10x/6.74 um z-step in the paper refers to separate Zeiss 880 tile scans); the imaging method
+  "spinning disk confocal" is from the study file. The paper says raw image data are available on request, but the IDR deposit holds the OME-Zarr images openly. enricher: voxel size 110x110x4000 nm from
+  the OME-Zarr scale (was null); size_bytes 5e11 from the study file "Total Tb 0.5" (approximate).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "ftp.ebi.ac.uk/pub/databases/IDR/idr0138-lohoff-seqfish/20210917-Globus/\n  barcoding_info/  fov_info/  test_submission/\n  ngff/TimEmbryos-102219/  HybCycle_0/ ... HybCycle_29/ (30 rounds)\n\
+      \         MMStack_Pos<N>.ome.zarr/  0/ 1/ 2/ 3/ 4/ (5 levels)  labels/cells/  labels/nuclei/\n  ngff/TimEmbryos-120919/  (same layout)\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0138-lohoff-seqfish/20210917-Globus/ngff/TimEmbryos-102219/HybCycle_0/MMStack_Pos0.ome.zarr
+    size_bytes: null
+    description: One field of view (4 channels x 6 z) with its cells and nuclei label images, in one OME-Zarr store
+  arrays:
+  - role: raw
+    path_pattern: ngff/*/HybCycle_*/MMStack_Pos*.ome.zarr
+    format: ome-zarr
+    axes: czyx
+    shape:
+    - 4
+    - 6
+    - 2048
+    - 2048
+    shape_varies: null
+    dtype: uint16
+    compression: blosc
+    value_range:
+    - 111
+    - 6059
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Level 0 scale 4.0 / 0.11 / 0.11 um (zyx), 5 levels, chunks 1x1x512x512, zarr v2.
+  - role: label
+    path_pattern: ngff/*/HybCycle_*/MMStack_Pos*.ome.zarr/labels/cells
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 6
+    - 512
+    - 512
+    shape_varies: null
+    dtype: uint32
+    compression: blosc
+    value_range:
+    - 1
+    - 461
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: scaled
+    alignment_notes: 'Label scale 4.0 / 0.44 / 0.44 um: same grid as raw level 2 (4x coarser in xy than level 0), no translation. No 0 in the sampled label (every pixel carries an id).'
+  - role: label
+    path_pattern: ngff/*/HybCycle_*/MMStack_Pos*.ome.zarr/labels/nuclei
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 6
+    - 512
+    - 512
+    shape_varies: null
+    dtype: uint8
+    compression: blosc
+    value_range: null
+    normalization: unknown
+    encoding: unknown
+    classes: null
+    alignment: scaled
+    alignment_notes: Same 0.44 um label grid as cells; not sampled.
+  notes: Browsed the EBI FTP HTTP index (top folders, ngff/TimEmbryos-102219 rounds, one store). Probed MMStack_Pos0.ome.zarr of HybCycle_0 (multiscales and labels metadata). Sampled raw level 2 (4x6x512x512,
+    12.6 MB) and labels/cells level 0 (6x512x512 uint32, 6.3 MB); ranges from that one field. labels/.zattrs exists for HybCycle_1 and is 404 for HybCycle_63 (no such round in this embryo folder, which
+    has 30), so labels per round were not checked beyond 0 and 1. Voxel size taken from the OME-Zarr scale (micrometer units); no other source states it. Size is the study file statement, not a listing.
+    The store root is the sample URL (chunked store; no --download-check).
