@@ -1,0 +1,152 @@
+schema_version: '1.2'
+id: zenodo-20114049-pbc-extended-yolo-9-class
+title: PBC labeling Extended - peripheral blood cell YOLO detection with erythrocytes
+short_name: Blood cell detection, 9 classes (smear)
+description: Enhanced version of the public peripheral blood cell dataset 'PBC labeling'. The original eight target
+  classes (basophils, eosinophils, erythroblasts, immature granulocytes, monocytes, platelets, lymphocytes, neutrophils)
+  were extended with manually annotated erythrocytes (LabelImg) and cleaned of low-quality or mislabelled samples.
+  1,910 microscopic images in YOLO format, split into train (1,372), validation (356) and test (182). Built for
+  training cell detection models used in optical-tweezers cell manipulation path planning.
+landing_url: https://zenodo.org/records/20114049
+doi: 10.5281/zenodo.20114049
+repository: Zenodo
+accession: '20114049'
+authors:
+- Jiahao Wu
+publications:
+- title: A dataset of microscopic peripheral blood cell images for development of automatic recognition systems
+  doi: 10.1016/j.dib.2020.105474
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC7182702/
+date_published: '2026-05-10'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: Peripheral blood smears (May Grunwald-Giemsa, CellaVision DM96, Hospital Clinic of Barcelona), from the
+    public PBC dataset via a Roboflow re-export
+  labels_stains:
+  - May-Grunwald-Giemsa
+data:
+  formats:
+  - jpeg
+  size_bytes: 60705965
+  n_items: 1910
+  access: open
+  download_url: https://zenodo.org/api/records/20114049/files/pbc_improve.zip/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  coverage: dense
+  format: YOLO txt per image (class_id x_center y_center width height, normalised) in a Roboflow-style images/{train,val,test}
+    and labels/{train,val,test} layout; data.yaml and classes.txt list 9 classes
+  source: manual
+ml:
+  tasks:
+  - detection
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-13T09:00:00Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/20114049
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7182702/fullTextXML
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-13T10:20:00Z'
+notes: 'Counts come from the Zenodo description and the zip listing (3,830 members: images and labels under train/val/test,
+  data.yaml, classes.txt, two .cache files, a nested Roboflow export zip); classes.txt lists the 9 classes. Differs
+  from TXL-PBC (figshare-27073186, 1,260 images from four datasets) and from the PBC classification records: this
+  is PBC-only with a 9th erythrocyte box class. Annotation of erythrocytes was manual (LabelImg). enricher: organism,
+  stain and microscope from the upstream PBC paper (Acevedo et al. 2020: CellaVision DM96, May Grunwald-Giemsa,
+  Hospital Clinic of Barcelona); channels 3 (RGB sample); images are 224x224 (resized from 360x363).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  1 file, 60,705,965 bytes\n  pbc_improve.zip  (3,830 members)\n    classes.txt, data.yaml, notes .txt\n\
+      \    PBC labelling.v1i.yolov8.zip           54.6 MB (nested original Roboflow export, 8 classes)\n    images/{train,val,test}/<cls>_<n>_jpg.rf.<hash>.jpg\
+      \   1,372 / 356 / 182\n    labels/{train,val,test}/<same stem>.txt               1,372 / 356 / 182 (+ classes.txt\
+      \ each)\n    labels/train.cache, labels/val.cache"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/20114049/files/pbc_improve.zip::images/train/BA_101611_jpg.rf.d0744420197a202af316cd6720bd3904.jpg
+    - https://zenodo.org/records/20114049/files/pbc_improve.zip::labels/train/BA_101611_jpg.rf.d0744420197a202af316cd6720bd3904.txt
+    size_bytes: 7886
+    description: one training image and its YOLO label file
+  arrays:
+  - role: raw
+    path_pattern: images/*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 224
+    - 224
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB May Grunwald-Giemsa smear crops; 224x224 in the Roboflow export, the upstream PBC images
+      are 360x363, so these are resized.
+  - role: label
+    path_pattern: labels/*/*_jpg.rf.*.txt
+    format: other
+    axes: null
+    shape:
+    - 16
+    - 5
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    normalization: unknown
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: Basophills
+    - id: 1
+      name: Eosinophills
+    - id: 2
+      name: Erythroblast
+    - id: 3
+      name: Ig
+    - id: 4
+      name: Monocytes
+    - id: 5
+      name: Platelets
+    - id: 6
+      name: lymphocytes
+    - id: 7
+      name: neutrophils
+    - id: 8
+      name: erythrocyte
+    alignment: same-grid
+    alignment_notes: 'YOLO txt with the same stem as the image (images/<split>/X.jpg <-> labels/<split>/X.txt):
+      class_id x_center y_center width height, normalised to [0,1] of the image size.'
+  notes: 'Listing: tools/listing.py --expand-zips on the Zenodo record (complete: 1 file, 60,705,965 bytes, 3,830
+    members). Sampled images/train/BA_101611_jpg.rf.d0744420197a202af316cd6720bd3904.jpg (7,136 B): 224x224x3 uint8
+    RGB, range 0-255 (one sample). Read labels/train/BA_101611_jpg.rf.d0744420197a202af316cd6720bd3904.txt: 16 boxes
+    (2 of class 0, 14 of class 8 erythrocyte). data.yaml (8 classes, Roboflow workspace home-uwdia/pbc-labelling
+    v1, license CC BY 4.0) and classes.txt (9 classes, adds erythrocyte) read with peek_archive. The nested "PBC
+    labelling.v1i.yolov8.zip" (54.6 MB) is the original 8-class export and was not expanded. voxel size not found;
+    checked: JPEG header, Zenodo description, data.yaml, upstream PBC paper (Acevedo et al. 2020, no pixel size;
+    images 360x363, here resized to 224x224).'
