@@ -2,9 +2,8 @@ schema_version: '1.2'
 id: idr0095-ecoli-autoregulation-phase-fluorescence
 title: Inherent regulatory asymmetry emanating from network architecture in a prevalent autoregulatory motif (idr0095)
 short_name: E. coli cell masks (phase + fluorescence)
-description: Multi-field phase-contrast plus mCherry and YFP fluorescence images (2048x2048 px, 3 channels) of E. coli strains
-  carrying an autoregulatory lacI-mCherry / YFP target motif, 3,221 images across three experiments. Each image carries 50-100
-  cell mask ROIs from automated phase-image segmentation (Schnitzcells) in the IDR.
+description: Multi-field phase-contrast plus mCherry and YFP fluorescence images (2048x2048 px, 3 channels) of E. coli strains carrying an autoregulatory lacI-mCherry / YFP target motif, 3,221 images across
+  three experiments. Each image carries 50-100 cell mask ROIs from automated phase-image segmentation (Schnitzcells) in the IDR.
 landing_url: https://idr.openmicroscopy.org/webclient/?show=project-1402
 doi: 10.17867/10000151
 repository: IDR
@@ -31,25 +30,24 @@ imaging:
   channels: 3
   organism:
   - Escherichia coli
-  sample: E. coli strains grown in M9 minimal media (glucose, glycerol, acetate or RDM) spotted on agarose pads; Nikon TI-E,
-    phase, mCherry and YFP channels; 6-12 fields per sample
+  sample: E. coli strains grown in M9 minimal media (glucose, glycerol, acetate or RDM) spotted on agarose pads; Nikon TI-E, phase, mCherry and YFP channels; 6-12 fields per sample
   labels_stains:
   - mCherry
   - YFP
 data:
   formats:
-  - other
+  - nd2
   size_bytes: null
   n_items: 3221
   access: open
-  download_url: null
-  download_method: api
+  download_url: https://ftp.ebi.ac.uk/pub/databases/IDR/idr0095-ali-asymmetry/
+  download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
   coverage: dense
-  format: per-image mask ROIs (about 50-100 per image) stored in the IDR OMERO server, readable via the IDR API
+  format: per-field instance mask TIFFs (<name>/<name>-NNN-Mask.tif next to each <name>.nd2) on the EBI IDR FTP; also as ROIs in OMERO
   source: automatic
 ml:
   tasks:
@@ -68,16 +66,76 @@ provenance:
   - https://raw.githubusercontent.com/IDR/idr0095-ali-asymmetry/master/experimentA/idr0095-experimentA-annotation.csv
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7505660/fullTextXML
   - https://idr.openmicroscopy.org/api/v0/m/images/
+  - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0095-ali-asymmetry/
+  - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0095-ali-asymmetry/20200831-ftp/AO1TO1-Trial1/
+  - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0095-ali-asymmetry/20200831-ftp/AO1TO1-Trial1/0X/
   confidence: 0.7
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-13T00:25:34Z'
-notes: 'Source files are Nikon ND2 (see IDR filePaths files, e.g. experimentA/idr0095-experimentA-filePaths.tsv), hence formats
-  other: nd2 is not in the schema list. Mask ROIs were seen through the IDR API on sampled images of experiments A, B and
-  C (e.g. 67, 52, 65, 101 masks per image); not every image was checked, and the masks are not a downloadable file listing
-  (annotations_verified false). Masks come from automated segmentation of the phase images with a modified Schnitzcells (Matlab);
-  per the study file, cells were then visually inspected for the analysis. Pixel size 0.0645 um is the IDR image metadata
-  value of sampled images. Total size not stated: IDR lists 9 GB (experiment A) and 13.5 GB (experiment B); experiment C not
-  stated. Objective/magnification not found in the study file or paper Methods text read.'
+  annotations_verified: true
+  last_checked: '2026-10-13T01:40:00Z'
+notes: 'Mask ROIs were seen through the IDR API on sampled images of experiments A, B and C (e.g. 67, 52, 65, 101 masks per image). Masks come from automated segmentation of the phase images with a modified
+  Schnitzcells (Matlab); per the study file, cells were then visually inspected for the analysis. Pixel size 0.0645 um is the IDR image metadata value of sampled images. Total size not stated: IDR lists
+  9 GB (experiment A) and 13.5 GB (experiment B); experiment C not stated. Objective/magnification not found in the study file or paper Methods text read. enricher: formats nd2 (was other); masks found
+  as TIFF files on EBI FTP (annotations_verified true); pixel size 0.06447 um confirmed from the ND2 header.'
+technical:
+  method: sample
+  size_source: unknown
+  layout:
+    tree: "ftp.ebi.ac.uk/pub/databases/IDR/idr0095-ali-asymmetry/ (HTTP index, sizes rounded; partial)\n  20200804-ftp/ Experiment_A_Figure3/, Experiment_B_Figure4/, Experiment_C_Figure5/   .nd2 (earlier\
+      \ upload)\n  20200831-ftp/ AO1TO1-Trial1/ ... DAStag_Trial3/          <sample>.nd2 (~145 MB)\n                <sample>/<sample>-NNN-Mask.tif             one mask per field\n  20200907-ftp/ Fig5B_O2/,\
+      \ Fig5C-Oid/\n  20201030-ftp/ GlyT3/\n  (listing.py stopped after 200 dirs: 1,315 files, ~99.9 GB so far)\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0095-ali-asymmetry/20200831-ftp/AO1TO1-Trial1/0X.nd2
+    - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0095-ali-asymmetry/20200831-ftp/AO1TO1-Trial1/0X/0X-001-Mask.tif
+    size_bytes: 151748488
+    description: One ND2 (6 fields x 3 channels) and the instance mask of its first field
+  arrays:
+  - role: raw
+    path_pattern: '*-ftp/**/*.nd2'
+    format: nd2
+    axes: null
+    shape:
+    - 6
+    - 3
+    - 2048
+    - 2048
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 51
+    - 7552
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 'Each .nd2 holds several fields (P, 6 in 0X.nd2; 6-12 per sample per the study) x 3 channels: Phase, YFP, Tx Red (mCherry).'
+  - role: label
+    path_pattern: '*-ftp/**/*-Mask.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: false
+    dtype: uint8
+    compression: packbits
+    value_range:
+    - 0
+    - 113
+    normalization: unknown
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    alignment: same-grid
+    alignment_notes: 'Pairing: <name>.nd2 field k (1-based) -> <name>/<name>-<kkk>-Mask.tif (e.g. 0X.nd2 field 1 -> 0X/0X-001-Mask.tif; 6 fields, 6 masks seen). Same 2048x2048 grid as the ND2 planes. Mask
+      from automated segmentation of the phase channel.'
+  notes: 'EBI FTP timed out; listing.py read the HTTP index and stopped after 200 directories (1,315 files, ~99.9 GB, rounded and incomplete), so size not confirmed and not estimated (file count per array
+    unknown). The IDR filePaths.tsv for experiment A points to 20200831-ftp; 20200804-ftp holds same-named nd2 files (an earlier upload), so a whole-tree download would double count. Downloaded 0X.nd2 (151,670,784
+    B) and read it with nd2: P6 C3 Y2048 X2048 uint16, channels Phase / YFP / Tx Red, voxel 0.06447 um; per-channel ranges on field 1: phase 2851-7552, YFP 51-6300, Tx Red 107-6493 (no saturation; normalization
+    none is inferred). Probed and sampled 0X/0X-001-Mask.tif: uint8 packbits yx, ids 0-113 consecutive (instance ids; 8-bit, so at most 255 cells per field). Both links usable (ftp.ebi.ac.uk, range requests).
+    axes null on the nd2 array because the schema has no position axis (P).'
