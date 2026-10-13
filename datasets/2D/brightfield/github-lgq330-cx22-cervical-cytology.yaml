@@ -33,10 +33,11 @@ imaging:
 data:
   formats:
   - png
+  - hdf5
   size_bytes: null
   n_items: 1320
   access: open
-  download_url: null
+  download_url: https://github.com/LGQ330/Cx22
   download_method: http
 annotations:
   present: true
@@ -44,7 +45,7 @@ annotations:
   - instance-segmentation
   - bounding-box
   coverage: dense
-  format: MATLAB .mat files (cyto/nuc clump labels, instance labels and bounding-box labels)
+  format: 'MATLAB v7.3 (HDF5) .mat files: per image a cell array of 512x512 logical instance masks (cyto_ins, nuc_ins), clump masks (cyto_clumps, nuc_clumps) and bounding boxes (*_ins_bbox)'
   source: manual
 ml:
   tasks:
@@ -62,14 +63,106 @@ provenance:
   - https://github.com/LGQ330/Cx22
   - https://github.com/nachifur/LLPC
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1016%2Fj.compbiomed.2022.106194%22&format=json&resultType=core&pageSize=3
-  confidence: 0.55
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9133536/fullTextXML
+  confidence: 0.6
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-13T15:01:27Z'
-notes: 'Terms (GitHub README): non-commercial research and education use only, no formal license named, so license.spdx is custom. Labels are in Cx22-Pair.zip, Cx22-Multi-Train.zip and Cx22-Multi-Test.zip
-  in the GitHub repo; the source images (png.zip) come from the separate CCEDD dataset (github.com/nachifur/LLPC, SharePoint link, USTC mirror) which also forbids redistribution. Zip contents could not
-  be listed (GitHub returned 403 to range requests), so file names are as stated in the README, not verified. Image size, magnification, microscope, stain and pixel size are not stated in the README, the
-  LLPC page or the paper abstract; the paper full text is not open access (Europe PMC) and was not read. Publication date not found. Number of images 1,320 is the generated crops, source CCEDD image count
-  not stated. Human organism inferred from cervical cytology.'
+  annotations_verified: true
+  last_checked: '2026-10-13T16:20:00Z'
+notes: 'Terms (GitHub README): non-commercial research and education use only, no formal license named, so license.spdx is custom. Labels are in Cx22-Pair.zip (820 images), Cx22-Multi-Train.zip (400) and
+  Cx22-Multi-Test.zip (100) in the GitHub repo. The images are not in the download: they are generated with the MATLAB script ImageDataGenerator.m (ROI crops padded to 512x512 RGB) from the CCEDD png.zip
+  (github.com/nachifur/LLPC, SharePoint link, USTC mirror). CCEDD paper (PMC9133536): Nikon Eclipse Ci slide scanner, 100x and 400x optical magnification, 2048x1536 images; no pixel size stated. enricher:
+  label zips listed and inspected; formats png, hdf5 (was png); annotations verified. Publication date not found. Human organism inferred from cervical cytology.'
+technical:
+  method: sample
+  size_source: unknown
+  layout:
+    tree: "Cx22-Pair.zip         3.7 MB\n  Cx22-Pair/CellNum.mat, OverlapRatio.mat\n  Cx22-Pair/cyto/{cyto_clumps,cyto_ins,cyto_ins_bbox}.mat   13.9 MB\n  Cx22-Pair/nuc/{nuc_clumps,nuc_ins,nuc_ins_bbox}.mat\
+      \       15.6 MB\n  Cx22-Pair/generator/ImageDataGenerator.m, ImageDataNames.mat, ROIs_W_H.mat, ROIs_x_y.mat\nCx22-Multi-Train.zip  6.4 MB   (same structure; cyto 36.4 MB, nuc 40.9 MB uncompressed)\n\
+      Cx22-Multi-Test.zip   1.8 MB   (same structure; cyto 10.4 MB, nuc 11.7 MB uncompressed)\nnot listed: CCEDD png.zip with the source images (SharePoint / USTC share, not directly downloadable)\n"
+    n_files: 3
+    listing_complete: false
+  sample:
+    urls:
+    - https://raw.githubusercontent.com/LGQ330/Cx22/main/Cx22-Pair.zip::Cx22-Pair/cyto/cyto_ins.mat
+    - https://raw.githubusercontent.com/LGQ330/Cx22/main/Cx22-Pair.zip::Cx22-Pair/nuc/nuc_ins.mat
+    size_bytes: 16318388
+    description: Cytoplasm and nucleus instance masks of the 820 Cx22-Pair images; the matching images must be generated from CCEDD with ImageDataGenerator.m
+  arrays:
+  - role: raw
+    path_pattern: CCEDD png.zip (external, not listed)
+    format: png
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: png
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Source images are not in the Cx22 download. ImageDataGenerator.m crops ROI (ROIs_x_y, ROIs_W_H) from each CCEDD png, downsizes it if a side is >= 512, and pastes it on a white 512x512x3
+      uint8 canvas; the result is saved as ImageDataSet.mat.
+  - role: label
+    path_pattern: Cx22-*.zip::Cx22-*/cyto/cyto_ins.mat (cyto_ins)
+    format: hdf5
+    axes: null
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: gzip
+    value_range:
+    - 0
+    - 1
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: 1
+      name: cytoplasm instance
+    alignment: cropped
+    alignment_notes: MATLAB cell array (1 x n_images); each entry a cell of one 512x512 logical mask per cytoplasm instance (HDF5 object references). Image i of the generated ImageDataSet.mat (order of
+      ImageDataNames.mat) matches entry i.
+  - role: label
+    path_pattern: Cx22-*.zip::Cx22-*/nuc/nuc_ins.mat (nuc_ins)
+    format: hdf5
+    axes: null
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: gzip
+    value_range:
+    - 0
+    - 1
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: 1
+      name: nucleus instance
+    alignment: cropped
+    alignment_notes: Same structure as cyto_ins, one logical mask per nucleus instance.
+  - role: label
+    path_pattern: Cx22-*.zip::Cx22-*/cyto/cyto_ins_bbox.mat (cyto_ins_bbox)
+    format: hdf5
+    axes: null
+    shape:
+    - 4
+    - 2
+    shape_varies: true
+    dtype: int64
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: boxes-table
+    classes: null
+    alignment: cropped
+    alignment_notes: Per image an int64 matrix of 4 box coordinates per cytoplasm instance (shape 4 x n_instances in HDF5); nuc_ins_bbox.mat is the same for nuclei. Coordinate order not documented.
+  notes: 'Listed the 3 label zips on raw.githubusercontent.com (36 members, 11,848,163 bytes compressed). The .mat files are MATLAB 7.3 (HDF5); read with h5py from the downloaded zips (11.8 MB): Pair 820
+    images / 1640 cells (2 per image), Multi-Train 400 / 4537 (4-53), Multi-Test 100 / 1296 (4-39); 1320 images, 7473 cytoplasm + 7473 nucleus instances = 14,946 as the paper states. Instance masks are
+    512x512 logical, gzip-chunked; value range from the Pair sample. Clump masks (cyto_clumps, nuc_clumps) are one 512x512 logical mask per image. Images are not distributed: they must be generated with
+    MATLAB from CCEDD png.zip (SharePoint / USTC share, no direct link), so the dataset size is unknown and the record cannot be converted automatically. Voxel size not found; checked: Cx22 README, LLPC
+    README, CCEDD paper full text (PMC9133536, Methods: 100x and 400x magnification, no pixel size), Cx22 paper (abstract only, not open access). HDF5 axes left null: MATLAB stores arrays column-major and
+    nothing states the order.'
