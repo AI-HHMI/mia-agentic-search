@@ -2,8 +2,8 @@ schema_version: '1.2'
 id: mendeley-k7nvtgn2x6-aidpath-glomeruli-pas
 title: Data for glomeruli characterization in histopathological images
 short_name: Kidney glomeruli normal vs sclerotic (PAS)
-description: 31 PAS-stained human kidney biopsy whole slide images (Leica Aperio SVS, 20x) from the AIDPATH project, plus
-  2,340 PNG crops of single glomeruli labelled normal (1,170) or sclerotic (1,170) for classification.
+description: 31 PAS-stained human kidney biopsy whole slide images (Leica Aperio SVS, 20x) from the AIDPATH
+  project, plus 2,340 PNG crops of single glomeruli labelled normal (1,170) or sclerotic (1,170) for classification.
 landing_url: https://data.mendeley.com/datasets/k7nvtgn2x6/3
 doi: 10.17632/k7nvtgn2x6.3
 repository: other
@@ -29,7 +29,8 @@ imaging:
   channels: null
   organism:
   - Homo sapiens
-  sample: human kidney needle-biopsy sections (4 um, paraffin), PAS stained, scanned at 20x with a Leica Aperio ScanScope CS
+  sample: human kidney needle-biopsy sections (4 um, paraffin), PAS stained, scanned at 20x with a Leica
+    Aperio ScanScope CS
   labels_stains:
   - PAS
 data:
@@ -39,14 +40,15 @@ data:
   size_bytes: 2137416596
   n_items: 2371
   access: open
-  download_url: null
+  download_url: https://data.mendeley.com/datasets/k7nvtgn2x6/3
   download_method: http
 annotations:
   present: true
   types:
   - classification
   coverage: unknown
-  format: DATASET_B_DIB.zip holds PNG crops of single glomeruli sorted into normal and sclerotic classes
+  format: 'DATASET_B_DIB.zip: 227x227 PNG crops of single glomeruli in class folders normal/ (1,170) and
+    sclerosed/ (1,170). DATASET_A_DIB.zip holds only the 31 SVS slides (no masks).'
   source: manual
 ml:
   tasks:
@@ -64,17 +66,73 @@ provenance:
   - https://data.mendeley.com/datasets/k7nvtgn2x6/3
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7058889/fullTextXML
   - https://data.mendeley.com/public-api/datasets/k7nvtgn2x6/files?folder_id=root&version=3
-  confidence: 0.7
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-13T10:45:00Z'
-notes: 'Mendeley lists two zips (DATASET_A_DIB.zip 1.93 GB: 31 raw WSIs in SVS; DATASET_B_DIB.zip 207 MB: 2,340 PNG
-  glomerulus crops, 1,170 normal and 1,170 sclerotic) and states licence CC BY 4.0. Zip contents could not be listed
-  with peek_archive (Mendeley does not report a file size), so counts and formats come from the dataset page and the Data
-  in Brief paper. The paper says glomeruli contours were annotated by pathologists and gray masks (non-glomerular / normal
-  / sclerosed) were created for 1,055 2000x2000 patches, and a figure shows masks for DATASET_A, but the dataset page
-  describes DATASET_A as raw SVS only, so whether masks are actually shipped is unverified (annotation type therefore
-  limited to classification); the crops in B are described as augmented (rotations, flips, colour transfer). Pixel size is
-  not stated (20x only). Data in Brief paper full text read via Europe PMC.'
+  annotations_verified: true
+  last_checked: '2026-10-13T11:22:50Z'
+notes: 'Mendeley lists two zips (DATASET_A_DIB.zip 1.93 GB: 31 raw WSIs in SVS; DATASET_B_DIB.zip 207
+  MB: 2,340 PNG glomerulus crops, 1,170 normal and 1,170 sclerotic) and states licence CC BY 4.0. Zip
+  contents could not be listed with peek_archive (Mendeley does not report a file size), so counts and
+  formats come from the dataset page and the Data in Brief paper. The paper says glomeruli contours were
+  annotated by pathologists and gray masks (non-glomerular / normal / sclerosed) were created for 1,055
+  2000x2000 patches, and a figure shows masks for DATASET_A, but the dataset page describes DATASET_A
+  as raw SVS only, and the enricher''s zip listing confirms A holds only 31 .svs files, no masks (annotation
+  type therefore limited to classification); the crops in B are described as augmented (rotations, flips,
+  colour transfer). Pixel size is not stated (20x only). Data in Brief paper full text read via Europe
+  PMC.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'Mendeley Data k7nvtgn2x6 v3: 2 zips, 2,137,416,596 B
+
+      DATASET_A_DIB.zip (1,930,404,480 B): 31 *.svs (VUHSK_*, SESCAM_*, SAS_*; 16.7-187.5 MB each), deflate64
+
+      DATASET_B_DIB.zip (207,012,116 B): normal/ 1170 png, sclerosed/ 1170 png'
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - s3://prod-dcd-datasets-public-files-eu-west-1/230c09d5-608f-45d8-a545-f04d17b4d13d::normal/LIT_NOR_VUHSK_127_PAS_VUHSK_20_Aperio.png
+    - s3://prod-dcd-datasets-public-files-eu-west-1/230c09d5-608f-45d8-a545-f04d17b4d13d::sclerosed/LIT_NOR_VUHSK_135_PAS_VUHSK_20_Aperio_16_0_2.png
+    size_bytes: 171737
+    description: One normal and one sclerosed glomerulus crop (labels = folder).
+  arrays:
+  - role: raw
+    path_pattern: '*/*.png'
+    format: png
+    axes: yxs
+    shape:
+    - 227
+    - 227
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: DATASET_B crops; class = parent folder (normal / sclerosed). Augmented copies (suffixes
+      _fl, _flv, _90) per the paper.
+  - role: raw
+    path_pattern: '*.svs'
+    format: svs
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: DATASET_A slides, 21651x10498 to 49799x32359 px at 20x (paper); unlabelled. Members
+      use deflate64, so not readable by range.
+  notes: 'Complete listing (Mendeley public API + both zip directories via the S3 objects the file_downloaded
+    links redirect to). Samples (2 crops by range): 227x227x3 uint8, 0..255 and 40..255. SVS header not
+    read (zip method 9, deflate64). The mendeley file_downloaded URLs answer 403 to HEAD; the s3:// form
+    of the redirect targets is usable. Voxel size not found; checked: PNG headers, Mendeley page/API,
+    paper full text (PMC7058889: 20x, WSI sizes in px, no um/pixel); SVS MPP not readable remotely.'
