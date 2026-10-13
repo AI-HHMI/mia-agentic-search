@@ -1,0 +1,166 @@
+schema_version: '1.2'
+id: github-ari-dasci-metaldam-am-steel-sem
+title: 'MetalDAM: Metallography dataset from additive manufacturing (SEM micrographs of steel with 5-class segmentation
+  masks)'
+short_name: Additive-manufactured steel microstructure (SEM)
+description: 42 grayscale SEM micrographs of additively manufactured steel (ArcelorMittal / DaSCI) with pixel-wise
+  semantic masks for five classes (matrix, austenite, martensite/austenite, precipitate, defect), plus 164 unlabeled
+  micrographs of the same materials. Released as GitHub release assets with train/val/test lists.
+landing_url: https://github.com/ari-dasci/OD-MetalDAM
+doi: null
+repository: GitHub
+accession: null
+authors:
+- ArcelorMittal
+- DaSCI Andalusian Research Institute
+publications:
+- title: 'A tutorial on the segmentation of metallographic images: Taxonomy, new MetalDAM dataset, deep learning-based
+    ensemble model, experimental analysis and challenges'
+  doi: 10.1016/j.inffus.2021.09.018
+  url: https://doi.org/10.1016/j.inffus.2021.09.018
+date_published: null
+imaging:
+  modality:
+  - other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: Additively manufactured steel microstructures (ArcelorMittal), SEM at 5,000x, 10,000x and 15,000x
+  labels_stains: []
+data:
+  formats:
+  - jpeg
+  - png
+  size_bytes: 129325056
+  n_items: 42
+  access: open
+  download_url: https://github.com/ari-dasci/OD-MetalDAM/releases/download/1.0/MetalDAM_labeled.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: PNG masks, pixel value = class (0 matrix, 1 austenite, 2 martensite/austenite, 3 precipitate, 4 defect),
+    plus colour-coded PNG versions; train/val/test lists in .txt files
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: MIT
+  url: https://huggingface.co/datasets/Voxel51/OD_MetalDAM
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-13T23:16:41Z'
+  evidence_urls:
+  - https://github.com/ari-dasci/OD-MetalDAM
+  - https://github.com/ari-dasci/OD-MetalDAM/releases
+  - https://huggingface.co/datasets/Voxel51/OD_MetalDAM
+  - https://raw.githubusercontent.com/ari-dasci/OD-MetalDAM/main/README.md
+  - https://huggingface.co/datasets/Voxel51/OD_MetalDAM/resolve/main/samples.json
+  - https://api.crossref.org/works/10.1016/j.inffus.2021.09.018
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-13T23:55:00Z'
+notes: 'Source GitHub repo and release page state no license; MIT is stated only on the Voxel51 Hugging Face mirror
+  card (code Apache-2.0), so the license is third-party-reported. enricher: dataset paper Luengo et al., Information
+  Fusion 2022 (Crossref; full text not reachable). Pixel size not stated on README, release or HF card (HF metadata
+  has a per-image scale bar in um and magnification, not read per image). Modality is SEM of steel, not in the enum,
+  so other; not biological. MetalDAM_labeled.zip (39.3 MB, listed with peek_archive): 42 JPEG images, 42 PNG masks,
+  42 coloured PNG masks, train/val/test .txt lists. Separate release assets: unlabeled images zip (164 images) and
+  a metadata .sql. enricher: per-image magnification 5000x (7), 10000x (31), 15000x (4) and scale-bar length from
+  HF samples.json; no single pixel size, so voxel_size_nm stays null.'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "MetalDAM_labeled.zip  (GitHub release 1.0, 39.3 MB, 129 members)\n  MetalDAM/\n    train.txt, val.txt,\
+      \ test.txt     split lists (file names)\n    images/micrograph<N>.jpg         42 SEM micrographs, 36x 768x1024,\
+      \ 6x 960x1280 (with info band)\n    labels/micrograph<N>.png         42 class-index masks, 703x1024 / 895x1280\n\
+      \    coloured_labels/micrograph<N>.png  42 RGB colour-coded masks\n(unlabeled 164-image zip and metadata .sql\
+      \ are separate release assets, not listed)"
+    n_files: 129
+    listing_complete: false
+  sample:
+    urls:
+    - https://github.com/ari-dasci/OD-MetalDAM/releases/download/1.0/MetalDAM_labeled.zip::MetalDAM/images/micrograph0.jpg
+    - https://github.com/ari-dasci/OD-MetalDAM/releases/download/1.0/MetalDAM_labeled.zip::MetalDAM/labels/micrograph0.png
+    size_bytes: 546945
+    description: 'micrograph0: one 768x1024 SEM JPEG and its 703x1024 class-index mask.'
+  arrays:
+  - role: raw
+    path_pattern: MetalDAM/images/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 768
+    - 1024
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Greyscale SEM per README, stored as 3-sample RGB JPEG (samples not bit-identical, JPEG chroma).
+      36 images are 768x1024 and 6 are 960x1280; both include the instrument information band at the bottom.
+  - role: label
+    path_pattern: MetalDAM/labels/*.png
+    format: png
+    axes: yx
+    shape:
+    - 703
+    - 1024
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 4
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: matrix
+    - id: 1
+      name: austenite
+    - id: 2
+      name: martensite/austenite
+    - id: 3
+      name: precipitate
+    - id: 4
+      name: defect
+    alignment: cropped
+    alignment_notes: 'Pairs by file stem (images/micrographN.jpg <-> labels/micrographN.png). README: resolutions
+      1280x895 and 1024x703 "after cropping the information band at the bottom", so the mask covers the top 703
+      (or 895) rows of the image; crop the raw to the mask height. Most precipitates were not annotated (README).'
+  - role: other
+    path_pattern: MetalDAM/coloured_labels/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 703
+    - 1024
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    alignment: cropped
+    alignment_notes: RGB colour-coded visualisation of the same masks; same grid as labels/.
+  notes: 'size estimated (uncompressed): raw 42 x 768x1024x3 uint8 + label 42 x 703x1024 uint8 = 129,325,056 B (129.3
+    MB); shapes vary, so approximate. The labeled zip itself is 39,257,097 B (file listing); the separate unlabeled-images
+    zip and .sql asset could not be listed (GitHub release page not reachable from this run), so the size is not
+    claimed as confirmed. value_range from micrograph0/1 only. Voxel size not found as one value; checked: JPEG/PNG
+    headers (no calibration), README, GitHub release, HF Voxel51 card and samples.json (magnification + micron_bar
+    per image, no px size), paper 10.1016/j.inffus.2021.09.018 (full text not reachable: Elsevier 403, UGR repository
+    timeout). Images mix 5000x/10000x/15000x, so pixel size differs per image anyway. The HF mirror''s images are
+    already cropped to 703 rows.'
