@@ -2,10 +2,9 @@ schema_version: '1.2'
 id: idr0047-yeast-smfish-osmotic-stress-cell-masks
 title: A microscopy data set of discrete spatial and temporal single molecule RNA expression in single cells (idr0047)
 short_name: Yeast smFISH z-stacks with cell masks (widefield)
-description: 337 widefield z-stacks (2048x2048 px, 25-26 planes at 200 nm; brightfield, DAPI, TMR and Cy5 channels) of S.
-  cerevisiae BY4741 fixed at 16 time points after 0.2 M or 0.4 M NaCl stress, with smFISH for STL1 and CTT1 mRNA. Cell and
-  nuclear segmentation masks (from brightfield and DAPI, thresholds set by eye) are stored as mask ROIs in the IDR, plus segmented
-  and processed RNA images and per-cell RNA counts.
+description: 337 widefield z-stacks (2048x2048 px, 25-26 planes at 200 nm; brightfield, DAPI, TMR and Cy5 channels) of S. cerevisiae BY4741 fixed at 16 time points after 0.2 M or 0.4 M NaCl stress, with
+  smFISH for STL1 and CTT1 mRNA. Cell and nuclear segmentation masks (from brightfield and DAPI, thresholds set by eye) are stored as mask ROIs in the IDR, plus segmented and processed RNA images and per-cell
+  RNA counts.
 landing_url: https://idr.openmicroscopy.org/webclient/?show=project-503
 doi: 10.17867/10000118
 repository: IDR
@@ -26,8 +25,7 @@ imaging:
   channels: 4
   organism:
   - Saccharomyces cerevisiae
-  sample: S. cerevisiae BY4741, CSM 30 C, fixed after 0.2 M or 0.4 M NaCl osmotic stress; Nikon Ti Eclipse, 100x lens, Orca
-    Flash 4v2
+  sample: S. cerevisiae BY4741, CSM 30 C, fixed after 0.2 M or 0.4 M NaCl osmotic stress; Nikon Ti Eclipse, 100x lens, Orca Flash 4v2
   labels_stains:
   - DAPI
   - TMR-labelled STL1 probes
@@ -38,15 +36,15 @@ data:
   size_bytes: 277440000000
   n_items: 337
   access: open
-  download_url: null
-  download_method: api
+  download_url: https://ftp.ebi.ac.uk/pub/databases/IDR/idr0047-neuert-yeastmRNA/20181016-ftp/
+  download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
-  coverage: dense
-  format: mask ROIs (cell/nucleus) in the IDR; segmented and processed RNA TIFFs and per-cell count tables in the original
-    deposit
+  coverage: partial
+  format: 'TIFF masks in each Exp*/#2_Analyzed_images/: M_Lab_<stack>_Cells.tif (2D binary cell mask), M_nuclei_<stack>_nuclei3D.tiff (3D nucleus stack), M_nuclei_<stack>_nuclei.tif; plus RNA spot TIFFs
+    and per-cell CSV counts; also mask ROIs in OMERO'
   source: automatic
 ml:
   tasks:
@@ -64,16 +62,93 @@ provenance:
   - https://raw.githubusercontent.com/IDR/idr0047-neuert-yeastmrna/master/idr0047-study.txt
   - https://raw.githubusercontent.com/IDR/idr0047-neuert-yeastmrna/master/experimentA/idr0047-experimentA-annotation.csv
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6572782/fullTextXML
+  - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0047-neuert-yeastmRNA/20181016-ftp/
+  - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0047-neuert-yeastmRNA/20181016-ftp/Exp1_rep1/%232_Analyzed_images/
+  - https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD1
   confidence: 0.7
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-13T00:32:42Z'
-notes: 'Size and count are the sums of the paper table: 63+64+72+71+67 = 337 stacks, 55.46+53.71+59.66+56.23+52.38 = 277.4
-  GB. The paper says the same data are also in BioImage Archive S-BIAD1 and a Dropbox folder. Mask ROIs were seen through
-  the IDR API on sampled images (list capped at 200 per request); that they are cell/nuclear masks is inferred from the paper
-  and study protocol (segmented nuclear and cell boundary masks), not checked shape by shape. Masks are automatic (DAPI/brightfield
-  thresholds chosen manually per stack). xy pixel size not stated in the study file or paper text read (IDR metadata of sampled
-  image has none), so xy left null. Cell-level coverage per image not verified. z spacing is 200 nm per the study file; voxel_size_nm
-  left null because x/y is unknown.'
+  annotations_verified: true
+  last_checked: '2026-10-13T01:55:00Z'
+notes: 'Size and count are the sums of the paper table: 63+64+72+71+67 = 337 stacks, 55.46+53.71+59.66+56.23+52.38 = 277.4 GB. The paper says the same data are also in BioImage Archive S-BIAD1 and a Dropbox
+  folder. Masks are automatic (DAPI/brightfield thresholds chosen manually per stack). xy pixel size not stated in the study file or paper text read (IDR metadata of sampled image has none), so xy left
+  null. z spacing is 200 nm per the study file; voxel_size_nm left null because x/y is unknown. enricher: mask TIFFs found on EBI FTP (annotations_verified true); Exp1_rep1 has analysed files for 6 of its
+  stacks only (0,10,...,50 min, im1), so coverage partial (was dense).'
+technical:
+  method: sample
+  size_source: paper
+  layout:
+    tree: "ftp.ebi.ac.uk/pub/databases/IDR/idr0047-neuert-yeastmRNA/20181016-ftp/\n  Exp1_rep1/ Exp1_rep2/ Exp2_rep1/ Exp2_rep2/ Exp2_rep3/\n    #1_Raw_Images/        Exp*_rep*_<t>min_im<n>.tif   (0.8-1.0\
+      \ GB each; 63 in Exp1_rep1 per paper)\n    #2_Analyzed_images/   per analysed stack: M_Lab_*_Cells.tif, M_Lab_*_trans_plane.tif, M_Lab_*_CellInfo.csv,\n                          M_nuclei_*_nuclei.tif,\
+      \ M_nuclei_*_nuclei3D.tiff (200 MB), SD_mRNA_* RNA TIFFs/CSVs, *.mat\n    #3_Results/           Result_*_RNA_{CY5,TMR}_{cytoplasm,nuclear,total}.csv, Results_*.mat\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0047-neuert-yeastmRNA/20181016-ftp/Exp1_rep1/%231_Raw_Images/Exp1_rep1_0min_im1.tif
+    - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0047-neuert-yeastmRNA/20181016-ftp/Exp1_rep1/%232_Analyzed_images/M_Lab_Exp1_rep1_0min_im1_Cells.tif
+    - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0047-neuert-yeastmRNA/20181016-ftp/Exp1_rep1/%232_Analyzed_images/M_nuclei_Exp1_rep1_0min_im1_nuclei3D.tiff
+    size_bytes: 1049493352
+    description: One raw z-stack (4 channels) with its 2D cell mask and 3D nucleus mask
+  arrays:
+  - role: raw
+    path_pattern: Exp*/#1_Raw_Images/*.tif
+    format: tiff
+    axes: zcyx
+    shape:
+    - 25
+    - 4
+    - 2048
+    - 2048
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'ImageJ hyperstack (25 slices x 4 channels, spacing 0.2 um). Channels per paper: TMR (STL1), CY5 (CTT1), DAPI, widefield. 25 or 26 z per stack.'
+  - role: label
+    path_pattern: Exp*/#2_Analyzed_images/M_Lab_*_Cells.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: false
+    dtype: uint16
+    compression: packbits
+    value_range:
+    - 0
+    - 1
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: cell
+    alignment: same-grid
+    alignment_notes: '2D cell mask on the yx grid of the raw stack (from a widefield max projection, paper). Pairing: M_Lab_<stack>_Cells.tif <-> #1_Raw_Images/<stack>.tif.'
+  - role: label
+    path_pattern: Exp*/#2_Analyzed_images/M_nuclei_*_nuclei3D.tiff
+    format: tiff
+    axes: zyx
+    shape:
+    - 25
+    - 2048
+    - 2048
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: unknown
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Plain multi-page TIFF; pages are z per the paper ("Image stack of the 3D segmented nuclei"); 209,732,758 B = 25 pages of 2048x2048 uint16. Pairing: M_nuclei_<stack>_nuclei3D.tiff <->
+      <stack>.tif.'
+  notes: 'Browsed the EBI FTP HTTP index (Exp1_rep1 folders in full; not every folder listed, so no listing). Probed Exp1_rep1_0min_im1.tif (ImageJ zcyx 25x4x2048x2048 uint16, z spacing 0.2 um, x/y calibration
+    0 = unset), its Cells.tif (yx uint16 packbits), trans_plane.tif and nuclei3D.tiff (plain, 2048x2048 pages). Sampled Cells.tif: values {0,1}, 97.2% zero. Raw stacks (0.84 GB) not sampled. Size is the
+    paper table sum of raw stacks (277.4 GB); analysed files come on top. Voxel size: z 200 nm (header, paper, study); xy not found; checked TIFF header, IDR study file, BioStudies S-BIAD1 API, paper full
+    text. All three sample links usable on ftp.ebi.ac.uk.'
