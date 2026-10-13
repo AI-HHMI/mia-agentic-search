@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-3997728-zebrafish-pronephros-cystic-classes
 title: Fluorescently-labelled zebrafish pronephroi with normal/cystic class labels and trained CNN (widefield)
 short_name: Zebrafish pronephros normal vs cystic (widefield)
-description: 290 widefield GFP images of the pronephric region of Tg(wt1b:EGFP) zebrafish larvae, with a
-  per-image ground-truth class (normal or cystic) in CSV tables, plus a trained classification CNN; from
-  an ift172-morpholino cystic kidney disease screen.
+description: 290 widefield GFP images of the pronephric region of Tg(wt1b:EGFP) zebrafish larvae, with a per-image ground-truth
+  class (normal or cystic) in CSV tables, plus a trained classification CNN; from an ift172-morpholino cystic kidney disease
+  screen.
 landing_url: https://zenodo.org/records/3997728
 doi: 10.5281/zenodo.3997728
 repository: Zenodo
@@ -32,7 +32,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 201913867
+  size_bytes: 317507031
   n_items: 290
   access: open
   download_url: https://zenodo.org/api/records/3997728/files/images.zip/content
@@ -42,8 +42,9 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: CSV tables (Annotations-singleColumn.csv, Annotations-multiColumn.csv) with image file name and category (Normal 141, Cystic 149)
-  source: unknown
+  format: CSV tables (Annotations-singleColumn.csv, Annotations-multiColumn.csv) with image file name and category (Normal
+    141, Cystic 149)
+  source: manual
 ml:
   tasks:
   - classification
@@ -68,9 +69,77 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-13T19:49:11Z'
-notes: 'images.zip lists 290 TIFFs; the annotation CSV has 290 rows (Normal 141, Cystic 149). ACQUIFER widefield,
-  10x, GFP channel. The paper acquired 30 z-slices, but the deposit has one TIFF per annotated image, so
-  it is treated as 2D (TIFF content not opened). Pixel size not stated on the Zenodo page or in the paper
-  text read. How per-image classes were assigned is not clearly stated, so annotation source is unknown.
-  Also contains a trained Keras model; CSV Folder columns hold the depositors'' Windows paths. No split.'
+  last_checked: '2026-10-13T21:35:00Z'
+notes: 'images.zip lists 290 TIFFs; the annotation CSV has 290 rows (Normal 141, Cystic 149). ACQUIFER widefield, 10x, GFP
+  channel. The paper acquired 30 z-slices, but the deposit has one TIFF per annotated image, so it is treated as 2D (TIFFs
+  are single-page 700x700). Pixel size not stated on the Zenodo page or in the paper text read. Also contains a trained Keras
+  model; CSV Folder columns hold the depositors'' Windows paths. No split. enricher: annotation source manual (Zenodo: tables
+  made with the Fiji Qualitative-Annotations single-class button plugin; was unknown); size_bytes = full file listing (was
+  images.zip only).'
+technical:
+  method: header
+  inspected_at: '2026-10-13T21:35:00Z'
+  inspected_urls:
+  - https://zenodo.org/records/3997728
+  - https://zenodo.org/api/records/3997728/files/images.zip/content::images/-A001--PO00--LO001--CO3--SL015--PX16250--PW0100--IN0020--TM249--X014032--Y011306--Z212662--T0605003836--WE00001.tif
+  - https://zenodo.org/api/records/3997728/files/Annotations-singleColumn.csv/content
+  bytes_downloaded: 1960700
+  size_source: file-listing
+  layout:
+    tree: "3997728/  (Zenodo, 4 files, 317.5 MB)\n  images.zip (201.9 MB)\n    images/-A0nn--PO00--LO001--CO3--SL015--PX16250--...--WE000nn.tif\
+      \   290 TIFFs, 980,350 B each\n  trainedModel.zip (124.2 MB)\n    trainedModel/trainedModel-5epochs.h5, trainedModel-5epochs-classes.txt\n\
+      \  Annotations-singleColumn.csv   290 rows: Folder, Image, Slice, Category (Normal/Cystic)\n  Annotations-multiColumn.csv\
+      \    same, Normal/Cystic as 0/1 columns"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/3997728/files/images.zip/content::images/-A001--PO00--LO001--CO3--SL015--PX16250--PW0100--IN0020--TM249--X014032--Y011306--Z212662--T0605003836--WE00001.tif
+    - https://zenodo.org/api/records/3997728/files/Annotations-singleColumn.csv/content
+    size_bytes: 1039441
+    description: One pronephros TIFF and the class table that labels it (Image column = TIFF file name).
+  arrays:
+  - role: raw
+    path_pattern: images/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 700
+    - 700
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ single-page TIFFs, GFP channel; ImageJ display range 69-18690 and 54-24102 in two probed files
+      (display settings, not measured).
+  - role: label
+    path_pattern: Annotations-singleColumn.csv
+    format: csv
+    axes: null
+    shape:
+    - 290
+    - 6
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: other
+    classes:
+    - id: Normal
+      name: Normal
+    - id: Cystic
+      name: Cystic
+    alignment: not-applicable
+    alignment_notes: 'Image-level class table: one row per TIFF, matched by the Image column (file name); Folder column holds
+      the depositors'' Windows path. Annotations-multiColumn.csv has the same classes as 0/1 columns.'
+  notes: 'Header-level: two TIFFs probed in full (980,350 B each); tools/sample.py failed twice on the zip member (Zenodo
+    SSL EOF, then a non-file response), so no value_range. Images are single-page although the paper acquired 30 z-slices
+    per region (file names carry SL015); which slice or projection was deposited is not stated. Voxel size not found; checked:
+    TIFF header (ImageJ, unit blank, no calibration), Zenodo description, paper Methods (10x NA 0.3, sCMOS 2048x2048, dZ 4
+    um for the stacks, no pixel size). File names contain PX16250, not documented in any source read.'
