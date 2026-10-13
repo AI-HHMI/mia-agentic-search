@@ -1,12 +1,11 @@
 schema_version: '1.2'
 id: zenodo-3874949-hela-single-nucleus-sbf-sem-labels
-title: HeLa cell images with four labels (nuclear envelope, nucleus, rest of the cell,
-  and background) for deep learning architecture training.
+title: HeLa cell images with four labels (nuclear envelope, nucleus, rest of the cell, and background) for deep learning architecture
+  training.
 short_name: HeLa central-cell 4-class labels (SBF-SEM)
-description: Four-class semantic ground truth (nuclear envelope, nucleus, rest of
-  the cell, background) for 300 slices (2000 x 2000 ROI) of an SBF-SEM volume of HeLa
-  cells, delineated in MATLAB Image Labeler with only the central cell labelled. Raw
-  images are the HeLa volume deposited as EMPIAR-10094.
+description: Four-class semantic ground truth (nuclear envelope, nucleus, rest of the cell, background) for 300 slices (2000
+  x 2000 ROI) of an SBF-SEM volume of HeLa cells, delineated in MATLAB Image Labeler with only the central cell labelled.
+  Raw images are the HeLa volume deposited as EMPIAR-10094.
 landing_url: https://zenodo.org/records/3874949
 doi: 10.5281/zenodo.3874949
 repository: Zenodo
@@ -19,8 +18,8 @@ authors:
 - Lucy M. Collinson
 - Constantino Carlos Reyes-Aldasoro
 publications:
-- title: Impact of Training Data, Ground Truth and Shape Variability in the Deep Learning-Based
-    Semantic Segmentation of HeLa Cells Observed with Electron Microscopy
+- title: Impact of Training Data, Ground Truth and Shape Variability in the Deep Learning-Based Semantic Segmentation of HeLa
+    Cells Observed with Electron Microscopy
   doi: 10.3390/jimaging9030059
   url: https://doi.org/10.3390/jimaging9030059
 date_published: '2020-05-19'
@@ -35,8 +34,7 @@ imaging:
   channels: 1
   organism:
   - Homo sapiens
-  sample: HeLa cells embedded in Durcupan, imaged by serial block face SEM (Gatan
-    3View2XP on a Zeiss Sigma VP)
+  sample: HeLa cells embedded in Durcupan, imaged by serial block face SEM (Gatan 3View2XP on a Zeiss Sigma VP)
   labels_stains: []
 data:
   formats:
@@ -51,8 +49,7 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: One label slice per file as TIFF and MATLAB .mat (GT_Slice_1 to GT_Slice_300)
-    plus a GIF preview
+  format: One label slice per file as TIFF and MATLAB .mat (GT_Slice_1 to GT_Slice_300) plus a GIF preview
   source: manual
 ml:
   tasks:
@@ -75,11 +72,56 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-13T21:47:07Z'
+  last_checked: '2026-10-13T22:35:00Z'
 notes: 'Same ROI as the multi-nuclei record zenodo-6355622 (open PR claude/dataset/zenodo-6355622-hela-multinuclei-sbf-sem-labels),
-  but a different labelling: here only the central cell/nucleus is labelled (600 files:
-  300 TIFF + 300 .mat label slices, ~50 MB), while 6355622 labels all visible nuclei
-  and ships .mat only. The record contains labels only; the raw images are in EMPIAR-10094
-  (not fetched in this run). Voxel size 10 x 10 x 50 nm, the 8192 x 8192 x 517 volume
-  and the 2000 x 2000 x 300 ROI are from the paper Methods (J. Imaging 2023, 9, 59,
-  CC BY 4.0). Format of the TIFF label slices (bit depth/label encoding) was not inspected.'
+  but a different labelling: here only the central cell/nucleus is labelled (600 files: 300 TIFF + 300 .mat label slices,
+  ~50 MB), while 6355622 labels all visible nuclei and ships .mat only. The record contains labels only; the raw images are
+  in EMPIAR-10094 (not fetched in this run). Voxel size 10 x 10 x 50 nm, the 8192 x 8192 x 517 volume and the 2000 x 2000
+  x 300 ROI are from the paper Methods (J. Imaging 2023, 9, 59, CC BY 4.0). enricher: TIFF labels uint8 grey levels 64/128/191/255
+  (4 classes; mapping to names not stated).'
+technical:
+  method: sample
+  inspected_at: '2026-10-13T22:35:00Z'
+  inspected_urls:
+  - https://zenodo.org/records/3874949
+  - https://zenodo.org/api/records/3874949/files/GT_Slice_1.tif/content
+  - https://zenodo.org/api/records/3874949/files/GT_Slice_150.tif/content
+  bytes_downloaded: 196624
+  size_source: file-listing
+  layout:
+    tree: "3874949/  (Zenodo, 601 files, 50.1 MB)\n  GT_Slice_1.tif ... GT_Slice_300.tif   300 label slices, 2000x2000 uint8\
+      \ (packbits)\n  GT_Slice_1.mat ... GT_Slice_300.mat   300 MATLAB label slices\n  *.gif                             \
+      \     1 preview"
+    n_files: 601
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/3874949/files/GT_Slice_150.tif
+    size_bytes: 99218
+    description: 'One mid-volume label slice (all 4 classes present). No raw image is in this record (raw: EMPIAR-10094).'
+  arrays:
+  - role: label
+    path_pattern: GT_Slice_*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2000
+    - 2000
+    shape_varies: false
+    dtype: uint8
+    compression: packbits
+    lossy: false
+    chunks: null
+    value_range:
+    - 64
+    - 255
+    encoding: semantic-ids
+    classes: null
+    alignment: cropped
+    alignment_notes: One file per z slice (GT_Slice_<n>, n = 1-300). Labels cover a 2000x2000x300 ROI cropped from the 8192x8192x517
+      EMPIAR-10094 volume (paper Methods); ROI offset and first slice not stated in the sources read. Grey levels 64, 128,
+      191, 255 = the 4 classes (nuclear envelope, nucleus, rest of cell, background); which value is which is not stated (slice
+      1 has only 191 and 255).
+  notes: 'value sets from two sampled slices (1 and 150). Labels only: raw SBF-SEM images are EMPIAR-10094 (not in this record,
+    not inspected), so there is no raw array and the ROI position in the full volume is unknown, which blocks pairing. .mat
+    copies of the slices not opened. Voxel size 10 x 10 x 50 nm (record value, paper Methods).'
