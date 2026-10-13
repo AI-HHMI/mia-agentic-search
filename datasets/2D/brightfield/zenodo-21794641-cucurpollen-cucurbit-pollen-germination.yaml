@@ -35,8 +35,8 @@ imaging:
   - Citrullus amarus
   - Citrullus colocynthis
   - Cucurbita moschata
-  sample: In vitro pollen germination assays of cucurbit cultivars (UPV genebank accessions), images captured
-    with a Leica DMS1000 digital microscope
+  sample: In vitro pollen germination assays of cucurbit cultivars (UPV genebank accessions), images captured with
+    a Leica DMS1000 digital microscope or a Zeiss Axiovert 40CLF
   labels_stains: []
 data:
   formats:
@@ -55,9 +55,8 @@ annotations:
   - bounding-box
   - counts
   coverage: partial
-  format: COCO JSON per annotated image (annotations/*.json; categories pollen_tube, non_germinated_grain,
-    germinated_grain; bbox and segmentation per instance); metadata/master_image.csv holds per-image instance
-    counts and visual scores
+  format: COCO JSON per annotated image (annotations/*.json; categories pollen_tube, non_germinated_grain, germinated_grain;
+    bbox and segmentation per instance); metadata/master_image.csv holds per-image instance counts and visual scores
   source: manual
 ml:
   tasks:
@@ -79,11 +78,112 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-13T08:20:00Z'
-notes: 'Annotation and image counts come from the Zenodo description and from listing CucurPollen.zip with
-  peek_archive (3,213 members: 3,089 images under images/2023 and images/2024 as .tif/.jpg/.png, 122 COCO JSON
-  files, 2 CSVs). A sample COCO file confirmed the three categories plus bbox and segmentation polygons. The
-  per-image CSV has a pixel_size column (e.g. 2,35) with no unit stated and the microscope Leica DMS1000, so
-  voxel size is left null. No accompanying paper or data descriptor was found (searched the web for the dataset
-  name); no train/val/test split is provided in the archive listing. License CC-BY-NC-ND-4.0 as shown on the
-  Zenodo record. Species from metadata/master_variety.csv.'
+  last_checked: '2026-10-13T09:50:00Z'
+notes: 'Annotation and image counts come from the Zenodo description and the zip listing (3,213 members: 3,089 images
+  under images/2023 and images/2024 as .tif/.jpg/.png, 122 COCO JSON files, 2 CSVs). Pixel size: the per-image CSV
+  pixel_size column (2,35 / 3,45) states no unit, so voxel size is null. No paper found; no split provided. License
+  CC-BY-NC-ND-4.0 as shown on the Zenodo record. organisms (master_variety.csv): Cucumis sativus = cucumber/, Cucumis
+  melo = melon/, Cucurbita moschata = pumpkin/, Citrullus lanatus, C. amarus, C. colocynthis = watermelon/ (varieties
+  per field_code). enricher: two microscopes per master_image.csv (Zeiss Axiovert 40CLF images are grey JPEGs);
+  annotations verified from a COCO file.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  1 file, 21,326,192,562 bytes\n  CucurPollen.zip  (3,213 members)\n    annotations/<image name>.json\
+      \        122 COCO files  93.3 MB\n    images/2023/cucumber/*.png           412   3.7 GB\n    images/2023/melon/*.jpg\
+      \              402 132.7 MB\n    images/2023/pumpkin/*.tif|*.jpg      175 tif + 172 jpg  1.7 GB\n    images/2023/watermelon/*.jpg\
+      \         461 148.2 MB\n    images/2024/{cucumber,melon,pumpkin,watermelon}/*.tif   1,467  15.9 GB\n    metadata/master_image.csv,\
+      \ master_variety.csv"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/21794641/files/CucurPollen.zip::images/2023/melon/A23_MEL_AXC_M15_BQ2_2_2.jpg
+    - https://zenodo.org/records/21794641/files/CucurPollen.zip::annotations/A23_MEL_AXC_M15_BQ2_2_2.json
+    size_bytes: 345544
+    description: one annotated melon image (Zeiss Axiovert, 1388x1038) and its COCO file (15 instances)
+  arrays:
+  - role: raw
+    path_pattern: images/*/*/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 1944
+    - 2592
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: unknown
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Leica DMS1000 RGB colour images (tifffile axes YXS, samples differ). 2023 pumpkin and all 2024
+      images.
+  - role: raw
+    path_pattern: images/2023/cucumber/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1944
+    - 2592
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Leica DMS1000 RGB colour images (mode RGB).
+  - role: raw
+    path_pattern: images/2023/*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1038
+    - 1388
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 25
+    - 195
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Zeiss Axiovert 40CLF images (melon, watermelon, part of pumpkin, per master_image.csv); grey
+      stored as RGB (samples_identical: true).'
+  - role: label
+    path_pattern: annotations/*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    normalization: unknown
+    encoding: polygons
+    classes:
+    - id: 0
+      name: pollen_tube
+    - id: 1
+      name: non_germinated_grain
+    - id: 2
+      name: germinated_grain
+    alignment: same-grid
+    alignment_notes: One COCO file per annotated image, same stem as the image (annotations/<name>.json <-> images/<year>/<crop>/<name>.<ext>);
+      images[0] gives file_name, height and width matching the image; bbox + segmentation polygons in image pixels.
+      122 annotated images.
+  notes: 'Listing: tools/listing.py --expand-zips on the Zenodo record (complete: 1 file, 21,326,192,562 bytes,
+    3,213 members). Sampled A23_MEL_AXC_M15_BQ2_2_2.jpg (245,376 B: 1038x1388x3 uint8, 25-195, samples identical),
+    A23_PUM_LEI_CM12_BQ2_1_1.tif (9,053,195 B: 1944x2592x3 uint8, 0-255, YXS) and A23_CUC_LEI_P6_BQ1_1_2.png (8,394,316
+    B: 1944x2592x3 uint8 RGB); value ranges from one sample each. Read annotations/A23_MEL_AXC_M15_BQ2_2_2.json:
+    3 categories, 15 polygon+bbox instances. TIFF compression not read (probe could not open the zip member). master_image.csv
+    lists two microscopes: Leica DMS1000 (2592x1944, pixel_size 2,35) and Zeiss Axiovert 40CLF (1388x1038, pixel_size
+    3,45); the column has no unit and 3.45 matches a camera sensor pitch, so it is not used as the sample pixel
+    size. voxel size not found; checked: master_image.csv, Zenodo description, TIFF/PNG/JPEG headers, web search
+    by the harvester (no paper).'
