@@ -1,0 +1,136 @@
+schema_version: '1.2'
+id: zenodo-2559237-axons-two-photon-masks
+title: Image Synthesis with a Convolutional Capsule Generative Adversarial Network - Dataset
+short_name: Mouse cortex axon masks (two-photon)
+description: 152 two-dimensional (512x512) in vivo two-photon images of GFP-labelled axons in mouse somatosensory cortex (max
+  projections of 3D stacks, combined from two earlier studies) with manually drawn binary axon segmentation masks, split into
+  132 training and 20 test images.
+landing_url: https://zenodo.org/records/2559237
+doi: 10.5281/zenodo.2559237
+repository: Zenodo
+accession: '2559237'
+authors:
+- Cher Bass
+publications:
+- title: Detection of axonal synapses in 3D two-photon images
+  doi: 10.1371/journal.pone.0183309
+  url: https://doi.org/10.1371/journal.pone.0183309
+date_published: '2019-02-07'
+imaging:
+  modality:
+  - two-photon
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Mus musculus
+  sample: in vivo mouse somatosensory (barrel) cortex, axons
+  labels_stains:
+  - GFP
+data:
+  formats:
+  - png
+  size_bytes: 23375054
+  n_items: 152
+  access: open
+  download_url: https://zenodo.org/api/records/2559237/files/Dataset.zip/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: binary PNG masks in mask/ folders matching original/ image names, under train/ and test/
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-14T02:13:39Z'
+  evidence_urls:
+  - https://zenodo.org/records/2559237
+  - https://zenodo.org/records/2559237/files/Dataset.zip
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5584757/fullTextXML
+  - https://zenodo.org/api/records/2559237
+  - https://www.biorxiv.org/content/biorxiv/early/2018/08/14/391425.source.xml
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-14T03:25:00Z'
+notes: Dataset.zip (23.4 MB) lists 304 PNGs (152 images + 152 masks) under train/ and test/. Images are 2D max projections
+  of 3D stacks taken from Bass et al. 2017 and Canty et al. 2018 (bioRxiv); the masks were produced manually by the depositor.
+  Pixel size is not stated on the Zenodo page; the Bass 2017 paper (PLoS One, Methods) gives 0.147 um per pixel at 512x512
+  for its own dataset, but this deposit also includes Canty et al. images, and Canty et al. 2018 (bioRxiv Methods) used "typically
+  100 x 100 um field of view, 512 x 512 pixels", so the sources differ and voxel_size_nm is left null. The capsule-GAN MIDL
+  2019 paper that this record is cited with could not be found in Europe PMC; it was not read. Which images come from which
+  source is not stated.
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Dataset.zip                     304 members  23.4 MB\n  train/original/               132 files   19.4 MB  .png\
+      \  (image_020.png ... )\n  train/mask/                   132 files  540.6 KB  .png  (same names)\n  test/original/ \
+      \                20 files    3.3 MB  .png  (image_000.png ... image_019.png)\n  test/mask/                     20 files\
+      \  110.2 KB  .png  (same names)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/2559237/files/Dataset.zip/content::test/original/image_000.png
+    - https://zenodo.org/api/records/2559237/files/Dataset.zip/content::test/mask/image_000.png
+    size_bytes: 159323
+    description: Test image image_000.png (512 x 512 uint8) and its mask
+  arrays:
+  - role: raw
+    path_pattern: Dataset.zip/*/original/*.png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Grayscale PNG max projections of two-photon z-stacks (Zenodo description). Sample: mean 21.8, p50 15,
+      p99 193, all 256 values used.'
+  - role: label
+    path_pattern: Dataset.zip/*/mask/*.png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: axon
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: <split>/mask/<name>.png labels <split>/original/<name>.png (same names, same 512 x 512
+      shape). Sample: {0: 253943, 255: 8201}. Description: "binary segmentation maps of the axons".'
+  notes: 'Value ranges from one pair (test/image_000). n_files counts the one zip; it holds 304 PNGs. voxel size not set:
+    Bass et al. 2017 (PLoS One Methods) states 0.147 um per pixel for its images, Canty et al. 2018 (bioRxiv Methods) "typically
+    100 x 100 um field of view, 512 x 512 pixels"; which images come from which study is not stated. Checked: PNG headers
+    (no calibration), Zenodo API record, both source papers; the MIDL 2019 capsule-GAN paper is not in Europe PMC.'
