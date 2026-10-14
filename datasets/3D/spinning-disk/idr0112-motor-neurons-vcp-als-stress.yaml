@@ -19,7 +19,7 @@ publications:
 - title: Image-based deep learning reveals the responses of human motor neurons to stress and VCP-related ALS
   doi: 10.1111/nan.12770
   url: https://doi.org/10.1111/nan.12770
-date_published: null
+date_published: '2021-09-01'
 imaging:
   modality:
   - spinning-disk
@@ -66,14 +66,90 @@ provenance:
   - https://idr.openmicroscopy.org/api/v0/m/images/13441326/
   - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0112-verzat-motorneurons/20210526-ftp/screenA/P1/
   - https://idr.openmicroscopy.org/webclient/?show=screen-3001
+  - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0112-verzat-motorneurons/20210526-ftp/plate1.companion.ome
+  - https://raw.githubusercontent.com/IDR/idr0112-verzat-motorneurons/master/screenA/idr0112-screenA-annotation.csv
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-14T15:10:00Z'
-notes: 'Size 0.626 TB, 59,468 images and 1080x1080 pixels are from the IDR study file. The IDR image header of one image (13441326) gives
-  1080x1080x4 planes, 3 channels, uint16, but its PhysicalSizeX of 341.28 um is implausible, so voxel size is left null (not found in the paper
-  Methods either; objectives x40/x63 water from the study file). Labels: per-image map annotations (Diagnosis Healthy, Treatment Description untreated,
-  cell line) were seen on one image; the paper trains classifiers for ALS vs control and untreated vs oxidative / heat / osmotic stress, but
-  provides no split. Files on the FTP are single-plane TIFFs (e.g. 002002-1-001001001.tif); authors taken from the paper citation.'
+  annotations_verified: true
+  last_checked: '2026-10-14T15:35:00Z'
+notes: 'Size 0.626 TB, 59,468 images and 1080x1080 pixels are from the IDR study file. The IDR image header and the OME companion files give
+  1080x1080x4 planes, 3 channels, uint16, but PhysicalSizeX/Y of 341.28 um, which is implausible per pixel (likely the field width), so voxel
+  size stays null; the paper states 1 um z steps (3-5 planes) but no lateral pixel size, and the schema needs x and y. Labels: per-well IDR
+  annotation CSV (Diagnosis, Mutation, Treatment, cell line); the paper trains classifiers for ALS vs control and untreated vs oxidative /
+  heat / osmotic stress, but provides no split. Authors taken from the paper citation. enricher: release date 2021-09-01 from the study
+  file (was null); annotations_verified true after reading the screenA annotation CSV (was false).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: 'idr0112-verzat-motorneurons/20210526-ftp/  (IDR FTP)
+
+      SHASUMS  20 MB
+
+      plate<1-30>.companion.ome  30 OME-XML files (1.5-2.4 MB) mapping TIFF planes to plate/well/field/z/c
+
+      screen<A-H>/P<1-26>/  26 plate folders (A: P1-P2, B: P3-P4, C: P5-P6, D: P7-P10, E: P11-P15, F: P16, G: P17-P19, H: P20-P26)
+
+      \  <row><col>-1-<field><z><channel>.tif  5,184-8,400 per plate, ~2.3 MB each (single-plane uint16)
+
+      GitHub IDR/idr0112-verzat-motorneurons: screen<A-H>/idr0112-screen<X>-annotation.csv (per-well metadata)
+
+      '
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0112-verzat-motorneurons/20210526-ftp/screenA/P1/002002-1-001001001.tif
+    - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0112-verzat-motorneurons/20210526-ftp/screenA/P1/002002-1-001002001.tif
+    - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0112-verzat-motorneurons/20210526-ftp/screenA/P1/002002-1-001003001.tif
+    - https://ftp.ebi.ac.uk/pub/databases/IDR/idr0112-verzat-motorneurons/20210526-ftp/screenA/P1/002002-1-001004001.tif
+    - https://raw.githubusercontent.com/IDR/idr0112-verzat-motorneurons/master/screenA/idr0112-screenA-annotation.csv
+    size_bytes: 9814329
+    description: The four z planes of the DAPI channel of plate P1, well B2 (002002), field 1, plus the screen A annotation table with the well's
+      diagnosis and treatment
+  arrays:
+  - role: raw
+    path_pattern: screen*/P*/*-*-*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1080
+    - 1080
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 70
+    - 12872
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 'One single-plane TIFF per z plane and channel. File name <row 3 digits><col 3 digits>-1-<field 3><z 3><channel 3>.tif
+      (from plate1.companion.ome: 002002-1-001002001 is Z=1, C=0 and 002002-1-001001002 is Z=0, C=1 of image 002002-1-001); 3-5 planes and
+      1-3 channels per field.'
+  - role: label
+    path_pattern: idr0112-screen*-annotation.csv
+    format: csv
+    axes: null
+    shape:
+    - 1402
+    - 34
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'Per-well labels keyed by Plate (P01...) and Well (B2...); well B2 is folder prefix 002002. Shape is screen A''s table
+      (1,402 rows, 34 columns); one table per screen. Diagnosis in screen A: Amyotrophic Lateral Sclerosis 704, Healthy 692, Corrected
+      ALS 6; also Mutation, Treatment Description, Treatment Time, Cell Line Designation, Channels.'
+  notes: 'Listed the FTP root and 19 of 26 plate folders (listing.py stopped at its cap: 55,567 files, 128.2 GB by the rounded HTTP index), so
+    size is the 0.626 TB the IDR study file states. Probed 002002-1-001001001.tif: plain single-page TIFF, 1080x1080 uint16, uncompressed.
+    Sampled 002002-1-001002001.tif (2.3 MB): min 70, max 12872, mean 203, p99 1876, 5588 unique values; normalization none is inferred
+    (16-bit raw per the paper: "Raw images are 16-bit images", no clipping); value_range is from this one sample. Annotation CSV read from the
+    IDR GitHub repo (screen A). Voxel size not found; checked: TIFF header (none), OME companion (PhysicalSizeX/Y 341.28 um, implausible per
+    pixel), IDR study file, paper full text (PMC9298273: 1 um z steps only; scale bars 25 um), GitHub idiap/als-classification (no pixel size).
+    No single archive: IDR FTP folders only (Aspera / FTP for bulk).'
