@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: kaggle-maximsolopov-msc-micrographs-phase-contrast
 title: Micrographs of MSCs
 short_name: Mesenchymal stem cell masks (phase contrast)
-description: 320 phase-contrast micrographs (1000 x 1000 px) of human mesenchymal stem cells from five donors, each with a binary cell/background
-  ground-truth mask annotated manually by three experts. Released with a comparative study of U-Net, DeepLabV3+, SegNet and Mask R-CNN.
+description: 320 phase-contrast micrographs (1000 x 1000 px) of human mesenchymal stem cells from five donors, each with a
+  binary cell/background ground-truth mask annotated manually by three experts. Released with a comparative study of U-Net,
+  DeepLabV3+, SegNet and Mask R-CNN.
 landing_url: https://www.kaggle.com/datasets/maximsolopov/msu-smooth-1-20
 doi: null
 repository: Kaggle
@@ -20,7 +21,7 @@ imaging:
   - phase-contrast
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism:
   - Homo sapiens
   sample: Human mesenchymal stem cell cultures from five independent donors (DMEM/F12 with 10% FCS)
@@ -31,14 +32,14 @@ data:
   size_bytes: 129963145
   n_items: 320
   access: open
-  download_url: https://www.kaggle.com/datasets/maximsolopov/msu-smooth-1-20
-  download_method: api
+  download_url: https://www.kaggle.com/api/v1/datasets/download/maximsolopov/msu-smooth-1-20
+  download_method: http
 annotations:
   present: true
   types:
   - semantic-segmentation
   coverage: dense
-  format: Binary PNG masks (cell 1, background 0) in masks/, one per image in images/
+  format: Binary PNG masks (cell 255, background 0) in masks/<image stem>_mask.png, one per image in images/
   source: manual
 ml:
   tasks:
@@ -57,13 +58,80 @@ provenance:
   - https://www.kaggle.com/api/v1/datasets/list/maximsolopov/msu-smooth-1-20
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.3390%2Fijms26052338%22&format=json&resultType=core&pageSize=3
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11899854/fullTextXML
+  - https://www.kaggle.com/api/v1/datasets/download/maximsolopov/msu-smooth-1-20
   confidence: 0.85
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-14T04:40:00Z'
-notes: 'Kaggle record (CC BY-NC-SA 4.0, 130 MB) and complete file listing: 320 PNG images in images/ and 320 PNG masks in masks/. Paper (PMC11899854, open access): Nikon Eclipse Ti2 inverted microscope in
-  phase contrast, 1000 x 1000 px, masks drawn by three independent experts in VGG Image Annotator, binary values 1/0; the paper split the images 256/64 for training/validation but the Kaggle dataset has no split
-  files. Magnification is stated inconsistently: the Kaggle description says 40x, the paper Methods say a 10x lens. Pixel size is not stated. How the three experts'' masks were combined into one mask per image
-  is not stated. The Data Availability statement points to this Kaggle dataset.'
+  last_checked: '2026-10-14T04:25:00Z'
+notes: 'Kaggle record (CC BY-NC-SA 4.0, 130 MB) and complete file listing: 320 PNG images in images/ and 320 PNG masks in
+  masks/. Paper (PMC11899854, open access): Nikon Eclipse Ti2 inverted microscope in phase contrast, 1000 x 1000 px, masks
+  drawn by three independent experts in VGG Image Annotator, binary (paper: 1/0); the paper split the images 256/64 for training/validation
+  but the Kaggle dataset has no split files. Magnification is stated inconsistently: the Kaggle description says 40x, the
+  paper Methods say a 10x lens. Pixel size is not stated. How the three experts'' masks were combined into one mask per image
+  is not stated. The Data Availability statement points to this Kaggle dataset. enricher: mask files store 0/255, not 1/0
+  (annotations.format corrected); channels 1; download_url is the Kaggle archive API URL.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: 'images/      320 files  124.2 MB  .png  (<donor>-<n>_part_<p>_tile_<t>.png)
+
+      masks/       320 files    5.8 MB  .png  (<same stem>_mask.png)
+
+      '
+    n_files: 640
+    listing_complete: true
+  sample:
+    urls:
+    - https://www.kaggle.com/api/v1/datasets/download/maximsolopov/msu-smooth-1-20/images%2F218-4_part_10_tile_9.png
+    - https://www.kaggle.com/api/v1/datasets/download/maximsolopov/msu-smooth-1-20/masks%2F218-4_part_10_tile_9_mask.png
+    size_bytes: 363614
+    description: Smallest image 218-4_part_10_tile_9.png (1000 x 1000) and its mask
+  arrays:
+  - role: raw
+    path_pattern: images/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1000
+    - 1000
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 45
+    - 124
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Greyscale PNG. Sample: mean 70.4, std 2.8 (low contrast). File names suggest tiles (part_<p>_tile_<t>)
+      of larger micrographs.'
+  - role: label
+    path_pattern: masks/*_mask.png
+    format: png
+    axes: yx
+    shape:
+    - 1000
+    - 1000
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: cell
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: masks/<stem>_mask.png labels images/<stem>.png (all 320 pair). Sample: {0: 963953, 255:
+      36047}.'
+  notes: 'Listing from the Kaggle file-list API (640 files, exact sizes, sum 129,963,145 B = stated totalBytes); listing.py
+    does not read Kaggle, so size is page-stated. Archive is 130,094,528 B. Value ranges from one pair. Per-file and archive
+    URLs are anonymous Kaggle API download links (302 to signed storage.googleapis.com URLs); www.kaggle.com is not on the
+    TensorSwitch allowlist. voxel size not found; checked: PNG headers, Kaggle description (40x), paper full text (PMC11899854:
+    Nikon Eclipse Ti2, 10x lens in Methods, 40x in the figure legend; no pixel size).'
