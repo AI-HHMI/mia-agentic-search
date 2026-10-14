@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: kaggle-user164919-hutu-80-scratch-assay
 title: HuTu 80
 short_name: HuTu 80 scratch assay masks (brightfield)
-description: 180 high-resolution colour microscopy images of human duodenum adenocarcinoma HuTu 80 cell monolayers in an in vitro scratch assay,
-  imaged right after scratching and after 24, 48 and 72 h, each with an expert-drawn segmentation mask. Acquired on a Zeiss Axio Observer 1.0 at 400x.
+description: 180 high-resolution colour microscopy images of human duodenum adenocarcinoma HuTu 80 cell monolayers in an in
+  vitro scratch assay, imaged right after scratching and after 24, 48 and 72 h, each with an expert-drawn segmentation mask.
+  Acquired on a Zeiss Axio Observer 1.0 at 400x.
 landing_url: https://www.kaggle.com/datasets/user164919/hutu-80
 doi: null
 repository: Kaggle
@@ -20,7 +21,7 @@ imaging:
   - other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Homo sapiens
   sample: HuTu 80 human duodenum adenocarcinoma cell monolayer after scratch, at 0, 24, 48 and 72 h
@@ -31,8 +32,8 @@ data:
   size_bytes: 619175367
   n_items: 180
   access: open
-  download_url: https://www.kaggle.com/datasets/user164919/hutu-80
-  download_method: api
+  download_url: https://www.kaggle.com/api/v1/datasets/download/user164919/hutu-80
+  download_method: http
 annotations:
   present: true
   types:
@@ -56,12 +57,76 @@ provenance:
   - https://www.kaggle.com/api/v1/datasets/view/user164919/hutu-80
   - https://www.kaggle.com/api/v1/datasets/list/user164919/hutu-80
   - https://api.crossref.org/works/10.1016/j.bspc.2022.104189
+  - https://www.kaggle.com/api/v1/datasets/download/user164919/hutu-80
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-14T03:30:00Z'
-notes: 'Kaggle API record: 180 colour images, Zeiss Axio Observer 1.0 at 400x, all images manually annotated by domain experts, CC BY 4.0; the complete file listing shows 180 PNG images
-  and 180 PNG masks. The paper is not open access (abstract was empty in Crossref/Europe PMC), so pixel size and the contrast method (likely brightfield or phase) are not stated: modality is
-  set to other. The task is segmentation of the scratch (patchy) area, as in the cited paper title. Mask encoding not inspected.'
+  last_checked: '2026-10-14T03:45:00Z'
+notes: 'Kaggle API record: 180 colour images, Zeiss Axio Observer 1.0 at 400x, all images manually annotated by domain experts,
+  CC BY 4.0; the complete file listing shows 180 PNG images and 180 PNG masks. The paper is not open access (abstract was
+  empty in Crossref/Europe PMC), so pixel size and the contrast method (likely brightfield or phase) are not stated: modality
+  is set to other. The task is segmentation of the scratch (patchy) area, as in the cited paper title. enricher: masks are
+  binary 0/255 with anti-aliased edges; channels 3 (RGB colour images, was null); download_url is the Kaggle archive API URL
+  (was the landing page).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "HuTu 80 cell populations Dataset/      360 files  619.2 MB\n  images/                              180 files  613.7\
+      \ MB  .png  (<dose>_<n>_<n>_<date>_<0h|24h|48h|72h>.png)\n  masks/                               180 files    5.5 MB\
+      \  .png  (same names)\n"
+    n_files: 360
+    listing_complete: true
+  sample:
+    urls:
+    - https://www.kaggle.com/api/v1/datasets/download/user164919/hutu-80/HuTu%2080%20cell%20populations%20Dataset%2Fimages%2F5_2_3%28low%29_040619_0h.png
+    - https://www.kaggle.com/api/v1/datasets/download/user164919/hutu-80/HuTu%2080%20cell%20populations%20Dataset%2Fmasks%2F5_2_3%28low%29_040619_0h.png
+    size_bytes: 2870878
+    description: Smallest image 5_2_3(low)_040619_0h.png (1040 x 1388 RGB) and its mask
+  arrays:
+  - role: raw
+    path_pattern: HuTu 80 cell populations Dataset/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1040
+    - 1388
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 231
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'RGB PNG, samples not identical (colour camera per the docs). Sample: mean 93.7, p1-p99 49-142.'
+  - role: label
+    path_pattern: HuTu 80 cell populations Dataset/masks/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1040
+    - 1388
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: masks/<name>.png labels images/<name>.png (all 180 names pair). RGB PNG with identical
+      samples (grey stored as RGB). Sample: 37.1 % 0, 62.6 % 255, 0.26 % intermediate values on edges (anti-aliasing); threshold
+      at 128. Which value marks the scratch is not stated.'
+  notes: 'Listing from the Kaggle file-list API (360 files, exact sizes, sum 619,175,367 B = stated totalBytes); listing.py
+    does not read Kaggle, so size is page-stated. Archive is 617,560,844 B. Value ranges from one pair. Per-file and archive
+    URLs are anonymous Kaggle API download links (302 to signed storage.googleapis.com URLs); www.kaggle.com is not on the
+    TensorSwitch allowlist. voxel size not found; checked: PNG headers (no calibration), Kaggle description (Zeiss Axio Observer
+    1.0, 400x), BCAnalyzer GitLab README (dataset link only), paper (ScienceDirect 403, not in Europe PMC), web search. Contrast
+    method (brightfield or phase) not stated, so modality stays other.'
