@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: figshare-12758750-fdapi-pollen-fluorescence
 title: FDAPI pollen image dataset
 short_name: FDA/PI-labelled pollen grain crops (fluorescence)
-description: 62,577 cropped images of individual pollen grains from eight plant species, labelled with fluorescein diacetate
-  and propidium iodide for viability assessment and imaged by epifluorescence microscopy. Each image is tagged with the
-  plant species; per-image viability classes are not annotated.
+description: 62,577 cropped images of individual pollen grains from eight plant species, labelled with
+  fluorescein diacetate and propidium iodide for viability assessment and imaged by epifluorescence microscopy.
+  Each image is tagged with the plant species; per-image viability classes are not annotated.
 landing_url: https://figshare.com/articles/dataset/FDAPI_pollen_image_dataset/12758750
 doi: 10.6084/m9.figshare.12758750.v1
 repository: Figshare
@@ -35,14 +35,14 @@ imaging:
   - Malus domestica
   - Magnolia stellata
   - Clivia miniata
-  sample: pollen grains labelled with FDA and PI, imaged with a Nikon Eclipse E400 epifluorescence microscope (B-2A filters,
-    100x) and a Nikon DS-U1 camera
+  sample: pollen grains labelled with FDA and PI, imaged with a Nikon Eclipse E400 epifluorescence microscope
+    (B-2A filters, 100x) and a Nikon DS-U1 camera
   labels_stains:
   - fluorescein diacetate (FDA)
   - propidium iodide (PI)
 data:
   formats:
-  - other
+  - png
   size_bytes: 202648797
   n_items: 62577
   access: open
@@ -53,7 +53,7 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: species label per image, given by the subfolder name
+  format: species label per image, given by the subfolder name (dataset/<Genusspecies>/<Genusspecies>NNNNN.png)
   source: manual
 ml:
   tasks:
@@ -76,11 +76,51 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-14T05:00:00Z'
-notes: 'The data is a single 202 MB 7z archive (dataset.7z), which peek_archive cannot list, so the image file format and
-  folder layout are not verified; the figshare page says images are stored in subfolders labelled by plant species, and the
-  paper says each image is tagged with the species name. Per-object image sizes in the paper range from 41x41 to 81x81 px
-  (species-dependent). Pixel size is not stated on the page or in the paper (source images are 640x480 at 100x). The paper
-  states that annotating the viability class (viable, dead, sterile) is future work, so the training signal is species
-  classification only. Number of images is from the paper (62,577; the paper says eight species). License CC BY 4.0 is
-  from the figshare record.'
+  last_checked: '2026-10-14T05:35:00Z'
+notes: 'The data is a single 202 MB 7z archive (dataset.7z). Per-object image sizes in the paper range
+  from 41x41 to 81x81 px (species-dependent). Pixel size is not stated on the page or in the paper (source
+  images are 640x480 at 100x). The paper states that annotating the viability class (viable, dead, sterile)
+  is future work, so the training signal is species classification only. Number of images is from the
+  paper (62,577; the paper says eight species). License CC BY 4.0 is from the figshare record. enricher:
+  formats other -> png (7z header read by range: 62,577 PNGs in 8 species folders). organisms: one per
+  folder dataset/<Genusspecies>/ (e.g. Olea europaea = Oleaeuropea/).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "dataset.7z (figshare 24144923)   202.6 MB, solid LZMA2, 62,577 files\n  dataset/Actinidiadeliciosa/\
+      \     10,312 *.png\n  dataset/Cliviaminiata/           2,107 *.png\n  dataset/Corylusavellana/ \
+      \       19,563 *.png\n  dataset/Magnoliastellata/        3,055 *.png\n  dataset/Malusdomestica/\
+      \          5,504 *.png\n  dataset/Oleaeuropea/             6,567 *.png\n  dataset/Quercussuber/\
+      \            8,372 *.png\n  dataset/Solanumlycopersicum/     7,097 *.png"
+    n_files: 62577
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: dataset/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 41
+    - 39
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One cropped pollen grain per RGB PNG (FDA green / PI red epifluorescence); the class
+      label is the folder name.
+  notes: 'Listing: figshare API, 1 file, 202,648,797 B exact. The 7z member list was read from the archive
+    header by HTTP range requests (scratch script, stdlib lzma + requests; LZMA-encoded header, 7.25 MB
+    decoded): 62,577 PNGs in 8 species folders, matching the paper''s count. Sample: the first 300 KB
+    of the solid LZMA2 stream decoded to 122 complete PNGs (first species folder); three read: RGB uint8,
+    41x39 / 41x41 / 41x41, values 0-255, channels differ (real colour). Value range from these few crops
+    only; shapes vary by species (41-81 px per the paper). No per-file sample URLs: the 7z is solid, so
+    files cannot be fetched individually; TensorSwitch would need to fetch and unpack the whole 7z. Voxel
+    size not found; checked: PNG headers (no dpi), figshare API record, paper full text (only areas in
+    um2, no pixel size).'
