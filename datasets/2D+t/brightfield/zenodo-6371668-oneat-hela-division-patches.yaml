@@ -10,12 +10,14 @@ landing_url: https://zenodo.org/records/6371668
 doi: 10.5281/zenodo.6371668
 repository: Zenodo
 accession: '6371668'
-authors: []
+authors:
+- Varun Kapoor
 publications: []
 date_published: '2022-03-20'
 imaging:
   modality:
   - brightfield
+  - fluorescence-other
   dimensionality: 2D+t
   voxel_size_nm: null
   channels: null
@@ -29,21 +31,22 @@ data:
   size_bytes: 514581397
   n_items: 5220
   access: open
-  download_url: https://zenodo.org/records/6371668/files/Oneat_trainng_data_hela_cells.zip?download=1
+  download_url: https://zenodo.org/api/records/6371668/files/Oneat_trainng_data_hela_cells.zip/content
   download_method: http
 annotations:
   present: true
   types:
   - classification
-  coverage: unknown
-  format: one CSV per TIFF patch (a single row of 8 numbers, e.g. 0.0,1.0,0.5,0.5,0.5,1.0,1.0,1.0)
+  - bounding-box
+  coverage: sparse
+  format: one CSV per TIFF patch, a single row [Normal, Division one-hot, x, y, t, height, width, confidence] (Oneat MovieCreator.py)
   source: unknown
 ml:
   tasks:
   - detection
   splits_provided: false
   benchmark: null
-  baseline_code_url: null
+  baseline_code_url: https://github.com/Kapoorlabs-CAPED/caped-ai-oneat
 license:
   spdx: CC-BY-4.0
   url: https://creativecommons.org/licenses/by/4.0/
@@ -53,13 +56,83 @@ provenance:
   evidence_urls:
   - https://zenodo.org/api/records/6371668
   - https://zenodo.org/api/records/6139958
+  - https://github.com/Kapoorlabs-CAPED/caped-ai-oneat
   confidence: 0.55
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-14T15:30:00Z'
-notes: 'Zip (peek_archive): 5,220 .tif + 5,220 .csv + 4 .npz (428 MB); only folder seen: Patch_ch_hela_brightfield. A probed
-  TIFF is float32 5x64x64 (axes not stated), so treated as 2D+t. Each CSV is one row of 8 values whose meaning is not documented,
-  so annotation source is unknown. Other imaging modalities in the zip are unconfirmed. No paper on either record nor found
-  by title search; voxel size left null (source record 6139958 says "0.299 nm", likely a typo).'
+  last_checked: '2026-10-14T15:40:00Z'
+notes: 'Zip: Patch_ch_hela_brightfield (870 patches, file tag ch_2) and Patch_ch_hela_flou (4,350 patches, tags ch_0, 1, 3, 4, 5),
+  each with 2 .npz (train and *val). A TIFF is float32 5x64x64. No paper on either record nor found by title search; voxel size left null
+  (source record 6139958 says "0.299 nm" at 4x downscaling, likely a unit typo). enricher: authors from Zenodo; label row layout from the
+  Oneat code (caped-ai-oneat MovieCreator.py: one-hot classes, then x, y, t, height, width, confidence; Normal 2,400 / Division 2,820 by
+  file name), so types add bounding-box and coverage sparse (was unknown); fluorescence-other added for the flou folder (folder name; the
+  ch_N to source-channel mapping is not documented); annotation source stays unknown (not stated).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'Oneat_trainng_data_hela_cells.zip  514.6 MB (861.1 MB uncompressed, 10,444 members)
+
+      \  Patch_ch_hela_brightfield/  870 .tif + 870 .csv (tag ch_2), Cellsplithelabrightfield.npz 67.7 MB, Cellsplithelabrightfieldval.npz 3.6 MB
+
+      \  Patch_ch_hela_flou/  4,350 .tif + 4,350 .csv (tags ch_0, 1, 3, 4, 5), Cellsplithelaflou.npz 338.9 MB, Cellsplithelaflouval.npz 17.9 MB
+
+      \    <movie> - R05-C03-F<field>_ch_<n><Division|Normal><i>shift[0, 0].tif|.csv  82,904 B / 34 B each
+
+      '
+    n_files: 10444
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/6371668/files/Oneat_trainng_data_hela_cells.zip/content::Patch_ch_hela_brightfield/20210904_TL2 - R05-C03-F0_ch_2Division0shift[0, 0].tif
+    - https://zenodo.org/api/records/6371668/files/Oneat_trainng_data_hela_cells.zip/content::Patch_ch_hela_brightfield/20210904_TL2 - R05-C03-F0_ch_2Division0shift[0, 0].csv
+    size_bytes: 82938
+    description: One brightfield division patch (5 frames of 64x64) and its label row
+  arrays:
+  - role: raw
+    path_pattern: Oneat_trainng_data_hela_cells.zip::Patch_ch_hela_*/*.tif
+    format: tiff
+    axes: tyx
+    shape:
+    - 5
+    - 64
+    - 64
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - 0.0815
+    - 0.7559
+    normalization: rescaled
+    alignment: not-applicable
+    alignment_notes: Plain 5-page TIFF; the pages are time points (Oneat MovieCreator.py crops t-size_tminus..t+size_tplus around the event, y, x).
+  - role: label
+    path_pattern: Oneat_trainng_data_hela_cells.zip::Patch_ch_hela_*/*.csv
+    format: csv
+    axes: null
+    shape:
+    - 1
+    - 8
+    shape_varies: false
+    dtype: unknown
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: Normal
+    - id: 1
+      name: Division
+    alignment: same-grid
+    alignment_notes: 'Same stem as the TIFF. Row = [Normal, Division] one-hot, then x, y, t, height, width, confidence, with x, y relative to the
+      patch, t = size_tminus / (size_tminus + size_tplus), height and width relative to the patch size (caped-ai-oneat MovieCreator.py,
+      MovieMaker). Class order is the code''s trainlabel index; the Normal / Division names come from the file names.'
+  notes: 'Zip central directory read with peek_archive.zip_entries (10,444 members; tools/listing.py timed out against Zenodo). Zenodo API lists
+    the one zip (514,581,397 bytes). Probe via glob failed on an SSL error; read the member with peek_archive.read_member instead (82,904 B):
+    5 pages of 64x64 float32, uncompressed, tifffile axes QYX; min 0.0815, max 0.756, mean 0.428 (one sample; float in [0, 1], so rescaled).
+    tools/sample.py failed on it (OSError, file signature not found). Sample CSV read: 0.0,1.0,0.5,0.5,0.5,1.0,1.0,1.0. The .npz train / val
+    files were not opened. Voxel size not found; checked: TIFF header (none), Zenodo 6371668 and source record 6139958 ("0.299 nm" after 4x
+    downscaling, not a plausible pixel size), Oneat GitHub README and code, Europe PMC title search by the harvester (no paper).'
