@@ -1,0 +1,127 @@
+schema_version: '1.2'
+id: zenodo-22664836-fmost-neuron-tracing-benchmark
+title: AIBS/SEU-ALLEN mouse neuron fMOST benchmark dataset for PyTube
+short_name: Mouse neuron tracing benchmark (fMOST)
+description: 1,512 local 3D image blocks from fMOST whole-brain imaging of single mouse neurons, each paired with a
+  manual neuron reconstruction (SWC skeleton), released as the benchmark for evaluating the PyTube neuron tracing
+  software. The record also ships the tracing and evaluation scripts.
+landing_url: https://zenodo.org/records/22664836
+doi: 10.5281/zenodo.22664836
+repository: Zenodo
+accession: '22664836'
+authors:
+- Zhixi Yun
+publications: []
+date_published: '2026-09-22'
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 3D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Mus musculus
+  sample: single neurons (AIBS and SEU-ALLEN fMOST brain datasets)
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: 3849936509
+  n_items: 1512
+  access: open
+  download_url: https://zenodo.org/api/records/22664836/files/mouse_block_groundtruth.tar.xz/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - skeleton
+  coverage: sparse
+  format: SWC neuron reconstructions (one .swc per image block, manual_swc_cropped.zip)
+  source: manual
+ml:
+  tasks:
+  - other
+  splits_provided: false
+  benchmark: PyTube neuron tracing benchmark
+  baseline_code_url: https://github.com/YunZhixi98/pyTube
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-14T14:54:04Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/22664836
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-14T15:50:00Z'
+notes: 'Files: mouse_block_groundtruth.tar.xz (3.76 GB, image blocks as Vaa3D .v3dpbd files), manual_swc_cropped.zip (1,512 .swc
+  files), trace_and_evaluation_codes.zip (3 .py files). Image blocks are not .tiff etc., hence formats: other. The record lists no
+  publication, and the PyTube GitHub page does not describe the benchmark, and a Europe PMC/Crossref title search found no paper, so
+  voxel size, microscope settings and the annotation procedure are not stated in any source checked. The task is neuron tracing
+  (skeleton reconstruction). fMOST is named in the title only; modality is recorded as fluorescence-other. enricher: channels 1 (was
+  null) from the .v3dpbd headers (1024x1024x256x1, uint8); SWC coordinates are in block voxels (soma at the block centre).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: 'mouse_block_groundtruth.tar.xz  3.76 GB  (xz tar; members read from its start only)
+
+      \  mouse_block_groundtruth/<brain id>_<neuron>.v3dpbd  1,512 blocks expected, 8.9-17.7 MB each (PBD-compressed)
+
+      manual_swc_cropped.zip  92.5 MB (245.4 MB uncompressed)
+
+      \  manual_swc_cropped/<brain id>_<neuron>.swc  1,512 files, ~0.1 MB each
+
+      trace_and_evaluation_codes.zip  10.8 KB  (3 .py files)
+
+      '
+    n_files: 3
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: mouse_block_groundtruth.tar.xz::mouse_block_groundtruth/*.v3dpbd
+    format: other
+    axes: czyx
+    shape:
+    - 1
+    - 256
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint8
+    compression: other
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Vaa3D PBD (key v3d_volume_pkbitdf_encod, little-endian, datatype 1 = uint8); the header's size order is x, y, z, c =
+      1024, 1024, 256, 1, the same in all 4 headers read.
+  - role: label
+    path_pattern: manual_swc_cropped.zip::manual_swc_cropped/*.swc
+    format: other
+    axes: null
+    shape:
+    - 4083
+    - 7
+    shape_varies: true
+    dtype: unknown
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    encoding: graph
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same stem as the image block (17787_00048.v3dpbd and 17787_00048.swc). SWC nodes (id, type, x, y, z, radius, parent)
+      are in block voxel coordinates; 17787_00048.swc starts at 500.5, 512.5, 128.5 (the block centre) and spans x 92-1021, y up to 951,
+      z 0-255, inside the 1024x1024x256 block. Shape is that one file's node table.
+  notes: 'Zenodo API lists 3 files with exact sizes (3,849,936,509 bytes in all). Read the start of the tar.xz by streaming (8.1 MB
+    downloaded, 37.9 MB decompressed): 4 .v3dpbd members (17787_00048, 18457_00162, 17545_00023, 18864_6104_x9372_y1806), all
+    1024x1024x256x1 uint8 in their PBD headers; the tar.xz is not seekable, so members cannot be fetched one by one and there is no
+    small sample unit (sample: null). Intensities not measured (PBD needs decoding). SWC zip listed with peek_archive (1,512 .swc,
+    same stems) and one SWC read. Voxel size not found; checked: PBD header (no spacing field), Zenodo record, PyTube GitHub README,
+    CITATION.cff and docs, trace_and_evaluation_codes.zip scripts (no spacing; utils.py shows voxel_size_xyz=(1, 1, 2) only as a usage example), Europe PMC/Crossref title search (no
+    paper). Upstream AIBS / SEU-ALLEN fMOST data were not matched to these blocks (cropping and any resampling are not documented).'
