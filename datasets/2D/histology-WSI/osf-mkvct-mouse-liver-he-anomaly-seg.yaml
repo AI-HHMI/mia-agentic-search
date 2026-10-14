@@ -1,0 +1,182 @@
+schema_version: '1.2'
+id: osf-mkvct-mouse-liver-he-anomaly-seg
+title: Histopathology Mouse Liver Tissue Segmentation Dataset
+short_name: Mouse liver H&E lesion masks (WSI tiles)
+description: 672x672 px tiles from 742 H&E-stained mouse liver whole-slide images of 44 preclinical studies,
+  with pixelwise polygon annotations by a veterinary pathologist for healthy tissue, no-tissue and ten
+  lesion classes (apoptosis, artifact, ballooning, cytoplasmic vacuolation, fibrosis, inflammation, macrosteatosis,
+  microsteatosis, mitosis, necrosis), with train/val/trainval/test split files.
+landing_url: https://osf.io/mkvct/
+doi: null
+repository: OSF
+accession: null
+authors:
+- Olga Graf
+- Dhruv Patel
+- Philipp Groß
+- Charlotte Lempp
+- Matthias Hein
+- Fabian Heinemann
+publications:
+- title: Toxicity assessment in preclinical histopathology via class-aware Mahalanobis distance for known
+    and novel anomalies
+  doi: 10.1038/s41598-026-56510-9
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC13272783/
+date_published: '2026-02-25'
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 442
+    y: 442
+    z: null
+  channels: 3
+  organism:
+  - Mus musculus
+  sample: liver sections of C57BL/6JRj mice (healthy controls, CCl4-treated and drug-treated animals)
+    from historic preclinical studies, H&E stained, Zeiss AxioScan slide scanner at 20x, downsampled 2x
+  labels_stains:
+  - hematoxylin and eosin
+data:
+  formats:
+  - png
+  size_bytes: 21592948413
+  n_items: null
+  access: open
+  download_url: null
+  download_method: other
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: partial
+  format: per-tile RGB PNG masks in mask/<study>.zip, same paths as the img/ tiles; one RGB colour per
+    class (config.py CLASS_SPECS), black (0,0,0) = unannotated; only selected regions are annotated
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/olgagraf/anomaly-segmentation-and-detection
+license:
+  spdx: CC-BY-NC-4.0
+  url: https://creativecommons.org/licenses/by-nc/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-14T04:14:21Z'
+  evidence_urls:
+  - https://osf.io/mkvct/
+  - https://api.osf.io/v2/nodes/mkvct/
+  - https://api.osf.io/v2/wikis/8qdxm/content/
+  - https://osf.io/download/pvzqn/
+  - https://osf.io/download/tmfb4/
+  - https://osf.io/download/699f2008dbef27b0b3e2c3f8/
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13272783/fullTextXML
+  - https://api.osf.io/v2/nodes/mkvct/files/osfstorage/
+  - https://raw.githubusercontent.com/olgagraf/anomaly-segmentation-and-detection/main/config.py
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-14T06:20:00Z'
+notes: 'OSF project: data/img/ (44 zips, one per study, PNG tiles in per-slide subfolders), data/mask/
+  (44 zips, PNG masks) and data/split/ (train.txt, val.txt, trainval.txt, test.txt, tile paths without
+  extension). The central 252x252 px of each 672x672 tile forms a non-overlapping grid; surrounding context
+  overlaps. Resolution 0.442 um/px from the project wiki. Test split is built from studies held out of
+  training/validation. License: license.txt in the project is CC BY-NC 4.0 (no licence field in the OSF
+  metadata). No single archive: per-study zips via the OSF storage API. Tile count not stated (n_items
+  null; one study zip, 19_267, has 44 tiles). enricher: mask colour map from the authors'' config.py.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "OSF mkvct osfstorage                         93 files  21.59 GB\n  license.txt            \
+      \                     CC BY-NC 4.0\n  data/img/<study>.zip                        44 zips, 21.53\
+      \ GB, PNG tiles\n    <study>/<slide>/<slide>__<row>_<col>.png  672x672 RGB tiles (e.g. 19_267/Liver_HE_19_267_401/Liver_HE_19_267_401__58_20.png)\n\
+      \  data/mask/<study>.zip                       44 zips, 58 MB, PNG masks (same member paths as img/)\n\
+      \  data/split/{train,val,trainval,test}.txt   tile paths without extension"
+    n_files: 93
+    listing_complete: true
+  sample:
+    urls:
+    - https://osf.io/download/tmfb4/::19_267/Liver_HE_19_267_401/Liver_HE_19_267_401__58_20.png
+    - https://osf.io/download/7abp2/::19_267/Liver_HE_19_267_401/Liver_HE_19_267_401__58_20.png
+    size_bytes: 869370
+    description: One 672x672 H&E tile (RGB PNG) from study 19_267 and its RGB class-colour mask
+  arrays:
+  - role: raw
+    path_pattern: '*/*/*__*_*.png'
+    format: png
+    axes: yxs
+    shape:
+    - 672
+    - 672
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Tile members of data/img/<study>.zip; name <slide>__<row>_<col>.png. RGB H&E colour.
+  - role: label
+    path_pattern: '*/*/*__*_*.png'
+    format: png
+    axes: yxs
+    shape:
+    - 672
+    - 672
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 235
+    normalization: none
+    encoding: rgb-colors
+    classes:
+    - id: 0,0,0
+      name: unannotated
+    - id: 235,55,52
+      name: apoptosis (OOD)
+    - id: 235,189,52
+      name: artifact (OOD)
+    - id: 158,235,52
+      name: ballooning
+    - id: 235,89,160
+      name: cyt_vacuolation
+    - id: 255,157,225
+      name: fibrosis
+    - id: 52,235,235
+      name: inflammation
+    - id: 52,100,235
+      name: macrosteatosis
+    - id: 255,230,153
+      name: microsteatosis
+    - id: 171,121,66
+      name: mitosis
+    - id: 19,89,63
+      name: necrosis
+    - id: 255,255,255
+      name: no_tissue
+    - id: 248,203,173
+      name: normal
+    alignment: same-grid
+    alignment_notes: Members of data/mask/<study>.zip with the same path as the image tile in data/img/<study>.zip;
+      672x672 in both (sampled). Class ids are RGB colours from config.py CLASS_SPECS of the authors'
+      code; (0,0,0) = unannotated (ignore).
+  notes: 'Listing: OSF storage API walked by a scratch script (listing.py has no OSF support): 93 files,
+    21,592,948,413 B, exact per-file sizes; zip members listed for 19_267 (img 44 PNGs + .DS_Store; mask
+    44 PNGs); a count over all 88 zips did not finish within the run, so the tile total is unknown. Size
+    is the OSF-stated total of a complete listing (size_source page-stated because the listing was not
+    made by listing.py). Sample (19_267 tile __58_20): image 672x672x3 uint8, 0-255; mask 672x672x3 uint8
+    with values {0, 52, 100, 235}: background black plus 9,308 px of (52,100,235) = macrosteatosis. Value
+    ranges from one sample. Both image and mask zips share member paths, so the two arrays have the same
+    path_pattern inside different zips (img/ vs mask/). Voxel size 442x442 nm (2D) from the OSF wiki:
+    "spatial resolution of 0.442 um/px".'
