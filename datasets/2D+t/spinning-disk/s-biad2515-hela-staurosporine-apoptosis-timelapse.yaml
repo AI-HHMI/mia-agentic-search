@@ -69,10 +69,81 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-14T06:27:33Z'
+  last_checked: '2026-10-14T09:10:00Z'
 notes: 'The study text mentions cell segmentation masks, tracking outputs and CellProfiler/scDINO features, but the
   file listing (6,480 .tif, 30 wells x 4 FOV x 13 live timepoints x 4 channels + terminal Hoechst/AnnexinV, z-projections)
   contains only raw images; no mask or track files were seen, and the preprint Data availability lists only code on
   Zenodo. The training signal is the terminal AnnexinV image (the paper models integrated cytoplasmic AnnexinV
   intensity per cell). Pixel size not stated in the study or preprint text; objective is 20x 0.75 NA. Author list
   not read from the page.'
+technical:
+  method: sample
+  inspected_at: '2026-10-14T09:10:00Z'
+  inspected_urls:
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/515/S-BIAD2515/Files/
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/515/S-BIAD2515/Files/filelist_bioimage_updated.tsv
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/515/S-BIAD2515/Files/C-02_F0001_T0013_Z0001_C01.tif
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/515/S-BIAD2515/Files/C-02_F0001_T0014_Z0001_C05.tif
+  bytes_downloaded: 14860030
+  size_source: page-stated
+  layout:
+    tree: |
+      Files/  (flat, 6482 files)
+        filelist_bioimage_updated.tsv, one .json
+        <well>_F<fov>_T<time>_Z0001_C<channel>.tif   6480 single-page TIFFs, 7,225,258 B each
+          wells: 30 (C-02 ...), fields F0001-F0004
+          T0001-T0013: live, channels C01-C04 (Hoechst + 3 ChromaLIVE)
+          T0014: terminal fixed, C01 (Hoechst) and C05 (AnnexinV)
+    n_files: 6482
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/515/S-BIAD2515/Files/C-02_F0001_T0013_Z0001_C01.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/515/S-BIAD2515/Files/C-02_F0001_T0014_Z0001_C05.tif
+    size_bytes: 14450516
+    description: Last live Hoechst frame (T0013 C01) and the terminal AnnexinV image (T0014 C05) of well C-02 field 1.
+  arrays:
+  - role: raw
+    path_pattern: '*_T00[0-1][0-9]_Z0001_C0[1-4].tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 1900
+    - 1900
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 1207
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One file per well, field, timepoint and channel; time and channel are in the file name, not in the TIFF.
+  - role: label
+    path_pattern: '*_T0014_Z0001_C05.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 1900
+    - 1900
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 8242
+    normalization: unknown
+    encoding: other
+    classes: null
+    alignment: unknown
+    alignment_notes: 'Terminal AnnexinV fluorescence image (an intensity readout, not a mask), one per well and field (120 files); pairs with the live series by well and field. Registration to T0013 is described by the study, not shipped as a transform.'
+  notes: 'File sizes from the study file list filelist_bioimage_updated.tsv (6480 rows with exact File Size; total 46,819,671,840
+    B; every TIFF 7,225,258 B). tools/listing.py (HTTP index, rounded) agrees: 6482 files, 46.9 GB. Counts from names: C01
+    1680, C02-C04 1560 each, C05 120; T0001-T0013 480 files each, T0014 240; 30 wells. Probe of T0014 C05: single page
+    1900 x 1900 uint16, uncompressed, no calibration. Sample (one well/field): Hoechst T0013 [0, 1207], mean 19.1; AnnexinV
+    T0014 [0, 8242], mean 110.9. Voxel size not found; checked: TIFF header, BioStudies study record and file list (harvester:
+    study text, preprint). No masks or tracks in the listing. 2D+t data: not convertible by the miao layout yet (3D only).'
