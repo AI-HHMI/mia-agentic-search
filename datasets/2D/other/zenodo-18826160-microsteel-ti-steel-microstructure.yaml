@@ -3,10 +3,9 @@ id: zenodo-18826160-microsteel-ti-steel-microstructure
 title: MicroSteel - steel microstructure segmentation dataset
 short_name: Steel microstructure segmentation (micrographs)
 description: 82 steel micrographs (1280x959 and 960x703 px) annotated at the pixel level with 5 microconstituent
-  classes (Alpha, TiB2, TiN, FeTiB, Fe2B), grouped into three image types by industrial processing route
-  (29, 17 and 36 images). Released on GitHub (release assets images_class1-3.zip, labels.zip, splits.zip)
-  and archived on Zenodo; labels were traced by three materials-science experts in Labelbox, with and
-  without deep-learning pre-annotations.
+  classes (Alpha, TiB2, TiN, FeTiB, Fe2B), grouped into three image types by industrial processing route (29, 17
+  and 36 images). Released on GitHub (release assets images_class1-3.zip, labels.zip, splits.zip) and archived on
+  Zenodo; labels were traced by three materials-science experts in Labelbox, with and without deep-learning pre-annotations.
 landing_url: https://github.com/martafdezmAM/microsteel
 doi: 10.5281/zenodo.18826160
 repository: GitHub
@@ -27,16 +26,17 @@ imaging:
   - other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism: []
   sample: Steel microstructures (Ti-containing phases TiB2, TiN, FeTiB, Fe2B in an alpha matrix), three industrial
     processing routes
   labels_stains: []
 data:
   formats:
-  - other
-  size_bytes: null
-  n_items: 82
+  - jpeg
+  - png
+  size_bytes: 75728455
+  n_items: 79
   access: open
   download_url: null
   download_method: http
@@ -45,7 +45,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: Integer masks (Labels folder) plus RGB colour labels for visualisation (Coloured_labels folder), per the release README
+  format: PNG class-index masks (labels/, 0 Alpha, 1 TiB2, 2 TiN, 3 FeTiB, 4 Fe2B) plus RGB colour masks (coloured_labels/);
+    train/val/test lists in splits.zip
   source: mixed
 ml:
   tasks:
@@ -64,18 +65,96 @@ provenance:
   - https://github.com/martafdezmAM/microsteel
   - https://github.com/martafdezmAM/microsteel/releases
   - https://arxiv.org/html/2606.19934
-  confidence: 0.5
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-13T23:50:00Z'
-notes: 'The Zenodo record holds only a 1.3 kB zip (LICENSE and a short README pointing to the GitHub
-  release); the data are the GitHub release assets images_class1.zip, images_class2.zip, images_class3.zip,
-  labels.zip and splits.zip (a release README describes folders Images, Labels = integer masks, Coloured_labels
-  = RGB labels). The asset zips could not be listed from this sandbox (HTTP 403), so image file format,
-  total size and the split contents are unverified (formats set to other as a placeholder), and no single
-  direct download link is recorded. Paper (arXiv 2606.19934, HTML): 82 images, types I/II/III with 29/17/36
-  images; classes Alpha 0, TiB2 1, TiN 2, FeTiB 3, Fe2B 4; Alpha ~74% of pixels. Microscope type, magnification,
-  pixel size and the split were not stated in the page text read (the arXiv PDF could not be parsed), so
-  modality is other and voxel size null. License MIT stated on Zenodo, the GitHub repo and in the paper.'
+  annotations_verified: true
+  last_checked: '2026-10-14T00:10:00Z'
+notes: 'Data are the GitHub release "dataset" assets, linked as github.com/user-attachments/files/<id>/<name>.zip:
+  images_class1.zip (29 JPEG), images_class2.zip (25: 15 Class_II + 10 Class_III), images_class3.zip (25 Class_III),
+  labels.zip (82 labels + 82 coloured), splits.zip (train/val/test lists, per type c1-c3). enricher: only 79 images
+  ship; labels Class_III_C104F2x10000_6, Class_II_C28F3x10000 and Class_II_C30F3x10000_2 have no image (n_items
+  79, was 82). File names carry magnifications 5000x-25000x (mostly 10000x), so pixel size varies; none is stated
+  (README, release, Zenodo, arXiv HTML). The paper''s figure caption says "optical micrograph", but the magnifications
+  suggest SEM; modality stays other. License MIT on Zenodo, the GitHub repo and in the paper.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "GitHub release 'dataset' assets (75.7 MB)\n  images_class1.zip   24.5 MB  29 Class_I_*.jpg\n  images_class2.zip\
+      \   21.6 MB  15 Class_II_*.jpg + 10 Class_III_*.jpg\n  images_class3.zip   22.0 MB  25 Class_III_*.jpg\n \
+      \ labels.zip           7.6 MB\n    labels/<stem>.png            82 class-index masks\n    coloured_labels/<stem>.png\
+      \   82 RGB masks\n  splits.zip          README.md, train/val/test(.txt), *_c1..c3.txt\n  README.md (asset)\n\
+      Zenodo 18826160: microsteel-main.zip, 1.3 kB (LICENSE, README)"
+    n_files: 5
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: Class_*.jpg
+    format: jpeg
+    axes: yx
+    shape:
+    - 1024
+    - 1280
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 1024x1280 or 768x960 including the instrument info band. Some files are greyscale (L), others
+      RGB with identical samples (grey stored as RGB, e.g. Class_I_C14F1x20000.jpg; axes then yxs).
+  - role: label
+    path_pattern: labels/*.png
+    format: png
+    axes: yx
+    shape:
+    - 959
+    - 1280
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 4
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: Alpha
+    - id: 1
+      name: TiB2
+    - id: 2
+      name: TiN
+    - id: 3
+      name: FeTiB
+    - id: 4
+      name: Fe2B
+    alignment: cropped
+    alignment_notes: Pairs by stem (Class_*.jpg <-> labels/<stem>.png). Masks are 959x1280 / 703x960, the top rows
+      of the 1024x1280 / 768x960 image (info band at the bottom cut off, as in MetalDAM). Inferred from the shapes;
+      no doc states the crop.
+  - role: other
+    path_pattern: coloured_labels/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 703
+    - 960
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    alignment: cropped
+    alignment_notes: RGB visualisation of labels/, same grid.
+  notes: 'Release assets were reached via the signed objects.githubusercontent.com redirects of the github.com/user-attachments
+    links (this sandbox''s proxy blocks the user-attachments path itself; the redirect was read with WebFetch).
+    listing.py over the 5 zips: 75,728,455 B, exact. The 1.3 kB Zenodo stub and the small README.md asset are not
+    counted. value_range is from 2 image/label pairs (Class_III_C103F2x10000_3: label values {0,1,2,4}; Class_I_C14F1x20000:
+    {0,1,2,3}). sample.py couldn''t read the signed URLs (no file extension), so a short fsspec/PIL script read
+    the members instead. No sample.urls: the user-attachments links could not be checked with probe.py --download-check
+    here (proxy 403), and the signed URLs expire after 5 min. Voxel size not found; checked: JPEG/PNG headers, README
+    assets, Zenodo API, arXiv HTML.'
