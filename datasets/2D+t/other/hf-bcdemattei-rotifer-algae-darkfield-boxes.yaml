@@ -1,0 +1,135 @@
+schema_version: '1.2'
+id: hf-bcdemattei-rotifer-algae-darkfield-boxes
+title: Predator-Prey Encounter Detection Dataset (plankton_interaction_videos)
+short_name: Rotifer and algae detection boxes (dark-field)
+description: 45,158 dark-field video frames (25 videos, 25 fps, 2048x2048 px) of bdelloid rotifers (Philodina
+  sp.) feeding on cryptomonad algae (Cryptomonas erosa), with YOLOv5-format bounding boxes made in Label
+  Studio and an 80/10/10 training/val/test split of the extracted frames.
+landing_url: https://huggingface.co/datasets/bcdemattei/plankton_interaction_videos
+doi: null
+repository: HuggingFace
+accession: null
+authors:
+- bcdemattei
+publications: []
+date_published: '2026-03-19'
+imaging:
+  modality:
+  - other
+  dimensionality: 2D+t
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Philodina
+  - Cryptomonas erosa
+  sample: live bdelloid rotifers and cryptomonad algae under dark-field illumination, Zeiss SteREO Discovery
+    V20 dissection microscope with Axiocam 705 Color, PlanApo S 0.63x objective at 120x zoom (field of
+    view 0.0241 mm2)
+  labels_stains: []
+data:
+  formats:
+  - jpeg
+  size_bytes: 5695146374
+  n_items: 21221
+  access: open
+  download_url: https://huggingface.co/datasets/bcdemattei/plankton_interaction_videos
+  download_method: git-lfs
+annotations:
+  present: true
+  types:
+  - bounding-box
+  coverage: partial
+  format: YOLOv5 text files (class, x_center, y_center, width, height, normalised) per frame in labels/
+    next to images/
+  source: manual
+ml:
+  tasks:
+  - detection
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: Apache-2.0
+  url: https://www.apache.org/licenses/LICENSE-2.0
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-14T04:14:21Z'
+  evidence_urls:
+  - https://huggingface.co/datasets/bcdemattei/plankton_interaction_videos
+  - https://huggingface.co/api/datasets/bcdemattei/plankton_interaction_videos
+  - https://huggingface.co/datasets/bcdemattei/plankton_interaction_videos/raw/main/README.md
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-14T06:30:00Z'
+notes: 'Dataset card plus Hugging Face file tree: training/{images,labels}, val/{images,labels}, test/{images,labels}.
+  The card says 25 videos with 45,158 frames; the repository holds 21,221 frame JPEGs (9,997 / 6,866 /
+  4,358 for training / val / test) and 17,190 label files (9,998 / 7,179 / 13), so the test split is almost
+  unlabelled. Frames are 2048x2048 JPEG; pixel size is not stated (only the 0.0241 mm2 field of view).
+  Class ids are not documented: in the sampled label files one large box (class 0) and many small ones
+  (class 1) suggest class 0 = rotifer, 1 = algal cells (unconfirmed). No paper or author names found (HF
+  user bcdemattei). enricher: n_items 45158 -> 21221 (frames actually in the repo, complete HF listing);
+  coverage unknown -> partial (test split has 13 label files for 4,358 frames). modality: dark-field light
+  microscopy (no schema value, so other). organisms: both species appear together in every frame, not
+  in separate folders.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "HF dataset bcdemattei/plankton_interaction_videos (main)   38,415 files  5.70 GB\n  README.md\n\
+      \  training/images/   9,997 *.jpg  2.6 GB   (Time<video>_<frame>.jpg)\n  training/labels/   9,998\
+      \ *.txt  24.9 MB  (YOLOv5, same stem)\n  val/images/        6,866 *.jpg  1.5 GB\n  val/labels/ \
+      \       7,179 *.txt  7.2 MB\n  test/images/       4,358 *.jpg  1.5 GB\n  test/labels/          13\
+      \ *.txt  71 KB\n  (+3 version-control files)"
+    n_files: 38415
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/bcdemattei/plankton_interaction_videos/resolve/main/val/images/Time1358_1.jpg
+    - https://huggingface.co/datasets/bcdemattei/plankton_interaction_videos/resolve/main/val/labels/Time1358_1.txt
+    size_bytes: 120579
+    description: One validation frame (JPEG, 2048x2048 RGB) and its YOLOv5 box file
+  arrays:
+  - role: raw
+    path_pattern: '*/images/*.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 2048
+    - 2048
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One frame per file, Time<video>_<frame>.jpg; colour camera (samples differ).
+  - role: label
+    path_pattern: '*/labels/*.txt'
+    format: other
+    axes: null
+    shape:
+    - 24
+    - 5
+    shape_varies: true
+    dtype: float64
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: class 0 (undocumented; large boxes, likely rotifer)
+    - id: 1
+      name: class 1 (undocumented; small boxes, likely algal cell)
+    alignment: same-grid
+    alignment_notes: '<split>/labels/<stem>.txt pairs with <split>/images/<stem>.jpg; YOLOv5 rows: class
+      x_center y_center width height, normalised to [0,1] of the image size.'
+  notes: 'Listing: Hugging Face API, 38,415 files, 5,695,146,374 B exact. Sample (val/Time1358_1): JPEG
+    2048x2048x3 uint8, 0-255, channels differ; label file 24 rows x 5 columns (1 class-0 box, 23 class-1
+    boxes). Value range from one sample. Voxel size not found; checked: JPEG header, dataset card (only
+    the 0.0241 mm2 field of view and the optics), HF API record; no paper or code repository was found.
+    Pixel size not derived from the field of view.'
