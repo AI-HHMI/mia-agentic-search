@@ -2,11 +2,10 @@ schema_version: '1.2'
 id: gnode-s4bsnu-synaptic-vesicles-tem
 title: Automated detection and localization of synaptic vesicles in electron microscopy images
 short_name: Hippocampal synaptic vesicle patches (TEM)
-description: 87 transmission electron micrographs (TIFF) of mouse hippocampal presynaptic terminals, plus
-  a patches.zip of small image patches labelled pos (vesicle in the centre) or neg (no vesicle). The first
-  50 images were used to generate the training and test patches for two CNN vesicle classifiers; the remaining
-  37 images were used to test the full detection algorithm. Released with the Imbrosci et al. vesicle detection
-  algorithm.
+description: 87 transmission electron micrographs (TIFF) of mouse hippocampal presynaptic terminals, plus a patches.zip
+  of small image patches labelled pos (vesicle in the centre) or neg (no vesicle). The first 50 images were used
+  to generate the training and test patches for two CNN vesicle classifiers; the remaining 37 images were used to
+  test the full detection algorithm. Released with the Imbrosci et al. vesicle detection algorithm.
 landing_url: https://doi.gin.g-node.org/10.12751/g-node.s4bsnu/
 doi: 10.12751/g-node.s4bsnu
 repository: other
@@ -24,30 +23,30 @@ imaging:
   modality:
   - TEM
   dimensionality: 2D
-  voxel_size_nm:
-    x: 2.27
-    y: 2.27
-    z: null
+  voxel_size_nm: null
   channels: 1
   organism:
   - Mus musculus
-  sample: Hippocampal presynaptic terminals - mossy fibre boutons from acute slices (chemically fixed) and
-    small synapses from cryo-fixed and chemically fixed cultured neurons
+  sample: Hippocampal presynaptic terminals - mossy fibre boutons from acute slices (chemically fixed) and small
+    synapses from cryo-fixed and chemically fixed cultured neurons
   labels_stains: []
 data:
   formats:
+  - ome-tiff
   - tiff
-  size_bytes: null
+  - jpeg
+  size_bytes: 618758983
   n_items: 87
   access: open
-  download_url: https://gin.g-node.org/Marta_Orlando/synaptic-vesicles-detection/archive/master.zip
+  download_url: https://doi.gin.g-node.org/10.12751/g-node.s4bsnu/10.12751_g-node.s4bsnu.zip
   download_method: http
 annotations:
   present: true
   types:
   - classification
   coverage: partial
-  format: patches.zip (image patches labelled pos / neg by file grouping, per the README); metadata.xlsx
+  format: 'patches.zip: 47,185 JPEG patches (92x92 RGB) sorted into vesicles/ and no_vesicles/ folders, per classifier
+    (first, second) and split (train, test); metadata.xlsx lists each image''s use and pixel size'
   source: manual
 ml:
   tasks:
@@ -57,8 +56,8 @@ ml:
   benchmark: null
   baseline_code_url: https://github.com/Imbrosci/synaptic-vesicles-detection
 license:
-  spdx: CC0-1.0
-  url: https://creativecommons.org/publicdomain/zero/1.0/
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
 provenance:
   discovered_by: harvest-websearch
   discovered_at: '2026-10-13T23:39:51Z'
@@ -67,18 +66,79 @@ provenance:
   - https://gin.g-node.org/Marta_Orlando/synaptic-vesicles-detection
   - https://gin.g-node.org/Marta_Orlando/synaptic-vesicles-detection/archive/master.zip
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8805189/fullTextXML
-  confidence: 0.6
+  - https://doi.gin.g-node.org/10.12751/g-node.s4bsnu/10.12751_g-node.s4bsnu.zip
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-13T23:50:00Z'
-notes: 'Archive listing (peek_archive) shows 87 TIFF images (image_01..image_87, ~4.4 MB each), README,
-  LICENSE, datacite.yml and metadata.xlsx; images/patches.zip (255 MB) is served without range requests,
-  so its contents were not listed and the pos/neg labelling is taken from the README and paper Methods
-  (34,805 40x40 and 6,245 80x80 patches for training, labelled manually). Per-image vesicle coordinates
-  used as ground truth for the full-image evaluation (two annotators) are described in the paper but are
-  not in this repository. The paper gives 2.27 nm pixel size for the training images (40 px = 90.8 nm);
-  per-image pixel sizes may be in metadata.xlsx, which was not read. README notes vesicle labelling was
-  often limited to the synaptic terminal, with black masks over other regions, hence partial coverage.
-  Landing page license: CC0 4.0.'
+  annotations_verified: true
+  last_checked: '2026-10-14T00:20:00Z'
+notes: 'Pixel size differs per image (metadata.xlsx "pixel size in nm (1 side)"): 2.27 nm = image_01-19, 22-25,
+  28-37, 43-47, 51-61 (49 images, all patch-source images among them); 0.94 nm = 19 images; 1.3 nm = image_66-73,
+  77; 0.72 nm = image_78-83; 1.56 nm = image_84-87. So voxel_size_nm is null (enricher; was 2.27 x 2.27). enricher:
+  license is CC-BY-4.0. The LICENSE file is the CC BY 4.0 text and the link points to it; the landing page and datacite.yml
+  call it "CC0 4.0 Attribution" (was CC0-1.0). enricher: download_url is now the DOI archive (618.8 MB, includes
+  patches.zip). The GIN master.zip only holds a 64-byte git-annex pointer for patches.zip. The 87 full images carry
+  no vesicle labels; only the patches are labelled (by folder). Per-image vesicle coordinates used for full-image
+  testing are not in the dataset (paper). Black masks cover non-terminal regions in some patch-source images (README).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "10.12751_g-node.s4bsnu.zip  (GIN DOI archive, 618.8 MB, 92 members)\n  LICENSE, README.md, datacite.yml,\
+      \ metadata.xlsx\n  images/images/image_01..87.TIF    87 TEM images, 363.7 MB\n  images/patches.zip       \
+      \         255.0 MB, 47,185 entries\n    patches/patches_first_classifier/{train,test}/{vesicles,no_vesicles}/*.jpeg\n\
+      \    patches/patches_second_classifier/{train,test}/{vesicles,no_vesicles}/*.jpeg\n      first: train 9,058\
+      \ pos / 25,747 neg, test 1,069 / 3,140\n      second: train 1,965 / 4,280, test 575 / 1,337"
+    n_files: 92
+    listing_complete: true
+  sample:
+    urls:
+    - https://doi.gin.g-node.org/10.12751/g-node.s4bsnu/10.12751_g-node.s4bsnu.zip::images/images/image_01.TIF
+    size_bytes: 4355921
+    description: image_01.TIF, one 2048x2048 OME-TIFF TEM image (2.27 nm/px). The labelled patches sit in the nested
+      patches.zip, which a single zip-member spec cannot reach.
+  arrays:
+  - role: raw
+    path_pattern: images/images/*.TIF
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Probed all 87: 53 OME-TIFF 2048x2048 (OME size; the page is 2087x2048), 23 ImageJ/plain 2115x2048,
+      9 ImageJ 1336x2004. Single page, uint8, uncompressed. No per-image vesicle labels in the dataset.'
+  - role: raw
+    path_pattern: images/patches.zip
+    format: jpeg
+    axes: yxs
+    shape:
+    - 92
+    - 92
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Classification patches inside the nested patches.zip. The class is the folder: vesicles/ (pos,
+      vesicle centred) or no_vesicles/ (neg, including black_neg_patch_* from masked regions). Names give the source
+      image (image_NN_pos_patch_NNNN). Read 3 patches: all 92x92 RGB JPEG (the paper says 40x40 / 80x80 patches,
+      so these were probably resized on saving).'
+  notes: 'Listing of the DOI archive is complete (618,758,983 B). The nested patches.zip was listed by range requests
+    through the outer zip (stored, not compressed). Note: a range request on the GIN raw/master/images/patches.zip
+    was ignored by the server and pulled the whole 255 MB (discarded; counted against the budget). value_range is
+    from image_01 and three patches only. Voxel size per image is in metadata.xlsx and agrees with the TIFF headers
+    (2.2739, 1.3061, 1.5594, 0.7092 nm); there are 5 different values, so voxel_size_nm is null. The DOI archive
+    host doi.gin.g-node.org is not on TensorSwitch''s fetch allowlist.'
