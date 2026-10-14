@@ -21,7 +21,10 @@ imaging:
   modality:
   - spinning-disk
   dimensionality: 2D
-  voxel_size_nm: null
+  voxel_size_nm:
+    x: 108.333
+    y: 108.333
+    z: null
   channels: 4
   organism:
   - Homo sapiens
@@ -67,5 +70,108 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-14T06:50:00Z'
-notes: 'Zip listing read with peek_archive (1,674 files: 439 raw multichannel nd2 plus PNG images and masks). With ground-truth masks: train 267, test 30, LLC-PK1 30, NIH-3T3 30; the 42 DMSO and 40 ROCK-inhibitor LifeAct images have predicted masks only, and every folder also holds model-predicted masks (not ground truth). Paper: Nikon Ti2 with CrestOptics X-Light V3 spinning disk, Kinetix camera, 60x 1.2 NA water objective, 12-bit 1600 x 1600 px. Masks are semi-automatic (Fiji macro) from antibody channels: phalloidin for actin and stress fibers, absence of myosin II for lamellipodia and lamellar regions, myosin X puncta for filopodia, paxillin for focal adhesions. Pixel size not stated on the pages read. Only HeLa is stated as human; the species of NIH-3T3 and LLC-PK1 was not checked.'
+  last_checked: '2026-10-14T07:30:00Z'
+notes: 'Zip listing read with peek_archive (1,674 files: 439 raw multichannel nd2 plus PNG images and masks). With ground-truth masks: train 267, test 30, LLC-PK1 30, NIH-3T3 30; the 42 DMSO and 40 ROCK-inhibitor LifeAct images have predicted masks only, and every folder also holds model-predicted masks (not ground truth). Paper: Nikon Ti2 with CrestOptics X-Light V3 spinning disk, Kinetix camera, 60x 1.2 NA water objective, 12-bit 1600 x 1600 px. Masks are semi-automatic (Fiji macro) from antibody channels: phalloidin for actin and stress fibers, absence of myosin II for lamellipodia and lamellar regions, myosin X puncta for filopodia, paxillin for focal adhesions. Pixel size not stated on the pages read. Only HeLa is stated as human; the species of NIH-3T3 and LLC-PK1 was not checked. enricher: pixel size 108.3 nm from the ND2 header calibration (0.10833 um, 60x objective; was null).'
+technical:
+  method: sample
+  inspected_at: '2026-10-14T07:30:00Z'
+  inspected_urls:
+  - https://zenodo.org/api/records/18135376
+  - https://zenodo.org/records/18135376/files/fast_dataset.zip
+  bytes_downloaded: 11816150
+  size_source: file-listing
+  layout:
+    tree: |
+      fast_dataset.zip (4.2 GB, 1674 members) / fast_dataset/
+        train_data/  images/ 267 .png; images/raw_multichannel_images/ 267 .nd2; ground_truth_masks/ 267 .png; predicted_masks/ 267 .png
+        test_data/   images/ 30 .png; images/raw_multichannel_images/ 30 .nd2; ground_truth_masks/ 30 .png; predicted_masks/ 30 .png
+        alternate_cells/
+          3t3/       images/ 30 .png; images/raw_multichannel_images/ 30 .nd2; ground_truth_masks/ 30; predicted_masks/ 30
+          llcpk1/    images/ 30 .png; images/raw_multichannel_images/ 30 .nd2; ground_truth_masks/ 30; predicted_masks/ 30
+        lifeact_3t3/
+          control_dmso_images/ 42 .png (+ raw_data/ 42 .nd2); control_dmso_predicted_masks/ 42 .png
+          rock_inhibitor_images/ 40 .png (+ raw_data/ 40 .nd2); rock_inhibitor_predicted_masks/ 40 .png
+    n_files: 1674
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/18135376/files/fast_dataset.zip::fast_dataset/test_data/images/hela_data1_x60_4Channel016.png
+    - https://zenodo.org/records/18135376/files/fast_dataset.zip::fast_dataset/test_data/ground_truth_masks/hela_data1_x60_4Channel016.png
+    size_bytes: 691019
+    description: Test cell hela_data1_x60_4Channel016, phalloidin PNG and its ground-truth colour mask (1600 x 1600 px); the 4-channel ND2 of the same cell is images/raw_multichannel_images/hela_data1_x60_4Channel016.nd2 (21 MB).
+  arrays:
+  - role: raw
+    path_pattern: fast_dataset/{train_data,test_data,alternate_cells/3t3,alternate_cells/llcpk1}/images/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1600
+    - 1600
+    shape_varies: null
+    dtype: uint8
+    compression: png
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 8-bit phalloidin image the masks were drawn on (model input).
+  - role: raw
+    path_pattern: fast_dataset/{train_data,test_data,alternate_cells/3t3,alternate_cells/llcpk1}/images/raw_multichannel_images/*.nd2
+    format: nd2
+    axes: cyx
+    shape:
+    - 4
+    - 1600
+    - 1600
+    shape_varies: null
+    dtype: uint16
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 73
+    - 4095
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 'Channels in the ND2: dapi_vineeth, cy5_vineeth, tritc_vineeth, fitc_vineeth (the stains per channel are not mapped in the files). File names carry a cell-line prefix (hela_, 3t3_, llcpk1_) that the PNGs of alternate_cells lack.'
+  - role: label
+    path_pattern: fast_dataset/{train_data,test_data,alternate_cells/3t3,alternate_cells/llcpk1}/ground_truth_masks/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1600
+    - 1600
+    - 4
+    shape_varies: null
+    dtype: uint8
+    compression: png
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: rgb-colors
+    classes:
+    - id: 0,178,79
+      name: actin and stress fibers (Actin_SF)
+    - id: 255,84,255
+      name: focal adhesions (FA)
+    - id: 255,163,0
+      name: lamellipodia and lamellar regions (Lame)
+    - id: 48,119,178
+      name: filopodia (Filo)
+    - id: 255,255,255
+      name: background
+    alignment: same-grid
+    alignment_notes: 'Pairing: ground_truth_masks/<name>.png for images/<name>.png in the same folder (same 1600 x 1600 grid). RGBA, alpha always 255. Colour-to-class mapping read from the figure legend colour names (green/cyan, magenta, orange, blue), not from a stated RGB table.'
+  notes: 'Listing: tools/listing.py on the Zenodo record, 1 file (fast_dataset.zip, 4,211,399,727 B, exact), 1674 members.
+    Sample test cell 016: phalloidin PNG mode L 1600 x 1600 uint8, [0, 255], mean 7.6; mask PNG RGBA 1600 x 1600, 5 colours
+    (white 2,359,397 px; green 0,178,79 161,273; orange 255,163,0 18,752; magenta 255,84,255 16,721; blue 48,119,178 3,857).
+    ND2 of the same cell (21,176,320 B, read with the nd2 package): C=4, Y=1600, X=1600 uint16, per channel max 2784-4095
+    (12-bit camera, so normalization none), calibration 0.10833 um/px (x, y calibrated), objective Plan Apo VC 60xA WI. Values
+    from one sample. predicted_masks/ folders hold model predictions (not ground truth, not listed as an array); lifeact_3t3 has only those. Organisms: only HeLa (Homo sapiens) is stated; 3T3 and LLC-PK1 species were not stated in the sources read.
+    2D data: not convertible by the miao layout yet (3D only).'
