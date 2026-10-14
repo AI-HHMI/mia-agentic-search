@@ -1,0 +1,148 @@
+schema_version: '1.2'
+id: kaggle-jeanpat-overlapping-chromosomes
+title: Overlapping chromosomes
+short_name: Overlapping chromosome pairs (fluorescence)
+description: Semi-synthetic images of two overlapping human metaphase chromosomes, built by combining pairs of single chromosomes
+  (DAPI plus Cy3 telomere probe merged into one greyscale image) with relative shifts and rotations. Each image has a ground-truth
+  label map that separates chromosome 1, chromosome 2 and their overlap, provided as one hdf5 array of 13,434 image/label
+  pairs.
+landing_url: https://www.kaggle.com/datasets/jeanpat/overlapping-chromosomes
+doi: null
+repository: Kaggle
+accession: jeanpat/overlapping-chromosomes
+authors:
+- Jeanpat
+publications:
+- title: Image Segmentation to Distinguish Between Overlapping Human Chromosomes
+  doi: 10.48550/arXiv.1712.07639
+  url: https://arxiv.org/abs/1712.07639
+date_published: '2016-10-12'
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Homo sapiens
+  sample: Human metaphase chromosomes, DAPI stained and hybridized with a Cy3-labelled telomeric probe, combined into synthetic
+    overlapping pairs
+  labels_stains:
+  - DAPI
+  - Cy3 telomeric probe
+data:
+  formats:
+  - hdf5
+  size_bytes: 24203163
+  n_items: 13434
+  access: open
+  download_url: https://www.kaggle.com/api/v1/datasets/download/jeanpat/overlapping-chromosomes
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: Label channel stored with the image in one HDF5 dataset (dataset_1[:, :, :, 1]); 0 background, 1 and 2 the two chromosomes,
+    3 the overlap (paper)
+  source: automatic
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-NC-SA-4.0
+  url: https://creativecommons.org/licenses/by-nc-sa/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-14T02:18:35Z'
+  evidence_urls:
+  - https://www.kaggle.com/api/v1/datasets/view/jeanpat/overlapping-chromosomes
+  - https://www.kaggle.com/api/v1/datasets/list/jeanpat/overlapping-chromosomes
+  - https://arxiv.org/abs/1712.07639
+  - https://arxiv.org/pdf/1712.07639
+  - https://www.kaggle.com/api/v1/datasets/download/jeanpat/overlapping-chromosomes
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-14T04:35:00Z'
+notes: 'Kaggle record (CC BY-NC-SA 4.0, 24 MB, one file LowRes_13434_overlapping_pairs.h5; grey image in channel 0, label
+  in channel 1) and the arXiv paper (Hu et al. 2017): single chromosomes from one human metaphase image (DAPI plus Cy3 telomere
+  probe merged to greyscale) were paired with relative shifts and rotations, and labels were computed by adding the single-chromosome
+  masks (overlap = 3). The images are synthetic compositions of real chromosome images, so the labels are computed, not hand-drawn.
+  The paper describes about 13k images of 94 x 93 px with a cleaned, cropped version that may not match this array. enricher:
+  dataset_1 is int64 [13434, 94, 93, 2] (image, label); 166 images keep one pixel of value 4 (erroneous per the paper). channels
+  1; download_url is the Kaggle download API URL (serves the .h5 inside a zip).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "LowRes_13434_overlapping_pairs.h5   24.2 MB   (served by Kaggle as a 21.8 MB zip)\n  dataset_1   int64 [13434,\
+      \ 94, 93, 2]   gzip, chunks [420, 6, 6, 1]\n    [..., 0] grey image   [..., 1] label\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://www.kaggle.com/api/v1/datasets/download/jeanpat/overlapping-chromosomes
+    size_bytes: 21808691
+    description: 'The whole dataset: one zip holding the single HDF5 file (13,434 image/label pairs)'
+  arrays:
+  - role: raw
+    path_pattern: LowRes_13434_overlapping_pairs.h5 (dataset_1)
+    format: hdf5
+    axes: null
+    shape:
+    - 13434
+    - 94
+    - 93
+    - 2
+    shape_varies: false
+    dtype: int64
+    compression: gzip
+    value_range:
+    - -15
+    - 402
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Kaggle description: pairs[i, :, :, 0] is the grey image, pairs[i, :, :, 1] the label, i.e. image index,
+      y, x, channel (no schema axis letter for an image index, so axes null). Grey: 90 % zeros (background), some negative
+      values.'
+  - role: label
+    path_pattern: LowRes_13434_overlapping_pairs.h5 (dataset_1)
+    format: hdf5
+    axes: null
+    shape:
+    - 13434
+    - 94
+    - 93
+    - 2
+    shape_varies: false
+    dtype: int64
+    compression: gzip
+    value_range:
+    - 0
+    - 4
+    normalization: none
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: chromosome 1
+    - id: 2
+      name: chromosome 2
+    - id: 3
+      name: overlap
+    alignment: same-grid
+    alignment_notes: 'Channel 1 of the same dataset, pixel-aligned with channel 0 by construction. Counts over all images:
+      0 106,552,584; 1 3,231,792; 2 6,185,900; 3 1,469,586; 4 166 (one pixel in each of 166 images; the paper calls these
+      "erroneous labels of 4", corrected only in its cleaned version).'
+  notes: 'Size from the Kaggle API (one file, 24,203,163 B; the download is a 21,808,691 B zip). The whole zip was read with
+    h5py in a temp dir and deleted (method sample). Kaggle file URLs are anonymous API links (302 to signed storage.googleapis.com
+    URLs); www.kaggle.com is not on the TensorSwitch allowlist, and the zip index was not readable through the redirect, so
+    no zip::member spec. voxel size not found; checked: HDF5 attributes (none), Kaggle description, arXiv 1712.07639 full
+    text (94 x 93 px images, no pixel size, microscope or magnification).'
