@@ -1,0 +1,152 @@
+schema_version: '1.2'
+id: zenodo-14991205-sinfnet-nematodes-protists
+title: SinfNet microorganism image datasets (nematodes, protists, amoebae, cells) with detection and segmentation annotations
+short_name: SinfNet nematodes and protists (brightfield)
+description: Collection of bright-field microscope image sets of soil microorganisms - nematodes (object detection boxes and
+  pixel-wise segmentation polygons, plus trophic-level classification by head or body), 17 protist genera (detection and semantic
+  segmentation), amoebae (active/inactive detection) and generic cells (detection) - released with trained YOLOv3, UNet and
+  FCN weights.
+landing_url: https://zenodo.org/records/14991205
+doi: 10.5281/zenodo.14991205
+repository: Zenodo
+accession: '14991205'
+authors:
+- Sari Sabban
+publications: []
+date_published: '2021-09-25'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism: []
+  sample: soil nematodes, protists, amoebae and cells on microscope slides
+  labels_stains: []
+data:
+  formats:
+  - jpeg
+  size_bytes: 3864809530
+  n_items: null
+  access: open
+  download_url: https://zenodo.org/records/14991205
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  - semantic-segmentation
+  - classification
+  coverage: unknown
+  format: 'Nematodes: VGG Image Annotator CSV of polygons (Train_Semantic.csv); Amoeba/Cells: Pascal-VOC-style XML boxes per
+    image (dataset/Annotations/*.xml); trophic sets: class = folder name'
+  source: manual
+ml:
+  tasks:
+  - detection
+  - segmentation
+  - classification
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/sarisabban/SinfNet
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-14T21:18:19Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/14991205
+  - https://github.com/sarisabban/SinfNet
+  - https://raw.githubusercontent.com/sarisabban/SinfNet/master/README.md
+  - https://zenodo.org/records/14991205
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-14T22:20:00Z'
+notes: 'Six tar.bz2 data archives (2.80 GB) plus YOLOv3/UNet/FCN .h5 weights and .pkl label lists; size_bytes is the whole
+  Zenodo record (3.86 GB). Organism left empty: soil nematodes (many genera), 17 protist genera, amoebae and cells. No dataset
+  paper found. enricher: formats jpeg (was other), channels 3 (RGB JPEGs), annotations seen in archives (VIA polygon CSV,
+  VOC-style XML boxes, class folders). Image sizes vary by subset: 2584x1936 (Protists, Cells), 1292x968 (Amoeba), 1392x1040
+  (trophic sets). Pixel size not stated anywhere checked. Box XML <xmax>/<ymax> hold box width/height, not corner coordinates
+  (e.g. xmin 592, xmax 44).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "zenodo.org/records/14991205/   16 files, 3.86 GB\n  Nematodes.tar.bz2              325 MB  Nematodes/Train_Semantic.csv,\
+      \ Nematodes/Tests set/*.jpg, ...\n  Protists.tar.bz2               1.0 GB  Protists/Images/<Genus_species>_NNN.jpg,\
+      \ ...\n  Cells.tar.bz2                  1.0 GB  dataset/Annotations/*.xml, dataset/Train/*.jpg\n  Amoeba.tar.bz2   \
+      \              273 MB  dataset/Annotations/*.xml, dataset/Train/*.jpg\n  Nematodes_Trophic_Head.tar.bz2 104 MB  dataset/<trophic\
+      \ class>/<Genus>_N.jpg\n  Nematodes_Trophic_Body.tar.bz2  46 MB  dataset/{Bacterivore 109,Fungivore 46,Herbivore 90,Omnivore\
+      \ 19,Predator 24}/*.jpg (288 jpg)\n  *.h5 (6 model weight files)    1.07 GB\n  *_labels.pkl (4)               <1 KB\n"
+    n_files: 16
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/14991205/files/Nematodes_Trophic_Body.tar.bz2/content
+    size_bytes: 45880878
+    description: 'smallest archive: 288 RGB JPEG nematode body images, labelled by trophic-class folder (classification)'
+  arrays:
+  - role: raw
+    path_pattern: '**/*.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1040
+    - 1392
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: Nematodes/Train_Semantic.csv
+    format: csv
+    axes: null
+    shape:
+    - 1524
+    - 7
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: polygons
+    classes:
+    - id: null
+      name: Nematode
+    alignment: same-grid
+    alignment_notes: 'VIA CSV: one row per polygon (1524 polygons over 468 images), keyed by the image filename column; polygon
+      vertices in pixel coordinates of the JPEG'
+  - role: label
+    path_pattern: dataset/Annotations/*.xml
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: null
+      name: Active
+    - id: null
+      name: Inactive
+    - id: null
+      name: Cell
+    alignment: same-grid
+    alignment_notes: one Pascal-VOC-style XML per image in Amoeba.tar.bz2 and Cells.tar.bz2, same stem as dataset/Train/<stem>.jpg;
+      <xmax>/<ymax> hold box width and height. Active/Inactive in Amoeba, Cell in Cells
+  notes: 'Data are six tar.bz2 archives on Zenodo (not zip, so members are not individually addressable). Nematodes_Trophic_Body
+    was streamed in full (45.9 MB) and listed; the first 3 MB of each other archive were streamed to read their first members
+    (Nematodes, Protists, Cells, Amoeba, Trophic_Head). Their full member lists and image counts are not known. value_range
+    [0,255] and shapes from 10 sampled JPEGs (2584x1936 Protists/Cells, 1292x968 Amoeba, 1392x1040 trophic). Protist semantic
+    masks/polygon files were not reached in the partial stream. No direct per-image links: TensorSwitch can only fetch whole
+    archives. Voxel size not found; checked: JPEG headers (no DPI), Zenodo API record, GitHub README (biomass example uses
+    0.58 um/px as a user parameter, not a dataset property), no paper exists.'
