@@ -76,8 +76,78 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-14T06:27:33Z'
+  last_checked: '2026-10-14T08:00:00Z'
 notes: 'Skeleton zip (1,023 .nmx files + 1 csv, 101 MB) listed with peek_archive. The raw volume is not on Zenodo:
   it is on BossDB (s3://open-neurodata/wanner16/AA201605/SBEM1, ODC-By 1.0 per neurodata.io); the paper describes
   the original as 374 GB of 8-bit TIFFs. Skeleton licence is CC-BY-NC-4.0 (Zenodo). The
   skeletons are traced neurite paths, not voxel masks.'
+technical:
+  method: header
+  inspected_at: '2026-10-14T08:00:00Z'
+  inspected_urls:
+  - https://zenodo.org/api/records/58985
+  - https://zenodo.org/records/58985/files/WannerAA201605_SkeletonsGlomeruli.zip
+  - https://open-neurodata.s3.amazonaws.com/wanner16/AA201605/SBEM1/info
+  bytes_downloaded: 160000
+  size_source: unknown
+  layout:
+    tree: |
+      Zenodo 58985: WannerAA201605_SkeletonsGlomeruli.zip (101.2 MB, 1024 members)
+        WannerAA201605_SkeletonsGlomeruli/
+          Neuron_id0001.nmx ... (1022 neurons; each a zip of skeleton + soma .nml)
+          Glomeruli.nmx
+          WannerAA201605.csv   (neuron class + per-glomerulus values, 1022 rows)
+      BossDB s3://open-neurodata/wanner16/AA201605/SBEM1/  neuroglancer precomputed, 8 scales
+        9.25_9.25_25/ ... 1184_1184_25/   raw chunks 512x512x16
+    n_files: 1024
+    listing_complete: false
+  sample:
+    urls:
+    - https://open-neurodata.s3.amazonaws.com/wanner16/AA201605/SBEM1
+    - https://zenodo.org/records/58985/files/WannerAA201605_SkeletonsGlomeruli.zip::WannerAA201605_SkeletonsGlomeruli/Neuron_id0001.nmx
+    size_bytes: null
+    description: The SBEM precomputed volume (read remotely, crop as needed) and the skeleton of neuron 1.
+  arrays:
+  - role: raw
+    path_pattern: SBEM1/9.25_9.25_25/*
+    format: precomputed
+    axes: zyx
+    shape:
+    - 5505
+    - 14976
+    - 13440
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks:
+    - 16
+    - 512
+    - 512
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Neuroglancer info: num_channels 1, encoding raw, size [13440, 14976, 5505] (x, y, z), resolution [9.25, 9.25, 25] nm, voxel_offset 0; 8 scales down to 1184 x 1184 x 25 nm.'
+  - role: label
+    path_pattern: WannerAA201605_SkeletonsGlomeruli/*.nmx
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    encoding: graph
+    classes: null
+    alignment: unknown
+    alignment_notes: 'Each .nmx is a zip of PyKNOSSOS NML XML files (Neuron_id0001: skeleton + soma .nml) with <node x y z> coordinates and <scale 1 1 1>. Coordinates look like nm in the volume frame (z values are multiples of 25, x/y within 13440 x 9.25 and 14976 x 9.25), so divide by 9.25, 9.25, 25 to get voxels; not stated in the files. One skeleton per neuron, not voxel masks.'
+  notes: 'Listing: tools/listing.py on the Zenodo record, 1 file (101,187,739 B, exact), 1024 members (1023 .nmx, 1 csv). The
+    raw volume lives on BossDB (open-neurodata S3), outside the Zenodo record, so no complete listing of the whole dataset
+    exists here. Raw size from the precomputed info: 13440 x 14976 x 5505 uint8 = 1,108,032,307,200 B at full resolution
+    (about 1.1 TB, uncompressed raw chunks), plus the 101 MB skeleton zip; the record keeps size_bytes null because the
+    skeleton array has no shape for an estimate. Read with peek_archive: WannerAA201605.csv (header ID, NeuronClass, 17 glomerulus
+    columns; 1024 lines) and Neuron_id0001.nmx (inner zip of 2 NML files). Raw values not sampled. Skeletons are graphs:
+    conversion to miao label volumes would need rasterisation, which no array here provides.'
