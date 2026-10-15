@@ -26,6 +26,7 @@ imaging:
 data:
   formats:
   - jpeg
+  - tiff
   size_bytes: null
   n_items: 864
   access: on-request
@@ -65,12 +66,64 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-15T01:55:00Z'
-notes: 'Access is restricted: the Zenodo record is public but its files need a login and a request form
-  (also stated in the paper: "Access to the dataset is restricted and requires submission of a formal request").
-  Kept as a well-known challenge benchmark (MICCAI 2024 mAIcetoma), hence the low confidence. The Zenodo page
-  lists no files (total 5.1 GB), so the file list could not be inspected and annotations were not seen in a
-  listing. Facts on images (JPEG RGB, 800x600, 10x), masks (TIFF) and class counts come from the arXiv paper
-  (fetched through its HTML version; tools/paper.py found no match). Pixel size and train/test split are not
-  stated in the dataset paper or the challenge paper (the split percentages given there are inconsistent). The
-  dataset is also hosted by the AFRICAI XNAT repository.'
+  last_checked: '2026-10-15T02:10:00Z'
+notes: 'Access is restricted: the Zenodo record is public but its files need a login and a request form (also stated
+  in the paper: "Access to the dataset is restricted and requires submission of a formal request"). Kept as a well-known
+  challenge benchmark (MICCAI 2024 mAIcetoma), hence the low confidence. The Zenodo page lists no files (total 5.1
+  GB), so the file list could not be inspected and annotations were not seen in a listing. Facts on images (JPEG
+  RGB, 800x600, 10x), masks (TIFF) and class counts come from the arXiv paper (fetched through its HTML version;
+  tools/paper.py found no match). Pixel size and train/test split are not stated in the dataset paper or the challenge
+  paper (the split percentages given there are inconsistent). The dataset is also hosted by the AFRICAI XNAT repository.
+  enricher: formats + tiff (paper: "images are in JPEG format, while the ground truth annotations are in TIFF format").'
+technical:
+  method: metadata-only
+  inspected_at: '2026-10-15T02:10:00Z'
+  inspected_urls:
+  - https://zenodo.org/api/records/13655082
+  - https://zenodo.org/records/13655082
+  bytes_downloaded: 0
+  size_source: unknown
+  layout:
+    tree: null
+    n_files: null
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: '*.jp*g'
+    format: jpeg
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 864 RGB H&E images, 800x600 px at 10x (arXiv 2410.12833); not inspected.
+  - role: label
+    path_pattern: '*_mask*.tif*'
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: grain
+    alignment: same-grid
+    alignment_notes: One mask per image with a _mask suffix; pixels 1 = grain (ROI), 0 = background (arXiv 2410.12833).
+      Not observed.
+  notes: 'Metadata only: the Zenodo API record (access_right: restricted) lists 0 files, and the page says "files
+    are restricted ... Request access", so nothing could be listed, probed or sampled. The paper confirms restricted
+    access via a formal request (also hosted on AFRICAI XNAT). Array facts are from the paper. The page''s "Total
+    data volume 5.1 GB" is a download statistic, not the dataset size, so size_bytes stays null; no estimate (no
+    file listing, mask dtype unknown). Voxel size not found; checked: Zenodo API and page, dataset paper (arXiv
+    2410.12833 full HTML), challenge paper (arXiv 2512.21792 full HTML); no headers readable. No direct download:
+    Zenodo API lists no files (restricted), download behind a request form. path_pattern globs follow the paper
+    (JPEG images, TIFF masks with a _mask suffix); file names not seen.'
