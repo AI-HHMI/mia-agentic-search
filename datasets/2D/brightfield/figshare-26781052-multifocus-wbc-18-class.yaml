@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: figshare-26781052-multifocus-wbc-18-class
 title: Multi-focus white blood cell stacks with 18 expert classes
 short_name: Multi-focus white blood cell classes (brightfield)
-description: 25,773 white blood cell image stacks from 72 patients, each cell cropped at 200 x 200 px in 10 focal
-  planes (257,730 JPEGs), with expert labels for 18 classes of normal and abnormal cells in labels.csv and a
-  slide_number.csv, plus a validation folder to reproduce the paper's technical validation.
+description: 25,773 white blood cell image stacks from 72 patients, each cell cropped at 200 x 200 px in 10 focal planes (257,730
+  JPEGs), with expert labels for 18 classes of normal and abnormal cells in labels.csv and a slide_number.csv, plus a validation
+  folder to reproduce the paper's technical validation.
 landing_url: https://figshare.com/articles/dataset/26781052
 doi: 10.6084/m9.figshare.26781052
 repository: Figshare
@@ -30,10 +30,11 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Homo sapiens
-  sample: stained peripheral blood smears from 72 patients imaged with the miLab device (50x lens, motorized stage, ten focal planes per cell)
+  sample: stained peripheral blood smears from 72 patients imaged with the miLab device (50x lens, motorized stage, ten focal
+    planes per cell)
   labels_stains: []
 data:
   formats:
@@ -47,8 +48,10 @@ annotations:
   present: true
   types:
   - classification
+  - bounding-box
   coverage: dense
-  format: labels.csv with one of 18 classes per cell stack, slide_number.csv, and a validation folder with CBC results
+  format: 'labels.csv (img_num, rel_x, rel_y, cell_roi_w, cell_roi_h, label): one of 18 classes and the cell ROI box inside
+    the 200x200 crop per cell stack; slide_number.csv; validation folder with its own labels, slide numbers and CBC results'
   source: manual
 ml:
   tasks:
@@ -71,10 +74,115 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-15T11:20:00Z'
-notes: 'Facts come from the figshare API record (landing page gives 403), peek_archive of the 2.3 GB zip (349,570 jpg
-  and 5 csv, including the validation folder) and the Scientific Data paper (Europe PMC full text). The paper says the
-  main set has 257,730 cropped images (25,773 cells x 10 focal planes); the zip count is higher because the
-  validation folder is included. Labels come from two medical technologists with escalation to more senior experts
-  on disagreement. Pixel size is not stated in the paper text read, so voxel_size_nm is null. The article is CC BY-NC-ND
-  while figshare states CC0; the figshare record licence is used.'
+  last_checked: '2026-10-15T10:10:00Z'
+notes: 'Facts come from the figshare API record (landing page gives 403), peek_archive of the 2.3 GB zip (349,570 jpg and
+  5 csv, including the validation folder) and the Scientific Data paper (Europe PMC full text). The paper says the main set
+  has 257,730 cropped images (25,773 cells x 10 focal planes); the zip count is higher because the validation folder is included.
+  Labels come from two medical technologists with escalation to more senior experts on disagreement. The article is CC BY-NC-ND
+  while figshare states CC0; the figshare record licence is used. enricher: labels.csv also gives a cell ROI box per stack,
+  so bounding-box added; channels 3 (RGB JPEG). Each cell is a 10-plane focal stack (<img_num>_<0-9>.jpg); paper: "captured
+  using a 50X microscope with 400 nm intervals", lateral pixel size not stated, so voxel_size_nm stays null.'
+technical:
+  method: sample
+  inspected_at: '2026-10-15T10:10:00Z'
+  inspected_urls:
+  - https://api.figshare.com/v2/articles/26781052
+  - https://ndownloader.figshare.com/files/48650791::multi-focus-wbc-dataset/labels.csv
+  - https://ndownloader.figshare.com/files/48650791::multi-focus-wbc-dataset/slide_number.csv
+  - https://ndownloader.figshare.com/files/48650791::multi-focus-wbc-dataset/3051_6.jpg
+  bytes_downloaded: 52873194
+  size_source: file-listing
+  layout:
+    tree: "26781052/  (figshare, 1 zip, 2.33 GB; 2.27 GB unzipped, 349,576 files)\n  multi-focus-wbc-dataset.zip\n    multi-focus-wbc-dataset/\n\
+      \      <img_num>_<plane>.jpg   257,730 = 25,773 cells x 10 focal planes (0-9), 200x200 RGB\n      labels.csv   (25,773\
+      \ rows: img_num, rel_x, rel_y, cell_roi_w, cell_roi_h, label)\n      slide_number.csv   (img_num, slide_num)\n     \
+      \ validation/<img_num>_<plane>.jpg   91,840\n      validation/labels.csv, slide_number.csv, cbc_result.csv\n    (__MACOSX/\
+      \ resource forks, .DS_Store)"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/48650791::multi-focus-wbc-dataset/0_0.jpg
+    - https://ndownloader.figshare.com/files/48650791::multi-focus-wbc-dataset/labels.csv
+    size_bytes: 803630
+    description: Focal plane 0 of cell 0 (labelled metamyelocyte) and labels.csv with the class and ROI of every cell.
+  arrays:
+  - role: raw
+    path_pattern: multi-focus-wbc-dataset/[0-9]*_[0-9].jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 200
+    - 200
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    lossy: true
+    chunks: null
+    value_range:
+    - 1
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB crops; file <img_num>_<plane>.jpg, plane 0-9 = the 10 focal planes of one cell (400 nm apart per
+      the paper).
+  - role: label
+    path_pattern: multi-focus-wbc-dataset/labels.csv
+    format: csv
+    axes: null
+    shape:
+    - 25773
+    - 6
+    shape_varies: false
+    dtype: unknown
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: boxes-table
+    classes:
+    - id: null
+      name: seg_neutrophil
+    - id: null
+      name: lymphocyte
+    - id: null
+      name: immature_wbc
+    - id: null
+      name: blast
+    - id: null
+      name: band_neutrophil
+    - id: null
+      name: myelocyte
+    - id: null
+      name: abnormal_lymphocyte
+    - id: null
+      name: eosinophil
+    - id: null
+      name: monocyte
+    - id: null
+      name: smudge
+    - id: null
+      name: metamyelocyte
+    - id: null
+      name: agg_plt
+    - id: null
+      name: artifact
+    - id: null
+      name: n_rbc
+    - id: null
+      name: basophil
+    - id: null
+      name: g_plt
+    - id: null
+      name: promyelocyte
+    - id: null
+      name: unk_wbc
+    alignment: same-grid
+    alignment_notes: 'img_num = file prefix; rel_x, rel_y, cell_roi_w, cell_roi_h in pixels of the 200x200 crop (row 0: 43,
+      55, 114, 90); label = class name, the same for all 10 planes of a cell.'
+  notes: 'value_range from one jpg (3051_6.jpg: 1-255, mean 159.7). Class counts from labels.csv: seg_neutrophil 8546, lymphocyte
+    4209, immature_wbc 3519, blast 1862, ... promyelocyte 24, unk_wbc 3. The zip index is 52.6 MB (441,436 entries incl. __MACOSX).
+    voxel size: lateral not found (checked: JPEG header (no dpi), figshare API record, paper full text Europe PMC PMC11464576:
+    50X lens, 200x200 crops, z step 400 nm); z step 400 nm stated. Files are 2D JPEGs; each cell is a 10-plane focal stack,
+    which could also be treated as a 3D stack.'
