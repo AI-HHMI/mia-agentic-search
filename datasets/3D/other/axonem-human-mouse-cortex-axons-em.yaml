@@ -1,0 +1,178 @@
+schema_version: '1.2'
+id: axonem-human-mouse-cortex-axons-em
+title: 'AxonEM Dataset: 3D Axon Instance Segmentation of Brain Cortical Regions'
+short_name: Human and mouse cortex axon instance seg. (EM)
+description: Two 30x30x30 um EM image volumes from human (1000 slices) and mouse (750 slices) cortex,
+  4096x4096 voxels per slice at 8 nm in x and y, with over 18,000 proofread axon instances. Nine densely
+  annotated training subvolumes per species are provided as HDF5 (image + instance segmentation); the
+  rest of each volume is the challenge test region (AxonEM challenge on grand-challenge.org).
+landing_url: https://connectomics-bazaar.github.io/proj/AxonEM/index.html
+doi: null
+repository: HuggingFace
+accession: null
+authors:
+- Donglai Wei
+- Kisuk Lee
+- Hanyu Li
+- Ran Lu
+- J. Alexander Bae
+- Zequan Liu
+- Lifu Zhang
+- Marcia dos Santos
+- Zudi Lin
+- Thomas Uram
+- Xueying Wang
+- Ignacio Arganda-Carreras
+- Brian Matejek
+- Narayanan Kasthuri
+- Jeff Lichtman
+- Hanspeter Pfister
+publications:
+- title: 'AxonEM Dataset: 3D Axon Instance Segmentation of Brain Cortical Regions'
+  doi: 10.1007/978-3-030-87193-2_17
+  url: https://arxiv.org/abs/2107.05451
+date_published: null
+imaging:
+  modality:
+  - other
+  dimensionality: 3D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Homo sapiens
+  - Mus musculus
+  sample: Human and mouse cerebral cortex, two 30 um cubes
+  labels_stains: []
+data:
+  formats:
+  - hdf5
+  size_bytes: 42859322712
+  n_items: 2
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: partial
+  format: HDF5 instance-ID volumes (seg_*_pad.h5, dataset main) per training subvolume; mouse zip also
+    has valid_mask.h5
+  source: proofread
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: AxonEM challenge (axonem.grand-challenge.org)
+  baseline_code_url: https://github.com/PytorchConnectomics/AxonEM-challenge
+license:
+  spdx: MIT
+  url: https://huggingface.co/datasets/pytc/AxonEM
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-15T10:30:00Z'
+  evidence_urls:
+  - https://connectomics-bazaar.github.io/proj/AxonEM/index.html
+  - https://arxiv.org/abs/2107.05451
+  - https://github.com/donglaiw/AxonEM-challenge
+  - https://axonem.grand-challenge.org/
+  - https://huggingface.co/api/datasets/pytc/AxonEM
+  - https://huggingface.co/api/datasets/pytc/EM30
+  - https://arxiv.org/pdf/2107.05451
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-15T14:20:00Z'
+notes: 'Per the challenge page: images are PNG-slice zips in HuggingFace pytc/EM30 (human 23.9 GB, mouse
+  15.2 GB); training data in pytc/AxonEM. MIT is from the HF dataset cards; the challenge page states
+  no license. Test ground truth is withheld. organisms: Homo sapiens = EM30-H-* (temporal cortex L2, from
+  H01), Mus musculus = EM30-M-* (V1 L2/3, from Dorkenwald et al.). enricher: voxel size set to null (was
+  8x8 nm): paper 2.1 states 7x7x40 nm (mouse) and 8x8x30 nm (human), no shared value. coverage: 9 densely
+  annotated 512x512x50 training subvolumes per species (padded to 90x1536x1536); test region GT withheld.
+  modality: paper says serial section EM only, so other.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./ (2 HF repos)      4 files   42.9 GB  .zip\npytc/AxonEM:\n  EM30-H-train-9vol-pad-20-512-512.zip\
+      \   1.8 GB  18 members: im_<z>-<y>-<x>_pad.h5 x9, seg_<z>-<y>-<x>_pad.h5 x9\n  EM30-M-train-9vol-pad-20-512-512.zip\
+      \   1.9 GB  20 members: im_*_pad.h5 x10, seg_*_pad.h5 x9, valid_mask.h5\npytc/EM30:\n  EM30-H-im-pad.zip\
+      \  23.9 GB  im_pad/im0000.png ... (1040 PNG slices)\n  EM30-M-im-pad.zip  15.2 GB  im_pad/im0000.png\
+      \ ... (790 PNG slices)\n  (EM30-R-im.zip 14.0 GB in the same repo is not part of AxonEM; not counted)"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/pytc/AxonEM/resolve/main/EM30-H-train-9vol-pad-20-512-512.zip::im_0-0-0_pad.h5
+    - https://huggingface.co/datasets/pytc/AxonEM/resolve/main/EM30-H-train-9vol-pad-20-512-512.zip::seg_0-0-0_pad.h5
+    size_bytes: 200667881
+    description: 'Human training subvolume 0-0-0: image and axon instance IDs (90x1536x1536 uint8 each)'
+  arrays:
+  - role: raw
+    path_pattern: EM30-?-train-9vol-pad-20-512-512.zip::im_*_pad.h5 (main)
+    format: hdf5
+    axes: zyx
+    shape:
+    - 90
+    - 1536
+    - 1536
+    shape_varies: false
+    dtype: uint8
+    compression: gzip
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Training subvolume padded by 20 z / 512 y,x (zip name pad-20-512-512) around the
+      paper's 50x512x512 annotated block; axis order inferred from that, not stated in the file. Mouse
+      im_675-800-800_pad.h5 has no seg file.
+  - role: label
+    path_pattern: EM30-?-train-9vol-pad-20-512-512.zip::seg_*_pad.h5 (main)
+    format: hdf5
+    axes: zyx
+    shape:
+    - 90
+    - 1536
+    - 1536
+    shape_varies: false
+    dtype: uint8
+    compression: gzip
+    value_range:
+    - 0
+    - 192
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1-255
+      name: axon instance
+    alignment: same-grid
+    alignment_notes: Pairs with im_<same offsets>_pad.h5; same shape and chunks. Human seg_0-0-0 has 193
+      values, mouse seg_0-3584-0 189; mouse seg_0-0-0_pad.h5 is byte-identical in content to valid_mask.h5
+      (binary), so it holds no instances.
+  - role: raw
+    path_pattern: EM30-?-im-pad.zip::im_pad/im*.png
+    format: png
+    axes: yx
+    shape:
+    - 5120
+    - 5120
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Full padded volumes, one PNG per z slice (human 1040, mouse 790); training subvolume
+      offsets in the h5 names presumably index this grid (not checked). Header only.
+  notes: 'Listing: tools/listing.py of the 4 HF zips (exact sizes, central directories). Sampled with
+    a zip-member HDF5 reader: mouse im/seg/valid_mask 0-0-0 and human seg_0-0-0, mouse seg_0-3584-0 (~187
+    MB). value_range from one sample each. Instance IDs are uint8, so IDs are local to each subvolume.
+    Mouse seg_0-0-0_pad.h5 equals valid_mask.h5: likely a packaging error; use the other 8 mouse pairs.
+    Voxel size differs by species (paper Sec. 2.1: mouse 7x7x40 nm, human 8x8x30 nm), so imaging.voxel_size_nm
+    is null; split per species to convert. download_url: no single archive (4 zips in two HF repos); direct
+    zip URLs are in the tree. EM30-R-im.zip (pytc/EM30) is a third volume not described by AxonEM. Mouse
+    valid_mask.h5 (90x1536x1536 uint8 binary, 1 = central 50x512x512 annotated block) is a loss mask,
+    not listed as an array.'
