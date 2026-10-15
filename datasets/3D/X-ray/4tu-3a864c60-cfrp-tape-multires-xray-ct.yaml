@@ -29,10 +29,7 @@ imaging:
   modality:
   - X-ray
   dimensionality: 3D
-  voxel_size_nm:
-    x: 800
-    y: 800
-    z: 800
+  voxel_size_nm: null
   channels: 1
   organism: []
   sample: Polished transversal sections of unidirectional carbon-fibre-reinforced thermoplastic polymer
@@ -76,11 +73,100 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-15T13:53:23Z'
+  last_checked: '2026-10-15T14:52:19Z'
 notes: 'Three zips: Microscopy_images.zip (1.27 GB; 162 .vk4 + 162 .png, 0.7 um pixels), XrayCT_Cropped_and_Registered_Reconstructed.zip
   (15.1 GB; listed with peek_archive: per-specimen _CRR.tif, _CRR_TWS_F.tif, _CRR_TWS_P.tif, _CRR_ST.mat;
   download_url points here) and XrayCT_Reconstructed_Image_Dataset.zip (106 GB, raw .txm per the paper;
-  not listed). Voxel size is 0.8, 2.0 or 3.5 um per scan (isotropic); the record gives the finest. Labels
-  come from Trainable Weka Segmentation (trained on user labels), so source is mixed; fibre labels exist
-  for 0.8 and 2.0 um (plus one 3.5 um file), pore labels for all three. The registered multi-resolution
-  stacks may also suit resolution-pair or registration work. n_items is the 4 specimens.'
+  not listed). Labels come from Trainable Weka Segmentation (trained on user labels), so source is mixed;
+  fibre labels exist for 0.8 and 2.0 um (plus one 3.5 um file), pore labels for all three. The registered
+  multi-resolution stacks may also suit resolution-pair or registration work. n_items is the 4 specimens.
+  enricher: voxel_size_nm set to null (was 800): scans are 0.8, 2.0 or 3.5 um isotropic per file (<n>_<size>um_CRR*.tif),
+  no shared value.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "./  4 files  122.8 GB (4TU.ResearchData API)\n  Microscopy_images.zip                     \
+      \     1.27 GB\n  XrayCT_Cropped_and_Registered_Reconstructed.zip 15.1 GB (48 members, 46.4 GB unzipped)\n\
+      \    Cropped_and_Registered Reconstructed/<n>_ROI/  (n = 1..4)\n      <n>_{0.8,2.0,3.5}um_CRR.tif\
+      \        raw\n      <n>_{0.8,2.0,3.5}um_CRR_TWS_F.tif  fibre labels (3.5 um only for ROI 2)\n  \
+      \    <n>_{0.8,2.0,3.5}um_CRR_TWS_P.tif  pore labels (3.5 um: 3 of 4)\n      <n>_<size>um_CRR_ST.mat\
+      \            structure-tensor fields\n  XrayCT_Reconstructed_Image_Dataset.zip       106.4 GB (not\
+      \ listed)\n  ReadMe.txt"
+    n_files: 4
+    listing_complete: false
+  sample:
+    urls:
+    - https://data.4tu.nl/file/3a864c60-3023-45ab-a6c6-f36a23d67f56/8e5e0388-36d8-447e-b3b2-e3c969177537::Cropped_and_Registered
+      Reconstructed/1_ROI/1_3.5um_CRR.tif
+    - https://data.4tu.nl/file/3a864c60-3023-45ab-a6c6-f36a23d67f56/8e5e0388-36d8-447e-b3b2-e3c969177537::Cropped_and_Registered
+      Reconstructed/1_ROI/1_3.5um_CRR_TWS_P.tif
+    size_bytes: 3830159
+    description: 'ROI 1 at 3.5 um: raw stack and pore label (308x47x441 each)'
+  arrays:
+  - role: raw
+    path_pattern: XrayCT_Cropped_and_Registered_Reconstructed.zip::Cropped_and_Registered Reconstructed/*_ROI/*um_CRR.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 308
+    - 47
+    - 441
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 58
+    - 239
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ hyperstack (ZYX). Three registered resolutions per ROI (0.8, 2.0, 3.5 um)
+      in one coordinate system per specimen (paper).
+  - role: label
+    path_pattern: XrayCT_Cropped_and_Registered_Reconstructed.zip::Cropped_and_Registered Reconstructed/*_ROI/*um_CRR_TWS_P.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 308
+    - 47
+    - 441
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 255
+      name: pore / air (per the TWS_P suffix and record)
+    alignment: same-grid
+    alignment_notes: Pairs with <n>_<size>um_CRR.tif of the same ROI and voxel size; same shape. ImageJ
+      slice labels read "class 2".
+  - role: label
+    path_pattern: XrayCT_Cropped_and_Registered_Reconstructed.zip::Cropped_and_Registered Reconstructed/*_ROI/*um_CRR_TWS_F.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 400
+    - 54
+    - 356
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 255
+      name: fibre (per the TWS_F suffix and record)
+    alignment: same-grid
+    alignment_notes: Pairs like the pore labels; sampled 2_3.5um_CRR_TWS_F.tif (ROI 2). ImageJ slice labels
+      read "class 1".
+  notes: 'Sizes: 4TU API file list (4 files, 122,815,865,092 B, exact; tools/listing.py stalled on the
+    106 GB zip, hence page-stated). Cropped zip listed (peek_archive, 48 members). Sampled 3 members (3.99
+    MB compressed): ImageJ ZYX uint8 TIFFs; raw 58-239, labels binary 0/255. Values from one sample each.
+    The .mat structure-tensor files (34 GB at 0.8 um) and the 106 GB raw .txm zip were not inspected.
+    Download: zip members are usable by range requests, but data.4tu.nl is not on the TensorSwitch allowlist.
+    Voxel size per file from names and the record (0.8/2.0/3.5 um); TIFFs carry no calibration.'
