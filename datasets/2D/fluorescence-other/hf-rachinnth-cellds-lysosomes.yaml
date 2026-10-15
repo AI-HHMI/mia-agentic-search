@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: hf-rachinnth-cellds-lysosomes
 title: CELLDS-Lysosomes (Curated Subcellular Dataset)
 short_name: Cell and lysosome instance masks (fluorescence)
-description: 12 curated fluorescence image sets (2048x2048, 16-bit TIFF) with three channels each (nuclei,
-  lysosomes, whole cell), hand-curated 16-bit instance masks for lysosomes and Cellpose-generated instance
-  masks for whole cells.
+description: 12 curated fluorescence image sets (2048x2048, 16-bit TIFF) with three channels each (nuclei, lysosomes,
+  whole cell), hand-curated 16-bit instance masks for lysosomes and Cellpose-generated instance masks for whole
+  cells.
 landing_url: https://huggingface.co/datasets/Rachinnth/CELLDS-Lysosomes
 doi: null
 repository: HuggingFace
@@ -16,12 +16,17 @@ date_published: '2026-07-07'
 imaging:
   modality:
   - fluorescence-other
+  - brightfield
   dimensionality: 2D
-  voxel_size_nm: null
+  voxel_size_nm:
+    x: 173.3
+    y: 173.3
+    z: null
   channels: 3
   organism: []
-  sample: 'cultured cells imaged in three channels: w1 nuclei (DAPI/Hoechst), w2 lysosomes (LysoTracker/LAMP1),
-    w3 cytoplasm/whole cell; Andor camera, 40 ms exposure for the lysosome channel'
+  sample: 'cultured cells in a multi-well plate (wells C03-C06), three channels per site: w1 nuclei (card: DAPI/Hoechst;
+    header filter FITC), w2 lysosomes (Texas Red filter), w3 whole cell (header: transmitted light TL 25); Andor
+    camera, 40X S Plan Fluor ELWD NA 0.6'
   labels_stains:
   - DAPI/Hoechst
   - LysoTracker/LAMP1
@@ -39,7 +44,8 @@ annotations:
   - instance-segmentation
   - organelle
   coverage: dense
-  format: lysosome_masks/*.tif (16-bit instance labels) and cell_masks/*.png (16-bit instance labels)
+  format: lysosome_masks/*_masks.tif and cell_masks/*_cell_masks.png (both uint16 TIFF instance labels; the .png
+    files are TIFF inside)
   source: mixed
 ml:
   tasks:
@@ -59,17 +65,166 @@ provenance:
   - https://huggingface.co/api/datasets/Rachinnth/CELLDS-Lysosomes
   - https://huggingface.co/api/datasets/Rachinnth/CELLDS-Lysosomes/tree/main?recursive=true
   - https://huggingface.co/datasets/Rachinnth/CELLDS-Lysosomes/resolve/main/raw_images_w2/C03_s1_w2_Timepoint_001_220518-ST_C03_s1_w2.TIF
-  confidence: 0.6
+  - https://huggingface.co/datasets/Rachinnth/CELLDS-Lysosomes/resolve/main/raw_images_w1/C03_s1_w1_Timepoint_001_220518-ST_C03_s1_w1.TIF
+  - https://huggingface.co/datasets/Rachinnth/CELLDS-Lysosomes/resolve/main/raw_images_w3/C03_s1_w3_Timepoint_001_220518-ST_C03_s1_w3.TIF
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-15T16:54:49Z'
-notes: Dataset card and full HF file listing read (12 image sets x 3 channels, 12 lysosome masks, 12 cell
-  masks, 504 MB); TIFF header probed (2048x2048 uint16, Andor camera metadata, no pixel calibration).
-  Card says this is the first 12 sets of a 25-image curation batch, so it may grow. Organism, cell line,
-  microscope and pixel size are not stated on the card (file names suggest a plate-based high-content
-  acquisition); no paper or author names found, only the HF user. Lysosome masks are hand-curated in Fiji;
-  whole-cell masks come from Cellpose, so only the lysosome masks are manual (annotation source marked
-  mixed). The cell_masks files carry a .png extension but the probe reads them as 16-bit TIFF, worth checking.
-  License MIT per card. Cell-mask format not verified beyond the header probe.
+  last_checked: '2026-10-15T17:34:00Z'
+notes: 'Dataset card and full HF file listing read (12 image sets x 3 channels, 12 lysosome masks, 12 cell masks,
+  504 MB). Card: first 12 sets of a 25-image curation batch, so it may grow. Organism and cell line not stated;
+  no paper or author names, only the HF user. Lysosome masks hand-curated in Fiji; whole-cell masks from Cellpose
+  (annotation source mixed). License MIT per card. enricher: voxel size 173.3 x 173.3 nm from the MetaSeries TIFF
+  header (spatial-calibration 0.1733 um, calibration on; same in w1, w2, w3 and other sites; was null). enricher:
+  brightfield added, since w3 headers say transmitted light (TL 25); w1 header filter is FITC (536 nm), not DAPI
+  as the card says. cell_masks *.png are TIFF files (probe).'
+technical:
+  method: sample
+  inspected_at: '2026-10-15T17:34:00Z'
+  inspected_urls:
+  - https://huggingface.co/api/datasets/Rachinnth/CELLDS-Lysosomes/tree/main
+  - https://huggingface.co/datasets/Rachinnth/CELLDS-Lysosomes/resolve/main/README.md
+  - https://huggingface.co/datasets/Rachinnth/CELLDS-Lysosomes/resolve/main/raw_images_w1/C03_s1_w1_Timepoint_001_220518-ST_C03_s1_w1.TIF
+  - https://huggingface.co/datasets/Rachinnth/CELLDS-Lysosomes/resolve/main/raw_images_w2/C03_s1_w2_Timepoint_001_220518-ST_C03_s1_w2.TIF
+  - https://huggingface.co/datasets/Rachinnth/CELLDS-Lysosomes/resolve/main/raw_images_w3/C03_s1_w3_Timepoint_001_220518-ST_C03_s1_w3.TIF
+  - https://huggingface.co/datasets/Rachinnth/CELLDS-Lysosomes/resolve/main/lysosome_masks/C03_s1_w2_Timepoint_001_220518-ST_C03_s1_w2_masks.tif
+  - https://huggingface.co/datasets/Rachinnth/CELLDS-Lysosomes/resolve/main/cell_masks/C03_s1_w2_Timepoint_001_220518-ST_C03_s1_w2_cell_masks.png
+  bytes_downloaded: 42087350
+  size_source: file-listing
+  layout:
+    tree: './                README.md, .gitattributes
+
+      raw_images_w1/   12 x <well>_s<site>_w1_Timepoint_<t>_<plate>-ST_<well>_s<site>_w1.TIF   (8.4 MB each)
+
+      raw_images_w2/   12 x ..._w2.TIF
+
+      raw_images_w3/   12 x ..._w3.TIF
+
+      lysosome_masks/  12 x <w2 stem>_masks.tif   (8.4 MB each)
+
+      cell_masks/      12 x <w2 stem>_cell_masks.png (TIFF inside, 8.4 MB each)
+
+      '
+    n_files: 62
+    listing_complete: true
+  sample:
+    description: 'one site (C03 s1, timepoint 001, plate 220518): w1, w2, w3 raw images and the lysosome and cell
+      masks'
+    urls:
+    - https://huggingface.co/datasets/Rachinnth/CELLDS-Lysosomes/resolve/main/raw_images_w1/C03_s1_w1_Timepoint_001_220518-ST_C03_s1_w1.TIF
+    - https://huggingface.co/datasets/Rachinnth/CELLDS-Lysosomes/resolve/main/raw_images_w2/C03_s1_w2_Timepoint_001_220518-ST_C03_s1_w2.TIF
+    - https://huggingface.co/datasets/Rachinnth/CELLDS-Lysosomes/resolve/main/raw_images_w3/C03_s1_w3_Timepoint_001_220518-ST_C03_s1_w3.TIF
+    - https://huggingface.co/datasets/Rachinnth/CELLDS-Lysosomes/resolve/main/lysosome_masks/C03_s1_w2_Timepoint_001_220518-ST_C03_s1_w2_masks.tif
+    - https://huggingface.co/datasets/Rachinnth/CELLDS-Lysosomes/resolve/main/cell_masks/C03_s1_w2_Timepoint_001_220518-ST_C03_s1_w2_cell_masks.png
+    size_bytes: 41987350
+  arrays:
+  - role: raw
+    path_pattern: raw_images_w1/*.TIF
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    lossy: false
+    value_range:
+    - 134
+    - 7983
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 'Channel w1: FITC filter, 536 nm; nuclei per the card (MetaSeries header). Single-page plain
+      TIFF.'
+  - role: raw
+    path_pattern: raw_images_w2/*.TIF
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    lossy: false
+    value_range:
+    - 0
+    - 13155
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 'Channel w2: Texas Red filter, 624 nm; lysosomes (MetaSeries header). Single-page plain TIFF.'
+  - role: raw
+    path_pattern: raw_images_w3/*.TIF
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    lossy: false
+    value_range:
+    - 522
+    - 3930
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 'Channel w3: transmitted light (TL 25); whole cell (MetaSeries header). Single-page plain TIFF.'
+  - role: label
+    path_pattern: lysosome_masks/*_masks.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    lossy: false
+    value_range:
+    - 0
+    - 2009
+    encoding: instance-ids
+    n_ids_observed: 2008
+    classes:
+    - id: 0
+      name: background
+    - id: 1..N
+      name: lysosome instance
+    alignment: same-grid
+    alignment_notes: Mask <w2 stem>_masks.tif belongs to raw_images_w2/<w2 stem>.TIF and to the w1/w3 images of
+      the same well, site, timepoint and plate (replace w2 by w1/w3). Same 2048x2048 grid.
+  - role: label
+    path_pattern: cell_masks/*_cell_masks.png
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    lossy: false
+    value_range:
+    - 0
+    - 252
+    encoding: instance-ids
+    n_ids_observed: 252
+    classes:
+    - id: 0
+      name: background
+    - id: 1..N
+      name: cell instance
+    alignment: same-grid
+    alignment_notes: Mask <w2 stem>_cell_masks.png pairs with the same site as the lysosome mask; Cellpose output
+      (card). TIFF data despite the .png extension.
+  notes: 'Listing: Hugging Face API, 62 files, 503,856,226 B, complete. Probed w2 raw (plain TIFF), lysosome mask
+    (ImageJ TIFF) and cell mask (TIFF written by tifffile, named .png): all 2048x2048 uint16, uncompressed, single
+    page. Sampled one site: w2 raw [0, 13155] (p1/p50/p99 73/146/2321), w3 raw [522, 3930], w1 raw [134, 7983];
+    lysosome mask 2009 unique values (0 + IDs up to 2009, 99% background); cell mask 253 unique values (0..252).
+    Value ranges are from one site. Normalization none: inferred from uint16 camera counts with no clipping (MetaSeries
+    header: Andor sCMOS 16-bit gain, no shading or subtraction). Raw w2 has a few 0 pixels (min 0, p0.1 62). Voxel
+    size from the MetaSeries XML at the end of each TIFF (header calibration, read by range). TensorSwitch matches
+    tiff arrays by .tif/.tiff extension, so the cell_masks .png files would not match a tiff array.'
