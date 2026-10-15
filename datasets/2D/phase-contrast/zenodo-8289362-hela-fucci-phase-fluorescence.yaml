@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-8289362-hela-fucci-phase-fluorescence
 title: HeLa FUCCI single-cell images, phase contrast with red and green fluorescence
 short_name: HeLa FUCCI phase and fluorescence triplets
-description: 324 fields of view of HeLa-FUCCI cells, each as a phase contrast image and the matching red (Cdt1,
-  G1) and green (Geminin, S/G2/M) fluorescence images, intended for developing cell segmentation, detection and
-  cell-cycle classification of unlabeled cells.
+description: 324 fields of view of HeLa-FUCCI cells, each as a phase contrast image and the matching red (Cdt1, G1) and green
+  (Geminin, S/G2/M) fluorescence images, intended for developing cell segmentation, detection and cell-cycle classification
+  of unlabeled cells.
 landing_url: https://zenodo.org/records/8289362
 doi: 10.5281/zenodo.8289362
 repository: Zenodo
@@ -34,8 +34,8 @@ imaging:
   - FUCCI Geminin-mAG1
 data:
   formats:
-  - jpeg
-  size_bytes: 790800000
+  - png
+  size_bytes: 790754291
   n_items: 972
   access: open
   download_url: null
@@ -45,7 +45,8 @@ annotations:
   types:
   - restoration-pairs
   coverage: dense
-  format: matching red and green fluorescence images (JPEG) of every phase contrast image; no mask files in the deposit
+  format: matching red and green fluorescence images (PNG files named .jpeg) of every phase contrast image, same file name
+    in each zip; no mask files in the deposit
   source: automatic
 ml:
   tasks:
@@ -69,10 +70,96 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-15T11:00:00Z'
+  last_checked: '2026-10-15T09:55:00Z'
 notes: 'Zenodo lists three zips (phase contrast 515 MB, fluorescent green intensity 156 MB, fluorescent red intensity 120
-  MB); peek_archive shows 324 jpeg in each of the phase and green zips (red zip not listed, assumed 324 from the
-  Zenodo name and paper: 324 images x 3 channels = 972). The deposit has no masks; the paper segments the phase images
-  with Cellpose, which are not released. Pixel size is derived from the paper statement of 3152 pixels/mm (1 mm /
-  3152 = 317.3 nm); that wording may describe the camera setup rather than the sample plane, so treat the value as
-  approximate. Exposure for fluorescence was 3 s. The Zenodo record lists no related publication; the paper cites it.'
+  MB); the file listing shows 324 images in each of the three zips (972). The deposit has no masks; the paper segments the
+  phase images with Cellpose, which are not released. Pixel size is derived from the paper statement of 3152 pixels/mm (1
+  mm / 3152 = 317.3 nm); that wording may describe the camera setup rather than the sample plane, so treat the value as approximate.
+  Exposure for fluorescence was 3 s. The Zenodo record lists no related publication; the paper cites it. enricher: the .jpeg
+  files are PNG (signature and decoder), so format png (was jpeg).'
+technical:
+  method: sample
+  inspected_at: '2026-10-15T09:55:00Z'
+  inspected_urls:
+  - https://zenodo.org/api/records/8289362
+  - https://zenodo.org/api/records/8289362/files/phase%20contrast.zip/content::phase contrast/img-1.jpeg
+  - https://zenodo.org/api/records/8289362/files/fluorescent%20green%20intensity.zip/content::fluorescent green intensity/img-1.jpeg
+  - https://zenodo.org/api/records/8289362/files/fluorescent%20red%20intensity.zip/content::fluorescent red intensity/img-1.jpeg
+  bytes_downloaded: 2311834
+  size_source: file-listing
+  layout:
+    tree: "8289362/  (Zenodo, 3 zips, 790.8 MB)\n  phase contrast.zip   515 MB\n    phase contrast/img-1.jpeg ... (324)\n\
+      \  fluorescent green intensity.zip   156 MB\n    fluorescent green intensity/img-1.jpeg ... (324)\n  fluorescent red\
+      \ intensity.zip   120 MB\n    fluorescent red intensity/img-1.jpeg ... (324)"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/8289362/files/phase%20contrast.zip/content::phase contrast/img-1.jpeg
+    - https://zenodo.org/api/records/8289362/files/fluorescent%20green%20intensity.zip/content::fluorescent green intensity/img-1.jpeg
+    - https://zenodo.org/api/records/8289362/files/fluorescent%20red%20intensity.zip/content::fluorescent red intensity/img-1.jpeg
+    size_bytes: 2551182
+    description: 'Field img-1: phase contrast image and its green (Geminin) and red (Cdt1) fluorescence images.'
+  arrays:
+  - role: raw
+    path_pattern: phase contrast/*.jpeg
+    format: png
+    axes: yxs
+    shape:
+    - 2048
+    - 2048
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 35
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: PNG despite the .jpeg name; 3 identical samples (grey stored as RGB), so s is not a channel axis.
+  - role: target
+    path_pattern: fluorescent green intensity/*.jpeg
+    format: png
+    axes: yxs
+    shape:
+    - 2048
+    - 2048
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 9
+    - 255
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: 'Green (mAG-Geminin) image of the same field: same file name as the phase image, same 2048x2048 size;
+      grey stored as RGB.'
+  - role: target
+    path_pattern: fluorescent red intensity/*.jpeg
+    format: png
+    axes: yxs
+    shape:
+    - 2048
+    - 2048
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 6
+    - 255
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: 'Red (mKO2-Cdt1) image of the same field: same file name, same size; grey stored as RGB.'
+  notes: 'value_range from one field (img-1): phase 35-255 (mean 68.0), green 9-255 (mean 14.1), red 6-255 (mean 10.3). All
+    three are 8-bit PNGs with identical R, G and B samples; how the camera data were converted to 8 bit is not documented,
+    so normalization unknown. Pixel size 317.3 nm from the paper: "capturing images with a resolution of 3152 pixels/mm" (Europe
+    PMC PMC11066426). File-name pairing: img-<n>.jpeg in each zip is the same field.'
