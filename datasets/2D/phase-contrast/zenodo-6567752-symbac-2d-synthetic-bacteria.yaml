@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: zenodo-6567752-symbac-2d-synthetic-bacteria
 title: 2D Synthetic Training Data For SyMBac
 short_name: Synthetic bacteria micrographs for SyMBac (phase)
-description: Four synthetic training sets generated with SyMBac for segmenting B. subtilis in a mother machine (100x phase contrast), E. coli on agar pads (100x phase contrast), E. coli in a microfluidic turbidostat (100x phase contrast) and E. coli streaked on agar pads (60x fluorescence). Each synthetic image comes with a ground-truth cell mask.
+description: Four synthetic training sets generated with SyMBac for segmenting B. subtilis in a mother machine (100x
+  phase contrast), E. coli on agar pads (100x phase contrast), E. coli in a microfluidic turbidostat (100x phase
+  contrast) and E. coli streaked on agar pads (60x fluorescence). Each synthetic image comes with a ground-truth
+  cell mask.
 landing_url: https://zenodo.org/records/6567752
 doi: 10.5281/zenodo.6567752
 repository: Zenodo
@@ -10,7 +13,8 @@ accession: '6567752'
 authors:
 - Georgeos Hardo
 publications:
-- title: Synthetic Micrographs of Bacteria (SyMBac) allows accurate segmentation of bacterial cells using deep neural networks
+- title: Synthetic Micrographs of Bacteria (SyMBac) allows accurate segmentation of bacterial cells using deep neural
+    networks
   doi: 10.1186/s12915-022-01453-6
   url: https://doi.org/10.1186/s12915-022-01453-6
 date_published: '2022-05-20'
@@ -24,22 +28,25 @@ imaging:
   organism:
   - Bacillus subtilis
   - Escherichia coli
-  sample: Synthetic (simulated) images of bacteria in a mother machine, on agar pads and in a microfluidic turbidostat, modelled on 100x oil and 60x air objectives
+  sample: Synthetic (simulated) images of bacteria in a mother machine, on agar pads and in a microfluidic turbidostat,
+    modelled on 100x oil and 60x air objectives
   labels_stains: []
 data:
   formats:
   - tiff
-  size_bytes: 17254000000
+  size_bytes: 17254554098
   n_items: null
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/6567752
   download_method: http
 annotations:
   present: true
   types:
+  - semantic-segmentation
   - other
   coverage: dense
-  format: Ground-truth cell masks as TIFFs (synth_NNNNN.tif) generated alongside each synthetic image; mask encoding not verified
+  format: Binary cell masks as TIFFs (CROPPED_MASKS/synth_NNNNN.tif, same name as the image) plus DeLTA weight maps
+    (WEIGHTMAPS/); verified in the 100x_PC_Bsub_MM archive only
   source: automatic
 ml:
   tasks:
@@ -57,10 +64,97 @@ provenance:
   - https://zenodo.org/records/6567752
   - https://zenodo.org/api/records/6567752
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9710168/fullTextXML
-  confidence: 0.6
+  confidence: 0.65
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-15T01:30:00Z'
-notes: 'Four tar.gz archives (5.8 GB, 142.5 MB, 9.2 GB, 2.0 GB; 17.3 GB total) at Zenodo. Images are synthetic (SyMBac simulation), not real micrographs; masks come from the simulation, so source is automatic. The first 3 MB of the 100x_PC_Bsub_MM archive showed TIFF files named synth_NNNNN.tif; the sibling record 7265884 has a training_data_DELTA_fourier/masks/ layout. Full archive contents, image counts, pixel size, mask encoding and splits were not verified (tar.gz cannot be listed without downloading; the Zenodo page, API record and paper give none of these). The paper (open access, Data availability) cites this record as [46]. Related but distinct records: Zenodo 7265884 (real and synthetic data of the same paper) and 21022735 (SyMBac data for E. coli dormancy exit).'
+  annotations_verified: true
+  last_checked: '2026-10-15T01:05:00Z'
+notes: 'Four tar.gz archives at Zenodo (17.3 GB). Images are synthetic (SyMBac simulation); masks come from the
+  simulation (source automatic). Paper cites this record as [46]; related records: Zenodo 7265884 (real + synthetic
+  data of the paper), 21022735. organisms: Bacillus subtilis = 100x_PC_Bsub_MM_training_data.tar.gz; Escherichia
+  coli = the other three archives. modality: fluorescence-other = 60x_FL_agar_training_data.tar.gz; phase-contrast
+  = the three 100x_PC archives. enricher: annotations verified (2450 image/mask/weightmap triplets in the B. subtilis
+  archive); size from Zenodo file listing (was page-stated); voxel size not stated anywhere and differs by objective
+  (100x vs 60x), left null.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                       4 files  17.3 GB  .tar.gz\n  60x_FL_agar_training_data.tar.gz\
+      \              2.0 GB (not listed: tar.gz)\n  100x_PC_agar_training_data.tar.gz             5.8 GB (not listed:\
+      \ tar.gz)\n  100x_PC_micro_turbidostat_training_data.tar.gz 9.2 GB (not listed: tar.gz)\n  100x_PC_Bsub_MM_training_data.tar.gz\
+      \          142.5 MB, 7350 files, 258.7 MB uncompressed\n    CROPPED_FILTERED/   2450 files  201.0 MB  synth_NNNNN.tif\
+      \ (images)\n    CROPPED_MASKS/      2450 files    6.9 MB  synth_NNNNN.tif (masks)\n    WEIGHTMAPS/       \
+      \  2450 files   50.8 MB  synth_NNNNN.tif (DeLTA weight maps)"
+    n_files: 4
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: 100x_PC_Bsub_MM_training_data.tar.gz::CROPPED_FILTERED/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 320
+    - 64
+    shape_varies: null
+    dtype: float32
+    compression: none
+    value_range:
+    - -0.0377
+    - 1.1212
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: 100x_PC_Bsub_MM_training_data.tar.gz::CROPPED_MASKS/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 320
+    - 64
+    shape_varies: null
+    dtype: bool
+    compression: none
+    value_range:
+    - 0
+    - 1
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: cell
+    alignment: same-grid
+    alignment_notes: 'mask CROPPED_MASKS/synth_N.tif pairs with image CROPPED_FILTERED/synth_N.tif (same file name,
+      same shape); masks are non-touching binary cells (paper: DeLTA training data)'
+  - role: other
+    path_pattern: 100x_PC_Bsub_MM_training_data.tar.gz::WEIGHTMAPS/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 320
+    - 64
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range:
+    - 1
+    - 10
+    normalization: none
+    encoding: other
+    alignment: same-grid
+    alignment_notes: DeLTA loss weight maps (high where masks nearly touch), same name and shape as the image
+  notes: 'Inspected only 100x_PC_Bsub_MM_training_data.tar.gz (142.5 MB, streamed in full and listed; 2 images,
+    2 masks, 2 weight maps read). Value ranges are from those two samples. The other three archives (2.0, 5.8, 9.2
+    GB) are tar.gz, which cannot be listed without downloading them in full, so their contents (image counts, shapes,
+    whether masks are binary or instance labels; the paper trained Omnipose on labelled masks of 40-trench tiles)
+    are unverified (layout.listing_complete refers to the four archives, all listed with exact sizes). Shapes are of the B. subtilis archive (single trench crops
+    320x64); other archives may differ. Compression inferred from file size (82054 B = 320*64*4 + header). Raw images
+    are float32 roughly in [0, 1] but exceed it, so normalization is unknown. Voxel size not found; checked: TIFF
+    members, Zenodo API record, paper full text (Methods, Table 3 gives only objectives: 100x oil NA 1.30; 40x air
+    + 1.5x), Data availability. Subsets use different objectives, so no single value applies. No sample unit: TensorSwitch
+    reads zip members but not tar.gz members, and data are offered only as four tar.gz archives (direct Zenodo links,
+    range requests OK).'
