@@ -1,0 +1,197 @@
+schema_version: '1.2'
+id: dataverse-ci0j2b-cryoendata-density-map-denoising
+title: CryoEnData - experimental cryo-EM density maps paired with PDB-derived label maps for denoising
+short_name: CryoEnData cryo-EM map denoising pairs
+description: Experimental single-particle cryo-EM density maps from EMDB (1 to 4 Angstrom resolution,
+  resampled to 1 Angstrom voxels), each paired with a voxel-aligned noise-free regression label map and
+  two classification label maps (structure versus background, and atom type) generated from the matching
+  PDB atomic model, plus the PDB assembly and a simulated map. Intended for supervised training of cryo-EM
+  map enhancement and denoising.
+landing_url: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/CI0J2B
+doi: 10.7910/DVN/CI0J2B
+repository: other
+accession: CI0J2B
+authors:
+- Nabin Giri
+- Jianlin Cheng
+publications:
+- title: A labeled dataset for AI-based cryo-EM map enhancement
+  doi: 10.1016/j.csbj.2025.06.041
+  url: https://doi.org/10.1016/j.csbj.2025.06.041
+date_published: '2026-08-13'
+imaging:
+  modality:
+  - cryo-EM
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 0.1
+    y: 0.1
+    z: 0.1
+  channels: 1
+  organism: []
+  sample: Single-particle cryo-EM density maps of soluble proteins, membrane proteins, protein-nucleic
+    acid complexes and macromolecular assemblies from EMDB
+  labels_stains: []
+data:
+  formats:
+  - mrc
+  size_bytes: 144260458013
+  n_items: 290
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  - restoration-pairs
+  coverage: dense
+  format: 'MRC label maps per entry: pdbID_regression_situs.mrc, pdbID_classification_situs.mrc, pdbID_classification_types_situs.mrc'
+  source: automatic
+ml:
+  tasks:
+  - denoising
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/BioinfoMachineLearning/denoisecryodata
+license:
+  spdx: CC-BY-4.0
+  url: http://creativecommons.org/licenses/by/4.0
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-15T04:14:26Z'
+  evidence_urls:
+  - https://dataverse.harvard.edu/api/datasets/:persistentId/?persistentId=doi:10.7910/DVN/CI0J2B
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12271583/fullTextXML
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-15T06:32:39Z'
+notes: These are 3D cryo-EM reconstructions (density maps) rather than raw micrographs; included because
+  they form supervised restoration pairs (experimental map versus noise-free label map) from a cryo-EM
+  source. Labels are generated automatically from PDB atomic models, not annotated by hand. The paper
+  says 650 maps; the Harvard Dataverse file listing fetched in this run holds 290 entries per file type
+  (290 experimental maps, 290 PDB assemblies, 290 simulated maps and 290 of each of the three label map
+  types, plus one zip, 7o71.zip, 114.6 MB) totalling 144.3 GB, so n_items is 290 as listed and the 650
+  figure could not be confirmed in the deposit. Voxel size 1 Angstrom (0.1 nm) is stated in the paper
+  for every map (resampled with ChimeraX). The paper recommends splitting by resolution, as in Cryo2StructData;
+  no split files are provided. The Dataverse license field reads CC BY 4.0.
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: 'Harvard Dataverse doi:10.7910/DVN/CI0J2B (flat, 1,741 files, 144,260,458,013 B)
+
+      <pdb>.mrc                              290  experimental EMDB map, resampled to 1 A (39.9 GB)
+
+      <pdb>_regression_situs.mrc             290  regression label map (39.9 GB)
+
+      <pdb>_classification_situs.mrc         290  classification label map, int16 (19.9 GB)
+
+      <pdb>_classification_types_situs.mrc   290  atom-type classification map (39.9 GB)
+
+      <pdb>_situs_simulated.mrc              290  simulated map from the model (3.8 GB, own grid)
+
+      <pdb>.pdb1                             290  PDB biological assembly (736 MB)
+
+      7o71.zip                                 1  (114.6 MB)
+
+      '
+    n_files: 1741
+    listing_complete: true
+  sample:
+    urls:
+    - https://dataverse.harvard.edu/api/access/datafile/10969782
+    - https://dataverse.harvard.edu/api/access/datafile/10969447
+    - https://dataverse.harvard.edu/api/access/datafile/10970928
+    - https://dataverse.harvard.edu/api/access/datafile/10969958
+    size_bytes: 18134502
+    description: 'Entry 8d1e (smallest): experimental map, regression map, classification map and atom-type
+      classification map (Dataverse file ids 10969782, 10969447, 10970928, 10969958)'
+  arrays:
+  - role: raw
+    path_pattern: ????.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 109
+    - 109
+    - 109
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range:
+    - -4.899
+    - 14.122
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Experimental map per PDB entry (MRC, space group 0 per header), 1 A voxels in the
+      header (cell/sampling); cube size varies per entry (8d1e: 109^3). File names via the Dataverse API
+      (access URLs have no name).'
+  - role: target
+    path_pattern: '*_regression_situs.mrc'
+    format: mrc
+    axes: zyx
+    shape:
+    - 109
+    - 109
+    - 109
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: 'Regression label map (enhanced density from the atomic model), same 109^3 grid as
+      8d1e.mrc (probed); paper: "consistent dimensions and spatial alignment with their corresponding
+      experimental maps".'
+    encoding: other
+    classes: null
+  - role: label
+    path_pattern: '*_classification_situs.mrc'
+    format: mrc
+    axes: zyx
+    shape:
+    - 109
+    - 109
+    - 109
+    shape_varies: true
+    dtype: int16
+    compression: none
+    value_range:
+    - 0
+    - 2
+    normalization: none
+    alignment: same-grid
+    alignment_notes: 'General classification label map; sample 8d1e values {0: 680,863, 1: 17,379, 2:
+      596,787}; same grid as the experimental map. Class meanings are defined in the paper Label Map Generation
+      section (not copied here).'
+    encoding: semantic-ids
+    classes: null
+  - role: label
+    path_pattern: '*_classification_types_situs.mrc'
+    format: mrc
+    axes: zyx
+    shape:
+    - 109
+    - 109
+    - 109
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: 'Atom-type classification label map, same grid (probed 8d1e: 109^3 float32); not
+      sampled.'
+    encoding: semantic-ids
+    classes: null
+  notes: 'Listing: Dataverse dataset API (latestVersion.files): 1,741 files with exact sizes summing to
+    144,260,458,013 B (page-stated; tools/listing.py does not read Dataverse). Probed the 5 MRC types
+    of entry 8d1e; *_situs_simulated.mrc has its own grid (101x100x103 zyx) and is not listed as an array.
+    Sampled 8d1e.mrc and 8d1e_classification_situs.mrc (7.8 MB): raw float32 min -4.90, max 14.12, mean
+    0.00004, std 0.62 (one sample). Voxel size 0.1 nm from the MRC headers agrees with the paper (1 A
+    resampling). Dataverse access URLs redirect to dvn-cloud-iqss.s3.amazonaws.com (usable, range requests).
+    No single archive: download_url stays null.'
