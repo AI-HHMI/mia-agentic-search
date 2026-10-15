@@ -2,10 +2,11 @@ schema_version: '1.2'
 id: zenodo-3532064-coos-7-protein-localization
 title: COOS-7 (Cells Out Of Sample 7-Class)
 short_name: COOS-7 mouse cell protein localization (confocal)
-description: 132,209 two-channel 64 x 64 px crops of individual mouse cells, each labelled with the subcellular compartment targeted
-  by a fluorescent protein (ER, inner mitochondrial membrane, Golgi, peroxisomes, early endosome, cytosol, nuclear envelope), with a
-  second channel for a nuclear dye. A 41,456-image training set and four test sets of increasing covariate shift (same plates, plate
-  edge wells, later experiments, a different microscope) are provided as HDF5 files.
+description: 132,209 two-channel 64 x 64 px crops of individual mouse cells, each labelled with the subcellular
+  compartment targeted by a fluorescent protein (ER, inner mitochondrial membrane, Golgi, peroxisomes,
+  early endosome, cytosol, nuclear envelope), with a second channel for a nuclear dye. A 41,456-image
+  training set and four test sets of increasing covariate shift (same plates, plate edge wells, later
+  experiments, a different microscope) are provided as HDF5 files.
 landing_url: https://zenodo.org/records/3532064
 doi: 10.5281/zenodo.3532064
 repository: Zenodo
@@ -18,7 +19,8 @@ authors:
 - David W. Andrews
 - Alan M. Moses
 publications:
-- title: The Cells Out of Sample (COOS) dataset and benchmarks for measuring out-of-sample generalization of image classifiers
+- title: The Cells Out of Sample (COOS) dataset and benchmarks for measuring out-of-sample generalization
+    of image classifiers
   doi: 10.48550/arXiv.1906.07282
   url: https://arxiv.org/abs/1906.07282
 date_published: '2019-09-04'
@@ -30,7 +32,8 @@ imaging:
   channels: 2
   organism:
   - Mus musculus
-  sample: Mouse cells expressing one of seven fluorescent proteins targeting organelles or compartments, with a nuclear dye channel
+  sample: Mouse cells expressing one of seven fluorescent proteins targeting organelles or compartments,
+    with a nuclear dye channel
   labels_stains:
   - fluorescent protein (organelle marker)
   - nuclear dye
@@ -47,7 +50,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: 'HDF5 datasets "data" (images, channels, height, width; 16-bit) and "labels" (class 0-6) per file, plus plate, well, date and microscope metadata'
+  format: HDF5 datasets "data" (images, channels, height, width; float32) and "labels" (int64 class 0-6)
+    per file, plus plateIDs, wellIDs, dateIDs and microscopeIDs
   source: mixed
 ml:
   tasks:
@@ -71,11 +75,83 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-15T05:50:00Z'
-notes: 'Zenodo API record (version 1.1; files COOS7_v1.1_training.hdf5 1.36 GB, test1 0.34 GB, test2 0.56 GB, test3 1.07 GB, test4 1.01
-  GB, unpackage_COOS.py, README.txt) and the paper PDF (read) were used. Paper: 64 x 64 px crops, 2 channels in 16-bit (raw
-  intensities), 41,456 training images, crops made by segmenting the nuclear channel with a mask-RCNN, acquired on a PerkinElmer
-  Opera QHS spinning-disk confocal with 40x water objectives (NA 0.9) over 95 plates, 4 plates imaged on a different microscope
-  (Test4); wells were manually checked for defects and consistency with their label. Pixel size and the specific mouse cell line
-  are not stated in the sources read. Labels derive from the tagged protein per well, curated by manual inspection (source
-  recorded as mixed). The HDF5 files were not opened (README describes their structure). License CC BY-NC 4.0 (non-commercial).'
+  last_checked: '2026-10-15T05:00:15Z'
+notes: 'Zenodo API record (version 1.1; files COOS7_v1.1_training.hdf5 1.36 GB, test1 0.34 GB, test2 0.56
+  GB, test3 1.07 GB, test4 1.01 GB, unpackage_COOS.py, README.txt) and the paper PDF (read) were used.
+  Paper: 64 x 64 px crops, 2 channels in 16-bit (raw intensities), 41,456 training images, crops made
+  by segmenting the nuclear channel with a mask-RCNN, acquired on a PerkinElmer Opera QHS spinning-disk
+  confocal with 40x water objectives (NA 0.9) over 95 plates, 4 plates imaged on a different microscope
+  (Test4); wells were manually checked for defects and consistency with their label. Pixel size and the
+  specific mouse cell line are not stated in the sources read. Labels derive from the tagged protein per
+  well, curated by manual inspection (source recorded as mixed). License CC BY-NC 4.0 (non-commercial).
+  enricher: HDF5 headers probed: data stored as float32 (paper: 16-bit raw intensities), labels int64
+  0-6.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'COOS7_v1.1_training.hdf5  1.36 GB   data [41456, 2, 64, 64] float32, labels [41456] int64,
+      plateIDs, wellIDs, dateIDs, microscopeIDs
+
+      COOS7_v1.1_test1.hdf5     0.34 GB   [10364, 2, 64, 64]
+
+      COOS7_v1.1_test2.hdf5     0.56 GB   [17021, 2, 64, 64]
+
+      COOS7_v1.1_test3.hdf5     1.07 GB   [32596, 2, 64, 64]
+
+      COOS7_v1.1_test4.hdf5     1.01 GB   [30772, 2, 64, 64]
+
+      README.txt, unpackage_COOS.py
+
+      '
+    n_files: 7
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/3532064/files/COOS7_v1.1_test1.hdf5
+    size_bytes: 339916300
+    description: 'Test set 1 (10,364 cells): images and labels in one HDF5 file, the smallest file'
+  arrays:
+  - role: raw
+    path_pattern: COOS7_v1.1_*.hdf5 (data)
+    format: hdf5
+    axes: null
+    shape:
+    - 41456
+    - 2
+    - 64
+    - 64
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'README: data is (images, channels, height, width), i.e. a stack of 2-channel yx
+      crops (axes null: the schema has no letter for the image index); channel 0/1 = protein / nucleus
+      per unpackage_COOS.py description (_protein.tif, _nucleus.tif), order not verified. Contiguous,
+      uncompressed. First axis: 41,456 / 10,364 / 17,021 / 32,596 / 30,772 cells (training, test1-4).'
+  - role: label
+    path_pattern: COOS7_v1.1_*.hdf5 (labels)
+    format: hdf5
+    axes: null
+    shape:
+    - 41456
+    shape_varies: true
+    dtype: int64
+    compression: none
+    value_range:
+    - 0
+    - 6
+    normalization: unknown
+    encoding: semantic-ids
+    classes: null
+    alignment: not-applicable
+    alignment_notes: One class id (0-6) per image, same order as data (README). The id-to-compartment
+      mapping is not stated in the README.
+  notes: 'Listing: Zenodo API, 7 files, 4,336,102,190 B exact. Probed all five HDF5 headers (shapes in
+    the tree; data float32, labels int64, no compression, no chunks; root attrs version v1.1). Sampled
+    test1 labels (whole dataset, 10,364 values): 7 distinct values 0-6. Raw crop sample failed twice on
+    Zenodo SSL disconnects, so value_range and normalization are unknown. unpackage_COOS.py not run (dataset
+    code). Voxel size not found; checked: HDF5 attrs, README, Zenodo description, the paper (40x NA 0.9
+    Opera; no pixel size). Each HDF5 file is a direct Zenodo link; no single archive.'
