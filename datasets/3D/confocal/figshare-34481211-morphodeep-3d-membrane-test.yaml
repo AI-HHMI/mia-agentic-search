@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: figshare-34481211-morphodeep-3d-membrane-test
 title: 'MorphoDeep 3D instance segmentation benchmark: held-out test volumes and reference masks'
 short_name: MorphoDeep 3D membrane masks (confocal, SPIM)
-description: 226 held-out 3D membrane-channel volumes with matching reference instance segmentation masks from six
-  specimen groups (Arabidopsis, C. elegans, lateral root primordia, ovules, sea star, Phallusia mammillata) imaged
-  by confocal and SPIM, for evaluating 3D cell instance segmentation.
+description: 226 held-out 3D membrane-channel volumes with matching reference instance segmentation masks
+  from six specimen groups (Arabidopsis, C. elegans, lateral root primordia, ovules, sea star, Phallusia
+  mammillata) imaged by confocal and SPIM, for evaluating 3D cell instance segmentation.
 landing_url: https://figshare.com/articles/dataset/MorphoDeep_3D_instance_segmentation_benchmark_held-out_test_volumes_and_reference_masks/34481211
 doi: 10.6084/m9.figshare.34481211.v1
 repository: Figshare
@@ -24,13 +24,14 @@ imaging:
   - Arabidopsis thaliana
   - Caenorhabditis elegans
   - Phallusia mammillata
-  sample: Membrane-labelled whole specimens and tissues (Arabidopsis, C. elegans, lateral root primordia, ovules, sea star, Phallusia mammillata embryos)
+  sample: Membrane-labelled whole specimens and tissues (Arabidopsis, C. elegans, lateral root primordia,
+    ovules, sea star, Phallusia mammillata embryos)
   labels_stains:
   - membrane
 data:
   formats:
   - tiff
-  size_bytes: 16531959819
+  size_bytes: 16532012938
   n_items: 226
   access: open
   download_url: null
@@ -66,13 +67,64 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-15T13:55:00Z'
-notes: 'Held-out test data only; training and validation volumes are not included. 21 files: 17 .tar.zst archives
-  (16.5 GB; uncompressed TIFFs total 113 GB) plus selection.csv (pair mapping), archive_plan.csv, SHA256SUMS and
-  README.md. Pairs per group: Arabidopsis thaliana 30, C. elegans 10, lateral root primordia 4, ovules 7, sea star 75,
-  Phallusia mammillata 100 (confocal for the first five groups, SPIM for Phallusia, per file names). Arabidopsis,
-  lateral root and ovule file names (e.g. plant13/76hrs_plant13_trim-acylYFP) resemble the public PlantSeg data, so
-  part of this may overlap existing records; the record does not say where the volumes originate. Sea star species,
-  voxel sizes, how the reference masks were made and any paper are not stated in the Figshare record, README or the
-  Codeberg page (no publication is linked). Archives were not opened (zstd). Checked: Figshare record and file list,
-  README, selection.csv, archive_plan.csv, Codeberg README.'
+  last_checked: '2026-10-15T15:05:00Z'
+notes: 'Held-out test data only; training/validation volumes not included. 17 .tar.zst archives (16.5
+  GB; 113 GB of TIFFs uncompressed) plus selection.csv (pair mapping), archive_plan.csv, SHA256SUMS, README.md.
+  organisms: Arabidopsis thaliana = CONF-Arabidopsis-Thaliana/, CONF-LateralRootPrimordia/, CONF-Ovules/
+  (PlantSeg data per the MorphoDeep legacy training doc); Caenorhabditis elegans = CONF-Caenorhabditis-Elegans/;
+  Phallusia mammillata = SPIM-Phallusia-Mammillata/; CONF-SeaStar/: species not stated. modality: confocal
+  = CONF-* folders, light-sheet = SPIM-*. Voxel sizes, mask provenance and any paper are not stated in
+  the Figshare record, README or Codeberg docs. Archives not opened (zstd).'
+technical:
+  method: metadata-only
+  size_source: file-listing
+  layout:
+    tree: "./  21 files  16.5 GB (Figshare 34481211)\n  README.md, selection.csv (226 pairs), archive_plan.csv,\
+      \ SHA256SUMS\n  test_CONF-Arabidopsis-Thaliana_01.tar.zst      711 MB   30 pairs\n  test_CONF-Caenorhabditis-Elegans_01.tar.zst\
+      \     72 MB   10 pairs\n  test_CONF-LateralRootPrimordia_01.tar.zst      308 MB    4 pairs\n  test_CONF-Ovules_01.tar.zst\
+      \                    831 MB    7 pairs\n  test_CONF-SeaStar_01.tar.zst                   127 MB\
+      \   75 pairs\n  test_SPIM-Phallusia-Mammillata_01..12.tar.zst  14.5 GB 100 pairs\ninside each archive\
+      \ (per README / selection.csv):\n  <group>/membrane/<subfolder>/<stem>_M.tiff\n  <group>/segmented/<subfolder>/<stem>_S.tiff"
+    n_files: 21
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/70086387
+    size_bytes: 71681770
+    description: 'Smallest archive: C. elegans group, 10 membrane/segmentation pairs (1.95 GB of TIFFs
+      uncompressed)'
+  arrays:
+  - role: raw
+    path_pattern: '*/membrane/*/*_M.tiff'
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Inside the .tar.zst archives; not opened.
+  - role: label
+    path_pattern: '*/segmented/*/*_S.tiff'
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: unknown
+    alignment_notes: 'Pairs by stem: <stem>_M.tiff <-> <stem>_S.tiff under membrane/ and segmented/ (selection.csv
+      lists all 226 pairs). Encoding per README of the MorphoDeep tool (0 = background, one positive ID
+      per cell); files not opened.'
+  notes: 'Listing: tools/listing.py of the Figshare record (21 files, exact sizes). Archive contents from
+    selection.csv/archive_plan.csv only: the .tar.zst archives cannot be read by range requests and zstd
+    is not an allowed inspection library, so no TIFF header was read. From selection.csv byte counts:
+    segmented TIFFs are 2x the membrane size for Arabidopsis, lateral root and ovules, equal for sea star
+    and Phallusia, 1/4 for C. elegans, so dtypes differ between groups (not confirmed). Direct links:
+    ndownloader.figshare.com/files/<id> per archive (usable); no single archive, so data.download_url
+    stays null. voxel size not found; checked: Figshare record, README.md, selection.csv, archive_plan.csv,
+    Codeberg README and legacy training doc (no paper linked). Groups come from different upstream datasets
+    (PlantSeg, sea star, C. elegans), so one shared value is unlikely.'
