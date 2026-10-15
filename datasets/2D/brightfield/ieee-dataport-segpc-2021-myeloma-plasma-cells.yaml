@@ -1,0 +1,142 @@
+schema_version: '1.2'
+id: ieee-dataport-segpc-2021-myeloma-plasma-cells
+title: 'SegPC-2021: Segmentation of Multiple Myeloma Plasma Cells in Microscopic Images'
+short_name: Myeloma plasma cell segmentation (brightfield)
+description: 775 Jenner-Giemsa stained brightfield images of bone marrow aspirate slides from multiple
+  myeloma patients (stain color normalized), released for the ISBI 2021 SegPC challenge. Nucleus and cytoplasm
+  of plasma cells are annotated separately for the training (298) and validation (200) images; test (277)
+  ground truth is withheld.
+landing_url: https://ieee-dataport.org/open-access/segpc-2021-segmentation-multiple-myeloma-plasma-cells-microscopic-images
+doi: 10.21227/7np1-2q42
+repository: other
+accession: null
+authors:
+- Anubha Gupta
+- Ritu Gupta
+- Shiv Gehlot
+- Shubham Goswami
+publications:
+- title: 'SegPC-2021: A challenge & dataset on segmentation of Multiple Myeloma plasma cells from microscopic
+    images'
+  doi: 10.1016/j.media.2022.102677
+  url: https://doi.org/10.1016/j.media.2022.102677
+date_published: '2021-04-29'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: Bone marrow aspirate slides from multiple myeloma patients (AIIMS New Delhi), Jenner-Giemsa
+    stain, stain color normalized
+  labels_stains:
+  - Jenner-Giemsa
+data:
+  formats:
+  - other
+  size_bytes: 4490000000
+  n_items: 775
+  access: registration
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: partial
+  format: 'One BMP mask per annotated cell instance: for image train/x/<n>.bmp the masks are train/y/<n>_<k>.bmp
+    (same for validation); classes background 0, cytoplasm 1, nucleus 2 per the readme; no GT for the
+    test set'
+  source: unknown
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: ISBI 2021 SegPC challenge
+  baseline_code_url: null
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-15T00:14:13Z'
+  evidence_urls:
+  - https://ieee-dataport.org/open-access/segpc-2021-segmentation-multiple-myeloma-plasma-cells-microscopic-images
+  - https://huggingface.co/datasets/MedOtter/SegPC-2021
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1016%2Fj.media.2022.102677%22&format=json&resultType=core&pageSize=3
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: false
+  last_checked: '2026-10-15T00:28:34Z'
+notes: 'IEEE DataPort lists the dataset as Open Access, but downloading needs a free IEEE account (access:
+  registration); the page also mentions a DataPort subscription, so terms are unclear. No license is stated
+  on the IEEE DataPort page. A third-party Hugging Face mirror (MedOtter/SegPC-2021, 298 train + 199 validation
+  rows with image, semantic mask, instance mask, overlay) labels itself cc-by-nc-sa-4.0; that is not the
+  original deposit''s statement and was not adopted. Files per IEEE page: TCIA_SegPC_dataset.zip (4.49
+  GB) and an evaluation scripts/readme zip; images are BMP (2040x1536 Olympus and 1920x2560 Nikon, 775
+  total). Annotations are only for designated cells of interest, so other plasma cells in a field may
+  be unlabeled (coverage partial). Annotation procedure, magnification and pixel size are not stated on
+  the IEEE page; the Medical Image Analysis paper is not open access (only the abstract was read), so
+  those fields stay unknown. The zip contents were not listed.'
+technical:
+  method: metadata-only
+  size_source: page-stated
+  layout:
+    tree: "IEEE DataPort SegPC-2021 (login required for the data zip; layout from the readme in the public\
+      \ scripts zip)\n  TCIA_SegPC_dataset.zip   4.49 GB (page-stated)\n    train/x/<n>.bmp        298\
+      \ images (2040x1536 Olympus or 1920x2560 Nikon, stain-normalized)\n    train/y/<n>_<k>.bmp    one\
+      \ mask per cell of interest\n    validation/            200 images + masks (same x / y layout)\n\
+      \    test/                  277 images, no GT\n  submission_and_evaluation_scripts_and_readme.zip\
+      \   evaluate.py, submission.py, readme.md, readme.txt\n"
+    n_files: null
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: train/x/*.bmp
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: BMP field images (2040x1536 or 1920x2560 px per the page), stain colour normalized
+      (GCTI-SN, in-house); validation and test sets follow the same layout. Folder names from the readme;
+      exact paths not listed.
+  - role: label
+    path_pattern: train/y/*_*.bmp
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: cytoplasm
+    - id: 2
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: 'Pairing rule from the readme: image <n>.bmp in x/ has masks <n>_1.bmp, <n>_2.bmp,
+      ... in y/, one per cell of interest (instances = files). Label values 0/1/2 are the classes the
+      readme asks submissions to use; the stored GT values were not read. Only pre-selected cells of interest
+      are annotated.'
+  notes: 'Not inspectable: IEEE DataPort serves TCIA_SegPC_dataset.zip (4.49 GB, page-stated) only to
+    logged-in users (free IEEE account). Read the readme.md from the public submission_and_evaluation_scripts_and_readme.zip
+    (presigned S3 link on the page, 4 small files) for the layout, counts (298 / 200 / 277) and the label
+    scheme; no file of the dataset was listed, probed or sampled. no direct download: page offers the
+    data zip only after login; the scripts zip link is a 10-minute presigned S3 URL. License: none on
+    the IEEE page, the readme or the scripts zip (it only asks to cite three papers). voxel size not found;
+    checked: page, readme, harvest notes (paper not open access).'
