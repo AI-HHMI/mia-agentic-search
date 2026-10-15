@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: figshare-12407567-sickle-cell-thin-blood-films
 title: Digitized Thin Blood Films for Sickle Cell Disease Detection
 short_name: Sickle cell thin blood film slides (brightfield)
-description: 162 thin blood film slides imaged on a custom brightfield microscope (100x/1.4
-  NA objective, colour camera), z-stacks collapsed with a wavelet extended-depth-of-field algorithm into
-  one RGB TIFF per field, grouped in one folder per slide. A text file gives a slide-level label per slide
-  (1 or 0, from haemoglobin electrophoresis phenotype testing for sickle cell disease).
+description: 162 thin blood film slides imaged on a custom brightfield microscope (100x/1.4 NA objective,
+  colour camera), z-stacks collapsed with a wavelet extended-depth-of-field algorithm into one RGB TIFF
+  per field, grouped in one folder per slide. A text file gives a slide-level label per slide (1 or 0,
+  from haemoglobin electrophoresis phenotype testing for sickle cell disease).
 landing_url: https://rdr.ucl.ac.uk/articles/dataset/Digitized_Thin_Blood_Films_for_Sickle_Cell_Disease_Detection/12407567
 doi: 10.5522/04/12407567
 repository: Figshare
@@ -67,7 +67,7 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-15T14:04:24Z'
+  last_checked: '2026-10-15T14:48:17Z'
 notes: 'Two tar.gz archives (8.7 GB and 17.3 GB) plus the label file (162 lines, one per slide, 0 or 1).
   The first bytes of part 1 were read: folders such as sickle3-edofed/280120-07/ holding pos004_EDOF_DENISOVAN_RGB.tiff
   (about 16.7 MB each); the full image count was not listed (tar.gz is not listable remotely), so n_items
@@ -77,3 +77,57 @@ notes: 'Two tar.gz archives (8.7 GB and 17.3 GB) plus the label file (162 lines,
   could not be read (publisher and UCL Discovery returned 403/404), so pixel size, patient count and the
   label legend are unverified; the Figshare page has no pixel size. Thick-film malaria sibling dataset
   figshare-12173568 is catalogued separately.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  3 files  26.0 GB (Figshare 12407567)\n  thin_films_part1.tar.gz   8.7 GB\n  thin_films_part2.tar.gz\
+      \  17.3 GB\n  sickle_slides_new_march.txt  162 lines: <slide folder> <0|1>\ninside part1 (first\
+      \ members): sickle3-edofed/<slide>/pos###_EDOF_DENISOVAN_RGB.tiff"
+    n_files: 3
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: thin_films_part*.tar.gz::*/*/pos*_EDOF_*_RGB.tiff
+    format: tiff
+    axes: yxs
+    shape:
+    - 2160
+    - 2560
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB (photometric 2) EDOF field-of-view images, one folder per slide; resolution tag
+      is the 72 dpi default (no calibration).
+  - role: label
+    path_pattern: sickle_slides_new_march.txt
+    format: other
+    axes: null
+    shape:
+    - 162
+    - 2
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes:
+    - id: 0
+      name: negative (per description)
+    - id: 1
+      name: sickle cell disease positive (per description)
+    alignment: not-applicable
+    alignment_notes: 'Slide-level label: one row per slide folder name, applying to every field-of-view
+      TIFF in that folder.'
+  notes: 'Listing: tools/listing.py of the Figshare record (3 files, exact sizes, total = size_bytes).
+    The tar.gz archives cannot be listed by range requests; I streamed the first 25.0 MB of part1 (stdlib
+    gzip/tarfile) and decoded its first TIFF: 2160x2560x3 uint8, values 0-255, uncompressed, 72 dpi default
+    resolution. Image count per slide not known (archives not listed). Direct links: both archives on
+    ndownloader.figshare.com (part1 = data.download_url); TensorSwitch cannot extract tar members, so
+    no sample unit. Voxel size: not stated (Figshare description; TIFF tag is a default); paper not readable.'
