@@ -2,11 +2,11 @@ schema_version: '1.2'
 id: idr0167-cellcyclenet-fucci-nuclei
 title: Predicting cell cycle stage from 3D single-cell nuclear-stained images (CellCycleNet)
 short_name: CellCycleNet FUCCI 3T3 nuclei (confocal)
-description: '3D fluorescence image tiles of fixed interphase mouse 3T3 fibroblasts carrying the Fucci2a
-  cell cycle reporter and stained with DAPI, from two instruments: a 60x spinning-disk confocal set and
-  a 40x widefield epifluorescence set. Each tile comes with 3D Cellpose nuclear instance masks and per-nucleus
-  ground-truth cell cycle labels (G1 vs S/G2) derived from the Fucci2a reporter intensities, released
-  as benchmarks for cell cycle classification from DAPI alone.'
+description: '3D fluorescence image tiles of fixed interphase mouse 3T3 fibroblasts carrying the Fucci2a cell cycle
+  reporter and stained with DAPI, from two instruments: a 60x spinning-disk confocal set and a 40x widefield epifluorescence
+  set. Each tile comes with 3D Cellpose nuclear instance masks and per-nucleus ground-truth cell cycle labels (G1
+  vs S/G2) derived from the Fucci2a reporter intensities, released as benchmarks for cell cycle classification from
+  DAPI alone.'
 landing_url: https://idr.openmicroscopy.org/webclient/?show=project-3351
 doi: 10.17867/10000211
 repository: IDR
@@ -30,10 +30,7 @@ imaging:
   - spinning-disk
   - widefield
   dimensionality: 3D
-  voxel_size_nm:
-    x: 182
-    y: 182
-    z: 200
+  voxel_size_nm: null
   channels: 3
   organism:
   - Mus musculus
@@ -45,11 +42,12 @@ imaging:
   - mCherry-hCdt1
 data:
   formats:
+  - tiff
   - ome-zarr
-  size_bytes: null
-  n_items: null
+  size_bytes: 1157670882668
+  n_items: 684
   access: open
-  download_url: https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/752/S-BIAD1752
+  download_url: https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/752/S-BIAD1752/Files/
   download_method: http
 annotations:
   present: true
@@ -57,8 +55,8 @@ annotations:
   - instance-segmentation
   - classification
   coverage: dense
-  format: 3D nuclear segmentation masks (Cellpose) plus per-nucleus .tsv tables with GT_label (G1 or S/G2)
-    per OME-Zarr tile
+  format: 3D instance mask TIFFs (*_masks_filtered.tif, uint8/uint16 nucleus IDs) plus per-nucleus .tsv tables (GT_labels_60x/,
+    GT_labels_40x/) with GT_label G1 or S/G2 per obj_num; also inside the OME-Zarr zips as labels/segmentation_mask
   source: automatic
 ml:
   tasks:
@@ -81,18 +79,174 @@ provenance:
   - https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD1752/info
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11969383/fullTextXML
   - https://idr.openmicroscopy.org/api/v0/m/projects/3351/
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/752/S-BIAD1752/Files/
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-15T21:39:20Z'
-notes: 'Same data is deposited in the BioImage Archive as S-BIAD1752 (2725 files; Zarr, JSON file lists,
-  .tsv); IDR idr0167 has experimentA = 60x spinning-disk confocal (voxel 182x182x200 nm per paper Methods;
-  BIA says 183 nm in one place) and experimentB = 40x Keyence widefield epifluorescence (188x188x500 nm).
-  voxel_size_nm given for the confocal set only. landing_url is the IDR project 3351 page (reachable via
-  the IDR API; the webclient page is JS-rendered). Labels: ground-truth G1/S-G2 assigned from Fucci2a
-  intensities after Cellpose segmentation (automatic); paper reports 4,076 labelled cells. Annotation
-  files were seen in the BioStudies record and study file but not in a file listing, so annotations_verified
-  false. Total size and exact image count not stated. Checked: IDR study file and annotation CSV, BioStudies
-  record, paper full text (Methods, Data availability).'
+  annotations_verified: true
+  last_checked: '2026-10-15T22:05:00Z'
+notes: 'Same data is deposited in the BioImage Archive as S-BIAD1752 (2725 files; Zarr, JSON file lists, .tsv);
+  IDR idr0167 has experimentA = 60x spinning-disk confocal and experimentB = 40x Keyence widefield epifluorescence.
+  landing_url is the IDR project 3351 page (reachable via the IDR API; the webclient page is JS-rendered). Labels:
+  ground-truth G1/S-G2 assigned from Fucci2a intensities after Cellpose segmentation (automatic); paper reports
+  4,076 labelled cells. Total size and exact image count not stated. enricher: voxel_size_nm null (was 182x182x200,
+  60x only): subsets differ, see technical.notes; formats + tiff; n_items 684 tiles from listing; annotations verified
+  (mask sampled).'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "Files/  (S-BIAD1752, ftp.ebi.ac.uk; sizes from HTTP index, rounded)\n  tile_x{1..25}_y{1..25}.tif   \
+      \         594  60x confocal raw, ~944 MB each\n  tile_x{1..25}_y{1..25}.zarr.zip       594  same images as\
+      \ zipped OME-Zarr (+ labels/segmentation_mask)\n  tile_x{1..25}_y{1..25}_masks_filtered.tif  594  60x nucleus\
+      \ instance masks, ~157 MB each\n  tile_{1..90}.tif                       90  40x widefield raw, ~1.1 GB each\n\
+      \  tile_{1..90}.zarr.zip                  90  same as zipped OME-Zarr\n  {1..90}_masks_filtered.tif      \
+      \       90  40x nucleus instance masks, ~393 MB each\n  GT_labels_60x/tile_x*_y*_masks_filtered.tsv  585 \
+      \ per-nucleus G1 / S-G2 labels\n  GT_labels_40x/*_masks_filtered.tsv     86  per-nucleus G1 / S-G2 labels\n\
+      \  GT_labels_{40x,60x}_with_source_file.tsv, *_filelist.{json,tsv},\n  img_*_filenames*.{json,tsv}, mask_*_filelist_reordered.{json,tsv}\
+      \   18  file lists"
+    n_files: 2741
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/752/S-BIAD1752/Files/tile_x1_y1.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/752/S-BIAD1752/Files/tile_x1_y1_masks_filtered.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/752/S-BIAD1752/Files/GT_labels_60x/tile_x1_y1_masks_filtered.tsv
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/752/S-BIAD1752/Files/tile_1.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/752/S-BIAD1752/Files/1_masks_filtered.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/752/S-BIAD1752/Files/GT_labels_40x/1_masks_filtered.tsv
+    size_bytes: 2671591367
+    description: 'one tile per subset: 60x confocal tile_x1_y1 (raw 3-channel z-stack, instance mask, G1/S-G2 table)
+      and 40x widefield tile_1 (same three files)'
+  arrays:
+  - role: raw
+    path_pattern: tile_x{?,??}_y{?,??}.tif
+    format: tiff
+    axes: zcyx
+    shape:
+    - 150
+    - 3
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 60x spinning-disk confocal tiles; ImageJ hyperstack (150 slices x 3 channels); channels DAPI,
+      mCherry-hCdt1, mVenus-hGeminin per study (order not stated in the file)
+  - role: label
+    path_pattern: tile_x*_y*_masks_filtered.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 150
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 4
+    normalization: none
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    - id: null
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: 'raw and mask pair by stem: tile_xX_yY.tif <-> tile_xX_yY_masks_filtered.tif (60x); tile_N.tif
+      <-> N_masks_filtered.tif (40x), per mask_*_filelist_reordered.tsv (Files / source_image columns); 150 pages
+      = the raw tile''s 150 z slices, same 1024x1024 grid; filtered Cellpose 3D masks (excluded objects removed),
+      IDs match obj_num in the GT table'
+  - role: label
+    path_pattern: GT_labels_60x/*.tsv
+    format: csv
+    axes: null
+    shape:
+    - 2
+    - 33
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes:
+    - id: G1
+      name: G1
+    - id: S/G2
+      name: S/G2
+    alignment: same-grid
+    alignment_notes: 'tab-separated per-nucleus table: Files, source_image, obj_num (mask ID), GT_label, coords,
+      intensity and shape features; one table per mask, same stem'
+  - role: raw
+    path_pattern: tile_{?,??}.tif
+    format: tiff
+    axes: zcyx
+    shape:
+    - 71
+    - 3
+    - 1440
+    - 1920
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 40x Keyence widefield epifluorescence tiles; ImageJ hyperstack (71 slices x 3 channels)
+  - role: label
+    path_pattern: '{?,??}_masks_filtered.tif'
+    format: tiff
+    axes: zyx
+    shape:
+    - 71
+    - 1440
+    - 1920
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range: null
+    normalization: none
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    - id: null
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: 'raw and mask pair by stem: tile_xX_yY.tif <-> tile_xX_yY_masks_filtered.tif (60x); tile_N.tif
+      <-> N_masks_filtered.tif (40x), per mask_*_filelist_reordered.tsv (Files / source_image columns); 71 pages
+      = the raw tile''s 71 z slices, same 1440x1920 grid (header only, not sampled)'
+  - role: label
+    path_pattern: GT_labels_40x/*.tsv
+    format: csv
+    axes: null
+    shape:
+    - 89
+    - 33
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes:
+    - id: G1
+      name: G1
+    - id: S/G2
+      name: S/G2
+    alignment: same-grid
+    alignment_notes: per-nucleus G1 / S-G2 table per 40x mask, same stem as the mask
+  notes: 'Listing: HTTP index of S-BIAD1752/Files (FTP timed out), 2741 files, sizes rounded; size_bytes = index
+    total (~1.16 TB, all files incl. the zipped OME-Zarr copies). size estimated (uncompressed): raw 594 x 150x3x1024x1024
+    uint16 + label 594 x 150x1024x1024 uint8 + raw 90 x 71x3x1440x1920 uint16 + label 90 x 71x1440x1920 uint16 =
+    795,333,427,200 B (795.3 GB), TIFFs only. Sample: tile_x1_y1_masks_filtered.tif downloaded whole (157 MB): values
+    0-4, 99.7% background, IDs match obj_num in the GT table. Raw TIFFs (~0.9-1.2 GB) exceed the budget and page-wise
+    sampling failed, so raw value range unknown; raw shapes/dtypes from headers. Mask TIFF axes zyx: plain page
+    stack whose page count equals the paired raw''s z slices (paper: 3D Cellpose masks). *.zarr.zip are OME-Zarr
+    v0.4 (axes czyx, 5 levels, blosc lz4, scale 1.0 = uncalibrated) with labels/segmentation_mask; arrays describe
+    the TIFF copies. voxel size not set: subsets differ (paper Methods: 60x 182x182x200 nm, 40x 188x188x500 nm;
+    paper also says 183 nm XY for confocal); OME-Zarr scales uncalibrated. Direct links: every file on ftp.ebi.ac.uk
+    https (range requests); download_url is the Files/ folder, no single archive.'
