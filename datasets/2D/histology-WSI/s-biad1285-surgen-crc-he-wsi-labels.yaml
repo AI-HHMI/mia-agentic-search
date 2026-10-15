@@ -2,8 +2,10 @@ schema_version: '1.2'
 id: s-biad1285-surgen-crc-he-wsi-labels
 title: 'SurGen: 1020 H&E-stained Whole Slide Images With Survival and Genetic Markers'
 short_name: SurGen colorectal cancer H&E slides, labels
-description: 1,020 H&E-stained whole-slide images (ZEISS Axio Scan.Z1, 40x, 0.1112 um per pixel; ZEISS CZI and OME-Zarr) from 843 colorectal cancer cases, with
-  case-level labels in two CSV files - KRAS, NRAS and BRAF mutation status, mismatch repair and microsatellite instability status, tumour site, stage and grade, and five-year survival for one cohort.
+description: 1,020 H&E-stained whole-slide images (ZEISS Axio Scan.Z1, 40x, 0.1112 um per pixel; ZEISS
+  CZI and OME-Zarr) from 843 colorectal cancer cases, with case-level labels in two CSV files - KRAS,
+  NRAS and BRAF mutation status, mismatch repair and microsatellite instability status, tumour site, stage
+  and grade, and five-year survival for one cohort.
 landing_url: https://www.ebi.ac.uk/biostudies/studies/S-BIAD1285
 doi: 10.6019/S-BIAD1285
 repository: BioImageArchive
@@ -37,17 +39,18 @@ data:
   formats:
   - czi
   - ome-zarr
-  size_bytes: null
+  size_bytes: 56616652758702
   n_items: 1020
   access: open
-  download_url: null
+  download_url: https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/285/S-BIAD1285/Files/
   download_method: http
 annotations:
   present: true
   types:
   - classification
   coverage: dense
-  format: Case-level CSV tables (SR386_labels.csv with survival, KRAS, NRAS, BRAF, MMR, stage and tumour site; SR1482_labels.csv with KRAS, NRAS, BRAF, MMR, MSI and tumour site), keyed by case ID
+  format: Case-level CSV tables (SR386_labels.csv with survival, KRAS, NRAS, BRAF, MMR, stage and tumour
+    site; SR1482_labels.csv with KRAS, NRAS, BRAF, MMR, MSI and tumour site), keyed by case ID
   source: unknown
 ml:
   tasks:
@@ -72,8 +75,99 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-15T06:05:00Z'
-notes: 'Labels are case-level clinical and molecular results (the study metadata lists the method as expertly annotated), not region or pixel annotations, so annotation source is unknown.
-  Survival data (five-year outcome and days to death) exist only for the SR386 cohort (the paper reports 426 cases); the SR1482 cohort has no survival. Label tables have about 427 (SR386) and 416
-  (SR1482) case rows; the paper reports 843 cases and 1,020 slides in total. The OME-Zarr copy was added on 2026-08-03 next to the original CZI files. The paper shows a proof-of-concept mismatch-repair
-  prediction model and a GitHub page is listed in the study metadata (repository contents not checked). Channels are 3 because the slides are RGB H&E (not read from file headers). Size not summed.'
+  last_checked: '2026-10-15T06:22:02Z'
+notes: 'Labels are case-level clinical and molecular results (the study metadata lists the method as expertly
+  annotated), not region or pixel annotations, so annotation source is unknown. Survival data (five-year
+  outcome and days to death) exist only for the SR386 cohort (the paper reports 426 cases); the SR1482
+  cohort has no survival. Label tables have about 427 (SR386) and 416 (SR1482) case rows; the paper reports
+  843 cases and 1,020 slides in total. The OME-Zarr copy was added on 2026-08-03 next to the original
+  CZI files. The paper shows a proof-of-concept mismatch-repair prediction model and a GitHub page is
+  listed in the study metadata (repository contents not checked). Channels are 3 because the slides are
+  RGB H&E (OME-Zarr: 3 channels). enricher: size from BIA file lists.'
+technical:
+  method: header
+  size_source: page-stated
+  layout:
+    tree: 'S-BIAD1285/Files/   2,042 files + 6 file lists
+
+      SR386_WSIs/SR386_40X_HE_T<case>_<n>.czi      ] 1,020 CZI, 4.32 TB
+
+      SR1482_WSIs/SR1482_40X_HE_T<case>_<n>.czi    ]
+
+      ome-zarr/<slide>.ome.zarr.zip                1,020 zipped OME-Zarr v0.5 (sharded Zarr v3), 52.3
+      TB
+
+      SR386_labels.csv, SR1482_labels.csv          case-level labels
+
+      wsi_file_paths.{json,tsv}, ome-zarr_file_list.{json,tsv}, annotation_file_paths.{json,tsv}
+
+      '
+    n_files: 2048
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/285/S-BIAD1285/Files/ome-zarr/SR1482_40X_HE_T198_01.ome.zarr.zip
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/285/S-BIAD1285/Files/SR1482_labels.csv
+    size_bytes: 817680495
+    description: Smallest slide as OME-Zarr zip (SR1482 case 198; the CZI original SR1482_WSIs/SR1482_40X_HE_T198_01.czi
+      is 78 MB) and its cohort label table
+  arrays:
+  - role: raw
+    path_pattern: ome-zarr/*.ome.zarr.zip
+    format: ome-zarr
+    axes: tczyx
+    shape:
+    - 1
+    - 3
+    - 1
+    - 13109
+    - 40470
+    shape_varies: true
+    dtype: uint8
+    compression: zstd
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One zipped OME-Zarr v0.5 per slide (sharded Zarr v3, shards of 1024x1024 chunks,
+      zstd level 5), 8 levels (0-7), level-0 scale 0.11124 um in y and x; RGB as 3 channels "TL Brightfield".
+      Shape is of T198_01.
+  - role: raw
+    path_pattern: SR*_WSIs/*.czi
+    format: czi
+    axes: null
+    shape:
+    - 13109
+    - 40470
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Original Zeiss CZI (XML metadata of T198_01: SizeX 40470, SizeY 13109, SizeM 216
+      tiles, PixelType Bgr24, scaling 1.1124e-07 m/px). Same slides as the OME-Zarr copies (source_image
+      attribute).'
+  - role: label
+    path_pattern: SR*_labels.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'Case-level table, one row per case: SR1482 columns case_id, tumour_site, stage_notes,
+      dukes, pT, pN, pM, sex, age, MMR, MSI, KRAS, NRAS, BRAF. Pairing: case_id 198 -> SR1482_40X_HE_T198_<n>
+      slides of that cohort.'
+  notes: 'Sizes from the BIA file lists (exact per-file sizes): wsi_file_paths.json 1,020 CZI 4,319,958,988,256
+    B; ome-zarr_file_list.json 1,020 zips 52,296,693,669,449 B; annotation_file_paths.json 2 CSVs 100,997
+    B (the 6 list files not counted), so page-stated. Read the CZI XML metadata of SR1482_40X_HE_T198_01.czi
+    with a range-request script (337,222 B) and the root and level-0 zarr.json inside its .ome.zarr.zip
+    (tools/peek_archive.py). Voxel size 111.24 nm confirmed by both (record 111.2). No pixel data sampled.
+    No single archive: download_url is the Files/ folder; each slide is a direct https file (CZI or .ome.zarr.zip,
+    range requests).'
