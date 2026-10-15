@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: ssbd-166-takubo-ec-nuclei-tracking
 title: Time-lapse images and BDML tracking of vascular endothelial cell nuclei in angiogenic branches (SSBD 166)
 short_name: Endothelial cell nuclei tracking (confocal)
-description: Time-lapse confocal fluorescence (SYTO-16 labelled nuclei) and phase-contrast images of mouse aortic sheet assay branches, 3 or 5 minute intervals over 36 h, with per-nucleus tracking trajectories
-  in BDML files. 5 image datasets (5.2 GB) and 4 quantitative tracking datasets (5.4 MB).
+description: Time-lapse confocal fluorescence (SYTO-16 labelled nuclei) and phase-contrast images of mouse aortic
+  sheet assay branches, 3 or 5 minute intervals over 36 h, with per-nucleus tracking trajectories in BDML files.
+  5 image datasets (5.2 GB) and 4 quantitative tracking datasets (5.4 MB).
 landing_url: https://ssbd.riken.jp/database/project/166
 doi: null
 repository: other
@@ -36,8 +37,9 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 5200000000
-  n_items: null
+  - hdf5
+  size_bytes: 8105478645
+  n_items: 5
   access: open
   download_url: https://ssbd.riken.jp/data/ssbd-000166/
   download_method: http
@@ -46,8 +48,8 @@ annotations:
   types:
   - tracking
   - points
-  coverage: unknown
-  format: BDML (nucleus centroid trajectories)
+  coverage: partial
+  format: BDML 3.0 XML + BD5 HDF5 (per-frame point tables data/<t>/object/0 with ID, t, x[, y] in micrometres)
   source: automatic
 ml:
   tasks:
@@ -67,13 +69,102 @@ provenance:
   - https://ssbd.riken.jp/data/ssbd-000166/
   - https://ssbd.riken.jp/data/ssbd-000166/raw_image-manifest.txt
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6594931/fullTextXML
-  confidence: 0.7
+  - https://ssbd.riken.jp/data/ssbd-000166/dataset.json
+  - https://ssbd.riken.jp/database/dataset/5034/
+  - https://ssbd.riken.jp/database/dataset/5036/
+  confidence: 0.6
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-15T18:14:28Z'
-notes: 'Project page states CC BY and X/Y scales of 1.25 and 0.83 um/pixel (differing per dataset, not mapped to individual datasets), so voxel_size_nm is null; z not applicable. Paper (Sci Rep 2019) Methods:
-  FV-10i confocal, 10x 0.4 NA, images every 3 or 5 min over 36 h; paper is not linked from the project page, matched by authors/topic (project contributors are paper co-authors). Tracking was produced by
-  an automated tracking system (paper), so annotation source is automatic; BDML contents not opened. Size 5.2 GB image total is from the project page. Item count not determined (raw_image manifest lists
-  per-frame TIFFs, e.g. C001T001..).'
+  annotations_verified: true
+  last_checked: '2026-10-15T18:56:31Z'
+notes: 'Project page: CC BY. Pixel size differs per dataset (dataset pages): 0.83 um/px for Fig1b, Fig2c, Fig3b,
+  Fig4c; 1.25 um/px for Fig3a, so voxel_size_nm stays null; z not applicable. T: 3 min (Fig1b, Fig3a, Fig3b), 5
+  min (Fig2c, Fig4c). Paper (Sci Rep 2019) Methods: FV-10i confocal, 10x 0.4 NA; tracking by an automated system
+  (paper), so source automatic. enricher: tracks read from BD5: only Fig1b has 2D nucleus positions (x, y in um,
+  282 frames); Fig3a/3b store a 1D tip cell position and Fig4c 1D positions of 8 nuclei along the branch (1D+T);
+  Fig2c has no tracks; so coverage partial (was unknown). n_items 5 = image time series (was null); size 8,105,478,645
+  B from the download server dataset.json, incl. 2.5 GB zip bundles duplicating raw_image (was 5.2 GB). Confidence
+  lowered: 1D track coordinates limit training use.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "ssbd-000166/   2,035 files, 8.11 GB (dataset.json)\n  raw_image/   2,018 files, 5.59 GB (one 2D TIFF\
+      \ per frame)\n    Fig1b_movie1_ECNuclei_trajectory/  500  gImage_01_04_01_01(Partial Open)_C001T<NNN>.tif\n\
+      \    Fig2c_ECs_U-turn/                  433  Image_03_05_01_01(Direct File Access Mode)_T<NNN>.tif\n    Fig3a_ECNuclei_trajectory_branch1/\
+      \ 720  s_C001T<NNN>.tif (T071-T790)\n    Fig3b_ECNuclei_trajectory_branch2/ 220  g2Image_01_04_01_01(Partial\
+      \ Open)_C001T<NNN>.tif (+ .DS_Store)\n    Fig4c_ECNuclei_trajectory_isolated_branch/ 144  Image_02_04_01_01_T<NNN>.tif\n\
+      \  raw_bdml/    8 files, 5.6 MB: <set>/<set>_bd5.h5 + <set>_bdml3.0.xml (Fig1b, Fig3a, Fig3b, Fig4c)\n  source/\
+      \      5 zips, 2.51 GB (bundles of the raw_image sets)\n  bdml/        4 zips, 264 KB (bundles of the BDML\
+      \ sets)\n  sha256sum.txt, md5sum.txt, dataset.json, *-manifest.txt\n"
+    n_files: 2035
+    listing_complete: true
+  sample:
+    urls:
+    - https://ssbd.riken.jp/data/ssbd-000166/raw_image/Fig4c_ECNuclei_trajectory_isolated_branch/Image_02_04_01_01_T001.tif
+    - https://ssbd.riken.jp/data/ssbd-000166/raw_bdml/Fig4c_ECNuclei_trajectory_isolated_branch/Fig4c_ECNuclei_trajectory_isolated_branch_bd5.h5
+    size_bytes: 3837348
+    description: First frame of the Fig4c isolated-branch series and the track file for that series (8 nuclei, 144
+      frames)
+  arrays:
+  - role: raw
+    path_pattern: raw_image/Fig[124]*/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 1024
+    - 1024
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 30
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'One RGB TIFF per time point (photometric 2, 3 samples, not identical: an RGB rendering, likely
+      nuclei fluorescence with phase contrast); probed Fig1b, Fig2c, Fig3b, Fig4c frames. 0.83 um/px per the dataset
+      pages.'
+  - role: raw
+    path_pattern: raw_image/Fig3a_ECNuclei_trajectory_branch1/s_C001T*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Greyscale (photometric 1) frames T071-T790, 1.25 um/px per the dataset page.
+  - role: label
+    path_pattern: raw_bdml/*/*_bd5.h5
+    format: hdf5
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: none
+    encoding: tracks-table
+    classes:
+    - id: 0
+      name: EC nucleus position (Fig1b, Fig4c) / tip cell position (Fig3a, Fig3b)
+    alignment: unknown
+    alignment_notes: 'BD5: one compound table per frame at data/<t>/object/0 (ID, t, entity=point, x[, y] as strings),
+      data/scaleUnit, data/trackInfo (parent-child links). Coordinates are in micrometres, not pixels: Fig1b 2D+T
+      (x, y); Fig3a, Fig3b, Fig4c 1D+T (position along the branch only), so they cannot be placed on the image grid
+      without the branch axis. Pairing: raw_bdml/<set>/ tracks raw_image/<set>/; Fig4c 144 frames = 144 TIFFs, Fig3a
+      720 = 720; Fig1b 282 frames vs 500 TIFFs, Fig3b 720 vs 220 TIFFs (not reconciled).'
+  notes: 'Listing from the SSBD download server: manifests (2,018 raw_image URLs, 8 raw_bdml, 5 + 4 zips) and dataset.json
+    (2,035 files, 8,105,478,645 B; per folder: raw_image 5,588,136,374, source 2,511,432,950, raw_bdml 5,645,812,
+    bdml 263,509). listing.py cannot read the JS index page, so size_source is page-stated (dataset.json). Probed
+    one TIFF from each of the 5 sets; sampled Fig4c T002 (uint8 RGB, range 30-255, mean 64, one sample only). Read
+    all 4 BD5 files (5.6 MB) with h5py. voxel size not set: two pixel sizes (0.83 / 1.25 um, dataset pages 5034-5038);
+    TIFF headers carry no calibration. HDF5 tables have one dataset per frame (data/<t>/object/0), so no single
+    dataset name is given. All files are direct https links on ssbd.riken.jp (not on the TensorSwitch allowlist).'
