@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: mendeley-sfp9s96prh-prbd-rice-microscopic
 title: PRBD microscope-camera images of ten processed rice varieties from Bangladesh
 short_name: Processed rice varieties (digital microscope)
-description: Digital-microscope-camera images of individual processed rice kernels from ten varieties sold in Dhaka markets (Aush, Beroi, BR-28, BR-29, Ghee Bhog, Katari Nazir, Katari Siddho, Swarna, Miniket, Chinigura), with 200 original and 800 augmented images per class, organised in class folders.
+description: Digital-microscope-camera images of individual processed rice kernels from ten varieties
+  sold in Dhaka markets (Aush, Beroi, BR-28, BR-29, Ghee Bhog, Katari Nazir, Katari Siddho, Swarna, Miniket,
+  Chinigura), with 200 original and 800 augmented images per class, organised in class folders.
 landing_url: https://data.mendeley.com/datasets/sfp9s96prh/1
 doi: 10.17632/sfp9s96prh.1
 repository: other
@@ -36,6 +38,7 @@ imaging:
 data:
   formats:
   - jpeg
+  - png
   size_bytes: 467123424
   n_items: 10000
   access: open
@@ -67,6 +70,76 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-15T04:14:26Z'
-notes: 'Borderline microscopy: images were taken of single kernels with a USB digital microscope camera (HP Wide Vision HD, stated 1000x zoom, 640 x 480 JPG), not a research microscope. Modality is other. Pixel size not stated on the Mendeley record or in the paper. The Mendeley record lists 10,000 files (2000 originals and 8000 augmented, 200 and 800 per class); the paper text also says about 2010 originals and 8010 augmented, but its folder table sums to 2000 and 8000. Folder layout (Original_images and Augmented_images, ten class sub-folders each) is from the paper. Augmented images derive from the originals, so splits must be made before augmentation. The paper reports a DenseNet201 baseline with an 80:10:10 split of its own; no split files are provided.'
+  annotations_verified: true
+  last_checked: '2026-10-15T06:30:15Z'
+notes: 'Borderline microscopy: images were taken of single kernels with a USB digital microscope camera
+  (HP Wide Vision HD, stated 1000x zoom, 640 x 480 images), not a research microscope. Modality is other.
+  Pixel size not stated on the Mendeley record or in the paper. The Mendeley record lists 10,000 files
+  (2000 originals and 8000 augmented, 200 and 800 per class); the paper text also says about 2010 originals
+  and 8010 augmented, but its folder table sums to 2000 and 8000. Augmented images derive from the originals,
+  so splits must be made before augmentation. The paper reports a DenseNet201 baseline with an 80:10:10
+  split of its own; no split files are provided. enricher: listed via Mendeley API; originals probed as
+  PNG despite .jpg names (formats + png).'
+technical:
+  method: header
+  size_source: page-stated
+  layout:
+    tree: 'Mendeley sfp9s96prh v1 (public API folders + files): 10,000 files, 467,123,424 B
+
+      Original_Images/<variety>/processed_S<date>_<nnnn>.jpg               10 x 200 = 2,000  (255.8 MB)
+
+      Augmented_images/<variety>/processed_S<date>_<nnnn>_aug_<k>.jpg     10 x 800 = 8,000  (211.3 MB)
+
+      <variety>: Aush, Beroi, BR-28, BR-29, Chinigura, Ghee Bhog, Katari Najir, Katari Siddho, Miniket,
+      Swarna
+
+      '
+    n_files: 10000
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.mendeley.com/public-files/datasets/sfp9s96prh/files/11aee1b6-5032-42c6-be6c-f6f25618cebf/file_downloaded
+    size_bytes: 226154
+    description: One original Aush kernel image (Original_Images/Aush/processed_S20250325_0001.jpg); class
+      = folder name
+  arrays:
+  - role: raw
+    path_pattern: Original_Images/*/*.jpg
+    format: png
+    axes: yxs
+    shape:
+    - 480
+    - 640
+    - 4
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Probed Original_Images/Aush/processed_S20250325_0001.jpg: actually a PNG (RGBA,
+      640x480) despite the .jpg name; other originals not checked.'
+  - role: raw
+    path_pattern: Augmented_images/*/*_aug_*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 480
+    - 640
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Augmented copies of the originals (4 per original, _aug_<k>), real JPEG RGB 640x480
+      (probed Aush _aug_1).
+  notes: 'Listing from the Mendeley public API (folders/1 plus files per folder, 22 requests via curl):
+    10,000 files, sizes summed exactly (page-stated). Probed 2 files via their S3 redirect targets; no
+    pixel data sampled. Download: per-file Mendeley URLs (public-files/.../file_downloaded) give HTTP
+    403 to probe.py (Cloudflare; curl works) and redirect to prod-dcd-datasets-public-files-eu-west-1.s3.eu-west-1.amazonaws.com
+    objects (range requests OK) that are not on the TensorSwitch allowlist. No single archive offered;
+    download_url stays null (folder-only dataset; Mendeley "Download all" not checked). Voxel size not
+    found; checked: image headers (none), Mendeley record, paper (PMC12510014: 1000x zoom USB camera,
+    no pixel size).'
