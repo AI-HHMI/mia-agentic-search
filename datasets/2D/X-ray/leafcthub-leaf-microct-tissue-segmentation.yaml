@@ -72,7 +72,7 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: false
-  last_checked: '2026-10-15T13:45:52Z'
+  last_checked: '2026-10-15T14:34:02Z'
 notes: 'One record for the whole hub: data/datasets.json lists 101 records (About page says 92) with 1,197
   images and masks (per-record counts, not checked in files); 95 Train, 6 Test. Pixel size is per record
   (0.65 um in 61, 0.642 um in 17, others 0.361-1.6 um, none in 10), so voxel_size_nm is null. Files are
@@ -80,3 +80,48 @@ notes: 'One record for the whole hub: data/datasets.json lists 101 records (Abou
   and license could not be read; the JSON license field is empty for all 101. About 64 records cite papers
   (e.g. 10.1093/plphys/kiae659, 10.1111/nph.17772) that were not read. May overlap usda-adc-1524793 (walnut,
   almond). A maintainer may split this per deposit.'
+technical:
+  method: metadata-only
+  size_source: unknown
+  layout:
+    tree: "LeafCTHub catalog (data/datasets.json): 101 records, one USDA Ag Data Commons file each\n \
+      \ per record (source_config dataset/configs/<id>.json):\n    dataset/images/<id>/images/   slice\
+      \ images (TIF in 97 records, PNG in 4)\n    dataset/images/<id>/masks/    grey-value masks, same\
+      \ count as images\n  1,197 images + 1,197 masks in total (source_image_count / source_mask_count)"
+    n_files: null
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: '*/images/*'
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 2D micro-CT slices; image_size per record in datasets.json (e.g. 2088 x 492, 1503
+      x 501). 4 records are PNG.
+  - role: label
+    path_pattern: '*/masks/*'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    encoding: semantic-ids
+    classes: null
+    alignment: unknown
+    alignment_notes: 'Masks pair with images by folder (images/ vs masks/, equal counts). Grey values
+      map to classes per record via label_mapping (e.g. almond_control: 170->0 Background ... 255->7,
+      ignore_index 254); 5-8 classes per record. Format of mask files not stated.'
+  notes: 'Not inspected: every record''s download_url is https://agdatacommons.nal.usda.gov/ndownloader/files/<id>,
+    which answers HTTP 202 with x-amzn-waf-action: challenge (no file bytes, no listing); ndownloader.figshare.com/files/<id>
+    answers 403. All structure comes from LeafCTHub data/datasets.json (101 records: 95 Train, 6 Test;
+    per-record classes, label_mapping, image_size, slice_count, voxel_size). Its license field is empty
+    for all 101. Size: unknown; no listing, and dtypes/file counts per archive are not known, so no estimate.
+    No direct download reachable: Ag Data Commons is behind a WAF challenge. Voxel size: per record (0.65
+    um in 61, 0.642 um in 17, others 0.361-1.6 um, none in 10), no shared value.'
