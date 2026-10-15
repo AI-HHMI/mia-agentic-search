@@ -1,0 +1,142 @@
+schema_version: '1.2'
+id: zenodo-6637456-tomotwin-simulated-cryoet
+title: Training and validation data for the TomoTwin cryo-ET particle picking model (simulated tomograms)
+short_name: TomoTwin simulated cryo-ET particle subvolumes
+description: Training and validation subvolumes (37x37x37 voxel .mrc files) cut from simulated cryo-electron tomograms
+  of 120 proteins plus membranes, noise and fiducials, with per-tomogram particle coordinate files, used to train
+  the generalized particle-picking model TomoTwin. Tomograms were simulated with TEM Simulator and reconstructed
+  with IMOD.
+landing_url: https://zenodo.org/records/6637456
+doi: 10.5281/zenodo.6637456
+repository: Zenodo
+accession: '6637456'
+authors:
+- Thorsten Wagner
+- Gavin Rice
+- Markus Stabrin
+- Stefan Raunser
+publications:
+- title: 'TomoTwin: generalized 3D localization of macromolecules in cryo-electron tomograms with structural data
+    mining'
+  doi: 10.1038/s41592-023-01878-z
+  url: https://doi.org/10.1038/s41592-023-01878-z
+date_published: '2022-06-13'
+imaging:
+  modality:
+  - cryo-ET
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 1.02
+    y: 1.02
+    z: 1.02
+  channels: null
+  organism: []
+  sample: Simulated tomograms of 120 proteins from the PDB and SHREC 2021, with vesicles (membranes), fiducials
+    and noise
+  labels_stains: []
+data:
+  formats:
+  - mrc
+  size_bytes: 23584336023
+  n_items: 123000
+  access: open
+  download_url: https://zenodo.org/records/6637456
+  download_method: http
+annotations:
+  present: true
+  types:
+  - points
+  - classification
+  coverage: dense
+  format: 'Per-tomogram coords/<PDB id>.coords text files: one particle per line, 3 space-separated columns (x y
+    z in tomogram voxels); subvolume class = PDB id in the .mrc file name'
+  source: automatic
+ml:
+  tasks:
+  - detection
+  - classification
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/MPI-Dortmund/tomotwin-cryoet
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-15T18:04:42Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/6637456
+  - https://zenodo.org/records/6637456/files/validation.tar.gz
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10250198/fullTextXML
+  - https://zenodo.org/records/6637456/files/training.tar.gz
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-15T18:49:41Z'
+notes: 'Synthetic data: tomograms are simulated (TEM Simulator + IMOD reconstruction), not experimental. Two archives,
+  training.tar.gz (20.2 GB) and validation.tar.gz (3.4 GB), listed in the record; the validation archive head was
+  listed with a range request (validation/round_1/tomo_08/ with coords/*.coords and subvolume .mrc files); the training
+  archive was not listed. Per the paper, 11 protein sets x 8 tomograms of 512x512x200 voxels at 1.02 nm; tomograms
+  1-7 for training and 8 for validation; 98,400 training and 24,600 validation subvolumes of 37^3 voxels (800/200
+  per class, 123 classes). The 1.02 nm voxel size is the simulated tomogram pixel size stated in the paper Methods;
+  subvolume voxel size in the archives not checked. Raw simulated tomograms are in a separate record (10.5281/zenodo.6637357).
+  download_url left null: two tar.gz archives. enricher: n_items 123000 = 98,400 + 24,600 subvolumes per the paper
+  (was null); coords files read (x y z per line).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  2 tar.gz, 23.6 GB (Zenodo API, exact sizes)\n  training.tar.gz    20.2 GB\n    training/make_sym_links.sh\n\
+      \    training/round_<r>/tomo_<01-07>/\n      coords/<PDB id>.coords, vesicle.coords, 1XXX.coords\n      round<rr>_t<tt>_<PDB\
+      \ id>_<NNN>.mrc   (203,636 B each)\n  validation.tar.gz   3.4 GB\n    validation/round_<r>/tomo_08/\n    \
+      \  coords/<PDB id>.coords, vesicle.coords, 1XXX.coords\n      round<rr>_t08_<PDB id>_<NNN>.mrc\n  (tar.gz\
+      \ has no index; only the archive heads were streamed)\n"
+    n_files: 2
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: '*/round_*/tomo_*/round*_t*_*_[0-9][0-9][0-9].mrc'
+    format: mrc
+    axes: zyx
+    shape:
+    - 37
+    - 37
+    - 37
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - -314.045
+    - 334.556
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One 37^3 subvolume per particle; the class label is the PDB id in the file name (round01_t08_6x9q_000.mrc
+      = class 6x9q). MRC header voxel size 0 (unset).
+  - role: label
+    path_pattern: '*/round_*/tomo_*/coords/*.coords'
+    format: other
+    axes: null
+    shape:
+    - 150
+    - 3
+    shape_varies: true
+    dtype: float64
+    compression: none
+    value_range: null
+    normalization: none
+    encoding: points-table
+    classes: null
+    alignment: unknown
+    alignment_notes: Particle positions in the simulated tomogram (x y z, values up to ~490 / ~155, consistent with
+      512x512x200 voxel tomograms), one file per PDB class per tomogram; the tomograms themselves are in Zenodo
+      6637357, not in this record.
+  notes: 'Zenodo listing complete: 2 tar.gz, 23,584,336,023 B. tar.gz has no index, so only the heads were stream-decompressed
+    with a scratch script (31.5 MB of validation.tar.gz, 1 MB of training.tar.gz): validation 176 members seen (12
+    coords, 160 mrc), training 23. Two subvolumes sampled (round01_t08_6x9q_000/001.mrc): 37x37x37 float32 (MRC
+    mode 2), mean ~ -21, std ~ 71, range from those two only; header voxel size 0. 6x9q.coords: 150 lines x 3 float
+    columns. No sample unit: tar.gz members cannot be fetched one by one; both archives are direct (usable, range
+    requests) but whole. Voxel size 1.02 nm is the simulated tomogram pixel size from the paper Methods (the subvolume
+    headers carry no calibration, so it is not confirmed for the subvolumes).'
