@@ -2,11 +2,11 @@ schema_version: '1.2'
 id: dryad-ht76hdrk7-ifc-immunological-synapse
 title: An imaging flow cytometry dataset for profiling the immunological synapse of therapeutic antibodies
 short_name: T-B cell immunological synapse (imaging cytometry)
-description: '2,899,575 multichannel imaging flow cytometry images (Amnis ImageStreamX Mark II, 60x; brightfield, F-actin,
-  MHCII, CD3, P-CD3zeta, live/dead) of primary human memory CD4+ T cells conjugated with B-LCL cells, from nine donors
-  in four experiments under several conditions (-SEA, +SEA, Ctrl-TCB, CD19-TCB, CD20-TCB, Isotype, Teplizumab). Each
-  image is saved as an HDF5 file with the 16-bit image, channel-wise segmentation masks exported from IDEAS, and, for
-  5,221 expert-annotated images, a class label (nine immunologically relevant cell classes, e.g. synapse with signaling).'
+description: 2,899,575 multichannel imaging flow cytometry images (Amnis ImageStreamX Mark II, 60x; brightfield, F-actin,
+  MHCII, CD3, P-CD3zeta, live/dead) of primary human memory CD4+ T cells conjugated with B-LCL cells, from nine donors in
+  four experiments under several conditions (-SEA, +SEA, Ctrl-TCB, CD19-TCB, CD20-TCB, Isotype, Teplizumab). Each image is
+  saved as an HDF5 file with the 16-bit image, channel-wise segmentation masks exported from IDEAS, and, for 5,221 expert-annotated
+  images, a class label (nine immunologically relevant cell classes, e.g. synapse with signaling).
 landing_url: https://datadryad.org/dataset/doi:10.5061/dryad.ht76hdrk7
 doi: 10.5061/dryad.ht76hdrk7
 repository: Dryad
@@ -18,7 +18,8 @@ authors:
 - Fabian Schmich
 - Elke Glasmacher
 publications:
-- title: Explainable machine learning for profiling the immunological synapse and functional characterization of therapeutic antibodies
+- title: Explainable machine learning for profiling the immunological synapse and functional characterization of therapeutic
+    antibodies
   doi: 10.1038/s41467-023-43429-2
   url: https://doi.org/10.1038/s41467-023-43429-2
 date_published: '2022-11-17'
@@ -72,15 +73,58 @@ provenance:
   - https://datadryad.org/api/v2/datasets/doi%3A10.5061%2Fdryad.ht76hdrk7
   - https://datadryad.org/api/v2/versions/206885/files
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10689847/fullTextXML
+  - https://github.com/marrlab/scifAI
   confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-15T15:50:00Z'
+  last_checked: '2026-10-15T15:58:00Z'
 notes: 'Page, Dryad API record (CC0-1.0, 124,943,117,997 bytes, exp1-4.zip + README) and the paper Methods and Data availability
-  were read. Paper: 5,221 images (-SEA 1,160, +SEA 4,061, CD19-TCB 396, Teplizumab 227) were expert-labelled into nine
-  classes; only those carry a label key, so labels are sparse. Masks are IDEAS-exported per channel (automatic). The
-  files and README could not be downloaded (Dryad 401/403), so zips were not listed: annotations_verified false, HDF5
-  layout from the page text. Pixel size not stated on the page or paper text read (60x objective only). No split
-  shipped (paper uses 70/30 on labelled data). Imaging flow cytometry treated as fluorescence microscopy.'
+  were read. Paper: 5,221 images (-SEA 1,160, +SEA 4,061, CD19-TCB 396, Teplizumab 227) were expert-labelled into nine classes;
+  only those carry a label key, so labels are sparse. Masks are IDEAS-exported per channel (automatic). The files and README
+  could not be downloaded (Dryad 401/403), so zips were not listed: annotations_verified false, HDF5 layout from the page
+  text. Pixel size not stated on the page or paper text read (60x objective only). No split shipped (paper uses 70/30 on labelled
+  data). Imaging flow cytometry treated as fluorescence microscopy.'
+technical:
+  method: metadata-only
+  size_source: page-stated
+  layout:
+    tree: "./                         5 files   124.9 GB (Dryad API sizes)\n  exp1.zip                 19,581,330,572 B\n\
+      \  exp2.zip                 21,652,375,381 B\n  exp3.zip                 40,989,887,567 B\n  exp4.zip              \
+      \   42,719,517,780 B\n  README.md                         6,697 B\nzip contents not listed (Dryad 401/403 from this\
+      \ environment); per the scifAI README the\nexpected layout is <experiment>/<donor>/<condition>/*_<object number>.h5"
+    n_files: 5
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: exp[1-4].zip
+    format: hdf5
+    axes: null
+    shape: null
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: HDF5 dataset "image" per scifAI README; 6 channels (BF, F-actin, MHCII, CD3, P-CD3zeta, live/dead) per
+      paper
+  - role: label
+    path_pattern: exp[1-4].zip
+    format: hdf5
+    axes: null
+    shape: null
+    dtype: unknown
+    compression: unknown
+    encoding: unknown
+    alignment: same-grid
+    alignment_notes: 'HDF5 dataset "mask" in the same file as "image": channel-wise segmentation masks exported from IDEAS
+      (paper Methods); grid match assumed, not verified'
+  notes: 'metadata-only: Dryad API v2 lists 5 files (exp1-4.zip, README.md) with exact sizes summing to 124,943,117,997 B,
+    matching data.size_bytes; listing.py has no Dryad support, so size_source is page-stated. No file could be read: /api/v2/files/<id>/download
+    returns 401 (API token needed) and the landing page''s /downloads/file_stream/<id> links return 403 (AWS ELB) from this
+    environment, so zip members, HDF5 keys, shapes, dtypes and the README are not inspected. Arrays follow the paper Methods
+    (16-bit raw images and channel-wise IDEAS segmentation masks, each image saved as one HDF5 file) and the scifAI README
+    (keys ''image'', ''mask'', optional ''label'' string); dtype/axes/shape left unknown. voxel size not found; checked: Dryad
+    page and API record, paper full text (Methods, Data availability), scifAI and scifAI-notebooks GitHub repos (README, file
+    tree). no direct download: Dryad file_stream links 403, API downloads need a token; no mirror in paper or repos.'
