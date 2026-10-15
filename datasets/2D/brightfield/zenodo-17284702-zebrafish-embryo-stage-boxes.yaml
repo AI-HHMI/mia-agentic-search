@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: zenodo-17284702-zebrafish-embryo-stage-boxes
 title: Zebrafish University of Brescia
 short_name: Zebrafish embryo stage detection (brightfield)
-description: Brightfield microscope images of zebrafish (Danio rerio) embryos with YOLO bounding boxes in three classes, STAGE1 (earliest
-  stage, suitable for microinjection), ADVANCED (past the first stage) and DEAD (non-viable). Exported from Roboflow (v3) at 640 x 640
-  px with train, valid and test splits; the training folder contains several augmented copies of each source image.
+description: Brightfield microscope images of zebrafish (Danio rerio) embryos with YOLO bounding boxes
+  in three classes, STAGE1 (earliest stage, suitable for microinjection), ADVANCED (past the first stage)
+  and DEAD (non-viable). Exported from Roboflow (v3) at 640 x 640 px with train, valid and test splits;
+  the training folder contains several augmented copies of each source image.
 landing_url: https://zenodo.org/records/17284702
 doi: 10.5281/zenodo.17284702
 repository: Zenodo
@@ -28,7 +29,7 @@ imaging:
 data:
   formats:
   - jpeg
-  size_bytes: 178000000
+  size_bytes: 178179541
   n_items: 6999
   access: open
   download_url: https://zenodo.org/records/17284702/files/ZebrafishUnibs.v3-zebrafishv3.yolov11.zip
@@ -39,7 +40,8 @@ annotations:
   - bounding-box
   - classification
   coverage: dense
-  format: YOLO txt (class x_center y_center width height, normalised), one file per image; classes ADVANCED, DEAD, STAGE1 in data.yaml
+  format: YOLO txt (class x_center y_center width height, normalised), one file per image; classes ADVANCED,
+    DEAD, STAGE1 in data.yaml
   source: unknown
 ml:
   tasks:
@@ -62,10 +64,77 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-15T05:10:00Z'
-notes: 'Zenodo API record and the zip listing (tools/peek_archive.py): train 6,129 images/labels, valid 582, test 288 (6,999 in
-  total) plus data.yaml. Train file names carry Roboflow augmentation hashes (about 3 copies per source image; 4,985 distinct
-  source image names over all splits), so the number of independent images is lower than n_items. Images probed: 640 x 640 RGB
-  JPEG; one test image viewed shows zebrafish embryos in chorions in brightfield, and its label file holds YOLO boxes. License
-  CC BY 4.0 per the Roboflow data.yaml and the Zenodo record. Magnification, microscope, pixel size, who annotated and any paper are
-  not stated on the record or in the archive; none was found. Roboflow preprocessing/augmentation settings were not read.'
+  last_checked: '2026-10-15T04:23:39Z'
+notes: 'Zenodo API record and the zip listing (tools/peek_archive.py): train 6,129 images/labels, valid
+  582, test 288 (6,999 in total) plus data.yaml. Train file names carry Roboflow augmentation hashes (about
+  3 copies per source image; 4,985 distinct source image names over all splits), so the number of independent
+  images is lower than n_items. Images probed: 640 x 640 RGB JPEG; one test image viewed shows zebrafish
+  embryos in chorions in brightfield, and its label file holds YOLO boxes. License CC BY 4.0 per the Roboflow
+  data.yaml and the Zenodo record. Magnification, microscope, pixel size, who annotated and any paper
+  are not stated on the record or in the archive; none was found. enricher: README.roboflow.txt: every
+  image resized to 640x640 (stretch), 3 augmented versions per source (rotation +-15 deg, brightness +-25%),
+  so no fixed pixel size; size from listing.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "ZebrafishUnibs.v3-zebrafishv3.yolov11.zip  178.2 MB, 14,001 members\n  README.dataset.txt,\
+      \ README.roboflow.txt, data.yaml\n  train/images/*.jpg  6,129   train/labels/*.txt  6,129\n  valid/images/*.jpg\
+      \    582   valid/labels/*.txt    582\n  test/images/*.jpg     288   test/labels/*.txt     288\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/17284702/files/ZebrafishUnibs.v3-zebrafishv3.yolov11.zip::test/images/101_jpg.rf.c74202640f56d486b13d4d9819a3535d.jpg
+    - https://zenodo.org/records/17284702/files/ZebrafishUnibs.v3-zebrafishv3.yolov11.zip::test/labels/101_jpg.rf.c74202640f56d486b13d4d9819a3535d.txt
+    size_bytes: 15208
+    description: One test image and its YOLO label file (2 boxes)
+  arrays:
+  - role: raw
+    path_pattern: ZebrafishUnibs.v3-zebrafishv3.yolov11.zip::*/images/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 640
+    - 640
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 23
+    - 165
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB JPEG (samples not identical). Resized to 640x640 by stretching (README.roboflow.txt).
+  - role: label
+    path_pattern: ZebrafishUnibs.v3-zebrafishv3.yolov11.zip::*/labels/*.txt
+    format: other
+    axes: null
+    shape:
+    - 2
+    - 5
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: rescaled
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: ADVANCED
+    - id: 1
+      name: DEAD
+    - id: 2
+      name: STAGE1
+    alignment: same-grid
+    alignment_notes: 'Same stem as the image (images/ -> labels/, .jpg -> .txt). One row per box: class
+      x_center y_center width height, normalised to [0, 1] of the 640x640 image (YOLO). Class ids from
+      data.yaml names order.'
+  notes: 'Listing: the single zip (178,179,541 B, 14,001 members; 6,999 image/label pairs in train/valid/test).
+    Probed and sampled test/images/101_jpg.rf.c742...jpg: 640x640x3 uint8 RGB JPEG, values 23-165 (one
+    sample). Its label file: 2 rows of space-separated YOLO boxes (class 2 = STAGE1). README.roboflow.txt:
+    auto-orient, resize to 640x640 (stretch), 3 augmented versions per source image (rotation, brightness).
+    Voxel size not found and not defined: images were stretched to 640x640; checked Zenodo API record
+    (description, no related identifiers), README.dataset.txt, README.roboflow.txt, data.yaml; no paper
+    cited. Zip and members are usable direct links (Zenodo).'
