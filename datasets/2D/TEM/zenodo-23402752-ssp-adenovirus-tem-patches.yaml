@@ -1,0 +1,161 @@
+schema_version: '1.2'
+id: zenodo-23402752-ssp-adenovirus-tem-patches
+title: 'SSP Adenovirus Dataset: TEM Image Patches with Detection and Segmentation Annotations'
+short_name: Adenovirus detection and masks (TEM)
+description: 145 transmission electron microscopy image patches of adenovirus, cut from the adenovirus
+  class of the TEM Virus Dataset (Matuszewski and Sintorn, 2021) with the semi-automatic stride-independent
+  patching (SSP) tool. Provided in two task-specific versions with the same train/validation/test split
+  (87/26/32 patches) - YOLO-format bounding boxes for detection and binary foreground masks for segmentation.
+landing_url: https://zenodo.org/records/23402752
+doi: 10.5281/zenodo.23402752
+repository: Zenodo
+accession: '23402752'
+authors:
+- Olivier Rukundo
+publications:
+- title: Stride Independent Patching for Deep Learning
+  doi: null
+  url: https://arxiv.org/abs/2610.12216
+- title: 'TEM virus images: Benchmark dataset and deep learning classification'
+  doi: 10.1016/j.cmpb.2021.106318
+  url: https://pubmed.ncbi.nlm.nih.gov/34375851/
+date_published: '2026-10-15'
+imaging:
+  modality:
+  - TEM
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: Adenovirus particles (adenovirus class of the TEM Virus Dataset)
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: 10752156
+  n_items: 145
+  access: open
+  download_url: https://zenodo.org/records/23402752/files/SSP-DATASET.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  - semantic-segmentation
+  coverage: dense
+  format: 'SSP-DATASET.zip: DETECTION/{train,val,test}/images/*.png with DETECTION/{train,val,test}/labels/*.txt
+    (YOLO text format, five-pixel margin around foreground components); SEGMENTATION/images/{train,val,test}/*.png
+    with SEGMENTATION/masks/{train,val,test}/*.png (binary adenovirus foreground vs background masks);
+    image and annotation share the filename stem'
+  source: unknown
+ml:
+  tasks:
+  - detection
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/legalcode
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-16T02:58:59Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/23402752
+  - https://zenodo.org/records/23402752/files/SSP-DATASET.zip
+  - https://arxiv.org/abs/2610.12216
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1016%2Fj.cmpb.2021.106318%22&format=json&resultType=core&pageSize=3
+  - https://arxiv.org/pdf/2610.12216
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-16T04:13:35Z'
+notes: 'Derived subset, not a re-deposit: the catalog record mendeley-x4dwwfwtw3-tem-virus-benchmark holds
+  the full 1,245-image, 22-class TEM Virus Dataset with point/centreline annotations only; this deposit
+  adds 145 adenovirus patches with bounding boxes (YOLO) and binary masks, and its own split. Image size
+  and pixel size are not stated on the Zenodo page or in the arXiv abstract; the SSP paper full text (read
+  by the enricher) states no pixel size for these patches, and the Matuszewski paper is not open access
+  (abstract only), so voxel_size_nm is null. Who produced the reference masks is not stated on the deposit
+  page (annotations.source unknown). 580 files listed in the zip: 145 patches per version (DETECTION images
+  + labels, SEGMENTATION images + masks). enricher: annotations.source left unknown (paper: masks from
+  a semi-automatic tool, for its own 640x640 patch set).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "SSP-DATASET.zip  (10,752,156 B, 580 members)\n  SSP-DATASET/DETECTION/{train,val,test}/images/*.png\
+      \   145 patches\n  SSP-DATASET/DETECTION/{train,val,test}/labels/*.txt   145 YOLO box files\n  SSP-DATASET/SEGMENTATION/images/{train,val,test}/*.png\
+      \ 145 patches\n  SSP-DATASET/SEGMENTATION/masks/{train,val,test}/*.png  145 binary masks\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/23402752/files/SSP-DATASET.zip::SSP-DATASET/SEGMENTATION/images/test/A4-080201_13_png.rf.TsGuPZlzaw5mwygISLTs_patch_1.png
+    - https://zenodo.org/records/23402752/files/SSP-DATASET.zip::SSP-DATASET/SEGMENTATION/masks/test/A4-080201_13_png.rf.TsGuPZlzaw5mwygISLTs_patch_1.png
+    size_bytes: 32322
+    description: One 256x256 test patch and its binary mask (zip members); the whole zip is 10.8 MB.
+  arrays:
+  - role: raw
+    path_pattern: SSP-DATASET.zip::SSP-DATASET/SEGMENTATION/images/*/*.png
+    format: png
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 38
+    - 219
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: DETECTION/*/images/*.png hold the same patch file names (same member sizes for the
+      probed patch).
+  - role: label
+    path_pattern: SSP-DATASET.zip::SSP-DATASET/SEGMENTATION/masks/*/*.png
+    format: png
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: adenovirus
+    alignment: same-grid
+    alignment_notes: SEGMENTATION/images/<split>/<stem>.png pairs with SEGMENTATION/masks/<split>/<stem>.png;
+      both 256x256.
+  - role: label
+    path_pattern: SSP-DATASET.zip::SSP-DATASET/DETECTION/*/labels/*.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'YOLO text: one line per box, class x_center y_center width height normalized to
+      [0,1] (read: "0 0.5117 0.5176 0.3438 0.3398"); pairs with DETECTION/<split>/images/<stem>.png.'
+  notes: 'Zip central directory listed: 580 members, 10,752,156 B. Probed SEGMENTATION test patch (gray
+    uint8 256x256 PNG, 31,552 B) and its mask (gray uint8 256x256, 770 B). Sample (one pair): raw 38..219,
+    mean 71.6; mask values {0: 60768, 255: 4768} -> binary. value_range from one sample. One YOLO label
+    file read (one box, class 0). No README/LICENSE inside the zip. File names (*_png.rf.<hash>_patch_N)
+    look like a Roboflow export; the SSP paper (arXiv 2610.12216) describes 282 patches of 640x640 from
+    50 MiniTEM 2048x2048 16-bit images (FOV 3 um), so these 145 256x256 8-bit patches were likely resized;
+    no pixel size is stated for them. voxel size not found; checked: PNG headers, Zenodo API record, zip
+    members (no docs), SSP paper full text (PDF), TEM Virus Dataset record on main. Zenodo dropped many
+    TLS connections during this run.'
