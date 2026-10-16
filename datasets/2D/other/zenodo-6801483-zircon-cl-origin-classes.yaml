@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-6801483-zircon-cl-origin-classes
 title: Zircon classification from cathodoluminescence images using deep learning
 short_name: Zircon CL images by host-rock origin (SEM-CL)
-description: 4,282 PNG cathodoluminescence (CL) images of zircon grains, sorted into folders by host-rock
-  origin (igneous, metamorphic, hydrothermal), with 1,392 original images and 2,890 augmented copies
-  in separate '-aug' folders.
+description: 4,282 PNG cathodoluminescence (CL) images of zircon grains, sorted into folders by host-rock origin
+  (igneous, metamorphic, hydrothermal), with 1,392 original images and 2,890 augmented copies in separate '-aug'
+  folders.
 landing_url: https://zenodo.org/records/6801483
 doi: 10.5281/zenodo.6801483
 repository: Zenodo
@@ -24,7 +24,7 @@ imaging:
   - other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism: []
   sample: Zircon grains (geological mineral samples) imaged by cathodoluminescence
   labels_stains: []
@@ -41,8 +41,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: image-level class given by folder name (igneous, metamorphic, hydrothermal; matching *-aug folders
-    hold augmented copies)
+  format: image-level class given by folder name (igneous, metamorphic, hydrothermal; matching *-aug folders hold
+    augmented copies)
   source: manual
 ml:
   tasks:
@@ -64,13 +64,66 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-16T10:50:00Z'
-notes: 'Zenodo description: images collected from published papers and unpublished personal collections;
-  zircon classified and labelled manually; used for a classification study submitted to Geoscience
-  Frontiers. The paper could not be found (Europe PMC title search and WebSearch), so no publication
-  is listed and the instrument, pixel size and labelling procedure are not stated on the dataset page.
-  Zip listing (peek_archive): 4,282 files in six folders, hydrothermal 414, igneous 647, metamorphic 331 originals
-  and hydrothermal-aug 1,551, igneous-aug 919, meta-aug 420 augmented copies; the augmented copies derive
-  from the originals, so train/test splits must keep them together. Because images come from many sources, the
-  CC BY 4.0 on the record may not cover every original image. Cathodoluminescence is an SEM-based
-  imaging mode, hence modality other.'
+  last_checked: '2026-10-16T12:05:00Z'
+notes: 'Zenodo description: images collected from published papers and unpublished personal collections; zircon
+  classified and labelled manually; used for a classification study submitted to Geoscience Frontiers. The paper
+  could not be found (Europe PMC title search and WebSearch), so no publication is listed and the instrument, pixel
+  size and labelling procedure are not stated on the dataset page. Zip listing (peek_archive): 4,282 files in six
+  folders, hydrothermal 414, igneous 647, metamorphic 331 originals and hydrothermal-aug 1,551, igneous-aug 919,
+  meta-aug 420 augmented copies; the augmented copies derive from the originals, so train/test splits must keep
+  them together. Because images come from many sources, the CC BY 4.0 on the record may not cover every original
+  image. Cathodoluminescence is an SEM-based imaging mode, hence modality other. enricher: channels 1 (PNGs are
+  grey stored as RGB, 3 identical samples; was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "submission dataset.zip (111.4 MB; 4,282 PNG)\nsubmission dataset/\n  hydrothermal/       414 <sample>-<grain>.png\n\
+      \  igneous/            647\n  metamorphic/        331\n  hydrothermal-aug/   1,551 aug-<original>.png_<n>_<m>.png\n\
+      \  igneous-aug/        919\n  meta-aug/           420"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/6801483/files/submission%20dataset.zip::submission dataset/igneous/100032-25.png
+    size_bytes: 11837
+    description: One original igneous zircon CL image (56x125, grey as RGB); the class is the folder name.
+  arrays:
+  - role: raw
+    path_pattern: submission dataset/{hydrothermal,igneous,metamorphic}/*.png
+    format: png
+    axes: yxs
+    shape: null
+    shape_varies: true
+    dtype: uint8
+    compression: png
+    value_range:
+    - 28
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Original grain images, sizes vary (sampled 56x125 and 268x202); grey stored as RGB (samples
+      identical). Class label = folder name.
+  - role: raw
+    path_pattern: submission dataset/*-aug/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 128
+    - 128
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Augmented copies (aug-<original file>_<n>_<m>.png) of the originals; one sampled at 128x128;
+      class = folder (meta-aug = metamorphic). Keep with their originals when splitting.
+  notes: 'Listing: whole zip via tools/listing.py --expand-zips (4,282 members, 111,410,040 B zip). Sampled 3 PNGs
+    (100.5 KB): igneous 56x125, hydrothermal 268x202, igneous-aug 128x128, all uint8 with 3 identical samples; value
+    ranges from those samples. Labels are folder names, no label files. voxel size not found; checked: PNG headers,
+    Zenodo API description, zip contents (no README); images come from many published papers, so no single pixel
+    size; no paper found (record notes).'
