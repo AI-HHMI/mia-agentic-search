@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: zenodo-8108445-mediterranean-pollen-detection
 title: Monospecific Mediterranean Pollen Images Dataset
 short_name: Mediterranean pollen grain detection (microscopy)
-description: 19,579 microscope images of pollen from monospecific samples of eleven Mediterranean taxa, with YOLO-format bounding boxes for the pollen grains, split into train (13,705), validation (2,937) and test (2,937) sets.
+description: 19,579 microscope images of pollen from monospecific samples of eleven Mediterranean taxa,
+  with YOLO-format bounding boxes for the pollen grains, split into train (13,705), validation (2,937)
+  and test (2,937) sets.
 landing_url: https://zenodo.org/records/8108445
 doi: 10.5281/zenodo.8108445
 repository: Zenodo
@@ -24,9 +26,10 @@ imaging:
   - other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism: []
-  sample: Pollen grains from monospecific samples (Chenopodiaceae, Cupressaceae, Olea, Pinus, Urticaceae, Casuarina, Palmaceae, Plantago, Platanus, Poaceae, Rumex)
+  sample: Pollen grains from monospecific samples (Chenopodiaceae, Cupressaceae, Olea, Pinus, Urticaceae,
+    Casuarina, Palmaceae, Plantago, Platanus, Poaceae, Rumex)
   labels_stains: []
 data:
   formats:
@@ -34,14 +37,15 @@ data:
   size_bytes: 26134485036
   n_items: 19579
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/8108445
   download_method: http
 annotations:
   present: true
   types:
   - bounding-box
   coverage: dense
-  format: One YOLO .txt file per image in labels/ (class id, normalised x-centre, y-centre, width, height per grain)
+  format: One YOLO .txt file per image in labels/ (class id, normalised x-centre, y-centre, width, height
+    per grain)
   source: unknown
 ml:
   tasks:
@@ -65,5 +69,86 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-16T05:25:00Z'
-notes: 'Three zips (train, val, test), each with images/ (PNG) and labels/ (YOLO .txt), counted from the zip central directories (13,705 + 2,937 + 2,937 = 19,579 pairs) and one label file read from the test zip. File names contain "EFI_40x" (likely extended-focus images at 40x), but the Zenodo page does not state the microscope, imaging mode, pixel size or how the boxes were made, and no paper is linked on the record or was found with paper.py or a web search; so modality is other, voxel size, organism and annotation source are unknown, and the class-id-to-taxon mapping is not documented in the files read. Image dimensions are not stated.'
+  last_checked: '2026-10-16T05:16:10Z'
+notes: 'Three zips (train, val, test), each with images/ (PNG) and labels/ (YOLO .txt), counted from the
+  zip central directories (13,705 + 2,937 + 2,937 = 19,579 pairs) and one label file read from the test
+  zip. File names contain "EFI_40x" (likely extended-focus images at 40x), but the Zenodo page does not
+  state the microscope, imaging mode, pixel size or how the boxes were made, and no paper is linked on
+  the record or was found with paper.py or a web search; so modality is other, voxel size, organism and
+  annotation source are unknown. enricher: class ids match the taxon list order in 22 label files; images
+  are RGB crops of varying size (channels 3, was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  3 files  26.1 GB  .zip\n  MediterraneanPollenDataset_train.zip  (18.3 GB)\n    train/images/\
+      \  13705 png    train/labels/  13705 txt\n  MediterraneanPollenDataset_val.zip  (3.9 GB)\n    val/images/\
+      \     2937 png    val/labels/     2937 txt\n  MediterraneanPollenDataset_test.zip  (3.9 GB)\n  \
+      \  test/images/    2937 png    test/labels/    2937 txt\n  (names: <taxon>_EFI_40x_crop-<i>-<j>[_t[_t]].png)"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/8108445/files/MediterraneanPollenDataset_test.zip::test/images/platanus_EFI_40x_crop-18-15_t_t.png
+    - https://zenodo.org/records/8108445/files/MediterraneanPollenDataset_test.zip::test/labels/platanus_EFI_40x_crop-18-15_t_t.txt
+    size_bytes: 230693
+    description: smallest test image (Platanus, 680x441 RGB PNG) and its YOLO box file
+  arrays:
+  - role: raw
+    path_pattern: '*.zip::*/images/*.png'
+    format: png
+    axes: yxs
+    shape:
+    - 441
+    - 680
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 139
+    - 232
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Crop sizes vary (441x680 to 2301x2579 probed).
+  - role: label
+    path_pattern: '*.zip::*/labels/*.txt'
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: Chenopodiaceae
+    - id: 1
+      name: Cupressaceae
+    - id: 2
+      name: Olea
+    - id: 3
+      name: Pinus
+    - id: 4
+      name: Urticaceae
+    - id: 5
+      name: Casuarina
+    - id: 6
+      name: Palmaceae
+    - id: 7
+      name: Plantago
+    - id: 8
+      name: Platanus
+    - id: 9
+      name: Poaceae
+    - id: 10
+      name: Rumex
+    alignment: same-grid
+    alignment_notes: 'YOLO rows: class x_center y_center width height (normalised); label = image stem
+      with .txt under labels/. Class ids: in 22 test label files every taxon prefix had one id, in the
+      order of the Zenodo taxon list (cheno 0 ... rumex 10).'
+  notes: 'Listing: Zenodo API + zip indexes, 3 files, 26,134,485,036 bytes (exact), 19,579 image/label
+    pairs. Probed 2 PNGs (441x680x3 and 2301x2579x3 uint8); sampled the smallest (182 KB, values 139-232,
+    one sample, RGB channels differ); read 22 label files. Voxel size not found; checked: PNG headers,
+    Zenodo description, related identifiers (none); no paper. Three archives: download_url is the record
+    page.'
