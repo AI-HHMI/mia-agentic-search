@@ -1,0 +1,151 @@
+schema_version: '1.2'
+id: github-malga-vision-filo-seg-filopodia
+title: 'Filo-SEG: annotated fluorescent confocal images for filopodia segmentation (FiloAnalyzer)'
+short_name: Filo-SEG filopodia segmentation (confocal)
+description: 245 Zeiss LSM 710 confocal fluorescence images (63x) of HEK 293T, NIH 3T3 and chicken embryonic
+  neural crest cells with brush-traced binary filopodia masks, split into 200 training and 45 test images,
+  plus a 31-image WNT1-GFP set with manual filopodia counts. Released in the FiloAnalyzer GitHub repository.
+landing_url: https://github.com/Malga-Vision/FiloAnalyzerToolbox
+doi: null
+repository: GitHub
+accession: null
+authors:
+- Vito Paolo Pastore
+- Roberta Rorato
+- Lorenzo Tirelli
+- Rosaria Del Vecchio
+- Lorenzo Gagliardi
+- Lorenzo Bruni
+- Francesca Odone
+- Simone Bianco
+publications:
+- title: 'FiloAnalyzer: a deep learning approach for cell filopodia segmentation'
+  doi: 10.1186/s12859-026-06437-9
+  url: https://doi.org/10.1186/s12859-026-06437-9
+date_published: null
+imaging:
+  modality:
+  - confocal
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Homo sapiens
+  - Mus musculus
+  - Gallus gallus
+  sample: Fluorescently labelled HEK 293T and NIH 3T3 cells and Hamburger and Hamilton stage 13-15 chicken
+    embryonic neural crest cells
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 587524210
+  n_items: 245
+  access: open
+  download_url: https://github.com/Malga-Vision/FiloAnalyzerToolbox/tree/main/dataset
+  download_method: other
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: Binary visual masks (white 4-pixel brush traces of each filopodium, drawn in Adobe Photoshop)
+    in dataset/masks, paired by file name with dataset/images TIFFs
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/Malga-Vision/FiloAnalyzerToolbox
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-16T04:15:10Z'
+  evidence_urls:
+  - https://github.com/Malga-Vision/FiloAnalyzerToolbox
+  - https://github.com/Malga-Vision/FiloAnalyzerToolbox/tree/main/dataset
+  - https://github.com/Malga-Vision/FiloAnalyzerToolbox/tree/main/dataset/images
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13312739/fullTextXML
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-16T05:41:44Z'
+notes: 'The paper (open access, full text read: Filo-SEG section) states 245 images (200 training, 45
+  test), Zeiss LSM 710 confocal with a 63x dipping or Plan Apochromat oil objective, and masks traced
+  with a 4-pixel Photoshop brush. The repo dataset/ folder has images/ (TIFFs, numbered), masks/, split_data/,
+  extraTest/, biologicallyRelevantData/, FiloCountAnnotation.csv and test_set_indices.xlsx; enricher:
+  git tree lists 245 images + 245 masks (binary uint8 TIFF), annotations_verified true. No license or
+  terms of use were found in the README, repo page or paper, so license is unknown. Pixel size is not
+  stated in the paper text. Which species/cell line belongs to which image was not seen; species are inferred
+  from the cell-line and embryo names in the paper. The paper says no other open filopodia dataset exists.'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "dataset/  (git tree at commit 519a76b, 1145 files)\n  images/  245 tif (1.tif ... 245.tif)\n\
+      \  masks/   245 tif (same names)\n  split_data/train/{imgs,masks}/  200 + 200 tif (RGB copies)\n\
+      \  split_data/test/{imgs,masks}/    45 + 45 tif\n  biologicallyRelevantData/CaaxFewFilopodia/ 45,\
+      \ CaaxStdNames/ 45, WlsManyFilopodia/ 33, WlsStdNames/ 33 tif\n  extraTest/  7 jpg\n  FiloCountAnnotation.csv,\
+      \ test_set_indices.xlsx"
+    n_files: 1145
+    listing_complete: true
+  sample:
+    urls:
+    - https://raw.githubusercontent.com/Malga-Vision/FiloAnalyzerToolbox/main/dataset/images/1.tif
+    - https://raw.githubusercontent.com/Malga-Vision/FiloAnalyzerToolbox/main/dataset/masks/1.tif
+    size_bytes: 850436
+    description: image 1 and its mask (single-page uint8 LZW TIFFs)
+  arrays:
+  - role: raw
+    path_pattern: dataset/images/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1097
+    - 1097
+    shape_varies: true
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Single-page greyscale TIFFs (tiff_layout plain, 1 sample). split_data/*/imgs hold
+      the same images as 3-sample RGB TIFFs.
+  - role: label
+    path_pattern: dataset/masks/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1093
+    - 1093
+    shape_varies: true
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: filopodia
+    alignment: unknown
+    alignment_notes: 'Mask = same file name under masks/. Pair 1: image 1097x1097, mask 1093x1093 (4 px
+      smaller, offset unknown); pair 2: both 1093x1093. So some pairs are not on the same grid; the paper
+      does not explain it.'
+  notes: 'Listing: git tree of the repo (blobless clone, no file sizes), 1145 files under dataset/. Probed
+    images/1,2 and masks/1,2 and split_data/train imgs/masks 1 (RGB, 3 samples); sampled pair 1 (image
+    0-255 uint8, mask {0,255}, 2.3% filopodia). size estimated (uncompressed): raw 245 x 1097x1097 uint8
+    + label 245 x 1093x1093 uint8 = 587,524,210 B (587.5 MB); shapes vary, so approximate; split_data
+    copies, biologicallyRelevantData and extraTest not counted. No archive: GitHub archive zip returned
+    HTTP 403 through the proxy; per-file raw.githubusercontent.com links are usable. Voxel size not found;
+    checked: TIFF headers, README, paper full text (harvester).'
