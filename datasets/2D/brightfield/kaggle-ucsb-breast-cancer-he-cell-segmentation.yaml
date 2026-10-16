@@ -2,8 +2,8 @@ schema_version: '1.2'
 id: kaggle-ucsb-breast-cancer-he-cell-segmentation
 title: Breast Cancer Cell Segmentation (UCSB Bio-Segmentation Benchmark, Kaggle mirror)
 short_name: Breast cancer H&E cell masks (brightfield)
-description: 58 H&E-stained histopathology images of benign and malignant breast cancer tissue (tissue microarray fields
-  from the Rimm laboratory at Yale), each with a binary cell/nucleus segmentation mask, from the UCSB Bio-Segmentation
+description: 58 H&E-stained histopathology images of benign and malignant breast cancer tissue (tissue microarray
+  fields from the Rimm laboratory at Yale), each with a binary cell/nucleus segmentation mask, from the UCSB Bio-Segmentation
   Benchmark. Images are 896 x 768 (some 768 x 512) pixel TIFFs; benign vs malignant is encoded in the file names.
 landing_url: https://www.kaggle.com/datasets/andrewmvd/breast-cancer-cell-segmentation
 doi: null
@@ -37,8 +37,8 @@ data:
   size_bytes: 159819344
   n_items: 58
   access: open
-  download_url: https://www.kaggle.com/datasets/andrewmvd/breast-cancer-cell-segmentation
-  download_method: api
+  download_url: https://www.kaggle.com/api/v1/datasets/download/andrewmvd/breast-cancer-cell-segmentation
+  download_method: http
 annotations:
   present: true
   types:
@@ -67,10 +67,73 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-16T10:20:00Z'
-notes: 'Kaggle API file list shows 58 TIFF images, 58 mask TIFFs and 116 XML files (232 files, 160 MB). The benchmark paper
-  (BMC Bioinformatics 2009, Table 2) states 58 H&E images from the Rimm laboratory (Yale) with ground truth obtained for 50
-  of them, 896 x 768 or 768 x 512 pixels, benign and malignant; the mirror ships 58 masks, so mask coverage of the extra
-  images is unverified. The Kaggle page states CC BY 3.0 (the paper itself is CC BY 2.0). The original UCSB page
-  (bioimage.ucsb.edu) says data are being migrated, so this Kaggle mirror is the hosting page. Pixel size is not stated
-  on the Kaggle page or the paper tables read. Splits are not provided.'
+  last_checked: '2026-10-16T11:30:00Z'
+notes: 'Kaggle API file list shows 58 TIFF images, 58 mask TIFFs and 116 XML files (232 files, 160 MB). The benchmark
+  paper (BMC Bioinformatics 2009, Table 2) states 58 H&E images from the Rimm laboratory (Yale) with ground truth
+  obtained for 50 of them, 896 x 768 or 768 x 512 pixels, benign and malignant; the mirror ships 58 masks, so mask
+  coverage of the extra images is unverified. The Kaggle page states CC BY 3.0 (the paper itself is CC BY 2.0).
+  The original UCSB page (bioimage.ucsb.edu) says data are being migrated, so this Kaggle mirror is the hosting
+  page. Pixel size is not stated on the Kaggle page or the paper tables read. Splits are not provided. enricher:
+  download_url is the anonymous Kaggle archive API URL (was the landing page), download_method http (was api).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: 'Kaggle andrewmvd/breast-cancer-cell-segmentation (232 files, 159.8 MB; archive 98.3 MB)
+
+      Images/   58 ytma*_<benign|malignant>N_ccd.tif (2,065,323 B each) + 58 .tif.xml (BisQue metadata)
+
+      Masks/    58 ytma*_<benign|malignant>N.TIF + 58 .TIF.xml'
+    n_files: 232
+    listing_complete: true
+  sample:
+    urls:
+    - https://www.kaggle.com/api/v1/datasets/download/andrewmvd/breast-cancer-cell-segmentation::Images/ytma10_010704_benign1_ccd.tif
+    - https://www.kaggle.com/api/v1/datasets/download/andrewmvd/breast-cancer-cell-segmentation/Masks%2Fytma10_010704_benign1.TIF
+    size_bytes: 2754384
+    description: 'benign1: H&E RGB image (768x896x3) and its binary mask (768x896).'
+  arrays:
+  - role: raw
+    path_pattern: Images/*_ccd.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 768
+    - 896
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 24
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'RGB H&E (tifffile axes YXS, photometric RGB, channels differ). Paper: 896x768 or 768x512 px,
+      so shape varies.'
+  - role: label
+    path_pattern: Masks/*.TIF
+    format: tiff
+    axes: yx
+    shape:
+    - 768
+    - 896
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: Images/<stem>_ccd.tif <-> Masks/<stem>.TIF (the .xml sidecars link each image
+      to its GroundTruth_Layers resource). Sampled pair: same 768x896 grid; mask values {0, 255}.'
+  notes: 'Listing: Kaggle file-list API, all 12 pages (232 files, sum 159,819,344 B = the API totalBytes); listing.py
+    does not read Kaggle, so size_source is page-stated. Sampled benign1 pair (2.4 MB): image uint8 RGB 24-255;
+    mask {0: 677760, 255: 10368}; ranges from one sample. TIFF sizes equal shape x bytes plus header, so compression
+    none. Kaggle serves the per-file image URL as a one-member zip, so the raw sample is a member of the archive.
+    Kaggle URLs are anonymous 302s to signed storage.googleapis.com (range requests work); www.kaggle.com is not
+    on the TensorSwitch allowlist. voxel size not found; checked: TIFF headers, XML sidecars (geometry only), Kaggle
+    API record, paper full text (BMC Bioinformatics 2009, PMC2777895).'
