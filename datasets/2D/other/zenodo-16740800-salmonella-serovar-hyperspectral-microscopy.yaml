@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: zenodo-16740800-salmonella-serovar-hyperspectral-microscopy
 title: Processed dataset for rapid Salmonella serovar classification using hyperspectral microscopy
 short_name: Salmonella serovars hyperspectral microscopy
-description: 500 hyperspectral microscopy fields (100 per serovar for five Salmonella enterica serovars) of bacterial cells
-  imaged with enhanced darkfield illumination and a 100x oil objective (1936 x 1216 pixels, 303 bands from 399 to 1000 nm),
-  released as RGB composite images in train and evaluate folders organised by serovar, plus single-cell spectra with serovar labels as CSV.
+description: 500 hyperspectral microscopy fields (100 per serovar for five Salmonella enterica serovars) of bacterial
+  cells imaged with enhanced darkfield illumination and a 100x oil objective (1936 x 1216 pixels, 303 bands from
+  399 to 1000 nm), released as RGB composite images in train and evaluate folders organised by serovar, plus single-cell
+  spectra with serovar labels as CSV.
 landing_url: https://zenodo.org/records/16740800
 doi: 10.5281/zenodo.16740800
 repository: Zenodo
@@ -15,7 +16,8 @@ authors:
 - Bosoon Park
 - Jiyoon Yi
 publications:
-- title: Rapid Salmonella serovar classification using AI-enabled hyperspectral microscopy with enhanced data preprocessing and multimodal fusion
+- title: Rapid Salmonella serovar classification using AI-enabled hyperspectral microscopy with enhanced data preprocessing
+    and multimodal fusion
   doi: 10.3390/foods14152737
   url: https://doi.org/10.3390/foods14152737
 date_published: '2025-08-04'
@@ -27,7 +29,8 @@ imaging:
   channels: 3
   organism:
   - Salmonella enterica
-  sample: Cultured Salmonella cells (serovars Enteritidis, Infantis, Kentucky, Johannesburg and 4,[5],12:i:-) on microscope slides
+  sample: Cultured Salmonella cells (serovars Enteritidis, Infantis, Kentucky, Johannesburg and 4,[5],12:i:-) on
+    microscope slides
   labels_stains: []
 data:
   formats:
@@ -35,14 +38,15 @@ data:
   size_bytes: 784370209
   n_items: 500
   access: open
-  download_url: https://zenodo.org/api/records/16740800/files/images.zip/content
+  download_url: https://zenodo.org/records/16740800
   download_method: http
 annotations:
   present: true
   types:
   - classification
   coverage: dense
-  format: Serovar label per image as folder name (PyTorch ImageFolder layout, train/ and evaluate/) and per-cell serovar label in spectra_single_cell.csv
+  format: Serovar label per image as folder name (PyTorch ImageFolder layout, train/ and evaluate/) and per-cell
+    serovar label in spectra_single_cell.csv
   source: unknown
 ml:
   tasks:
@@ -65,8 +69,79 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-16T13:00:00Z'
-notes: 'images.zip lists 500 PNG files (640 MB; evaluate/ and train/ serovar folders) next to spectra_single_cell.csv (144 MB). The paper (Foods 2025) states 500
-  hyperspectral cubes (100 per serovar) on an Olympus BX43 with CytoViva enhanced darkfield, HinaLea 4250 camera, 100x oil, 303 bands, and a 70/30 split; the released
-  PNGs are RGB composites of the cubes, not the raw cubes. The images carry serovar labels from the known culture, not per-pixel annotations. Pixel size is not
-  stated on the pages read. The 70/30 split described in the paper is reflected by the train and evaluate folders, but the exact count per folder was not checked.'
+  last_checked: '2026-10-16T12:50:00Z'
+notes: 'images.zip lists 500 PNG files (640 MB; evaluate/ and train/ serovar folders) next to spectra_single_cell.csv
+  (144 MB). The paper (Foods 2025) states 500 hyperspectral cubes (100 per serovar) on an Olympus BX43 with CytoViva
+  enhanced darkfield, HinaLea 4250 camera, 100x oil, 303 bands, and a 70/30 split; the released PNGs are RGB composites
+  of the cubes, not the raw cubes. The images carry serovar labels from the known culture, not per-pixel annotations.
+  Pixel size is not stated on the pages read. Split: train/ 70 per serovar, evaluate/ 150 (flat, serovar in the
+  file name). enricher: download_url = record page (was images.zip only; the CSV is a second file); PNGs are RGBA.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "zenodo record 16740800 (2 files, 784.4 MB)\nspectra_single_cell.csv   (144.2 MB; InImage_ID + Band_N_W_<nm>\
+      \ columns)\nimages.zip/images/\n  train/{Enteritidis,I4,Infantis,Johannesburg,Kentucky}/   70 <serovar>_train_NN.png\
+      \ each\n  evaluate/   150 <serovar>_evaluate_NN.png (flat)"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/16740800/files/images.zip::images/train/Kentucky/Kentucky_train_19.png
+    size_bytes: 1424690
+    description: One Kentucky training image (1216x1936 RGBA PNG); the class is the folder / file-name prefix.
+  arrays:
+  - role: raw
+    path_pattern: images.zip/images/evaluate/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1216
+    - 1936
+    - 4
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Evaluation split (150 images, flat): RGBA composites of the hyperspectral cubes (paper: 1936x1216
+      px); class = file-name prefix (I45_ = 4,[5],12:i:-).'
+  - role: raw
+    path_pattern: images.zip/images/train/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1216
+    - 1936
+    - 4
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Training split, one folder per serovar (70 images each; folder I4 holds I45_* files).
+  - role: label
+    path_pattern: spectra_single_cell.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: float64
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes: null
+    alignment: unknown
+    alignment_notes: 'Single-cell spectra table: InImage_ID then one column per band (Band_2_W_401.00 ...); per-cell
+      serovar labels per the record. Header read by range only; row count not read.'
+  notes: 'Listing: tools/listing.py --expand-zips (2 files, 502 zip members incl. 2 .DS_Store, 784,370,209 B). Sampled
+    Kentucky_train_19.png (1.4 MB): 1216x1936x4 uint8 RGBA, 0-255, one sample. CSV header read with a 600-byte range
+    request. voxel size not found; checked: PNG header, Zenodo API description, paper full text (PMC12346574: Olympus
+    BX43, 100x oil, HinaLea 4250, 1936x1216 px; no um/pixel).'
