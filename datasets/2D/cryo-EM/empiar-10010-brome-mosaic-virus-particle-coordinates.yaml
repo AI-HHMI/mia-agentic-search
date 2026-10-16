@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: empiar-10010-brome-mosaic-virus-particle-coordinates
 title: Full virus map of Brome Mosaic Virus (micrographs and particle coordinates)
 short_name: Brome mosaic virus cryo-EM movies with coordinates
-description: Direct-detector cryo-EM movies (37 frames each, 4096 x 3072 px, 0.99 A/px) of brome mosaic virus particles, 647 gain-corrected micrographs in the full set and a 424-micrograph subset used in the reconstruction, with .box files giving the particle locations used for the reconstruction.
+description: Direct-detector cryo-EM movies (37 frames each, 4096 x 3072 px, 0.99 A/px) of brome mosaic
+  virus particles, 647 gain-corrected micrographs in the full set and a 424-micrograph subset used in
+  the reconstruction, with .box files giving the particle locations used for the reconstruction.
 landing_url: https://www.ebi.ac.uk/empiar/EMPIAR-10010/
 doi: 10.6019/EMPIAR-10010
 repository: EMPIAR
@@ -35,7 +37,8 @@ imaging:
     y: 0.099
     z: null
   channels: 1
-  organism: []
+  organism:
+  - Brome mosaic virus
   sample: Brome mosaic virus particles in vitreous ice
   labels_stains: []
 data:
@@ -45,14 +48,15 @@ data:
   size_bytes: 1700000000000
   n_items: 647
   access: open
-  download_url: null
-  download_method: ftp
+  download_url: https://ftp.ebi.ac.uk/empiar/world_availability/10010/data/
+  download_method: http
 annotations:
   present: true
   types:
   - points
   coverage: dense
-  format: .box files (particle locations) in data/micrographs/non_gain_corrected/box_files; rotated 90 degrees relative to the micrograph frames according to the EMPIAR entry
+  format: '.box files (EMAN box: x, y, width, height = 420 px, tab-separated) in data/micrographs/non_gain_corrected/box_files/,
+    one per micrograph stem; per the EMPIAR entry rotated 90 degrees relative to the frames'
   source: unknown
 ml:
   tasks:
@@ -70,10 +74,98 @@ provenance:
   - https://www.ebi.ac.uk/empiar/api/entry/EMPIAR-10010/
   - https://www.ebi.ac.uk/empiar/EMPIAR-10010/
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC4155512/fullTextXML
-  confidence: 0.6
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-16T06:00:00Z'
-notes: 'From the EMPIAR API record: two imagesets, gain-corrected MRC (647 movies, 37 frames, 32-bit float, the full set collected) and non-gain-corrected TIFF (424 movies, one TIFF per frame, a subset used in the final reconstruction, with dark and gain reference frames and the box_files folder), 1.7 TB in total, related to EMPIAR-10011. Paper: DE-12 camera on a JEOL JEM-3200FSC at 300 kV; about 30,000 particles were selected on the sum of all frames. The FTP file listing was not opened (1.7 TB entry), so the .box files and their count are taken from the EMPIAR entry text, hence annotations_verified false; whether particles were picked manually or automatically is not stated in the sources read, so annotation source is unknown. download_url is null (FTP directory tree, see landing page). size_bytes is the entry size as stated (1.7 TB).'
+  annotations_verified: true
+  last_checked: '2026-10-16T05:35:03Z'
+notes: 'From the EMPIAR API record: two imagesets, gain-corrected MRC (647 movies, 37 frames, 32-bit float,
+  the full set collected) and non-gain-corrected TIFF (424 movies, one TIFF per frame, a subset used in
+  the final reconstruction, with dark and gain reference frames and the box_files folder), 1.7 TB in total,
+  related to EMPIAR-10011. Paper: DE-12 camera on a JEOL JEM-3200FSC at 300 kV; about 30,000 particles
+  were selected on the sum of all frames. enricher: box_files/ holds 425 .box files (read one: 73 boxes
+  of 420 px), annotations_verified true; whether particles were picked manually or automatically is not
+  stated in the sources read, so annotation source is unknown. download_url is the data/ folder (was null).
+  size_bytes is the entry size as stated (1.7 TB). enricher: organism Brome mosaic virus from the entry
+  title (was empty).'
+technical:
+  method: header
+  size_source: page-stated
+  layout:
+    tree: "10010.xml, list (425 .box names)\ndata/micrographs/\n  gain_corrected/BMV_DE12/<date>/<date>_<n>.mrcs\
+      \   (647 movies, 1.7 GB each)\n  non_gain_corrected/\n    <date>_<n>/  (424 folders)\n      FinalImage.tif\
+      \ (+ .json), RawImage_0..36.tif (24 MB each), info.txt (+ .json)\n    box_files/  425 .box (~1.2-1.5\
+      \ KB)\n    gain_correction/"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/empiar/world_availability/10010/data/micrographs/non_gain_corrected/20130109_10497/FinalImage.tif
+    - https://ftp.ebi.ac.uk/empiar/world_availability/10010/data/micrographs/non_gain_corrected/box_files/20130109_10497.box
+    size_bytes: 25200101
+    description: summed micrograph 20130109_10497 (4096x3072 uint16 TIFF) and its .box file (73 particles)
+  arrays:
+  - role: raw
+    path_pattern: data/micrographs/non_gain_corrected/*/FinalImage.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 4096
+    - 3072
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: Single-page TIFF per micrograph folder; 4096x3072, i.e. transposed relative to the
+      RawImage_N.tif frames (3072x4096).
+  - role: raw
+    path_pattern: data/micrographs/non_gain_corrected/*/RawImage_*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 3072
+    - 4096
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: '37 single-page frame TIFFs per movie (info.txt: Total Number of Frames=37, ROI 4096
+      x 3072, 10-bit output).'
+  - role: raw
+    path_pattern: data/micrographs/gain_corrected/BMV_DE12/*/*.mrcs
+    format: mrc
+    axes: tyx
+    shape:
+    - 37
+    - 3072
+    - 4096
+    shape_varies: false
+    dtype: float32
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Gain-corrected movie stacks (space group 0: 37 frames, not a volume); header mean
+      29.3, range -466 to 181.'
+  - role: label
+    path_pattern: data/micrographs/non_gain_corrected/box_files/*.box
+    format: csv
+    axes: null
+    shape:
+    - 73
+    - 4
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    alignment: unknown
+    alignment_notes: Tab-separated x, y (corner), 420, 420; file stem = micrograph folder name. EMPIAR
+      says the boxes are rotated 90 degrees relative to the frames; which raw array they index directly
+      was not verified.
+  notes: 'Not fully listed: the entry is 1.7 TB (EMPIAR, page-stated) with 424 + 647 folders/files; read
+    the HTTP indexes of data/micrographs, non_gain_corrected/, one movie folder, box_files/ (425 .box)
+    and gain_corrected/BMV_DE12/20130109/. Headers probed: FinalImage.tif, RawImage_0.tif, one .mrcs;
+    read one .box (73 rows) and info.txt. No single archive: per-file HTTPS links on ftp.ebi.ac.uk; download_url
+    is the data/ folder. Voxel size 0.99 A from the EMPIAR API (harvester).'
