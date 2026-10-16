@@ -1,8 +1,12 @@
 schema_version: '1.2'
 id: zenodo-7898308-kirc-he-texture-lymphocyte-tiles
-title: Training data for the "Computational textural mapping harmonises sampling variation and reveals multidimensional histopathological fingerprints"
+title: Training data for the "Computational textural mapping harmonises sampling variation and reveals
+  multidimensional histopathological fingerprints"
 short_name: Renal carcinoma H&E texture and lymphocyte tiles
-description: 77,808 H&E image tiles cut from clear-cell renal cell carcinoma whole-slide images (TCGA-KIRC and a Helsinki cohort), labelled by tile into six tissue-texture classes (52,713 tiles of 300x300 px) or low/high lymphocyte density (25,095 tiles, mostly 256x256 px), plus ResNet-18 weights trained on them.
+description: 77,808 H&E image tiles cut from clear-cell renal cell carcinoma whole-slide images (TCGA-KIRC
+  and a Helsinki cohort), labelled by tile into six tissue-texture classes (52,713 tiles of 300x300 px)
+  or low/high lymphocyte density (25,095 tiles, mostly 256x256 px), plus ResNet-18 weights trained on
+  them.
 landing_url: https://zenodo.org/records/7898308
 doi: 10.5281/zenodo.7898308
 repository: Zenodo
@@ -11,7 +15,8 @@ authors:
 - Brummer, Otso
 - Brück, Oscar
 publications:
-- title: Computational textural mapping harmonises sampling variation and reveals multidimensional histopathological fingerprints
+- title: Computational textural mapping harmonises sampling variation and reveals multidimensional histopathological
+    fingerprints
   doi: 10.1038/s41416-023-02329-4
   url: https://doi.org/10.1038/s41416-023-02329-4
 date_published: '2022-08-15'
@@ -26,23 +31,25 @@ imaging:
   channels: 3
   organism:
   - Homo sapiens
-  sample: H&E-stained clear-cell renal cell carcinoma tissue sections (TCGA-KIRC and a Helsinki cohort of 64 patients), tiled from whole-slide scans
+  sample: H&E-stained clear-cell renal cell carcinoma tissue sections (TCGA-KIRC and a Helsinki cohort
+    of 64 patients), tiled from whole-slide scans
   labels_stains:
   - hematoxylin and eosin
 data:
   formats:
   - png
-  size_bytes: 10007105070
+  size_bytes: 10098795538
   n_items: 77808
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/7898308
   download_method: http
 annotations:
   present: true
   types:
   - classification
   coverage: dense
-  format: Tile-level class labels given by the folder name inside each zip (tissue_classification/{cancer,normal,stroma,blood,empty,other}; binary_lymphocytes/{tumor,immune})
+  format: Tile-level class labels given by the folder name inside each zip (tissue_classification/{cancer,normal,stroma,blood,empty,other};
+    binary_lymphocytes/{tumor,immune})
   source: manual
 ml:
   tasks:
@@ -66,5 +73,53 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-16T04:45:00Z'
-notes: 'tissue_classification.zip: 52,713 PNGs (empty 16,026, cancer 13,057, normal 8,652, other 8,522, stroma 5,460, blood 996). binary_lymphocytes.zip: 25,096 PNG entries (tumor 20,092, immune 5,004); Zenodo text and paper say 20,092 low and 5,003 high. Labels are the folder names, read from the zip central directories; zips not unpacked. Pixel size: the paper states ~0.25 "mm/px" (typo for um) for both cohorts, so 250 nm comes from the paper, not tile headers. Tiles are PNG crops, not the whole-slide files. The record also holds two ResNet-18 .pth weight files; download_url is null because it has several files.'
+  last_checked: '2026-10-16T04:56:00Z'
+notes: 'tissue_classification.zip: 52,713 PNGs (empty 16,026, cancer 13,057, normal 8,652, other 8,522,
+  stroma 5,460, blood 996). binary_lymphocytes.zip: 25,096 entries (25,095 PNG + 1 OS metadata file) (tumor
+  20,092, immune 5,004); Zenodo text and paper say 20,092 low and 5,003 high. Labels are the folder names,
+  read from the zip central directories; zips not unpacked. Pixel size: the paper states ~0.25 "mm/px"
+  (typo for um) for both cohorts, so 250 nm comes from the paper, not tile headers. Tiles are PNG crops,
+  not the whole-slide files. The record also holds two ResNet-18 .pth weight files; enricher: size 10,098,795,538
+  B from file listing incl. .pth (was 10,007,105,070); download_url record page (was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  4 files  10.1 GB\n  tissue_classification.zip  (5.8 GB)\n    tissue_classification/blood/\
+      \    996 png\n    tissue_classification/cancer/ 13057 png\n    tissue_classification/empty/  16026\
+      \ png\n    tissue_classification/normal/  8652 png\n    tissue_classification/other/   8522 png\n\
+      \    tissue_classification/stroma/  5460 png\n  binary_lymphocytes.zip  (4.2 GB)\n    binary_lymphocytes/immune/\
+      \  5003 png\n    binary_lymphocytes/tumor/  20092 png\n  resnet18_tissue_classification.pth\n  resnet18_binary_lymphocytes.pth"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7898308/files/tissue_classification.zip::tissue_classification/blood/TCGA-EU-5906_16524_36398_other_1821.png
+    size_bytes: 115993
+    description: one 256x256 RGB tile of class blood (the class is its folder name)
+  arrays:
+  - role: raw
+    path_pattern: '*.zip::*/*/*.png'
+    format: png
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 14
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'RGB H&E tiles; TCGA tiles 256x256, Helsinki (FIMM*.mrxs) tiles 300x300 (probed).
+      Label = parent folder: tissue_classification/{blood,cancer,empty,normal,other,stroma}, binary_lymphocytes/{immune,tumor};
+      no separate label files.'
+  notes: 'Listing: Zenodo API + zip indexes, 4 files, 10,098,795,538 bytes (exact, incl. two ResNet-18
+    .pth weight files, 91 MB). binary_lymphocytes holds 25,095 PNGs (5,003 immune + 20,092 tumor) plus
+    one OS metadata entry. Probed 4 PNGs (256x256 or 300x300 RGB uint8, deflate); sampled one (115,993
+    B, values 14-255, one sample). Class labels are folder names only, so there is no label array to convert.
+    No single archive: download_url is the record page; direct files are https://zenodo.org/records/7898308/files/<name>
+    (listing).'
