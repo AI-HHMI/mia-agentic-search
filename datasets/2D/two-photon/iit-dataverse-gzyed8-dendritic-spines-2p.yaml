@@ -1,0 +1,186 @@
+schema_version: '1.2'
+id: iit-dataverse-gzyed8-dendritic-spines-2p
+title: 'Replication Data for: "Mapping dendritic spines using 2D two-photon laser scanning"'
+short_name: Dendritic spine masks and restoration (two-photon)
+description: Two-photon images of Alexa-594-filled dendrites of mouse ventral CA1 pyramidal neurons (50
+  images at various resolutions) with manual pixel-level masks for spines and dendrites, 50 matching artificially
+  degraded low-SNR images for content-aware restoration, and calcium traces with event labels for a classifier.
+  Includes trained models.
+landing_url: https://doi.org/10.48557/GZYED8
+doi: 10.48557/GZYED8
+repository: other
+accession: GZYED8
+authors:
+- Dario Cupolillo
+- Vincenzo Regio
+- Valentina Galleano
+- Andrea Barberis
+publications:
+- title: Deep learning-assisted mapping of dendritic spines using sequential 2D two-photon calcium imaging
+  doi: 10.1016/j.isci.2026.117010
+  url: https://doi.org/10.1016/j.isci.2026.117010
+date_published: '2026-04-30'
+imaging:
+  modality:
+  - two-photon
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Mus musculus
+  sample: Ventral CA1 pyramidal neuron dendrites and spines in acute hippocampal slices, patch-loaded
+    with Alexa 594
+  labels_stains:
+  - Alexa Fluor 594
+data:
+  formats:
+  - tiff
+  - hdf5
+  size_bytes: 1376093517
+  n_items: 50
+  access: open
+  download_url: https://dataverse.iit.it/api/access/dataset/:persistentId/?persistentId=doi:10.48557/GZYED8
+  download_method: api
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  - restoration-pairs
+  coverage: dense
+  format: 'Binary mask TIFFs per image in labels/: img_<n>_spines.tif (0/1) and img_<n>_dendrites.tif
+    (0/37 in the sample); calcium event labels in HDF5.'
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  - denoising
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/dcupolillo/DeepD3
+license:
+  spdx: CC-BY-4.0
+  url: http://creativecommons.org/licenses/by/4.0
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-16T06:43:21Z'
+  evidence_urls:
+  - https://dataverse.iit.it/api/datasets/:persistentId/?persistentId=doi:10.48557/GZYED8
+  - https://dataverse.iit.it/api/access/datafile/41090
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13453581/fullTextXML
+  - https://dataverse.iit.it/api/access/datafile/41090
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-16T08:25:00Z'
+notes: 'IIT Dataverse deposit (212 files, 1.38 GB); Read the README, file listing and paper full text.
+  Spines: 50 images + 100 manual masks (_spines and _dendrites per image); paper text mentions 27 training
+  images. Restoration: 50 low-SNR images are artificially degraded copies of the same 50 spine images,
+  not experimental pairs. Also holds 2204 + 459 labelled calcium traces (HDF5) and trained models. Dataverse
+  lists CC BY 4.0. enricher: voxel size set to null (was 35 nm, the paper average for 27 training images):
+  pixel size varies per image, TIFF ImageJ calibration 90.6, 117.2, 189.7 nm/px for img_0001-0003.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "README.md                                                     4.3 KB\nSpine_segmentation_training_images_annotations/\n\
+      \  images/img_<nnnn>.tif                       50 files   10.3 MB\n  labels/img_<nnnn>_{spines,dendrites}.tif\
+      \     100 files  0.8 MB\n  resolutions.npy (30 float64), deepd3_model.h5, nnunet_model.pth, dataset.json,\n\
+      \  dataset_fingerprint.json, nnUNetPlans.json                  6 files  224.5 MB\nContent_aware_image_restoration_training_images/\n\
+      \  low/img_<nnnn>.tif                          50 files   20.6 MB (degraded copies)\n  csbdeep_model.h5,\
+      \ config.json                2 files    3.7 MB\ncalcium_event_classifier_training_data/\n  dataset.h5,\
+      \ test_dataset.h5, model.pth       3 files    1.1 GB\n"
+    n_files: 212
+    listing_complete: true
+  sample:
+    urls:
+    - https://dataverse.iit.it/api/access/datafile/40552
+    - https://dataverse.iit.it/api/access/datafile/40617
+    - https://dataverse.iit.it/api/access/datafile/40512
+    - https://dataverse.iit.it/api/access/datafile/40603
+    size_bytes: 1839152
+    description: 'img_0001: raw image, spine and dendrite masks, and its low-SNR copy'
+  arrays:
+  - role: raw
+    path_pattern: Spine_segmentation_training_images_annotations/images/img_*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 276
+    - 1104
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 31975
+    - 39808
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: High-SNR images; also the restoration ground truth. Shapes vary (276x1104, 256x128,
+      130x130 probed).
+  - role: label
+    path_pattern: Spine_segmentation_training_images_annotations/labels/img_*_spines.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 276
+    - 1104
+    shape_varies: true
+    dtype: int32
+    compression: deflate
+    value_range:
+    - 0
+    - 1
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: 1
+      name: dendritic spine
+    alignment: same-grid
+    alignment_notes: 'Pairing: images/img_<n>.tif <-> labels/img_<n>_spines.tif and img_<n>_dendrites.tif;
+      same shape.'
+  - role: label
+    path_pattern: Spine_segmentation_training_images_annotations/labels/img_*_dendrites.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 276
+    - 1104
+    shape_varies: true
+    dtype: int32
+    compression: deflate
+    value_range:
+    - 0
+    - 37
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: null
+      name: dendrite
+    alignment: same-grid
+    alignment_notes: 'Two values in the sample: 0 and 37 (foreground value is not 1).'
+  - role: raw
+    path_pattern: Content_aware_image_restoration_training_images/low/img_*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 276
+    - 1104
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range:
+    - 31975.0
+    - 39483.6
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: 'Low-SNR restoration input: artificially degraded copy of images/img_<n>.tif (README),
+      same file name and grid; the high-SNR target is the raw array.'
+  notes: 'Listing from the Dataverse API (212 files, exact sizes, 1,376,093,517 bytes; listing.py does
+    not read Dataverse). Probed img_0001/0002/0003 (uint16; ImageJ calibration 90.58, 117.19 and 189.65
+    nm/px), the img_0001 masks (int32, deflate) and low-SNR img_0001 (float32). Sampled img_0001 set:
+    raw 31975-39808; spines {0,1} (9,151 px of 1); dendrites {0,37}; low-SNR 31975-39484 (one sample).
+    resolutions.npy (float64, allow_pickle=False) has 30 values 0.082-0.3125 for 50 images; unit not stated.
+    Whole-dataset zip via Dataverse access API has no range support; per-file datafile URLs are direct
+    with ranges, host dataverse.iit.it not on the TensorSwitch allowlist. calcium HDF5 not inspected.'
