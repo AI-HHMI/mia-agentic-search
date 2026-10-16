@@ -1,0 +1,137 @@
+schema_version: '1.2'
+id: zenodo-5144802-celegans-diy-microscope-maskrcnn
+title: Dataset - Mask R-CNN Based C. Elegans Detection with a DIY Microscope
+short_name: C. elegans on agar plates, DIY microscope
+description: 1,908 JPEG images (3280 x 2464 px, 1 Hz) of C. elegans on 3.5 cm Petri dishes recorded with
+  a Raspberry Pi based low-cost DIY microscope (backlit, macro optics), split into 1,345 train, 366 test
+  and 197 validation images, each with per-worm mask images used to train a Mask R-CNN detector.
+landing_url: https://zenodo.org/records/5144802
+doi: 10.5281/zenodo.5144802
+repository: Zenodo
+accession: '5144802'
+authors:
+- Sebastian Fudickar
+- Eike J. Nustede
+- Eike Dreyer
+- Finnja Zuber
+- Julia Bornhorst
+publications:
+- title: Mask R-CNN Based C. Elegans Detection with a DIY Microscope
+  doi: 10.3390/bios11080257
+  url: https://doi.org/10.3390/bios11080257
+date_published: '2021-07-29'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Caenorhabditis elegans
+  sample: C. elegans on agar in 3.5 cm Petri dishes, imaged with a backlit Raspberry Pi camera with a
+    2x telephoto and 14x macro lens
+  labels_stains: []
+data:
+  formats:
+  - jpeg
+  size_bytes: 3784723207
+  n_items: 1908
+  access: open
+  download_url: https://zenodo.org/api/records/5144802/files/dataset.zip/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: JPEG mask images in dataset/<split>/mask, many per source image (one per worm), alongside dataset/<split>/img
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  - detection
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-16T04:15:10Z'
+  evidence_urls:
+  - https://zenodo.org/records/5144802
+  - https://zenodo.org/api/records/5144802
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8391161/fullTextXML
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-16T05:45:04Z'
+notes: 'The zip lists 54,275 JPEGs: dataset/train (1,345 img, 36,906 mask), val (197 img, 5,206 mask)
+  and test (366 img, 10,085 mask). The paper (Methods read in full) says masks were first produced automatically
+  with OpenCV pre-processing, then visually inspected and adjusted where needed, hence source mixed; it
+  counts 52,657 worm masks (36,906 / 5,496 / 10,255), slightly more than the 52,197 mask files in val/test,
+  so a few masks may be missing from the zip. Images show whole Petri dishes with macro optics (a DIY
+  microscope), pixel size not stated, so voxel size is null. Images were taken as time sequences (300
+  frames per 5-minute acquisition from 3 dishes), so neighbouring images are highly correlated.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "dataset.zip  (3.8 GB, 54,275 members)\n  dataset/train/img/   1345 jpg  img_<nnn>_id<k>.jpg\n\
+      \  dataset/train/mask/ 36906 jpg  m<i>_img_<nnn>_id<k>.jpg (one per worm)\n  dataset/val/img/  \
+      \    197 jpg   dataset/val/mask/   5206 jpg\n  dataset/test/img/     366 jpg   dataset/test/mask/\
+      \ 10085 jpg"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5144802/files/dataset.zip::dataset/test/img/img_038_id110.jpg
+    - https://zenodo.org/records/5144802/files/dataset.zip::dataset/test/mask/m0_img_038_id110.jpg
+    size_bytes: 1980780
+    description: one test image (3280x2464 RGB JPEG) and the mask of its first worm (34 masks exist for
+      this image)
+  arrays:
+  - role: raw
+    path_pattern: dataset.zip::dataset/*/img/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 2464
+    - 3280
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 225
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: dataset.zip::dataset/*/mask/*.jpg
+    format: jpeg
+    axes: yx
+    shape:
+    - 2464
+    - 3280
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    alignment: same-grid
+    alignment_notes: 'One full-size mask per worm: m<i>_<image stem>.jpg in the split''s mask/ folder
+      (e.g. 34 for img_038_id110). Lossy JPEG, so the binary mask has compression artefacts (20 distinct
+      values in the sample); threshold before use. Instances = separate files.'
+  notes: 'Listing: Zenodo API + zip index, 1 file, 3,784,723,207 bytes (exact), 1,908 images and 52,197
+    mask files. Probed and sampled test image img_038_id110 (2464x3280x3 uint8, values 0-225, one sample)
+    and its mask m0 (2464x3280 uint8, 99.99% zero, 20 values from JPEG artefacts). Voxel size not found;
+    checked: JPEG headers, Zenodo description, paper Methods (harvester; macro optics, no um/px). download_url
+    is the one direct archive.'
