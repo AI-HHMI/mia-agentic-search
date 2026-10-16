@@ -1,12 +1,12 @@
 schema_version: '1.2'
 id: zenodo-23377605-yeast-brightfield-cellpose-masks
-title: Brightfield microscopy images and single-cell morphology measurements of Saccharomyces cerevisiae and Schizosaccharomyces
-  pombe
+title: Brightfield microscopy images and single-cell morphology measurements of Saccharomyces cerevisiae
+  and Schizosaccharomyces pombe
 short_name: Yeast cells with Cellpose masks (brightfield)
-description: 64 brightfield microscopy images (Nikon ND2) of Saccharomyces cerevisiae and Schizosaccharomyces pombe from
-  16 wells of a 96-well plate (four fields per well), with one integer-ID label-image TIFF per image from Cellpose-SAM
-  segmentation, per-cell morphology CSVs and QC overlays. Collected to demonstrate a cloud-scalable single-cell phenotyping
-  pipeline.
+description: 64 brightfield microscopy images (Nikon ND2) of Saccharomyces cerevisiae and Schizosaccharomyces
+  pombe from 16 wells of a 96-well plate (four fields per well), with one integer-ID label-image TIFF
+  per image from Cellpose-SAM segmentation, per-cell morphology CSVs and QC overlays. Collected to demonstrate
+  a cloud-scalable single-cell phenotyping pipeline.
 landing_url: https://zenodo.org/records/23377605
 doi: 10.5281/zenodo.23377605
 repository: Zenodo
@@ -19,7 +19,10 @@ imaging:
   modality:
   - brightfield
   dimensionality: 2D
-  voxel_size_nm: null
+  voxel_size_nm:
+    x: 162.5
+    y: 162.5
+    z: null
   channels: 1
   organism:
   - Saccharomyces cerevisiae
@@ -40,9 +43,9 @@ annotations:
   types:
   - instance-segmentation
   coverage: dense
-  format: '20260611_141152_330.zip: raw/*.nd2 (64 images); derived/masks/*.tif (label images, integer cell ID per pixel, 0 =
-    background, one per raw image); derived/measurements/*.csv (per-cell morphology); derived/overlays/*.jpg (outlines on
-    the image)'
+  format: '20260611_141152_330.zip: raw/*.nd2 (64 images); derived/masks/*.tif (label images, integer
+    cell ID per pixel, 0 = background, one per raw image); derived/measurements/*.csv (per-cell morphology);
+    derived/overlays/*.jpg (outlines on the image)'
   source: automatic
 ml:
   tasks:
@@ -59,16 +62,87 @@ provenance:
   evidence_urls:
   - https://zenodo.org/api/records/23377605
   - https://zenodo.org/records/23377605/files/20260611_141152_330.zip
-  confidence: 0.6
+  confidence: 0.65
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-16T03:35:00Z'
-notes: 'Masks are model output (Cellpose-SAM), not manual annotation, and no manual curation is stated on the Zenodo page:
-  usable as pseudo-labels or a segmentation test bed rather than ground truth. Zip listing (peek_archive): 64 nd2, 64 tif
-  masks, 64 csv, 64 jpg overlays (256 files). Accompanies an Arcadia Science pub, "Scaling single-cell phenotyping with
-  Cellpose and cloud GPU compute"; the pub and its GitHub repo (Arcadia-Science/cloud-scaled-cell-phenotyping, 404 when
-  fetched) could not be read, so no paper was found, and microscope,
-  objective and pixel size are unknown (not in the Zenodo description or zip listing). Raw images are in ND2 and masks
-  in TIFF.'
+  last_checked: '2026-10-16T04:39:41Z'
+notes: 'Masks are model output (Cellpose-SAM), not manual annotation; no curation stated: pseudo-labels
+  / test bed rather than ground truth. Accompanies Arcadia pub doi:10.57844/arcadia-tb5a-ft98 (DOI not
+  resolvable, 404) and GitHub repo Arcadia-Science/cloud-scaled-cell-phenotyping (not readable); no paper
+  found. Organisms: which of the 16 wells (K01-K08, L01-L08) hold S. cerevisiae vs S. pombe is not stated
+  on the Zenodo page, in the zip or in file names.
+
+  enricher: voxel size 162.5x162.5 nm (2D, z null) from ND2 header calibration (axesCalibrated x,y true),
+  consistent with um areas in the measurement CSVs (was null).
+
+  enricher: ND2 header: Nikon Ti2, PLAN APO 40x/0.95, Fusion camera, single 2304x2304 uint16 plane.
+
+  enricher: confidence 0.6 -> 0.65 after sampling a raw/mask pair.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "23377605/  (Zenodo, 1 file, 763.7 MB)\n  20260611_141152_330.zip  (256 members, 2.24 GB uncompressed)\n\
+      \    20260611_141152_330/raw/                 64 .nd2   691.5 MB  Well<W>_Point<W>_000<n>_Channelbrightfield_Seq<NNNN>.nd2\n\
+      \    20260611_141152_330/derived/masks/       64 .tif   1.4 GB    <raw stem>_mask.tif\n    20260611_141152_330/derived/measurements/\
+      \ 64 .csv  23.6 MB   <raw stem>_measurements.csv\n    20260611_141152_330/derived/overlays/    64\
+      \ .jpg   165.5 MB  <raw stem>_overlay.jpg"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/23377605/files/20260611_141152_330.zip::20260611_141152_330/raw/WellL01_PointL01_0000_Channelbrightfield_Seq0060.nd2
+    - https://zenodo.org/records/23377605/files/20260611_141152_330.zip::20260611_141152_330/derived/masks/WellL01_PointL01_0000_Channelbrightfield_Seq0060_mask.tif
+    size_bytes: 32039184
+    description: 'Well L01, field 0000 (Seq0060): one 2304x2304 uint16 brightfield ND2 and its uint32
+      Cellpose-SAM label TIFF (uncompressed member sizes).'
+  arrays:
+  - role: raw
+    path_pattern: 20260611_141152_330.zip::20260611_141152_330/raw/*.nd2
+    format: nd2
+    axes: yx
+    shape:
+    - 2304
+    - 2304
+    shape_varies: null
+    dtype: uint16
+    compression: unknown
+    value_range:
+    - 0
+    - 29319
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'ND2 sizes {Y: 2304, X: 2304}, one brightfield channel, calibration 0.1625 um/px
+      (x, y); read with the nd2 package.'
+  - role: label
+    path_pattern: 20260611_141152_330.zip::20260611_141152_330/derived/masks/*_mask.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2304
+    - 2304
+    shape_varies: null
+    dtype: uint32
+    compression: none
+    value_range:
+    - 0
+    - 2777
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    alignment: same-grid
+    alignment_notes: 'One mask per raw image: <raw stem>_mask.tif pairs with raw/<raw stem>.nd2; same
+      2304x2304 grid. Zenodo: each pixel holds the integer ID of its cell, 0 = background; 2778 distinct
+      values in the sample.'
+  notes: 'Listed the Zenodo record (1 zip, 763,655,906 bytes, 256 members, all deflate). Probed 2 mask
+    TIFFs (uint32, uncompressed, 2304x2304, shaped). ND2 not readable by probe.py/sample.py; read one
+    ND2 (10,805,248 bytes) with the nd2 package from a scratch script: 2D YX 2304x2304 uint16, calibrated
+    0.1625 um/px; its text metadata mentions a 35-plane Z loop, but the file holds one plane. sample.py
+    on the paired mask (325,136 bytes downloaded). value_range is from one sample each. Overlays (JPG)
+    are QC renderings, not arrays. Organism per well unknown (checked Zenodo API description, zip listing,
+    file names, CSV header; pub DOI 404, GitHub repo not readable). data.download_url is the direct zip
+    (usable, range requests). Measurement CSVs (per-cell morphology keyed by mask label ID: label, area_um2,
+    perimeter_um, centroid_y/x, intensity stats) are derived tables, not listed as arrays.'
