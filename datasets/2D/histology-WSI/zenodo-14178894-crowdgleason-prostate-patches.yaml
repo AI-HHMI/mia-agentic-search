@@ -2,7 +2,11 @@ schema_version: '1.2'
 id: zenodo-14178894-crowdgleason-prostate-patches
 title: 'The CrowdGleason dataset: learning the Gleason grade from crowds and experts'
 short_name: CrowdGleason prostate Gleason-grade patches (H&E)
-description: 19,077 H&E patches (512 x 512 px) from 1,045 prostate biopsy whole-slide images with Gleason-grade labels. Training (13,824) and validation (2,327) patches carry crowdsourced labels from up to seven pathologists-in-training; the 2,926-patch test set has a consensus ground truth from expert pathologists. Colour-normalised copies and the external SICAPv2 patches and labels are included.
+description: 19,077 H&E patches (described as 512 x 512; the files are 2048 x 2048 px JPEGs) from 1,045
+  prostate biopsy whole-slide images with Gleason-grade labels. Training (13,824) and validation (2,327)
+  patches carry crowdsourced labels from up to seven pathologists-in-training; the 2,926-patch test set
+  has a consensus ground truth from expert pathologists. Colour-normalised copies and the external SICAPv2
+  patches and labels are included.
 landing_url: https://zenodo.org/records/14178894
 doi: 10.5281/zenodo.14178894
 repository: Zenodo
@@ -37,14 +41,16 @@ data:
   size_bytes: 33203546813
   n_items: 19077
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/14178894
   download_method: http
 annotations:
   present: true
   types:
   - classification
   coverage: dense
-  format: CSV per split (train.csv, val.csv, test.csv) with one column per annotator (marker1 to marker7), aggregated labels (MV, DS, GLAD, MACE) for train/val, and an expert-consensus 'ground truth' column for test
+  format: CSV per split (train.csv, val.csv, test.csv) with one column per annotator (marker1 to marker7),
+    aggregated labels (MV, DS, GLAD, MACE) for train/val, and an expert-consensus 'ground truth' column
+    for test
   source: manual
 ml:
   tasks:
@@ -68,5 +74,67 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-16T05:00:00Z'
-notes: 'Files: Patches.zip (19,077 JPEGs in train/val/test, 16.2 GB), NormalizedPatches.zip (same patches colour-normalised, 16.0 GB), Annotations.zip (train/val/test CSVs, listed and read), NormalizedSICAPv2.zip and NormalizedSICAPv2_Annotations.zip (external SICAPv2 dataset, 1.0 GB). Pixel size and magnification are not given on the record; the paper is not open access (abstract only was read), so voxel_size_nm is null. Numeric label codes in the CSVs (0, 1, 2, ... and -1 where an annotator did not label a patch) are not decoded on the Zenodo page; the mapping to Gleason grades is in the paper. size_bytes sums the five zips; n_items counts the CrowdGleason patches only. download_url is null because the record has several files.'
+  last_checked: '2026-10-16T05:00:15Z'
+notes: 'Files: Patches.zip (19,077 JPEGs in train/val/test, 16.2 GB), NormalizedPatches.zip (same patches
+  colour-normalised, 16.0 GB), Annotations.zip (train/val/test CSVs, listed and read), NormalizedSICAPv2.zip
+  and NormalizedSICAPv2_Annotations.zip (external SICAPv2 dataset, 1.0 GB). Pixel size and magnification
+  are not given on the record; the paper is not open access (abstract only was read), so voxel_size_nm
+  is null. Numeric label codes in the CSVs (0, 1, 2, ... and -1 where an annotator did not label a patch)
+  are not decoded on the Zenodo page; the mapping to Gleason grades is in the paper. size_bytes sums the
+  five zips; n_items counts the CrowdGleason patches only. enricher: patches are 2048x2048 px in the files
+  (probed), not 512x512 as the page says; download_url record page (was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  5 files  33.2 GB  .zip\n  Patches.zip  (16.2 GB)\n    train/ 13824 jpg   val/ 2327 jpg\
+      \   test/ 2926 jpg\n  NormalizedPatches.zip  (16.0 GB, same names, colour-normalised)\n    train/\
+      \ 13824 jpg   val/ 2327 jpg   test/ 2926 jpg\n  Annotations.zip  (train.csv, val.csv, test.csv)\n\
+      \  NormalizedSICAPv2.zip  (18783 jpg, external SICAPv2, 512x512)\n  NormalizedSICAPv2_Annotations.zip\
+      \  (3 .xlsx)"
+    n_files: 5
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/14178894/files/Patches.zip::test/Casos_P_B29_row_47104_column_63488.jpg
+    - https://zenodo.org/records/14178894/files/Annotations.zip::test.csv
+    size_bytes: 834952
+    description: one test patch (2048x2048 RGB JPEG) and the test-split CSV that gives its labels
+  arrays:
+  - role: raw
+    path_pattern: Patches.zip::*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 2048
+    - 2048
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 45
+    - 255
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: Original patches; NormalizedPatches.zip holds colour-normalised copies with the same
+      names and shape. File name = <slide>_row_<y>_column_<x>.
+  - role: label
+    path_pattern: Annotations.zip::*.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: other
+    alignment: not-applicable
+    alignment_notes: 'One row per patch, joined on ''Patch filename'' (no .jpg suffix): marker1..marker7
+      per-annotator labels (-1 = not labelled), train/val add MV, DS, GLAD, MACE aggregated labels, test
+      adds ''ground truth''. Integer codes; the code-to-Gleason mapping is not stated on the record.'
+  notes: 'Listing: Zenodo API + zip indexes, 5 files, 33,203,546,813 bytes (exact), 56,943 members. Probed
+    4 CrowdGleason patches (original and normalised): all 2048x2048x3 JPEG, although the Zenodo text says
+    512x512; SICAPv2 patches are 512x512. Sampled one patch (661 KB, values 45-255, one sample) and test.csv.
+    normalization none = the non-normalised copy per the Zenodo text. Voxel size not found; checked: JPEG
+    headers (none), Zenodo description, Europe PMC (paper not open access, abstract only). Several archives:
+    download_url is the record page.'
