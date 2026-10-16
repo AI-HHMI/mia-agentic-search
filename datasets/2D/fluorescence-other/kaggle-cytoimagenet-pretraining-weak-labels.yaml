@@ -2,11 +2,12 @@ schema_version: '1.2'
 id: kaggle-cytoimagenet-pretraining-weak-labels
 title: 'CytoImageNet: A large-scale pretraining dataset for bioimage transfer learning'
 short_name: CytoImageNet weakly labeled pretraining images
-description: 890,737 grayscale microscopy images in 894 weak classes (about 1,000 images per class), curated from 40 openly
-  available datasets of Recursion, the Image Data Resource, the Broad Bioimage Benchmark Collection, Kaggle and the Cell
-  Image Library, as an ImageNet-style pretraining set for bioimage transfer learning. Labels are soft classes derived from
-  the source metadata (compound, phenotype, cell type, gene, siRNA, stained structure or organism), so classes can overlap.
-  Images were converted to PNG, multi-channel images merged to grayscale, and some are crops of larger images.
+description: 890,737 grayscale microscopy images in 894 weak classes (about 1,000 images per class), curated from
+  40 openly available datasets of Recursion, the Image Data Resource, the Broad Bioimage Benchmark Collection, Kaggle
+  and the Cell Image Library, as an ImageNet-style pretraining set for bioimage transfer learning. Labels are soft
+  classes derived from the source metadata (compound, phenotype, cell type, gene, siRNA, stained structure or organism),
+  so classes can overlap. Images were converted to PNG, multi-channel images merged to grayscale, and some are crops
+  of larger images.
 landing_url: https://www.kaggle.com/datasets/stanleyhua/cytoimagenet
 doi: null
 repository: Kaggle
@@ -38,16 +39,17 @@ data:
   - png
   size_bytes: 56173777598
   n_items: 890737
-  access: registration
-  download_url: https://www.kaggle.com/datasets/stanleyhua/cytoimagenet
-  download_method: api
+  access: open
+  download_url: https://www.kaggle.com/api/v1/datasets/download/stanleyhua/cytoimagenet
+  download_method: http
 annotations:
   present: true
   types:
   - classification
   coverage: dense
-  format: 'One weak class label per image (894 classes - compound 637, phenotype 93, cell_type 44, gene 43, cell_visible 38,
-    sirna 36, organism 3) with per-image metadata (source dataset, crop coordinates) kept in the GitHub repository annotations folder'
+  format: One weak class label per image (894 classes - compound 637, phenotype 93, cell_type 44, gene 43, cell_visible
+    38, sirna 36, organism 3) with per-image metadata (source dataset, crop coordinates) kept in the GitHub repository
+    annotations folder
   source: automatic
 ml:
   tasks:
@@ -72,12 +74,49 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-16T10:05:00Z'
-notes: 'Kaggle public metadata (license CC0: Public Domain, 56.2 GB, version 8) and the paper (arXiv 2111.11646) were
-  read; the Kaggle HTML page itself did not render, so size and license come from the Kaggle API record and the file
-  list shows PNG images. A free Kaggle account is needed to download (registration). The CC0 label is the
-  compiler''s; the source datasets (IDR, BBBC, Recursion RxRx, Kaggle, Cell Image Library) keep their own terms, which the
-  record does not list. Labels are weak, metadata-derived classes (not expert annotations); the dataset was released for
-  pretraining. Pixel size is not given (images are rescaled/cropped and merged to grayscale). Organisms listed from the paper''s
-  source-dataset table (human, murine fibroblast, C. elegans) and may be incomplete. The annotation CSVs were seen only as a
-  folder name in the GitHub README, not in the Kaggle file listing.'
+  last_checked: '2026-10-16T11:20:00Z'
+notes: 'Size and license (CC0: Public Domain, v8) from the Kaggle API record; paper arXiv 2111.11646 read. The CC0
+  label is the compiler''s; the 40 source datasets (IDR, BBBC, Recursion RxRx, Kaggle, Cell Image Library) keep
+  their own terms. Labels are weak, metadata-derived classes; released for pretraining. Pixel size not given (images
+  rescaled/cropped, merged to grayscale). Organisms from the paper''s source-dataset table, may be incomplete; files
+  are not grouped by organism. enricher: access open (was registration) and download_method http (was api): the
+  Kaggle archive API URL served files anonymously; download_url is that URL (was the landing page).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: 'Kaggle stanleyhua/cytoimagenet v8 (890,737 PNG, 56.2 GB; archive.zip 56.08 GB)
+
+      <class dir_name>/<class dir_name>-<binary index>.png   e.g. 02-004/02-004-0000000000.png'
+    n_files: 890737
+    listing_complete: false
+  sample:
+    urls:
+    - https://www.kaggle.com/api/v1/datasets/download/stanleyhua/cytoimagenet/02-004%2F02-004-0000000000.png
+    size_bytes: 34723
+    description: One PNG of class folder 02-004 (2048x2048 uint8 grayscale). Labels are not separate files.
+  arrays:
+  - role: raw
+    path_pattern: '*/*.png'
+    format: png
+    axes: yx
+    shape: null
+    shape_varies: true
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 255
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: 'Class label = folder name (Kaggle docs: filename = class name + binary index of the image
+      in its class); per-image metadata (label, category, source dataset, crop box) is described in the Kaggle docs
+      and kept in the GitHub repo, not as a file here. Sampled image 2048x2048; crops vary in size (paper: crops
+      of 1, 0.5, 0.25 or 0.125 of a quadrant, min 70x70).'
+  notes: 'Listing: Kaggle file-list API, first page only (20 of 890,737 files, 20 per page), so the tree is from
+    those plus the docs; size 56,173,777,598 B is the Kaggle API totalBytes (page-stated). Sampled 02-004/02-004-0000000000.png
+    (34,723 B): 2048x2048 uint8, range 0-255, p50 0, p99 63; value range from one sample. Normalization from the
+    paper (sec 2.2): each channel scaled to [0, 255] between the 0.1 and 99.9th percentiles, RGB averaged to grey,
+    fluorescence channels merged. Download: Kaggle archive and per-file API URLs are anonymous 302s to signed storage.googleapis.com
+    URLs (range requests work); www.kaggle.com is not on the TensorSwitch allowlist. voxel size not found; checked:
+    Kaggle API record, PNG header (none), paper (images rescaled/cropped from 40 sources, no pixel size).'
