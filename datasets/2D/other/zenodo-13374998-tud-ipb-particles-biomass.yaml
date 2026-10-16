@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: zenodo-13374998-tud-ipb-particles-biomass
 title: TUD-IPB Dataset for Detecting the Interaction between Particles and Biomass
 short_name: Microparticles in granular sludge (microscope)
-description: 196 microscope images of microparticles (free or entrapped) and aerobic granular sludge biomass from wastewater treatment experiments at TU Delft, each with a text file of polygon masks for two classes (entrap particle, free particle). File names encode sampling time (10, 30, 60 min) and biomass diameter class.
+description: 196 microscope images of microparticles (free or entrapped) and aerobic granular sludge biomass
+  from wastewater treatment experiments at TU Delft, each with a text file of polygon masks for two classes
+  (entrap particle, free particle). File names encode sampling time (10, 30, 60 min) and biomass diameter
+  class.
 landing_url: https://zenodo.org/records/13374998
 doi: 10.5281/zenodo.13374998
 repository: Zenodo
@@ -15,7 +18,8 @@ authors:
 - Shuo Zhang
 - Merle K. de Kreuk
 publications:
-- title: Detecting the interaction between microparticles and biomass in biological wastewater treatment process with Deep Learning method
+- title: Detecting the interaction between microparticles and biomass in biological wastewater treatment
+    process with Deep Learning method
   doi: 10.1016/j.scitotenv.2024.175813
   url: https://doi.org/10.1016/j.scitotenv.2024.175813
 date_published: '2024-08-26'
@@ -26,7 +30,8 @@ imaging:
   voxel_size_nm: null
   channels: 3
   organism: []
-  sample: Wastewater-treatment biomass (granules in several diameter classes) with added microparticles, sampled at 10, 30 and 60 minutes
+  sample: Wastewater-treatment biomass (granules in several diameter classes) with added microparticles,
+    sampled at 10, 30 and 60 minutes
   labels_stains: []
 data:
   formats:
@@ -34,7 +39,7 @@ data:
   size_bytes: 76341256
   n_items: 196
   access: open
-  download_url: https://zenodo.org/api/records/13374998/files/images.zip/content
+  download_url: https://zenodo.org/records/13374998
   download_method: http
 annotations:
   present: true
@@ -42,7 +47,8 @@ annotations:
   - instance-segmentation
   - bounding-box
   coverage: dense
-  format: One .txt per image in labels_txt.zip with a class index and normalised polygon vertices per object (YOLO segmentation format); classes.txt lists 0 entrap particle, 1 free particle
+  format: One .txt per image in labels_txt.zip with a class index and normalised polygon vertices per
+    object (YOLO segmentation format); classes.txt lists 0 entrap particle, 1 free particle
   source: unknown
 ml:
   tasks:
@@ -66,5 +72,64 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-16T07:20:00Z'
-notes: 'Images and labels zips list 196 JPEGs and 196 matching .txt files (a first label file was read: lines of a class index followed by normalised x y polygon points). The paper (Sci Total Environ 2024) is not open access in Europe PMC, so only its abstract was read: it states the dataset is for instance segmentation (Mask R-CNN, YOLOv8 etc., mAP50 mask 90.6%) and gives no train/test split here. The Zenodo text also cites a 2025 J Environ Manage paper (10.1016/j.jenvman.2025.124268) that reuses it. Microscope type, magnification and pixel size were not found on the record, so modality is other and voxel size null. Annotation method (manual vs assisted) is not stated, so source is unknown.'
+  last_checked: '2026-10-16T05:37:40Z'
+notes: 'Images and labels zips list 196 JPEGs and 196 matching .txt files (a first label file was read:
+  lines of a class index followed by normalised x y polygon points). The paper (Sci Total Environ 2024)
+  is not open access in Europe PMC, so only its abstract was read: it states the dataset is for instance
+  segmentation (Mask R-CNN, YOLOv8 etc., mAP50 mask 90.6%) and gives no train/test split here. The Zenodo
+  text also cites a 2025 J Environ Manage paper (10.1016/j.jenvman.2025.124268) that reuses it. Microscope
+  type, magnification and pixel size were not found on the record, so modality is other and voxel size
+  null. Annotation method (manual vs assisted) is not stated, so source is unknown.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  3 files  76.3 MB\n  images.zip      images/      196 jpg (+ Thumbs.db)\n  labels_txt.zip\
+      \  labels_txt/  196 txt (same stems)\n  classes.txt     (0 entrap particle, 1 free particle)"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/13374998/files/images.zip::images/A10-bigger3-0-1.jpg
+    - https://zenodo.org/records/13374998/files/labels_txt.zip::labels_txt/A10-bigger3-0-1.txt
+    size_bytes: 275990
+    description: one 1600x1200 RGB image and its YOLO polygon label file
+  arrays:
+  - role: raw
+    path_pattern: images.zip::images/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1200
+    - 1600
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: labels_txt.zip::labels_txt/*.txt
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: polygons
+    classes:
+    - id: 0
+      name: entrap particle
+    - id: 1
+      name: free particle
+    alignment: same-grid
+    alignment_notes: 'YOLO segmentation rows: class id, then normalised x y polygon vertices; label =
+      image stem with .txt; class names from classes.txt (line order).'
+  notes: 'Listing: Zenodo API + zip indexes, 3 files, 76,341,256 bytes (exact): 196 jpg + Thumbs.db, 196
+    txt, classes.txt. Probed 2 images (both 1200x1600x3 uint8); sampled one (values 0-255, one sample)
+    and read its label file. Voxel size not found; checked: JPEG headers, Zenodo description, paper abstract
+    (not open access). Three files, no single archive: download_url is the record page.'
