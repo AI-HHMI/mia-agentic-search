@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-15510590-sem-hydrogen-fracture-surfaces
 title: SEM Image dataset (fracture surfaces of steels tested in hydrogen)
 short_name: Steel fracture surfaces, brittle/ductile (SEM)
-description: 1,961 scanning electron microscopy images of fracture surfaces from various steels tested by slow strain
-  rate tensile tests in pressurized hydrogen and reference atmospheres, sorted into Brittle, Ductile and Mixed
-  fracture classes, with a Labels.csv listing each image's label.
+description: 1,961 scanning electron microscopy images of fracture surfaces from various steels tested by slow strain rate
+  tensile tests in pressurized hydrogen and reference atmospheres, sorted into Brittle, Ductile and Mixed fracture classes,
+  with a Labels.csv listing each image's label.
 landing_url: https://zenodo.org/records/15510590
 doi: 10.5281/zenodo.15510590
 repository: Zenodo
@@ -18,7 +18,7 @@ imaging:
   - other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism: []
   sample: Fracture surfaces of steels after slow strain rate tensile tests under pressurized hydrogen and reference atmospheres
   labels_stains: []
@@ -35,7 +35,7 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: Folders Brittle/Ductile/Mixed plus Labels.csv (filename,label)
+  format: 'Folders Brittle/Ductile/Mixed plus Labels.csv (filename,label): image-level class labels'
   source: unknown
 ml:
   tasks:
@@ -57,12 +57,83 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-16T23:05:00Z'
-notes: 'Material (not microscopy of biological samples): SEM fractography. Zip listed with peek_archive: 1,961 PNG
-  files in Brittle (822), Ductile (996) and Mixed (144) folders, Labels.csv, Licence.txt ("CC-BY 4.0") and desktop.ini
-  files. The Zenodo page lists no related publication, magnification, pixel size, microscope or steel grades, and
-  does not say who assigned the labels (annotation source recorded as unknown). A paper by the same author (Campari et al., Computational Materials Science 2025,
-  doi:10.1016/j.commatsci.2025.114366, "Hydrogen-assisted cracking: A deep learning approach for fractographic
-  analysis") describes SEM fractography with brittle/ductile classification, but its page does not cite this
-  Zenodo record and its full text is not open access, so the link is unconfirmed and it is not listed in publications.
-  Images were not opened, so image dimensions are unknown.'
+  last_checked: '2026-10-16T23:10:00Z'
+notes: 'SEM fractography of steels (100Cr6, 304, 316L, X65, mX65 by file prefix); modality other = SEM (no plain SEM value
+  in the schema). Zip: 1,961 greyscale 500x500 PNGs in Brittle (822), Ductile (996), Mixed (143 PNG + desktop.ini), Labels.csv,
+  Licence.txt ("Licence: CC-BY 4.0"). Zenodo page/API list no paper, magnification, pixel size or labeller (annotation source
+  unknown). Campari et al. 2025 (doi:10.1016/j.commatsci.2025.114366) may be the related paper, but it does not cite this
+  record and is not open access; not listed. enricher: channels 1 from PNG headers (was null); image size 500x500 confirmed.'
+technical:
+  method: sample
+  inspected_at: '2026-10-16T23:10:00Z'
+  inspected_urls:
+  - https://zenodo.org/records/15510590/files/SEM%20Image%20Database.zip::SEM Image Database/Mixed/100Cr6_AR_28_1.png
+  - https://zenodo.org/records/15510590/files/SEM%20Image%20Database.zip::SEM Image Database/Labels.csv
+  - https://zenodo.org/records/15510590/files/SEM%20Image%20Database.zip::SEM Image Database/Licence.txt
+  - https://zenodo.org/api/records/15510590
+  bytes_downloaded: 293457
+  size_source: file-listing
+  layout:
+    tree: "SEM Image Database.zip (433.6 MB, 1,964 members)\n  SEM Image Database/\n    Labels.csv            (filename,label;\
+      \ 1,962 rows)\n    Licence.txt           (\"Licence: CC-BY 4.0\")\n    Brittle/   822 .png   (177.2 MB)\n    Ductile/\
+      \   996 .png   (224.4 MB)\n    Mixed/     143 .png + desktop.ini (31.6 MB)\n      e.g. 100Cr6_AR_05_11.png, 316L_AR_02_17.png,\
+      \ mX65_H2_01_12.png, X65_AIR_10_27.png"
+    n_files: 1964
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/15510590/files/SEM%20Image%20Database.zip::SEM Image Database/Mixed/100Cr6_AR_28_1.png
+    - https://zenodo.org/records/15510590/files/SEM%20Image%20Database.zip::SEM Image Database/Labels.csv
+    size_bytes: 293457
+    description: One Mixed-class SEM PNG (500x500 uint8) and Labels.csv, which holds the class of every image.
+  arrays:
+  - role: raw
+    path_pattern: SEM Image Database.zip::SEM Image Database/*/*.png
+    format: png
+    axes: yx
+    shape:
+    - 500
+    - 500
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Greyscale PNG (colour type gray). 7 files probed across all classes and steels: all 500x500 uint8. The
+      class is the parent folder name.'
+  - role: label
+    path_pattern: SEM Image Database.zip::SEM Image Database/Labels.csv
+    format: csv
+    axes: null
+    shape:
+    - 1962
+    - 2
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes:
+    - id: Brittle
+      name: Brittle
+    - id: Ductile
+      name: Ductile
+    - id: Mixed
+      name: Mixed
+    alignment: not-applicable
+    alignment_notes: Image-level classification table, columns filename,label; one row per PNG (822 Brittle, 996 Ductile,
+      144 Mixed, one of which is desktop.ini). Label = folder name; pairing by file name.
+  notes: 'Listing of the single Zenodo zip (complete, exact sizes). Probed 7 PNG headers; sampled 100Cr6_AR_28_1.png: min
+    0, max 255, mean 128.7, only 129 distinct values spread over 0-255 (suggests a 2x intensity stretch, not documented, so
+    normalization unknown); value_range from one sample. Labels.csv lists desktop.ini as a Mixed item (bogus row). Voxel size
+    not found; checked: PNG headers (no pHYs calibration reported), Zenodo API (description, notes, versions: only v1.0),
+    Licence.txt, Labels.csv; no paper cites the record and the candidate paper is not open access. Download: the zip is a
+    direct link (range requests, member access) usable by TensorSwitch.'
