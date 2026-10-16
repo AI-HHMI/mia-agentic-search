@@ -1,8 +1,13 @@
 schema_version: '1.2'
 id: zenodo-20719504-skdrepadata-sickle-cell-smears
-title: 'SKDrepaData: blood-smear microscopy for sickle cell detection and classification (v1 boxes, v2 patches, v3 masks)'
+title: 'SKDrepaData: blood-smear microscopy for sickle cell detection and classification (v1 boxes, v2
+  patches, v3 masks)'
 short_name: SKDrepaData sickle-cell blood smears (brightfield)
-description: Giemsa-stained peripheral blood smear images for sickle cell disease, in three sub-sets - v1 YOLOv8 bounding boxes for normal / sickle / other-abnormality red blood cells (Roboflow export, 1,487 images in the archive), v2 more than 33,000 cropped 224 x 224 cell patches sorted by class folder for classification, and v3 a CSV of 33,835 segmented cells with morphological descriptors. Released with a doctoral thesis from Universite Assane Seck de Ziguinchor.
+description: Giemsa-stained peripheral blood smear images for sickle cell disease, in three sub-sets -
+  v1 YOLOv8 bounding boxes for normal / sickle / other-abnormality red blood cells (Roboflow export, 1,487
+  images in the archive), v2 more than 33,000 cropped 224 x 224 cell patches sorted by class folder for
+  classification, and v3 a CSV of morphological descriptors for 302 segmented cells (no mask images).
+  Released with a doctoral thesis from Universite Assane Seck de Ziguinchor.
 landing_url: https://zenodo.org/records/20719504
 doi: 10.5281/zenodo.20719504
 repository: Zenodo
@@ -36,7 +41,7 @@ data:
   size_bytes: 275443171
   n_items: 1487
   access: open
-  download_url: https://zenodo.org/api/records/20719504/files/SKDrepaData-v1.zip/content
+  download_url: https://zenodo.org/records/20719504
   download_method: http
 annotations:
   present: true
@@ -44,7 +49,9 @@ annotations:
   - bounding-box
   - classification
   coverage: dense
-  format: 'v1: YOLOv8 text labels in train/valid/test folders (data.yaml, classes autres / falciformes / normales); v2: cell patches in class folders plus .csv labels per the record description; v3: one CSV of per-cell masks descriptors'
+  format: 'v1: YOLOv8 .txt labels (class cx cy w h, normalised) in train/valid/test/labels, classes 0
+    autres, 1 falciformes, 2 normales (data.yaml); v2: 224x224 cell patches in class folders (normale_cell,
+    other_cell, sickle_cell), no CSV; v3: one CSV of per-cell shape/intensity descriptors'
   source: manual
 ml:
   tasks:
@@ -63,10 +70,92 @@ provenance:
   - https://zenodo.org/records/20719504
   - https://zenodo.org/api/records/20719504
   - https://zenodo.org/api/records/21365925
-  confidence: 0.6
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-16T05:05:00Z'
-notes: 'No paper is cited on the record and Europe PMC finds none by name, so publications is empty. v1 is a Roboflow YOLOv8 export (640 x 640, flips/rotations, 3 versions per image): its 1,487 images are not the 1,861 originals in the description (a restricted sibling record, 21365925, describes 1,861 full-field images, x40/x100, three microscopes, five annotators). v1 has a train/valid/test split. v2 has 33,832 JPEG cell patches in class folders. The v3 CSV could not be opened, so its contents come from the record description and no binary masks were verified. Label files were not listed individually, hence annotations_verified false. Pixel size not stated.'
+  annotations_verified: true
+  last_checked: '2026-10-16T05:03:17Z'
+notes: 'No paper is cited on the record and Europe PMC finds none by name, so publications is empty. v1
+  is a Roboflow YOLOv8 export (640 x 640, flips/rotations, 3 versions per image): its 1,487 images are
+  not the 1,861 originals in the description (a restricted sibling record, 21365925, describes 1,861 full-field
+  images, x40/x100, three microscopes, five annotators). v1 has a train/valid/test split. v2 has 33,832
+  JPEG cell patches in class folders. enricher: v1 YOLO labels and v3 CSV read (v3 has 302 rows, no masks),
+  annotations_verified true; download_url record page (was the v1 zip only). Pixel size not stated.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  3 files  275.4 MB  .zip\n  SKDrepaData-v1.zip  (40 MB, Roboflow YOLOv8 export)\n    SKDrepaData-v1/data.yaml,\
+      \ README.dataset.txt, README.roboflow.txt\n    SKDrepaData-v1/{train,valid,test}/images/  1302 /\
+      \ 123 / 62 jpg\n    SKDrepaData-v1/{train,valid,test}/labels/  1302 / 123 / 62 txt\n  SKDrepaData-v2.zip\
+      \  (235 MB)\n    SKDrepaData-v2/normale_cell/  11106 jpg\n    SKDrepaData-v2/other_cell/    11253\
+      \ jpg\n    SKDrepaData-v2/sickle_cell/   11473 jpg\n  SKDrepaData-v3.zip  (18 KB)\n    SKDrepaData-v3.csv\
+      \  (302 rows)"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/20719504/files/SKDrepaData-v1.zip::SKDrepaData-v1/test/images/0002_drepano_jpg.rf.036eee2c2563ffd014202b043201d96d.jpg
+    - https://zenodo.org/records/20719504/files/SKDrepaData-v1.zip::SKDrepaData-v1/test/labels/0002_drepano_jpg.rf.036eee2c2563ffd014202b043201d96d.txt
+    size_bytes: 28182
+    description: one v1 test image (640x640 RGB JPEG) and its YOLO box file
+  arrays:
+  - role: raw
+    path_pattern: SKDrepaData-v1.zip::SKDrepaData-v1/*/images/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 640
+    - 640
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 250
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Roboflow-resized 640x640 smear images (augmented copies share the stem before .rf.).
+  - role: label
+    path_pattern: SKDrepaData-v1.zip::SKDrepaData-v1/*/labels/*.txt
+    format: csv
+    axes: null
+    shape:
+    - 23
+    - 5
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: autres
+    - id: 1
+      name: falciformes
+    - id: 2
+      name: normales
+    alignment: same-grid
+    alignment_notes: 'Space-separated YOLO rows: class, x_center, y_center, width, height, normalised
+      to the image; label file = image stem with .txt in the parallel labels/ folder.'
+  - role: raw
+    path_pattern: SKDrepaData-v2.zip::SKDrepaData-v2/*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 224
+    - 224
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Single-cell patches; class = parent folder (normale_cell, other_cell, sickle_cell).
+  notes: 'Listing: Zenodo API + zip indexes, 3 files, 275,443,171 bytes (exact), 36,810 members. Probed
+    2 v1 images (640x640x3) and 2 v2 patches (224x224x3); sampled one v1 image (26,891 B, values 0-250,
+    one sample) and read its label file (23 boxes). v3 CSV read in full: 302 rows of Area, equivalent_diameter,
+    orientation, axis lengths, Perimeter, Min/Mean/MaxIntensity; no masks in the record. Voxel size not
+    found; checked: JPEG headers, Zenodo description, README.dataset.txt, data.yaml; no paper. Three archives:
+    download_url is the record page.'
