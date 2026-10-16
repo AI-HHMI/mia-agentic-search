@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: s-biad1089-muscle-fiber-profile-brightfield
 title: Analysis of the fiber profile of skeletal muscle
 short_name: Mouse skeletal muscle fiber masks (brightfield)
-description: Serial cross sections of mouse soleus and extensor digitorum longus muscle stained for MyHC I, MyHC IIa and SDH activity, stitched into whole-section grayscale images (12 TIFFs) with Cellpose fiber instance masks and TrackMate tracks linking fibers across sections (AI4Life Open Call 2023).
+description: Serial cross sections of mouse soleus and extensor digitorum longus muscle stained for MyHC
+  I, MyHC IIa and SDH activity, stitched into whole-section grayscale images (12 TIFFs) with Cellpose
+  fiber instance masks and TrackMate tracks linking fibers across sections (AI4Life Open Call 2023).
 landing_url: https://www.ebi.ac.uk/biostudies/BioImages/studies/S-BIAD1089
 doi: 10.6019/S-BIAD1089
 repository: BioImageArchive
@@ -29,7 +31,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 873887844
+  size_bytes: 876919478
   n_items: 12
   access: open
   download_url: https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/089/S-BIAD1089/Files/BIA/
@@ -40,7 +42,8 @@ annotations:
   - instance-segmentation
   - tracking
   coverage: dense
-  format: TIFF label masks (TrackMate mask) and TIFF track images
+  format: 'RGB TIFF renderings from TrackMate (3 slices, one per aligned section): fibers drawn in colour
+    over the greyscale image, same fiber = same colour; no integer label maps'
   source: mixed
 ml:
   tasks:
@@ -59,10 +62,142 @@ provenance:
   - https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD1089
   - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/089/S-BIAD1089/Files/BIA/
   - https://raw.githubusercontent.com/ai4life-opencalls/oc-1-project-6/main/README.md
-  confidence: 0.6
+  - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/089/S-BIAD1089/Files/file%20list1.tsv
+  - https://zenodo.org/api/records/10792900
+  confidence: 0.5
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-16T20:55:00Z'
-notes: Only two muscle sections (soleus, EDL) are provided, each as 6 whole-section stitched images (MyHC I, MyHC IIa, SDH, stack, mask, tracks), so 12 files but many fibers per image. Masks were produced by Cellpose and fiber linking with TrackMate, with manual selection of fibers co-expressing MyHC I and IIa; not purely manual annotation. Pixel size not stated on the study page, in the file listing or the project README (no associated paper listed; checked BioStudies record and GitHub README). Acquisition on Leica DM500 with 20x objective; the study reports bright-field microscopy though stains are immunostained and SDH.
+  last_checked: '2026-10-16T21:45:00Z'
+notes: 'Only two muscle sections (soleus, EDL) are provided, each as 6 whole-section stitched images (MyHC
+  I, MyHC IIa, SDH, stack, mask, tracks), so 12 files but many fibers per image. Masks were produced by
+  Cellpose and fiber linking with TrackMate, with manual selection of fibers co-expressing MyHC I and
+  IIa; not purely manual annotation. Pixel size not stated on the study page, in the file listing or the
+  project README (no associated paper listed; checked BioStudies record and GitHub README). Acquisition
+  on Leica DM500 with 20x objective; the study reports bright-field microscopy though stains are immunostained
+  and SDH. enricher: masks/tracks are RGB overlays, not label maps (confidence 0.6->0.5); size from exact
+  file listing.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                         14 files  876.9 MB\n  file list1.json, file list1.tsv\
+      \           BIA file list (annotation type, source)\n  BIA/                                    \
+      \  12 .tif\n    sol-m2-{MyHCI,MyHCIIa}.tif               100 MB each   10000x10000 grey\n    sol-m2-sdh.tif\
+      \                           300 MB        10000x10000x3 RGB\n    edl-m1-{MYHCI,MyHCIIa,sdh}.tif\
+      \           100 MB each   10000x10000 grey\n    Stack sol m2.tif / Stack-edl-m1.tif      10 MB each\
+      \    3 aligned sections (BigWarp)\n    TrackMate mask-sol-m2.tif / -edl-m1.tif  17 / 7.5 MB   3\
+      \ x RGB overlay\n    TrackMate track(s) MyHCI-IIa-*.tif       17 / 15 MB    3 x RGB overlay"
+    n_files: 14
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/089/S-BIAD1089/Files/BIA/Stack-edl-m1.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/089/S-BIAD1089/Files/BIA/TrackMate%20mask-edl-m1.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/089/S-BIAD1089/Files/BIA/TrackMate%20tracks%20MyHCI-IIa-edl-m1.tif
+    size_bytes: 32130907
+    description: 'EDL muscle: aligned 3-section stack with its TrackMate mask and track renderings'
+  arrays:
+  - role: raw
+    path_pattern: BIA/{*-m[12]-[Mm][Yy]*,edl-m1-sdh}.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 10000
+    - 10000
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Stitched greyscale sections: MyHC I / MyHC IIa (4 files) and edl-m1-sdh (probed:
+      10000x10000 grey); ImageJ TIFF without calibration.'
+  - role: raw
+    path_pattern: BIA/sol-m2-sdh.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 10000
+    - 10000
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: The soleus SDH section is stored as RGB (photometric 2, 300 MB); the EDL SDH section
+      is grey.
+  - role: raw
+    path_pattern: BIA/Stack*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 3
+    - 1749
+    - 1902
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'ImageJ stack of the 3 BigWarp-aligned sections (header axis z = section, not depth);
+      cropped and downscaled from the 10000 px sources. sol: 3x1657x2060.'
+  - role: label
+    path_pattern: BIA/TrackMate mask-*.tif
+    format: tiff
+    axes: zyxs
+    shape:
+    - 3
+    - 874
+    - 951
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: other
+    classes: null
+    alignment: scaled
+    alignment_notes: 'Pairing: one set per muscle (sol-m2, edl-m1); "Stack <muscle>" pairs with "TrackMate
+      mask-<muscle>" and "TrackMate track(s) MyHCI-IIa-<muscle>". RGB overlay, not a label map: ~90% of
+      pixels grey (image), ~7-10k colours per slice. edl mask is exactly half the Stack grid (874x951
+      vs 1749x1902); sol mask 1242x1545 vs Stack 1657x2060 (x0.75, matching the stored 1.27 vs 0.952 um
+      calibrations).'
+  - role: label
+    path_pattern: BIA/TrackMate track*.tif
+    format: tiff
+    axes: zyxs
+    shape:
+    - 3
+    - 1170
+    - 1393
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: other
+    classes: null
+    alignment: unknown
+    alignment_notes: RGB rendering of fibers expressing both MyHC I and IIa, tracked across the 3 sections.
+      edl 1170x1393 has no simple ratio to the Stack grid; sol 1242x1545 matches its mask.
+  notes: 'Listing: tools/listing.py on all 14 file URLs (from the BIA file list and HTTP index): 876,919,478
+    B, exact. Probed 8 TIFFs (headers). Sampled edl-m1: Stack 3x1749x1902 uint8 0-255 (9,980,443 B), TrackMate
+    mask 3x874x951x3 (7,481,370 B), tracks 3x1170x1393x3 (14,669,094 B); a second read of the mask counted
+    colours: 90% grey pixels, 7,189-10,207 colours per slice, so the ''masks'' are colour overlays on
+    the image (GitHub README: ''the same cells are marked with the same color''), not integer labels;
+    instance IDs would need colour decoding. Voxel size not set: source TIFFs uncalibrated; Stack 0.952
+    um/px and sol mask 1.27 um/px in ImageJ headers, but the project README says the scale was set to
+    ''the estimated number of microns'' by hand, and the BIA record states none. Checked: headers, BioStudies
+    API, file list, GitHub README, Zenodo 10792900 (code + tutorial images only, no masks). Download:
+    each TIFF is a direct https file on ftp.ebi.ac.uk (range requests); no single archive.'
