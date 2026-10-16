@@ -1,0 +1,142 @@
+schema_version: '1.2'
+id: zenodo-23389427-fluoecoli-instance
+title: FluoEcoli-Instance
+short_name: E. coli instance segmentation (fluorescence)
+description: 24,702 fluorescence microscopy image patches (256 x 256 px, TIFF) of Escherichia coli with
+  199,419 expert-annotated bacterial instances (polygon, bounding box and area per cell) in COCO format,
+  split by source image into train (14,820), validation (4,941) and test (4,941) patches. Introduced with
+  a CBAM-enhanced Hybrid Task Cascade instance segmentation baseline.
+landing_url: https://zenodo.org/records/23389427
+doi: 10.5281/zenodo.23389427
+repository: Zenodo
+accession: '23389427'
+authors:
+- Son T. Huynh
+publications:
+- title: 'FluoEcoli-Instance: A High-Content Fluorescence Microscopy Dataset and CBAM-Enhanced Hybrid
+    Task Cascade for E. Coli Instance Segmentation'
+  doi: 10.1109/JSTSP.2025.3648286
+  url: https://doi.org/10.1109/JSTSP.2025.3648286
+date_published: '2026-10-15'
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Escherichia coli
+  sample: E. coli cells imaged by high-content fluorescence microscopy; full-size images cut into 256
+    x 256 px patches
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 2422943929
+  n_items: 24702
+  access: open
+  download_url: https://zenodo.org/records/23389427/files/FluoEcoli-Instance.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - bounding-box
+  coverage: dense
+  format: 'FluoEcoli-Instance.zip: coco/{train,val,test}/images/*.tiff (256x256) with one COCO JSON per
+    split (coco/train/train.json, coco/val/val.json, coco/test/test.json); one instance polygon (segmentation),
+    bounding box and area per cell; single class "cell" with category_id 0 (not 1 as in standard COCO)'
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  - detection
+  splits_provided: true
+  benchmark: FluoEcoli-Instance (COCO mAP; best reported mAP50:95 0.787 with ConvNeXtV2-Tiny + CBAM-HTC)
+  baseline_code_url: https://github.com/huynhthanh98/jove_mmdetection
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/legalcode
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-16T03:20:00Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/23389427
+  - https://zenodo.org/records/23389427/files/FluoEcoli-Instance.zip
+  - https://api.crossref.org/works/10.1109/JSTSP.2025.3648286
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1109%2FJSTSP.2025.3648286%22&format=json&resultType=core&pageSize=3
+  - https://api.openalex.org/works/doi:10.1109/JSTSP.2025.3648286
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-16T04:27:51Z'
+notes: 'Zip: 24,702 TIFF patches plus one COCO JSON per split (24,709 entries incl. 4 .DS_Store); size_bytes
+  is the compressed zip. Annotations described as expert-annotated on the Zenodo page. The paper (IEEE
+  JSTSP, not open access) was read as abstract only: it extends the E. coli fluorescence dataset of Dat
+  et al. with more samples and refined annotations. Microscope, objective, pixel size and stain are not
+  stated on the Zenodo page, the abstract, the TIFF headers or the zip, so voxel_size_nm is null and the
+  modality is fluorescence-other. Baseline code from the Zenodo usage notes.
+
+  enricher: size confirmed by file listing (unchanged); TIFF and test COCO JSON sampled; no field changes;
+  voxel size still not found.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "FluoEcoli-Instance.zip (2.4 GB)\n  coco/\n    train/train.json           71.7 MB\n    train/images/*.tiff\
+      \        14820 files  1.9 GB\n    val/val.json               23.9 MB\n    val/images/*.tiff    \
+      \       4941 files  648.2 MB\n    test/test.json             23.7 MB\n    test/images/*.tiff   \
+      \       4941 files  648.2 MB\n    (+4 .DS_Store files)"
+    n_files: 24709
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/23389427/files/FluoEcoli-Instance.zip::coco/test/images/003579.tiff
+    - https://zenodo.org/records/23389427/files/FluoEcoli-Instance.zip::coco/test/test.json
+    size_bytes: 23877295
+    description: one 256x256 test patch (003579.tiff, image_id 3579, 14 instances) and the test-split
+      COCO JSON that holds its polygons
+  arrays:
+  - role: raw
+    path_pattern: FluoEcoli-Instance.zip::coco/*/images/*.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 1390
+    - 28170
+    normalization: unknown
+    alignment: not-applicable
+  - role: label
+    path_pattern: FluoEcoli-Instance.zip::coco/*/*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    encoding: polygons
+    classes:
+    - id: 0
+      name: cell
+    alignment: same-grid
+    alignment_notes: COCO JSON per split (train.json, val.json, test.json); images[].file_name names the
+      TIFF in the same split's images/ folder, annotations[].image_id links polygons (pixel coordinates,
+      width/height 256), bbox [x,y,w,h], area, iscrowd 0. Patch file names repeat across splits (e.g.
+      003579.tiff in val and test), so pair within a split only.
+  notes: 'Listing (tools/listing.py, Zenodo + zip central directory): 24,709 zip members, total 2,422,943,929
+    bytes (zip). Probe: train TIFFs single-page plain, uint16, uncompressed, 256x256, 1 sample/pixel,
+    no calibration in header. Sample (one test TIFF): min 1390, max 28170, p50 1756, p99 12599; value_range
+    is from that one file; normalization not documented. test.json (23,746,101 bytes, read in full): 4,941
+    images, all 256x256; 39,472 annotations (matches the Zenodo table), all polygon lists, iscrowd 0,
+    category 0 "cell". Labels are polygons, not masks: conversion needs rasterisation. Voxel size not
+    found; checked: TIFF header, Zenodo API record (description, no related identifiers), zip listing
+    (no README), paper (not open access, abstract only), baseline repo README (stock mmdetection text).
+    data.download_url is the direct zip (usable, range requests).'
