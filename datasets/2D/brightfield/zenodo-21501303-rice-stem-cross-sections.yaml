@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zenodo-21501303-rice-stem-cross-sections
 title: Rice stem cross-section microscope images with vascular bundle, stem and cavity masks
 short_name: Rice stem cross-sections segmentation (microscopy)
-description: 686 stereomicroscope images (3584x2748 px) of phloroglucinol-stained rice (Oryza sativa) stem cross-sections
-  from 165, 120 and 17 accessions, annotated in LabelMe for large vascular bundles, small vascular bundles, stem outline and
-  cavity, with PNG masks in a VOC-style layout. The deposit also holds a trained ONNX segmentation model and a Windows inference
-  GUI archive.
+description: 686 stereomicroscope images (3584x2748 px) of phloroglucinol-stained rice (Oryza sativa)
+  stem cross-sections from 165, 120 and 17 accessions, annotated in LabelMe for large vascular bundles,
+  small vascular bundles, stem outline and cavity, with PNG masks in a VOC-style layout. The deposit also
+  holds a trained ONNX segmentation model and a Windows inference GUI archive.
 landing_url: https://zenodo.org/records/21501303
 doi: 10.5281/zenodo.21501303
 repository: Zenodo
@@ -25,8 +25,8 @@ imaging:
   channels: 3
   organism:
   - Oryza sativa
-  sample: hand-cut 0.2-0.4 mm cross-sections of the second inverted internode of the main stem at heading stage, stained with
-    phloroglucinol and HCl
+  sample: hand-cut 0.2-0.4 mm cross-sections of the second inverted internode of the main stem at heading
+    stage, stained with phloroglucinol and HCl
   labels_stains:
   - phloroglucinol-HCl
 data:
@@ -36,7 +36,7 @@ data:
   size_bytes: 470213841
   n_items: 686
   access: open
-  download_url: https://zenodo.org/api/records/21501303/files/dataset.7z/content
+  download_url: https://zenodo.org/records/21501303/files/dataset.7z
   download_method: http
 annotations:
   present: true
@@ -61,15 +61,86 @@ provenance:
   - https://zenodo.org/api/records/21501303
   - https://zenodo.org/api/records/21501303/files/dataset.7z/content
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13457637/fullTextXML
+  - https://zenodo.org/records/21501303/files/dataset.7z
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-16T14:10:42Z'
-notes: 'Pixel size / magnification not stated on the Zenodo page, archive listing or paper Methods (OLYMPUS SZ2-ILST stereomicroscope,
-  3584x2748 px images); left null. dataset.7z listed through range requests: dataset/JPEGImages (686 .jpg) and dataset/SegmentationClass
-  (686 .png masks). Original LabelMe JSON annotations are not in the listing (masks only); four classes per the paper: small
-  VB, large VB, stem (''out''), cavity (''in''). The paper uses a random 9:1 split (617 train / 69 validation, seed 0) but
-  the deposit has no split files. Size is the sum of the three files (dataset.7z 210 MB, rice_stem_pre_v1.1.rar 160 MB GUI/software,
-  ONNX model 100 MB); the rar and onnx were not opened. Images are of one stain (phloroglucinol-HCl) and one lab.'
+  last_checked: '2026-10-16T15:35:00Z'
+notes: 'Pixel size / magnification not stated on the Zenodo page, archive listing or paper Methods (OLYMPUS
+  SZ2-ILST stereomicroscope, 3584x2748 px images); left null. dataset.7z listed through range requests:
+  dataset/JPEGImages (686 .jpg) and dataset/SegmentationClass (686 .png masks). Original LabelMe JSON
+  annotations are not in the listing (masks only); four classes per the paper: small VB, large VB, stem
+  (''out''), cavity (''in''). The paper uses a random 9:1 split (617 train / 69 validation, seed 0) but
+  the deposit has no split files. Size is the complete Zenodo listing of the three files (dataset.7z 210
+  MB, rice_stem_pre_v1.1.rar 160 MB GUI/software, ONNX model 100 MB); the rar and onnx were not opened.
+  Images are of one stain (phloroglucinol-HCl) and one lab. enricher: 7z header decoded via range requests:
+  686 jpg + 686 png, same stems.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                  3 files  470.2 MB\ndataset.7z                         \
+      \ 210.5 MB  (solid LZMA2, 1374 entries)\n  dataset/JPEGImages/*.jpg            686 files (e.g. 21c-02.jpg)\n\
+      \  dataset/SegmentationClass/*.png     686 files (same stems, e.g. zh11-3.png)\nrice_stem_pre_v1.1.rar\
+      \              160.2 MB  (Windows inference GUI; not opened)\nvgg_200_ECA_1024_Bio.onnx        \
+      \    99.6 MB  (trained model)\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/21501303/files/dataset.7z
+    size_bytes: 210466689
+    description: 'The whole image and mask archive (dataset.7z): a solid 7z has no single-file unit'
+  arrays:
+  - role: raw
+    path_pattern: dataset.7z::dataset/JPEGImages/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 2748
+    - 3584
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: dataset.7z::dataset/SegmentationClass/*.png
+    format: png
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    encoding: unknown
+    classes:
+    - id: null
+      name: small vascular bundle (small)
+    - id: null
+      name: large vascular bundle (big)
+    - id: null
+      name: stem (out)
+    - id: null
+      name: cavity (in)
+    alignment: unknown
+    alignment_notes: Pairs with the JPEG of the same stem (JPEGImages/<stem>.jpg <-> SegmentationClass/<stem>.png);
+      masks made from LabelMe polygons with the LabelMe script (paper Methods). Mask pixels not read.
+  notes: 'Zenodo listing complete (3 files, 470,213,841 B). dataset.7z is a solid LZMA2 archive: its LZMA-compressed
+    header (16,551 B) was decoded with stdlib lzma via range requests and lists dataset/JPEGImages (686
+    .jpg) and dataset/SegmentationClass (686 .png). The first 1 MB of the stream gave the first image,
+    21c-02.jpg: JPEG RGB 3584x2748 (h 2748, w 3584, 3 samples), uint8 [0, 255], no DPI/EXIF calibration
+    (JFIF density 1x1). The masks sit at the end of the solid stream, so reading one would mean downloading
+    the whole archive; their encoding, IDs and shape are unverified. Class names from the paper (LabelMe
+    tags in brackets); their IDs are not stated. TensorSwitch can''t read members of a 7z (zip only),
+    so the sample is the whole archive. voxel size not found; checked: JPEG header, Zenodo API record
+    and description, paper full text (Methods: OLYMPUS SZ2-ILST, 3584x2748 px, no scale), no code repo
+    linked.'
