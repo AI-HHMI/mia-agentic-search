@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-13833478-mudrapp-seq-influenza-mdck-cellpose
 title: Nucleus and cell segmentations for data in the mudRapp-seq paper
 short_name: Infected MDCK cell and nucleus masks (widefield)
-description: Cellpose training images with curated masks for cells and nuclei (7 cell and 5 DAPI nucleus image/mask pairs),
-  two trained Cellpose models, and ~7,600 PNG segmentation outputs for in situ sequencing images of influenza-infected
-  MDCK cells (mudRapp-seq).
+description: Cellpose training images with curated masks for cells and nuclei (7 cell and 5 DAPI nucleus
+  image/mask pairs), two trained Cellpose models, and ~7,600 PNG segmentation outputs for in situ sequencing
+  images of influenza-infected MDCK cells (mudRapp-seq).
 landing_url: https://zenodo.org/records/13833478
 doi: 10.5281/zenodo.13833478
 repository: Zenodo
@@ -18,7 +18,8 @@ authors:
 - Markus Ankenbrand
 - Redmond Smyth
 publications:
-- title: Visualizing the transcription and replication of influenza A viral RNAs in cells by multiple direct RNA padlock probing and in-situ sequencing (mudRapp-seq)
+- title: Visualizing the transcription and replication of influenza A viral RNAs in cells by multiple
+    direct RNA padlock probing and in-situ sequencing (mudRapp-seq)
   doi: 10.1101/2025.03.26.645430
   url: https://www.biorxiv.org/content/10.1101/2025.03.26.645430
 date_published: '2024-09-24'
@@ -30,24 +31,27 @@ imaging:
   channels: null
   organism:
   - Canis lupus familiaris
-  sample: MDCK cells infected with influenza A (PR8), fixed; padlock-probe rolling circle products and DAPI imaged by epifluorescence (Leica, 63x/1.40 oil), z-stacks maximum-projected
+  sample: MDCK cells infected with influenza A (PR8), fixed; padlock-probe rolling circle products and
+    DAPI imaged by epifluorescence (Leica, 63x/1.40 oil), z-stacks maximum-projected
   labels_stains:
   - DAPI
 data:
   formats:
   - tiff
   - png
-  size_bytes: null
+  size_bytes: 4818044676
   n_items: 12
   access: open
-  download_url: https://zenodo.org/records/13833478/files/mudRapp-seq-segmentation.zip?download=1
+  download_url: https://zenodo.org/records/13833478/files/mudRapp-seq-segmentation.zip
   download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
-  coverage: dense
-  format: 'Cellpose *_seg.npy label files beside each training TIFF in data/training/cellpose/{cells,nuclei}/; segmentation result PNGs (cp_masks, cpws_cells, cp_output) under analysis/segmentation/'
+  coverage: partial
+  format: Cellpose *_seg.npy (pickled dict with masks/outlines) beside each training TIFF in data/training/cellpose/{cells,nuclei}/;
+    model-output PNGs (cp_masks, cpws_cells, cp_output) under analysis/segmentation/ without their raw
+    images.
   source: mixed
 ml:
   tasks:
@@ -66,10 +70,93 @@ provenance:
   - https://zenodo.org/records/13833478/files/mudRapp-seq-segmentation.zip?download=1
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1101%2F2025.03.26.645430%22&format=json&resultType=core&pageSize=3
   - https://api.biorxiv.org/details/biorxiv/10.1101/2025.03.26.645430
+  - https://github.com/BioMeDS/mudRapp-seq/blob/main/README.md
   confidence: 0.55
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-16T06:55:00Z'
-notes: 'Zip listed with peek_archive (7,630 members): data/training/cellpose has 7 cell TIFF + _seg.npy pairs and 5 DAPI nuclei TIF + _seg.npy pairs (~100 MB per TIFF), models/cellpose holds the two models, analysis/segmentation holds 7,604 PNG model outputs (not raw images). Preprint Methods: Leica epifluorescence, 63x/1.40 oil, z-stacks max-projected (so 2D), Cellpose 2.2.3 masks with cell masks manually curated in napari (source mixed). Pixel size not stated on the Zenodo page or Methods; zip TIFF headers not probed. 12 pairs is near the size threshold.'
+  last_checked: '2026-10-16T07:55:00Z'
+notes: 'Zip listed with peek_archive (7,630 members): data/training/cellpose has 7 cell TIFF + _seg.npy
+  pairs and 5 DAPI nuclei TIF + _seg.npy pairs (~100 MB per TIFF), models/cellpose holds the two models,
+  analysis/segmentation holds 7,604 PNG model outputs (not raw images). Preprint Methods: Leica epifluorescence,
+  63x/1.40 oil, z-stacks max-projected (so 2D), Cellpose 2.2.3 masks with cell masks manually curated
+  in napari (source mixed). Pixel size not stated on the Zenodo page or Methods; zip TIFF headers not
+  probed. 12 pairs is near the size threshold. enricher: coverage partial (README: sparse human cell labels);
+  seq_2nt cell images 103 nm/px per GitHub README, nuclei subset not stated, so voxel size left null.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "mudRapp-seq-segmentation.zip (4.8 GB, 7,630 members)\n  data/training/cellpose/cells/adjusted_image_2nt_<rep>_<moi>_<hpi>_<fov>.tiff\
+      \     7 (100.7 MB each)\n  data/training/cellpose/cells/..._seg.npy                            \
+      \             7 (Cellpose labels)\n  data/training/cellpose/nuclei/dapi_strain_PR8_rep3_hpi5_fov<1-5>.tif\
+      \             5 (16.8 MB each)\n  data/training/cellpose/nuclei/..._seg.npy                    \
+      \                    5 (Cellpose labels)\n  models/cellpose/{cells,nuclei}                     \
+      \                              2 models (53 MB)\n  analysis/segmentation/{cDNA_vRNA,plp_cumulative,plp_individual,seq_2nt,specificity}/rep*/.../\n\
+      \      fov_<n>_{cp_masks,cpws_cells,cp_output}.png                                  7,604 model\
+      \ outputs (no raw images)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/13833478/files/mudRapp-seq-segmentation.zip::data/training/cellpose/nuclei/dapi_strain_PR8_rep3_hpi5_fov1.tif
+    - https://zenodo.org/records/13833478/files/mudRapp-seq-segmentation.zip::data/training/cellpose/nuclei/dapi_strain_PR8_rep3_hpi5_fov1_seg.npy
+    size_bytes: 62048406
+    description: 'Smallest nucleus training pair: one DAPI TIFF and its Cellpose _seg.npy'
+  arrays:
+  - role: raw
+    path_pattern: mudRapp-seq-segmentation.zip::data/training/cellpose/nuclei/dapi_strain_*_fov[0-9].tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - 0.0
+    - 0.0155
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: DAPI nucleus images (5).
+  - role: raw
+    path_pattern: mudRapp-seq-segmentation.zip::data/training/cellpose/cells/adjusted_image_*.tiff
+    format: tiff
+    axes: yxs
+    shape:
+    - 2048
+    - 2048
+    - 3
+    shape_varies: false
+    dtype: float64
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Cell images (7), 3 samples per pixel (photometric RGB) ; README: intensity re-scaled
+      (seq_2nt_scale_intensity.py), non-ICC images. Not sampled.'
+  - role: label
+    path_pattern: mudRapp-seq-segmentation.zip::data/training/cellpose/*/*_seg.npy
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing: <stem>.tif(f) <-> <stem>_seg.npy in the same folder. NPY header: dtype
+      object (|O), shape () = a pickled Cellpose dict; its first key ''outlines'' is uint32 2048x2048,
+      matching the image grid. Not unpickled (untrusted data), so masks were not read.'
+  notes: 'Exact listing of the single Zenodo zip (7,630 members). Probed nuclei fov1 TIFF (2048x2048 float32,
+    uncompressed) and cells 8hpi_fov1 TIFF (2048x2048x3 float64, photometric RGB, axis order not stated
+    in file; yxs: samples per pixel last). Sampled nuclei fov1: min 0 max 0.0155, mean 0.00137 (one sample).
+    _seg.npy labels are pickled Python objects: not loadable without allow_pickle, so neither TensorSwitch
+    nor the enricher can read them. README: cell model trained on 7 images with human-provided sparse
+    labels; pixel size 0.103 um stated for the seq_2nt images (the cell set); nuclei set (PR8 rep3) pixel
+    size not stated, so voxel_size_nm stays null.'
