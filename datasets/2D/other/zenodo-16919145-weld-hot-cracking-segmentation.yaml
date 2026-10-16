@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: zenodo-16919145-weld-hot-cracking-segmentation
 title: Semantic Segmentation for Hot Cracking
 short_name: Weld hot-crack segmentation (light microscopy)
-description: Light-microscope (Keyence) colour images at 50x and 100x of tungsten-inert-gas weld surfaces from modified Varestraint-Transvarestraint tests, with paired 8-bit binary masks marking hot-crack pixels (255 = crack), made for training crack segmentation networks. Folders are organised wire / magnification / train or mask / numbered images.
+description: Light-microscope (Keyence) colour images at 50x and 100x of tungsten-inert-gas weld surfaces
+  from modified Varestraint-Transvarestraint tests, with paired 8-bit binary masks marking hot-crack pixels
+  (255 = crack), made for training crack segmentation networks. Folders are organised wire / magnification
+  / train or mask / numbered images.
 landing_url: https://zenodo.org/records/16919145
 doi: 10.5281/zenodo.16919145
 repository: Zenodo
@@ -20,7 +23,8 @@ imaging:
   voxel_size_nm: null
   channels: 3
   organism: []
-  sample: Surfaces of welded high-strength fine-grained structural steel Varestraint-Transvarestraint test samples (TIG welds, several filler wires)
+  sample: Surfaces of welded high-strength fine-grained structural steel Varestraint-Transvarestraint
+    test samples (TIG welds, several filler wires)
   labels_stains: []
 data:
   formats:
@@ -35,7 +39,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: 8-bit grayscale PNG masks (255 = crack, 0 = background) with the same height and width as the matching colour image
+  format: 8-bit grayscale PNG masks (255 = crack, 0 = background) with the same height and width as the
+    matching colour image
   source: manual
 ml:
   tasks:
@@ -57,5 +62,72 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-16T06:00:00Z'
-notes: 'Materials-science light microscopy (reflected light, Keyence optical microscope), so modality is other. The zip lists 1,218 PNGs plus one .db file; the description pairs every train image with a mask of the same size, so 609 image/mask pairs is inferred (only the 1/100/mask folder was seen in the listing). Image sizes vary (no fixed size). Masks were drawn manually with a self-written OpenCV program. Pixel size and microscope objective details not stated on the record. No paper is linked on the record and a Europe PMC author search found none about this dataset, so publications is empty. No train/test split is provided.'
+  last_checked: '2026-10-16T05:12:38Z'
+notes: 'Materials-science light microscopy (reflected light, Keyence optical microscope), so modality
+  is other. The zip lists 1,218 PNGs plus one .db file; the description pairs every train image with a
+  mask of the same size, enricher: the zip listing pairs all 609 train/mask files by path. Image sizes
+  vary (no fixed size). Masks were drawn manually with a self-written OpenCV program. Pixel size and microscope
+  objective details not stated on the record. No paper is linked on the record and a Europe PMC author
+  search found none about this dataset, so publications is empty. No train/test split is provided.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "segmented.zip  (11.4 GB, 1219 members)\n  dataset_upload/\n    <wire 1-5>/50/train/   322 png\
+      \ in total (RGB images)\n    <wire 1-5>/50/mask/    322 png (binary masks, same names)\n    <wire\
+      \ 1-5>/100/train/  287 png\n    <wire 1-5>/100/mask/   287 png\n    4/100/Thumbs.db"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/16919145/files/segmented.zip::dataset_upload/1/50/train/26.png
+    - https://zenodo.org/records/16919145/files/segmented.zip::dataset_upload/1/50/mask/26.png
+    size_bytes: 5776865
+    description: smallest pair, wire 1 at 50x, image 26 (2048x1536 RGB PNG) and its mask (no crack pixels
+      in this one)
+  arrays:
+  - role: raw
+    path_pattern: segmented.zip::dataset_upload/*/*/train/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1536
+    - 2048
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Sizes vary (e.g. 1536x2048 at 50x, 1951x4164 at 100x).
+  - role: label
+    path_pattern: segmented.zip::dataset_upload/*/*/mask/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1536
+    - 2048
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: hot crack
+    alignment: same-grid
+    alignment_notes: Mask = same wire/magnification folder and file name under mask/ instead of train/;
+      all 609 images have a mask (listing). Some masks are empty (sampled 1/50/mask/26.png is all 0).
+  notes: 'Listing: Zenodo API + zip index, 1 file, 11,427,069,320 bytes (exact): 609 image/mask pairs,
+    all paired by path, plus Thumbs.db. Probed 3 images and 1 mask; sampled pair 1/50/26 (image values
+    0-255, mask all 0) and mask 3/100/30 (values {0,255}, 0.4% crack). value_range from these samples.
+    Voxel size not found; checked: PNG headers (no pHYs), Zenodo description; no paper. download_url is
+    the one direct archive.'
