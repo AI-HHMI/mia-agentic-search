@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: zenodo-8383580-her2-breast-he-tiles
 title: 2 million histological images of breast cancer tumors with her2 labels
 short_name: Breast cancer H&E tiles with HER2 status
-description: 2,051,877 non-overlapping 256 x 256 px H&E tiles (0.5 um/px) from breast cancer biopsy and resection slides of A.C. Camargo Cancer Center patients, restricted by a tumour-detection network to tumour and surrounding tissue. Tiles are sorted by the slide-level HER2 status (negative, low, high) from IHC and ISH tests.
+description: 2,051,877 non-overlapping 256 x 256 px H&E tiles (0.5 um/px) from breast cancer biopsy and
+  resection slides of A.C. Camargo Cancer Center patients, restricted by a tumour-detection network to
+  tumour and surrounding tissue. Tiles are sorted by the slide-level HER2 status (negative, low, high)
+  from IHC and ISH tests.
 landing_url: https://zenodo.org/records/8383580
 doi: 10.5281/zenodo.8383580
 repository: Zenodo
@@ -45,7 +48,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: Class given by the folder name inside dataset.zip (her2_neg, her2_low, her2_high), plus a metadata.csv; labels come from slide-level IHC and ISH results, so every tile inherits its slide's label
+  format: Class given by the folder name inside dataset.zip (her2_neg, her2_low, her2_high), plus a metadata.csv;
+    labels come from slide-level IHC and ISH results, so every tile inherits its slide's label
   source: proofread
 ml:
   tasks:
@@ -68,5 +72,68 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-16T05:10:00Z'
-notes: 'dataset.zip (35.6 GB) lists 2,051,877 JPEGs plus metadata.csv: her2_neg 804,562, her2_low 767,652, her2_high 479,663 (zip central directory, not unpacked; metadata.csv contents not read). Labels are weak, slide-level HER2 status (IHC 0 = negative; IHC 1+, or 2+ with negative ISH = low; 2+ with positive ISH or 3+ = high), not tile-level annotations, and tiles come from a tumour-detection network, so some may not show tumour. Tile scale of 0.5 um/px is stated on the Zenodo page and in the paper Methods. Counts differ between sources (Zenodo page 426 slides; paper 546 slides, 504 patients), and the paper says slides were digitised at 0.25 um/px, the Zenodo page says 40x on a Leica Aperio AT2. source is proofread because ground truth comes from clinical tests, not manual image labelling.'
+  last_checked: '2026-10-16T05:07:56Z'
+notes: 'dataset.zip (35.6 GB) lists 2,051,877 JPEGs plus metadata.csv: her2_neg 804,562, her2_low 767,652,
+  her2_high 479,663 (zip central directory, not unpacked; enricher: metadata.csv read, 428 slides with
+  case_id, slide_id, Target). Labels are weak, slide-level HER2 status (IHC 0 = negative; IHC 1+, or 2+
+  with negative ISH = low; 2+ with positive ISH or 3+ = high), not tile-level annotations, and tiles come
+  from a tumour-detection network, so some may not show tumour. Tile scale of 0.5 um/px is stated on the
+  Zenodo page and in the paper Methods. Counts differ between sources (Zenodo page 426 slides; paper 546
+  slides, 504 patients), and the paper says slides were digitised at 0.25 um/px, the Zenodo page says
+  40x on a Leica Aperio AT2. source is proofread because ground truth comes from clinical tests, not manual
+  image labelling.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "dataset.zip  (35.6 GB, zip64, 2,051,881 entries)\n  metadata.csv   (428 slides: case_id, slide_id,\
+      \ Target)\n  her2_neg/   804,562 jpg  (<slide_id>-<tile no>.jpg)\n  her2_low/   767,652 jpg\n  her2_high/\
+      \  479,663 jpg"
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: dataset.zip::her2_*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 14
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Tile name <slide_id>-<7-digit tile no>.jpg (e.g. her2_low/AC212-223-0001570.jpg);
+      class = parent folder, which repeats the slide-level Target in metadata.csv.
+  - role: label
+    path_pattern: dataset.zip::metadata.csv
+    format: csv
+    axes: null
+    shape:
+    - 428
+    - 3
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes:
+    - id: her2_neg
+      name: HER2 negative
+    - id: her2_low
+      name: HER2 low
+    - id: her2_high
+      name: HER2 high
+    alignment: not-applicable
+    alignment_notes: 'Slide table: case_id, slide_id, Target; join tiles to it by the slide_id prefix
+      of the tile name.'
+  notes: 'Listing: Zenodo API, 1 file, 35,632,061,259 bytes (exact). The zip central directory is 180
+    MB (2,051,881 entries), so only its first and last entries were read by range, plus metadata.csv (10,817
+    B, 428 slide rows) and one tile (17,437 B: 256x256 RGB JPEG, values 14-255, one sample). Folder counts
+    are the harvester''s. No sample unit: any single member needs the 180 MB index read first, so none
+    was download-checked. download_url is the one direct archive (usable, range requests).'
