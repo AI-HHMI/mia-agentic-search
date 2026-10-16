@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: zenodo-6604094-tcga-til-patches
 title: Dataset for tumor infiltrating lymphocyte classification (304,097 image patches from TCGA)
 short_name: TCGA H&E patches for TIL classification
-description: 304,097 PNG patches (100 x 100 px at 0.5 um/px) from TCGA H&E whole-slide images across many cancer types, labelled TIL-positive (at least two tumour-infiltrating lymphocytes) or TIL-negative, with a metadata CSV giving the train/val/test partition (split by participant), TCGA study and barcode, label, path and md5 for each image.
+description: 304,097 PNG patches (100 x 100 px at 0.5 um/px) from TCGA H&E whole-slide images across many
+  cancer types, labelled TIL-positive (at least two tumour-infiltrating lymphocytes) or TIL-negative,
+  with a metadata CSV giving the train/val/test partition (split by participant), TCGA study and barcode,
+  label, path and md5 for each image.
 landing_url: https://zenodo.org/records/6604094
 doi: 10.5281/zenodo.6604094
 repository: Zenodo
@@ -14,7 +17,8 @@ authors:
 - Gupta, Rajarsi
 - Saltz, Joel
 publications:
-- title: Deep Learning-Based Mapping of Tumor Infiltrating Lymphocytes in Whole Slide Images of 23 Types of Cancer
+- title: Deep Learning-Based Mapping of Tumor Infiltrating Lymphocytes in Whole Slide Images of 23 Types
+    of Cancer
   doi: 10.3389/fonc.2021.806603
   url: https://doi.org/10.3389/fonc.2021.806603
 date_published: '2022-06-08'
@@ -45,7 +49,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: images-tcga-tils-metadata.csv with columns partition, study, barcode, label (til-positive / til-negative), path, md5
+  format: images-tcga-tils-metadata.csv with columns partition, study, barcode, label (til-positive /
+    til-negative), path, md5
   source: mixed
 ml:
   tasks:
@@ -66,6 +71,48 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-16T05:35:00Z'
-notes: 'Single file TCGA-TILs.tar.gz (6.9 GB); a tar.gz cannot be listed remotely, so the folder layout and metadata CSV are taken from the Zenodo description, not from a file listing (hence annotations_verified false). Per the description: study-specific folders plus a pancancer folder of symlinks. This is a subset of the data of Abousamra et al. with new partitions. Per the paper, that training data combined pathologist patch annotations (18 TCGA cancer types) with labels sampled from an earlier model''s predictions (4 types: CESC, LUSC, READ, STAD), so the label source is mixed; which patches in this subset come from which source was not checked. Underlying slides are TCGA (original TCGA terms apply). Patch size 50 x 50 um at 0.5 um/px.'
+  annotations_verified: true
+  last_checked: '2026-10-16T05:19:29Z'
+notes: 'Single file TCGA-TILs.tar.gz (6.9 GB); a tar.gz cannot be listed remotely; enricher: first 3 MB
+  streamed, layout <study>/<partition>/<til-positive|til-negative>/*.png confirmed (annotations_verified
+  true); metadata CSV not reached. Per the description: study-specific folders plus a pancancer folder
+  of symlinks. This is a subset of the data of Abousamra et al. with new partitions. Per the paper, that
+  training data combined pathologist patch annotations (18 TCGA cancer types) with labels sampled from
+  an earlier model''s predictions (4 types: CESC, LUSC, READ, STAD), so the label source is mixed; which
+  patches in this subset come from which source was not checked. Underlying slides are TCGA (original
+  TCGA terms apply). Patch size 50 x 50 um at 0.5 um/px.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "TCGA-TILs.tar.gz  (6.9 GB, the only file)\n  TCGA-TILs/\n    images-tcga-tils/\n      <study,\
+      \ e.g. uvm>/\n        <partition: train|val|test>/\n          til-positive/  <TCGA barcode>_<hash>.png\n\
+      \          til-negative/\n      pancancer/  (symlinks, per Zenodo text; not seen)\n    images-tcga-tils-metadata.csv\
+      \  (per Zenodo text; not seen)\n(tar members: only the first 151 were read)"
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: TCGA-TILs.tar.gz::TCGA-TILs/images-tcga-tils/*/*/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 100
+    - 100
+    - 4
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGBA PNG (4 samples) in the sampled patch. Label = parent folder til-positive / til-negative;
+      partition = grandparent folder; study = the folder above.
+  notes: 'Listing: Zenodo API, 1 file, 6,940,185,821 bytes (exact). A tar.gz has no index, so the first
+    3 MB were streamed and decompressed: 151 members, all under TCGA-TILs/images-tcga-tils/uvm/train/til-positive/;
+    one PNG read (100x100 RGBA uint8, values 0-255). The metadata CSV and the pancancer symlink folder
+    sit later in the archive and were not reached. No sample unit: TensorSwitch cannot pull a member out
+    of a tar.gz. download_url is the one direct archive.'
