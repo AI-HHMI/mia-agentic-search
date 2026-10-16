@@ -1,15 +1,16 @@
 schema_version: '1.2'
 id: zenodo-21487212-breast-cancer-he-ihc-masks
 title: Breast Cancer Histology and Immunohistochemistry Image Dataset
-short_name: Breast cancer H&E and IHC with masks (histology)
-description: 55 brightfield fields of view (4096 x 3286 px, x10) from 11 breast cancer cases, five stains
-  per case (H&E, ER, HER2, Ki-67, PR immunohistochemistry), each with a binary PNG mask (tumour cells,
-  or only positive tumour cells for HER2 and Ki-67), and a per-case JSON with tumour profile, scores and
-  image metadata.
+short_name: Breast cancer H&E/IHC tumor-cell masks (histology)
+description: 55 high-resolution (4096 x 3286 px) histology fields of view from 11
+  breast cancer cases, each case with H&E and four IHC stainings (ER, PR, HER2, Ki-67)
+  imaged at 10x, with a binary PNG mask per image (tumor cells; positive tumor cells
+  only for HER2 and Ki-67) and per-case JSON metadata (tumor profile, receptor scores,
+  antibodies).
 landing_url: https://zenodo.org/records/21487212
-doi: null
+doi: 10.5281/zenodo.21487212
 repository: Zenodo
-accession: '21487212'
+accession: null
 authors:
 - Oleh Berezsky
 - Grygoriy Melnyk
@@ -20,19 +21,20 @@ date_published: '2026-07-22'
 imaging:
   modality:
   - histology-WSI
+  - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: 3
+  channels: null
   organism:
   - Homo sapiens
-  sample: Human breast cancer tissue (invasive carcinoma cases), H&E and IHC (ER, HER2, Ki-67, PR; DAKO
-    antibodies), field-of-view images at x10
+  sample: De-identified breast cancer tissue (11 cases, mostly invasive ductal carcinoma),
+    H&E and immunohistochemistry (ER, PR, HER2, Ki-67; DAKO antibodies)
   labels_stains:
   - H&E
   - ER
+  - PR
   - HER2
   - Ki-67
-  - PR
 data:
   formats:
   - jpeg
@@ -40,15 +42,15 @@ data:
   size_bytes: 518528624
   n_items: 55
   access: open
-  download_url: https://zenodo.org/api/records/21487212/files/dataset_images_AHIHCI.zip/content
+  download_url: https://zenodo.org/records/21487212/files/dataset_images_AHIHCI.zip
   download_method: http
 annotations:
   present: true
   types:
   - semantic-segmentation
-  coverage: dense
-  format: Binary PNG masks in masks/<case>/..._MASK.png; per-case JSON (case profile, scores, image list
-    with mask paths and mask type)
+  coverage: unknown
+  format: Binary PNG masks (masks/<case>/*_MASK.png); per-case JSON metadata lists
+    mask_type (tumor_cells / only_positive_tumor_cells)
   source: unknown
 ml:
   tasks:
@@ -60,77 +62,21 @@ license:
   spdx: CC-BY-NC-4.0
   url: https://creativecommons.org/licenses/by-nc/4.0/
 provenance:
-  discovered_by: harvest-literature
-  discovered_at: '2026-10-01T07:21:38Z'
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-16T11:48:16Z'
   evidence_urls:
+  - https://zenodo.org/records/21487212
   - https://zenodo.org/api/records/21487212
-  - https://zenodo.org/api/records/21487212/files/dataset_images_AHIHCI.zip/content
-  confidence: 0.7
+  - https://zenodo.org/records/21487212/files/dataset_images_AHIHCI.zip
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-01T09:16:55Z'
-notes: 'Zenodo record and zip listed with peek_archive (121 files: 55 jpg, 55 png masks, 11 case JSON);
-  one case JSON read (ID0001: invasive ductal carcinoma, five stains, x10, mask_type tumor_cells or only_positive_tumor_cells).
-  No paper found (Europe PMC title search failed; no related identifiers on Zenodo). Annotation procedure,
-  annotators, scanner/camera and pixel size are not stated. Modality histology-WSI is used as the closest
-  schema value for H&E/IHC tissue images, though these are fields of view, not whole slides. CC BY-NC
-  (non-commercial).'
-technical:
-  method: sample
-  size_source: file-listing
-  layout:
-    tree: "dataset_images_AHIHCI.zip  (518,528,624 B; 121 members)\n  dataset_images_AHIHCI/\n    ID<case>.json\
-      \            11 case files (31.6 KB)\n    images/<case>/ID<case>_<stain>_1.jpg   11 dirs x 5 stains\
-      \ (ER, H&E, HER2, KI67, PR), 514.1 MB\n    masks/<case>/ID<case>_<stain>_1_MASK.png  55 PNG (4.8\
-      \ MB)\n"
-    n_files: 1
-    listing_complete: true
-  sample:
-    urls:
-    - https://zenodo.org/records/21487212/files/dataset_images_AHIHCI.zip::dataset_images_AHIHCI/images/0001/ID0001_ER_1.jpg
-    - https://zenodo.org/records/21487212/files/dataset_images_AHIHCI.zip::dataset_images_AHIHCI/masks/0001/ID0001_ER_1_MASK.png
-    size_bytes: 8065068
-    description: One IHC field (case 0001, ER) and its mask.
-  arrays:
-  - role: raw
-    path_pattern: images/<case>/ID<case>_<stain>_1.jpg
-    format: jpeg
-    axes: yxs
-    shape:
-    - 3286
-    - 4096
-    - 3
-    shape_varies: null
-    dtype: uint8
-    compression: jpeg
-    value_range:
-    - 41
-    - 255
-    normalization: unknown
-    alignment: not-applicable
-    alignment_notes: null
-  - role: label
-    path_pattern: masks/<case>/ID<case>_<stain>_1_MASK.png
-    format: png
-    axes: yx
-    shape:
-    - 3286
-    - 4096
-    shape_varies: null
-    dtype: bool
-    compression: deflate
-    value_range: null
-    encoding: binary
-    classes: null
-    alignment: same-grid
-    alignment_notes: masks/<case>/ID<case>_<stain>_1_MASK.png pairs with images/<case>/ID<case>_<stain>_1.jpg
-      (stain case differs, e.g. her2 vs HER2); same 3286 x 4096 grid. Case JSON lists image and mask paths
-      with mask_type.
-  notes: 'Listing: Zenodo API + zip central directory (121 members). Probed ER and H&E JPEGs (3286x4096x3
-    uint8 RGB, lossy) and the ER mask (3286x4096 1-bit grey PNG, dtype bool, so binary). Sampled ID0001_ER_1.jpg:
-    range 41-255, p50 240, mean 232 (mostly bright background); one sample only. tools/sample.py failed
-    on the 1-bit mask (numpy bool percentile error), so mask pixel counts were not measured. ID0001.json
-    read: patient age/sex, tumour profile, per-stain antibody (DAKO clones), positive-cell %, Allred /
-    HER2 scores.'
+  last_checked: '2026-10-16T11:48:16Z'
+notes: 'Zip (519 MB, 121 files) listed with peek_archive: 55 JPEG images (11 cases
+  x 5 stains), 55 PNG masks and 11 case JSON files (read ID0001.json: mask_type tumor_cells,
+  or only_positive_tumor_cells for HER2/Ki-67, magnification x10). No paper is linked
+  on the Zenodo record and none was found, so annotation procedure/annotator, mask
+  coverage, pixel size and scanner are not stated (annotations.source unknown, voxel_size_nm
+  null). Small dataset (11 cases). CC-BY-NC-4.0 limits commercial use.'
