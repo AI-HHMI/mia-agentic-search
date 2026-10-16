@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-2593855-sam-human-tibia-endosteum-masks
 title: Scanning Acoustic Microscopy (SAM) images of human tibiae
 short_name: Human tibia cortical bone (acoustic microscopy)
-description: 19 scanning acoustic microscopy (100 MHz) acoustic-impedance images of polished mid-shaft cross sections of human
-  tibiae from 19 body donors (12 um pixels), rotated to a common anatomical frame, with drawn endosteum masks and masks of the
-  anteromedial region of interest (ROIUS) used to measure cortical pores.
+description: 19 scanning acoustic microscopy (100 MHz) acoustic-impedance images of polished mid-shaft cross sections
+  of human tibiae from 19 body donors (12 um pixels), rotated to a common anatomical frame, with drawn endosteum
+  masks and masks of the anteromedial region of interest (ROIUS) used to measure cortical pores.
 landing_url: https://zenodo.org/records/2593855
 doi: 10.5281/zenodo.2593855
 repository: Zenodo
@@ -29,7 +29,8 @@ imaging:
   channels: 1
   organism:
   - Homo sapiens
-  sample: Polished cross sections of human tibia mid-shaft cortical bone (19 donors, mean age 84), scanned in degassed PBS at 25 C
+  sample: Polished cross sections of human tibia mid-shaft cortical bone (19 donors, mean age 84), scanned in degassed
+    PBS at 25 C
   labels_stains: []
 data:
   formats:
@@ -37,14 +38,15 @@ data:
   size_bytes: 67679605
   n_items: 19
   access: open
-  download_url: https://zenodo.org/api/records/2593855/files/SAM_images.zip/content
+  download_url: https://zenodo.org/records/2593855
   download_method: http
 annotations:
   present: true
   types:
   - semantic-segmentation
   coverage: partial
-  format: Binary mask TIFFs, one per image, in masks.zip folders masks/endo (endosteum) and masks/00_eval/ROIUS (anteromedial region of interest)
+  format: Binary mask TIFFs, one per image, in masks.zip folders masks/endo (endosteum) and masks/00_eval/ROIUS
+    (anteromedial region of interest)
   source: manual
 ml:
   tasks:
@@ -63,13 +65,101 @@ provenance:
   - https://zenodo.org/api/records/2593855/files/masks.zip/content
   - https://zenodo.org/api/records/2593855/files/SAM_images.zip/content
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6469812/fullTextXML
+  - https://zenodo.org/records/2593855/files/readme.txt
   confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
   last_checked: '2026-10-16T12:40:00Z'
-notes: 'Zenodo listing and zip contents: SAM_images.zip has 19 TIFFs (72 MB), masks.zip 38 TIFF masks (endo and 00_eval/ROIUS, 19 each).
-  The paper (PLOS ONE 2019) gives a 100 MHz transducer, 19.8 um focal beam and a 12 um pixel size, notes that the endosteal
-  boundary was drawn manually and the other masks follow from thresholding, and points to the sister record 10.5281/zenodo.2605350 (full anonymized
-  study dataset, not covered here). Mask-to-image alignment was not checked. Modality is acoustic microscopy, not optical, so recorded as other.'
+notes: 'Zenodo listing and zip contents: SAM_images.zip has 19 TIFFs (72 MB), masks.zip 38 TIFF masks (endo and
+  00_eval/ROIUS, 19 each). The paper (PLOS ONE 2019) gives a 100 MHz transducer, 19.8 um focal beam and a 12 um
+  pixel size, notes that the endosteal boundary was drawn manually and the other masks follow from thresholding,
+  and points to the sister record 10.5281/zenodo.2605350 (full anonymized study dataset, not covered here). Modality
+  is acoustic microscopy, not optical, so recorded as other. enricher: download_url is the record page (was SAM_images.zip
+  only; images and masks are two zips); TIFF descriptions state ''pixelsize: 0.012'' (mm), matching 12 um.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'zenodo record 2593855 (3 files, 67.7 MB)
+
+      readme.txt
+
+      SAM_images.zip/SAM_images/   19 <donor><side>.tif (e.g. 10L.tif, ~5 MB)
+
+      masks.zip/masks/endo/   19 <donor><side>.tif   (endosteum masks)
+
+      masks.zip/masks/00_eval/ROIUS/   19 <donor><side>.tif   (anteromedial ROI masks)'
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/2593855/files/SAM_images.zip::SAM_images/10L.tif
+    - https://zenodo.org/records/2593855/files/masks.zip::masks/endo/10L.tif
+    - https://zenodo.org/records/2593855/files/masks.zip::masks/00_eval/ROIUS/10L.tif
+    size_bytes: 5117376
+    description: 'Donor 10L: impedance image with its endosteum and ROIUS masks (zip members).'
+  arrays:
+  - role: raw
+    path_pattern: SAM_images.zip/SAM_images/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2922
+    - 2074
+    shape_varies: true
+    dtype: uint16
+    compression: packbits
+    value_range:
+    - 0
+    - 60508
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Acoustic impedance maps (readme: converted from SAM RF signals, rotated to a common APML frame,
+      anterior at the bottom). TIFF description: ''pixelsize: 0.012; divide pixels by 4369 to get Z'', i.e. values
+      are impedance x 4369; 0 = background (60% of the sample).'
+  - role: label
+    path_pattern: masks.zip/masks/endo/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2922
+    - 2074
+    shape_varies: true
+    dtype: bool
+    compression: other
+    value_range: null
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 1
+      name: endosteum (inside)
+    alignment: same-grid
+    alignment_notes: 'Manually drawn endosteum masks (readme, paper). Pairing rule: same file name (<donor><side>.tif)
+      in SAM_images/, masks/endo/ and masks/00_eval/ROIUS/; probed shapes match (2922x2074) and the same pixelsize
+      tag.'
+  - role: label
+    path_pattern: masks.zip/masks/00_eval/ROIUS/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2922
+    - 2074
+    shape_varies: true
+    dtype: bool
+    compression: other
+    value_range: null
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 1
+      name: anteromedial region of interest
+    alignment: same-grid
+    alignment_notes: 'Anteromedial ROI masks used for pore measurement (paper: derived, not hand-drawn); same grid
+      as the image.'
+  notes: 'Listing: tools/listing.py --expand-zips (3 files, 57 zip members, 67,679,605 B). Sampled raw 10L.tif (4.8
+    MB): 2922x2074 uint16 0-60508 (p99 42328), one sample. Masks probed only (1-bit bool TIFFs; tools/sample.py
+    fails on bool arrays), compression code not one tifffile names (other). Shapes may vary between donors (one
+    probed). Voxel size 12 um confirmed by the TIFF descriptions (pixelsize 0.012, mm by the paper). No single archive:
+    images and masks are separate zips, so download_url is the record page.'
