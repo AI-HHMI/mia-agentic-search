@@ -1,0 +1,137 @@
+schema_version: '1.2'
+id: zenodo-17004172-soybean-rust-spore-bud-segmentation
+title: Time-Series Annotated Dataset of Spore Bud Morphological Development
+short_name: Fungal spore bud time-series segmentation
+description: 4,414 microscopy images of germinating Phakopsora pachyrhizi (Asian soybean rust) spores
+  under DMSO treatment, taken from the Cell Image Library and sorted into nine 15-minute time folders
+  (90 to 210 min after germination), each with a manually drawn segmentation label image. Released with
+  the MS-UNet segmentation paper.
+landing_url: https://zenodo.org/records/17004172
+doi: 10.5281/zenodo.17004172
+repository: Zenodo
+accession: '17004172'
+authors:
+- Peng Su
+- Tian Liu
+- Liangzheng Sun
+- Pengwei Xie
+- Qiulong Wu
+- Quan Zou
+publications:
+- title: 'MS-UNet: A Hybrid Network with a Multi-Scale Vision Transformer and Attention Learning Confusion
+    Regions for Soybean Rust Fungus'
+  doi: 10.3390/s25175582
+  url: https://doi.org/10.3390/s25175582
+date_published: '2025-08-30'
+imaging:
+  modality:
+  - other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Phakopsora pachyrhizi
+  sample: Germinating Phakopsora pachyrhizi spores treated with DMSO, imaged every 15 minutes from about
+    90 to 210 minutes after germination (source images from the Cell Image Library)
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: 520398417
+  n_items: 4414
+  access: open
+  download_url: https://zenodo.org/api/records/17004172/files/dataset.zip/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: PNG label images in labels/<time>min/ matching images/<time>min/ file names (9 time folders,
+    4,414 pairs)
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-16T04:15:10Z'
+  evidence_urls:
+  - https://zenodo.org/records/17004172
+  - https://zenodo.org/api/records/17004172
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12430981/fullTextXML
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-16T05:18:13Z'
+notes: 'The zip listing (8,828 PNGs) shows images/ and labels/ each with nine folders (090min to 210min;
+  258 to 556 files per folder). The paper (Data section) says the images come from the Cell Image Library
+  and are split by time interval for cross-validation (7 train, 1 val, 1 test intervals), so no fixed
+  split is in the zip. Imaging modality, magnification and pixel size are not stated on the record or
+  in the paper text, so modality is other and voxel size null. Images are separate frames, not tracked
+  objects, so dimensionality is 2D. The original CIL entry was not identified; check that it is not already
+  catalogued. enricher: images are grey stored as RGB (channels 1, was null); masks 0/255 with soft edges.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "dataset.zip  (520 MB, 8828 members)\n  images/{090,105,120,135,150,165,180,195,210}min/NNNNNN.png\
+      \  4414 png\n  labels/{090,...,210}min/NNNNNN.png                          4414 png (same names)"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/17004172/files/dataset.zip::images/090min/000001.png
+    - https://zenodo.org/records/17004172/files/dataset.zip::labels/090min/000001.png
+    size_bytes: 116992
+    description: first 90-min image (685x503, grey stored as RGB) and its label PNG
+  arrays:
+  - role: raw
+    path_pattern: dataset.zip::images/*min/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 503
+    - 685
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: The 3 RGB samples are identical in the sampled file (grey stored as RGB).
+  - role: label
+    path_pattern: dataset.zip::labels/*min/*.png
+    format: png
+    axes: yx
+    shape:
+    - 503
+    - 685
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    alignment: same-grid
+    alignment_notes: Label = same time folder and file name under labels/. Mostly 0 (98.3%) and 255 (1.2%),
+      but 0.6% of pixels take values 1-254 (soft edges), so it needs thresholding; class meaning (fungus
+      vs background) is not documented.
+  notes: 'Listing: Zenodo API + zip index, 1 file, 520,398,417 bytes (exact): 4,414 image/label pairs
+    in 9 time folders. Probed and sampled pair 090min/000001 (raw 503x685x3 uint8, values 0-255, grey
+    as RGB; label 503x685 uint8, values 0-255 with 256 distinct, mostly 0/255). value_range from one sample.
+    Voxel size not found; checked: PNG headers, Zenodo description, paper full text (Europe PMC, harvester).
+    download_url is the one direct archive.'
