@@ -1,0 +1,71 @@
+schema_version: '1.2'
+id: czi-subcell-hpa-single-cell-crops
+title: SubCell Training Data From Human Protein Atlas
+short_name: SubCell HPA single-cell crops (confocal)
+description: Single-cell crops (1024x1024 PNG, centred on each segmented cell) from Human Protein Atlas Subcellular Section v23 confocal immunofluorescence images, with four channels (microtubules, endoplasmic reticulum, DNA, protein of interest) and a cell mask per crop. Protein subcellular localization labels come from HPA expert annotation per field of view. Released with the SubCell vision foundation models for training and benchmarking.
+landing_url: https://virtualcellmodels.cziscience.com/dataset/01933229-3c87-7818-be80-d7e5578bb0b7
+doi: null
+repository: other
+accession: null
+authors:
+- Lundberg Lab (Stanford University)
+- Chan Zuckerberg Initiative
+publications:
+- title: 'SubCell: Vision foundation models for microscopy capture single-cell biology'
+  doi: 10.1101/2024.12.06.627299
+  url: https://doi.org/10.1101/2024.12.06.627299
+date_published: '2024-11-18'
+imaging:
+  modality:
+  - confocal
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 4
+  organism:
+  - Homo sapiens
+  sample: Human cell lines (37 per the paper introduction) from the Human Protein Atlas; channels are microtubules, endoplasmic reticulum, DNA (DAPI) and the protein of interest.
+  labels_stains:
+  - microtubules
+  - endoplasmic reticulum
+  - DAPI
+  - protein of interest (antibody)
+data:
+  formats:
+  - png
+  size_bytes: null
+  n_items: null
+  access: open
+  download_url: https://czi-subcell-public.s3.amazonaws.com/?list-type=2&prefix=hpa-processed/cell_crops/
+  download_method: s3
+annotations:
+  present: true
+  types:
+  - classification
+  - other
+  coverage: dense
+  format: Per-crop 8-bit cell mask PNG (_cell_mask.png, from HPA-Cell-Segmentation); per-field-of-view metadata CSV with HPA protein localization labels
+  source: mixed
+ml:
+  tasks:
+  - classification
+  - self-supervised
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/CellProfiling/subcell-analysis
+license:
+  spdx: CC-BY-SA-3.0
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-17T13:18:48Z'
+  evidence_urls:
+  - https://virtualcellmodels.cziscience.com/dataset/01933229-3c87-7818-be80-d7e5578bb0b7
+  - https://www.biorxiv.org/content/10.1101/2024.12.06.627299v1.full
+  - https://czi-subcell-public.s3.amazonaws.com/?list-type=2&prefix=hpa-processed/cell_crops/10/&max-keys=8
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-17T13:18:48Z'
+notes: 'Hosted on the public S3 bucket s3://czi-subcell-public/hpa-processed/cell_crops/ (one subfolder per 96-well plate; listing of plate 10 shows _cell_image.png about 1.4-2.4 MB and _cell_mask.png about 5 KB per cell, plus a metadata CSV per field of view). Total image/cell count, total size, pixel size, microscope model and train/val/test split are not stated on the dataset page, in the listed S3 prefix or in the readable part of the paper (bioRxiv full text truncated at the end; Methods not fully read). Mask method (HPA-Cell-Segmentation) is automatic; localization labels are HPA manual expert annotation per field of view, so crops from one field share labels and may overlap. License CC BY-SA 3.0 as stated on the dataset page (inherited from HPA). Images are mostly 16-bit with a few 8-bit.'
