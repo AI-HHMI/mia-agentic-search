@@ -3,8 +3,8 @@ id: hf-genius-society-hep2-cell-patterns
 title: HEp2 (HEp-2 cell ANA pattern classification, Genius-Society mirror)
 short_name: HEp-2 cell staining pattern crops (fluorescence)
 description: 13,596 single-cell crops (PNG, 78x78 px in the sampled rows) of HEp-2 cells stained for antinuclear antibodies,
-  each with one of six pattern class labels (Centromere, Golgi, Homogeneous, NuMem, Nucleolar, Speckled), packed in data.zip with one
-  folder per class.
+  each with one of six pattern class labels (Centromere, Golgi, Homogeneous, NuMem, Nucleolar, Speckled), packed in data.zip
+  with one folder per class.
 landing_url: https://huggingface.co/datasets/Genius-Society/HEp2
 doi: null
 repository: HuggingFace
@@ -39,9 +39,9 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: 'One folder per class in data.zip (data/<Class>/NNNNN.png); the HF card exposes the same as a ClassLabel
-    column (Centromere, Golgi, Homogeneous, NuMem, Nucleolar, Speckled)'
-  source: unknown
+  format: One folder per class in data.zip (data/<Class>/NNNNN.png); the HF card exposes the same as a ClassLabel column (Centromere,
+    Golgi, Homogeneous, NuMem, Nucleolar, Speckled)
+  source: manual
 ml:
   tasks:
   - classification
@@ -62,15 +62,53 @@ provenance:
   - https://huggingface.co/datasets/Genius-Society/HEp2/resolve/main/data.zip
   - https://arxiv.org/abs/1504.02531
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22HEp-2+Cell+Image+Classification+with+Deep+Convolutional+Neural+Networks%22&format=json&resultType=core&pageSize=3
-  confidence: 0.55
+  - https://arxiv.org/pdf/1504.02531
+  confidence: 0.65
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-17T07:30:00Z'
-notes: 'HF mirror of a widely used HEp-2 classification benchmark; the card gives no original source, only a thanks link to the
-  paper (arXiv 1504.02531; full text not open access) and a tutorial repo. The MIT licence is the mirror owner''s card
-  field and may not match the original data holder''s terms. data.zip listed with peek_archive: 13,596 PNG crops in
-  class folders. Image size 78x78 seen only in the first rows of datasets-server. Microscope, pixel size, annotators
-  and any train/test split are not stated on the card, file listing or paper abstract. Related pending record:
-  uq-snphep2-hep2-cell-patterns.'
+  last_checked: '2026-10-17T08:05:00Z'
+notes: 'HF mirror; the card gives no original source. Class counts (Speckled 2831, Nucleolar 2598, Centromere 2741 ...) and
+  13,596 total match the ICPR 2014 contest training set as described in arXiv 1504.02531, which also states the preprocessing
+  these files show (min-max normalised, resized to 78x78). MIT is the mirror owner''s card field and may not match the original
+  data holder''s terms. No split. enricher: annotations.source manual (paper: ''manually annotated by specialists''; was unknown).
+  Voxel size left null: crops were resized to 78x78, so no pixel size applies. Related pending record: uq-snphep2-hep2-cell-patterns.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "data.zip  54,436,330 B (13,596 members)\n  data/\n    Centromere/   2741 .png  9.5 MB\n    Golgi/         724 .png\
+      \  2.6 MB\n    Homogeneous/  2494 .png 10.2 MB\n    NuMem/        2208 .png  9.4 MB\n    Nucleolar/    2598 .png  9.6\
+      \ MB\n    Speckled/     2831 .png 11.0 MB\n(HF repo also holds README.md, .gitattributes, .gitignore)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/Genius-Society/HEp2/resolve/main/data.zip::data/Homogeneous/00001.png
+    size_bytes: 4239
+    description: one 78x78 grey PNG crop of class Homogeneous (class = parent folder)
+  arrays:
+  - role: raw
+    path_pattern: data.zip::data/*/*.png
+    format: png
+    axes: yx
+    shape:
+    - 78
+    - 78
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: 'No separate label files: the class label is the parent folder (Centromere, Golgi, Homogeneous, NuMem
+      = nuclear membrane, Nucleolar, Speckled). File names are global running numbers, unique across folders.'
+  notes: 'Listing: HF tree API + data.zip central directory (tools/listing.py --expand-zips, complete, exact sizes): 13,596
+    PNGs in 6 class folders; size_bytes is data.zip only (README etc. add <4 KB). Probed 6 PNG headers (Centromere, Golgi,
+    Speckled): all 78x78 grey uint8, deflate. Sampled Homogeneous/00001.png (4,239 B): range [0, 255] (one sample), 239 unique
+    values. ''contrast-stretched'' from the paper''s preprocessing (each image min-max normalised, resized to 78x78; arXiv
+    1504.02531 sec. 3.2). Voxel size not applicable/not found; checked: PNG headers (no calibration), HF card, paper (20x/0.8
+    objective named, no pixel size; images resized anyway).'
