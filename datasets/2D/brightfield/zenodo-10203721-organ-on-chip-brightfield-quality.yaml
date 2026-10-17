@@ -1,0 +1,111 @@
+schema_version: '1.2'
+id: zenodo-10203721-organ-on-chip-brightfield-quality
+title: Organ-on-a-chip brightfield images labelled good or bad sample quality
+short_name: Organ-on-chip culture quality labels (brightfield)
+description: More than 3,000 brightfield microscope images of organ-on-a-chip cultures of six human cell lines (A549, Caco-2,
+  HPMEC, HUVEC, NHBE, HSAEC), each labelled 'good' or 'bad' sample quality by a biology expert. Images are sorted into train,
+  val and test folders, then by class, cell line and time after seeding, and a datasheet lists cell type, time after seeding
+  and, for some images, seeding density and flow rate. Intended for training classifiers that judge chip cultures automatically.
+landing_url: https://zenodo.org/records/10203721
+doi: 10.5281/zenodo.10203721
+repository: Zenodo
+accession: '10203721'
+authors:
+- Valērija Movčana
+- Arnis Strods
+- Karīna Narbute
+- Fēlikss Rūmnieks
+publications:
+- title: Synthetic Image Generation With a Fine-Tuned Latent Diffusion Model for Organ on Chip Cell Image Classification
+  doi: 10.23919/SPA59660.2023.10274460
+  url: https://doi.org/10.23919/SPA59660.2023.10274460
+date_published: '2023-11-24'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Homo sapiens
+  sample: Organ-on-a-chip cultures of A549, Caco-2, HPMEC, HUVEC, NHBE and HSAEC cells imaged on an automated brightfield
+    microscopy setup
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: 6710887117
+  n_items: 3072
+  access: open
+  download_url: https://zenodo.org/api/records/10203721/files/OOC_image_dataset.zip/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  coverage: dense
+  format: Class label (good or bad) given by the folder name, plus an Excel datasheet with cell type, time after seeding and,
+    for some images, seeding density and flow rate
+  source: manual
+ml:
+  tasks:
+  - classification
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: null
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-17T07:55:00Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/10203721
+  - https://zenodo.org/api/records/10203721/files/OOC_image_dataset.zip/content
+  - https://api.crossref.org/works/10.23919/SPA59660.2023.10274460
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-17T10:15:00Z'
+notes: 'Checked the Zenodo record and the zip listing (3,072 PNG files in train, val and test folders, sorted by class, cell
+  line and time after seeding). The related paper is not open access, so only its metadata was read; pixel size and microscope
+  are not stated on the Zenodo page. The labels are a sample quality grade, not cell-level annotation. enricher: channels
+  1 (grey PNGs probed); size from the exact listing (zip + datasheet, was rounded).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "OOC_datasheet.xlsx  119,712 B\nOOC_image_dataset.zip  6,710,767,405 B (3,072 members)\n  OOC_image_dataset/{train,val,test}/{good,bad}/cell_type_<A549|CACO|HPMEC|HSAEC|HUVEC|NHBE>/<0-1_days|2-3_days|4_days|4+_days>/<yymmdd>_<n>.png\n\
+      \  e.g. test/bad/cell_type_HPMEC/2-3_days/  57 .png  106.4 MB\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/10203721/files/OOC_image_dataset.zip/content::OOC_image_dataset/test/bad/cell_type_HUVEC/2-3_days/230405_39.png
+    size_bytes: 1961830
+    description: one 2056x1542 grey brightfield PNG of class 'bad' (class = folder)
+  arrays:
+  - role: raw
+    path_pattern: OOC_image_dataset.zip::OOC_image_dataset/*/*/cell_type_*/*/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1542
+    - 2056
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 13
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'No label files: split / class (good, bad) / cell line / time after seeding are the folder levels. OOC_datasheet.xlsx
+      adds per-image metadata (not read: no xlsx reader here).'
+  notes: 'Listing: Zenodo API + zip central directory (tools/listing.py --expand-zips, complete, exact sizes). Probed 2 PNG
+    headers (test/bad HUVEC 2-3_days, test/good A549 4_days): 2056x1542 grey uint8, deflate. Read 2 PNGs by zip range requests (3.6 MB):
+    ranges [18, 255] and [13, 255], 15.7% and 4.0% of pixels at 255 (bright saturation), from these files only. Voxel size
+    not found; checked: PNG headers (no calibration), Zenodo description (no microscope or pixel size), Crossref record of
+    the SPA 2023 paper (no full text). OOC_datasheet.xlsx not parsed.'
