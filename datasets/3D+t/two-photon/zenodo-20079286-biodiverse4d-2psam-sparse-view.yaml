@@ -2,10 +2,9 @@ schema_version: '1.2'
 id: zenodo-20079286-biodiverse4d-2psam-sparse-view
 title: 'BioDiverse4D: A Diverse 3D+Time Microscopy Dataset for Sparse-view Two-photon Synthetic Aperture Microscopy'
 short_name: Sparse-view 2P synthetic aperture pairs (3D+t)
-description: Paired sparse-view two-photon synthetic aperture microscopy measurements (input) and corresponding 3D / 4D
-  target volumes (gt) for training and benchmarking volumetric reconstruction, with microglia, neutrophil, bead-phantom and
-  NAOMi-simulated sets. Intended for sparse-view light-field microscopy reconstruction, time-lapse microscopy and deep-learning
-  image restoration.
+description: Paired sparse-view two-photon synthetic aperture microscopy measurements (input) and corresponding 3D / 4D target
+  volumes (gt) for training and benchmarking volumetric reconstruction, with microglia, neutrophil, bead-phantom and NAOMi-simulated
+  sets. Intended for sparse-view light-field microscopy reconstruction, time-lapse microscopy and deep-learning image restoration.
 landing_url: https://zenodo.org/records/20079286
 doi: 10.5281/zenodo.20079286
 repository: Zenodo
@@ -19,7 +18,7 @@ imaging:
   - two-photon
   dimensionality: 3D+t
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism: []
   sample: microglia, neutrophils, bead phantoms and NAOMi-simulated volumes
   labels_stains: []
@@ -27,7 +26,7 @@ data:
   formats:
   - tiff
   size_bytes: 6095711391
-  n_items: 10
+  n_items: 256
   access: open
   download_url: null
   download_method: http
@@ -64,8 +63,100 @@ verification:
   annotations_verified: true
   last_checked: '2026-10-17T13:30:00Z'
 notes: 'Zenodo API record read in full and the zips Microglia, Microglia_single, Neutrophil, NAOMi and Bead_tube_seq_group1
-  listed with peek_archive: each holds gt/vol_N.tif target volumes (NAOMi: delbg/gt) and, for the experimental sets,
-  input/inp_N.tif measurements, all TIFF. n_items counts the 10 zip archives; per-archive file counts are only partly
-  visible in the truncated listings. The record names no paper and points to a GitHub repository without giving its URL, and
-  a web search for the dataset name and author found neither, so species, voxel size, acquisition parameters and how the
-  target volumes were made are unknown. Species are not stated for the microglia and neutrophil samples.'
+  listed with peek_archive: each holds gt/vol_N.tif target volumes (NAOMi: delbg/gt) and, for the experimental sets, input/inp_N.tif
+  measurements, all TIFF. The record names no paper and points to a GitHub repository without giving its URL, and a web search
+  for the dataset name and author found neither, so species, voxel size, acquisition parameters and how the target volumes
+  were made are unknown. Species are not stated for the microglia and neutrophil samples. enricher: n_items 256 target volumes,
+  each paired with one input (was 10 archives); channels 1 from TIFF headers (was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'record 20079286  10 files, 6.1 GB (9 .zip, checksums.sha256)
+
+      Bead_tube_seq_group[1-4].zip/gt/       32 files   15.3 MB  vol_N.tif
+
+      Bead_tube_seq_group[1-4].zip/input/    32 files  164.2 MB  inp_N.tif
+
+      Microglia.zip/gt/                      30 files    3.3 GB
+
+      Microglia.zip/input/                   30 files  671.3 MB
+
+      Microglia_single.zip/gt/               32 files  998.5 MB
+
+      Microglia_single.zip/input/            32 files  203.1 MB
+
+      NAOMi.zip/delbg/gt/                    60 files    7.7 GB
+
+      NAOMi.zip/delbg/input/                 60 files    1.1 GB
+
+      NAOMi.zip/delsoma/gt/                  60 files    7.7 GB
+
+      NAOMi.zip/delsoma/input/               60 files    1.0 GB
+
+      Neutrophil.zip/gt/                     10 files  870.9 MB  vol_31..40
+
+      Neutrophil.zip/input/                  10 files  178.0 MB
+
+      Neutrophil_single.zip/gt/              32 files  998.5 MB
+
+      Neutrophil_single.zip/input/           32 files  203.1 MB
+
+      (zip member sizes uncompressed; 512 TIFFs in all)'
+    n_files: 10
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/20079286/files/Bead_tube_seq_group1.zip::input/inp_1.tif
+    - https://zenodo.org/records/20079286/files/Bead_tube_seq_group1.zip::gt/vol_1.tif
+    size_bytes: 6576504
+    description: 'Bead_tube_seq_group1: one sparse-view input (13x512x512) and its target volume (64x512x512), uint16'
+  arrays:
+  - role: raw
+    path_pattern: '*.zip::*input/inp_*.tif'
+    format: tiff
+    axes: null
+    shape:
+    - 13
+    - 512
+    - 512
+    shape_varies: true
+    dtype: uint16
+    compression: packbits
+    value_range:
+    - 0
+    - 4736
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Plain multi-page TIFF, 13 pages per file in every set probed (bead 512x512, Microglia_single 492x492,
+      Microglia 924x924); the pages are presumably the sparse views of the 2pSAM measurement, but no doc states the page axis,
+      so axes stay null.
+  - role: target
+    path_pattern: '*.zip::*gt/vol_*.tif'
+    format: tiff
+    axes: zyx
+    shape:
+    - 64
+    - 512
+    - 512
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 38827
+    normalization: unknown
+    alignment: unknown
+    alignment_notes: input/inp_N.tif pairs with gt/vol_N.tif in the same folder (Bead, Microglia, Microglia_single, Neutrophil,
+      Neutrophil_single; NAOMi per delbg/ and delsoma/). Target is a 64-page volume with the same yx size as its input (bead
+      512, Microglia_single 492, Microglia 924); axes zyx from the record calling the targets 3D volumes (one volume per file,
+      vol_N = time point / item N). Input is a 13-view measurement, not on the target grid. Bead gt is deflate-compressed;
+      Microglia, Microglia_single gt uncompressed.
+  notes: 'Zenodo listing complete: 10 files, 6,095,711,391 B (= size_bytes); zip indexes read: 512 TIFF members. Probed headers:
+    Bead group1 input/gt, Microglia_single input/gt, Microglia input/gt (all plain multi-page TIFF, uint16, 1 sample/pixel).
+    Sampled Bead_tube_seq_group1 inp_1 (0-4736) and vol_1 (0-38827); value ranges are from this one pair. NAOMi and Neutrophil
+    members are deflated with the IFD past the first 8 MB, so their headers were not read (shape assumed like the other sets
+    only in the tree). Voxel size not found; checked: TIFF headers (no resolution tags with unit, no ImageJ/OME metadata),
+    Zenodo record description (no paper, GitHub repo named but not linked), checksums.sha256, web search for BioDiverse4D
+    / author / 2pSAM sparse-view code (none found). Organism not stated for the microglia and neutrophil sets; beads and NAOMi
+    are phantom / simulated.'
