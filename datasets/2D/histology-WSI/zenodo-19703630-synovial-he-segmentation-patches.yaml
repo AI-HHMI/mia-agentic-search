@@ -1,0 +1,129 @@
+schema_version: '1.2'
+id: zenodo-19703630-synovial-he-segmentation-patches
+title: Training patch images and masks for semantic segmentation of human synovial H&E whole slide images
+short_name: Human synovial H&E tissue patches (histology)
+description: 512x512 pixel patch images (JPEG) cut from H&E-stained whole-slide images of human synovial tissue, each paired
+  with a pixel-level segmentation mask (PNG) of histological structures, released as training data for semantic segmentation
+  models. The Labels archive holds 2,690 masks from 77 slides; patch file names encode the slide, the pyramid level and the
+  crop position.
+landing_url: https://zenodo.org/records/19703630
+doi: 10.5281/zenodo.19703630
+repository: Zenodo
+accession: '19703630'
+authors:
+- Toshiya Tsubaki
+- Ryota Chijimatsu
+publications: []
+date_published: '2026-04-23'
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: H&E-stained human synovial tissue sections (whole-slide images, patches of 512x512 pixels)
+  labels_stains:
+  - hematoxylin
+  - eosin
+data:
+  formats:
+  - jpeg
+  - png
+  size_bytes: 84683292
+  n_items: 2690
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: PNG mask per patch, same file name as the image patch
+  source: unknown
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-NC-4.0
+  url: https://creativecommons.org/licenses/by-nc/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-17T12:14:42Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/19703630
+  - https://zenodo.org/api/records/19703630/files/Images.tar.gz/content
+  - https://zenodo.org/api/records/19703630/files/Labels.tar.gz/content
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-17T13:00:00Z'
+notes: 'Zenodo API record read in full; the Images.tar.gz and Labels.tar.gz archives were listed by streaming their headers
+  (JPEG patches in Images/, PNG masks in Labels/, 2,690 masks from 77 slides). The record names no associated paper (searched
+  the web for the authors and topic without finding one), no class definitions, no pixel size or magnification, no annotation
+  procedure and no train/validation split, so annotations.source is unknown and the semantic classes of the masks are undocumented.
+  The same authors deposited model-predicted whole-slide segmentation labels in separate Zenodo records (19479198 to 19479682);
+  those are not part of this record. enricher: label masks are uint8 semantic class IDs (0-12 seen), class names undocumented.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "record 19703630  2 files, 84.7 MB (.tar.gz)\n  Images.tar.gz   75.4 MB\n    Images/<slide>_HE [d=5,x=..,y=..,w=..,h=..]\
+      \ [d=1,x=..,y=..,w=512,h=512].jpg\n  Labels.tar.gz    9.2 MB  (2,690 members, 10.8 MB uncompressed)\n    Labels/<same\
+      \ name>.png"
+    n_files: 2
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: Images.tar.gz::Images/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB H&E patch; file name = QuPath-style region [d=5,...] of the slide plus tile [d=1,x,y,w=512,h=512]
+      within it. JPEG DPI 100 is a default, not a calibration.
+  - role: label
+    path_pattern: Labels.tar.gz::Labels/*.png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 12
+    normalization: none
+    encoding: semantic-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'One greyscale PNG per image patch with the same file name stem (Images/X.jpg <-> Labels/X.png); 3 pairs
+      checked, all 512x512. Class names are not documented; IDs seen in 6 masks: 0,3,4,5,6,7,9,12.'
+  notes: 'Zenodo listing complete (2 tar.gz, 84,683,292 B = size_bytes). tar.gz cannot be listed by range: the whole Labels.tar.gz
+    (9.2 MB) was streamed to list members (2,690 PNGs, all tiles 512x512, 76 distinct slide-name prefixes) and the first 100
+    KB of Images.tar.gz decoded (3 JPEG patches). 3 image/mask pairs plus 3 more masks measured: images RGB uint8 512x512
+    (0-255 in one sample), masks L-mode uint8 with small integer class IDs (max 12 seen). Value ranges are from these samples
+    only. Class names undocumented. No per-file links exist (only the two archives) and TensorSwitch cannot pull members out
+    of a .tar.gz, so sample is null; both archives are direct and pass --download-check. Voxel size not found; checked: JPEG
+    header (DPI 100 default), Zenodo record description, web search for a paper (none), the authors'' related Zenodo WSI label
+    record 19479198 (no pixel size in its description).'
