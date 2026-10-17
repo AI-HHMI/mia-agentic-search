@@ -43,7 +43,7 @@ annotations:
   - classification
   - other
   coverage: dense
-  format: Per-crop 8-bit cell mask PNG (_cell_mask.png, from HPA-Cell-Segmentation); per-field-of-view metadata CSV with HPA protein localization labels
+  format: Per-crop 8-bit binary cell mask PNG (_cell_mask.png, 0/255, from HPA-Cell-Segmentation); per-field-of-view CSV (_cell_bbox.csv) with cell bounding boxes and HPA protein localization labels (column locations)
   source: mixed
 ml:
   tasks:
@@ -54,7 +54,7 @@ ml:
   baseline_code_url: https://github.com/CellProfiling/subcell-analysis
 license:
   spdx: CC-BY-SA-3.0
-  url: null
+  url: https://creativecommons.org/licenses/by-sa/3.0/deed.en
 provenance:
   discovered_by: harvest-websearch
   discovered_at: '2026-10-17T13:18:48Z'
@@ -62,10 +62,79 @@ provenance:
   - https://virtualcellmodels.cziscience.com/dataset/01933229-3c87-7818-be80-d7e5578bb0b7
   - https://www.biorxiv.org/content/10.1101/2024.12.06.627299v1.full
   - https://czi-subcell-public.s3.amazonaws.com/?list-type=2&prefix=hpa-processed/cell_crops/10/&max-keys=8
+  - https://czi-subcell-public.s3.amazonaws.com/?list-type=2&prefix=hpa-processed/cell_crops/10/
+  - https://czi-subcell-public.s3.amazonaws.com/hpa-processed/cell_crops/10/10_A12_1_cell_bbox.csv
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-17T13:18:48Z'
-notes: 'Hosted on the public S3 bucket s3://czi-subcell-public/hpa-processed/cell_crops/ (one subfolder per 96-well plate; listing of plate 10 shows _cell_image.png about 1.4-2.4 MB and _cell_mask.png about 5 KB per cell, plus a metadata CSV per field of view). Total image/cell count, total size, pixel size, microscope model and train/val/test split are not stated on the dataset page, in the listed S3 prefix or in the readable part of the paper (bioRxiv full text truncated at the end; Methods not fully read). Mask method (HPA-Cell-Segmentation) is automatic; localization labels are HPA manual expert annotation per field of view, so crops from one field share labels and may overlap. License CC BY-SA 3.0 as stated on the dataset page (inherited from HPA). Images are mostly 16-bit with a few 8-bit.'
+  last_checked: '2026-10-17T14:54:55Z'
+notes: 'Hosted on public S3 s3://czi-subcell-public/hpa-processed/cell_crops/, one subfolder per 96-well plate (1586 plate folders). Channels per dataset page: R=DNA, G=ER, B=microtubules, A=protein of interest; most PNGs 16-bit, some 8-bit. Masks are automatic (HPA-Cell-Segmentation); localization labels are HPA manual expert annotation per field of view, so crops of one field share labels and may overlap. Total cell count, total size, pixel size and splits are not stated on the dataset page, the bioRxiv v1 full text or the HPA v23 assay page. License CC BY-SA 3.0 per dataset page (inherited from HPA). enricher: annotations.format names the bbox CSV and binary masks from inspected files; license.url added from the dataset page.'
+technical:
+  method: sample
+  size_source: unknown
+  layout:
+    tree: "hpa-processed/cell_crops/                      1586 plate folders (only plate 10 listed in full)\n  10/                                          1880 files  1.6 GB  .png 1778, .csv 102\n    10_A12_1_1_cell_image.png                  <plate>_<well>_<fov>_<cell>, 4-channel RGBA PNG\n    10_A12_1_1_cell_mask.png                   binary cell mask\n    10_A12_1_cell_bbox.csv                     one per field of view: bboxes + labels\n  1/ 100/ 1000/ ... 997/                       same layout"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://czi-subcell-public.s3.amazonaws.com/hpa-processed/cell_crops/10/10_A12_1_1_cell_image.png
+    - https://czi-subcell-public.s3.amazonaws.com/hpa-processed/cell_crops/10/10_A12_1_1_cell_mask.png
+    - https://czi-subcell-public.s3.amazonaws.com/hpa-processed/cell_crops/10/10_A12_1_cell_bbox.csv
+    size_bytes: 1430420
+    description: 'one single-cell crop of plate 10, well A12, field 1, cell 1: image, mask and the field-of-view CSV'
+  arrays:
+  - role: raw
+    path_pattern: '*/*_cell_image.png'
+    format: png
+    axes: yxc
+    shape:
+    - 1024
+    - 1024
+    - 4
+    shape_varies: false
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: '4 channels stored as PNG RGBA: R=DNA, G=ER, B=microtubules, A=protein of interest (dataset page); cv2.imread(-1) returns BGRA order. dtype varies per file: uint16 for most (dataset page; probed plate 1000), uint8 for some (probed plates 1 and 10).'
+  - role: label
+    path_pattern: '*/*_cell_mask.png'
+    format: png
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: cell
+    alignment: same-grid
+    alignment_notes: mask pairs with the image of the same <plate>_<well>_<fov>_<cell> stem (_cell_mask.png vs _cell_image.png); same 1024x1024 grid.
+  - role: label
+    path_pattern: '*/*_cell_bbox.csv'
+    format: csv
+    axes: null
+    shape:
+    - 9
+    - 13
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: other
+    alignment: unknown
+    alignment_notes: 'one CSV per field of view (<plate>_<well>_<fov>_cell_bbox.csv), one row per cell_id: x1,y1,x2,y2 (bbox in field-of-view pixels), if_plate_id, position, sample, atlas_name (cell line), antibody, ensembl_ids, gene_names, locations (HPA localization label per field of view).'
+  notes: 'Listing: plate folder 10 only (1880 files, 1,624,440,555 bytes, 889 image/mask pairs); a full listing of all 1586 plate folders was not run (millions of objects), so size is not confirmed and no estimate is possible (cell count per plate unknown). Sample: one image+mask pair (1,429,673 bytes); value ranges are from that one 8-bit sample: image 0-255 (p50 0, 61% zeros, hint possibly contrast-stretched, not documented), mask {0,255}. Probed images of plates 1 and 10 are uint8, plate 1000 uint16; dtype is listed as uint16 since the page says most are 16-bit. Voxel size not found; checked: PNG headers (no calibration), dataset page, bioRxiv v1 full text (Methods not in it), HPA v23 assay page, subcell-analysis README. No direct whole-dataset archive: data.download_url stays the S3 prefix listing; sample.urls are direct S3 objects (usable). 2D, so not covered by the miao layout yet.'
