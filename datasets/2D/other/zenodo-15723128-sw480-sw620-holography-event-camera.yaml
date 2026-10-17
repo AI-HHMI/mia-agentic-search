@@ -2,11 +2,10 @@ schema_version: '1.2'
 id: zenodo-15723128-sw480-sw620-holography-event-camera
 title: SW480 and SW620 colorectal cancer cell classification, digital holography and event-based imaging
 short_name: SW480 vs SW620 cells, holography (label-free)
-description: Training data for classifying two colorectal cancer cell lines, SW480 and SW620, in a label-free
-  imaging flow cytometry system. Each cell line has its own zip with optical path difference maps and
-  amplitude images (.npy), off-axis hologram images (.png) and event-based images synthesized from an
-  event camera (.png), all organized in per-cell-line subfolders. About 4,700 files for SW480 and 5,000
-  for SW620.
+description: Training data for classifying two colorectal cancer cell lines, SW480 and SW620, in a label-free imaging flow
+  cytometry system. Each cell line has its own zip with optical path difference maps and amplitude images (.npy), off-axis
+  hologram images (.png) and event-based images synthesized from an event camera (.png), all organized in per-cell-line subfolders.
+  About 4,700 files for SW480 and 5,000 for SW620.
 landing_url: https://zenodo.org/records/15723128
 doi: 10.5281/zenodo.15723128
 repository: Zenodo
@@ -14,8 +13,7 @@ accession: '15723128'
 authors:
 - Eden Dotan
 publications:
-- title: Rare cell classification using label-free imaging flow cytometry via motion-sensitive-triggered
-    interferometry
+- title: Rare cell classification using label-free imaging flow cytometry via motion-sensitive-triggered interferometry
   doi: 10.1039/d5lc00634a
   url: https://doi.org/10.1039/d5lc00634a
 date_published: '2025-06-23'
@@ -32,10 +30,10 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: 1304000000
-  n_items: null
+  size_bytes: 1304721328
+  n_items: 9722
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/15723128
   download_method: http
 annotations:
   present: true
@@ -66,8 +64,100 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-17T07:50:00Z'
-notes: 'Checked the Zenodo record and both zip listings. The paper is not open access, so only its abstract
-  was read; pixel size, camera and cell counts are not stated on the Zenodo page. The main arrays are .npy
-  (OPD maps and amplitude images), which the format list lacks; the hologram and event images are PNG.
-  The two classes are cell-line identity, so labels come from the sample, not from per-image annotation.'
+  last_checked: '2026-10-17T10:05:00Z'
+notes: 'Checked the Zenodo record and both zip listings. The paper is not open access (abstract only; publisher page 403);
+  pixel size, camera and cell counts are not stated on the Zenodo page. The main arrays are .npy (OPD maps and amplitude images,
+  float64 224x224), which the format list lacks; the hologram and event images are PNG. The two classes are cell-line identity,
+  so labels come from the sample, not from per-image annotation. SW480_hologram/hologram_predictions.csv holds model predictions
+  (Predicted_Class, Confidence), not ground truth. enricher: size from the exact listing (was page-rounded), n_items = 9,722
+  zip members.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "training_dataset_SW480.zip  644,010,557 B (4,714 members)\n  SW480_OPD/        1308 .npy  525.2 MB  opd_<nnn>_SW480_<k>.npy\n\
+      \  SW480_amplitude/  1306 .npy  524.4 MB  amp_cell_<nnn>_SW480_<k>.npy\n  SW480_hologram/   1305 .png   62.1 MB  cell_<nnn>_SW480_<k>.png\
+      \ + hologram_predictions.csv\n  SW480_event/       794 .png   34.7 MB  recording_<date>_<time>_object_ID_<n>.png\ntraining_dataset_SW620.zip\
+      \  660,710,771 B (5,008 members)\n  SW620_OPD/ 1406 .npy  SW620_amplitude/ 1406 .npy  SW620_hologram/ 1406 .png  SW620_event/\
+      \ 790 .png\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/15723128/files/training_dataset_SW480.zip/content::SW480_OPD/opd_001_SW480_1.npy
+    - https://zenodo.org/api/records/15723128/files/training_dataset_SW480.zip/content::SW480_amplitude/amp_cell_001_SW480_1.npy
+    - https://zenodo.org/api/records/15723128/files/training_dataset_SW480.zip/content::SW480_hologram/cell_001_SW480_1.png
+    size_bytes: 849923
+    description: 'one SW480 cell: OPD map, amplitude image and hologram (class = zip / folder name)'
+  arrays:
+  - role: raw
+    path_pattern: training_dataset_SW*.zip::SW*_OPD/*.npy
+    format: other
+    axes: null
+    shape:
+    - 224
+    - 224
+    shape_varies: false
+    dtype: float64
+    compression: none
+    value_range:
+    - 0.0
+    - 0.6066
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: NumPy .npy optical path difference maps (unit not stated). Class = SW480 or SW620 from the zip and folder
+      name.
+  - role: raw
+    path_pattern: training_dataset_SW*.zip::SW*_amplitude/*.npy
+    format: other
+    axes: null
+    shape:
+    - 224
+    - 224
+    shape_varies: false
+    dtype: float64
+    compression: none
+    value_range:
+    - 0.0304
+    - 1.0
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: amp_cell_<nnn>_SW*_<k>.npy pairs by cell number and index with opd_<nnn>_... and cell_<nnn>_....png (same
+      224x224 size).
+  - role: raw
+    path_pattern: training_dataset_SW*.zip::SW*_hologram/*.png
+    format: png
+    axes: yx
+    shape:
+    - 224
+    - 224
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Off-axis interferogram crops, grey PNG.
+  - role: raw
+    path_pattern: training_dataset_SW*.zip::SW*_event/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Event-camera frames synthesised from events; grey stored as RGB (samples_identical true), values {0,
+      128, 255} seen (polarity-like). Named by recording time and object ID, not paired with the hologram files by name.
+  notes: 'Listing: Zenodo API + both zip central directories (tools/listing.py --expand-zips, complete, exact sizes). Probed
+    headers (SW480 OPD .npy magic bytes, hologram PNG 224x224 grey, event PNG 256x256 RGB). Read by zip range requests (~0.83
+    MB): opd_001_SW480_1.npy float64 [0, 0.607], amp_cell_001_SW480_1.npy float64 [0.030, 1.0], one event PNG, head of hologram_predictions.csv.
+    Value ranges from single files. npy loaded with allow_pickle=False. No separate label files: class is the cell line. Voxel
+    size not found; checked: Zenodo description, file headers (.npy and PNG carry no calibration), Europe PMC (not OA), RSC
+    article page (403). No single archive: two zips; data.download_url is the record page.'
