@@ -1,0 +1,134 @@
+schema_version: '1.2'
+id: zenodo-21528406-cut-detector-cytokinesis-hela
+title: Cut-Detector training and test data, HeLa cell divisions and microtubule cuts in time-lapse microscopy
+short_name: HeLa cytokinesis time-lapse classification
+description: Training and test data for Cut-Detector, a tool that times late cytokinetic events in time-lapse movies of HeLa
+  cells (phase contrast, SiR-tubulin and GFP-MKLP1 channels, one frame every 10 minutes). Two training archives hold the images
+  and train/validation/test split files for the cell division detection model (cell crops labelled interphase, metaphase or
+  dead) and for the microtubule cut detection model (midbody-centered crops of the intercellular bridge labelled by cut state).
+  A separate test movie file is also provided.
+landing_url: https://zenodo.org/records/21528406
+doi: 10.5281/zenodo.21528406
+repository: Zenodo
+accession: '21528406'
+authors:
+- Thomas Bonte
+- Lucas Dubois
+- Paul Gagna
+- Rayane Dibsy
+publications:
+- title: 'Cut-Detector: A Tool for Automated Temporal Analysis of Late Cytokinetic Events'
+  doi: 10.1101/2025.06.06.658046
+  url: https://doi.org/10.1101/2025.06.06.658046
+date_published: '2026-07-24'
+imaging:
+  modality:
+  - phase-contrast
+  - fluorescence-other
+  dimensionality: 2D+t
+  voxel_size_nm:
+    x: 225
+    y: 225
+    z: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: HeLa cells stably expressing GFP-MKLP1, labelled with SiR-tubulin, imaged live for 48 hours on an inverted Nikon
+    Eclipse TiE with a 40x 0.95 NA objective
+  labels_stains:
+  - SiR-tubulin
+  - GFP-MKLP1
+data:
+  formats:
+  - tiff
+  size_bytes: 3167738747
+  n_items: null
+  access: open
+  download_url: https://zenodo.org/records/21528406
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  coverage: dense
+  format: Class labels for cell crops (interphase, metaphase, dead) and bridge crops (cut state), stored in the training archives;
+    data_set_split .txt files list the train, validation and test images
+  source: manual
+ml:
+  tasks:
+  - classification
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: null
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-17T08:05:00Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/21528406
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1101%2F2025.06.06.658046%22&format=json&resultType=core&pageSize=3
+  - https://api.biorxiv.org/details/biorxiv/10.1101/2025.06.06.658046
+  - https://www.biorxiv.org/content/biorxiv/early/2025/06/10/2025.06.06.658046.source.xml
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: false
+  last_checked: '2026-10-17T10:25:00Z'
+notes: 'Checked the Zenodo record and the paper full text (bioRxiv). The two training archives are .7z and could not be listed
+  remotely, so image format inside them and the label files are taken from the record description and paper (3,257 annotated
+  cell crops in three classes; 6,878 intercellular bridge crops in three classes). Only test_data.tif is a known TIFF. Pixel
+  size 225 nm is from the paper Methods. enricher: test_data.tif header is ImageJ 264 x 3 x 1100 x 1600 uint16, but labels
+  the 264 planes ''slices''; recorded as t (time-lapse per record and paper), not z. The .7z training archives were not opened.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "zenodo 21528406 (3 files, 3,167,738,747 B)\n  test_data.tif                              2,787,949,505 B  ImageJ\
+      \ hyperstack 264 x 3 x 1100 x 1600 uint16\n  train_data_cell_division_detection.7z        160,734,048 B  images/ + data_set_split/*.txt\
+      \ (per record text)\n  train_data_microtubule_cut_detection.7z      219,055,194 B  images/ + data_set_split/*.txt (per\
+      \ record text)\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/21528406/files/train_data_cell_division_detection.7z/content
+    size_bytes: 160734048
+    description: the smaller training archive (cell crops + split files); 7z members cannot be fetched one by one
+  arrays:
+  - role: raw
+    path_pattern: test_data.tif
+    format: tiff
+    axes: tcyx
+    shape:
+    - 264
+    - 3
+    - 1100
+    - 1600
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Test movie: 3 channels (phase contrast, SiR-tubulin, GFP-MKLP1 per the record) x 264 frames. The ImageJ
+      header says slices=264, channels=3; the planes are time points (10 min apart per the record), so t, not z.'
+  - role: raw
+    path_pattern: train_data_*.7z
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Two 7z archives, each with images/ (crops) and data_set_split/ (.txt lists of train / val / test images)
+      per the Zenodo description; class labels per the paper (interphase / metaphase / dead; bridge cut states). Contents
+      not listed: 7z has no remotely readable index here.'
+  notes: 'Listing: Zenodo API (3 files, exact sizes). Probed test_data.tif header (range request): ImageJ TIFF, 792 pages,
+    channels 3, slices 264, uncompressed uint16, 1100x1600, no spatial calibration in the header; ImageJ display range 141-292.
+    Not sampled: the TIFF is 2.8 GB and the .7z archives can''t be listed or partly read without a 7z reader (none installed;
+    not added). Voxel size 225 nm kept from the harvester''s reading of the paper Methods; re-reading the bioRxiv full text
+    failed this run (HTTP 429). annotations_verified stays false: label files not seen.'
