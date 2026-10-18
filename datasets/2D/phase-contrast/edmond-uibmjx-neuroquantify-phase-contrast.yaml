@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: edmond-uibmjx-neuroquantify-phase-contrast
 title: NeuroQuantify Dataset
 short_name: Neuron and neurite segmentation (phase contrast)
-description: Phase contrast microscopy images of neuronal cultures with ground-truth masks of cells and neurites, released as training/validation and two test sets for the NeuroQuantify deep-learning segmentation software, plus NeuronJ neurite tracings for the full-size test images.
+description: Phase contrast microscopy images of neuronal cultures with ground-truth masks of cells and neurites,
+  released as training/validation and two test sets for the NeuroQuantify deep-learning segmentation software, plus
+  NeuronJ neurite tracings for the full-size test images.
 landing_url: https://edmond.mpg.de/dataset.xhtml?persistentId=doi:10.17617/3.UIBMJX
 doi: 10.17617/3.UIBMJX
 repository: other
@@ -10,7 +12,8 @@ accession: UIBMJX
 authors:
 - Truong Ka My Dang
 publications:
-- title: NeuroQuantify - An image analysis software for detection and quantification of neuron cells and neurite lengths using deep learning
+- title: NeuroQuantify - An image analysis software for detection and quantification of neuron cells and neurite
+    lengths using deep learning
   doi: 10.1016/j.jneumeth.2024.110273
   url: https://doi.org/10.1016/j.jneumeth.2024.110273
 date_published: '2024-05-28'
@@ -20,16 +23,20 @@ imaging:
   dimensionality: 2D
   voxel_size_nm: null
   channels: 1
-  organism: []
-  sample: Neuronal network cultures (neuroblastoma cells per the software repository) imaged by phase contrast
+  organism:
+  - Homo sapiens
+  sample: Retinoic-acid-differentiated SH-SY5Y neuroblastoma cells in T25 flasks, Zeiss microscope, 10x objective,
+    phase contrast (arXiv preprint 2310.10978)
   labels_stains: []
 data:
   formats:
   - tiff
-  size_bytes: 590000000
-  n_items: 3300
+  - png
+  - jpeg
+  size_bytes: 589004334
+  n_items: 3352
   access: open
-  download_url: null
+  download_url: https://edmond.mpg.de/dataset.xhtml?persistentId=doi:10.17617/3.UIBMJX
   download_method: http
 annotations:
   present: true
@@ -37,8 +44,9 @@ annotations:
   - semantic-segmentation
   - skeleton
   coverage: dense
-  format: PNG label masks (*_all_objects.png) paired with TIFF image tiles; NeuronJ .ndf neurite tracings for test set B
-  source: unknown
+  format: RGB colour PNG masks (Labels/<stem>_all_objects.png, 3 colours = background / cells / neurites) paired
+    with 512x512 TIFF tiles (Resized_gamma/<stem>.tif); NeuronJ .ndf neurite tracings for the full-size test images
+  source: manual
 ml:
   tasks:
   - segmentation
@@ -54,10 +62,92 @@ provenance:
   evidence_urls:
   - https://edmond.mpg.de/api/datasets/:persistentId/?persistentId=doi:10.17617/3.UIBMJX
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22NeuroQuantify+-+An+image+analysis+software+for+detection+and+quantification+of+neuron+cells+and+neurite+lengths+using+deep+learning%22&format=json&resultType=core&pageSize=3
+  - https://arxiv.org/abs/2310.10978v2
+  - https://arxiv.org/pdf/2310.10978v2
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-18T01:15:23Z'
-notes: 'Four zips on Edmond (CC0): Training&Validation_Data (421 MB; 2,987 TIFF + 2,987 PNG label pairs, Data/Labels), test_set_A (49 MB; 323 TIFF + 323 PNG pairs), test set B (68 MB; 14 JPG + 6 TIF full-size images) and Groundtruth_NeuronJ (52 MB; 22 TIFF + 21 .ndf tracings). Member lists read from zip central directories via range requests (peek_archive could not follow the Edmond redirect). n_items and size_bytes are approximate sums. The paper is not open access (Europe PMC abstract only), and the software repo page does not describe the data, so pixel size, organism/cell line, magnification, label classes (cells vs neurites) and how the masks were made are not stated in sources checked (dataset page and API record, abstract, GitHub README); the cell type is taken from the README (neuroblastoma) and left out of organism. Edmond zip downloads redirect to presigned S3 links; download_url left null.'
+  last_checked: '2026-10-18T02:15:00Z'
+notes: 'Four zips on Edmond (CC0): Training&Validation_Data (421 MB; 2,987 TIFF tiles in Data/Resized_gamma + 2,987
+  PNG masks in Data/Labels), test_set_A (49 MB; 323 + 323), test set B (68 MB; 14 JPG + 6 TIF full-size 2560x1920
+  images) and Groundtruth_NeuronJ (52 MB; 22 TIFF + 21 .ndf tracings). enricher: organism Homo sapiens and sample
+  from the arXiv preprint (SH-SY5Y human neuroblastoma line, 10x phase contrast). enricher: annotations.source manual
+  (preprint: 200 images manually annotated with ByteBridge software, three classes as colours). enricher: voxel
+  size left null: the preprint states 1 um = 2.21 pixel (~452.5 nm/px) for the captured full-size images, but the
+  512x512 training tiles sit in Resized_gamma folders and the resize factor is not stated. enricher: size_bytes
+  = exact sum of the four Dataverse files; n_items = 3,352 images; formats + png, jpeg.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "./                                          4 zips   589.0 MB (Dataverse API)\nTraining&Validation_Data.zip\
+      \  (421.3 MB)   5,976 members\n  Training&Validation_Data/Data/Resized_gamma/   2,987 *.tif   (e.g. 100_10Snap-948.tif)\n\
+      \  Training&Validation_Data/Data/Labels/          2,987 *_all_objects.png\ntest_set_A.zip  (48.9 MB)     \
+      \               647 members\n  test_set_A/Resized_gamma/                    323 *.tif\n  test_set_A/Labels/\
+      \                           323 *_all_objects.png\ntest set B.zip  (68.2 MB)                     20 members\n\
+      \  test set B/                                  14 Snap-*.jpg, 6 Snap-*.tif\nGroundtruth_NeuronJ.zip  (51.6\
+      \ MB)            45 members\n  Groundtruth_NeuronJ/                         22 *.tif, 21 *.ndf, 1 *.txt"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://edmond.mpg.de/api/access/datafile/223981::Training&Validation_Data/Data/Resized_gamma/100_10Snap-948.tif
+    - https://edmond.mpg.de/api/access/datafile/223981::Training&Validation_Data/Data/Labels/100_10Snap-948_all_objects.png
+    size_bytes: 151872
+    description: One 512x512 training tile and its RGB colour mask
+  arrays:
+  - role: raw
+    path_pattern: '*.zip::*/Resized_gamma/*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 91
+    - 192
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Single-page greyscale TIFF (photometric 1, 1 sample/pixel), no resolution tags. Tiles cut from
+      2560x1920 images (20 per image, preprint); gamma-corrected per the preprint (folder name Resized_gamma).
+  - role: label
+    path_pattern: '*.zip::*/Labels/*_all_objects.png'
+    format: png
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 11
+    - 250
+    normalization: none
+    encoding: rgb-colors
+    classes:
+    - id: null
+      name: background
+    - id: null
+      name: cells
+    - id: null
+      name: neurites
+    alignment: same-grid
+    alignment_notes: 'Pairing: Resized_gamma/<stem>.tif <-> Labels/<stem>_all_objects.png (2,987 of 2,987 training
+      stems match). Sampled mask has exactly 3 colours: (250,170,30) 227,202 px, (244,35,232) 31,746 px, (119,11,32)
+      3,196 px; the colour-to-class mapping is not documented (preprint: three classes cells, neurites, background
+      as distinct colours).'
+  notes: 'Listing: zip central directories of all four Edmond files read by range requests with a short requests
+    script (tools/listing.py and peek_archive.py do not follow the Edmond 303 redirect to presigned S3 URLs); sizes
+    are the Dataverse API values (exact). Sample: 100_10Snap-948 pair (152 KB) plus test set B/Snap-582.tif (5.6
+    MB: RGB 1920x2560 uint8, LZW, XResolution 300 dpi) read with tifffile/PIL; value ranges from that one pair.
+    Not inspected: NeuronJ .ndf tracings and the test set B JPGs. Voxel size: preprint scale 1 um = 2.21 px for
+    captured images; tile resize factor unknown; no TIFF calibration; checked Dataverse API, README of StanleyZ0528/neural-image-segmentation,
+    journal abstract (paywalled), arXiv full text. Download: four separate zips, no single archive; Edmond (edmond.mpg.de)
+    not on the TensorSwitch allowlist.'
