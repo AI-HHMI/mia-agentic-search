@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: bossdb-meirovitch2025-smartem-mouse-cortex
 title: SmartEM mouse cortex serial-section SEM volume with automated 3D neuron segmentation (BossDB)
 short_name: SmartEM mouse cortex EM + segmentation (ssSEM)
-description: Mouse cortex serial-section SEM volume imaged with the SmartEM adaptive dwell-time pipeline at 4 x 4 x 30 nm (composite dwell-time EM, 94 sections), with a 3D segmentation channel from the paper's automated neuron reconstruction, plus a fast-dwell-time EM channel, a fused 10x10 volume, single-section fused, homogenised and segmentation data, and trained models, all on BossDB.
+description: Mouse cortex serial-section SEM volume imaged with the SmartEM adaptive dwell-time pipeline
+  at 4 x 4 x 30 nm (composite dwell-time EM, 94 sections), with a 3D segmentation channel from the paper's
+  automated neuron reconstruction, plus a fast-dwell-time EM channel, a fused 10x10 volume, single-section
+  fused, homogenised and segmentation data, and trained models, all on BossDB.
 landing_url: https://bossdb.org/project/meirovitch2025
 doi: 10.60533/boss-2023-4w35
 repository: other
@@ -42,12 +45,14 @@ imaging:
   channels: 1
   organism:
   - Mus musculus
-  sample: Mouse cortex tissue imaged on a single-beam SEM with the SmartEM pipeline (short initial scan, rescan of error-prone regions at longer dwell times); the BossDB composite_dwell_time experiment spans 34816 x 32768 x 94 voxels
+  sample: Mouse cortex tissue imaged on a single-beam SEM with the SmartEM pipeline (short initial scan,
+    rescan of error-prone regions at longer dwell times); the BossDB composite_dwell_time experiment spans
+    34816 x 32768 x 94 voxels
   labels_stains: []
 data:
   formats:
   - precomputed
-  size_bytes: null
+  size_bytes: 594461897457
   n_items: 1
   access: open
   download_url: https://bossdb-open-data.s3.amazonaws.com/meirovitch2025/composite_dwell_time/
@@ -57,7 +62,9 @@ annotations:
   types:
   - instance-segmentation
   coverage: dense
-  format: 'BossDB annotation channel composite_3dseg (type annotation, uint64 per the BossDB API) next to composite_em (uint16); the S3 info file of composite_3dseg lists uint8 with 3 channels at 8 x 8 x 30 nm, so the label encoding is unclear'
+  format: Neuroglancer precomputed segmentation layer composite_3dseg stored as uint8 with 3 channels
+    (RGB colours per segment, raw encoding) at 8 x 8 x 30 nm, next to the uint16 EM layer composite_em
+    at 4 x 4 x 30 nm
   source: automatic
 ml:
   tasks:
@@ -80,10 +87,91 @@ provenance:
   - https://api.datacite.org/dois/10.60533/boss-2023-4w35
   - https://api.biorxiv.org/details/biorxiv/10.1101/2023.10.05.561103
   - https://www.biorxiv.org/content/biorxiv/early/2025/05/15/2023.10.05.561103.source.xml
-  confidence: 0.55
+  - https://bossdb-open-data.s3.amazonaws.com/meirovitch2025/composite_dwell_time/composite_em/info
+  - https://bossdb-open-data.s3.amazonaws.com/meirovitch2025/composite_dwell_time/composite_3dseg/info
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-18T06:10:00Z'
-notes: 'BossDB project page is rendered by script, so fields come from the BossDB API, the DataCite record (CC BY 4.0) and the bioRxiv full text. The segmentation is the paper''s lightweight automated 3D neuron reconstruction of the mouse cortex volume (99 ns/pixel effective dwell time), checked by expert annotators on dendritic spines, not a manual dense label; the paper also reports synapse segmentation validated against expert annotation, but no synapse channel was seen in the experiment listing. Volume dimensions come from the BossDB coordinate frame; the paper describes volumes of 68x60x3 and 118x102x3 um at 4 nm pixels, and which one is released was not stated. Sizes of the S3 prefixes were not available. Other prefixes under meirovitch2025/ (models, single_section, workflow_example_data) were not inspected. Annotations were not confirmed in a file listing, hence annotations_verified false.'
+  annotations_verified: true
+  last_checked: '2026-10-18T07:20:00Z'
+notes: 'BossDB project page is rendered by script, so fields come from the BossDB API, the DataCite record
+  (CC BY 4.0) and the bioRxiv full text. The segmentation is the paper''s lightweight automated 3D neuron
+  reconstruction of the mouse cortex volume (99 ns/pixel effective dwell time), checked by expert annotators
+  on dendritic spines, not a manual dense label; no synapse channel was seen in the listing. Volume dimensions
+  come from the BossDB coordinate frame and the info files. enricher: size from complete S3 listing of
+  the whole project (was null); annotations confirmed (segmentation stored as RGB colours, uint8 x3).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      s3://bossdb-open-data/meirovitch2025/   192,856 files, 594.5 GB (complete S3 listing)
+      composite_dwell_time/composite_em/              info, provenance
+      composite_dwell_time/composite_em/<scale>/ (x5)            27,777 files  183.9 GB  2048x2048x1 chunks
+      composite_dwell_time/composite_em_rechunked/<scale>/ (x5)  34,824 files  183.9 GB
+      composite_dwell_time/composite_3dseg/           info, info.old, provenance
+      composite_dwell_time/composite_3dseg/<scale>/ (x6)         45,099 files    4.2 GB
+      composite_dwell_time/composite_3dseg/mesh_mip_2_err_40/    18,694 files  866.0 MB  meshes
+      fast_dwell_time/fast_em/<scale>/ (x8)                      42,993 files  184.0 GB
+      10x10_volume/fusedem/<scale>/ (x6)                         15,132 files   28.9 GB
+      single_section/{fused,homogenized,seg}/<scale>/            8,312 files    5.6 GB
+      models/                                         4 .zip  2.2 GB
+      workflow_example_data/                          2 .tar.gz + 1 .txt  960.2 MB
+    n_files: 192856
+    listing_complete: true
+  sample:
+    urls:
+    - https://bossdb-open-data.s3.amazonaws.com/meirovitch2025/composite_dwell_time/composite_em
+    - https://bossdb-open-data.s3.amazonaws.com/meirovitch2025/composite_dwell_time/composite_3dseg
+    size_bytes: null
+    description: Precomputed layer roots (read remotely); one EM chunk at 8x8x30 nm is 8.4 MB (2048x2048x1
+      uint16, raw), one segmentation chunk 3.1 MB (1024x1024x1x3 uint8, raw).
+  arrays:
+  - role: raw
+    path_pattern: meirovitch2025/composite_dwell_time/composite_em
+    format: precomputed
+    axes: zyx
+    shape:
+    - 94
+    - 32768
+    - 34816
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 43
+    - 65286
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Composite dwell-time EM, 5 scales from 4x4x30 nm; composite_em_rechunked holds the
+      same data with other chunking, fast_dwell_time/fast_em the fast-scan EM.
+  - role: label
+    path_pattern: meirovitch2025/composite_dwell_time/composite_3dseg
+    format: precomputed
+    axes: zyxc
+    shape:
+    - 94
+    - 16384
+    - 17408
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: rgb-colors
+    classes: null
+    alignment: scaled
+    alignment_notes: Finest segmentation scale is 8x8x30 nm with 17408x16384x94 voxels, exactly half of
+      the EM's 34816x32768x94 at 4x4x30 nm (same 8x8x30 grid as EM scale 8_8_30), offset 0 in both. Each
+      segment is one RGB colour (403 colours in one 1024x1024 chunk); ids must be derived from the colour
+      triplets. info.old listed 34816x32768 at 8_8_30, the current info corrects it.
+  notes: 'Complete S3 listing of meirovitch2025/ (192,856 objects, 594,461,897,457 B exact; composite_em
+    ~184 GB, composite_3dseg 4.2 GB plus meshes). Probed both info files (raw encoding, no gzip). Sampled
+    one chunk each: EM 8_8_30/8192-10240_8192-10240_47-48 (8.4 MB) uint16 min 43 max 65286, p1/p50/p99
+    5321/33328/58861; segmentation 8_8_30/8192-9216_8192-9216_47-48 (3.1 MB) uint8 x3 channels, 403 distinct
+    RGB colours, 35.8% black background; ranges from one chunk. Voxel 4x4x30 nm from the info file, agrees
+    with the record. The layer is a segmentation layer stored as colour triplets rather than integer ids.'
