@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: heidata-l3pita-nuclear-stardist-2p-brain
 title: Accurate classification of major brain cell types using in vivo imaging and neural network processing
 short_name: Mouse cortex nuclei 3D segmentation (two-photon)
-description: In vivo two-photon volumes of H2B-eGFP-labelled cell nuclei in the mouse neocortex with manually traced 3D nucleus segmentations (StarDist training ground truth), plus raw and segmented volumes with cell-type labels (neurons, excitatory/inhibitory neurons, astroglia, microglia, oligodendroglia, endothelial cells) for nucleus classification.
+description: In vivo two-photon volumes of H2B-eGFP-labelled cell nuclei in the mouse neocortex with manually traced
+  3D nucleus segmentations (StarDist training ground truth), plus raw and segmented volumes with cell-type labels
+  (neurons, excitatory/inhibitory neurons, astroglia, microglia, oligodendroglia, endothelial cells) for nucleus
+  classification.
 landing_url: https://heidata.uni-heidelberg.de/dataset.xhtml?persistentId=doi:10.11588/DATA/L3PITA
 doi: 10.11588/DATA/L3PITA
 repository: other
@@ -30,7 +33,8 @@ imaging:
   channels: 2
   organism:
   - Mus musculus
-  sample: In vivo mouse neocortex through a chronic cranial window; H2B-eGFP nuclei, with tdTomato, mCherry, mRuby2 or DyLight 594 markers for cell types
+  sample: In vivo mouse neocortex through a chronic cranial window; H2B-eGFP nuclei, with tdTomato, mCherry, mRuby2
+    or DyLight 594 markers for cell types
   labels_stains:
   - H2B-eGFP
   - tdTomato
@@ -41,7 +45,7 @@ data:
   size_bytes: 145214666937
   n_items: null
   access: open
-  download_url: https://heidata.uni-heidelberg.de/api/access/datafile/12026
+  download_url: https://heidata.uni-heidelberg.de/dataset.xhtml?persistentId=doi:10.11588/DATA/L3PITA
   download_method: http
 annotations:
   present: true
@@ -49,8 +53,9 @@ annotations:
   - instance-segmentation
   - classification
   coverage: dense
-  format: Segmented TIFF label volumes paired with raw TIFFs; cell-type ground truth table (.tab)
-  source: manual
+  format: 'Segmented TIFF label volumes paired with raw TIFFs (StarDist GT: manual 3D instance IDs); cell-type classification
+    archives with StarDist segmentations; .tab of ground-truth nucleus counts per cell type'
+  source: mixed
 ml:
   tasks:
   - segmentation
@@ -73,5 +78,72 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-18T01:15:23Z'
-notes: 'Six files (145 GB in total): StardistTraining.tar.gz (144 MB; read its tar headers: 15 raw TIFF volumes in RawData/ and 15 manually segmented TIFF volumes in SegmentedGroundtruth/, named 1-15.tif), StardistModel.tar.gz (trained model), CelltypeClassification.tar.gz (80 GB) and CelltypeClassificationExcInhNeurons.tar.gz (32 GB) with raw and segmented data, RawdataResults.tar.gz (34 GB) and ClassificationTrainingDataSet.tab. Only the StardistTraining archive was opened; contents of the other archives are described by the dataset page only. Voxel size from paper Methods (0.29 um lateral, 2 um axial, TriM Scope II, 16x NA 0.8). Number of manually traced nuclei and the train/validation split of the StarDist ground truth were not located in the main text (shown in S1I Fig). download_url points to the StarDist training archive only.'
+  last_checked: '2026-10-18T02:10:00Z'
+notes: 'Six files (145 GB in total): StardistTraining.tar.gz (144 MB; read its tar headers: 15 raw TIFF volumes
+  in RawData/ and 15 manually segmented TIFF volumes in SegmentedGroundtruth/, named 1-15.tif), StardistModel.tar.gz
+  (trained model), CelltypeClassification.tar.gz (80 GB) and CelltypeClassificationExcInhNeurons.tar.gz (32 GB)
+  with raw and segmented data, RawdataResults.tar.gz (34 GB) and ClassificationTrainingDataSet.tab. Voxel size from
+  paper Methods (0.29 um/pixel lateral, 2 um z step). enricher: annotations.source manual -> mixed: StarDist GT
+  manually traced in Fiji (15 crops, ~150-200 nuclei each); classification archives hold automatic StarDist segmentations
+  with manually selected cell-type ground truth (paper Methods). enricher: download_url -> landing page (six separate
+  files, no single archive; StarDist training archive is datafile/12026).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "./                                         6 files  145.2 GB  (Dataverse API file list)\nCelltypeClassification.tar.gz\
+      \              79.5 GB  (not opened)\nCelltypeClassificationExcInhNeurons.tar.gz 31.8 GB  (not opened)\nRawdataResults.tar.gz\
+      \                      33.7 GB  (not opened)\nStardistModel.tar.gz                       14.1 MB  (trained\
+      \ model)\nClassificationTrainingDataSet.tab          173 B    (GT nucleus counts per type)\nStardistTraining.tar.gz\
+      \                   143.9 MB\n  StardistTraining/RawData/{1..15}.tif               15 files\n  StardistTraining/SegmentedGroundtruth/{1..15}.tif\
+      \  15 files"
+    n_files: 6
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: StardistTraining.tar.gz::StardistTraining/RawData/*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 25
+    - 352
+    - 395
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 110
+    - 15418
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: ImageJ hyperstack, 25 slices (images=25, slices=25), single channel H2B-eGFP; slice labels
+      name the source PMT stack. Member sizes 7-32 MB, so shapes vary per crop.
+  - role: label
+    path_pattern: StardistTraining.tar.gz::StardistTraining/SegmentedGroundtruth/*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 25
+    - 352
+    - 395
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 183
+    normalization: none
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairs by file name: RawData/N.tif <-> SegmentedGroundtruth/N.tif (N = 1-15); sampled pair
+      14 has identical shape. 0 = background, 183 distinct nucleus IDs in crop 14 (glasbey LUT in the ImageJ metadata).'
+  notes: 'Size: Dataverse API filesize of all six files (sum 145,214,666,937 B); listing.py did not finish on the
+    large Heidata files, so the sizes are the repository API values. Sample: streamed StardistTraining.tar.gz (88.5
+    MB read, logged) to RawData/14.tif and SegmentedGroundtruth/14.tif, read with tifffile: both uint16 zyx [25,352,395],
+    uncompressed, no XY calibration in the TIFF tags. value_range from that one pair. normalization none is inferred
+    (integer PMT counts, no clipping). Only the StarDist training archive was inspected; the classification archives
+    (145 GB together) were not opened. No sample.urls: the data are only offered as tar.gz archives, and TensorSwitch
+    can pull members only from zip archives; a sample needs the whole 144 MB StardistTraining.tar.gz. Host heidata.uni-heidelberg.de
+    is not on the TensorSwitch fetch allowlist (range requests work).'
