@@ -1,0 +1,144 @@
+schema_version: '1.2'
+id: bossdb-park2023-mouse-cerebellum-sbem-seg
+title: Serial blockface SEM, segmentation and meshes of reconstructed neurons within the mouse cerebellum
+  (BossDB)
+short_name: Mouse cerebellum SBEM with neuron segmentation
+description: Mouse cerebellum serial blockface SEM volume (BossDB experiment cnsl-cerebellum, 12 x 12
+  x 50 nm, 1024 sections) with a uint32 segmentation annotation channel and neuroglancer meshes of reconstructed
+  neurons.
+landing_url: https://bossdb.org/project/park2023
+doi: 10.60533/boss-2023-3dld
+repository: other
+accession: park2023
+authors:
+- Jinseop S. Kim
+- Kea Joo Lee
+publications: []
+date_published: '2023-01-01'
+imaging:
+  modality:
+  - SBF-SEM
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 12
+    y: 12
+    z: 50
+  channels: 1
+  organism:
+  - Mus musculus
+  sample: Mouse cerebellum, SBEM volume of about 14592 x 10240 x 1024 voxels at base resolution (S3 info
+    file)
+  labels_stains: []
+data:
+  formats:
+  - precomputed
+  size_bytes: 765041049600
+  n_items: 1
+  access: open
+  download_url: https://bossdb-open-data.s3.amazonaws.com/park2023/cnsl-cerebellum/
+  download_method: s3
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: unknown
+  format: Neuroglancer precomputed segmentation layer seg (uint32 ids, raw encoding, gzip on S3, meshes
+    mesh_mip_3_err_40) on the same 12 x 12 x 50 nm grid as the uint8 em layer
+  source: unknown
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/legalcode
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-18T05:15:40Z'
+  evidence_urls:
+  - https://bossdb.org/project/park2023
+  - https://api.bossdb.io/v1/collection/park2023
+  - https://api.bossdb.io/v1/collection/park2023/experiment/cnsl-cerebellum
+  - https://api.bossdb.io/v1/coord/park2023_cnsl-cerebellum
+  - https://api.bossdb.io/v1/collection/park2023/experiment/cnsl-cerebellum/channel/seg
+  - https://bossdb-open-data.s3.amazonaws.com/park2023/cnsl-cerebellum/seg/info
+  - https://bossdb-open-data.s3.amazonaws.com/park2023/cnsl-cerebellum/em/info
+  - https://api.datacite.org/dois/10.60533/boss-2023-3dld
+  confidence: 0.5
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-18T07:10:00Z'
+notes: 'Facts come from the BossDB API (collection, experiment, coordinate frame, channels), the S3 info
+  files of the em and seg channels and the DataCite record (CC BY 4.0, title, creators); the project page
+  itself is script-rendered. The BossDB coordinate frame lists 7296 x 5120 x 1024 voxels while the S3
+  info of seg gives 14592 x 10240 x 1024 at 12 nm, so the extent is quoted from the info file. No paper,
+  organism detail beyond mouse, annotation procedure or segmentation proofreading status was found: the
+  DataCite record has no related identifiers and a web search for the 2023 study returned nothing, so
+  annotation source and coverage are unknown. The date is the DataCite year 2023.'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: |
+      s3://bossdb-open-data/park2023/cnsl-cerebellum/
+        em/   info, provenance + 5 scale dirs (12_12_50 ... 192_192_50), 512x512x1 chunks
+        seg/  info, provenance + 5 scale dirs (same grid), 512x512x1 chunks, mesh_mip_3_err_40/
+      (listing of all chunk objects not completed: ~1.6 M chunk files by the info chunk grids)
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://bossdb-open-data.s3.amazonaws.com/park2023/cnsl-cerebellum/em
+    - https://bossdb-open-data.s3.amazonaws.com/park2023/cnsl-cerebellum/seg
+    size_bytes: null
+    description: Precomputed layer roots (read remotely); one 512x512x1 chunk is ~240 KB gzipped (em)
+      / ~11 KB (seg).
+  arrays:
+  - role: raw
+    path_pattern: park2023/cnsl-cerebellum/em
+    format: precomputed
+    axes: zyx
+    shape:
+    - 1024
+    - 10240
+    - 14592
+    shape_varies: false
+    dtype: uint8
+    compression: gzip
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: park2023/cnsl-cerebellum/seg
+    format: precomputed
+    axes: zyx
+    shape:
+    - 1024
+    - 10240
+    - 14592
+    shape_varies: false
+    dtype: uint32
+    compression: gzip
+    value_range:
+    - 0
+    - 43253
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: em and seg info files list identical scales (12x12x50 nm base, 14592x10240x1024,
+      offset 0, 512x512x1 chunks).
+  notes: 'Probed both info files (raw encoding, 5 levels; chunks served with Content-Encoding gzip). Sampled
+    chunk 12_12_50/7168-7680_5120-5632_512-513: em (242 KB gzip) uint8 min 0 max 255, p1/p50/p99 51/168/230;
+    seg (11 KB gzip) uint32, 70 ids, max 43253, 18.7% zero; ranges from one chunk. encoding instance-ids
+    from the sample (dozens of large ids in one 512x512 tile of a neuron segmentation layer). Voxel 12x12x50
+    nm from the info files, agrees with the record. A complete S3 listing was not feasible (~1.6 M chunk
+    objects; stopped after 15 min). Annotation source and coverage stay unknown: no paper found (DataCite
+    has no related identifiers; a web search by authors found none). size estimated (uncompressed): raw 1 x 1024x10240x14592 uint8 + label 1 x 1024x10240x14592 uint32 = 765,041,049,600 B (765.0 GB), finest level only.'
