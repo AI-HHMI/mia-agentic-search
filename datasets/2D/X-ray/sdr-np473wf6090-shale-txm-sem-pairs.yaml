@@ -2,8 +2,8 @@ schema_version: '1.2'
 id: sdr-np473wf6090-shale-txm-sem-pairs
 title: Microscopic multimodal image dataset of a shale rock sample
 short_name: Shale paired TXM and SEM images
-description: 149 paired transmission X-ray microscopy (TXM) and scanning electron microscopy (SEM) images of a shale rock sample
-  (298 TIFF files), released with a paper on using multimodal imaging and machine learning to enhance shale microscope images.
+description: 149 paired transmission X-ray microscopy (TXM) and scanning electron microscopy (SEM) images of a shale rock sample (298
+  TIFF files), released with a paper on using multimodal imaging and machine learning to enhance shale microscope images.
 landing_url: https://purl.stanford.edu/np473wf6090
 doi: 10.25740/np473wf6090
 repository: other
@@ -20,9 +20,12 @@ date_published: '2022-11-16'
 imaging:
   modality:
   - X-ray
-  - other
+  - FIB-SEM
   dimensionality: 2D
-  voxel_size_nm: null
+  voxel_size_nm:
+    x: 31.2
+    y: 31.2
+    z: null
   channels: 1
   organism: []
   sample: Shale rock sample imaged by transmission X-ray microscopy and scanning electron microscopy at the same locations.
@@ -44,6 +47,7 @@ annotations:
   source: automatic
 ml:
   tasks:
+  - super-resolution
   - other
   splits_provided: false
   benchmark: null
@@ -59,17 +63,83 @@ provenance:
   - https://purl.stanford.edu/np473wf6090.json
   - https://stacks.stanford.edu/file/druid:np473wf6090/TXM-SEM.zip
   - https://api.crossref.org/works/10.1016/j.cageo.2020.104593
-  confidence: 0.55
+  - https://www.osti.gov/pages/servlets/purl/1759011
+  - https://github.com/supri-a/TXM2SEM
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-17T23:59:00Z'
-notes: 'Stanford Digital Repository record (version 3, one file TXM-SEM.zip, 169 MB): peek_archive lists 298 TIFF files, 149 named
-  SEM000-SEM148 in "SEM dataset/" and 149 named TXM000-TXM148, so the pairing is inferred from matching indices and the repository
-  description ("acquired and paired TXM-SEM image dataset"); the actual registration of each pair was not checked. The associated
-  paper (Computers & Geosciences) is not open access and its abstract is not available through Europe PMC or Crossref, so pixel
-  size, instrument settings, how the pairs were registered and the intended ML task (cross-modality enhancement) are unknown.
-  Counted as restoration-type pairs because the paper title and record describe the pairs as training data for enhancing microscope
-  images; the target (SEM) is a measurement, hence annotations.source automatic is a best fit, not a manual label. Sources checked:
-  repository page and JSON record, zip listing, Crossref metadata.'
+  last_checked: '2026-10-18T01:20:00Z'
+notes: 'Stanford Digital Repository v3, one zip (TXM-SEM.zip): 149 TXM (TXM dataset/TXMnnn.tif) and 149 FIB-SEM (SEM dataset/SEMnnn.tif)
+  slices of a 30 um Vaca Muerta shale cylinder, paired by index. Paper (accepted manuscript on OSTI): TXM reconstructed at 31.2 nm/px;
+  FIB-SEM at 33.6 nm/px was filtered, rotated, padded with black pixels, scaled, resampled at TXM resolution and registered to the matched
+  TXM slice; TXM grey values reindexed to 0-255 to match the SEM histogram; SEM charging artifacts masked out. Paper split 119/5/20
+  is not in the files. No organism (rock sample). Target (SEM) is a measurement, so annotations.source automatic is a best fit. enricher:
+  voxel size 31.2x31.2 nm from paper Section 3.1-3.2 (was null); modality other -> FIB-SEM per paper; ml.tasks adds super-resolution
+  (paper tests SISR models).'
+technical:
+  method: sample
+  inspected_at: '2026-10-18T01:20:00Z'
+  inspected_urls:
+  - https://stacks.stanford.edu/file/druid:np473wf6090/TXM-SEM.zip
+  - https://stacks.stanford.edu/file/druid:np473wf6090/TXM-SEM.zip::TXM dataset/TXM000.tif
+  - https://stacks.stanford.edu/file/druid:np473wf6090/TXM-SEM.zip::SEM dataset/SEM000.tif
+  bytes_downloaded: 1196423
+  size_source: file-listing
+  layout:
+    tree: "TXM-SEM.zip  (168.9 MB, 298 members)\n  SEM dataset/   149 files  96.2 MB  SEM000.tif .. SEM148.tif\n  TXM dataset/   149\
+      \ files  76.4 MB  TXM000.tif .. TXM148.tif"
+    n_files: 298
+    listing_complete: true
+  sample:
+    urls:
+    - https://stacks.stanford.edu/file/druid:np473wf6090/TXM-SEM.zip::TXM dataset/TXM000.tif
+    - https://stacks.stanford.edu/file/druid:np473wf6090/TXM-SEM.zip::SEM dataset/SEM000.tif
+    size_bytes: 1224594
+    description: 'Pair 000: TXM000.tif (input) and SEM000.tif (target), 1132x1200 uint8 each.'
+  arrays:
+  - role: raw
+    path_pattern: TXM dataset/TXM*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1132
+    - 1200
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: 'TXM slices (synchrotron TXM, 8 keV), 31.2 nm/px; paper: grey values reindexed to 0-255 to match the FIB-SEM histogram,
+      beam-hardening halo cropped (zero). 54% zero pixels in TXM000.'
+  - role: target
+    path_pattern: SEM dataset/SEM*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1132
+    - 1200
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: 'SEMnnn.tif pairs with TXMnnn.tif (same index, same 1132x1200 shape in all probed files). Paper: FIB-SEM (33.6
+      nm/px) resampled to TXM resolution, padded with black pixels and registered to the matched TXM slice; charged regions masked to
+      0 (55% zero pixels in SEM000).'
+  notes: 'Listing: one zip, 298 TIFF members, 168,939,678 bytes (file-listing, complete). Probed TXM000/SEM000 and TXM100-102: single-page
+    plain TIFF, uint8, LZW, 1132x1200. value_range from one sample pair (TXM000, SEM000). Voxel size 31.2 nm/px lateral from paper (TXM
+    reconstruction; SEM resampled to it); 2D slices, z null (slices come from a TXM stack with 31.2 nm isotropic voxels but FIB-SEM
+    depth steps vary). Zip and members support range requests, but stacks.stanford.edu is not on TensorSwitch''s fetch allowlist. Readiness:
+    2D not covered by the miao layout yet; no organism (rock).'
