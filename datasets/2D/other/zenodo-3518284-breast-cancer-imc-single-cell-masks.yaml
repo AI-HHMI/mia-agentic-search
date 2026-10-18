@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: zenodo-3518284-breast-cancer-imc-single-cell-masks
 title: The Single-Cell Pathology Landscape of Breast Cancer (imaging mass cytometry images and single-cell masks)
 short_name: Breast cancer IMC images + cell masks (IMC)
-description: Multi-channel imaging mass cytometry (IMC) images of breast cancer tissue microarrays from the Basel and Zurich cohorts, as OME-TIFF stacks, with CellProfiler single-cell segmentation masks and tumour/stroma region masks; the paper reports 35 biomarkers and 720 images from 352 patients.
+description: Multi-channel imaging mass cytometry (IMC) images of breast cancer tissue microarrays from the Basel and Zurich
+  cohorts, as OME-TIFF stacks, with CellProfiler single-cell segmentation masks and tumour/stroma region masks; the paper
+  reports 35 biomarkers and 720 images from 352 patients.
 landing_url: https://zenodo.org/records/3518284
 doi: 10.5281/zenodo.3518284
 repository: Zenodo
@@ -29,7 +31,7 @@ imaging:
   - other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: 35
+  channels: 52
   organism:
   - Homo sapiens
   sample: human breast cancer tissue microarray cores (Basel and Zurich cohorts) imaged by imaging mass cytometry
@@ -37,10 +39,10 @@ imaging:
 data:
   formats:
   - ome-tiff
-  size_bytes: null
+  size_bytes: 48233252799
   n_items: 720
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/3518284
   download_method: http
 annotations:
   present: true
@@ -48,7 +50,8 @@ annotations:
   - instance-segmentation
   - semantic-segmentation
   coverage: dense
-  format: 'Single-cell masks (CellProfiler) in OMEandSingleCellMasks/Basel_Zuri_masks, tumour/stroma region masks in TumorStroma_masks.zip; mask labels can skip IDs, so they need relabelling or rank matching against the single-cell tables'
+  format: Single-cell masks (CellProfiler) in OMEandSingleCellMasks/Basel_Zuri_masks, tumour/stroma region masks in TumorStroma_masks.zip;
+    mask labels can skip IDs, so they need relabelling or rank matching against the single-cell tables
   source: automatic
 ml:
   tasks:
@@ -67,10 +70,97 @@ provenance:
   - https://zenodo.org/api/records/3518284/files/OMEandSingleCellMasks.zip/content
   - https://github.com/BodenmillerGroup/SCPathology_publication
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1038%2Fs41586-019-1876-x%22&format=json&resultType=core&pageSize=3
+  - https://zenodo.org/api/records/3518284
+  - https://zenodo.org/api/records/3518284/files/TumorStroma_masks.zip/content
+  - https://zenodo.org/api/records/3518284/files/SingleCell_and_Metadata.zip/content
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-18T05:50:00Z'
-notes: 'Zenodo lists 48.2 GB in three zips: OMEandSingleCellMasks.zip (11.4 GB, holding ome.zip and Basel_Zuri_masks.zip, listed with peek_archive), SingleCell_and_Metadata.zip (36.8 GB, tables) and TumorStroma_masks.zip (7 MB); size_bytes is null because only part of the total is images. Counts (720 images, 352 patients, 35 biomarkers) are from the paper abstract; the paper is not open access, so pixel size and segmentation details were not read from it. The GitHub README says the masks come from CellProfiler and states no pixel size. Imaging mass cytometry is not a listed modality, so other. Zenodo shows CC BY 1.0; a newer version of the record exists.'
+  last_checked: '2026-10-18T06:30:00Z'
+notes: 'Zenodo lists 48.2 GB in three zips: OMEandSingleCellMasks.zip (11.4 GB; nested deflated ome.zip and Basel_Zuri_masks.zip),
+  SingleCell_and_Metadata.zip (36.8 GB, tables, histoCAT sessions, jpg) and TumorStroma_masks.zip (7 MB). Counts (720 images,
+  352 patients, 35 biomarkers) are from the paper abstract; the paper is not open access. Imaging mass cytometry is not a
+  listed modality, so other. Zenodo shows CC BY 1.0; a newer version (4607374) adds cluster-label and cell-location zips.
+  enricher: channels 52 from the OME-TIFF header (was 35, the paper''s biomarker count; channel map in Basel_Zuri_StainingPanel.csv
+  FullStack column). enricher: size_bytes from the Zenodo file listing (was null). Masks cover the Basel (381/382) and Zurich
+  (365/364) cohorts.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "OMEandSingleCellMasks.zip                     11.4 GB (deflated; holds two nested zips)\n  OMEnMasks/ome.zip  \
+      \                         11.4 GB (deflated, contents not listable remotely)\n    ome/<core>_a0_full.tiff          \
+      \         OME-TIFF, 52 channels, float32\n  OMEnMasks/Basel_Zuri_masks.zip              34.3 MB\n    Basel_Zuri_masks/<core>_a0_full_mask.tiff\
+      \ 746 files 559.4 MB uncompressed (Basel spelt _maks)\nTumorStroma_masks.zip                         7.0 MB\n  TumorStroma_masks/<core>_a0_full_mask_AllTumorFilled.tiff\
+      \  746 files\nSingleCell_and_Metadata.zip                   36.8 GB, 21899 files (46.5 GB uncompressed)\n  Data_publication/...\
+      \                        csv tables, 21644 jpg, 2 histoCAT .mat sessions, Basel_Zuri_StainingPanel.csv\n"
+    n_files: 3
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: OMEandSingleCellMasks.zip::OMEnMasks/ome.zip::ome/*_full.tiff
+    format: ome-tiff
+    axes: cyx
+    shape:
+    - 52
+    - 726
+    - 689
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range:
+    - 0.0
+    - 3544.231
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: OMEandSingleCellMasks.zip::OMEnMasks/Basel_Zuri_masks.zip::Basel_Zuri_masks/*_full_ma*.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 726
+    - 689
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 4311
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Single-cell mask per core; file name = OME-TIFF stem + _mask (Basel cohort spelt _maks). Sampled pair
+      726x689 matches the raw YX. Some masks are uint8 (small cores). CellProfiler IDs can skip values (Zenodo notes).
+  - role: label
+    path_pattern: TumorStroma_masks.zip::TumorStroma_masks/*_full_mask_AllTumorFilled.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 586
+    - 617
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 1
+    normalization: unknown
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: Tumour region mask per core, name = OME-TIFF stem + _mask_AllTumorFilled; sampled core 100_239 is 726x689
+      like its raw (all 0 there).
+  notes: 'Listed the three zips via the Zenodo API (48,233,252,799 B exact) and the zip central directories. The nested zips
+    in OMEandSingleCellMasks.zip are deflated, so their members cannot be range-read: Basel_Zuri_masks.zip (33.3 MB) was fetched
+    whole and listed (746 masks); the first OME-TIFF of ome.zip was streamed out of the first 16.8 MB. The raw file count
+    is not listed (paper: 720 images). Raw OME-TIFF: 52 pages = channels (OME DimensionOrder XYCZT, SizeC 52), float32 uncompressed,
+    no physical pixel size in the OME-XML; value_range from that one core. 13 single-cell masks read: uint8/uint16, 106 to
+    4309 unique IDs. Tumour masks {0,1}. No sample unit: TensorSwitch can''t pull members out of nested deflated zips, so
+    a sample or conversion needs the whole 11.4 GB OMEandSingleCellMasks.zip. Voxel size not found; checked: OME-XML, TIFF
+    resolution tags (masks 0/1000 per cm, a placeholder), Zenodo API, staining panel csv, Nature page (Methods paywalled,
+    Europe PMC no full text), GitHub repo.'
