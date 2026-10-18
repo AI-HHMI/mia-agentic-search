@@ -4,8 +4,8 @@ title: Macrophage cell and nucleus instance segmentation dataset (feature pyrami
 short_name: THP-1 macrophage cells and nuclei (fluorescence)
 description: 82 two-channel (nucleus and cell) fluorescence images of Legionella-infected human THP-1 macrophages from a high-throughput screen, with ground truth bounding boxes and instance segmentation masks for 2552 cells and 2595 nuclei. 64 training and 18 test images.
 landing_url: https://uni-marburg.de/en/fb12/research-groups/distsys/software/cells
-doi: null
-repository: LabWebsite
+doi: 10.17192/fdr/185
+repository: other
 accession: null
 authors:
 - Korfhage N
@@ -24,7 +24,7 @@ imaging:
   - widefield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 2
   organism:
   - Homo sapiens
   sample: THP-1 derived human macrophages infected with Legionella pneumophila, 96-well plates, Nikon Eclipse Ti-E, 20x Plan Apo VC lens, 1280 x 1024 px
@@ -34,19 +34,20 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: null
+  size_bytes: 196880077
   n_items: 82
   access: open
-  download_url: https://box.uni-marburg.de/index.php/s/N934NJi7IsvOphf
+  download_url: https://data.uni-marburg.de/bitstream/handle/dataumr/231/synmikro_macrophages.tar.gz
   download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
+  - semantic-segmentation
   - bounding-box
   coverage: dense
-  format: Ground truth bounding boxes and instance segmentation masks for cells and nuclei (file format not stated)
-  source: mixed
+  format: 'TIFF masks: masks/ binary foreground per image and channel; object_masks/<image>/<x>_<y>_<w>_<h>_<channel>.tif one binary full-frame mask per instance, bounding box in the file name'
+  source: proofread
 ml:
   tasks:
   - segmentation
@@ -55,18 +56,92 @@ ml:
   benchmark: null
   baseline_code_url: https://github.com/umr-ds/feature_pyramid_fusion
 license:
-  spdx: unknown
-  url: null
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
 provenance:
   discovered_by: harvest-literature
   discovered_at: '2026-10-18T22:18:31Z'
   evidence_urls:
   - https://uni-marburg.de/en/fb12/research-groups/distsys/software/cells
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7523959/fullTextXML
-  confidence: 0.6
+  - https://data.uni-marburg.de/handle/dataumr/231
+  - https://open.uni-marburg.de/server/api/core/items/964313fc-8d1c-47ab-a4c8-24a74bade792
+  - https://raw.githubusercontent.com/umr-ds/feature_pyramid_fusion/master/README.md
+  - https://data.uni-marburg.de/bitstream/handle/dataumr/231/synmikro_macrophages.tar.gz
+  confidence: 0.8
 verification:
   url_ok: true
-  license_found: false
-  annotations_verified: false
-  last_checked: '2026-10-18T22:18:31Z'
-notes: 'Dataset license is not stated on the CELLS page or in the paper (the article itself is CC-BY 4.0), so license is unknown. The Box download folder could not be listed from this run, so file layout and annotation file format are unverified; formats tiff comes from the paper (images converted to TIFF). Ground truth was made in two steps: classical OpenCV segmentation, then correction by a biomedical researcher. Pixel size not stated on page or paper Methods. Checked page, paper full text.'
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-18T23:05:00Z'
+notes: 'Ground truth: OpenCV threshold/contour segmentation, then manual correction in Fiji by a biomedical researcher (paper Methods). Pixel size not stated on page, paper, README or TIFF headers. enricher: license CC-BY-4.0 and dataset DOI 10.17192/fdr/185 from the open_UMR record data.uni-marburg.de/handle/dataumr/231 (was unknown; the Box share was unreachable); repository LabWebsite -> other (open_UMR, Marburg institutional repository); download_url -> direct tar.gz on open_UMR; formats tiff confirmed; channels 2 (DAPI = Hoechst 33342 nuclei, mCherry = HCS CellMask Red cells, one file each); annotation source mixed -> proofread; semantic-segmentation added (binary masks/); annotations verified from the full archive.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "synmikro_macrophages.tar.gz  196,880,077 B (808,857,858 B unpacked, 6300 TIFFs)\n  train/images/          128  <NNN>_DAPI.tif, <NNN>_mCherry.tif (64 images x 2 channels)  346.6 MB\n  train/masks/           128  same names, binary masks                                    167.8 MB\n  train/object_masks/<NNN>/  4125  <x>_<y>_<w>_<h>_<DAPI|mCherry>.tif, one per instance  107.1 MB\n  test/images/            36  (18 images x 2 channels)                                   97.4 MB\n  test/masks/             36                                                             47.2 MB\n  test/object_masks/<NNN>/  1022                                                          26.5 MB\n  test_clustered/images/ 156  256x256 uint8 patches of clustered cells                    2.6 MB\n  test_clustered/masks/  156                                                              0.3 MB\n  test_clustered/object_masks/<NNN>/  513                                                13.3 MB"
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: synmikro_macrophages.tar.gz::*/images/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1280
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 1408
+    - 65520
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'One channel per file: <NNN>_DAPI.tif (nuclei, Hoechst 33342) and <NNN>_mCherry.tif (cells, HCS CellMask Red). train/ and test/ images are 1024x1280 uint16; test_clustered/ images are 256x256 uint8 patches (LZW). Plain single-page TIFFs.'
+  - role: label
+    path_pattern: synmikro_macrophages.tar.gz::*/masks/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1280
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: nucleus (DAPI files) / cell (mCherry files)
+    alignment: same-grid
+    alignment_notes: 'Pairing: <split>/masks/<NNN>_<channel>.tif labels <split>/images/<NNN>_<channel>.tif; same shape (test_clustered masks 256x256, LZW).'
+  - role: label
+    path_pattern: synmikro_macrophages.tar.gz::*/object_masks/*/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1280
+    shape_varies: true
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: one instance (nucleus for _DAPI, cell for _mCherry)
+    alignment: same-grid
+    alignment_notes: 'Instance masks: <split>/object_masks/<NNN>/<x>_<y>_<w>_<h>_<channel>.tif is one full-frame binary mask of one object in image <NNN>; x_y_w_h is its bounding box (checked on 2 masks). train 4125 = 2044 cells + 2081 nuclei, test 1022 = 508 + 514, as in the paper.'
+  notes: 'The whole tar.gz (196,880,077 B) was streamed once (requests + tarfile) to list all 6300 members; 2 files per folder were kept in a temp dir, read with tifffile, then deleted. value_range from those files only: images 1408-65520, values in steps of 16 (12-bit data shifted to 16 bit) with saturation at 65520. No direct per-file links: only the one tar.gz, and TensorSwitch cannot pull members out of a .tar.gz, so sample is null. Hosts data.uni-marburg.de / open.uni-marburg.de are not on the TensorSwitch allowlist. The Box share in the paper (box.uni-marburg.de) was unreachable from this run (proxy 502). Voxel size not found; checked: TIFF headers (no resolution tags), open_UMR record and API metadata, CELLS page, paper full text (Methods: Nikon Ti-E, 20x Plan Apo VC, DS-Qi1Mc; no pixel size), GitHub README.'
