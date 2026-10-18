@@ -1,0 +1,125 @@
+schema_version: '1.2'
+id: zenodo-10978822-licai-er-u2os-nile-red
+title: ER training dataset for live cell anatomy segmentation
+short_name: U2-OS ER segmentation (spinning-disk)
+description: Training data for segmenting the er in live U2-OS cells stained with the membrane dye Nile Red and
+  imaged on a super-resolution spinning-disk microscope, released with the LiCAI live-cell anatomy segmentation
+  study. The Zenodo record has no description; it holds a single ER.zip archive of per-cell TIFF stacks.
+landing_url: https://zenodo.org/records/10978822
+doi: 10.5281/zenodo.10978822
+repository: Zenodo
+accession: '10978822'
+authors:
+- Zhanghao, Karl
+- Li, Meiqi
+publications:
+- title: Fast, live-cell imaging of 15 intracellular compartments by deep learning segmentation of super-resolution
+    data
+  doi: 10.1101/2021.12.13.472520
+  url: null
+date_published: '2024-04-16'
+imaging:
+  modality:
+  - spinning-disk
+  - super-resolution
+  dimensionality: 3D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: Live U2-OS (human osteosarcoma) cells stained with Nile Red
+  labels_stains:
+  - Nile Red
+data:
+  formats:
+  - tiff
+  size_bytes: 3712740634
+  n_items: 46
+  access: open
+  download_url: https://zenodo.org/api/records/10978822/files/ER.zip/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: unknown
+  format: 'No mask files: each stack is a 3-channel ImageJ hyperstack (ZCYX). Per the paper, the channels are the
+    GFP colocalization (green, ER-GFP) and Nile Red yellow and red channels; the ER ground-truth masks are made
+    from the green channel by the pre-trained FG-net and are not included'
+  source: automatic
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/KarlZhanghao/LiCAI
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/legalcode
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-18T14:29:19Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/10978822
+  - https://github.com/KarlZhanghao/LiCAI
+  - https://www.biorxiv.org/content/biorxiv/early/2021/12/15/2021.12.13.472520.source.xml
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11928634/fullTextXML
+  confidence: 0.5
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: false
+  last_checked: '2026-10-18T15:30:00Z'
+notes: 'Archive listed with peek_archive; contents are TIFF stacks only. Zenodo page has no description; the title
+  and the LiCAI GitHub README call it a training dataset for segmentation, and the preprint Methods say networks
+  were trained on super-resolution images with ground-truth binary masks (manual annotation, or colocalization with
+  organelle-GFP segmented by a pre-trained network), but no mask files were seen in the listing, so annotation source,
+  coverage and format are unconfirmed. Sibling dataset zenodo-7724799 (mitochondria) stores fluo/ratio/label as
+  separate TIFFs. Voxel size not stated on the Zenodo record, GitHub README or preprint text read. Preprint license
+  is CC-BY-NC-ND vs. Zenodo CC-BY-4.0. enricher: sampled a stack: 3 intensity channels, no binary mask channel or
+  mask files (annotations_verified stays false); annotations.source automatic (FG-net masks from the GFP channel,
+  Nat Commun 2025 Methods); n_items 46 from listing.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "ER.zip (3.71 GB zip; 46 .tif, 8.6 GB uncompressed)\n  Upload/   46 files  <date>-U2OS-NileRed-ER-<nnn>*_ALN.tif\
+      \  (one cell per file, 3-channel z-stack)"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/10978822/files/ER.zip/content::Upload/20210820-U2OS-NileRed-ER-008_ALN.tif
+    size_bytes: 60744299
+    description: One cell stack (smallest member); raw only, there are no label files
+  arrays:
+  - role: raw
+    path_pattern: Upload/*_ALN.tif
+    format: tiff
+    axes: zcyx
+    shape:
+    - 20
+    - 3
+    - 1004
+    - 1004
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 6552
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'ImageJ hyperstack (big-endian), channels=3, slices vary per file; _ALN = channels registered.
+      Channel order not stated (paper: green GFP colocalization, yellow 580-653 nm and red 665-705 nm Nile Red);
+      the GFP channel is the ground-truth source, so raw and its target sit on the same grid in one file.'
+  notes: 'Listing: Zenodo API + zip central directory, ER.zip 3,712,740,634 B exact, 46 TIFF members (8.59 GB uncompressed).
+    Sample: Upload/20210820-U2OS-NileRed-ER-008_ALN.tif (60.7 MB compressed in the zip, deflate; read with tifffile):
+    ImageJ 1.53c hyperstack, ZCYX [20,3,1004,1004] uint16, uncompressed; per-channel ranges 0-4360, 45-6552, 0-1331
+    (one sample). No channel is binary; no mask files anywhere in the archive, so the ER ground-truth masks the
+    paper trains on are not included. Header calibration: 10 px/micron (0.1 um = 100 nm in x, y) and spacing 0.3
+    um (300 nm); not filled into voxel_size_nm because no document states it (sibling MITO record zenodo-7724799
+    has 65x65x300 nm from the paper supplement, which conflicts in x/y). Voxel size checked: TIFF/ImageJ header,
+    Zenodo API record (no description), LiCAI GitHub README, bioRxiv preprint and Nat Commun 2025 full text (Methods
+    give resolution ~143 nm, FoV 1200 px, not the pixel size); Nat Commun supplementary information and peer-review
+    file (PSF/resolution only, no pixel size).'
