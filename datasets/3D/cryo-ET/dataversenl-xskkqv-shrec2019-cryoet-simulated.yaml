@@ -2,7 +2,11 @@ schema_version: '1.2'
 id: dataversenl-xskkqv-shrec2019-cryoet-simulated
 title: SHREC Cryo-ET 2019 - simulated cryo-electron tomograms for particle localization and classification
 short_name: SHREC 2019 simulated cryo-ET particle benchmark
-description: Ten simulated cryo-electron tomograms (512 x 512 x 512 voxels at 1 nm) of a cell-like volume, each with about 2,500 particles of 12 protein types (PDB 1bxn, 1qvr, 1s3x, 1u6g, 2cg9, 3cf3, 3d2f, 3gl1, 3h84, 3qm1, 4b4t, 4d8q), with projections, ground-truth volumes and particle location and class lists for nine tomograms; the tenth is the withheld test tomogram, whose ground truth is in a separate difference archive.
+description: Ten simulated cryo-electron tomograms (512 x 512 x 512 voxels at 1 nm) of a cell-like volume,
+  each with about 2,500 particles of 12 protein types (PDB 1bxn, 1qvr, 1s3x, 1u6g, 2cg9, 3cf3, 3d2f, 3gl1,
+  3h84, 3qm1, 4b4t, 4d8q), with projections, ground-truth volumes and particle location and class lists
+  for nine tomograms; the tenth is the withheld test tomogram, whose ground truth is in a separate difference
+  archive.
 landing_url: https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/XSKKQV
 doi: 10.34894/XSKKQV
 repository: other
@@ -27,15 +31,16 @@ imaging:
     z: 1
   channels: 1
   organism: []
-  sample: Simulated cell-like volume with 12 protein types, reconstructed from simulated tilt projections by a physically accurate simulator (not real specimens)
+  sample: Simulated cell-like volume with 12 protein types, reconstructed from simulated tilt projections
+    by a physically accurate simulator (not real specimens)
   labels_stains: []
 data:
   formats:
-  - other
+  - mrc
   size_bytes: 14063687997
   n_items: 10
   access: open
-  download_url: null
+  download_url: https://dataverse.nl/api/access/datafile/285770
   download_method: http
 annotations:
   present: true
@@ -43,7 +48,10 @@ annotations:
   - points
   - classification
   coverage: dense
-  format: 'Per tomogram a ground-truth volume and a text file of particle locations with true classes (PDB id); the track page also names a 4-column submission format (class, z, y, x); contest archive omits the test ground truth, which is in the difference archive'
+  format: 'Per tomogram 0-8: hitbox_N.mrc (float32 volume on the grandmodel grid, one integer-valued id
+    per particle box) and particle_locations_model_N.txt (whitespace table: class PDB id, z, y, x, three
+    rotation angles, in grandmodel coordinates; +156 in z to reconstruction coordinates per readme). Tomogram
+    9 ground truth is in the diff archive.'
   source: automatic
 ml:
   tasks:
@@ -67,6 +75,111 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-18T08:30:00Z'
-notes: 'Data is simulated, not real cryo-ET. Dataverse lists three zips: contest dataset (6.84 GB, without test ground truth), difference dataset (199 MB, test ground truth and evaluation script) and the full dataset (7.03 GB); size_bytes sums the three, so it double counts the contest and full sets. The zips could not be listed (connection reset on range requests), so file formats and the exact ground-truth encoding were not confirmed, hence formats other and annotations_verified false; the track page describes the ground truth as a volume plus a particle location and class file. The paper PDF (Eurographics) returned 403 and the paper tool found no full text, so voxel size, tomogram size and particle counts come from the track page and the Dataverse abstract; noise level, tilt geometry and the simulator were not stated. Ground truth comes from the simulation, hence source automatic. Related to but distinct from the TomoTwin simulated dataset in the catalog.'
+  annotations_verified: true
+  last_checked: '2026-10-18T08:35:00Z'
+notes: 'Data is simulated, not real cryo-ET. Dataverse lists three zips: contest dataset (6.84 GB, without
+  test ground truth), difference dataset (199 MB, test ground truth and evaluation script) and the full
+  dataset (7.03 GB); size_bytes sums the three, so it double counts the contest and full sets. enricher:
+  zips listed and readme read; formats MRC + txt (was other), annotations confirmed; download_url = full
+  archive (was null). The paper PDF (Eurographics) returned 403 and the paper tool found no full text,
+  so voxel size, tomogram size and particle counts come from the track page and the Dataverse abstract;
+  noise level, tilt geometry and the simulator were not stated. Ground truth comes from the simulation,
+  hence source automatic. Related to but distinct from the TomoTwin simulated dataset in the catalog.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "Dataverse doi:10.34894/XSKKQV, 3 zips (14,063,687,997 B)\nshrec19_cryoet_full_dataset.zip (7,027,892,581\
+      \ B; 435 members)\n  full_dataset/readme.txt, evaluate.py, example_*.py, hitbox_visualization.py\n\
+      \  full_dataset/<0-8>/grandmodel_N.mrc        512x512x200 float32 (noise-free model)\n  full_dataset/<0-8>/hitbox_N.mrc\
+      \            512x512x200 float32 (particle boxes)\n  full_dataset/<0-8>/particle_locations_model_N.txt\n\
+      \  full_dataset/<0-9>/reconstruction_model_N.mrc  512x512x512 float32\n  full_dataset/<0-9>/projections_N/simulated_proj_model0N_<1-39>.mrc\
+      \  39 tilts\n  (folder 9: reconstruction and projections only)\nshrec19_cryoet_diff_dataset.zip\
+      \ (199,102,928 B; 14 members): diff_dataset/<0-9>/hitbox_N.mrc, model 9 ground truth, evaluation\
+      \ script\nshrec19_cryoet_contest_dataset.zip (6,836,692,488 B): the full set without test ground\
+      \ truth (members not listed)\n"
+    n_files: 449
+    listing_complete: false
+  sample:
+    urls:
+    - https://dataverse.nl/api/access/datafile/285770::full_dataset/0/reconstruction_model_0.mrc
+    - https://dataverse.nl/api/access/datafile/285770::full_dataset/0/hitbox_0.mrc
+    - https://dataverse.nl/api/access/datafile/285770::full_dataset/0/particle_locations_model_0.txt
+    size_bytes: 746675590
+    description: 'Tomogram 0: reconstruction (537 MB), hitbox volume (210 MB) and particle table (87 KB),
+      uncompressed sizes.'
+  arrays:
+  - role: raw
+    path_pattern: shrec19_cryoet_full_dataset.zip::full_dataset/[0-9]/reconstruction_model_[0-9].mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 512
+    - 512
+    - 512
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Weighted back-projection of the noise-free model from 39 tilts (-57 to +57 deg, 3
+      deg steps), per readme.
+  - role: other
+    path_pattern: shrec19_cryoet_full_dataset.zip::full_dataset/[0-9]/grandmodel_[0-9].mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 200
+    - 512
+    - 512
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: offset
+    alignment_notes: Noise-free model; grandmodel slice z corresponds to reconstruction slice z+156 (readme).
+  - role: label
+    path_pattern: shrec19_cryoet_full_dataset.zip::full_dataset/[0-9]/hitbox_[0-9].mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 200
+    - 512
+    - 512
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - 0
+    - 2498
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: offset
+    alignment_notes: On the grandmodel grid (same 512x512x200 shape); add 156 to z for reconstruction
+      coordinates (readme). Each particle box has its own integer value stored as float.
+  - role: label
+    path_pattern: shrec19_cryoet_full_dataset.zip::full_dataset/[0-9]/particle_locations_model_[0-9].txt
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: points-table
+    classes: null
+    alignment: offset
+    alignment_notes: Whitespace-separated columns class (PDB id), z, y, x, rotation_1-3, in grandmodel
+      coordinates (+156 in z for the reconstruction), per readme.
+  notes: 'Zip central directories read by range over the signed objectstore.surf.nl redirect (tools/listing.py
+    --expand-zips timed out). Read readme.txt and example_loading.py (not run). MRC headers (mode 2 float32):
+    grandmodel_0 512x512x200, reconstruction_model_0 512x512x512, hitbox_0 512x512x200, projection 512x512x1.
+    Sampled hitbox_0 (2.5 MB compressed): 2,499 distinct values 0..2498 (box sizes 1000-27000 voxels),
+    so particle-instance ids; particle_locations_model_0.txt head read. grandmodel header cell 512x512x200
+    A (1 A/px placeholder; readme says headers are not populated correctly), the track page gives 1 nm
+    voxels, which the record keeps. value ranges of the float volumes were not sampled (500 MB budget
+    vs 537 MB file).'
