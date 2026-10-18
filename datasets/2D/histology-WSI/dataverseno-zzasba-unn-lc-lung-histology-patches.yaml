@@ -1,0 +1,151 @@
+schema_version: '1.2'
+id: dataverseno-zzasba-unn-lc-lung-histology-patches
+title: UNN-LC High-Resolution Histopathological Lung Tissue Patch Dataset
+short_name: UNN-LC lung H&E patches (4 tissue classes)
+description: 6,572 patches of 768 x 768 pixels from 194 Aperio 40x H&E whole-slide images of lung cancer
+  from the University Hospital of North Norway, labelled by an oncologist and a pathologist as necrosis,
+  tumor, stroma_tls (reactive stroma with lymphocyte aggregates) or normal_lung, with predefined training
+  (3,996) and testing (2,576) sets and CSV datasheets.
+landing_url: https://dataverse.no/dataset.xhtml?persistentId=doi:10.18710/ZZASBA
+doi: 10.18710/ZZASBA
+repository: other
+accession: ZZASBA
+authors:
+- Nikita Shvetsov
+- Thomas Karsten Kilvær
+- Stig Manfred Dalen
+publications:
+- title: Fast TILs - A pipeline for efficient TILs estimation in non-small cell lung cancer
+  doi: 10.1016/j.jpi.2025.100437
+  url: https://doi.org/10.1016/j.jpi.2025.100437
+date_published: '2024-05-15'
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 253
+    y: 253
+    z: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: H&E-stained human lung cancer tissue (adenocarcinoma and squamous cell carcinoma) and normal
+    lung, patches cut from 194 whole-slide images scanned with an Aperio scanner at 40x
+  labels_stains:
+  - hematoxylin and eosin
+data:
+  formats:
+  - png
+  size_bytes: 17322769459
+  n_items: 6572
+  access: open
+  download_url: https://dataverse.no/api/access/datafile/209120
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  coverage: dense
+  format: train_datasheet.csv and test_datasheet.csv (columns slide_id, label, img_name, split) with labels
+    necrosis, tumor, stroma_tls, normal_lung; patches are PNG files inside train_subset.zip (9.07 GB)
+    and test_subset.zip (8.25 GB)
+  source: manual
+ml:
+  tasks:
+  - classification
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC0-1.0
+  url: http://creativecommons.org/publicdomain/zero/1.0
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-18T05:15:40Z'
+  evidence_urls:
+  - https://dataverse.no/dataset.xhtml?persistentId=doi:10.18710/ZZASBA
+  - https://dataverse.no/api/datasets/:persistentId/?persistentId=doi:10.18710/ZZASBA
+  - https://dataverse.no/api/access/datafile/209217
+  - https://dataverse.no/api/access/datafile/209215
+  - https://dataverse.no/api/access/datafile/209214
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11994347/fullTextXML
+  - https://dataverse.no/api/access/datafile/209217
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-18T08:20:00Z'
+notes: 'Counts come from the two datasheet CSVs (train 3,996 rows: stroma_tls 1,347, necrosis 1,333, normal_lung
+  1,008, tumor 308; test 2,576 rows: normal_lung 954, tumor 761, stroma_tls 566, necrosis 295) and the
+  README; size is the sum of the two zip files in the Dataverse listing. The README gives 768 x 768 pixel
+  patches from 194 slides at 40x but no pixel size in micrometres. enricher: zips listed (6,572 PNGs in
+  class folders); pixel size 253 nm from the sampled PNG pHYs header (100395 dpi), not stated in the docs
+  (was null). The paper describes the UNN-LC patch set as the training data of a patch classifier and
+  notes no cell-level ground truth exists. Download URL points at train_subset.zip only (datafile 209120);
+  test_subset.zip is datafile 209122.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "Dataverse doi:10.18710/ZZASBA (5 files, 17,323,073,420 B)\n  00_README.txt, train_datasheet.csv,\
+      \ test_datasheet.csv\n  train_subset.zip  9,068,962,846 B  3,996 PNG (9.07 GB unzipped, stored)\n\
+      \    necrosis/ 1,333   normal_lung/ 1,008   stroma_tls/ 1,347   tumor/ 308\n  test_subset.zip  \
+      \ 8,253,806,613 B  2,576 PNG (8.25 GB unzipped, stored)\n    necrosis/ 295     normal_lung/ 954\
+      \     stroma_tls/ 566     tumor/ 761\n  member names <class>/<slide_id>_<x>_<y>_<patch_id>.png\n"
+    n_files: 6575
+    listing_complete: true
+  sample:
+    urls:
+    - https://dataverse.no/api/access/datafile/209120::necrosis/0008_107796_19416_10.png
+    size_bytes: 3299343
+    description: One 768x768 RGBA PNG patch from train_subset.zip; its class is the folder name (and train_datasheet.csv).
+  arrays:
+  - role: raw
+    path_pattern: '*_subset.zip::*/*.png'
+    format: png
+    axes: yxs
+    shape:
+    - 768
+    - 768
+    - 4
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 13
+    - 255
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: RGBA PNG (H&E RGB plus alpha); class = parent folder.
+  - role: label
+    path_pattern: '*_datasheet.csv'
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes:
+    - id: necrosis
+      name: necrosis
+    - id: tumor
+      name: tumor
+    - id: stroma_tls
+      name: stroma_tls
+    - id: normal_lung
+      name: normal_lung
+    alignment: not-applicable
+    alignment_notes: Per-image class table (slide_id, label, img_name, split); img_name matches the PNG
+      member name, label matches its folder.
+  notes: 'Zip central directories read by range (zip64, members stored uncompressed): train 3,996 and
+    test 2,576 PNGs, matching the README counts; sizes from the Dataverse API. Sampled one member (3.3
+    MB): RGBA 768x768 uint8, min 13 max 255, channels differ; PNG pHYs 100395.25 dpi = 253 nm/px (header
+    calibration; plausible for a 40x Aperio scan, the README states none). Value range from one patch.
+    normalization none: plain RGB export of the scan (inferred). Direct links api/access/datafile/<id>
+    redirect to signed S3 (s3-oslo.educloud.no) with range requests, but dataverse.no is not on the TensorSwitch
+    allowlist; tools/peek_archive.py could not read the zip64 directory.'
