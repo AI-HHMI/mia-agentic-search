@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: figshare-31634557-hek293-fucci-timelapse-tracks
 title: Raw data for cell tracking and the tracking file (FUCCI HEK293 time-lapse with TrackMate tracks)
 short_name: HEK293 FUCCI time-lapse cell tracks (widefield)
-description: One 24 h time-lapse of FUCCI-expressing HEK293 cells (96 frames, 3 channels, 437 x 377 px, uint16 ImageJ
-  TIFF hyperstack) imaged every 15 min on a Tecan Spark Cyto, with the TrackMate XML file holding the segmented cell
-  spots (Cellpose) and tracks used in the paper's cell-cycle / migration analysis.
+description: One 24 h time-lapse of FUCCI-expressing HEK293 cells (96 frames, 3 channels, 437 x 377 px, uint16 ImageJ TIFF
+  hyperstack) imaged every 15 min on a Tecan Spark Cyto, with the TrackMate XML file holding the segmented cell spots (Cellpose)
+  and tracks used in the paper's cell-cycle / migration analysis.
 landing_url: https://figshare.com/articles/dataset/Raw_data_for_celltracking_and_the_tracking_file/31634557
 doi: 10.6084/m9.figshare.31634557
 repository: Figshare
@@ -12,7 +12,8 @@ accession: '31634557'
 authors:
 - Yajie Liang
 publications:
-- title: An open-source pipeline for longitudinal single-cell tracking and cell-cycle/migration coupling analysis for neurotherapeutic screening
+- title: An open-source pipeline for longitudinal single-cell tracking and cell-cycle/migration coupling analysis for neurotherapeutic
+    screening
   doi: 10.1002/nep3.70047
   url: https://pmc.ncbi.nlm.nih.gov/articles/PMC13399087/
 date_published: '2026-03-10'
@@ -42,7 +43,7 @@ annotations:
   - tracking
   - instance-segmentation
   coverage: dense
-  format: TrackMate XML (spots with polygon ROIs, tracks, lineage splits)
+  format: TrackMate 7.13.2 XML (Cellpose spots with polygon ROIs, LAP tracks with splits), one file for the one movie
   source: mixed
 ml:
   tasks:
@@ -67,11 +68,77 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-19T16:05:00Z'
-notes: 'Figshare listing (API): correctedcells.tif 94.9 MB and correctedcells.xml 21.9 MB; the figshare page itself returned 403 to
-  WebFetch so the API was used. TIFF header (probe.py): uint16, shape 96 x 3 x 377 x 437, uncompressed ImageJ hyperstack stored with
-  axes labelled zcyx (the 96 are the time points per the paper). The XML is a TrackMate 7.13.2 file with per-spot polygon ROIs from
-  Cellpose; the paper says tracks come from TrackMate LAP and only a subset of 10 cells was manually curated, so the annotation is
-  automatic with partial manual correction and its accuracy is not guaranteed. Which channel is brightfield vs FUCCI fluorescence is
-  not stated in the record. Pixel size and objective not stated on figshare, in the paper text read, or in the XML header. Only one
-  recording is released, so this is a small dataset.'
+  last_checked: '2026-10-19T18:05:00Z'
+notes: 'Figshare listing (API): correctedcells.tif 94.9 MB and correctedcells.xml 21.9 MB; the figshare page itself returned
+  403 to WebFetch so the API was used. TIFF header (probe.py): uint16, shape 96 x 3 x 377 x 437, uncompressed ImageJ hyperstack
+  stored with axes labelled zcyx (the 96 are the time points per the paper). The XML is a TrackMate 7.13.2 file with per-spot
+  polygon ROIs from Cellpose; the paper says tracks come from TrackMate LAP and only a subset of 10 cells was manually curated,
+  so the annotation is automatic with partial manual correction and its accuracy is not guaranteed. Which channel is brightfield
+  vs FUCCI fluorescence is not stated in the record. Pixel size and objective not stated on figshare, in the paper text read,
+  or in the XML header. Only one recording is released, so this is a small dataset.'
+technical:
+  method: sample
+  inspected_at: '2026-10-19T18:05:00Z'
+  inspected_urls:
+  - https://api.figshare.com/v2/articles/31634557
+  - https://ndownloader.figshare.com/files/62617384
+  - https://ndownloader.figshare.com/files/62617381
+  bytes_downloaded: 95304416
+  size_source: file-listing
+  layout:
+    tree: "figshare 31634557  2 files, 116,859,448 B\n  correctedcells.tif   94,937,700 B   ImageJ hyperstack 96 x 3 x 377\
+      \ x 437 uint16\n  correctedcells.xml   21,921,748 B   TrackMate 7.13.2 model (spots, tracks)"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/62617384
+    - https://ndownloader.figshare.com/files/62617381
+    size_bytes: 116859448
+    description: 'The whole dataset: the one time-lapse and its TrackMate file.'
+  arrays:
+  - role: raw
+    path_pattern: correctedcells.tif
+    format: tiff
+    axes: tcyx
+    shape:
+    - 96
+    - 3
+    - 377
+    - 437
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 65535
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'ImageJ hyperstack labelled slices=96 (header axes zcyx), but the 96 planes are time points: TrackMate
+      ImageData says nslices=1 nframes=96, and the paper images every 15 min for 24 h. Channel identities (brightfield / FUCCI)
+      not stated.'
+  - role: label
+    path_pattern: correctedcells.xml
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: other
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'TrackMate XML for correctedcells.tif: ImageData width 437 height 377 nframes 96, pixelwidth 1.0 (pixel
+      units), so spot coordinates are in pixels on the raw grid; Cellpose detector (custom BrightfieldModel) on channel setting
+      0.'
+  notes: 'Figshare API listing complete (2 files, 116,859,448 B). TIFF probed and sampled whole (94.9 MB): uint16, 96 x 3
+    x 377 x 437, values 0-65535, 27% zeros, p99 47943; file name and paper say frames were background-subtracted and SIFT-registered,
+    so not raw camera data; normalization unknown. TrackMate XML read by range (head + last 60 KB): v7.13.2, ImageData pixelwidth/pixelheight
+    1.0, timeinterval 1.0 (uncalibrated). Voxel size not found; checked: ImageJ TIFF header (no calibration), TrackMate ImageData
+    (1.0 placeholder), figshare API description (none), paper full text (Tecan Spark Cyto, no objective or pixel size), no
+    code repository linked besides Cellpose. 2D+t, so not in the miao layout yet.'
