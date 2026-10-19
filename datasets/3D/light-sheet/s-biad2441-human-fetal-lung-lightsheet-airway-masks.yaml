@@ -1,10 +1,12 @@
 schema_version: '1.2'
 id: s-biad2441-human-fetal-lung-lightsheet-airway-masks
-title: Light-sheet images of developing human fetal lungs with airway segmentation masks, meshes and branching graphs
+title: Light-sheet images of developing human fetal lungs with airway segmentation masks, meshes and branching
+  graphs
 short_name: Human fetal lung airway masks (light-sheet)
-description: 53 cleared whole-lung light-sheet stacks (E-cadherin, EpCAM or SOX9/SOX2 labelling, 1.63 x 1.63 x 2 um voxels) of
-  human embryos and fetuses at 6-12 post-conceptional weeks, with per-lobe binary airway masks, surface meshes (OBJ) and
-  skeleton network graphs derived from a pixel-classifier or U-Net segmentation followed by manual mesh correction.
+description: 53 cleared whole-lung light-sheet stacks (E-cadherin, EpCAM or SOX9/SOX2 labelling, 1.63
+  x 1.63 x 2 um voxels) of human embryos and fetuses at 6-12 post-conceptional weeks, with per-lobe binary
+  airway masks, surface meshes (OBJ) and skeleton network graphs derived from a pixel-classifier or U-Net
+  segmentation followed by manual mesh correction.
 landing_url: https://www.ebi.ac.uk/biostudies/BioImages/studies/S-BIAD2441
 doi: 10.6019/S-BIAD2441
 repository: BioImageArchive
@@ -17,14 +19,12 @@ imaging:
   modality:
   - light-sheet
   dimensionality: 3D
-  voxel_size_nm:
-    x: 1630
-    y: 1630
-    z: 2000
-  channels: 2
+  voxel_size_nm: null
+  channels: null
   organism:
   - Homo sapiens
-  sample: PFA-fixed, bleached and cleared human embryonic and fetal lungs (6-12 post-conceptional weeks) immunolabelled for airway epithelium
+  sample: PFA-fixed, bleached and cleared human embryonic and fetal lungs (6-12 post-conceptional weeks)
+    immunolabelled for airway epithelium
   labels_stains:
   - E-cadherin
   - EpCAM
@@ -33,7 +33,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: null
+  size_bytes: 1478536819896
   n_items: 53
   access: open
   download_url: https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/441/S-BIAD2441/Files/
@@ -45,8 +45,10 @@ annotations:
   - skeleton
   - other
   coverage: dense
-  format: per-lobe uint8 multi-page TIFF masks (Mask/), OBJ surface meshes (Mesh/), and node-position and edge-list .dat files for branching network graphs (Cleaned_CSV/)
-  source: mixed
+  format: Per-lobe binary uint8 multi-page TIFF masks (Mask/, 0/255) rasterized from the corrected meshes
+    as isotropic volumes (e.g. 7 um voxels), OBJ surface meshes (Mesh/), and node-position and edge-list
+    .dat files for branching network graphs (Cleaned_CSV/)
+  source: proofread
 ml:
   tasks:
   - segmentation
@@ -68,5 +70,82 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-19T05:30:00Z'
-notes: 'Licence CC BY-NC 4.0 (BioStudies record). Record text says 4X objective, xy 1.625 um, z step 3 um; the probed file header says 1.63 x 1.63 x 2.0 um, so the header is used and the difference is unexplained. Segmentation: Aivia pixel classifier (5-11 PCW) or a light-weight U-Net (older lungs), then OBJ meshes manually corrected in Meshmixer. File lists: masks 101 rows mapped to source Biomarker images, meshes 90, graphs 216. No publication is listed, so no paper was read. Probed: image uint16 1466 slices x 2 channels x 1878 x 1099; mask uint8 101 x 142 x 95 (per-lobe crop, apparently downsampled), so raw/mask grid alignment is not established.'
+  last_checked: '2026-10-19T05:25:43Z'
+notes: 'Licence CC BY-NC 4.0 (BioStudies record). Segmentation: Aivia pixel classifier (5-11 PCW) or a
+  light-weight U-Net (older lungs), then OBJ meshes manually corrected in Meshmixer (proofread); masks
+  are "binary mask from meshes", converted to an isotropic image volume. File lists: masks 101 rows mapped
+  to source Biomarker images, meshes 90, graphs 216. No publication is listed. enricher: voxel_size_nm
+  set to null (was 1630 x 1630 x 2000): it differs per specimen. Study text: typically xy 1.625 um, z
+  step 3 um; SM8_Epcam.tif header 1.625 x 1.625 x 4.0 um; the file probed by the harvester 1.63 x 1.63
+  x 2.0 um; masks 7 um isotropic (SM8 headers; some mask names say _4um or _7um). channels: 1 or 2 per
+  Biomarker file.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "Files/\n  Files list_{study,masks,Meshes,graphs}.{json,tsv}\n  Lung Files/<specimen>/     \
+      \     43 specimens (EH<n>, GW13, REN<n>, SM<n>, 10GW.., 11GW..)\n    Biomarker/[<lobe>/]<specimen>_<marker>.tif\
+      \   45 image stacks, 0.36-174 GB each\n    Mask/<specimen>_<lobe>[_<n>um].tif           101 per-lobe\
+      \ binary masks\n    Mesh/<specimen>_<lobe|FULL|B<n>>.obj         90 meshes\n    Cleaned_CSV/<specimen>_<lobe>_clean[ed]_{edge_list,node_positions}.dat\
+      \   216 graph files\n"
+    n_files: 469
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/441/S-BIAD2441/Files/Lung%20Files/SM8/Biomarker/SM8_Epcam.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/441/S-BIAD2441/Files/Lung%20Files/SM8/Mask/SM8_LL.tif
+    size_bytes: 364524719
+    description: 'Specimen SM8: EpCAM image stack (215x938x903 uint16) and the left-lower-lobe mask (47x87x59
+      uint8, 7 um voxels); SM8 has 4 more lobe masks.'
+  arrays:
+  - role: raw
+    path_pattern: Lung Files/*/Biomarker/**.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 215
+    - 938
+    - 903
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 149
+    - 7066
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'SM8_Epcam.tif is an ImageJ stack whose 215 planes are stored as frames (probe axes
+      tyx); they are the light-sheet z steps (study text: z-stack, header spacing 4.0 um), so zyx. Other
+      Biomarker files hold 2 channels (harvester probe: 1466 x 2 x 1878 x 1099), so shape and channel
+      count vary.'
+  - role: label
+    path_pattern: Lung Files/*/Mask/*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 47
+    - 87
+    - 59
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: airway epithelium (lobe)
+    alignment: unknown
+    alignment_notes: One mask per lobe, named <specimen>_<lobe>; pairing with the image via the "Source
+      study" column of Files list_masks (e.g. SM8_LL.tif -> SM8/Biomarker/SM8_Epcam.tif). Masks are rasterized
+      from meshes as isotropic volumes (7 um in SM8 headers) and cropped to the lobe; the crop offset
+      relative to the image is not stored, so they are neither on the image grid nor registered to it.
+  notes: 'File list from the BioStudies files API (461 files with exact byte sizes, 1,478,536,819,896
+    B) plus the 8 file-list JSON/TSV files in Files/ (HTTP index); listing.py over FTP timed out. Headers:
+    SM8_Epcam.tif, SM8_LL.tif, SM8_RU.tif. Samples read by range with a short tifffile/fsspec script:
+    image page 107 (uint16 149-7066, mean 721; ~2 MB), mask SM8_LL page 23 ({0: 3497, 255: 1636}). Voxel
+    size varies per specimen (see notes), so it is null. Meshes and graph .dat files (node_id x_um y_um
+    z_um; source target length_um diameter_um) are not listed as arrays.'
