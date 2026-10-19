@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: zenodo-5320076-tcga-manual-tumor-region-annotations
 title: Manual tumor annotations in TCGA
 short_name: TCGA manual tumor region outlines (H&E WSI)
-description: Manual outlines of invasive tumor regions on TCGA diagnostic H&E whole slide images for 23 solid tumour types (one zip per type, one polygon-vertex CSV per slide, drawn in QuPath), made to enrich tumour tissue for molecular prediction rather than for pixel-exact segmentation. The slides themselves are not included.
+description: Manual outlines of invasive tumor regions on TCGA diagnostic H&E whole slide images for 23
+  solid tumour types (one zip per type, one polygon-vertex CSV per slide, drawn in QuPath), made to enrich
+  tumour tissue for molecular prediction rather than for pixel-exact segmentation. The slides themselves
+  are not included.
 landing_url: https://zenodo.org/records/5320076
 doi: 10.5281/zenodo.5320076
 repository: Zenodo
@@ -17,25 +20,27 @@ imaging:
   - histology-WSI
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Homo sapiens
-  sample: Human solid tumours (TCGA diagnostic H&E slides) from 23 TCGA cohorts, COAD and READ merged as CRC
+  sample: Human solid tumours (TCGA diagnostic H&E slides) from 23 TCGA cohorts, COAD and READ merged
+    as CRC
   labels_stains: []
 data:
   formats:
   - svs
-  size_bytes: 157400000
-  n_items: null
+  size_bytes: 11346975149671
+  n_items: 10582
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/5320076
   download_method: http
 annotations:
   present: true
   types:
   - semantic-segmentation
   coverage: partial
-  format: One CSV of polygon vertices (X_base, Y_base) per slide, named by TCGA slide ID, zipped per cancer type
+  format: 'One CSV per slide (<cancer type>.zip/<TYPE>/<TCGA slide file name>.csv), columns X_base, Y_base:
+    polygon vertices in level-0 slide pixels; 10,583 CSVs in 23 zips'
   source: manual
 ml:
   tasks:
@@ -56,5 +61,78 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-19T09:22:55Z'
-notes: 'The 157.4 MB total is the annotation archives only; the TCGA slides come from the GDC portal (TCGA terms apply). CRC.zip lists 624 CSVs, one per slide, each a list of X_base, Y_base vertices; per-cancer slide counts for the other 22 archives not listed. The record says the aim was not a pixel-perfect tumour annotation (region-level outlines, QuPath v0.1.2). No related paper listed on the Zenodo page, so none read. Pixel size not given. Coverage partial: only invasive tumour regions are outlined.'
+  last_checked: '2026-10-19T11:05:00Z'
+notes: 'Annotations are on Zenodo; the TCGA slides come from the GDC portal (TCGA terms apply). The record
+  says the aim was not a pixel-perfect tumour annotation (region-level outlines, QuPath v0.1.2). No related
+  paper listed on the Zenodo page, so none read. Coverage partial: only invasive tumour regions are outlined.
+  enricher: 23 zips hold 10,583 CSVs (956 MB uncompressed); 10,582 match open GDC slides by file name
+  (1 KIRP CSV unmatched); size_bytes is now slides (11,346,817,742,101 B, GDC API) + zips (157,407,570
+  B), was zips only; n_items = matched slides; channels 3 (RGB SVS). Pixel size not given.'
+technical:
+  method: header
+  size_source: unknown
+  layout:
+    tree: "zenodo.org/records/5320076 (23 zips, 157,407,570 B)\n  BLCA.zip/BLCA/TCGA-*-DX*.<uuid>.csv\
+      \   458 CSVs\n  BRCA.zip/BRCA/...                    1,133\n  CRC.zip/CRC/... (COAD+READ)      \
+      \    624\n  GBM 860, LGG 844, SARC 600, UCEC 566, LUAD 539, KIRC 519, THCA 519, SKCM 474, HNSC 472,\n\
+      \  PRAD 449, STAD 399, LIHC 378, LUSC 323, KIRP 297, CESC 279, PAAD 209, PCPG 196, THYM 181,\n \
+      \ ESCA 157, OV 107                     (CSVs per zip; 10,583 in total, 956,449,046 B uncompressed)\n\
+      GDC (api.gdc.cancer.gov/data/<file_id>, open access)\n  gdc/TCGA-*-DX*.svs                   10,582\
+      \ matched diagnostic slides, 11,346,817,742,101 B"
+    n_files: 10605
+    listing_complete: true
+  sample:
+    urls:
+    - https://api.gdc.cancer.gov/data/2cd68fa7-8178-478f-bd58-aeaa0fe42380
+    - https://zenodo.org/records/5320076/files/CRC.zip::CRC/TCGA-AG-3725-01Z-00-DX1.86CF8220-F410-49E4-A840-E42AE8C5D8B2.csv
+    size_bytes: 4976352
+    description: smallest annotated slide, TCGA-AG-3725-01Z-00-DX1 (CRC, SVS level 0 9089 x 10000 RGB,
+      4.97 MB) and its outline CSV (5,934 B)
+  arrays:
+  - role: raw
+    path_pattern: gdc/TCGA-*-DX*.svs
+    format: svs
+    axes: yxs
+    shape:
+    - 9089
+    - 10000
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg2000
+    value_range: null
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: Aperio SVS pyramids from GDC; the sampled slide is J2K-compressed (Aperio JP2000
+      RGB, 256 px tiles), the GBM slide read for another PR was JPEG, so compression varies by slide.
+      Slide = CSV file name with .svs (case as in the CSV; GDC lookup by file_name).
+  - role: label
+    path_pattern: '*.zip/*/TCGA-*.csv'
+    format: csv
+    axes: null
+    shape:
+    - 224
+    - 2
+    shape_varies: true
+    dtype: float64
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: polygons
+    classes:
+    - id: null
+      name: tumor
+    alignment: same-grid
+    alignment_notes: 'Pairing: <TYPE>.zip/<TYPE>/<slide file name stem>.csv outlines slide <stem>.svs.
+      Columns X_base, Y_base = vertex coordinates in level-0 pixels (QuPath export), e.g. x 17860-19281,
+      y 22458 in PRAD TCGA-HC-8262. One vertex list per file; whether several regions are concatenated
+      in one list is not documented.'
+  notes: 'Listing: Zenodo API (23 zips, complete), zip central directories (10,583 CSVs), GDC files API
+    by file name for every CSV (10,582 open SVS, 11.35 TB; 1 KIRP CSV unmatched). Sizes summed from these
+    APIs, not tools/listing.py, so size_source stays unknown. Read PRAD/TCGA-HC-8262-01Z-00-DX1 CSV (225
+    lines, header X_base, Y_base). Header read of slide 2cd68fa7 (4.9 MB, whole file): 3 pages, level
+    0 (9089, 10000, 3) uint8 Aperio JP2000, description has no MPP or AppMag. Voxel size not found; checked:
+    SVS header of the sampled slide (no MPP), Zenodo description (none), no paper linked; TCGA slides
+    come from many sites and scanners, and each SVS header states its own MPP where present. Whole-dataset
+    download is impractical (11 TB); direct files: api.gdc.cancer.gov/data/<file_id> (not on the TensorSwitch
+    allowlist).'
