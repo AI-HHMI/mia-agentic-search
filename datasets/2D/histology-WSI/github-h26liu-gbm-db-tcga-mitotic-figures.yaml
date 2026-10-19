@@ -1,0 +1,152 @@
+schema_version: '1.2'
+id: github-h26liu-gbm-db-tcga-mitotic-figures
+title: 'Glioblastoma TCGA-WSI-Annotations: mitotic figure boxes on TCGA H&E slides'
+short_name: GBM mitotic figure boxes on TCGA H&E slides
+description: Bounding-box annotations of mitotic figures (normal, atypical and granular classes) on 66
+  TCGA glioblastoma H&E whole slide images, produced with a deep active learning pipeline plus pathologist
+  review. The repo holds only the JSON annotations; the slides come from the TCGA/GDC portal.
+landing_url: https://github.com/h26liu/gbm-db
+doi: null
+repository: GitHub
+accession: null
+authors:
+- Eric Liu
+- August Lin
+- Pramath Kakodkar
+- Yayuan Zhao
+- Boyu Wang
+- Charles Ling
+- Qi Zhang
+publications:
+- title: A deep active learning framework for mitotic figure detection with minimal manual annotation
+    and labelling
+  doi: 10.1111/his.15506
+  url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12445828/fullTextXML
+date_published: null
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: Human glioblastoma, H&E-stained TCGA diagnostic whole slide images
+  labels_stains: []
+data:
+  formats:
+  - svs
+  size_bytes: 47622321395
+  n_items: 66
+  access: open
+  download_url: https://github.com/h26liu/gbm-db
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  - classification
+  coverage: dense
+  format: 'Per-slide JSON (annotations/TCGA-XX-XXXX-DXn.json): name = SVS file name, data[] = boxes with
+    tl/tr/bl/br corner coordinates in level-0 slide pixels and className (normal, atypical, granular,
+    uncertain); ambiguous/*.svs_ambiguous.json hold model detections per tile'
+  source: mixed
+ml:
+  tasks:
+  - detection
+  - classification
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC0-1.0
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-19T09:13:19Z'
+  evidence_urls:
+  - https://github.com/h26liu/gbm-db
+  - https://github.com/h26liu/gbm-db/tree/main/annotations
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12445828/fullTextXML
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-19T10:35:00Z'
+notes: 'Slides are not in the repo: metadata.xlsx maps TCGA image IDs to annotation files and the slides
+  are fetched from the GDC portal (TCGA terms apply to the images; CC0-1.0 is the repo license for annotations).
+  annotations/ holds 77 JSON files while the paper says 66 WSIs, so n_items follows the paper. Paper reports
+  804 normal, 728 atypical and 1,955 granular mitotic figures; initial 2 slides annotated by 3 pathologists,
+  the rest by active learning with review of ambiguous cases (source mixed). Splits not provided. enricher:
+  all 77 annotated SVS names resolve to open TCGA-GBM files in the GDC API (47.6 GB); the 77 JSONs hold
+  6,083 boxes (2,590 atypical, 2,522 normal, 943 granular, 24 uncertain, 4 unnamed); channels 3 (RGB SVS).'
+technical:
+  method: header
+  size_source: unknown
+  layout:
+    tree: "github.com/h26liu/gbm-db (7.2 MB)\n  annotations/TCGA-*-DX[0-9].json      77 files, 1,571,103\
+      \ B (boxes per slide)\n  ambiguous/*.svs_ambiguous.json      102 files, 5,593,445 B (model detections\
+      \ per tile)\n  metadata.xlsx, README.md, LICENSE (CC0 1.0), .gitignore\nGDC (api.gdc.cancer.gov/data/<file_id>,\
+      \ TCGA-GBM, open access)\n  gdc/TCGA-*-DX*.svs                  77 slides, 47,615,102,172 B (22.3\
+      \ MB - ~1.5 GB each)"
+    n_files: 260
+    listing_complete: true
+  sample:
+    urls:
+    - https://api.gdc.cancer.gov/data/3188036e-674b-4699-9e6e-a23ee9ea7bed
+    - https://raw.githubusercontent.com/h26liu/gbm-db/main/annotations/TCGA-06-0130-DX1.json
+    size_bytes: 22255588
+    description: smallest annotated slide, TCGA-06-0130-01Z-00-DX1 (SVS, 7350 x 6000 RGB at level 0, 20x,
+      MPP 0.5015) and its annotation JSON (3 boxes)
+  arrays:
+  - role: raw
+    path_pattern: gdc/TCGA-*-DX*.svs
+    format: svs
+    axes: yxs
+    shape:
+    - 7350
+    - 6000
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range: null
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: Aperio SVS pyramid (level 0 tiled 240x240 JPEG RGB, plus thumbnail and a 4x downsampled
+      level in the sampled slide). Files come from GDC by file_id; the JSON field name holds the full
+      SVS file name used to look up the file_id.
+  - role: label
+    path_pattern: annotations/TCGA-*-DX[0-9].json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: boxes-table
+    classes:
+    - id: null
+      name: normal
+    - id: null
+      name: atypical
+    - id: null
+      name: granular
+    - id: null
+      name: uncertain
+    alignment: same-grid
+    alignment_notes: 'Pairing: annotations/TCGA-XX-XXXX-DXn.json name field = the SVS file name (TCGA-XX-XXXX-01Z-00-DXn.<uuid>.svs).
+      Box corners (tl, tr, bl, br) are float x/y in level-0 pixels of that slide (e.g. x 13001-30973,
+      y 10274-27112 in TCGA-02-0003). Classes are className strings, no numeric ids.'
+  notes: 'Listing: blobless git clone of the repo (179 JSONs, xlsx, README, LICENSE; sizes from checkout)
+    plus GDC files API for the 77 slide names in annotations/*.json: all 77 found, access open, project
+    TCGA-GBM, 47,615,102,172 B. Total 47,622,321,395 B; size_source left unknown because the size was
+    summed from the git tree and the GDC API, not tools/listing.py. Header read of TCGA-06-0130-01Z-00-DX1
+    (21.8 MB read via ranges, nearly the whole 22.3 MB file): 3 pages, level 0 (7350, 6000, 3) uint8 JPEG
+    RGB tiled 240, Aperio AppMag 20, MPP 0.5015. Voxel size not set: only one slide''s MPP was read (the
+    other 76 not checked, so a shared value is not established); each SVS header states its own MPP, the
+    paper text read gives none. Sizes of other slides are not shape-checked. Download: GDC data endpoint
+    is direct (range requests) but api.gdc.cancer.gov is not on the TensorSwitch allowlist.'
