@@ -2,7 +2,8 @@ schema_version: '1.2'
 id: dryad-1rn8pk12f-menardella-foraminifera-microct
 title: 'Data from: How many specimens make a sufficient training set for automated three dimensional feature extraction?'
 short_name: Menardella foraminifera 3D segmentation (micro-CT)
-description: Micro-CT stacks of 50 planktonic foraminifera (Menardella spp.) with manual 3D segmentations of external calcite and internal cavity space, used to study how many training specimens a 3D U-Net (Biomedisa) needs.
+description: Micro-CT stacks of 50 planktonic foraminifera (Menardella spp.) with manual 3D segmentations of external calcite
+  and internal cavity space, used to study how many training specimens a 3D U-Net (Biomedisa) needs.
 landing_url: https://datadryad.org/dataset/doi:10.5061/dryad.1rn8pk12f
 doi: 10.5061/dryad.1rn8pk12f
 repository: Dryad
@@ -33,7 +34,8 @@ imaging:
   - Menardella limbata
   - Menardella exilis
   - Menardella pertenuis
-  sample: Planktonic foraminifera tests from ODP Site 925 (Ceara Rise, Equatorial Atlantic), 5.65-2.85 Ma, scanned on a Zeiss Xradia 510 Versa
+  sample: Planktonic foraminifera tests from ODP Site 925 (Ceara Rise, Equatorial Atlantic), 5.65-2.85 Ma, scanned on a Zeiss
+    Xradia 510 Versa
   labels_stains: []
 data:
   formats:
@@ -42,7 +44,7 @@ data:
   n_items: 50
   access: open
   download_url: null
-  download_method: other
+  download_method: http
 annotations:
   present: true
   types:
@@ -66,10 +68,77 @@ provenance:
   - https://datadryad.org/dataset/doi:10.5061/dryad.1rn8pk12f
   - https://datadryad.org/api/v2/datasets/doi%3A10.5061%2Fdryad.1rn8pk12f
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11296157/fullTextXML
+  - https://zenodo.org/api/records/11402134
+  - https://datadryad.org/api/v2/versions/296961/files
   confidence: 0.85
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-19T08:37:58Z'
-notes: 'One CT stack per specimen (Image_Files.zip, 19.4 GB, 16-bit TIFF, 992x1015 px slices) plus manual labels (38 MB zip). Paper splits the 50 specimens 20 train / 10 val / 20 test, but the zips could not be listed (Dryad downloads need a token), so splits_provided is false and formats lists tiff only; the Dryad record also holds a 783 MB network file (.h5), shape-analysis zips and PLY meshes. Paper reports about 11,947 manually labelled 2D slices. Voxel size 1.75 um from paper Methods. Checked: Dryad page and API record, full paper.'
+  last_checked: '2026-10-19T09:20:00Z'
+notes: 'One CT stack per specimen (50 16-bit TIFF stacks, ~992x1015 px slices) plus manual 8-bit labels (38 MB zip). Paper
+  splits the 50 specimens 20 train / 10 val / 20 test; splits not marked in the files. Record also holds a 783 MB network
+  file (.h5), shape-analysis zips and PLY/VTK meshes. Paper reports about 11,947 manually labelled 2D slices. Voxel size 1.75
+  um from paper Methods; TIFF resolution tag 1.757 um agrees. enricher: files listed and sampled via the identical Zenodo
+  mirror 10.5281/zenodo.11402134 (Dryad blocks scripted downloads).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  7 files, 21.7 GB (Zenodo mirror 11402134 = same files and sizes as Dryad)\n  Image_Files.zip              \
+      \          19.4 GB  (holds one stored zip: SafeSend-VC8yzXQUUdrKXbdR/Image Files.zip)\n    Image Files/            \
+      \             50 .tiff (16-bit CT stacks, st<NNN>_bl<N>_fo<N>.tiff) + Thumbs.db\n  Internal_and_External_Structures.zip\
+      \   38.4 MB\n    Internal and External Structures/Segmentation Files/   50 .tiff (8-bit labels, 258.2 MB unpacked)\n\
+      \  Aug_T5_AI_20_Images.h5                 783 MB   (trained Biomedisa network, not image data)\n  External_Shape_Comparison.zip\
+      \          403 MB   (264 .vtk/.xml + output/ csv, txt)\n  Internal_Shape_Comparison.zip          413 MB   (264 .vtk/.xml\
+      \ + output/ csv, txt)\n  Processed_Mesh_Files.zip               646 MB   (520 .ply, 522 .vtk, data.csv)\n  README.md\
+      \                              2.7 KB"
+    n_files: 7
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: Image Files/*.tiff
+    format: tiff
+    axes: zyx
+    shape:
+    - 120
+    - 1011
+    - 984
+    shape_varies: true
+    dtype: uint16
+    compression: lzw
+    value_range:
+    - 0
+    - 54816
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'One reconstructed micro-CT stack per specimen, plain multi-page TIFF, one page per z slice (paper: 16-bit
+      .tiff stacks, ~992x1015 px slices). Shape from st093_bl1_fo2.tiff; st012_bl3_fo4 is 209 pages. Inside a zip nested in
+      Image_Files.zip.'
+  - role: label
+    path_pattern: Internal and External Structures/Segmentation Files/*.tiff
+    format: tiff
+    axes: zyx
+    shape:
+    - 120
+    - 1011
+    - 984
+    shape_varies: true
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 2
+    encoding: semantic-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing: same file name as the raw stack (st093_bl1_fo2.tiff in both zips); sampled pair has identical
+      shape and TIFF resolution (1.757 um/px). Values 0/1/2 = background, external calcite, internal cavity per paper (three
+      labels: external, internal, background), but which ID is which is not documented.'
+  notes: 'Sampled st093_bl1_fo2 (smallest pair, 197.2 MB fetched by range requests from the Zenodo mirror; values from this
+    one sample). Label values {0: 116.9M, 1: 1.20M, 2: 1.29M voxels}; raw 28% of voxels are 0 (outside the specimen/reconstruction),
+    max 54816. Dryad itself refuses scripted downloads (API file download HTTP 401); Zenodo record 11402134 (CC0, README links
+    Dryad DOI) has the same 7 files with the same byte sizes. No sample unit: the raw TIFFs are members of a zip stored inside
+    Image_Files.zip, so the smallest fetchable unit holding a raw stack is the 19.4 GB inner zip (TensorSwitch reads one zip
+    level). data.download_url: the dataset is 7 files, not one archive; raw images are Image_Files.zip on Zenodo.'
