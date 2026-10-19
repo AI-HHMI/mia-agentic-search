@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: ultranet-tem-melanoma-mito-er
 title: 'UltraNet: annotated TEM images of murine B16 melanoma sections (mitochondria and ER masks)'
 short_name: Mouse melanoma mitochondria/ER segmentation (TEM)
-description: 296 transmission electron micrographs (2028 x 2048 px) of B16 melanoma tumour sections from 20 C57BL/6 mice (control
-  and brefeldin A / rapamycin treatments), each with a manually drawn PNG mask separating background, mitochondria and endoplasmic
-  reticulum. The zip is split into train (114), val (80) and test (102) images with matching masks.
+description: 296 transmission electron micrographs (2048 x 2048 px) of B16 melanoma tumour sections from 20 C57BL/6
+  mice (control and brefeldin A / rapamycin treatments), each with a manually drawn PNG mask separating background,
+  mitochondria and endoplasmic reticulum. The zip is split into train (114), val (80) and test (102) images with
+  matching masks.
 landing_url: https://ultranet.sysbio.ru
 doi: null
 repository: LabWebsite
@@ -27,11 +28,11 @@ imaging:
   - TEM
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism:
   - Mus musculus
-  sample: B16 skin melanoma tumour sections (ultrathin, uranyl acetate and lead citrate stained), JEOL JEM 1400 at 25,000x,
-    80 kV
+  sample: B16 skin melanoma tumour sections (ultrathin, uranyl acetate and lead citrate stained), JEOL JEM 1400
+    at 25,000x, 80 kV
   labels_stains: []
 data:
   formats:
@@ -71,8 +72,76 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-19T15:50:00Z'
-notes: 'Dataset is the Download button of the UltraNet web server (/export_dataset, 1.15 GB zip); the paper only points to
-  the site. Its terms page returned HTTP 500, so no license was found. Zip (peek_archive): images/{train 114, val 80, test
-  102} .tif + masks .png. Paper says 296 images in Methods but 206 in Conclusions; zip has 296 pairs. Paper states pixel width
-  0.38 nm, implausible at 25,000x for 2028 px, so voxel size is left null. Mask class values not inspected.'
+  last_checked: '2026-10-19T17:45:00Z'
+notes: 'Dataset is the Download button of the UltraNet web server (/export_dataset, 1.15 GB zip); the paper only
+  points to the site. Its terms page returned HTTP 500, so no license was found. Zip (peek_archive): images/{train
+  114, val 80, test 102} .tif + masks .png. Paper says 296 images in Methods but 206 in Conclusions; zip has 296
+  pairs. Paper states pixel width 0.38 nm, implausible at 25,000x for 2028 px, so voxel size is left null. enricher:
+  images are 2048x2048 uint8 (paper says 2028x2048); masks are RGB PNG with 3 colours; 0.38 nm also conflicts with
+  the paper''s 2,707,933 nm2 mitochondrial area for one image (more than a whole 2048 px frame at 0.38 nm), so voxel
+  size stays null.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "export_dataset (zip, 1.16 GB; 594 members, 1.25 GB uncompressed)\n  data/images/{train,val,test}/<sample>/<sample>_<n>.tif\
+      \   296 TEM images\n    train: MB-020 (31), MK1-017 (83); val: MK1-03 (19), MRB-018 (61); test: MP-09 (102)\n\
+      \  data/masks/{train,val,test}/<sample>/<sample>_<n>.png    296 RGB masks\n  data/images/imgs list.docx, imgs\
+      \ list.xlsx\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://ultranet.sysbio.ru/export_dataset::data/images/train/MB-020/MB-020_38.tif
+    - https://ultranet.sysbio.ru/export_dataset::data/masks/train/MB-020/MB-020_38.png
+    size_bytes: 4243309
+    description: One training image (4.2 MB) and its mask (48 KB).
+  arrays:
+  - role: raw
+    path_pattern: data/images/*/*/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: data/masks/*/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 2048
+    - 2048
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 180
+    encoding: rgb-colors
+    classes:
+    - id: null
+      name: background
+    - id: null
+      name: mitochondria
+    - id: null
+      name: endoplasmic reticulum
+    alignment: same-grid
+    alignment_notes: 'images/<split>/<sample>/<stem>.tif pairs with masks/<split>/<sample>/<stem>.png; same 2048x2048
+      grid. Colours seen in 2 masks: (0,0,0), (124,180,60), (31,120,180); which colour is mitochondria and which
+      ER is not documented.'
+  notes: 'Zip central directory read (594 members: 296 .tif, 296 .png, imgs list .docx/.xlsx). Probed MB-020_38.tif:
+    plain single-page TIFF, uint8, 2048x2048, uncompressed. Sampled MB-020_38 pair: image 0..255 (mean 125, all
+    256 values used); mask RGB with exactly 3 colours (black 83%, (124,180,60) 13%, (31,120,180) 4%); MP-09_153
+    [1].png also 3 colours. One sample each. Voxel size not found; checked: TIFF header (no resolution), zip listing,
+    landing page, paper Methods (states 0.38 nm, contradicted by its own areas). Download host ultranet.sysbio.ru
+    is not on the TensorSwitch allowlist. One test file name has a space and brackets ("MP-09_153 [1]").'
