@@ -2,11 +2,10 @@ schema_version: '1.2'
 id: opara-105-al2o3-particles-xray-ct
 title: 'Tomographic dataset of a particulate Al2O3 sample: X-ray microscopy volume with per-particle segmentation'
 short_name: Al2O3 particles segmentation (X-ray CT)
-description: One Zeiss Xradia Versa 510 X-ray microscopy tomogram (4x optical lens) of Al2O3 particles
-  embedded in wax, as a reconstructed raw TIFF stack (993 slices) plus a segmented TIFF stack (951 slices)
-  in which every discrete particle has its own grey value. Part of the PARROT open archive of particle-discrete
-  tomographic datasets; acquisition and reconstruction parameters and the particle size distribution are
-  given as images.
+description: One Zeiss Xradia Versa 510 X-ray microscopy tomogram (4x optical lens) of Al2O3 particles embedded
+  in wax, as a reconstructed raw TIFF stack (993 slices) plus a segmented TIFF stack (951 slices) in which every
+  discrete particle has its own grey value. Part of the PARROT open archive of particle-discrete tomographic datasets;
+  acquisition and reconstruction parameters and the particle size distribution are given as images.
 landing_url: https://opara.zih.tu-dresden.de/items/4c95db45-48e3-45ce-bdfd-078a5fbd5063/full
 doi: 10.25532/OPARA-105
 repository: other
@@ -71,13 +70,79 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-19T22:46:58Z'
-notes: 'Files: Al2O3_raw.zip (993 .tiff slices, ~2 MB each) and Al2O3_segmented.zip (951 .tif slices in
-  Split25/), plus acquisition/reconstruction/size-distribution images; size_bytes is the OPARA datacite.size.
-  Voxel size is not in the metadata or paper; x=y=z=1.9965 µm is the instrument pixel size read from the
-  deposited reconstruction screenshot (Info panel, 4x lens, binning 2), not checked against TIFF headers.
-  The segmented stack has 951 slices vs 993 raw, so alignment is unverified. Paper: particles segmented
-  by single-threshold binarisation plus watershed in ImageJ, then manually sorted (under/over-segmented
-  particles discarded), hence source mixed; label encoding not inspected. Sibling PARROT records (same
-  scanner, other materials, separate samples): Mica (OPARA-107), Dolomite (OPARA-104), Limestone (OPARA-108),
-  Quartz (OPARA-106), soda-lime glass (OPARA-109). Non-biological sample, so organism is empty.'
+  last_checked: '2026-10-19T23:50:00Z'
+notes: 'Files: Al2O3_raw.zip (993 .tiff slices, ~2 MB each) and Al2O3_segmented.zip (951 .tif slices in Split25/),
+  plus acquisition/reconstruction/size-distribution images; size_bytes is the OPARA datacite.size. Voxel size: pixel
+  size stated in the deposited acquisition screenshot (see technical.notes). The segmented stack has 951 slices
+  vs 993 raw, so alignment is unverified. Paper: particles segmented by single-threshold binarisation plus watershed
+  in ImageJ, then manually sorted (under/over-segmented particles discarded), hence source mixed. Sibling PARROT
+  records: OPARA-104 to -109. Non-biological sample, so organism is empty. enricher: label encoding instance-ids
+  from sample; voxel size checked against the screenshot.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  6 files, 1,317,620,774 B (OPARA bitstreams)\n  Al2O3_raw.zip  (1.29 GB)\n    TIFF/00001.tiff ...\
+      \ TIFF/00993.tiff  (993 slices) + Thumbs.db\n  Al2O3_segmented.zip  (20.0 MB)\n    Split25/Split250000.tif\
+      \ ... Split25/Split250950.tif  (951 slices) + Thumbs.db\n  acquisition.JPG, reconstruction.PNG, psd.png, sem.tif\
+      \  (screenshots, size distribution, SEM image)"
+    n_files: 6
+    listing_complete: true
+  sample:
+    urls:
+    - https://opara.zih.tu-dresden.de/server/api/core/bitstreams/424a681d-0754-44ae-b27b-f3eb4dcaefc2/content::TIFF/00497.tiff
+    - https://opara.zih.tu-dresden.de/server/api/core/bitstreams/0a09dd0d-bb63-42e2-af59-eddec68548d8/content::Split25/Split250475.tif
+    size_bytes: 1337859
+    description: One raw z slice and one segmented z slice (slice correspondence not stated); the full volume is
+      a folder of 2D slices
+  arrays:
+  - role: raw
+    path_pattern: TIFF/[0-9][0-9][0-9][0-9][0-9].tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 1009
+    - 984
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 54797
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: 'One 2D z slice per file; 993 files make the volume (z = file number). TIFF Orientation tag
+      4: readers ignoring the tag return the slices flipped relative to the stored orientation.'
+  - role: label
+    path_pattern: Split25/Split25[0-9][0-9][0-9][0-9].tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1009
+    - 984
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 1315
+    normalization: none
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    alignment: unknown
+    alignment_notes: One 2D z slice per file (ImageJ 1.52p, stack max 2393); same yx size as the raw slices, but
+      951 slices vs 993 raw and no stated offset, so the z correspondence is unknown. No Orientation tag, while
+      the raw slices carry Orientation 4, so the label slices may be flipped relative to tag-aware raw reads. Each
+      particle has its own grey value (OPARA TechnicalInfo).
+  notes: 'Listing: OPARA DSpace bitstreams API, 6 files, 1,317,620,774 B exact; zip central directories: raw 993
+    .tiff (Al2O3_raw.zip), segmented 951 .tif (Al2O3_segmented.zip), each plus Thumbs.db. Sample (own read of two
+    zip members via range requests, 1,337,859 B): raw TIFF/00497.tiff uint16 1009x984 uncompressed, range 0-54797,
+    26% zeros (outside the holder), p99 44437; Split25/Split250475.tif uint16, 138 unique values 0-1315, 90% background
+    (one sample each). Normalization: the reconstruction screenshot shows Byte Scaling Custom (fixed min/max window)
+    to USHORT. Voxel size: acquisition.JPG Info panel of the reconstruction (Al2O3_tomo-A_recon.txm, image size
+    984 x 1009, matching the TIFFs, recon binning 1) states pixel size 1.9965 um; isotropic CT voxels assumed in
+    the record (z not separately stated). No calibration in the TIFF headers. Download: direct zips on opara.zih.tu-dresden.de
+    (range requests work), host not on the TensorSwitch allowlist. Slice-per-file volumes: the planner converts
+    each file as 2D.'
