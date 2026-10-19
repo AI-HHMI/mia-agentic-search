@@ -1,13 +1,12 @@
 schema_version: '1.2'
 id: opara-106-quartz-particles-xray-ct
-title: 'Tomographic dataset of a particulate Quartz sample: X-ray microscopy volume with per-particle
-  segmentation'
+title: 'Tomographic dataset of a particulate Quartz sample: X-ray microscopy volume with per-particle segmentation'
 short_name: Quartz particles segmentation (X-ray CT)
-description: One Zeiss Xradia Versa 510 X-ray microscopy tomogram (4x optical lens) of Quartz particles
-  embedded in wax, as a reconstructed raw TIFF stack (2243 slices, split over two raw zips) plus a segmented
-  TIFF stack (2210 slices) in which every discrete particle has its own grey value. Part of the PARROT
-  open archive of particle-discrete tomographic datasets; acquisition and reconstruction parameters and
-  the particle size distribution are given as images.
+description: One Zeiss Xradia Versa 510 X-ray microscopy tomogram (4x optical lens) of Quartz particles embedded
+  in wax, as a reconstructed raw TIFF stack (2243 slices, split over two raw zips) plus a segmented TIFF stack (2210
+  slices) in which every discrete particle has its own grey value. Part of the PARROT open archive of particle-discrete
+  tomographic datasets; acquisition and reconstruction parameters and the particle size distribution are given as
+  images.
 landing_url: https://opara.zih.tu-dresden.de/items/646e118e-741b-4109-a17f-2efd5e2269b4/full
 doi: 10.25532/OPARA-106
 repository: other
@@ -73,14 +72,81 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-19T22:52:59Z'
-notes: 'Files: Quartz_raw_Part1.zip + Quartz_raw_Part2.zip (2243 .tiff slices in total, ~2 MB each) and
-  Quartz_segmented.zip (2210 .tif slices in Split25/), plus acquisition/reconstruction/size-distribution
-  images; size_bytes is the OPARA datacite.size. Voxel size is not in the metadata or paper; x=y=z=2.0210
-  µm is the instrument pixel size read from the deposited reconstruction screenshot (Info panel, 4x lens,
-  binning 2), not checked against TIFF headers. The segmented stack has 2210 slices vs 2243 raw, so alignment
-  is unverified. Paper: particles segmented by single-threshold binarisation plus watershed in ImageJ,
-  then manually sorted (under/over-segmented particles discarded), hence source mixed; label encoding
-  not inspected. Sibling PARROT records (same scanner, other materials, separate samples): Mica (OPARA-107),
-  Al2O3 (OPARA-105), Dolomite (OPARA-104), Limestone (OPARA-108), Soda-lime glass (OPARA-109). Non-biological
-  sample, so organism is empty.'
+  last_checked: '2026-10-19T23:50:00Z'
+notes: 'Files: Quartz_raw_Part1.zip + Quartz_raw_Part2.zip (2243 .tiff slices in total, ~2 MB each) and Quartz_segmented.zip
+  (2210 .tif slices in Split25/), plus acquisition/reconstruction/size-distribution images; size_bytes is the OPARA
+  datacite.size. Voxel size: pixel size stated in the deposited acquisition screenshot (see technical.notes). The
+  segmented stack has 2210 slices vs 2243 raw, so alignment is unverified. Paper: particles segmented by single-threshold
+  binarisation plus watershed in ImageJ, then manually sorted (under/over-segmented particles discarded), hence
+  source mixed. Sibling PARROT records: OPARA-104 to -109. Non-biological sample, so organism is empty. enricher:
+  label encoding instance-ids from sample; voxel size checked against the screenshot.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  6 files, 3,294,506,731 B (OPARA bitstreams)\n  Quartz_raw_Part1.zip  (1.60 GB)\n    Quartz_raw_Part1/BCS201_0001.tiff\
+      \ ... Quartz_raw_Part1/BCS201_1100.tiff  (1100 slices)\n  Quartz_raw_Part2.zip  (1.66 GB)\n    Quartz_raw_Part2/BCS201_1101.tiff\
+      \ ... Quartz_raw_Part2/BCS201_2243.tiff  (1143 slices)\n  Quartz_segmented.zip  (38.7 MB)\n    Split25/Split250000.tif\
+      \ ... Split25/Split252209.tif  (2210 slices) + Thumbs.db\n  acquisition.PNG, reconstruction.PNG, psd.png \
+      \ (screenshots, size distribution)"
+    n_files: 6
+    listing_complete: true
+  sample:
+    urls:
+    - https://opara.zih.tu-dresden.de/server/api/core/bitstreams/e1ef83aa-55a4-4830-b7cf-8ffcbed84b7f/content::Quartz_raw_Part1/BCS201_0551.tiff
+    - https://opara.zih.tu-dresden.de/server/api/core/bitstreams/5aa0ee93-85fb-47de-9568-02333271edaf/content::Split25/Split251105.tif
+    size_bytes: 1465482
+    description: One raw z slice and one segmented z slice (slice correspondence not stated); the full volume is
+      a folder of 2D slices
+  arrays:
+  - role: raw
+    path_pattern: Quartz_raw_Part[0-9]/BCS201_[0-9][0-9][0-9][0-9].tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 1009
+    - 984
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 65535
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: 'One 2D z slice per file; 2243 files make the volume (z = file number, numbering continues
+      across the Part zips). TIFF Orientation tag 4: readers ignoring the tag return the slices flipped relative
+      to the stored orientation.'
+  - role: label
+    path_pattern: Split25/Split25[0-9][0-9][0-9][0-9].tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1009
+    - 984
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 1166
+    normalization: none
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    alignment: unknown
+    alignment_notes: One 2D z slice per file (ImageJ 1.52p, stack max 2299); same yx size as the raw slices, but
+      2210 slices vs 2243 raw and no stated offset, so the z correspondence is unknown. No Orientation tag, while
+      the raw slices carry Orientation 4, so the label slices may be flipped relative to tag-aware raw reads. Each
+      particle has its own grey value (OPARA TechnicalInfo).
+  notes: 'Listing: OPARA DSpace bitstreams API, 6 files, 3,294,506,731 B exact; zip central directories: raw 2243
+    .tiff (Quartz_raw_Part1.zip, Quartz_raw_Part2.zip), segmented 2210 .tif (Quartz_segmented.zip), plus Thumbs.db
+    files. Sample (own read of two zip members via range requests, 1,465,482 B): raw Quartz_raw_Part1/BCS201_0551.tiff
+    uint16 1009x984 uncompressed, range 0-65535, 24% zeros (outside the holder), p99 47696; Split25/Split251105.tif
+    uint16, 63 unique values 0-1166, 91% background (one sample each). Normalization: the reconstruction screenshot
+    shows Byte Scaling Custom (fixed min/max window) to USHORT. Voxel size: acquisition.PNG (projection BCS201_stitch-A_000.txrm)
+    and reconstruction.PNG Info panel state pixel size 2.0210 um, recon output down sampling None; isotropic CT
+    voxels assumed in the record (z not separately stated). No calibration in the TIFF headers. Download: direct
+    zips on opara.zih.tu-dresden.de (range requests work), host not on the TensorSwitch allowlist. Slice-per-file
+    volumes: the planner converts each file as 2D.'
