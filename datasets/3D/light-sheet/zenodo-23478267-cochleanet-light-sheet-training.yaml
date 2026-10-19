@@ -63,7 +63,7 @@ annotations:
   format: 'SGN_v1 and IHC_v1: <crop>_annotations.tif instance label volumes (0 = background, one positive ID
     per cell) beside each image TIFF; synapses_v1: Zarr v2 images (raw CtBP2, optional raw_ihc) with one CSV
     of Z,Y,X voxel coordinates per crop (labels/<name>.csv)'
-  source: mixed
+  source: proofread
 ml:
   tasks:
   - segmentation
@@ -83,18 +83,154 @@ provenance:
   - https://zenodo.org/api/records/23478267/files/IHC_v1.zip/content
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1101%2F2025.11.16.688700%22&format=json&resultType=core&pageSize=3
   - https://www.biorxiv.org/content/biorxiv/early/2025/11/17/2025.11.16.688700.source.xml
-  confidence: 0.85
+  - https://zenodo.org/records/23478267/files/SGN_v1.zip
+  - https://zenodo.org/records/23478267/files/synapses_v1.zip
+  confidence: 0.9
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-19T20:50:00Z'
+  last_checked: '2026-10-19T21:10:00Z'
 notes: 'Three zips (SGN_v1 490 MB, IHC_v1 3.3 GB, synapses_v1 329 MB), 48 + 89 + 15 crops; each has README.md
-  and crops.tsv. IHC_v1 and synapses_v1 file listings and READMEs were read with peek_archive; the SGN_v1
-  zip could not be listed (SSL error on range requests), so its layout is taken from the Zenodo description
-  (TIFF crops with instance annotation, 40 train / 8 val) and assumed to match IHC_v1. Voxel size 0.38 um
-  isotropic in all three archives (README: TIFF/Zarr files do not store it). Annotation per paper: experts
-  corrected CellPose / uSAM initial segmentations in napari (SGN, IHC) and intensity-based synapse detections,
-  hence source mixed. IHC crops come from mouse and gerbil (README); mouse only for SGN and synapses per
-  record text. License MIT per Zenodo record. The paper text mentions 56 SGN training sub-volumes; the
-  record lists 48 SGN crops (record count used).'
+  and crops.tsv. Voxel size 0.38 um isotropic in all three READMEs (TIFF/Zarr files do not store it); paper
+  Methods: effective pixel size at the sample plane 380 nm. Paper text mentions 56 SGN training sub-volumes;
+  the archives hold 48 SGN crops (count used). License MIT per Zenodo record. organisms: Meriones unguiculatus
+  = IHC_v1 crops named G_* (36 of 89); Mus musculus = all other IHC_v1 crops, all of SGN_v1 and synapses_v1
+  (READMEs, crops.tsv). enricher: annotations.source proofread (was mixed): paper Methods says SGN/IHC masks
+  are CellPose/uSAM results corrected manually in napari and synapses are IMARIS spot detections corrected
+  manually. enricher: SGN_v1 zip now listed (48 TIFF crops + 48 annotations, matches the Zenodo description).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |-
+      ./                                                3 files      4.1 GB  .zip
+      zip contents:
+      IHC_v1.zip/IHC_v1/                                2 files     12.1 KB  .tsv 1, .md 1
+      IHC_v1.zip/IHC_v1/train/                        150 files      3.1 GB  .tif
+      IHC_v1.zip/IHC_v1/val/                           28 files    475.7 MB  .tif
+      SGN_v1.zip/SGN_v1/                                2 files      7.4 KB  .tsv 1, .md 1
+      SGN_v1.zip/SGN_v1/train/                         80 files    924.2 MB  .tif
+      SGN_v1.zip/SGN_v1/val/                           16 files    175.4 MB  .tif
+      synapses_v1.zip/synapses_v1/                      2 files      4.6 KB  .tsv 1, .md 1
+      synapses_v1.zip/synapses_v1/train/images/<name>.zarr/ (x13 dirs)  Zarr v2 groups (raw, raw_ihc)
+      synapses_v1.zip/synapses_v1/train/labels/        13 files    199.0 KB  .csv
+      synapses_v1.zip/synapses_v1/val/images/<name>.zarr/   (x2 dirs)   Zarr v2 groups
+      synapses_v1.zip/synapses_v1/val/labels/           2 files     21.5 KB  .csv
+      per crop (SGN/IHC): <name>.tif image + <name>_annotations.tif instance labels; optional suffix _empty (negative crop)
+    n_files: 1808
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/23478267/files/SGN_v1.zip::SGN_v1/train/M_19R_crop_04_PV.tif
+    - https://zenodo.org/records/23478267/files/SGN_v1.zip::SGN_v1/train/M_19R_crop_04_PV_annotations.tif
+    - https://zenodo.org/records/23478267/files/IHC_v1.zip::IHC_v1/train/M_01L_crop_0516-1274-1078_Vglut3.tif
+    - https://zenodo.org/records/23478267/files/IHC_v1.zip::IHC_v1/train/M_01L_crop_0516-1274-1078_Vglut3_annotations.tif
+    size_bytes: 13010125
+    description: One SGN_v1 crop (M_19R_crop_04_PV) and one IHC_v1 crop (M_01L_crop_0516-1274-1078_Vglut3), each 64x256x256 with its instance label volume
+  arrays:
+  - role: raw
+    path_pattern: SGN_v1.zip/SGN_v1/*/*_PV{.tif,_empty.tif}
+    format: tiff
+    axes: zyx
+    shape: [64, 256, 256]
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range: [83, 1145]
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: SGN crops, PV stain, mouse. README - axis order Z-Y-X, dtype uint16 or float32, shapes (64|96|128, 256, 256).
+  - role: label
+    path_pattern: SGN_v1.zip/SGN_v1/*/*_PV*_annotations.tif
+    format: tiff
+    axes: zyx
+    shape: [64, 256, 256]
+    shape_varies: true
+    dtype: uint32
+    compression: deflate
+    value_range: [0, 11334455]
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    - id: null
+      name: spiral ganglion neuron (one positive ID per cell)
+    alignment: same-grid
+    alignment_notes: Pairing rule - <name>.tif pairs with <name>_annotations.tif in the same folder (README; same shape in the sample). _empty crops have no SGN.
+  - role: raw
+    path_pattern: IHC_v1.zip/IHC_v1/*/*_Vglut3{.tif,_empty.tif}
+    format: tiff
+    axes: zyx
+    shape: [64, 256, 256]
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    value_range: [80, 6034]
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: IHC crops, Vglut3 stain; G_* crops are gerbil, M_* mouse. README - axis order Z-Y-X, uint16; most crops (512, 512, 256), (128, 392, 392) or (96, 392, 392).
+  - role: label
+    path_pattern: IHC_v1.zip/IHC_v1/*/*_Vglut3*_annotations.tif
+    format: tiff
+    axes: zyx
+    shape: [64, 256, 256]
+    shape_varies: true
+    dtype: uint64
+    compression: unknown
+    value_range: [0, 230]
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    - id: null
+      name: inner hair cell (one positive ID per cell)
+    alignment: same-grid
+    alignment_notes: Pairing rule - <name>.tif pairs with <name>_annotations.tif in the same folder (README; same shape in the sample).
+  - role: raw
+    path_pattern: synapses_v1.zip/synapses_v1/*/images/*.zarr/raw
+    format: zarr
+    axes: zyx
+    shape: [40, 120, 146]
+    shape_varies: true
+    dtype: uint16
+    compression: blosc
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: CtBP2 stain, mouse. Zarr v2 array `raw` in each crop group (blosc lz4, chunks 20x60x146 for M_27R_crop_apex); uint8 for M_26L_crop_mid_CTBP2 (README).
+  - role: raw
+    path_pattern: synapses_v1.zip/synapses_v1/*/images/*.zarr/raw_ihc
+    format: zarr
+    axes: zyx
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: blosc
+    normalization: unknown
+    alignment: offset
+    alignment_notes: Second stain (Vglut3, PV or calretinin) in 7 crops only; same origin as raw, but raw is cut to the CtBP2 extent so raw_ihc can be larger (README). Not used for training.
+  - role: label
+    path_pattern: synapses_v1.zip/synapses_v1/*/labels/*.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: float64
+    compression: none
+    encoding: points-table
+    classes:
+    - id: null
+      name: ribbon synapse (CtBP2 punctum)
+    alignment: same-grid
+    alignment_notes: Pairing rule - labels/<name>.csv pairs with images/<name>.zarr. Columns axis-0, axis-1, axis-2 = Z, Y, X in voxels of raw (sub-voxel floats), one synapse per row.
+  notes: >-
+    Listing: tools/listing.py on the three Zenodo zips with --expand-zips: 3 files, 1808 zip members,
+    4,081,482,928 bytes (file-listing, complete; matches the Zenodo API sizes). Sample (value ranges from one
+    crop each): SGN M_19R_crop_04_PV raw 64x256x256 uint16, 83-1145 (12-bit range hint), label uint32 with 100
+    distinct IDs (0 = 79% background); IHC M_01L_crop_0516-1274-1078_Vglut3 raw 64x256x256 uint16 80-6034, label
+    uint64 with 13 values (0-230). Headers: SGN raw uncompressed, IHC raw and SGN labels deflate; TIFFs carry no
+    axis order or calibration, axes zyx from the READMEs. Dtypes vary per crop (SGN raw uint16 or float32 per
+    README; label uint32/uint64 seen). synapses_v1: Zarr v2 groups stored inside the zip (.zarray read with
+    peek_archive: shape 40x120x146 <u2 blosc lz4); CSV point tables, sub-voxel float coordinates. No single
+    archive: the three zips are direct links (https://zenodo.org/records/23478267/files/<name>.zip), so
+    download_url stays the record page. Voxel size 380 nm isotropic from the READMEs and paper Methods.
