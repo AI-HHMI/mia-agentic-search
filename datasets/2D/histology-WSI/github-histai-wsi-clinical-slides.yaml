@@ -2,11 +2,11 @@ schema_version: '1.2'
 id: github-histai-wsi-clinical-slides
 title: 'HISTAI: An Open-Source, Large-Scale Whole Slide Image Dataset for Computational Pathology'
 short_name: HISTAI clinical whole slide images (histology)
-description: >-
-  Large collection of clinical whole slide images (about 112,800 slides from about 47,300 cases, mostly H&E at 20X)
-  across hematologic, gastrointestinal, breast, thorax, skin and colorectal pathology, released as TIFF files in
-  Hugging Face subsets. Each slide comes with per-slide JSON metadata (diagnosis, final pathological conclusion,
-  microscopic description, ICD-10 code, age, sex). No pixel-level annotations are described.
+description: Large collection of clinical whole slide images (about 112,800 slides from about 47,300 cases,
+  mostly H&E at 20X) across hematologic, gastrointestinal, breast, thorax, skin and colorectal pathology,
+  released as TIFF files in Hugging Face subsets. Each slide comes with per-slide JSON metadata (diagnosis,
+  final pathological conclusion, microscopic description, ICD-10 code, age, sex). No pixel-level annotations
+  are described.
 landing_url: https://github.com/HistAI/HISTAI
 doi: null
 repository: HuggingFace
@@ -28,14 +28,15 @@ imaging:
   channels: null
   organism:
   - Homo sapiens
-  sample: Clinical human pathology slides (hematologic, gastrointestinal, breast, thorax, skin, colorectal), mostly H&E (92,536) with IHC (16,920) and other stains (3,345)
+  sample: Clinical human pathology slides (hematologic, gastrointestinal, breast, thorax, skin, colorectal),
+    mostly H&E (92,536) with IHC (16,920) and other stains (3,345)
   labels_stains:
   - H&E
   - IHC
 data:
   formats:
   - tiff
-  size_bytes: null
+  size_bytes: 27061314229504
   n_items: 112801
   access: registration
   download_url: null
@@ -45,7 +46,9 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: Per-slide JSON metadata (diagnosis, conclusion, microscopic description, ICD-10 code, age, gender, specialization)
+  format: 'One metadata.json (60.9 MB, linked from the HISTAI-metadata card on Google Drive): a JSON list
+    of case records with diagnosis, conclusion, grossing and microscopic description text, ICD-10 code,
+    age, sex'
   source: manual
 ml:
   tasks:
@@ -65,18 +68,89 @@ provenance:
   - https://huggingface.co/datasets/histai/HISTAI-metadata
   - https://arxiv.org/abs/2505.12120
   - https://arxiv.org/html/2505.12120v1
+  - https://huggingface.co/api/datasets/histai/HISTAI-hematologic
+  - https://drive.google.com/uc?export=download&id=18mNh2yYO4nUIsGlwyrHRnzFWF27GT8mw
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-19T18:35:00Z'
-notes: >-
-  Annotations are slide-level clinical text and codes, not image annotations; no segmentation masks are
-  described in the README, the Hugging Face metadata card or the paper. The GitHub README lists 112,801 slides
-  from 47,279 cases in nine Hugging Face subsets (hematologic 214, gastrointestinal 202, breast 1,925,
-  thorax 829, skin-b2 43,757, skin-b1 7,710, colorectal-b1 5,379, colorectal-b2 94, mixed 52,691); arXiv v1
-  reports an earlier 60,110 slides from 26,142 cases. Hugging Face access requires accepting a sharing
-  agreement. License is CC BY-NC 4.0, research use only. Pixel size, total size on disk and per-subset file
-  listings were not checked (not stated in README, metadata card or paper abstract/summary). Related to but
-  distinct from the SPIDER histology patch subsets already proposed (hf-histai-spider-*).
+  annotations_verified: true
+  last_checked: '2026-10-19T19:00:56Z'
+notes: 'Annotations are case-level clinical text and codes (diagnosis, conclusion, ICD-10, age, sex),
+  not pixel labels. The GitHub README lists 112,801 slides from 47,279 cases in nine Hugging Face subsets
+  (hematologic, gastrointestinal, breast, thorax, skin-b1, skin-b2, colorectal-b1, colorectal-b2, mixed);
+  arXiv v1 reports an earlier 60,110 slides. Mostly 20X (110,338), 40X (2,463), magnification in file
+  names when not 20X; scanners Leica Aperio GT450/AT2, some Hamamatsu/3DHISTECH (paper). The image subsets
+  are gated on Hugging Face (manual approval, files return HTTP 401 without a token). License CC BY-NC
+  4.0, research use only. Related to but distinct from the SPIDER patch subsets (hf-histai-spider-*).
+  enricher: size from the complete HF file listings plus the metadata.json size (was null); metadata.json
+  read (first 1.5 KB), so annotations_verified true.'
+technical:
+  method: metadata-only
+  size_source: file-listing
+  layout:
+    tree: 'huggingface.co/datasets/histai/   112819 files, 27.06 TB (complete HF listings, 9 repos)
+
+      HISTAI-<subset>/README.md, .gitattributes        (2 files per repo)
+
+      HISTAI-breast/case_*/slide_<stain>_<n>.tiff         1692 cases   1925 files  540.6 GB
+
+      HISTAI-colorectal-b1/case_*/                         998 cases   5379 files    1.3 TB
+
+      HISTAI-colorectal-b2/case_*/                          62 cases     94 files   21.7 GB
+
+      HISTAI-gastrointestinal/case_*/                      120 cases    202 files   44.9 GB
+
+      HISTAI-hematologic/case_*/                           214 cases    214 files   78.1 GB
+
+      HISTAI-mixed/case_*/                               21137 cases  52691 files   12.3 TB
+
+      HISTAI-skin-b1/case_*/                              1778 cases   7710 files    2.3 TB
+
+      HISTAI-skin-b2/case_*/                             20621 cases  43757 files   10.2 TB
+
+      HISTAI-thorax/case_*/                                657 cases    829 files  238.9 GB
+
+      Google Drive: metadata.json                                       1 file   60.9 MB
+
+      '
+    n_files: 112820
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: HISTAI-*/case_*/slide_*.tiff
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One whole slide image per file, named slide_<stain>_<n>.tiff or slide_<magnification>_<stain>_<n>.tiff
+      inside case_<id>/ (paper, listing).
+  - role: label
+    path_pattern: metadata.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes: null
+    alignment: unknown
+    alignment_notes: Case-level clinical records (free text plus ICD-10 code), one JSON list for all subsets;
+      how records map to subset/case folders was not read (only the first 1.5 KB).
+  notes: 'Listed all nine HISTAI Hugging Face repos with tools/listing.py (complete, exact sizes: 112,819
+    files, 27,061,253,320,612 bytes) and checked metadata.json on Google Drive (60,908,892 bytes, range
+    requests); size_bytes is their sum. No slide header could be read: every file returns HTTP 401 (gated
+    repo, manual approval), so axes, shape, dtype, compression and pyramid layout are unknown. Voxel size
+    not found; checked: GitHub README, HF dataset cards, HF API, arXiv paper (html v1: 20X/40X magnification
+    and scanner models, no um/px), metadata.json head; slide headers not readable. No direct download:
+    slides need an accepted HF agreement and token (git-lfs / huggingface_hub); metadata.json is a direct
+    Google Drive link (host not on the TensorSwitch allowlist).'
