@@ -1,0 +1,129 @@
+schema_version: '1.2'
+id: allen-aics-mnist-hipsc-structure-classification
+title: AICS MNIST, MNIST-style 28x28 single-cell images of 10 subcellular structures (Allen Institute for Cell Science)
+short_name: hiPSC 10-structure 28x28 cells (confocal)
+description: MNIST-style classification benchmark of 70,000 28x28 PNG images of single hiPS cells with endogenously tagged
+  subcellular structures (7,000 cells per class, 10 structures), made from Allen Institute 3D spinning-disk confocal single-cell
+  images by projecting along z, centring on the cell mask and resizing. Released as a single-channel GFP version (aics_mnist)
+  and a three-channel cell/GFP/nucleus version (aics_mnist_rgb) with 60,000 training and 10,000 test images in class folders.
+landing_url: https://registry.opendata.aws/allen-cell-imaging-collections/
+doi: null
+repository: other
+accession: aics/aics_mnist
+authors: []
+publications: []
+date_published: null
+imaging:
+  modality:
+  - spinning-disk
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: Single WTC-11 hiPS cells from the Allen variance/ACTK single-cell image data, maximum projections along z, resized
+    to 28 x 28 pixels
+  labels_stains:
+  - EGFP-tagged structure
+  - cell membrane dye
+  - DNA dye
+data:
+  formats:
+  - png
+  size_bytes: 88534413
+  n_items: 70000
+  access: open
+  download_url: https://allencell.s3.amazonaws.com/aics/aics_mnist/
+  download_method: s3
+annotations:
+  present: true
+  types:
+  - classification
+  coverage: dense
+  format: 'Class = tagged structure, given by the folder name: aics_mnist/{train,test}/<structure>/CellId_<id>_FOVId_<id>_CellIndex_<n>.png'
+  source: automatic
+ml:
+  tasks:
+  - classification
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: custom
+  url: https://www.allencell.org/terms-of-use.html
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-19T18:30:40Z'
+  evidence_urls:
+  - https://allencell.s3.amazonaws.com/aics/aics_mnist/aics_mnist.ipynb
+  - https://allencell.s3.amazonaws.com/?prefix=aics/aics_mnist/&delimiter=/
+  - https://registry.opendata.aws/allen-cell-imaging-collections/
+  - https://www.allencell.org/terms-of-use.html
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-19T21:30:00Z'
+notes: 'S3 prefix s3://allencell/aics/aics_mnist/ holds aics_mnist.tar.gz (26.2 MB), aics_mnist_rgb.tar.gz (62.3 MB) and the
+  generating notebook aics_mnist.ipynb. Counts, classes (Desmosomes, ER, Lysosomes, Microtubules, Mitochondria, Nuclear envelope,
+  Nuclear pores, Nucleolus DFC, Nucleolus GC, Plasma membrane), 60,000/10,000 stratified split, 28 x 28 size and folder layout
+  are read from the notebook; enricher: both tarballs opened and confirm 70,000 PNGs each in these folders. The labels come
+  from the cell line metadata, not manual annotation. No paper is cited in the package. Derived from images in the Allen single-cell
+  data (see allen-hipsc-single-cell-image-dataset); pixel size after resizing is unknown. Terms: Allen Institute terms of
+  use; no SPDX licence. enricher: size 88,534,413 B from S3 listing (was 88,518,670).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "aics_mnist/ (S3, 3 files, 88.5 MB)\n  aics_mnist.ipynb         generating notebook\n  aics_mnist.tar.gz       \
+      \ 26.2 MB -> aics_mnist/{train,test}/<structure>/CellId_<id>_FOVId_<id>_CellIndex_<n>.png\n  aics_mnist_rgb.tar.gz \
+      \   62.3 MB -> aics_mnist_rgb/{train,test}/<structure>/<same names>.png\nper archive: 70,000 PNGs; train 6,000 and test\
+      \ 1,000 per class, 10 classes:\n  desmosomes, endoplasmic_reticulum, lysosomes, microtubules, mitochondria, nuclear_envelope,\n\
+      \  nuclear_pores, nucleolus_dense_fibrillar_component, nucleolus_granular_component, plasma_membrane\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://allencell.s3.amazonaws.com/aics/aics_mnist/aics_mnist.tar.gz
+    size_bytes: 26172871
+    description: The single-channel archive (members of a tar.gz can't be fetched alone)
+  arrays:
+  - role: raw
+    path_pattern: aics_mnist/*/*/*.png
+    format: png
+    axes: yx
+    shape:
+    - 28
+    - 28
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 148
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Grayscale (mode L) GFP-structure image per cell. Class = parent folder name; split = train/test folder.
+  - role: raw
+    path_pattern: aics_mnist_rgb/*/*/*.png
+    format: png
+    axes: yxc
+    shape:
+    - 28
+    - 28
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 206
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB PNG whose 3 channels are cell membrane, GFP structure and nucleus per the notebook (as cited by the
+      harvester), not colour; same file names as aics_mnist, so the two versions pair by name.
+  notes: S3 listing (3 files, exact sizes). Downloaded both tarballs (26,172,871 + 62,345,799 B; PNG members total 26,394,859
+    and 62,146,709 B) into a temp dir, listed them with Python tarfile (70,000 PNG files each, layout above) and read 3 PNGs
+    per archive in memory (no extraction); value ranges are from these 3 images only. Labels are the class folder names (structure
+    of the tagged cell line), so there is no label array. Pixel size not stated (crops resized to 28 x 28). Notebook not run.
