@@ -2,12 +2,12 @@ schema_version: '1.2'
 id: bossdb-collman2015-conjugate-array-tomography-synapses
 title: Mapping synapses by conjugate light-electron array tomography (BossDB collman)
 short_name: Mouse cortex conjugate array tomography synapses
-description: Two voxel-conjugate array tomography volumes of mouse S1 neocortex (collman14v2, 39 sections; collman15v2,
-  27 sections; 70 nm sections) imaged by scanning EM and multiplexed immunofluorescence (synapsin, PSD95, gephyrin,
-  VGluT1, GABA, GAD and others), hosted on BossDB with an annotation channel per volume. The paper describes
-  manual annotation of synapses in the SEM data.
+description: Two voxel-conjugate array tomography volumes of mouse S1 neocortex (collman14v2, 39 sections;
+  collman15v2, 27 sections; 70 nm sections) imaged by scanning EM and multiplexed immunofluorescence (synapsin,
+  PSD95, gephyrin, VGluT1, GABA, GAD and others), hosted on BossDB with an annotation channel per volume.
+  The paper describes manual annotation of synapses in the SEM data.
 landing_url: https://api.bossdb.io/v1/collection/collman
-doi: null
+doi: 10.60533/boss-2015-ejsn
 repository: other
 accession: collman
 authors:
@@ -27,10 +27,7 @@ imaging:
   - ssSEM
   - fluorescence-other
   dimensionality: 3D
-  voxel_size_nm:
-    x: 3.72
-    y: 3.72
-    z: 70
+  voxel_size_nm: null
   channels: 13
   organism:
   - Mus musculus
@@ -46,7 +43,7 @@ imaging:
 data:
   formats:
   - precomputed
-  size_bytes: null
+  size_bytes: 3129995151
   n_items: 2
   access: open
   download_url: https://bossdb-open-data.s3.amazonaws.com/neurodata/collman/
@@ -56,7 +53,8 @@ annotations:
   types:
   - synapse
   coverage: unknown
-  format: BossDB annotation channel per volume (uint64 neuroglancer precomputed segmentation, compressed_segmentation)
+  format: BossDB annotation channel per volume (neuroglancer precomputed segmentation, uint64, compressed_segmentation),
+    one integer id per marked synapse
   source: manual
 ml:
   tasks:
@@ -66,8 +64,8 @@ ml:
   benchmark: null
   baseline_code_url: null
 license:
-  spdx: unknown
-  url: null
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/legalcode
 provenance:
   discovered_by: harvest-websearch
   discovered_at: '2026-10-19T18:30:40Z'
@@ -77,18 +75,97 @@ provenance:
   - https://api.bossdb.io/v1/coord/collman_collman15v2
   - https://pmc.ncbi.nlm.nih.gov/articles/PMC4388933/
   - https://bossdb-open-data.s3.amazonaws.com/neurodata/collman/collman15v2/annotation/info
-  confidence: 0.5
+  - https://api.datacite.org/dois/10.60533/boss-2015-ejsn
+  - https://bossdb-open-data.s3.amazonaws.com/neurodata/collman/
+  - https://bossdb-open-data.s3.amazonaws.com/neurodata/collman/collman14v2/annotation/info
+  - https://bossdb-open-data.s3.amazonaws.com/neurodata/collman/collman14v2/EM10K/info
+  - https://bossdb-open-data.s3.amazonaws.com/neurodata/collman/collman15v2/EM25K/info
+  confidence: 0.75
 verification:
   url_ok: true
-  license_found: false
-  annotations_verified: false
-  last_checked: '2026-10-19T18:50:00Z'
-notes: 'BossDB collection collman has two public experiments. collman14v2: 9888x7936x39 voxels at 3.72x3.72x70 nm,
-  13 channels (EM10K, annotation, 11 immunofluorescence); collman15v2: 6306x4518x27 voxels at 2.24x2.24x70 nm,
-  15 channels (EM25K, EM2k, annotation, 12 IF). The paper (open PMC text) describes a 39-section and a 27-section
-  dataset and states that synapses in the SEM images were identified by manually inspecting the entire volume
-  and marked in TrakEM2 (988 synapses in the larger dataset). That these are what the BossDB annotation channels
-  contain was inferred from matching dimensions and section counts and was not checked in the channel data; the
-  label encoding is undocumented. No license or data-availability statement was found on the paper, the BossDB
-  API records or the S3 listing, so license is unknown. voxel_size_nm shows collman14v2 (EM); collman15v2 differs.
-  Stored as neuroglancer precomputed on the public S3 bucket bossdb-open-data (info file read for collman15v2/annotation).'
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-19T18:57:11Z'
+notes: 'Two BossDB experiments, each with EM, an annotation channel and immunofluorescence channels, all
+  on one grid: collman14v2 9888x7936x39 voxels at 3.72x3.72x70 nm (EM10K, 11 IF); collman15v2 6306x4518x27
+  at 2.24x2.24x70 nm (EM25K, EM2k, 12 IF). The two share no voxel size, so voxel_size_nm is null (sizes
+  from the precomputed info files and the BossDB coord frames). Paper (as read at harvest): synapses marked
+  manually in TrakEM2 over the SEM volume, 988 in the larger dataset; that the annotation channels hold
+  these is inferred from matching sizes. enricher: license CC-BY-4.0 from the BossDB DataCite record 10.60533/boss-2015-ejsn
+  (was unknown); doi set from it; size from the complete S3 listing; annotation channels sampled (integer
+  synapse ids).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "s3://bossdb-open-data/neurodata/collman/   17542 files, 3.13 GB (complete S3 listing)\ncollman14v2/\
+      \   (9888x7936x39, 3.72x3.72x70 nm)\n  EM10K/            info, provenance, <scale>/ (7 scales) \
+      \  1292 files  1.26 GB\n  annotation/       info, provenance, 3.72_3.72_70/          962 files \
+      \ 0.7 MB\n  DAPI_2nd/ DAPI_3rd/ GABA/ GAD2/ NR1/ PSDr/ VGAT/ VGluT1/\n  bIIItubulin/ gephyrin/ synapsin/\
+      \   (11 IF channels)       10582 files  627 MB\ncollman15v2/   (6306x4518x27, 2.24x2.24x70 nm)\n\
+      \  EM25K/ EM2k/      info, provenance, <scale>/ (6 scales)    684 files  778 MB\n  annotation/ \
+      \      info, provenance, 2.24_2.24_70/          236 files  0.3 MB\n  DAPI1st/ DAPI2nd/ DAPI3rd/\
+      \ GABA488/ GAD647/ GS594/ MBP488/\n  NR1594/ PSD95_488/ Synapsin647/ VGluT1_647/ gephyrin594/  \
+      \ (12 IF channels)  3786 files  464 MB\nchunks: <x0-x1>_<y0-y1>_<z0-z1>, 512x512x16 voxels\n"
+    n_files: 17542
+    listing_complete: true
+  sample:
+    urls:
+    - https://bossdb-open-data.s3.amazonaws.com/neurodata/collman/collman15v2/EM25K
+    - https://bossdb-open-data.s3.amazonaws.com/neurodata/collman/collman15v2/annotation
+    size_bytes: null
+    description: 'Precomputed layer roots of the smaller volume (collman15v2: EM25K and annotation, 6306x4518x27),
+      read remotely; a 512x512x16 EM chunk is ~2.6 MB brotli-coded, an annotation chunk ~6 KB.'
+  arrays:
+  - role: raw
+    path_pattern: collman1[45]v2/EM*
+    format: precomputed
+    axes: zyx
+    shape:
+    - 39
+    - 7936
+    - 9888
+    shape_varies: true
+    dtype: uint8
+    compression: other
+    value_range:
+    - 0
+    - 184
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'EM layers: collman14v2/EM10K 9888x7936x39 (x,y,z) at 3.72x3.72x70 nm; collman15v2/EM25K
+      and EM2k 6306x4518x27 at 2.24x2.24x70 nm; offset 0. Raw chunk encoding, stored brotli-coded on S3
+      (Content-Encoding br). Image pyramid of 6-7 scales.'
+  - role: label
+    path_pattern: collman1[45]v2/annotation
+    format: precomputed
+    axes: zyx
+    shape:
+    - 39
+    - 7936
+    - 9888
+    shape_varies: true
+    dtype: uint64
+    compression: compressed-segmentation
+    value_range:
+    - 0
+    - 538
+    normalization: none
+    encoding: instance-ids
+    classes:
+    - id: null
+      name: synapse
+    alignment: same-grid
+    alignment_notes: 'Same size, resolution and offset as the EM layer of the same experiment (single
+      scale, block size 8x8x8). One integer id per synapse object, 0 = background (sampled: ids 69..538
+      in one collman14v2 chunk, 1.4% of voxels non-zero).'
+  notes: 'Sampled one 512x512x16 chunk each of collman14v2/EM10K (uint8, observed range 0-184, p1-p99
+    19-141), collman14v2/annotation (uint64, 15 unique values, max 538) and collman15v2/annotation (8
+    unique, max 229), decoded with a short requests+numpy script (compressed_segmentation decoder); value
+    ranges are from one chunk each. Label encoding: instance ids inferred from the sample (many distinct
+    ids in a sparse mask), not documented. Voxel size: the two experiments differ (3.72 vs 2.24 nm lateral,
+    both 70 nm z); stated in the precomputed info files and the BossDB coord frames, so voxel_size_nm
+    stays null per the one-size rule. Annotation coverage is still unknown: the paper full text was not
+    reachable this run (PMC bot check, not open access on Europe PMC). The 23 immunofluorescence layers
+    (other folders, uint8, registered onto the same EM grid per their info files) are not listed as arrays
+    (miao has raw/ and labels/ only).'
