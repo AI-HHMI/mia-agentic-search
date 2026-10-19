@@ -1,7 +1,7 @@
 schema_version: '1.2'
 id: zenodo-5010430-synthetic-liver-tissue-benchmark
-title: 'Synthetic 3D confocal liver tissue benchmark: simulated four-channel images at three noise levels with
-  voxelated ground-truth tissue models (Zenodo)'
+title: 'Synthetic 3D confocal liver tissue benchmark: simulated four-channel images at three noise levels
+  with voxelated ground-truth tissue models (Zenodo)'
 short_name: Synthetic liver tissue 3D benchmark (confocal)
 description: Benchmark for reconstructing dense 3D tissue from confocal images. Three voxelated ground-truth
   models of idealised mouse liver tissue (nuclei, cell borders, sinusoids, bile canaliculi) and nine artificial
@@ -23,8 +23,8 @@ authors:
 - Marino Zerial
 - Yannis Kalaidzidis
 publications:
-- title: A versatile pipeline for the multi-scale digital reconstruction and quantitative analysis of 3D
-    tissue architecture
+- title: A versatile pipeline for the multi-scale digital reconstruction and quantitative analysis of
+    3D tissue architecture
   doi: 10.7554/eLife.11214
   url: null
 date_published: '2016-02-12'
@@ -39,8 +39,8 @@ imaging:
   channels: 4
   organism:
   - Mus musculus
-  sample: Computer-simulated mouse liver tissue (models built from experimental confocal data); images are
-    artificial confocal stacks, not real acquisitions
+  sample: Computer-simulated mouse liver tissue (models built from experimental confocal data); images
+    are artificial confocal stacks, not real acquisitions
   labels_stains: []
 data:
   formats:
@@ -55,8 +55,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: 'Models/Model1-3.tif in models.zip: voxelated ground-truth tissue models (134 MB each); label
-    encoding not inspected'
+  format: 'Models/Model1-3.tif in models.zip: 4-channel ImageJ TIFFs (zcyx 256x4x256x256 uint16), one
+    binary mask (0/1000) per tissue structure'
   source: automatic
 ml:
   tasks:
@@ -77,17 +77,83 @@ provenance:
   - https://zenodo.org/records/5010430/files/models.zip
   - https://zenodo.org/records/5010430/files/model_image.zip
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC4764584/fullTextXML
-  confidence: 0.6
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-19T09:05:00Z'
+  last_checked: '2026-10-19T10:10:00Z'
 notes: 'Synthetic data: the paper (Results, Methods) says the images are simulated by convolving uneven-stained
   models with a 3D confocal PSF and adding z-dependent Poisson noise; they are not microscope acquisitions.
   Zenodo lists models.zip (3 TIFF models), model_image.zip (9 TIFFs, model_image_N_SNR_M.tif for N=1-3
-  and SNR 10, 4, 2) and scripts_img_generation.zip (138 MB of generation scripts, not images); zip contents
-  from peek_archive. size_bytes is the whole record. Paper states four channels per synthetic image (nuclei,
-  cell borders, sinusoidal and bile canaliculi networks) and 0.3 um voxels. Label encoding of the model
-  TIFFs and whether the images map one-to-one to the models were not inspected (the enricher can check).
-  Confocal is listed as modality because the images emulate confocal stacks.'
+  and SNR 10, 4, 2) and scripts_img_generation.zip (generation scripts, not images). Paper states four
+  channels (nuclei, cell borders, sinusoids, bile canaliculi) and 0.3 um voxels. Confocal is listed as
+  modality because the images emulate confocal stacks. enricher: sampled image 1 SNR 10 and Model1, same
+  zcyx shape and grid; model channels are binary masks (0/1000); annotations.format updated.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "models.zip (6.2 MB)\n  Models/Model{1,2,3}.tif            3 ground-truth models, 134.4 MB each\
+      \ uncompressed\nmodel_image.zip (428.1 MB)\n  model_image_{1,2,3}_SNR_{10,4,2}.tif  9 simulated\
+      \ confocal stacks, 134.4 MB each uncompressed\nscripts_img_generation.zip (137.9 MB)\n  Scripts_Img_Generation/\
+      \             10 files: MotionTracking project/scripts (.p3a, .mtst, .vsc, .mtj, ...), README.txt"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5010430/files/model_image.zip::model_image_1_SNR_10.tif
+    - https://zenodo.org/records/5010430/files/models.zip::Models/Model1.tif
+    size_bytes: 268700146
+    description: 'simulated stack 1 at SNR 10:1 and its ground-truth model 1: zcyx 256 x 4 x 256 x 256
+      uint16 each (uncompressed member sizes; ~44.6 MB deflated in the zips)'
+  arrays:
+  - role: raw
+    path_pattern: model_image.zip/model_image_[123]_SNR_*.tif
+    format: tiff
+    axes: zcyx
+    shape:
+    - 256
+    - 4
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 4595
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ hyperstack, 4 channels = the four simulated stains (nuclei, cell borders,
+      sinusoids, bile canaliculi per the paper; channel order not documented). 0.3 um isotropic voxels
+      (paper).
+  - role: label
+    path_pattern: models.zip/Models/Model[123].tif
+    format: tiff
+    axes: zcyx
+    shape:
+    - 256
+    - 4
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 1000
+    normalization: none
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing by number: Models/ModelN.tif is the ground truth of model_image_N_SNR_{10,4,2}.tif
+      (three noise levels per model). Same zcyx shape as the images; each of the 4 channels is a binary
+      mask (0 / 1000) of one structure (channel order not documented, assumed to match the image channels).'
+  notes: 'Listing: Zenodo API, 3 zips, 572,166,225 bytes (complete); zip members listed with peek_archive.
+    TIFF members are deflated inside the zips, so headers could not be probed by range; sampled model_image_1_SNR_10.tif
+    (42.6 MB downloaded) and Models/Model1.tif (2.0 MB): both ImageJ ZCYX [256,4,256,256] uint16, uncompressed
+    TIFF (member size 134,350,073 B = 256*4*256*256*2 + header). Image values 0-4595 (p50 116, p99 1090),
+    model values {0, 1000} (8.7% foreground over all channels); value ranges from one sample. Uncompressed
+    total of the images and models: 1.6 GB. scripts_img_generation.zip is MotionTracking software project
+    data (not arrays, not described). Not checked: per-channel label overlap and channel order.'
