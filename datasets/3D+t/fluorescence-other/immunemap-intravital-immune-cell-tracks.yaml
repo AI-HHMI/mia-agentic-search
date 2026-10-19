@@ -1,0 +1,156 @@
+schema_version: '1.2'
+id: immunemap-intravital-immune-cell-tracks
+title: Immunemap atlas of immune cell motility (intravital microscopy videos with manual cell tracks)
+short_name: Immunemap intravital immune cell tracks
+description: Open database of over 400 intravital microscopy videos of immune cells contributed by a consortium
+  of 30 laboratories, covering trachea, lung, spleen, skin, spinal cord, lymph node and liver under steady-state,
+  infection, vaccination, inflammation, tumor and autoimmune conditions. 233 videos carry 58,943 manually annotated
+  2D single-cell tracks (1,049,340 centroid annotations) made with TrackMate for B, T, NK, dendritic cells, neutrophils,
+  eosinophils, innate lymphoid cells and others.
+landing_url: https://www.immunemap.org
+doi: null
+repository: other
+accession: null
+authors:
+- Diego Ulisse Pizzagalli
+- Paola Carrillo-Barberà
+- Himanshu Bansal
+- Elisa Palladino
+- Kevin Ceni
+- Bastian Thelen
+- Alain Pulfer
+- Enrico Moscatello
+- Rolf Krause
+- Santiago Fernandez Gonzalez
+publications:
+- title: Systematic analysis of immune cell motility leveraging the open intravital microscopy database Immunemap
+  doi: 10.1038/s44318-025-00629-4
+  url: https://doi.org/10.1038/s44318-025-00629-4
+date_published: null
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 3D+t
+  voxel_size_nm: null
+  channels: null
+  organism:
+  - Mus musculus
+  sample: Intravital imaging of immune cells in living tissues (trachea, lung, spleen, skin, spinal cord, lymph
+    node, liver)
+  labels_stains: []
+data:
+  formats:
+  - hdf5
+  size_bytes: 420899472756
+  n_items: 360
+  access: open
+  download_url: https://api.immunemap.org/acquisition/public
+  download_method: api
+annotations:
+  present: true
+  types:
+  - tracking
+  - points
+  coverage: partial
+  format: 'One tracks.json per video (api.immunemap.org/video/<uid>/tracks.json): "points" rows of 5 numbers (track
+    id, x, y, constant 1, frame index as observed; columns not documented); the web app also exports CSV'
+  source: manual
+ml:
+  tasks:
+  - tracking
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-19T05:16:53Z'
+  evidence_urls:
+  - https://www.immunemap.org
+  - https://api.immunemap.org
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12759063/fullTextXML
+  - https://api.immunemap.org/acquisition/public
+  - https://api.immunemap.org/acquisition/439
+  - https://api.immunemap.org/video/14QTWP21B29S1A1F220VTMQBTG
+  - https://api.immunemap.org/video/14QTWP21B29S1A1F220VTMQBTG/tracks.json
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-19T07:45:00Z'
+notes: 'enricher: access open (was registration): the public API serves each public video as its original Imaris
+  .ims (HDF5) and its tracks.json without login. enricher: 360 public videos with files (n_items, was 400), 234
+  with tracks (959,179 points); size = sum of the API original_file sizes plus tracks.json (was null). enricher:
+  modality fluorescence-other (was other): fluorescent reporters; the paper names multiphoton and spinning-disk,
+  per-video technique not public. Voxel size varies per video (136 spacing triples, e.g. 0.667x0.667x2, 0.8x0.8x3;
+  API gives no unit, paper says ~0.7 um pixels), so null. No data license found (the paper is CC BY 4.0). Cell Death
+  Dataset is catalogued separately (zenodo-14551288).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "api.immunemap.org (public API, JSON + files; no folder listing)\n  acquisition/public               \
+      \  index of 367 public acquisitions (id, name, area, type)\n  acquisition/<id>                   metadata:\
+      \ video uid, size (x,y,z,t,c), spacing, fps, original_file size/md5, stainings\n  video/<uid>/ims        \
+      \            original Imaris .ims (HDF5), 360 files, 420,874,464,674 B in all\n    DataSet/ResolutionLevel\
+      \ <r>/TimePoint <t>/Channel <c>/Data   one 3D uint16 volume per time point and channel\n  video/<uid>/tracks.json\
+      \            manual tracks, 360 files (234 non-empty), 25,008,082 B in all\n  video/<uid>/frames.zip     \
+      \        8-bit JPEG max projections per frame and channel (viewer)\n  video/<uid>/preview                MP4\
+      \ preview"
+    n_files: 720
+    listing_complete: true
+  sample:
+    urls:
+    - https://api.immunemap.org/video/14QTWP21B29S1A1F220VTMQBTG/ims
+    - https://api.immunemap.org/video/14QTWP21B29S1A1F220VTMQBTG/tracks.json
+    size_bytes: 44447700
+    description: 'Smallest tracked video: v8_Capture 25.ims (acquisition 439, neutrophils and endothelial cells),
+      256x256x13 px, 9 frames, 3 channels, with its 88 tracks (683 points).'
+  arrays:
+  - role: raw
+    path_pattern: video/*/ims (DataSet/ResolutionLevel 0/TimePoint */Channel */Data)
+    format: hdf5
+    axes: null
+    shape:
+    - 16
+    - 256
+    - 256
+    shape_varies: true
+    dtype: uint16
+    compression: gzip
+    value_range:
+    - 0
+    - 26786
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Imaris 5.5 layout: one dataset per time point and channel, chunks [8,256,256]. The first axis
+      is z: 16 = the 13 slices in the API metadata padded to the chunk size (the last 3 planes are zero, zero_fraction
+      0.1875). y/x order is not stated (square frame), so axes stay null. Lower resolution levels are also stored.'
+  - role: label
+    path_pattern: video/*/tracks.json
+    format: json
+    axes: null
+    shape:
+    - 683
+    - 5
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: tracks-table
+    alignment: same-grid
+    alignment_notes: tracks.json of the same video uid. In the sample, column 0 takes 88 values (track id), columns
+      1-2 run 0.33-254.67 (x, y in pixels of the 256x256 frame, as observed), column 3 is always 1, column 4 runs
+      0-8 (frame index of the 9 frames). Tracks are 2D (no z). Column meanings are inferred, not documented.
+  notes: 'Size: summed from original_file.size of all 360 public videos in acquisition/<id> (the /ims Content-Range
+    matched it for 2 videos) plus the tracks.json bytes; not a tools/listing.py listing. Crawled acquisition/public
+    and all 367 acquisition/<id> records plus 360 tracks.json at 1 req/s; 7 acquisitions have no video. Probed v8_Capture
+    25.ims (HDF5 header, 15.6 MB of ranges). Sampled TimePoint 0/Channel 1 (4,060,628 B): uint16, [0, 26786], mean
+    1168 (one sample); normalization unknown. Videos vary: 51-1041 x 77-1040 px, 1-108 slices, 9-293 frames, 1-5
+    channels. Download: /ims, /tracks.json and /frames.zip are direct (206, range requests), but api.immunemap.org
+    is not on the TensorSwitch allowlist. Voxel size not set: it varies per video (136 spacing triples in the API,
+    no unit given); checked: API metadata, HDF5 header, paper full text (typical pixel size 0.7 um). License not
+    found; checked: www.immunemap.org, API root, the web app bundle, paper Data availability. Dimensionality 3D+t
+    is not covered by the miao layout yet.'
