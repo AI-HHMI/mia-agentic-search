@@ -2,16 +2,19 @@ schema_version: '1.2'
 id: zenodo-3910757-tcga-focus-wsi-patches
 title: TCGA@Focus Dataset
 short_name: Focus-quality patches from TCGA slides (histology)
-description: 14,371 image patches (PNG) cut from regions of interest of 1,000 TCGA whole slide images across
-  52 organ types, each labelled in-focus (11,328 patches) or out-of-focus (3,043 patches), released for focus
-  quality assessment of digital pathology images.
+description: 14,371 image patches (PNG) cut from regions of interest of 1,000 TCGA whole slide images across 52
+  organ types, each labelled in-focus (11,328 patches) or out-of-focus (3,043 patches), released for focus quality
+  assessment of digital pathology images.
 landing_url: https://zenodo.org/records/3910757
 doi: 10.5281/zenodo.3910757
 repository: Zenodo
 accession: '3910757'
 authors:
 - Adyn Miles
-publications: []
+publications:
+- title: 'FocusLiteNN: High Efficiency Focus Quality Assessment for Digital Pathology'
+  doi: null
+  url: https://arxiv.org/abs/2007.06565
 date_published: '2020-06-27'
 imaging:
   modality:
@@ -19,13 +22,14 @@ imaging:
   dimensionality: 2D
   voxel_size_nm: null
   channels: 3
-  organism: []
+  organism:
+  - Homo sapiens
   sample: Tissue sections from 52 organ types (TCGA diagnostic slides)
   labels_stains: []
 data:
   formats:
   - png
-  size_bytes: 23675200000
+  size_bytes: 23662252880
   n_items: 14371
   access: open
   download_url: https://zenodo.org/records/3910757/files/TCGA@Focus.zip
@@ -35,7 +39,9 @@ annotations:
   types:
   - classification
   coverage: sparse
-  format: 'Folder names In Focus / Out Focus (then organ and slide) give the binary label; WSI_ROI.xlsx per slide lists the regions of interest'
+  format: 'Folder name gives the label: In Focus (11,328 listed), Out of Focus (2,462) and Out of Focus (Marker)
+    (581); the curated list data/TCGA@Focus.txt in the FocusLiteNN GitHub repo gives path, organ and two 0/1 columns
+    per patch; WSI_ROI.xlsx per slide lists the regions of interest'
   source: manual
 ml:
   tasks:
@@ -51,11 +57,89 @@ provenance:
   discovered_at: '2026-10-19T06:41:55Z'
   evidence_urls:
   - https://zenodo.org/records/3910757
+  - https://zenodo.org/api/records/3910757
+  - https://github.com/icbcbicc/FocusLiteNN
+  - https://raw.githubusercontent.com/icbcbicc/FocusLiteNN/master/data/TCGA@Focus.txt
+  - https://arxiv.org/abs/2007.06565
+  - https://www.genome.gov/Funded-Programs-Projects/Cancer-Genome-Atlas
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-19T06:50:00Z'
-notes: 'Labels are image-level focus quality (in-focus / out-focus), not structure annotations. peek_archive of
-  TCGA@Focus.zip (23.7 GB, 21,048 files): 19,346 PNGs under "Image Patches Database/In Focus|Out Focus/<organ>/<slide>/patch_i_*_j_*.png", 1,701 per-slide WSI_ROI.xlsx files and one txt. The 19,346 PNG count exceeds the 14,371 patches on the page; the page figure is used for n_items. Pixel size not stated on the Zenodo page or in the archive listing. The Zenodo page asks to cite the FocusLiteNN MICCAI 2020 paper (Wang et al.); that 2020 paper is not indexed in Europe PMC or Crossref (tools/paper.py found nothing), so it could not be read; only the Zenodo page was used.'
+  last_checked: '2026-10-19T07:20:00Z'
+notes: 'Labels are image-level focus quality, not structure annotations. The zip holds 19,346 PNGs: the 14,371 in
+  TCGA@Focus.txt (GitHub) plus 4,975 small unlisted ones (<20 KB; one sampled was all zero, i.e. blank). Use the
+  txt list. enricher: organism Homo sapiens (TCGA = human cancer slides, genome.gov) (was empty). enricher: size
+  23,662,252,880 B from the Zenodo file listing (was 23,675,200,000, the uncompressed sum). enricher: paper read
+  on arXiv (2007.06565); it gives no pixel size for TCGA@Focus. Folder names corrected to In Focus / Out of Focus
+  / Out of Focus (Marker).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "TCGA@Focus.zip   1 file   23,662,252,880 B (Zenodo API)\nzip contents (21,048 members):\n  TCGA@Focus/\n\
+      \    NIH-TCGA_v1.txt                                     2.8 MB\n    Image Patches Database/\n      In Focus/<organ>/<TCGA\
+      \ slide id>/              14,489 .png  + WSI_ROI.xlsx per slide\n      Out of Focus/<organ>/<TCGA slide id>/\
+      \           4,006 .png\n      Out of Focus (Marker)/<organ>/<TCGA slide id>/    851 .png\n    (1,701 WSI_ROI.xlsx\
+      \ in all; patch file names patch_i_<row>_j_<col>.png)\nlabels list (GitHub icbcbicc/FocusLiteNN): data/TCGA@Focus.txt\
+      \  14,371 rows, 151,603 B"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/3910757/files/TCGA@Focus.zip::TCGA@Focus/Image Patches Database/In Focus/Adrenal
+      Gland/TCGA-OR-A5JB-01Z-00-DX3.A71196CF-F710-49EC-8F1A-2F90F60CDA0C/patch_i_32381_j_37784.png
+    - https://raw.githubusercontent.com/icbcbicc/FocusLiteNN/master/data/TCGA@Focus.txt
+    size_bytes: 2193128
+    description: One in-focus adrenal gland patch (1025x1025 RGB PNG, zip member) and the label list; the class
+      is also the folder name.
+  arrays:
+  - role: raw
+    path_pattern: TCGA@Focus.zip::TCGA@Focus/Image Patches Database/*/*/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1025
+    - 1025
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB patches cut from TCGA SVS slides. Probed 2 members (both 1025x1025x3 uint8 RGB PNG). 4,975
+      PNGs not in the label list are under 20 KB; one sampled is all zero.
+  - role: label
+    path_pattern: TCGA@Focus.txt
+    format: csv
+    axes: null
+    shape:
+    - 14371
+    - 4
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes:
+    - id: In Focus
+      name: in-focus (ground truth 1)
+    - id: Out of Focus
+      name: out-of-focus (ground truth 0)
+    - id: Out of Focus (Marker)
+      name: out-of-focus, marker region (ground truth 0)
+    alignment: not-applicable
+    alignment_notes: 'Image-level labels. Each row: patch path relative to Image Patches Database/, organ, then
+      two 0/1 columns: 0,0 for all 11,328 In Focus, 0,1 for 2,462 Out of Focus, 1,1 for 581 Out of Focus (Marker);
+      the columns are not documented. Paper: in-focus = 1, out-focus = 0.'
+  notes: 'Listing: Zenodo API + zip central directory (tools/listing.py --expand-zips): 1 zip, 23,662,252,880 B,
+    21,048 members (19,346 PNG, 1,701 xlsx, 1 txt). The 14,371 rows of TCGA@Focus.txt all exist in the zip (11,328
+    in focus + 3,043 out of focus, as the page says). Sampled patch_i_32381_j_37784.png (2,041,525 B): [0, 255],
+    mean 152, 256 unique values (from one sample); normalization unknown. Sampled one unlisted 3,182 B patch: all
+    zero. Download: the zip is direct with range requests (usable). Voxel size not found; checked: PNG headers (no
+    pHYs read), Zenodo API record, FocusLiteNN README, arXiv full text (it states 0.25 um/px only for FocusPath
+    and 0.5 um/px @20X only as a general example), NIH-TCGA_v1.txt (paths only). The source SVS slides on the GDC
+    portal were not checked. Dimensionality 2D is not covered by the miao layout yet.'
