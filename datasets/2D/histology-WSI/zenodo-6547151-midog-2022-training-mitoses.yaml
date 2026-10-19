@@ -1,0 +1,143 @@
+schema_version: '1.2'
+id: zenodo-6547151-midog-2022-training-mitoses
+title: MItosis DOmain Generalization Challenge 2022 (MICCAI MIDOG 2022), Training data set (PNG version)
+short_name: MIDOG 2022 multi-tumor mitotic figures (WSI)
+description: 405 hematoxylin-eosin stained 2 mm2 regions of interest cropped from whole slide images of six human
+  and canine tumor types (canine lung cancer, human breast cancer, canine lymphoma, human neuroendocrine tumor,
+  canine cutaneous mast cell tumor, human melanoma), released as PNG. Mitotic figures (9501) and hard negative look-alikes
+  (11051) are annotated as bounding boxes in MS COCO JSON and SlideRunner SQLite. Training data of the MICCAI MIDOG
+  2022 challenge; the melanoma cases are unlabeled.
+landing_url: https://zenodo.org/records/6547151
+doi: 10.5281/zenodo.6547151
+repository: Zenodo
+accession: '6547151'
+authors:
+- Marc Aubreville
+- Nikolas Stathonikos
+- Taryn A. Donovan
+publications:
+- title: Domain generalization across tumor types, laboratories, and species - insights from the 2022 edition of
+    the Mitosis Domain Generalization Challenge
+  doi: 10.48550/arXiv.2309.15589
+  url: https://arxiv.org/abs/2309.15589
+date_published: '2022-04-21'
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  - Canis lupus familiaris
+  sample: H&E-stained tumor tissue, 2 mm2 regions of interest cropped from whole slide images (six tumor types,
+    five scanners)
+  labels_stains:
+  - H&E
+data:
+  formats:
+  - png
+  size_bytes: 29994696481
+  n_items: 405
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  - classification
+  coverage: dense
+  format: MS COCO JSON (MIDOG2022_training_png.json) and SlideRunner SQLite
+  source: manual
+ml:
+  tasks:
+  - detection
+  splits_provided: false
+  benchmark: MICCAI MIDOG 2022
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/legalcode
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-19T11:27:57Z'
+  evidence_urls:
+  - https://zenodo.org/records/6547151
+  - https://zenodo.org/api/records/6547151
+  - https://arxiv.org/pdf/2309.15589
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-19T12:00:00Z'
+notes: 'Pixel size depends on the scanner (paper: 0.23 um/px Hamamatsu XR/S360, 0.25 um/px Pannoramic Scan II and
+  Aperio CS2); each PNG stores its own in pHYs (227-253 nm in 9 files read). Differs from the catalogued MIDOG 2021
+  set (200 breast cases): 405 cases, six tumor types; 150 breast cases are also in MIDOG 2021, much overlaps MIDOG++.
+  TIFF version: Zenodo 6474727 (not examined). enricher: voxel size 250x250 -> null (sub-datasets differ). organisms:
+  355-405.png = unlabeled human melanoma (51 images without annotations, matching the 51 melanoma cases); the file-to-domain
+  mapping of 001-354 (Homo sapiens breast/NET vs Canis lupus familiaris lung/lymphoma/MCT) is not stated in the
+  sources read.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./   407 files, 30.0 GB\n  001.png ... 405.png        405 files (46-86 MB each)\n  MIDOG2022_training_png.json\
+      \    1.7 MB (COCO-style boxes)\n  MIDOG2022_training_png.sqlite  3.6 MB (SlideRunner)\n"
+    n_files: 407
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/6547151/files/350.png/content
+    - https://zenodo.org/api/records/6547151/files/MIDOG2022_training_png.json/content
+    size_bytes: 48144128
+    description: Smallest labeled ROI (350.png, 46.4 MB) and the annotation JSON covering all images
+  arrays:
+  - role: raw
+    path_pattern: '[0-9][0-9][0-9].png'
+    format: png
+    axes: yxs
+    shape:
+    - 5412
+    - 7215
+    - 4
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 24
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGBA PNG (colour type 6); RGB H&E plus an alpha channel. Five image sizes occur (7215x5412
+      in 156 files, 6577x4933 in 99, 6447x4835 in 49, ...).
+  - role: label
+    path_pattern: MIDOG2022_training_png.json
+    format: json
+    axes: null
+    shape:
+    - 20552
+    - 4
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: boxes-table
+    classes:
+    - id: 1
+      name: mitotic figure
+    - id: 2
+      name: not mitotic figure
+    alignment: same-grid
+    alignment_notes: 'COCO-style JSON: images[].file_name = NNN.png (id = number), annotations[].bbox is [x1, y1,
+      x2, y2] in pixels of that PNG (all boxes 50x50 px, i.e. corner format, not COCO xywh); category 1 = mitotic
+      figure (9501), 2 = hard negative (11051). Same content as the SlideRunner sqlite. Images 355-405 have no annotations.'
+  notes: 'Listing: tools/listing.py Zenodo record 6547151: 407 files, 29,994,696,481 bytes, complete, exact. Probed
+    001.png and 350.png headers (RGBA uint8, deflate). Sampled 001.png (76.3 MB): range [24,255] over all four samples,
+    from this one file; read the JSON (1.7 MB) and sqlite (3.6 MB) in full. Voxel size: the paper gives 0.23-0.25
+    um/px by scanner and PNG pHYs gives 226.8-253.3 nm per file (001, 060, 120, 160, 200, 260, 320, 350, 380), so
+    no single value; a converter should read each PNG''s pHYs. Sub-dataset-to-file mapping not found (checked: Zenodo
+    description, JSON, sqlite Slides table, arXiv paper). No single archive: Zenodo offers per-file links only;
+    download_url left null, direct files are /api/records/6547151/files/<name>/content.'
