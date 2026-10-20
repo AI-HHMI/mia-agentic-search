@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zenodo-6819463-simulated-smlm-emitter-pairs
 title: Simulations of Single Molecule Localization Microscopy frames with scattered single emitters
 short_name: Simulated SMLM noisy/clean frame pairs
-description: Simulated single-molecule localization microscopy frames of scattered single emitters (Gaussian PSF, sigma 3 px,
-  Poisson noise). The training zip holds 5,000 noiseless/noisy image pairs (folders X and Y); the sample zip holds
-  frames over a grid of emitter count, emitter distance, peak intensity and noise realization, each with noiseless (X),
-  noisy (Y) and CNN-denoised (Z) images.
+description: Simulated single-molecule localization microscopy frames of scattered single emitters (Gaussian PSF, sigma 3
+  px, Poisson noise). The training zip holds 5,000 noiseless/noisy image pairs (folders X and Y); the sample zip holds frames
+  over a grid of emitter count, emitter distance, peak intensity and noise realization, each with noiseless (X), noisy (Y)
+  and CNN-denoised (Z) images.
 landing_url: https://zenodo.org/records/6819463
 doi: 10.5281/zenodo.6819463
 repository: Zenodo
@@ -22,7 +22,7 @@ imaging:
   - super-resolution
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism: []
   sample: Simulated point emitters (no biological sample); Gaussian PSF with sigma 3 px, Poisson noise with dark signal 10
   labels_stains: []
@@ -56,13 +56,121 @@ provenance:
   evidence_urls:
   - https://zenodo.org/records/6819463
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22Combining+deep+learning+with+SUPPOSe+and+Compressed+Sensing+for+SNR-enhanced+localization+of+overlapping+emitters%22&format=json&resultType=core&pageSize=3
+  - https://zenodo.org/api/records/6819463
   confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-20T02:30:00Z'
-notes: Two zips (peek_archive). Train dataset.zip - 10,000 .tif files in X/ and Y/ folders (5,000 pairs); Sample dataset.zip -
-  9,720 .tif files in Q/d/imax/i folders with X, Y and Z images each. Synthetic data, not real microscope images. Pixel
-  size not stated on the Zenodo page; the paper is not open access, so only its abstract was read (Europe PMC).
-  Ground-truth emitter positions are not described on the record. Two download files, so no single download_url.
+  last_checked: '2026-10-20T03:10:00Z'
+notes: 'Two zips (peek_archive). Train dataset.zip - 10,000 .tif files in X/ and Y/ folders (5,000 pairs); Sample dataset.zip
+  - 9,720 .tif files in Q/d/imax/i folders with X, Y and Z images each. Synthetic data, not real microscope images. Pixel
+  size not stated on the Zenodo page; the paper is not open access, so only its abstract was read (Europe PMC). Ground-truth
+  emitter positions are not described on the record. Two download files, so no single download_url. enricher: channels 1 from
+  TIFF headers (was null). Pixel size: none stated (simulation in pixel units).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "zenodo record 6819463 (2 files, 112.8 MB; 19,720 zip members)\nTrain%20dataset.zip  (83.2 MB)\n  Secondary dataset/X/<n>.tif\
+      \   5000 files, 165.4 MB unzipped  (noiseless, 64x64 int64)\n  Secondary dataset/Y/<n>.tif   5000 files, 165.4 MB unzipped\
+      \  (noisy, 64x64 int64)\nSample%20dataset.zip  (29.6 MB)\n  Sample dataset/Q={2,3,4}/d={3.0,4.5,6.0}/imax={20..10000,\
+      \ 12 levels}/i={0..}/  (3240 dirs)\n    X.tif (noiseless), Y.tif (noisy), Z.tif (CNN-denoised)   9720 files, 69.5 MB\
+      \ unzipped"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/6819463/files/Train%20dataset.zip::Secondary dataset/Y/472.tif
+    - https://zenodo.org/records/6819463/files/Train%20dataset.zip::Secondary dataset/X/472.tif
+    size_bytes: 66176
+    description: 'Training pair 472: noisy Y/472.tif and its noiseless target X/472.tif (64x64 int64, uncompressed zip member
+      sizes).'
+  arrays:
+  - role: raw
+    path_pattern: Train%20dataset.zip/Secondary dataset/Y/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 64
+    - 64
+    shape_varies: false
+    dtype: int64
+    compression: none
+    value_range:
+    - 2
+    - 3657
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: Noisy training input (Poisson noise, dark signal 10, per Zenodo description).
+  - role: target
+    path_pattern: Train%20dataset.zip/Secondary dataset/X/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 64
+    - 64
+    shape_varies: false
+    dtype: int64
+    compression: none
+    value_range:
+    - 0
+    - 3579
+    normalization: none
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: same file name in X/ and Y/ (e.g. X/472.tif <-> Y/472.tif); shapes match.'
+  - role: raw
+    path_pattern: Sample%20dataset.zip/Sample dataset/*/*/*/*/Y.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 32
+    - 32
+    shape_varies: null
+    dtype: int64
+    compression: none
+    value_range:
+    - 2
+    - 141
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: Noisy evaluation frame; folder encodes Q (emitter count), d (distance, px), imax (peak intensity), i
+      (noise realization).
+  - role: target
+    path_pattern: Sample%20dataset.zip/Sample dataset/*/*/*/*/X.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 32
+    - 32
+    shape_varies: null
+    dtype: float64
+    compression: none
+    value_range:
+    - 7.6e-09
+    - 108.0
+    normalization: none
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: X.tif, Y.tif and Z.tif in the same Q/d/imax/i folder; shapes match.'
+  - role: other
+    path_pattern: Sample%20dataset.zip/Sample dataset/*/*/*/*/Z.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 32
+    - 32
+    shape_varies: null
+    dtype: float32
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: CNN-denoised prediction (authors' model output), same folder as X/Y; header only.
+  notes: 'Listing: both zips via tools/listing.py, complete, 112,781,828 bytes (confirmed). Probed Train X/472.tif (64x64
+    int64, uncompressed TIFF) and Sample Z.tif (32x32 float32). Sampled Train pair 472 (Y range 2-3657, X range 0-3579) and
+    Sample Q=2/d=6.0/imax=108/i=16 (Y int64 2-141, X float64 0-108): value ranges from one sample each. normalization none
+    is inferred: simulated photon counts, unclipped. Sample-dataset shapes from one folder only (shape_varies null). Training
+    data live in a folder named "Secondary dataset". voxel size not found; checked: TIFF headers, Zenodo API description,
+    paper (not open access, abstract only), web search for preprint/code. Data are simulated in pixel units (PSF sigma 3 px),
+    so a physical pixel size may not exist. No single archive: data.download_url stays null; direct files are the two zips
+    at https://zenodo.org/records/6819463/files/<name>.'
