@@ -1,8 +1,8 @@
 accession: jrc_mus-liver-zon-2
 annotations:
   coverage: partial
-  format: OME-Zarr-style groundtruth/cropN/<class> arrays under jrc_mus-liver-zon-2.zarr/recon-1/labels/groundtruth
-    (19 crop(s))
+  format: OME-Zarr 0.4 (Zarr v2) groundtruth/cropN/all plus per-class cropN/<class> arrays under jrc_mus-liver-zon-2.zarr/recon-1/labels/groundtruth
+    (19 crops; class_names list in each crop's .zattrs)
   present: true
   source: manual
   types:
@@ -16,14 +16,14 @@ data:
   download_url: s3://janelia-cosem-datasets/jrc_mus-liver-zon-2/
   formats:
   - zarr
+  - n5
   - precomputed
   n_items: 1
-  size_bytes: 27253762620000
+  size_bytes: 27262688620000
 date_published: null
-description: FIB-SEM volume jrc_mus-liver-zon-2 (26250 x 19466 x 53336 voxels at full resolution, 8 nm
-  in-plane) from the Janelia CellMap/COSEM project on the public janelia-cosem-datasets S3 bucket (OpenOrganelle),
-  with 19 ground-truth crop(s) in which every voxel was labelled by a human annotator (per the bucket
-  README).
+description: FIB-SEM volume jrc_mus-liver-zon-2 (26250 x 19466 x 53336 voxels at full resolution, 8 nm in-plane)
+  from the Janelia CellMap/COSEM project on the public janelia-cosem-datasets S3 bucket (OpenOrganelle), with 19
+  ground-truth crop(s) in which every voxel was labelled by a human annotator (per the bucket README).
 doi: null
 id: jrc-mus-liver-zon-2-cellmap-fib-sem-organelles
 imaging:
@@ -34,8 +34,8 @@ imaging:
   - FIB-SEM
   organism:
   - Mus musculus
-  sample: Mouse liver (organism and tissue inferred from the dataset name jrc_mus-liver-zon-2; sample
-    preparation not stated in the sources read)
+  sample: Mouse liver (organism and tissue inferred from the dataset name jrc_mus-liver-zon-2; sample preparation
+    not stated in the sources read)
   voxel_size_nm:
     x: 8
     y: 8
@@ -50,16 +50,17 @@ ml:
   splits_provided: false
   tasks:
   - segmentation
-notes: 'S3 listing: jrc_mus-liver-zon-2.zarr/recon-1/labels/groundtruth has 19 cropN group(s); em/fibsem-uint8
-  is uint8, s0 shape 53336x19466x26250 (zyx) with scale 8/8/8 nm in its .zattrs. size_bytes = uncompressed
-  s0 voxels of the raw volume only. The bucket README says groundtruth blocks are labelled voxel-by-voxel
-  by a human annotator; CC-BY-4.0 is stated for the collection on the AWS registry page. Species and tissue/cell
-  type are inferred from the dataset name; sample prep, annotators and per-crop provenance are not documented
-  in the sources read (per-dataset README files do not exist in the bucket; the COSEM preprint describes
-  other volumes), and the Nature paper is paywalled. Different volume and crops from the other jrc_* records.
-  Train/val split undocumented.'
+notes: 'S3 listing: jrc_mus-liver-zon-2.zarr/recon-1/labels/groundtruth has 19 cropN group(s); em/fibsem-uint8 is
+  uint8, s0 shape 53336x19466x26250 (zyx) with scale 8/8/8 nm in its .zattrs. size_bytes = uncompressed s0 voxels
+  of the raw volume plus the label crops (enricher estimate). The bucket README says groundtruth blocks are labelled
+  voxel-by-voxel by a human annotator; CC-BY-4.0 is stated for the collection on the AWS registry page. Species
+  and tissue/cell type are inferred from the dataset name; sample prep, annotators and per-crop provenance are not
+  documented in the sources read (per-dataset README files do not exist in the bucket; the COSEM preprint describes
+  other volumes), and the Nature paper is paywalled. Different volume and crops from the other jrc_* records. Train/val
+  split undocumented. enricher: added n5 to formats (a jrc_mus-liver-zon-2.n5 store with em/ and labels/ sits next
+  to the zarr).'
 provenance:
-  confidence: 0.6
+  confidence: 0.7
   discovered_at: '2026-10-20T21:00:00Z'
   discovered_by: harvest-websearch
   evidence_urls:
@@ -69,6 +70,8 @@ provenance:
   - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_mus-liver-zon-2/jrc_mus-liver-zon-2.zarr/recon-1/em/fibsem-uint8/.zattrs
   - https://api.biorxiv.org/details/biorxiv/10.1101/2020.11.14.382143
   - https://www.biorxiv.org/content/biorxiv/early/2020/11/16/2020.11.14.382143.source.xml
+  - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_mus-liver-zon-2/jrc_mus-liver-zon-2.zarr/recon-1/em/fibsem-uint8/s0/.zarray
+  - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_mus-liver-zon-2/jrc_mus-liver-zon-2.zarr/recon-1/labels/groundtruth/crop355/all/.zattrs
 publications:
 - doi: 10.1038/s41586-021-03977-3
   title: Whole-cell organelle segmentation in volume electron microscopy
@@ -79,6 +82,86 @@ short_name: Mouse liver organelles zone 2 (FIB-SEM, 8 nm)
 title: FIB-SEM volume jrc_mus-liver-zon-2 (CellMap, 8 nm) with human-annotated organelle crops
 verification:
   annotations_verified: true
-  last_checked: '2026-10-20T21:00:00Z'
+  last_checked: '2026-10-20T20:55:15Z'
   license_found: true
   url_ok: true
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "jrc_mus-liver-zon-2/   (s3://janelia-cosem-datasets; chunked Zarr v2 stores, not listed in full)\n  jrc_mus-liver-zon-2.zarr/recon-1/em/fibsem-uint8/s0..s13\
+      \   zyx 53336 x 19466 x 26250 uint8, 8 nm, zstd, chunks 128x128x128\n  jrc_mus-liver-zon-2.zarr/recon-1/labels/groundtruth/\
+      \   19 crops, each cropN/all (s0..) plus per-class arrays\n      crop333/all  400x400x400 uint8, 4 nm, translation\
+      \ 203678/87558/105598 nm\n      crop340/all  400x400x400 uint8, 4 nm, translation 207998/101262/134302 nm\n\
+      \      crop341/all  400x400x400 uint8, 4 nm, translation 206870/130726/39246 nm\n      crop342/all  400x400x400\
+      \ uint8, 4 nm, translation 207006/138214/36294 nm\n      crop353/all  600x400x600 uint8, 32 nm, translation\
+      \ 6156/4172/133772 nm\n      crop354/all  600x400x600 uint8, 32 nm, translation 144012/25612/26348 nm\n  \
+      \    crop355/all  200x200x200 uint8, 32 nm, translation 352012/83212/59212 nm\n      crop356/all  200x200x200\
+      \ uint8, 32 nm, translation 345612/67212/108812 nm\n      crop357/all  1500x1500x1500 uint8, 32 nm, translation\
+      \ 208012/48012/76812 nm\n      crop358/all  1500x1500x1500 uint8, 32 nm, translation 230412/16652/137612 nm\n\
+      \      crop362/all  600x400x600 uint8, 32 nm, translation 2092/4684/20812 nm\n      crop366/all  600x400x600\
+      \ uint8, 32 nm, translation 35564/123820/80012 nm\n      crop367/all  1000x1000x1000 uint8, 32 nm, translation\
+      \ 219020/8172/129772 nm\n      crop368/all  400x400x400 uint8, 4 nm, translation 266398/117838/147998 nm\n\
+      \      crop369/all  400x400x400 uint8, 4 nm, translation 336798/66478/40798 nm\n      crop370/all  400x400x400\
+      \ uint8, 4 nm, translation 191998/118238/107198 nm\n      crop376/all  400x400x400 uint8, 4 nm, translation\
+      \ 277598/134158/46398 nm\n      crop387/all  200x200x200 uint8, 32 nm, translation 208332/144012/188812 nm\n\
+      \      crop408/all  400x400x400 uint8, 32 nm, translation 255372/65452/39468 nm\n  jrc_mus-liver-zon-2.n5/,\
+      \ neuroglancer/   (other copies / meshes / viewer states, not inspected)\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_mus-liver-zon-2/jrc_mus-liver-zon-2.zarr/recon-1/labels/groundtruth/crop355/all
+    - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_mus-liver-zon-2/jrc_mus-liver-zon-2.zarr/recon-1/em/fibsem-uint8
+    size_bytes: null
+    description: Ground-truth crop crop355/all (200x200x200 uint8 at 32 nm) plus the EM region under its translation
+      (OME-Zarr groups, read remotely).
+  arrays:
+  - role: raw
+    path_pattern: jrc_mus-liver-zon-2.zarr/recon-1/em/fibsem-uint8
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 53336
+    - 19466
+    - 26250
+    shape_varies: false
+    dtype: uint8
+    compression: zstd
+    value_range:
+    - 20
+    - 207
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: OME-Zarr 0.4, 14 levels, s0 scale 8/8/8 nm, translation 0; chunks 128x128x128. Value range
+      from one central crop of s0.
+  - role: label
+    path_pattern: jrc_mus-liver-zon-2.zarr/recon-1/labels/groundtruth/crop*/all
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 200
+    - 200
+    - 200
+    shape_varies: true
+    dtype: uint8
+    compression: zstd
+    value_range:
+    - 0
+    - 50
+    normalization: unknown
+    encoding: semantic-ids
+    classes: null
+    alignment: transform-provided
+    alignment_notes: 'Each crop carries an OME-Zarr scale + translation in nm (e.g. crop355: scale 32 nm, translation
+      352012/83212/59212 nm z/y/x), a 4x coarser grid than the EM s0 (8 nm); crop s0 scales differ between crops
+      (4 nm: 8, 32 nm: 11 crops), so each crop must be placed by its own transform. Per-class arrays (cropN/<class>)
+      sit next to ''all''; the id-to-name map of ''all'' is not stated in the files read.'
+  notes: 'Prefixes enumerated with S3 ListObjectsV2 delimiter queries (chunked Zarr, no full listing). Headers:
+    em/fibsem-uint8 .zattrs + s0 .zarray and every crop''s all/.zattrs + all/s0/.zarray (19 crops). Samples (tools/sample.py,
+    ~59 MB): central EM s0 crop 416x304x410, uint8 20-207 (p50 139); crop355/all s0 central crop, 3 values {''0'':
+    6948343, ''49'': 42245, ''50'': 1009412}. Ranges from one sample each. size estimated (uncompressed): raw 1
+    x 53336x19466x26250 uint8 = 27,253,762,620,000 B + labels 19 crops ''all'' s0 (8,926,000,000 voxels, shapes
+    read from each crop''s .zarray) uint8 = 8,926,000,000 B; total 27,262,688,620,000 B. s0 only; pyramids, per-class
+    arrays and the n5 / neuroglancer copies not counted; zstd chunks download smaller. Voxel 8 nm from the OME-Zarr
+    scale, agrees with the record.'
