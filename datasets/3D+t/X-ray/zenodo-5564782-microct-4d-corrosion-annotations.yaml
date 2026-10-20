@@ -34,7 +34,7 @@ data:
   formats:
   - hdf5
   size_bytes: 1661726120
-  n_items: null
+  n_items: 21
   access: open
   download_url: https://zenodo.org/api/records/5564782/files/manual_4D_annotations.h5/content
   download_method: http
@@ -61,17 +61,71 @@ provenance:
   - https://zenodo.org/api/records/5564782
   - https://zenodo.org/api/records/4293394
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8640015/fullTextXML
-  confidence: 0.55
+  - https://zenodo.org/records/5564782
+  confidence: 0.6
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-20T10:15:46Z'
+  annotations_verified: true
+  last_checked: '2026-10-20T11:20:00Z'
 notes: >-
   Materials-science X-ray CT, not biological. The record holds only the labels; the images they refer to are the
   CGLS reconstructions in Zenodo 4293394 (CC-BY-4.0, 21 tomograms of 91 projections each, one 192.7 GB 7z archive;
   paper: cropped 1710x1310x1310 voxels). Annotations are sparse: 6 slices per time step (6 x 21 = 126 slice images),
-  made with SuRVoS and HMM-T refinement, and the paper uses them only as test ground truth. The HDF5 contents were
-  not opened, so shape and dtype are unverified. Voxel size not stated on either Zenodo record or in the paper
-  text read (Methods give voxel dimensions only). The 3D training data of the CNN used in the paper is listed as
-  available online in the paper but was not followed here. n_items left null.
+  made with SuRVoS and HMM-T refinement, and the paper uses them only as test ground truth. Voxel size not stated
+  on either Zenodo record, in the paper, in the CNN paper (Mach. Vis. Appl. 2021) or the code README.
+  enricher: HDF5 opened (dataset data, 1710x1310x1310x21 float32); n_items 21 = one label volume per time step
+  (was null); annotations_verified true (class IDs seen in slices 740-742, 747-749).
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |-
+      5564782/                1 file    1.7 GB  .h5
+        manual_4D_annotations.h5
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5564782/files/manual_4D_annotations.h5
+    size_bytes: 1661726120
+    description: >-
+      The single label file (the whole record); stored chunks cover only z 702-755, y 656-1311, x 0-532. The raw
+      images are not in this record (Zenodo 4293394, one 192.7 GB 7z).
+  arrays:
+  - role: label
+    path_pattern: manual_4D_annotations.h5 (data)
+    format: hdf5
+    axes: zyxt
+    shape: [1710, 1310, 1310, 21]
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range: [0, 3]
+    encoding: semantic-ids
+    classes:
+    - id: null
+      name: air
+    - id: null
+      name: base material (aluminium)
+    - id: null
+      name: magnesium deposits
+    - id: null
+      name: gas pockets
+    alignment: same-grid
+    alignment_notes: >-
+      One 4D HDF5 dataset 'data', chunks 54x41x41x2, fill value 0. Axis 0 is z: the Zenodo description says slices
+      740-742 and 747-749 are annotated "referring to the first axis", and the sample shows labels exactly in those
+      planes of axis 0 (745 is empty). Axis 3 (21) is time, one per tomogram of the 21-step series. The y/x order of
+      axes 1-2 is not stated (both 1310). The shape matches the cropped 1710x1310x1310 reconstructions of Zenodo
+      4293394 (paper), so labels sit on the raw grid of each time step. Class names are from the paper/Zenodo;
+      the value-to-class mapping is not documented (observed values 0-3; 0 is also the fill value).
+  notes: >-
+    Listing: Zenodo 5564782 holds one file, 1661726120 bytes (file-listing, complete); the raw record 4293394 is a
+    single 192678485858-byte 7z that cannot be listed or probed by range, so the raw format, dtype and axes are
+    unknown and no raw array is recorded. Sample: h5py range reads of the chunk index and a 54x164x164x2 crop
+    (z 702-755, y 902-1065, x 164-327, t 0-1): values {0,1,2,3} float32 (counts 2582074/302750/19712/232),
+    value_range from this one crop only; only 2288 of the chunks are stored (z 702-755, y 656-1311, x 0-532).
+    Voxel size not found; checked: HDF5 attributes (none), Zenodo API for 5564782 and 4293394, paper full text
+    (Sci Rep 2021, Europe PMC XML), CNN paper (Mach. Vis. Appl. 2021, Springer page), code README
+    (DimitriosBellos/Stacked-DenseDenSeg). data.download_url is the direct label file; raw images need the 7z.
