@@ -1,8 +1,8 @@
 accession: jrc_fly-vnc-1
 annotations:
   coverage: partial
-  format: OME-Zarr-style groundtruth/cropN/<class> arrays under jrc_fly-vnc-1.zarr/recon-1/labels/groundtruth
-    (6 crop(s))
+  format: OME-Zarr 0.4 (Zarr v2) groundtruth/cropN/all plus per-class cropN/<class> arrays under jrc_fly-vnc-1.zarr/recon-1/labels/groundtruth
+    (6 crops; class_names list in each crop's .zattrs)
   present: true
   source: manual
   types:
@@ -18,11 +18,11 @@ data:
   - zarr
   - precomputed
   n_items: 1
-  size_bytes: 47000000000
+  size_bytes: 47757000000
 date_published: null
-description: FIB-SEM volume jrc_fly-vnc-1 (9400 x 2500 x 2000 voxels at full resolution, 4 nm in-plane)
-  from the Janelia CellMap/COSEM project on the public janelia-cosem-datasets S3 bucket (OpenOrganelle),
-  with 6 ground-truth crop(s) in which every voxel was labelled by a human annotator (per the bucket README).
+description: FIB-SEM volume jrc_fly-vnc-1 (9400 x 2500 x 2000 voxels at full resolution, 4 nm in-plane) from the
+  Janelia CellMap/COSEM project on the public janelia-cosem-datasets S3 bucket (OpenOrganelle), with 6 ground-truth
+  crop(s) in which every voxel was labelled by a human annotator (per the bucket README).
 doi: null
 id: jrc-fly-vnc-1-cellmap-fib-sem-organelles
 imaging:
@@ -33,8 +33,8 @@ imaging:
   - FIB-SEM
   organism:
   - Drosophila melanogaster
-  sample: Fly ventral nerve cord tissue (organism and region inferred from the dataset name jrc_fly-vnc-1;
-    sample preparation not stated in the sources read)
+  sample: Fly ventral nerve cord tissue (organism and region inferred from the dataset name jrc_fly-vnc-1; sample
+    preparation not stated in the sources read)
   voxel_size_nm:
     x: 4
     y: 4
@@ -49,16 +49,15 @@ ml:
   splits_provided: false
   tasks:
   - segmentation
-notes: 'S3 listing: jrc_fly-vnc-1.zarr/recon-1/labels/groundtruth has 6 cropN group(s); em/fibsem-uint8
-  is uint8, s0 shape 2000x2500x9400 (zyx) with scale 4/4/4 nm in its .zattrs. size_bytes = uncompressed
-  s0 voxels of the raw volume only. The bucket README says groundtruth blocks are labelled voxel-by-voxel
+notes: 'S3 listing: jrc_fly-vnc-1.zarr/recon-1/labels/groundtruth has 6 cropN group(s); em/fibsem-uint8 is uint8,
+  s0 shape 2000x2500x9400 (zyx) with scale 4/4/4 nm in its .zattrs. size_bytes = uncompressed s0 voxels of the raw
+  volume plus the label crops (enricher estimate). The bucket README says groundtruth blocks are labelled voxel-by-voxel
   by a human annotator; CC-BY-4.0 is stated for the collection on the AWS registry page. Species and tissue/cell
-  type are inferred from the dataset name; sample prep, annotators and per-crop provenance are not documented
-  in the sources read (per-dataset README files do not exist in the bucket; the COSEM preprint describes
-  other volumes), and the Nature paper is paywalled. Different volume and crops from the other jrc_* records.
-  Train/val split undocumented.'
+  type are inferred from the dataset name; sample prep, annotators and per-crop provenance are not documented in
+  the sources read (per-dataset README files do not exist in the bucket; the COSEM preprint describes other volumes),
+  and the Nature paper is paywalled. Different volume and crops from the other jrc_* records. Train/val split undocumented.'
 provenance:
-  confidence: 0.6
+  confidence: 0.7
   discovered_at: '2026-10-20T21:00:00Z'
   discovered_by: harvest-websearch
   evidence_urls:
@@ -68,6 +67,8 @@ provenance:
   - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_fly-vnc-1/jrc_fly-vnc-1.zarr/recon-1/em/fibsem-uint8/.zattrs
   - https://api.biorxiv.org/details/biorxiv/10.1101/2020.11.14.382143
   - https://www.biorxiv.org/content/biorxiv/early/2020/11/16/2020.11.14.382143.source.xml
+  - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_fly-vnc-1/jrc_fly-vnc-1.zarr/recon-1/em/fibsem-uint8/s0/.zarray
+  - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_fly-vnc-1/jrc_fly-vnc-1.zarr/recon-1/labels/groundtruth/crop174/all/.zattrs
 publications:
 - doi: 10.1038/s41586-021-03977-3
   title: Whole-cell organelle segmentation in volume electron microscopy
@@ -78,6 +79,77 @@ short_name: Fly nerve cord organelles (FIB-SEM, 4 nm)
 title: FIB-SEM volume jrc_fly-vnc-1 (CellMap, 4 nm) with human-annotated organelle crops
 verification:
   annotations_verified: true
-  last_checked: '2026-10-20T21:00:00Z'
+  last_checked: '2026-10-20T20:55:15Z'
   license_found: true
   url_ok: true
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "jrc_fly-vnc-1/   (s3://janelia-cosem-datasets; chunked Zarr v2 stores, not listed in full)\n  jrc_fly-vnc-1.zarr/recon-1/em/fibsem-uint8/s0..s5\
+      \   zyx 2000 x 2500 x 9400 uint8, 4 nm, zstd, chunks 128x128x128\n  jrc_fly-vnc-1.zarr/recon-1/labels/groundtruth/\
+      \   6 crops, each cropN/all (s0..) plus per-class arrays\n  jrc_fly-vnc-1.zarr/recon-2/   (second reconstruction,\
+      \ not inspected)\n      crop78/all  600x600x600 uint8, 2 nm, translation 4243/3159/14439 nm\n      crop79/all\
+      \  500x500x500 uint8, 2 nm, translation 2383/6379/24039 nm\n      crop173/all  400x600x600 uint8, 2 nm, translation\
+      \ 3599/799/14779 nm\n      crop174/all  400x400x400 uint8, 2 nm, translation 6535/7671/5139 nm\n      crop176/all\
+      \  400x400x400 uint8, 2 nm, translation 1999/799/1399 nm\n      crop185/all  400x600x600 uint8, 2 nm, translation\
+      \ 3599/799/14779 nm\n  neuroglancer/   (other copies / meshes / viewer states, not inspected)\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_fly-vnc-1/jrc_fly-vnc-1.zarr/recon-1/labels/groundtruth/crop174/all
+    - https://janelia-cosem-datasets.s3.amazonaws.com/jrc_fly-vnc-1/jrc_fly-vnc-1.zarr/recon-1/em/fibsem-uint8
+    size_bytes: null
+    description: Ground-truth crop crop174/all (400x400x400 uint8 at 2 nm) plus the EM region under its translation
+      (OME-Zarr groups, read remotely).
+  arrays:
+  - role: raw
+    path_pattern: jrc_fly-vnc-1.zarr/recon-1/em/fibsem-uint8
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 2000
+    - 2500
+    - 9400
+    shape_varies: false
+    dtype: uint8
+    compression: zstd
+    value_range:
+    - 135
+    - 240
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: OME-Zarr 0.4, 6 levels, s0 scale 4/4/4 nm, translation 0; chunks 128x128x128. Value range from
+      one central crop of s0.
+  - role: label
+    path_pattern: jrc_fly-vnc-1.zarr/recon-1/labels/groundtruth/crop*/all
+    format: ome-zarr
+    axes: zyx
+    shape:
+    - 400
+    - 400
+    - 400
+    shape_varies: true
+    dtype: uint8
+    compression: zstd
+    value_range:
+    - 1
+    - 36
+    normalization: unknown
+    encoding: semantic-ids
+    classes: null
+    alignment: transform-provided
+    alignment_notes: 'Each crop carries an OME-Zarr scale + translation in nm (e.g. crop174: scale 2 nm, translation
+      6535/7671/5139 nm z/y/x), a 2x finer grid than the EM s0 (4 nm); so each crop must be placed by its own transform.
+      Per-class arrays (cropN/<class>) sit next to ''all''; the id-to-name map of ''all'' is not stated in the files
+      read.'
+  notes: 'Prefixes enumerated with S3 ListObjectsV2 delimiter queries (chunked Zarr, no full listing). Headers:
+    em/fibsem-uint8 .zattrs + s0 .zarray and every crop''s all/.zattrs + all/s0/.zarray (6 crops). Samples (tools/sample.py,
+    ~109 MB): central EM s0 crop 500x312x293, uint8 135-240 (p50 201); crop174/all s0 central crop, 15 values {''1'':
+    1696312, ''2'': 1583235, ''3'': 264487, ''4'': 41134, ''8'': 53758, ''9'': 40538, ''10'': 58465, ''11'': 68693,
+    ''12'': 12644, ''13'': 25451, ''16'': 118829, ''17'': 114797, ''30'': 67311, ''35'': 11815561, ''36'': 38785}.
+    Ranges from one sample each. size estimated (uncompressed): raw 1 x 2000x2500x9400 uint8 = 47,000,000,000 B
+    + labels 6 crops ''all'' s0 (757,000,000 voxels, shapes read from each crop''s .zarray) uint8 = 757,000,000
+    B; total 47,757,000,000 B. s0 only; pyramids, per-class arrays and the neuroglancer copies not counted; zstd
+    chunks download smaller. Voxel 4 nm from the OME-Zarr scale, agrees with the record.'
