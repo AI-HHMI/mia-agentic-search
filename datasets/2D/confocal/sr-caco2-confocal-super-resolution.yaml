@@ -1,0 +1,161 @@
+schema_version: '1.2'
+id: sr-caco2-confocal-super-resolution
+title: SR-CACO-2 - paired low/high-resolution confocal images of Caco-2 cells for super-resolution
+short_name: SR-CACO-2 Caco-2 super-resolution pairs (confocal)
+description: Real (not synthetically downsampled) paired confocal fluorescence images of Caco-2 cells grown as 3D cysts, scanned
+  with a Zeiss LSM700 at four resolutions (HR 1024 px; LR at /2, /4, /8) and registered, for single-image super-resolution
+  at x2, x4 and x8. Three fluorescent markers (Survivin, E-cadherin or GFP-tubulin, mCherry-Histone H2B). 22 tiles of a 10x10
+  grid give 2,200 unique images and 9,937 patches per scale and marker, with a tile-level train/val/test split.
+landing_url: https://www.etsmtl.ca/en/labs/livia/datasets/sr-caco-2
+doi: null
+repository: LabWebsite
+accession: null
+authors: []
+publications:
+- title: 'SR-CACO-2: A Dataset for Confocal Fluorescence Microscopy Image Super-Resolution'
+  doi: null
+  url: https://arxiv.org/abs/2406.09168
+date_published: null
+imaging:
+  modality:
+  - confocal
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Homo sapiens
+  sample: Caco-2 (ATCC HTB-37) colorectal adenocarcinoma cells grown as 3D cysts
+  labels_stains:
+  - Survivin
+  - E-cadherin or GFP-tubulin
+  - mCherry-Histone H2B
+data:
+  formats:
+  - tiff
+  size_bytes: 5200000000
+  n_items: 2200
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - restoration-pairs
+  coverage: dense
+  format: Paired LR/HR .tif images (HR = ground truth)
+  source: automatic
+ml:
+  tasks:
+  - super-resolution
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/LIVIAETS/sr-caco-2
+license:
+  spdx: CC-BY-NC-SA-4.0
+  url: https://creativecommons.org/licenses/by-nc-sa/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-20T07:18:08Z'
+  evidence_urls:
+  - https://www.etsmtl.ca/en/labs/livia/datasets/sr-caco-2
+  - https://github.com/LIVIAETS/sr-caco-2
+  - https://arxiv.org/html/2406.09168v2
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: false
+  last_checked: '2026-10-20T08:05:00Z'
+notes: 'Pixel size not stated on the dataset page, GitHub README or paper (only a generic ~200 nm confocal lateral resolution),
+  so voxel_size_nm is null; bit depth also unstated. Hosting is inconsistent: the landing page links a share on an ETS server
+  (raw IP, certificate warning) while the paper says Google Drive; no stable direct download URL, so download_url is null.
+  Paper reports tiles ~1.8 GB and patches ~3.4 GB (enricher: size_bytes 5.2e9 from that, was null); n_items = 2,200 unique
+  images. File listing not inspected (data not downloaded), hence annotations_verified false. Paper has no DOI recorded (arXiv
+  2406.09168; Europe PMC / crossref lookup failed). Channels per image is 1 (one marker per image set). Manual nucleus counts
+  exist only for a 30-image evaluation subset and are not part of the SR task.'
+technical:
+  method: metadata-only
+  inspected_at: '2026-10-20T08:05:00Z'
+  inspected_urls:
+  - https://www.etsmtl.ca/en/labs/livia/datasets/sr-caco-2
+  - https://github.com/LIVIAETS/sr-caco-2
+  - https://arxiv.org/html/2406.09168v2
+  - https://142.137.245.13/index.php/s/aCTfLWwS3rNeFNY
+  bytes_downloaded: 0
+  size_source: paper
+  layout:
+    tree: "<share root> (layout per paper Appendix A.2 Fig. 15 and code dlib/datasets/ds_scripts/caco2_resample.py; not listed)\n\
+      \  tiles/\n    HighRes1024/HighRes1024-<1..22>.tif   HR tile, 3 planes (CELL0-2), ~9318x9318\n    LowRes512/LowRes512-<ID>.tif\
+      \          LR /2\n    LowRes256/LowRes256-<ID>.tif          LR /4\n    LowRes128/LowRes128-<ID>.tif          LR /8\n\
+      \  patches/\n    hr_div_1/tile_HighRes1024-<ID>_<S>_h0_h1_w0_w1_CELL<0-2>.tif   HR 512x512\n    hr_div_2/tile_LowRes512-...CELL<I>.tif\
+      \                         LR 256x256\n    hr_div_4/tile_LowRes256-...CELL<I>.tif                         LR 128x128\n\
+      \    hr_div_8/tile_LowRes128-...CELL<I>.tif                         LR 64x64\nfolds.zip (in the GitHub repo): train/val/test\
+      \ l_h.txt pair lists per scale and CELL"
+    n_files: null
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: target
+    path_pattern: patches/hr_div_1/*.tif
+    format: tiff
+    axes: null
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: HR (1024 px scan, averaging 8) = SR ground truth.
+  - role: raw
+    path_pattern: patches/hr_div_2/*.tif
+    format: tiff
+    axes: null
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: scaled
+    alignment_notes: 'x2 input. LR patch hr_div_<s>/tile_LowRes<1024/s>-<ID>_<S>_<h0/s>_<h1/s>_<w0/s>_<w1/s>_CELL<I>.tif pairs
+      with hr_div_1/tile_HighRes1024-<ID>_<S>_<h0>_<h1>_<w0>_<w1>_CELL<I>.tif (coordinates divided by the scale; caco2_resample.py
+      build_scale_to_hr, folds l_h.txt). Paper: all LR patches registered to their HR patch.'
+  - role: raw
+    path_pattern: patches/hr_div_4/*.tif
+    format: tiff
+    axes: null
+    shape:
+    - 128
+    - 128
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: scaled
+    alignment_notes: x4 input; same pairing rule, scale 4.
+  - role: raw
+    path_pattern: patches/hr_div_8/*.tif
+    format: tiff
+    axes: null
+    shape:
+    - 64
+    - 64
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: scaled
+    alignment_notes: x8 input; same pairing rule, scale 8.
+  notes: 'Files not inspected: the only download (Nextcloud share https://142.137.245.13/index.php/s/aCTfLWwS3rNeFNY, linked
+    from the GitHub README; the paper says Google Drive but gives no link) reset every connection from this environment (https;
+    http gave 503), so no listing, probe or sample. Layout, shapes and pairing from paper Appendix A.2 / data card and the
+    repo''s caco2_resample.py; folder prefix (tiles/, patches/) assumed for the globs, the hr_div_<s> folder names come from
+    folds.zip. Tiles (not described as arrays) are 3-plane TIFFs, one marker per plane (code comment ''3, h, w''). Patch shapes
+    per paper: HR 512x512, LR 256/128/64. dtype unknown: the code registers images as uint8 but the files were not read. Size
+    5.2e9 = paper''s 1.8 GB tiles + 3.4 GB patches. Voxel size not found; checked: dataset page, GitHub README and code (caco2_resample.py,
+    utils_config.py), project page, paper full text (Zeiss LSM700, 20x/0.8 NA, 1024 px HR scan; no pixel size), no file headers
+    reachable. No direct download: Nextcloud share unreachable and its host is not on TensorSwitch''s allowlist; HF repo sbelharbi/sr-caco-2
+    holds only weights and prediction PNGs.'
