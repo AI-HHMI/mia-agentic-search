@@ -52,8 +52,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: 'Per tile, 1-bit PNG masks named specimen_xx_tile_yy_zz_channel_[CD14|CD163|Pax5|DAPI]_type_[segment|convhull|multiple|evalmask]_mode_bw.png,
-    next to 8-bit original and ROF-filtered (cartoon) grey-scale images.'
+  format: Per tile, 1-bit PNG masks named specimen_xx_tile_yy_zz_channel_[CD14|CD163|Pax5|DAPI]_type_[segment|convhull|multiple|evalmask]_mode_bw.png,
+    next to 8-bit original and ROF-filtered (cartoon) grey-scale images.
   source: automatic
 ml:
   tasks:
@@ -71,17 +71,103 @@ provenance:
   - https://health-atlas.de/lha/7YXMMFNPDG-0
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7066390/fullTextXML
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1093%2Fgigascience%2Fgiaa016%22&format=json&resultType=core&pageSize=3
-  confidence: 0.7
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-21T00:16:31Z'
-notes: 'Hosted at the Leipzig Health Atlas as 46 zip files (one per specimen, two split in a/b; sizes in the paper Table
-  3 sum to 17,444 MB, so size_bytes is that number times 1,048,576), each with its own LHA ID (example 7YXMMFNPDG-0 for specimen
+  annotations_verified: true
+  last_checked: '2026-10-21T01:40:16Z'
+notes: 'Hosted at the Leipzig Health Atlas as 46 zip files (one per specimen, two split in a/b; sizes in the paper Table 3
+  sum to 17,444 MB, so size_bytes is that number times 1,048,576), each with its own LHA ID (example 7YXMMFNPDG-0 for specimen
   01, read; the page lists the file as 161 MB, CC0 1.0); snapshots also in GigaDB per the paper. n_items counts the 44 specimens
-  (tiles of 1000 x 1000 pixels inside each zip, 19 files per tile). Pixel size is derived from the paper figure legend
-  (1,000 x 1,000 pixels = 450 x 450 um). The masks are produced by an automated reference method (Wagner et al.), not
-  by hand, so annotations source is automatic and they are not ground truth in the manual sense. Zip contents were not
-  listed (LHA download not tried); the file naming and mask types come from the paper Dataset structure section, hence
-  annotations_verified false. Plain download link not found because each specimen has its own page.'
+  (tiles of 1000 x 1000 pixels inside each zip, 19 files per tile). Pixel size is derived from the paper figure legend (1,000
+  x 1,000 pixels = 450 x 450 um). The masks are produced by an automated reference method (Wagner et al.), not by hand, so
+  annotations source is automatic and they are not ground truth in the manual sense. Plain download link not found because
+  each specimen has its own page. enricher: specimen_01 zip (yh_specimen_01.zip, 169,231,682 B) read: 72 tiles x 19 PNG +
+  a logfile (German) per tile, and a copyright_waiver folder stating CC0 1.0; masks are 0/255.'
+technical:
+  method: sample
+  size_source: paper
+  layout:
+    tree: "Leipzig Health Atlas: one data file per specimen (46 zips; e.g. data_files/215 = yh_specimen_01.zip, LHA 7YXMMFNPDG-0)\n\
+      yh_specimen_01.zip  169,231,682 B, 1,516 entries, 170.3 MB uncompressed\n  specimen_01/\n    copyright_waiver/  copyright_waiver.txt,\
+      \ CC0_1.0_universal_legalcode.txt\n    specimen_01_tile_<row>_<col>/   72 tiles (01_01 ...)\n      ..._channel_<CD14|CD163|Pax5|DAPI>_type_original_mode_gs.png\
+      \   raw\n      ..._type_cartoon_mode_gs.png    ROF-filtered\n      ..._type_segment_mode_bw.png / _convhull_mode_bw.png\
+      \   masks (all 4 channels)\n      ..._channel_<CD14|CD163>_type_multiple_mode_bw.png   double-stained macrophages\n\
+      \      ..._channel_DAPI_type_evalmask_mode_bw.png   evaluation region\n      specimen_01_tile_<row>_<col>__logfile.txt\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://www.health-atlas.de/data_files/215/content_blobs/320/download
+    size_bytes: 169231682
+    description: Specimen 01 zip (72 tiles of 1000 x 1000 px, raw channels plus all masks). The host serves no range requests,
+      so single tiles cannot be pulled out of the zip.
+  arrays:
+  - role: raw
+    path_pattern: specimen_*/specimen_*_tile_*/*_type_original_mode_gs.png
+    format: png
+    axes: yx
+    shape:
+    - 1000
+    - 1000
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 141
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One greyscale PNG per channel (CD14, CD163, Pax5, DAPI) per tile; channel in the file name. Range from
+      CD14 of specimen_01 tile 01_01 (one sample).
+  - role: label
+    path_pattern: specimen_*/specimen_*_tile_*/*_type_segment_mode_bw.png
+    format: png
+    axes: yx
+    shape:
+    - 1000
+    - 1000
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 255
+      name: CD14 segment
+    - id: 255
+      name: CD163 segment
+    - id: 255
+      name: Pax5 segment
+    - id: 255
+      name: DAPI segment
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: same tile folder and channel name, _type_segment_mode_bw vs _type_original_mode_gs; masks
+      are automatic (reference method, paper). Values {0,255}.'
+  - role: label
+    path_pattern: specimen_*/specimen_*_tile_*/*_type_multiple_mode_bw.png
+    format: png
+    axes: yx
+    shape:
+    - 1000
+    - 1000
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'CD14 and CD163 only: double-stained macrophage masks (paper). Convex-hull masks (_convhull_mode_bw)
+      and the DAPI evaluation mask (_evalmask_mode_bw) sit in the same folder, also {0,255}.'
+  notes: 'Sampled one specimen: curl with a Range header got the whole 169 MB zip because the host ignores ranges (logged;
+    deleted after reading). Decoded 6 PNGs of specimen_01 tile 01_01: all 1000 x 1000 uint8; originals and cartoons greyscale
+    (CD14 original 0-141), all masks {0,255}. Size stays the paper Table 3 value; only one of the 46 zips was sized. The LHA
+    publication page (publications/279) links the specimen data files (data_files/215 ... 264, paged); no single archive.
+    Download: data_files/<id>/content_blobs/<blob>/download serves the zip directly but without range requests, and www.health-atlas.de
+    is not on the TensorSwitch allowlist. Voxel size 450 nm kept (paper figure legend: 1,000 x 1,000 px = 450 x 450 um).'
