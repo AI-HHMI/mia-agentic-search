@@ -1,14 +1,14 @@
 schema_version: '1.2'
 id: zenodo-17153082-iga-ema-monkey-liver-if
-title: IgA endomysial antibody (EMA-eq) immunofluorescence images on monkey liver substrate, expert-graded for
-  celiac disease serology
+title: IgA endomysial antibody (EMA-eq) immunofluorescence images on monkey liver substrate, expert-graded
+  for celiac disease serology
 short_name: IgA EMA monkey-liver patterns (widefield IF)
-description: Single-field indirect immunofluorescence images of IgA endomysial antibody (EMA-eq) staining on
-  monkey liver substrate, one image per serum sample from patients referred for suspected celiac disease at
-  Ege University Hospital (June-December 2023). Each image carries an expert consensus pattern grade (negative,
-  weak positive, strong positive, plus a gray-zone class) used for 2-, 3- and 4-class classification with
-  5-fold cross-validation. The paper reports 368 original images of about 1,170 x 980 px, from which 254
-  (binary and 3-class) or 294 (4-class) were used.
+description: Single-field indirect immunofluorescence images of IgA endomysial antibody (EMA-eq) staining
+  on monkey liver substrate, one image per serum sample from patients referred for suspected celiac disease
+  at Ege University Hospital (June-December 2023). Each image carries an expert consensus pattern grade
+  (negative, weak positive, strong positive, plus a gray-zone class) used for 2-, 3- and 4-class classification
+  with 5-fold cross-validation. The paper reports 368 original images of about 1,170 x 980 px, from which
+  254 (binary and 3-class) or 294 (4-class) were used.
 landing_url: https://zenodo.org/records/17153082
 doi: 10.5281/zenodo.17153082
 repository: Zenodo
@@ -16,8 +16,8 @@ accession: null
 authors:
 - Ahmet Selman Bozkır
 publications:
-- title: Recognizing IgA-class endomysial antibody equivalent binding patterns on monkey liver substrate through
-    EfficientNet architectures and deep learning
+- title: Recognizing IgA-class endomysial antibody equivalent binding patterns on monkey liver substrate
+    through EfficientNet architectures and deep learning
   doi: 10.7717/peerj.20191
   url: https://doi.org/10.7717/peerj.20191
 date_published: '2025-09-18'
@@ -26,14 +26,15 @@ imaging:
   - widefield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism: []
-  sample: Monkey liver tissue substrate slides stained by indirect immunofluorescence with patient serum (Euroimmun EMA IgA kit)
+  sample: Monkey liver tissue substrate slides stained by indirect immunofluorescence with patient serum
+    (Euroimmun EMA IgA kit)
   labels_stains:
   - patient serum IgA / anti-human IgA fluorescent conjugate
 data:
   formats:
-  - other
+  - jpeg
   size_bytes: 381426001
   n_items: 368
   access: open
@@ -44,7 +45,8 @@ annotations:
   types:
   - classification
   coverage: sparse
-  format: Image-level class grade, assumed encoded in the folder layout of data.rar (5-fold train/validation folders); not verified because the RAR cannot be listed remotely
+  format: 'Image-level class from the folder name: data.rar/ema2_{2,3,4}classseperation_5CV/train/<class>/<image>.jpg
+    (classes negative, positive / positive-weak, positive-strong / grayzone). No separate label files.'
   source: manual
 ml:
   tasks:
@@ -63,17 +65,56 @@ provenance:
   - https://zenodo.org/records/17153082
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12535235/fullTextXML
   - https://raw.githubusercontent.com/asfix/iga-ema-classification/main/README.md
-  confidence: 0.6
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-21T15:05:00Z'
-notes: 'Data: data.rar (381 MB) in Zenodo record 17153082 (concept 16333475); the RAR cannot be listed remotely
-  (no range requests), so the file format and folder layout are unverified: formats is other and the
-  split/label layout is inferred from the paper (5-fold cross-validation) and the code README. Paper Methods:
-  monkey species not stated (organism left empty; images are of the monkey liver substrate, serum is human), Euroimmun EUROPattern microscope, one field per serum, 368 original untransformed images, ~1,170 x 980
-  px, two experts with consensus (disagreements excluded); pixel size and objective not stated, so voxel
-  size is null. Counts: 254 samples for binary / 3-class, 294 for 4-class; n_items uses the 368 images. The paper
-  says the dataset "will be publicly available" and the Data Availability section points to this record.
-  Related code-only Zenodo record 16333476 (and concept 16333475, which also lists data.rar) is the same data.'
+  annotations_verified: true
+  last_checked: '2026-10-21T15:52:07Z'
+notes: 'Data: data.rar (381 MB) in Zenodo record 17153082 (concept 16333475), RAR5 holding 1004 JPEGs.
+  Paper Methods: monkey species not stated (organism left empty; images are of the monkey liver substrate,
+  serum is human), Euroimmun Sprinter XL, 368 original images ~1,170 x 980 px, two experts with consensus;
+  pixel size and objective not stated, so voxel size is null. n_items uses the 368 images. Related code-only
+  Zenodo record 16333476 (and concept 16333475) is the same data. enricher: formats other -> jpeg, channels
+  3 (RGB JPEG), annotation layout and size_bytes from the RAR''s quick-open file list.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  4 files, 381,467,806 bytes\n  data.rar   381.4 MB  (RAR5, 1004 JPEGs, mostly stored)\n\
+      \    ema2_2classseperation_5CV/train/{negative,positive}/          149 / 169\n    ema2_3classseperation_5CV/train/{negative,positive-weak,positive-strong}/\
+      \   149 / 84 / 85\n    ema2_4classseperation_5CV/train/{negative,positive-weak,positive-strong,grayzone}/\
+      \   149 / 84 / 85 / 50\n      n1.jpg, c1.jpg, x1.jpg, ...\n  cnn_v3_5CV.py, ema-classifier-run.py,\
+      \ ema_classifier.py   (training code)"
+    n_files: 4
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: ema2_*classseperation_5CV/train/*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 980
+    - 1173
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'RGB JPEG of a FITC-type stain: signal is in the green channel (sample means R 1.9,
+      G 95.5, B 2.1). The three ema2_*classseperation_5CV folders are copies of the same images grouped
+      for the 2-, 3- and 4-class tasks (4-class folder has all 368; the others 318 without grayzone).
+      Class = parent folder name.'
+  notes: 'Listed data.rar remotely: RAR5 main header has a quick-open locator; one 96,739-byte range read
+    of the archive tail gave all 1004 file headers (all .jpg, sum of unpacked sizes 381,253,810 bytes,
+    mostly stored). Sampled 2 stored JPEGs by range request (n1.jpg 455,821 B: 980x1173x3 uint8, c1.jpg
+    384,655 B: 985x1171x3 uint8; both 0-255): value_range is from these samples. Shapes vary slightly.
+    No sample.urls: TensorSwitch can''t read members of a RAR (only zip::member), and no other copy of
+    the images exists (Zenodo lists only data.rar and 3 .py files). voxel size not found; checked: JPEG
+    header (JFIF 96 dpi default, no calibration), Zenodo API description, GitHub README, paper full text
+    (Methods). Organism: paper says ''monkey liver'' without a species.'
