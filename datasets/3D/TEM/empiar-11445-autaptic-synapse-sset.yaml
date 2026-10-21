@@ -1,10 +1,11 @@
 schema_version: '1.2'
 id: empiar-11445-autaptic-synapse-sset
-title: Serial electron tomograms of autaptic presynaptic terminals with synaptic vesicle and membrane models (EMPIAR-11445)
+title: Serial electron tomograms of autaptic presynaptic terminals with synaptic vesicle and membrane
+  models (EMPIAR-11445)
 short_name: Presynaptic tomograms, vesicle models (TEM)
-description: Nine joined dual-axis serial-section electron tomography volumes of rat sympathetic neuron autaptic
-  presynaptic terminals (five wild type, four after Kif18A treatment), with IMOD segmentations of synaptic vesicles
-  and cellular membranes, plus the raw tilt series.
+description: Nine joined dual-axis serial-section electron tomography volumes of rat sympathetic neuron
+  autaptic presynaptic terminals (five wild type, four after Kif18A treatment), with IMOD segmentations
+  of synaptic vesicles and cellular membranes, plus the raw tilt series.
 landing_url: https://www.ebi.ac.uk/empiar/EMPIAR-11445/
 doi: 10.6019/EMPIAR-11445
 repository: EMPIAR
@@ -36,8 +37,8 @@ imaging:
 data:
   formats:
   - mrc
-  size_bytes: null
-  n_items: 9
+  size_bytes: 123800000000
+  n_items: 5
   access: open
   download_url: https://ftp.ebi.ac.uk/empiar/world_availability/11445/data
   download_method: ftp
@@ -47,7 +48,7 @@ annotations:
   - semantic-segmentation
   - organelle
   coverage: partial
-  format: IMOD .mod models, converted to .hff (one per joined volume)
+  format: IMOD .mod contour models, one per joined volume
   source: mixed
 ml:
   tasks:
@@ -66,15 +67,84 @@ provenance:
   - https://www.ebi.ac.uk/empiar/api/entry/EMPIAR-11445
   - https://ftp.ebi.ac.uk/empiar/world_availability/11445/data
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10163034/fullTextXML
-  confidence: 0.65
+  - https://ftp.ebi.ac.uk/empiar/world_availability/11445/11445.xml
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-21T12:45:00Z'
-notes: 'EMPIAR lists 5 wild-type and 4 Kif18A joined volumes, each with a segmentation of synaptic vesicles and cellular
-  membranes (IMOD models, semi-automated per the paper Methods), plus 66 dual-axis tilt series (about 93 GB .st files).
-  Total 123.8 GB per EMPIAR; the HTTP index estimates 133 GB, so size_bytes is null. Voxel size differs: wild-type
-  tilt series 1.3 nm and 2.052 nm, Kif18A 2.052 nm; the paper states 1.303 nm after 2x binning, and no single value
-  fits all volumes, so null. Only synaptic vesicles and cellular membranes are modelled (no dense labels), so coverage is
-  partial; label class meaning beyond the EMPIAR description was not inspected. The paper full text came from Europe PMC.'
+  last_checked: '2026-10-21T13:05:00Z'
+notes: 'FTP holds 5 joined wild-type volumes (a2, a4, a5, t1, t2 _join.mrc) and their IMOD models (data/*.mod;
+  semi-automated IMOD segmentation per paper Methods). The 4 Kif18A volumes and the .hff conversions listed
+  in the EMPIAR XML are not in the FTP tree. Plus 36 dual-axis tilt series (.st). Voxel size differs per
+  volume: a2/a4/a5 1.303 nm (header; paper: 1.303 nm after 2x binning), t1/t2 2.052 nm (header; EMPIAR
+  bin2 20.52 A), so null. Models: synaptic vesicles, terminal membrane, microtubules, active zone, endosomes,
+  mitochondria (partial coverage). enricher: n_items 9 -> 5 (FTP listing); size 123.8 GB from EMPIAR dataset_size
+  (was null; HTTP index 133.3 GB rounded, so EMPIAR likely means GiB).'
+technical:
+  method: header
+  size_source: page-stated
+  layout:
+    tree: "11445.xml\ndata/\n  a2.mod a4.mod a5.mod t1.mod t2.mod   IMOD models (9.4-29 MB)\n  volumes-models/\n\
+      \    a2_join.mrc a4_join.mrc a5_join.mrc t1_join.mrc t2_join.mrc   40.4 GB\n  raw/\n    bin1/  20\
+      \ .st tilt series (77.3 GB)\n    bin2/  16 .st tilt series (15.5 GB)\n"
+    n_files: 47
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/empiar/world_availability/11445/data/volumes-models/t1_join.mrc
+    - https://ftp.ebi.ac.uk/empiar/world_availability/11445/data/t1.mod
+    size_bytes: 3086773917
+    description: Smallest joined volume t1 (3.08 GB) and its IMOD model
+  arrays:
+  - role: raw
+    path_pattern: data/volumes-models/*_join.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 407
+    - 3217
+    - 2350
+    shape_varies: true
+    dtype: int8
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Joined serial-section tomograms. Shape and dtype of t1_join.mrc; a2/a4/a5 are int16
+      (e.g. a2 616x2716x3754, header min/max -4863/1202), t1/t2 int8.
+  - role: label
+    path_pattern: data/*.mod
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    normalization: unknown
+    encoding: other
+    classes:
+    - id: SVs
+      name: synaptic vesicles
+    - id: terminal
+      name: presynaptic terminal membrane
+    - id: microtubules
+      name: microtubules
+    - id: AZ
+      name: active zone
+    - id: endosomes 11x / Endo12-25
+      name: endosomes
+    - id: Mito1
+      name: mitochondrion
+    alignment: same-grid
+    alignment_notes: 'IMOD binary model (IMODV1.2) of contours/points, not a raster. Pairing: data/<name>.mod
+      <-> data/volumes-models/<name>_join.mrc. t1.mod model dims 2350x3217x407 = t1_join.mrc (x,y,z).
+      t1.mod has 21 objects: SVs, terminal (289 contours), microtubules, AZ, endosomes, Endo SVs, Endo12-25,
+      Mito1; must be rasterized for training. Class ids are the IMOD object names of t1.mod; names other
+      models use may differ.'
+  notes: 'Listing: EMPIAR HTTP index (FTP timed out), 47 files, 133.3 GB from rounded sizes; size stays
+    EMPIAR-stated 123.8 GB. probe.py headers (256 KB each) of all 5 joined volumes: a2 616x2716x3754,
+    a4 627x2628x3546, a5 588x3150x2664 int16 at 1.303 nm; t1 407x3217x2350, t2 429x2314x2722 int8 at 2.052
+    nm. MRC header min/max: t1 -128/127, a2 -4863/1202. Downloaded t1.mod (9,873,243 B) and read its IMOD
+    object names with a small parser. No raw sample downloaded (smallest volume 3.08 GB > budget). Labels
+    are IMOD contour models, not a format TensorSwitch converts. Voxel size per volume differs, so imaging.voxel_size_nm
+    stays null. No archive: every file is a direct https link on ftp.ebi.ac.uk (usable, range requests).'
