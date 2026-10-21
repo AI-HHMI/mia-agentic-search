@@ -1,0 +1,134 @@
+schema_version: '1.2'
+id: hf-cryotracer-empiar10022-tmv-filament-centerlines
+title: EMPIAR-10022 tobacco mosaic virus cryo-EM micrographs with ordered filament centerline annotations
+short_name: TMV cryo-EM filament centerlines (CryoTracer)
+description: 109 cryo-EM micrographs of tobacco mosaic virus filaments (EMPIAR-10022, 4096 x 4096 px MRC,
+  0.106 nm/px) re-annotated by the CryoTracer authors with ordered filament vertices in CBOX files, one
+  polyline per filament, paired by file name with each MRC micrograph.
+landing_url: https://huggingface.co/datasets/cryotracer/empiar10022-filaments
+doi: null
+repository: HuggingFace
+accession: cryotracer/empiar10022-filaments
+authors:
+- Radosław Kuczbański
+- Wojciech Kozłowski
+- Mateusz Grzesiuk
+- Konrad Karanowski
+- Lukas Frey
+- Andrzej Rzepiela
+- Maciej Zięba
+publications:
+- title: 'CryoTracer: A Synthetic-to-Real System for Filament Instance Tracing in Cryo-EM'
+  doi: null
+  url: https://arxiv.org/abs/2610.18696
+date_published: '2026-10-14'
+imaging:
+  modality:
+  - cryo-EM
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 0.1062
+    y: 0.1062
+    z: null
+  channels: 1
+  organism:
+  - Tobacco mosaic virus
+  sample: tobacco mosaic virus filaments on cryo-EM grids (EMPIAR-10022 micrographs)
+  labels_stains: []
+data:
+  formats:
+  - mrc
+  size_bytes: 3663023257
+  n_items: 109
+  access: open
+  download_url: https://huggingface.co/datasets/cryotracer/empiar10022-filaments
+  download_method: git-lfs
+annotations:
+  present: true
+  types:
+  - skeleton
+  coverage: dense
+  format: one CBOX file per micrograph (data/<name>.cbox) with ordered filament_vertices (x, y, filament
+    id) in MRC pixel coordinates
+  source: unknown
+ml:
+  tasks:
+  - detection
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/cryotracer/cryotracer
+license:
+  spdx: CC-BY-NC-4.0
+  url: https://creativecommons.org/licenses/by-nc/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-21T05:00:00Z'
+  evidence_urls:
+  - https://huggingface.co/api/datasets/cryotracer/empiar10022-filaments
+  - https://arxiv.org/html/2610.18696v1
+  - https://github.com/cryotracer/cryotracer
+  - https://www.ebi.ac.uk/empiar/api/entry/EMPIAR-10022/
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-21T04:48:34Z'
+notes: 'Hugging Face listing: 223 files = 109 MRC + 109 CBOX + 3 preview JPEGs + README (data/ is about
+  3.66 GB). One MRC header probed by range request (4096 x 4096, float16, 0.106 nm/px) and the start of
+  one CBOX read (ordered filament vertices with filament ids). Same 109 micrographs as the EMPIAR-10022
+  record already on main (empiar-10022-tmv-falcon2-embl-helix-boxes, EMAN helix boxes from Fromm et al.);
+  this record differs in the annotation: new ordered filament centerline vertices made by the CryoTracer
+  authors, not the original helix boxes. The paper calls them expert annotations; how they were made (manual
+  or semi-automatic) is not stated in the page read, so source is unknown. The paper also uses a private
+  alpha-synuclein set that is not released. Licence is CC-BY-NC-4.0 on the Hugging Face card. enricher:
+  voxel size 0.1062 nm from the EMPIAR API pixel_width 1.062 A (was 0.106 from the MRC header).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "README.md, .gitattributes\ndata/      109 × IntermediateImage_<date>_<time>_stack.mrc   (4096\
+      \ × 4096 float16, 33,555,456 B)\n           109 × IntermediateImage_<date>_<time>_stack.cbox  (STAR-style\
+      \ vertex table)\npreviews/  3 × <name>.jpg"
+    n_files: 223
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/cryotracer/empiar10022-filaments/resolve/main/data/IntermediateImage_20131016_200656_stack.mrc
+    - https://huggingface.co/datasets/cryotracer/empiar10022-filaments/resolve/main/data/IntermediateImage_20131016_200656_stack.cbox
+    size_bytes: 33580344
+    description: one micrograph and its filament vertex table
+  arrays:
+  - role: raw
+    path_pattern: data/*.mrc
+    format: mrc
+    axes: yx
+    shape:
+    - 4096
+    - 4096
+    shape_varies: false
+    dtype: float16
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+  - role: label
+    path_pattern: data/*.cbox
+    format: other
+    axes: null
+    shape:
+    - 364
+    - 5
+    shape_varies: true
+    dtype: float32
+    compression: none
+    normalization: none
+    encoding: points-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'data/<name>.cbox pairs with data/<name>.mrc (same stem). CBOX (STAR) table data_filament_vertices:
+      _CoordinateX, _CoordinateY (MRC pixels, 0-4096), _filamentid, _Width, _Height (400); vertices of
+      one filament share an id and are ordered along it.'
+  notes: 'Listing: tools/listing.py on the HF dataset (223 files, exact sizes, 3,663,023,257 B). MRC header:
+    4096 x 4096 float16, header min/max/mean 739/1611/1048, 1.06 A cell sampling. Read IntermediateImage_20131016_200656_stack.cbox
+    whole (24,888 B): 364 vertex rows, 21 filaments. Download: mrc and cbox resolve/main URLs pass --download-check
+    (usable, 206). CBOX is a text table, not a schema format (other).'
