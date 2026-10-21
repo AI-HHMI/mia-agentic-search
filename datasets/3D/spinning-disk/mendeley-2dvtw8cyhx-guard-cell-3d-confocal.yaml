@@ -1,11 +1,13 @@
 schema_version: '1.2'
 id: mendeley-2dvtw8cyhx-guard-cell-3d-confocal
-title: 3D guard cell segmentation dataset - spinning-disk confocal stacks of Arabidopsis cotyledon stomata with hand labels
+title: 3D guard cell segmentation dataset - spinning-disk confocal stacks of Arabidopsis cotyledon stomata
+  with hand labels
 short_name: Arabidopsis guard cell 3D segmentation (confocal)
-description: Spinning-disk confocal z-stacks (LTI6b-GFP plasma-membrane marker) of stomatal guard cells in
-  Arabidopsis thaliana cotyledon epidermis, with hand-annotated 3D guard-cell label volumes for nine stacks
-  (five training, three test, one more in the labelled set) plus before/after laser-ablation stacks of
-  neighbouring pavement cells. Released with the 3D CellNet guard-cell segmentation model, code and checkpoints.
+description: Spinning-disk confocal z-stacks (LTI6b-GFP plasma-membrane marker) of stomatal guard cells
+  in Arabidopsis thaliana cotyledon epidermis, with hand-annotated 3D guard-cell label volumes for nine
+  stacks (five training, three test, one more in the labelled set) plus before/after laser-ablation stacks
+  of neighbouring pavement cells. Released with the 3D CellNet guard-cell segmentation model, code and
+  checkpoints.
 landing_url: https://data.mendeley.com/datasets/2dvtw8cyhx
 doi: 10.17632/2dvtw8cyhx.1
 repository: other
@@ -25,7 +27,8 @@ imaging:
   channels: 1
   organism:
   - Arabidopsis thaliana
-  sample: Ten-day-old LTI6b-GFP seedling cotyledon epidermis (stomatal guard cells), some stacks before and after laser ablation of neighbouring pavement cells
+  sample: Ten-day-old LTI6b-GFP seedling cotyledon epidermis (stomatal guard cells), some stacks before
+    and after laser ablation of neighbouring pavement cells
   labels_stains:
   - LTI6b-GFP
 data:
@@ -39,9 +42,11 @@ data:
 annotations:
   present: true
   types:
-  - instance-segmentation
-  coverage: dense
-  format: 3D label TIFF stacks (label-<N>.tif next to the image <N>.tif)
+  - semantic-segmentation
+  coverage: partial
+  format: 3D binary label TIFF stacks (int16, 0 = background, 1 = guard cell), label-<N>.tif / label-N-<k>.tif
+    / label_N-9.tif next to the image <N>.tif / N-<k>.tif; guard-cell instances are separated by the model
+    post-processing, not in the label files.
   source: manual
 ml:
   tasks:
@@ -59,16 +64,103 @@ provenance:
   - https://data.mendeley.com/public-api/datasets/2dvtw8cyhx
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9782259/fullTextXML
   - https://data.mendeley.com/public-files/datasets/2dvtw8cyhx/files/7c42290b-4f29-4a69-8460-74e256a31b3c/file_downloaded
-  confidence: 0.7
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-21T15:50:00Z'
-notes: 'Mendeley Data API listing: 14 before/after or numbered image stacks (1-1, 1-2, 2-1, 2-2, 3-1, 7, 8, 13, 14),
-  five N-<k>.tif stacks, nine label-*.tif volumes (7, 8, 13, 14, N-1, 2, 5, 9, 11), plus code, checkpoints (~2.5 GB
-  total with .hdf5 models). Paper: 8 labelled volumes were split 5 train / 3 test; images are 512 x 512
-  slices resized to 32 planes in the pipeline. Zeiss Cell Observer SD, Yokogawa CSU-X1, 63x/1.4 NA oil. Voxel size
-  not stated in the paper text or record listing (TIFF headers were not read), so null. The paper says nine
-  vs eight stacks inconsistently; n_items 19 counts image TIFFs in the listing. Files are individual Mendeley
-  downloads (no single archive), so download_url is null.'
+  last_checked: '2026-10-21T16:05:37Z'
+notes: 'Mendeley Data API: 59 files, 2,563,737,828 B. Images: 9 training stacks (7, 8, 13, 14, N-1, N-2,
+  N-5, N-9, N-11; float32 normalised to [0,1]) with 9 label stacks, 12 unlabelled before/after-ablation
+  stacks (uint16), plus code and ~2.2 GB of .hdf5 model checkpoints. Paper: 8 human-labelled volumes,
+  63x spinning-disk confocal, images resized to 32 x 512 x 512 for the model. The paper says nine vs eight
+  labelled stacks inconsistently. n_items 19 counts image TIFFs. Files are individual Mendeley downloads
+  (no single archive), so download_url is null. enricher: annotation types instance-segmentation -> semantic-segmentation
+  (the label files are binary {0,1} masks, sampled); coverage dense -> partial (only 9 of 21 image stacks
+  have labels).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  59 files, 2,563,737,828 bytes (Mendeley folders; names not exposed by the API)\n  training\
+      \ images  9 files   7.tif 8.tif 13.tif 14.tif N-1.tif N-2.tif N-5.tif N-9.tif N-11.tif   (19-31\
+      \ MB each)\n  labels           9 files   label-7.tif label-8.tif label-13.tif label-14.tif label-N-1.tif\
+      \ label-N-2.tif\n                             label-N-5.tif label_N-9.tif label-N-11.tif   (0.6-1.0\
+      \ MB each)\n  ablation images 12 files   '1-1 after.tif', '1-1 before.tif', ..., '3-1 before ablation.tif'\
+      \   (no labels)\n  model checkpoints 6 files  model_128.hdf5, model_256.hdf5, my_model_*_weights.hdf5,\
+      \ ...  (~2.2 GB)\n  code             ~30 files *.py, *.pyc, requirement.txt, workspace.code-workspace\n\
+      \  README.md"
+    n_files: 59
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.mendeley.com/public-files/datasets/2dvtw8cyhx/files/1cfb8ae6-6a6c-466e-ab7f-eb5b74ebeeed/file_downloaded
+    - https://data.mendeley.com/public-files/datasets/2dvtw8cyhx/files/fe04a978-cb00-47c3-88f6-8f01c799fa21/file_downloaded
+    size_bytes: 21818170
+    description: training stack 7.tif and its label-7.tif (Mendeley file URLs carry no file name)
+  arrays:
+  - role: raw
+    path_pattern: '{7,8,13,14,N-1,N-2,N-5,N-9,N-11}.tif'
+    format: tiff
+    axes: zyx
+    shape:
+    - 20
+    - 512
+    - 512
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range:
+    - 0.0056
+    - 1.0
+    normalization: rescaled
+    alignment: not-applicable
+    alignment_notes: Training stacks. The ImageJ header marks the pages as frames (tyx), but the paper
+      and README describe 3D z-stacks, so the axes are zyx. Page counts vary (20 in 7.tif, 23 in N-1.tif).
+      The header calibration of 1 micron per px is the ImageJ default.
+  - role: label
+    path_pattern: label[-_]*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 20
+    - 512
+    - 512
+    shape_varies: true
+    dtype: int16
+    compression: packbits
+    value_range:
+    - 0
+    - 1
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 1
+      name: guard cell
+    alignment: same-grid
+    alignment_notes: 'label-<X>.tif (label_N-9.tif for N-9) pairs with <X>.tif. Shapes match in both pairs
+      probed (7: 20x512x512, N-1: 23x512x512). Plain TIFF; the page axis is z, as in its image.'
+  - role: raw
+    path_pattern: '*-* *.tif'
+    format: tiff
+    axes: zyx
+    shape:
+    - 22
+    - 512
+    - 512
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Before/after laser-ablation stacks without labels. ImageJ slices with spacing 0.5
+      micron (1-1 after.tif); x/y calibration is the 1 micron default.
+  notes: 'Listing: Mendeley public API (59 files, exact sizes). Probed 7.tif, label-7.tif, N-1.tif, label-N-1.tif,
+    ''1-1 after.tif''. Sampled 7.tif (20,977,215 B) + label-7.tif (840,955 B) and label-N-1.tif (667,529
+    B). The raw sample is float32 0.0056-1.0 (mean 0.19). Labels are {0,1}: 6.4% foreground in label-7
+    and 3.9% in label-N-1. value_range is from these samples only. voxel size not found; checked: TIFF
+    headers (x/y 1 micron ImageJ default, implausible at 63x; z spacing 0.5 micron only on the ablation
+    stack, z not given on training stacks), Mendeley API description, README, the code (dataset.py, helper.py,
+    predict.py), paper full text (PMC9782259). The GitHub repo Dolzodmaa/GuardCellSegmentation README
+    has no pixel size.'
