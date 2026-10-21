@@ -42,7 +42,7 @@ annotations:
   types:
   - classification
   coverage: partial
-  format: per-droplet multi-label morphology labels in the SQLite database.db (1,184 manually curated droplets, remaining labels predicted by the ResNet34)
+  format: 'SQLite database.db: table droplets (chip_id, droplet_id, feature_id, value, day) holds 12,903 positive morphology-label rows over 12 features plus 168,000 n_cells counts; the paper says 1,184 droplets were labelled manually and a ResNet34 labelled the rest'
   source: mixed
 ml:
   tasks:
@@ -62,10 +62,111 @@ provenance:
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22Extending+digital+biology%3A+bacterial+survival+and+morphological+heterogeneity+under+antibiotic+stress%22&format=json&resultType=core&pageSize=3
   - https://api.biorxiv.org/details/biorxiv/10.1101/2025.11.25.690353
   - https://www.biorxiv.org/content/biorxiv/early/2025/11/28/2025.11.25.690353.source.xml
-  confidence: 0.6
+  - https://zenodo.org/api/records/17257606/files/database.db/content
+  confidence: 0.65
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-21T22:51:23Z'
-notes: 'Zip listing (816 files): per antibiotic/experiment/day folders with BF_TRITC_aligned.zarr, BF_TRITC_aligned.crops.zarr and table.csv; database.db (18 MB, not opened) and the ResNet34 model are separate files. Paper (bioRxiv preprint, full text read): 1,184 droplets manually labelled with non-exclusive morphology labels (70:30 train/test), then a ResNet34 labelled all 82,268 droplets, so most labels are predictions. The paper cites Zenodo 10.5281/zenodo.17193389 for the imaging data and SQL database; that record was not retrievable, this record holds the same files. Spinning-disk confocal (Nikon Ti2, 20x 0.7 NA) with brightfield; pixel size not stated, so voxel size is null. annotations_verified is false because the database content was not inspected. Size is the sum of the three Zenodo files.'
+  annotations_verified: true
+  last_checked: '2026-10-21T23:58:00Z'
+notes: 'Zip listing (816 files): per antibiotic/experiment/day folders with BF_TRITC_aligned.zarr, BF_TRITC_aligned.crops.zarr and table.csv; database.db (18 MB) and the ResNet34 model are separate files. Paper (bioRxiv preprint, full text read): 1,184 droplets manually labelled with non-exclusive morphology labels (70:30 train/test), then a ResNet34 labelled all 82,268 droplets, so most labels are predictions. The paper cites Zenodo 10.5281/zenodo.17193389 for the imaging data and SQL database; that record was not retrievable, this record holds the same files. Spinning-disk confocal (Nikon Ti2, 20x 0.7 NA) with brightfield; pixel size not stated, so voxel size is null. Size is the sum of the three Zenodo files. enricher: annotations_verified true after opening database.db (12 morphology features, 180,903 label rows).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                   3 files  31.9 GB  (.zip 1, .db 1, model 1)\n  Antibiotics.zip                    816 members\n  database.db                        18.3 MB  SQLite: datasets, chips, centers, features, droplets, users\n  bacteria_trained_model_resnet34    85.3 MB  network weights\nAntibiotics.zip/\n  <Antibiotic>/<experiment>/final_table.csv\n  <Antibiotic>/<experiment>/day{1,2}/table.csv                   per-droplet x, y, n_cells, intensity\n  <Antibiotic>/<experiment>/day{1,2}/BF_TRITC_aligned.crops.zarr/  ~10 chunks x ~82 MB (droplet crops)\n  <Antibiotic>/<experiment>/day{1,2}/BF_TRITC_aligned.zarr/        .zattrs + level 3 only (~40 MB)\n  antibiotics: Ampicillin, Chloramphenicol, Cirpofloxacin (sic), Gentamicin, Tetracycline;\n  some experiments have 1stexp/ 2ndexp/ subfolders above day*/"
+    n_files: 818
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/17257606/files/Antibiotics.zip/content::Ampicillin/20220614-MIC-e.coli-amp-LB-2/day1/BF_TRITC_aligned.crops.zarr/.zarray
+    - https://zenodo.org/api/records/17257606/files/Antibiotics.zip/content::Ampicillin/20220614-MIC-e.coli-amp-LB-2/day1/BF_TRITC_aligned.crops.zarr/8.0.0.0.0
+    - https://zenodo.org/api/records/17257606/files/database.db/content
+    size_bytes: 24079340
+    description: last chunk (droplets 496-499) of one droplet-crop zarr plus the label database; a whole crops.zarr is ~660 MB
+  arrays:
+  - role: raw
+    path_pattern: Antibiotics.zip/*/**/day[12]/BF_TRITC_aligned.crops.zarr
+    format: zarr
+    axes: null
+    shape:
+    - 500
+    - 6
+    - 2
+    - 300
+    - 300
+    shape_varies: false
+    dtype: uint16
+    compression: blosc
+    value_range:
+    - 403
+    - 37170
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: zarr v2 array (no .zattrs); dims appear to be droplet (500 = rows of the database centers table), chip/stack (6), channel (BF, TRITC), y, x; axis names are not stated in the files
+  - role: other
+    path_pattern: Antibiotics.zip/*/**/day[12]/BF_TRITC_aligned.zarr
+    format: zarr
+    axes: null
+    shape:
+    - 6
+    - 3
+    - 894
+    - 2774
+    shape_varies: true
+    dtype: uint16
+    compression: blosc
+    normalization: unknown
+    alignment: scaled
+    alignment_notes: chip overview; .zattrs multiscales lists levels 0-3 with channel_axis 1 named BF, TRITC, mask, but only level 3 is in the zip
+  - role: label
+    path_pattern: database.db
+    format: other
+    axes: null
+    shape:
+    - 180903
+    - 8
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes:
+    - id: 1
+      name: filaments
+    - id: 2
+      name: clumped
+    - id: 3
+      name: positive
+    - id: 4
+      name: coalescent
+    - id: 5
+      name: negative
+    - id: 6
+      name: empty
+    - id: 7
+      name: bad alignment
+    - id: 8
+      name: planktonic
+    - id: 9
+      name: junk
+    - id: 10
+      name: rods
+    - id: 11
+      name: intermediate
+    - id: 12
+      name: big-droplet
+    - id: 15
+      name: n_cells
+    alignment: unknown
+    alignment_notes: 'per-droplet multi-label table: datasets.path names each crops.zarr, chips.stack_index and droplets.droplet_id/day index into it (inferred from the schema; no doc states the mapping). value is 1 for a positive label; feature 15 n_cells is a count'
+  - role: other
+    path_pattern: Antibiotics.zip/*/**/table.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    alignment: not-applicable
+    alignment_notes: 'per-droplet columns: label, x, y, n_cells, [AB], intensity, poisson fit'
+  notes: 'Listing: Zenodo API + zip central directory (816 members), exact sizes, 31,860,256,881 bytes total. Zarr stores are zipped, so they are not remotely readable as stores; single chunks can be pulled as zip members. value_range is from one sample chunk (4 non-fill droplets; BF 1758-37170, TRITC 403-1449). Label database opened read-only with sqlite3 (18.3 MB). voxel size not found; checked: zarr .zattrs/.zarray (no scale), Zenodo API record, table.csv, paper full text (per the harvester; Nikon Ti2 20x, pixel size not stated); no GitHub URL is given on the record. 2D record: not covered by the miao layout yet.'
