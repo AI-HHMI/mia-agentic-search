@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: bcdata-ki67-breast-tumor-cells
 title: 'BCData: A Large-Scale Dataset and Benchmark for Cell Detection and Counting'
 short_name: Ki-67 breast tumor cell points (brightfield)
-description: 'BCData: 1,338 Ki-67 immunohistochemistry images of breast cancer tissue with point annotations of
-  181,074 tumor cells in two classes (Ki-67 positive and negative), split into train / validation / test (803 / 133
-  / 402 images per a later paper). Released for cell detection and counting and Ki-67 index estimation.'
+description: 'BCData: 1,338 Ki-67 immunohistochemistry images of breast cancer tissue with point annotations
+  of 181,074 tumor cells in two classes (Ki-67 positive and negative), split into train / validation /
+  test (803 / 133 / 402 images per a later paper). Released for cell detection and counting and Ki-67
+  index estimation.'
 landing_url: https://sites.google.com/view/bcdataset
 doi: null
 repository: LabWebsite
@@ -41,18 +42,18 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: null
+  size_bytes: 853879248
   n_items: 1338
   access: open
-  download_url: https://drive.google.com/file/d/16W04QOR1E-G3ifc4061Be4eGpjRYDlkA/view?usp=sharing
-  download_method: other
+  download_url: https://drive.usercontent.google.com/download?id=16W04QOR1E-G3ifc4061Be4eGpjRYDlkA&export=download&confirm=t
+  download_method: http
 annotations:
   present: true
   types:
   - points
   coverage: dense
-  format: 'One HDF5 file per image and class (BCData/annotations/<split>/{positive,negative}/<id>.h5), cell centre
-    coordinates under the key "coordinates"'
+  format: One HDF5 file per image and class (BCData/annotations/<split>/{positive,negative}/<id>.h5),
+    cell centre coordinates as an int64 [N, 2] dataset "coordinates"
   source: manual
 ml:
   tasks:
@@ -70,17 +71,93 @@ provenance:
   - https://sites.google.com/view/bcdataset
   - https://pure.bit.edu.cn/zh/publications/bcdata-a-large-scale-dataset-and-benchmark-for-cell-detection-and/
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13653216/fullTextXML
+  - https://drive.usercontent.google.com/download?id=16W04QOR1E-G3ifc4061Be4eGpjRYDlkA&export=download&confirm=t
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-21T17:50:00Z'
-notes: 'Found via the ShadoNet paper (Bioinformatics 2026), which uses BCData as a public benchmark. Terms: the paper
-  abstract (BIT repository page) says the dataset "can only be used for non-commercial research"; the dataset page
-  names no licence, hence spdx custom. Image count and cell count from that abstract; 640x640 px, 40x, Motic BA600-4
-  scanner and the 803/133/402 split from Table 1 of the ShadoNet paper, not from the original paper (its full text
-  was not available). The dataset page lists the folder layout (images/ and annotations/ with train, validation, test)
-  but the data is a single Google Drive file that was not listed or downloaded, so formats (PNG, from the example
-  path train/10.png) and annotation counts are not verified from a file listing. Pixel size not stated on the dataset
-  page, abstract or ShadoNet Table 1. Image size per the ShadoNet table; file size unknown.'
+  annotations_verified: true
+  last_checked: '2026-10-21T18:45:00Z'
+notes: 'Found via the ShadoNet paper (Bioinformatics 2026), which uses BCData as a public benchmark. Terms:
+  the paper abstract (BIT repository page) says the dataset "can only be used for non-commercial research";
+  the dataset page and the zip name no licence, hence spdx custom. 640x640 px, 40x, Motic BA600-4 scanner
+  from ShadoNet Table 1. Pixel size not stated. enricher: zip listed (4,014 members: 1,338 PNG, 2,676
+  h5; split 803/133/402 confirmed), size_bytes 853,879,248 from the file (was null), download_url is the
+  direct Drive download link from the virus-scan form (was the Drive view page), annotations_verified
+  true.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "BCData.zip  853.9 MB (876.8 MB uncompressed, 4,014 files)\n  BCData/images/{train,validation,test}/<id>.png\
+      \              803 / 133 / 402\n  BCData/annotations/{train,validation,test}/positive/<id>.h5  803\
+      \ / 133 / 402\n  BCData/annotations/{train,validation,test}/negative/<id>.h5  803 / 133 / 402\n"
+    n_files: 4014
+    listing_complete: true
+  sample:
+    urls:
+    - https://drive.usercontent.google.com/download?id=16W04QOR1E-G3ifc4061Be4eGpjRYDlkA&export=download&confirm=t::BCData/images/test/165.png
+    - https://drive.usercontent.google.com/download?id=16W04QOR1E-G3ifc4061Be4eGpjRYDlkA&export=download&confirm=t::BCData/annotations/test/positive/165.h5
+    - https://drive.usercontent.google.com/download?id=16W04QOR1E-G3ifc4061Be4eGpjRYDlkA&export=download&confirm=t::BCData/annotations/test/negative/165.h5
+    size_bytes: null
+    description: Test image 165 with its positive and negative tumour-cell point files
+  arrays:
+  - role: raw
+    path_pattern: BCData/images/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 640
+    - 640
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB PNG (header), Ki-67 IHC.
+  - role: label
+    path_pattern: BCData/annotations/*/positive/*.h5 (coordinates)
+    format: hdf5
+    axes: null
+    shape:
+    - 6
+    - 2
+    shape_varies: true
+    dtype: int64
+    compression: none
+    value_range: null
+    normalization: none
+    encoding: points-table
+    classes:
+    - id: positive
+      name: Ki-67 positive tumour cell
+    alignment: same-grid
+    alignment_notes: 'Pairs by split and id: images/<split>/<id>.png <-> annotations/<split>/positive/<id>.h5
+      (dataset page). One row per cell centre in pixel coordinates; column order (x, y vs y, x) not stated.'
+  - role: label
+    path_pattern: BCData/annotations/*/negative/*.h5 (coordinates)
+    format: hdf5
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: int64
+    compression: none
+    value_range: null
+    normalization: none
+    encoding: points-table
+    classes:
+    - id: negative
+      name: Ki-67 negative tumour cell
+    alignment: same-grid
+    alignment_notes: As the positive files, under annotations/<split>/negative/<id>.h5; dataset "coordinates"
+      per the dataset page loader.
+  notes: 'Listing: zip central directory read with range requests through the Drive download link (confirm=t
+    from the virus-scan page): 4,014 members, 853,879,248 B. Probed headers of images/test/165.png (640x640x3
+    uint8 RGB) and annotations/test/positive/165.h5 (dataset coordinates [6,2] int64, no compression).
+    Sampling failed three times on Drive HTTP 500 range errors, so method is header and value ranges are
+    unknown; the negative h5 header was not read (same 500). Voxel size not found; checked: PNG header,
+    dataset page, ShadoNet paper Table 1 (40x only, per the harvester), MICCAI paper (full text not available).
+    Drive link is direct (range requests, but intermittent 500s); host drive.usercontent.google.com is
+    not on the TensorSwitch allowlist.'
