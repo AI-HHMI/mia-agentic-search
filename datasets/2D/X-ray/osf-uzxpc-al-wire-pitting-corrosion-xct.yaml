@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: osf-uzxpc-al-wire-pitting-corrosion-xct
 title: Al Pitting Corrosion (XCT) - MDS B&MG
 short_name: Al wire pitting corrosion (in-situ XCT)
-description: 100 in-situ X-ray computed tomography images (1024x988 JPEG, 1.25 um voxels) of a commercial-purity aluminium wire exposed to NaCl droplets at 98% relative humidity, acquired at Sandia National Laboratories, with 100 JPEG masks of corrosion pits. Component of the Materials Data Segmentation Benchmark and Model Garden (MDS B&MG); trained models and inference/evaluation scripts are provided alongside.
+description: 100 in-situ X-ray computed tomography images (1024x988 JPEG, 1.25 um voxels) of a commercial-purity
+  aluminium wire exposed to NaCl droplets at 98% relative humidity, acquired at Sandia National Laboratories,
+  with 100 JPEG masks of corrosion pits. Component of the Materials Data Segmentation Benchmark and Model
+  Garden (MDS B&MG); trained models and inference/evaluation scripts are provided alongside.
 landing_url: https://osf.io/uzxpc/
 doi: null
 repository: OSF
@@ -22,15 +25,16 @@ imaging:
   voxel_size_nm:
     x: 1250
     y: 1250
-    z: 1250
+    z: null
   channels: 1
   organism: []
-  sample: Commercial-purity aluminium (1100 Al) wire, 0.813 mm diameter, 1.25 mm length imaged, with 60 ug/cm2 NaCl droplets at 98% relative humidity
+  sample: Commercial-purity aluminium (1100 Al) wire, 0.813 mm diameter, 1.25 mm length imaged, with 60
+    ug/cm2 NaCl droplets at 98% relative humidity
   labels_stains: []
 data:
   formats:
   - jpeg
-  size_bytes: 9229000
+  size_bytes: 1064640293
   n_items: 100
   access: open
   download_url: https://osf.io/uzxpc/files/osfstorage
@@ -40,7 +44,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: JPEG masks in Masks/, one per image (pitting corrosion vs background)
+  format: 8-bit greyscale JPEG masks in Masks/, same file name as the image; pit 255 vs background 0,
+    with JPEG artefacts at edges
   source: unknown
 ml:
   tasks:
@@ -60,10 +65,86 @@ provenance:
   - https://api.osf.io/v2/nodes/uzxpc/
   - https://api.osf.io/v2/nodes/uzxpc/files/osfstorage/
   - https://api.osf.io/v2/nodes/uzxpc/wikis/
+  - https://api.osf.io/v2/wikis/q3kpd/content/
+  - https://api.osf.io/v2/wikis/4pfy7/content/
   confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-21T12:50:00Z'
-notes: 'Materials-science X-ray CT (no organism). OSF component uzxpc: Images 100 JPG (8.6 MB), Masks 100 JPG (0.6 MB), Models 2 h5 (1.06 GB), Scripts 3 .py. Voxel size 1.25 um and image size 1024x988 are from the wiki; the images are listed as 100 images, and whether they are slices of one volume is not stated, so the record is 2D with isotropic voxel size copied from the wiki. JPEG masks are lossy so values may not be exactly binary. No paper found; annotation procedure and source not described. License BSD 3-Clause from the OSF project license record (a software license applied to data). Sibling benchmark components are separate datasets.'
+  last_checked: '2026-10-21T13:45:00Z'
+notes: 'Materials-science X-ray CT (no organism). OSF component uzxpc: Images 100 JPG, Masks 100 JPG,
+  Models 2 h5 (1.06 GB), Scripts 3 .py. Voxel size 1.25 um from the wiki. The 100 images are slices from
+  two scans (1100Al_s060_98RH03_02Jy20_1f: 57, _29Jn20_2g: 43; slice numbers not contiguous), so the record
+  stays 2D. JPEG masks are lossy: values cluster at 0 and 255 with edge artefacts, threshold at 128. No
+  paper found; annotation procedure and source not described. License BSD 3-Clause from the OSF project
+  license record (a software license applied to data). enricher: voxel z 1250 -> null (2D record); size
+  9.2 MB -> 1,064,640,293 B (full OSF listing incl. models; images + masks 9,228,580 B); files are 1014x992,
+  not the 1024x988 the wiki states.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'Images/   100 .jpg  8.6 MB  1100Al_s060_98RH03_02Jy20_1f_<slice>.jpg (57), 1100Al_s060_98RH03_29Jn20_2g_<slice>.jpg
+      (43)
+
+      Masks/    100 .jpg  0.6 MB  same file names as Images/
+
+      Models/   unet_standard.h5 (373 MB), unet_seresnext101.h5 (682 MB)
+
+      Scripts/  get_evaluation_metrics.py, unet_standard_generate_predictions.py, unet_seresnext_generate_predictions.py
+
+      '
+    n_files: 205
+    listing_complete: true
+  sample:
+    urls:
+    - https://osf.io/download/8zsxk/
+    - https://osf.io/download/9fmna/
+    size_bytes: 88240
+    description: Images/ and Masks/1100Al_s060_98RH03_02Jy20_1f_165.jpg
+  arrays:
+  - role: raw
+    path_pattern: Images/*.jpg
+    format: jpeg
+    axes: yx
+    shape:
+    - 1014
+    - 992
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 204
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One XCT slice per greyscale JPEG (PIL mode L).
+  - role: label
+    path_pattern: Masks/*.jpg
+    format: jpeg
+    axes: yx
+    shape:
+    - 1014
+    - 992
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: pitting corrosion
+    alignment: same-grid
+    alignment_notes: 'Pairing: Masks/<name>.jpg <-> Images/<name>.jpg (all 100 names match). Sampled pair
+      has identical 1014x992 shapes. Lossy JPEG mask: 45 distinct values in the sample, threshold at 128.'
+  notes: 'Listing: OSF API v2 file tree walked folder by folder with pagination (1 req/s): 205 files,
+    1,064,640,293 B exact. sample.py on 1100Al_s060_98RH03_02Jy20_1f_165: raw 1014x992 uint8, min 0, max
+    204, mean 68.9, p99 157; mask 45 distinct values: 1,005,358 px = 0, 337 = 255, 87 in 128-254, 106
+    in 1-127. value_range is from this one pair. Each OSF file is a direct download (osf.io/download/<id>/);
+    no archive offered, so download_url stays the OSF storage page.'
