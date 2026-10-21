@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: dataverseno-idcuci-sim-mitochondria-segmentation
 title: 'Replication Data for: Physics based machine learning for sub-cellular segmentation in living cells'
 short_name: Simulated mitochondria segmentation (widefield)
-description: >-
-  7,774 simulated widefield-fluorescence mitochondria images with segmentation masks (train/val/test PNG pairs, simulated for a DeltaVision OMX epifluorescence microscope), plus about 80 GB of real
-  live-cell and fixed-cell fluorescence TIFFs of mitochondria and vesicles in rat and human cells (without labels).
+description: 7,774 simulated widefield-fluorescence mitochondria images with segmentation masks (train/val/test
+  PNG pairs, simulated for a DeltaVision OMX epifluorescence microscope), plus about 80 GB of real live-cell
+  and fixed-cell fluorescence TIFFs of mitochondria and vesicles in rat and human cells (without labels).
 landing_url: https://dataverse.no/dataset.xhtml?persistentId=doi:10.18710/IDCUCI
 doi: 10.18710/IDCUCI
 repository: other
@@ -27,7 +27,8 @@ imaging:
   organism:
   - Rattus norvegicus
   - Homo sapiens
-  sample: H9c2 rat cardiomyoblasts and human MCC13 cells with labelled mitochondria and vesicles (live and fixed); the labelled training images are simulated
+  sample: H9c2 rat cardiomyoblasts and human MCC13 cells with labelled mitochondria and vesicles (live
+    and fixed); the labelled training images are simulated
   labels_stains:
   - mCherry-OMP25-TM
   - mCLING-ATTO647N
@@ -55,7 +56,6 @@ ml:
   splits_provided: true
   benchmark: null
   baseline_code_url: https://doi.org/10.5281/zenodo.5017066
-  
 license:
   spdx: CC0-1.0
   url: https://creativecommons.org/publicdomain/zero/1.0/
@@ -66,14 +66,88 @@ provenance:
   - https://dataverse.no/api/datasets/:persistentId/?persistentId=doi:10.18710/IDCUCI
   - https://dataverse.no/api/access/datafile/101613
   - https://api.crossref.org/works/10.1038/s42256-021-00420-0
+  - https://dataverse.no/api/access/datafile/101605
+  - https://zenodo.org/api/records/5017066/files/skarifahmed/physeg-v1.0.zip/content
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-21T03:40:00Z'
-notes: >-
-  Only the simulated data carry labels: Simulation.zip (465 MB) holds 15,549 PNG files in image/ and segment/ for train (5,448), val (1,600) and test (726) pairs, indexed from the remote zip. The ground
-  truth comes from the physics-based simulation, not from manual annotation. The real data (LiveEpi1Rat, LiveEpi1Hu, LiveEpi2Rat time-lapse TIFFs up to 6 GB each, FixedAiry1Rat Airyscan TIFFs) have no masks
-  in the record. Real microscopes: DeltaVision OMX Blaze, Zeiss CellDiscoverer 7 (widefield) and Zeiss LSM 880 Airyscan. Pixel size not stated in the README or record. The paper is not open access
-  (only the Crossref record could be read), so voxel size, simulation parameters and the dataset's real-image evaluation are unchecked; the 7,774 pair count is half the PNG count. The README mentions 'Simulations.zip' but the file is Simulation.zip.
+  last_checked: '2026-10-21T04:05:19Z'
+notes: 'Only the simulated data carry labels: Simulation.zip (465 MB, 15,549 PNGs) has image/ and segment/
+  for train (5,448), val (1,600) and test (726); the ground truth comes from the physics-based simulation.
+  The real data (LiveEpi1Rat, LiveEpi1Hu, LiveEpi2Rat time-lapse TIFFs, FixedAiry1Rat Airyscan TIFFs)
+  have no masks. Microscopes: DeltaVision OMX Blaze, Zeiss CellDiscoverer 7 (widefield), Zeiss LSM 880
+  Airyscan (confocal = FixedAiry1Rat/). organisms: Rattus norvegicus = LiveEpi1Rat/, LiveEpi2Rat/, FixedAiry1Rat/;
+  Homo sapiens = LiveEpi1Hu/; Simulation.zip is simulated (no organism). enricher: voxel size stays null:
+  real LiveEpi2Rat TIFF header 130 nm/px (ImageJ), simulation pixel size not stated for the 256 px PNGs.
+  The paper is not open access.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "0_ReadMe-1.txt\nSimulation.zip  (465,081,773 B; 15,549 PNGs)\n└── Simulation/SimEpi1Mito/\n\
+      \    ├── image/{train 5448, val 1600, test 726}/<n>.png\n    └── segment/{train 5449, val 1600,\
+      \ test 726}/<n>.png\nLiveEpi1Rat/  8 × ~10.5 GB time-lapse .tif\nLiveEpi1Hu/   4 × 0.6–6.3 GB .tif\n\
+      LiveEpi2Rat/  2 × 30 MB .tif (ImageJ, 3 × 2048 × 2048 uint16)\nFixedAiry1Rat/ 3 × Image<n>_Airyscan_RAW.tif\
+      \ + 3 × _AiryscanProcessing.tif"
+    n_files: 15569
+    listing_complete: true
+  sample:
+    urls:
+    - https://dataverse.no/api/access/datafile/101094::Simulation/SimEpi1Mito/image/train/0.png
+    - https://dataverse.no/api/access/datafile/101094::Simulation/SimEpi1Mito/segment/train/0.png
+    size_bytes: 60517
+    description: one simulated training pair (256 x 256 PNG image and its mask)
+  arrays:
+  - role: raw
+    path_pattern: Simulation/SimEpi1Mito/image/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 2
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 26
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'PNG mode LA (grey + alpha): s = [grey, alpha].'
+  - role: label
+    path_pattern: Simulation/SimEpi1Mito/segment/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: mitochondria
+    alignment: same-grid
+    alignment_notes: 'segment/<split>/<n>.png pairs with image/<split>/<n>.png (same split and number).
+      Masks are grey stored as RGB (samples_identical: true), values {0, 255}. train has one more mask
+      (5,449) than images (5,448).'
+  notes: 'Listing: Dataverse API (21 files, exact sizes, 86,008,747,736 B total) plus the Simulation.zip
+    central directory (15,549 PNGs). tools/listing.py and sample.py could not read the zip directly: the
+    datafile URL has no .zip suffix and its presigned S3 redirect answers HEAD with 403, so the repo''s
+    readers were run with a ranged-GET HEAD replacement. Sample train/0.png: raw LA uint8, range 26-255
+    (one sample); mask 0/255, 2.6% foreground. Real data were not sampled; LiveEpi2Rat _01.tif header:
+    ImageJ cyx 3x2048x2048 uint16, 0.13 um/px, spacing 0.31 um. Voxel size: real data 130 nm (one header),
+    simulation unknown (physeg generator_batch_parallel.py uses 128 px at 0.042 um, but the PNGs are 256
+    px, so the files'' pixel size is not established). Download: all datafile URLs are direct (206, ranges)
+    but dataverse.no is not on TensorSwitch''s allowlist; no single archive of the whole dataset.'
