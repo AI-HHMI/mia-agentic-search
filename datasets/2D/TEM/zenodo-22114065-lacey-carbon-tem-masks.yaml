@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: zenodo-22114065-lacey-carbon-tem-masks
 title: Lacey carbon grid image dataset
 short_name: Lacey carbon grid TEM segmentation masks (TEM)
-description: >-
-  TEM images from routine crystal-search sessions on three microscope-detector setups (JEM-2100 and Zeiss Libra 120 with TimePix, Themis Z with Gatan OneView), with manually prepared masks of the
-  lacey carbon support: 10,272 image/mask patches of 256 x 256 px (3,816 augmented), 110 full test images, and a full-image set with raw H5, DM4 and TIFF originals.
+description: 'TEM images from routine crystal-search sessions on three microscope-detector setups (JEM-2100
+  and Zeiss Libra 120 with TimePix, Themis Z with Gatan OneView), with manually prepared masks of the
+  lacey carbon support: 10,272 image/mask patches of 256 x 256 px (3,816 augmented), 110 full test images,
+  and a full-image set with raw H5, DM4 and TIFF originals.'
 landing_url: https://zenodo.org/records/22114065
 doi: 10.5281/zenodo.22114065
 repository: Zenodo
@@ -30,7 +31,8 @@ imaging:
   voxel_size_nm: null
   channels: 1
   organism: []
-  sample: Nanocrystalline samples on lacey carbon support grids imaged during automated crystal searching (electron diffraction workflows)
+  sample: Nanocrystalline samples on lacey carbon support grids imaged during automated crystal searching
+    (electron diffraction workflows)
   labels_stains: []
 data:
   formats:
@@ -47,7 +49,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: TIFF masks in patches_for_training/masks paired by file name with patches_for_training/images; full-image masks in TEM_images_of_lacey_carbon/masks
+  format: 8-bit TIFF masks (0/255) in patches_for_training/masks, paired by file name with patches_for_training/images;
+    full-image masks in TEM_images_of_lacey_carbon/masks (per the description)
   source: manual
 ml:
   tasks:
@@ -70,10 +73,72 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-21T04:50:00Z'
-notes: >-
-  Three zips (version 2). patches_for_training.zip (500 MB) lists 10,272 images and 10,272 masks as TIFF, of which 3,816 images are augmented copies ('_aug_N' names), so 6,456 are original patches.
-  test_all_images.zip (24 MB) holds 110 full-image PNGs (no masks listed). TEM_images_of_lacey_carbon.zip (201 MB) could not be indexed remotely (no readable end-of-central-directory); per the record
-  description it holds images, masks, images_raw (H5, DM4, TIFF originals), image_mapping.csv and a README, so its content is taken from the description only. DM4 is not a listed format, so
-  formats lists only the listed ones. No paper is linked in the record or found by title search, so pixel size and mask encoding (assumed binary lacey carbon vs. other) are unknown. The mask
-  format and class values were not inspected.
+  last_checked: '2026-10-21T04:15:27Z'
+notes: 'Three zips (version 2). patches_for_training.zip (500 MB) lists 10,272 images and 10,272 masks
+  as TIFF, of which 3,816 images are augmented copies (''_aug_N'' names), so 6,456 are original patches.
+  test_all_images.zip (24 MB) holds 110 full-image PNGs (no masks). TEM_images_of_lacey_carbon.zip (201
+  MB) has no readable zip end-of-central-directory (the file may be truncated); per the description it
+  holds images, masks, images_raw (H5, DM4, TIFF), image_mapping.csv and a README. enricher: one patch
+  pair sampled, masks are binary 0/255. No paper is linked or found, so the pixel size is unknown (it
+  varies across the three microscope setups).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "patches_for_training.zip  (499,713,737 B)\n└── patches_for_training/\n    ├── images/  10,272\
+      \ × <timestamp>_<id>_<NN>[_aug_N].tif  (256 × 256 uint8, 634.5 MB)\n    └── masks/   10,272 × same\
+      \ names                          (432.5 MB)\ntest_all_images.zip  (24,171,129 B)\n└── test_all_images/\
+      \  109 × <timestamp>.png (e.g. 516 × 516 grey), test/mont_0042.png\nTEM_images_of_lacey_carbon.zip\
+      \  (200,560,640 B; index not readable)"
+    n_files: 20657
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/22114065/files/patches_for_training.zip/content::patches_for_training/images/20230523-142213_758236_01.tif
+    - https://zenodo.org/api/records/22114065/files/patches_for_training.zip/content::patches_for_training/masks/20230523-142213_758236_01.tif
+    size_bytes: 131584
+    description: one 256 x 256 training patch and its mask
+  arrays:
+  - role: raw
+    path_pattern: patches_for_training/images/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 10
+    - 232
+    normalization: unknown
+    alignment: not-applicable
+  - role: label
+    path_pattern: patches_for_training/masks/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: masks/<name>.tif pairs with images/<name>.tif (same name); identical shapes. The
+      description calls them lacey-carbon masks; which value (0 or 255) is lacey carbon is not stated
+      (35% of the sample is 255).
+  notes: 'Listing: tools/listing.py on the Zenodo record (3 files, exact sizes, 724,445,506 B = size confirmed)
+    with zip expansion of two zips; TEM_images_of_lacey_carbon.zip could not be indexed (no EOCD in its
+    tail), so its members are not counted (the file list and byte total are complete). Sample 20230523-142213_758236_01:
+    raw uint8 10-232 (one sample); mask {0: 42437, 255: 23099}. Headers: both plain single-page TIFF 256x256
+    uint8, uncompressed. Download: patches_for_training.zip and its members pass --download-check (usable,
+    206, ranges). Voxel size not found; checked: TIFF/PNG headers (no calibration), Zenodo description
+    and API record (no pixel size, no related identifiers), README (inside the unreadable zip), paper
+    (none found).'
