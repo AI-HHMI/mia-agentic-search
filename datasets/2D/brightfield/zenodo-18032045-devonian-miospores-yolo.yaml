@@ -2,7 +2,8 @@ schema_version: '1.2'
 id: zenodo-18032045-devonian-miospores-yolo
 title: Devonian miospore detection dataset (YOLOv11 bounding boxes)
 short_name: Devonian miospores detection (brightfield)
-description: 480 transmitted-light microscope images of dispersed Devonian (upper Frasnian, Armenia) miospores with YOLO bounding boxes, split 420/40/20 into train/valid/test, used to train a YOLOv11 spore detector.
+description: 480 transmitted-light microscope images of dispersed Devonian (upper Frasnian, Armenia) miospores with YOLO bounding
+  boxes, split 420/40/20 into train/valid/test, used to train a YOLOv11 spore detector.
 landing_url: https://zenodo.org/records/18032045
 doi: 10.5281/zenodo.18032045
 repository: Zenodo
@@ -23,17 +24,18 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism: []
-  sample: Dispersed fossil miospores (Teichertospora torquata, Geminospora lemurata, Samarisporites triangulatus) on palynological slides, upper Frasnian Ertych section, Armenia
+  sample: Dispersed fossil miospores (Teichertospora torquata, Geminospora lemurata, Samarisporites triangulatus) on palynological
+    slides, upper Frasnian Ertych section, Armenia
   labels_stains: []
 data:
   formats:
   - jpeg
-  size_bytes: 51100000
+  size_bytes: 51135000
   n_items: 480
   access: open
-  download_url: https://zenodo.org/api/records/18032045/files/miospore-dataset.zip/content
+  download_url: https://zenodo.org/records/18032045/files/miospore-dataset.zip
   download_method: http
 annotations:
   present: true
@@ -59,10 +61,76 @@ provenance:
   - https://zenodo.org/api/records/18032045/files/miospore-dataset.zip/content
   - https://jm.copernicus.org/articles/45/405/2026/
   - https://doi.org/10.5194/jm-45-405-2026
+  - https://zenodo.org/records/18032045/files/miospore-dataset.zip
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-21T22:45:43Z'
-notes: 'Zip listing: train 420, valid 40, test 20 images with matching YOLO label files; README.roboflow.txt states 480 images, one class (miospores), CC BY 4.0. The paper (Journal of Micropalaeontology, read online) reports 209 annotated micrographs and a five-class detection set, so the Zenodo export differs from the paper (likely Roboflow preprocessing/augmentation); not resolved. Microscope Leica DM2700 with Flexacam C5 camera; magnification and pixel size are not stated in the paper or record, so voxel size is null. Classification crops (159) are not in the zip. Annotated with rectangular boxes in Roboflow by an operator. Size from the Zenodo listing (51.1 MB).'
+  last_checked: '2026-10-21T23:20:00Z'
+notes: 'Zip listing: train 420, valid 40, test 20 images with matching YOLO label files; README.roboflow.txt states 480 images,
+  one class (miospores), CC BY 4.0. The paper (Journal of Micropalaeontology, read online) reports 209 annotated micrographs
+  and a five-class detection set, so the Zenodo export differs from the paper (likely Roboflow preprocessing/augmentation);
+  not resolved. Microscope Leica DM2700 with Flexacam C5 camera; magnification and pixel size are not stated in the paper
+  or record, so voxel size is null. Classification crops (159) are not in the zip. Annotated with rectangular boxes in Roboflow
+  by an operator. enricher: size 51,135,000 B from the full Zenodo listing (was 51.1 MB stated); download_url now the direct
+  .zip; channels 3 (RGB JPEG). README.roboflow.txt: train images are 3 augmented versions of each source image. Organism left
+  empty: fossil miospore form taxa have no NCBI name.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  6 files, 51,135,000 bytes (963 zip members)\n  miospore-dataset.zip      51,055,763 B\n    README.dataset.txt,\
+      \ README.roboflow.txt, data.yaml\n    train/images/  420 .jpg   44.6 MB\n    train/labels/  420 .txt\n    valid/images/\
+      \   40 .jpg    4.2 MB\n    valid/labels/   40 .txt\n    test/images/    20 .jpg    2.0 MB\n    test/labels/    20 .txt\n\
+      \  YOLOv11.ipynb, VGG16.ipynb, ResNet_18.ipynb, EfficientNet_B0.ipynb, requirements.txt  (code)"
+    n_files: 6
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/18032045/files/miospore-dataset.zip::test/images/Er1-2-K72-2_png.rf.12ada26851a9dd1925acfa6d690df60e.jpg
+    - https://zenodo.org/records/18032045/files/miospore-dataset.zip::test/labels/Er1-2-K72-2_png.rf.12ada26851a9dd1925acfa6d690df60e.txt
+    size_bytes: 144349
+    description: one test image (1920x1080 RGB JPEG) and its YOLO label (1 box)
+  arrays:
+  - role: raw
+    path_pattern: '*/images/*.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1080
+    - 1920
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB JPEGs (colour micrographs, samples not identical); probed sizes 1920x1080 and 1280x720. Train images
+      include Roboflow augmentations (flips, 90° and ±15° rotations, brightness, blur, salt-and-pepper noise).
+  - role: label
+    path_pattern: '*/labels/*.txt'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    normalization: unknown
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: miospores
+    alignment: same-grid
+    alignment_notes: 'YOLO txt (class x_center y_center width height, normalised to [0,1]) with the same stem as <split>/images/<stem>.jpg;
+      class 0 = miospores per data.yaml (nc: 1).'
+  notes: 'Listing: tools/listing.py --expand-zips on the Zenodo record (complete: 6 files, 51,135,000 B; zip holds 480 JPEG
+    + 480 YOLO txt + 3 docs). Probed 8 JPEGs (1920x1080x3 or 1280x720x3 uint8). Sampled test/images/Er1-2-K72-2_png.rf.12ada...jpg
+    (144,272 B): range 0-255, mean 169.6 (one sample); its label has 1 box. The paper describes 209 original micrographs with
+    five classes; this Roboflow export has one class and 3 augmented versions per training image (README.roboflow.txt). Voxel
+    size not found; checked: JPEG headers (no calibration), Zenodo description, README.dataset.txt, README.roboflow.txt, data.yaml,
+    paper full text on jm.copernicus.org (Methods mention a Leica DM2700 and areas calibrated to µm², but no pixel size or
+    magnification per image). Notebooks not opened or run (untrusted code).'
