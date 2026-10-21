@@ -51,9 +51,9 @@ annotations:
   - semantic-segmentation
   - classification
   coverage: dense
-  format: 'Binary 8-bit segmentation image stacks of the Salmonella channel per plate (plateN_Thr=....tif.zip_ for plates
-    2 to 7), made by an ImageJ macro with manual lower threshold and, for plates 6 and 7, a 250 pixel size filter; infected
-    versus non-infected cell labels are produced by the macro and R scripts from feature files.'
+  format: Binary 8-bit segmentation image stacks of the Salmonella channel per plate (plateN_Thr=....tif.zip_ for plates 2
+    to 7), made by an ImageJ macro with manual lower threshold and, for plates 6 and 7, a 250 pixel size filter; infected
+    versus non-infected cell labels are produced by the macro and R scripts from feature files.
   source: automatic
 ml:
   tasks:
@@ -72,16 +72,82 @@ provenance:
   - https://dataverse.harvard.edu/api/access/datafile/3314838
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6915951/fullTextXML
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1186%2Fs13104-019-4844-5%22&format=json&resultType=core&pageSize=3
-  confidence: 0.6
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-21T00:16:31Z'
-notes: 'Dataverse file list (API): 33 files, 29.5 GB, per plate 365, 488 and 561 nm image stacks as ImageJ TIFF zips with a
-  .zip_ extension to be renamed to .zip, plus the threshold-segmented stacks for plates 2 to 7 (Thr values in the names),
-  infected_cell_ER_signal_Plate2-7.zip_, three R scripts, the ImageJ macro and the plate layout .xls. The binary masks
-  are automatic threshold segmentations of the bacteria, not manual annotations; per-cell infected labels are derived by
-  the scripts. plate2_Thr=235.tif.zip_ was listed with peek_archive: one 1.6 GB binary TIFF stack (4.4 MB compressed); the other zips were not opened. Pixel size
-  0.323 um after 2 x 2 binning (paper); effective camera size 671 x 497 pixels. The image count 93,300 is from the paper
-  abstract. No train split.'
+  last_checked: '2026-10-21T01:49:58Z'
+notes: 'Dataverse file list (API): 33 files, 29.5 GB, per plate 365, 488 and 561 nm image stacks as ImageJ TIFF zips with
+  a .zip_ extension to be renamed to .zip, plus the threshold-segmented stacks for plates 2 to 7 (Thr values in the names),
+  infected_cell_ER_signal_Plate2-7.zip_, three R scripts, the ImageJ macro and the plate layout .xls. The binary masks are
+  automatic threshold segmentations of the bacteria, not manual annotations; per-cell infected labels are derived by the scripts.
+  plate2_Thr=235.tif.zip_ was listed with peek_archive: one 1.6 GB binary TIFF stack (4.4 MB compressed); enricher: plate2_561nm.zip_
+  holds one ImageJ stack plate2_561nm.tif (3.2 GB, 4800 pages of 497 x 671 uint16). Pixel size 0.323 um after 2 x 2 binning
+  (paper); effective camera size 671 x 497 pixels. The image count 93,300 is from the paper abstract. No train split. organisms:
+  HeLa (Homo sapiens) and Salmonella enterica share every image of plates 2-7; plate 1 is uninfected HeLa only.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "doi:10.7910/DVN/FYGHFO  33 files, 29,518,350,200 B (Dataverse API, exact)\n  plate<1-7>_<365|488|561>nm.zip_  \
+      \  21 zips, 0.55-1.81 GB, each one ImageJ stack plate<N>_<λ>nm.tif\n  plate<2-7>_Thr...tif.zip_          6 zips, 3.3-7.1\
+      \ MB, each one binary stack (e.g. plate2_Thr=235.tif, 1.6 GB)\n  infected_cell_ER_signal_Plate2-7.zip_  2.7 MB\n  ImageJ_macro_ijm.txt,\
+      \ plates2-3.R, plates4-5.R, plates6-7.R\n  ST_exp60_confocal_infection_plates.xls   plate layout\n"
+    n_files: 33
+    listing_complete: true
+  sample:
+    urls:
+    - https://dataverse.harvard.edu/api/access/datafile/3312244::plate2_561nm.tif
+    - https://dataverse.harvard.edu/api/access/datafile/3314838::plate2_Thr=235.tif
+    size_bytes: 1192289921
+    description: Plate 2 Salmonella (561 nm) stack and its threshold mask stack. Smallest raw+label pair, but the raw zip
+      is 1.19 GB (3.2 GB unpacked).
+  arrays:
+  - role: raw
+    path_pattern: plate*_*nm.tif
+    format: tiff
+    axes: null
+    shape:
+    - 4800
+    - 497
+    - 671
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 2021
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: One ImageJ stack per plate and channel (365 nm DAPI, 488 nm ER tracker, 561 nm mCherry Salmonella), inside
+      a zip named .zip_. ImageJ header says slices=4800, but the pages are wells x fields (96 x 50), not z; page axis left
+      null. value_range is page 0 of plate2_561nm (one sample). Shape from plate2_561nm.
+  - role: label
+    path_pattern: plate*_Thr*.tif
+    format: tiff
+    axes: null
+    shape:
+    - 4800
+    - 497
+    - 671
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 255
+      name: Salmonella
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: plateN_Thr*.tif masks the 561 nm stack of plate N page by page (same 4800 x 497 x 671
+      shape for plate 2). Automatic threshold (lower threshold in the file name; plates 6-7 size-filtered at 250 px). Page
+      0 values {0,255}.'
+  notes: 'Sampled: read the first 4 MB (uncompressed) of plate2_561nm.tif and plate2_Thr=235.tif from their zips by range
+    requests; parsed the first IFD and decoded page 0. The zips are deflate-compressed members (paper: LZW-compressed ImageJ
+    zips; the TIFF pages themselves are uncompressed). probe.py could not read these deflated members. No single archive:
+    33 separate Dataverse files; each /api/access/datafile/<id> redirects to dvn-cloud-iqss.s3.amazonaws.com (usable, range
+    requests). download_url stays null. Page axis: TensorSwitch would name it i; the paper says stacks are 96-well plates,
+    50 fields per well. Voxel size 323 nm kept (paper).'
