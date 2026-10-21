@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: hf-benjamincblake-needl-bench-snc-stomata
 title: NEEDL-Bench - stomata and pseudothecia in Douglas-fir needle microscopy images (Swiss Needle Cast)
 short_name: Douglas-fir needle stomata detection (microscopy)
-description: 3,250 annotated 256 x 256 px microscopy tiles from 1,082 Douglas-fir needles (benchtop camera and handheld
-  Dino-Lite microscope, scaled to 360 px/mm) with centroid keypoints and YOLO bounding boxes for two classes,
-  open stomata and stomata occluded by Swiss Needle Cast pseudothecia. Train, validation and test splits are provided.
+description: 3,250 annotated microscopy tiles (512 x 512 px PNG as released; the paper describes 256 x
+  256 tiles) from 1,082 Douglas-fir needles (benchtop camera and handheld Dino-Lite microscope, scaled
+  to 360 px/mm) with centroid keypoints and YOLO bounding boxes for two classes, open stomata and stomata
+  occluded by Swiss Needle Cast pseudothecia. Train, validation and test splits are provided.
 landing_url: https://huggingface.co/datasets/benjamincblake/Needl-Bench
 doi: null
 repository: HuggingFace
@@ -25,19 +26,17 @@ imaging:
   modality:
   - brightfield
   dimensionality: 2D
-  voxel_size_nm:
-    x: 2778
-    y: 2778
-    z: null
+  voxel_size_nm: null
   channels: 3
   organism:
   - Pseudotsuga menziesii
-  sample: Douglas-fir needles affected by Swiss Needle Cast (Nothophaeocryptopus gaeumannii), focal stacks stitched into single in-focus images
+  sample: Douglas-fir needles affected by Swiss Needle Cast (Nothophaeocryptopus gaeumannii), focal stacks
+    stitched into single in-focus images
   labels_stains: []
 data:
   formats:
   - png
-  size_bytes: null
+  size_bytes: 1966495492
   n_items: 3250
   access: open
   download_url: https://huggingface.co/datasets/benjamincblake/Needl-Bench
@@ -48,7 +47,8 @@ annotations:
   - bounding-box
   - points
   coverage: dense
-  format: per-tile JSON keypoint files (keypoint/<split>/out_annotations) and YOLO .txt box labels (yolo/labels/<split>); classes 0 stomata, 1 pseudothecia
+  format: per-tile JSON keypoint files (keypoint/<split>/out_annotations) and YOLO .txt box labels (yolo/labels/<split>);
+    classes 0 stomata, 1 pseudothecia
   source: mixed
 ml:
   tasks:
@@ -66,17 +66,98 @@ provenance:
   - https://huggingface.co/api/datasets/benjamincblake/Needl-Bench
   - https://github.com/benjamincblake/NEEDL-BENCH-Dataset
   - https://arxiv.org/html/2607.12076v1
-  confidence: 0.8
+  - https://huggingface.co/datasets/benjamincblake/Needl-Bench/resolve/main/Needl-Bench/keypoint/train/out_annotations/NRC-NEEDL-AI-CAPTURE_1_0_2_0_0.json
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-21T04:30:00Z'
-notes: 'Hugging Face file listing (13,009 files): keypoint/{train,validation,test} with PNG tiles and JSON annotations
-  (2,443 / 403 / 404 each) and yolo/{images,labels}/{train,validation,test} with the same tiles and YOLO txt labels.
-  Splits (2,443 / 403 / 404) match the paper. Keypoints were placed by one trained annotator with expert spot checks;
-  boxes were generated with SAM2 seeded by the keypoints and reviewed without edits (paper), so source is mixed.
-  Pixel size derived from the paper statement that images were scaled to 360 px/mm (1e6 nm / 360 = 2778 nm); the
-  physical magnification and benchtop microscope model are not stated (benchtop camera SeBaCam14C and handheld
-  Dino-Lite AM8917MZT per the GitHub README). Licence: CC-BY-4.0 on Hugging Face; the GitHub README adds "for
-  non-commercial and academic research use". Total size not computed from the listing.'
+  last_checked: '2026-10-21T04:39:06Z'
+notes: 'Hugging Face file listing (13,009 files, 1,966,495,492 B): keypoint/{train,validation,test} with
+  PNG tiles and JSON annotations (2,443 / 403 / 404) and yolo/{images,labels}/{train,validation,test}
+  with the same tiles and YOLO txt labels; splits match the paper. Keypoints were placed by one trained
+  annotator with expert spot checks; boxes were generated with SAM2 seeded by the keypoints and reviewed
+  (paper), so source is mixed. enricher: voxel size set to null (was 2778 nm): the paper scales images
+  to 360 px/mm and splits them into 256 x 256 tiles, but the released tiles are 512 x 512 (two headers,
+  keypoints up to 504), so the released pixel size is not established. Licence: CC-BY-4.0 on Hugging Face;
+  the GitHub README adds "for non-commercial and academic research use".'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Needl-Bench/\n├── keypoint/{train 2443, validation 403, test 404}/\n│   ├── out_images/<name>.png\
+      \       (512 × 512 RGB)\n│   └── out_annotations/<name>.json ({\"pseudothecia\": [[x,y],…], \"stoma\"\
+      : [[x,y],…], \"Human Annotated\": true})\n└── yolo/\n    ├── images/{train,validation,test}/<name>.png\
+      \   (same tiles)\n    └── labels/{train,validation,test}/<name>.txt   (YOLO: class cx cy w h, normalized),\
+      \ {split}.cache"
+    n_files: 13009
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/benjamincblake/Needl-Bench/resolve/main/Needl-Bench/yolo/images/train/NRC-NEEDL-AI-CAPTURE_1_0_2_0_0.png
+    - https://huggingface.co/datasets/benjamincblake/Needl-Bench/resolve/main/Needl-Bench/yolo/labels/train/NRC-NEEDL-AI-CAPTURE_1_0_2_0_0.txt
+    - https://huggingface.co/datasets/benjamincblake/Needl-Bench/resolve/main/Needl-Bench/keypoint/train/out_annotations/NRC-NEEDL-AI-CAPTURE_1_0_2_0_0.json
+    size_bytes: 324647
+    description: one training tile with its YOLO boxes and keypoint JSON
+  arrays:
+  - role: raw
+    path_pattern: Needl-Bench/yolo/images/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 253
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: keypoint/*/out_images/ holds the same tiles (same names).
+  - role: label
+    path_pattern: Needl-Bench/yolo/labels/*/*.txt
+    format: other
+    axes: null
+    shape:
+    - 5
+    - 5
+    shape_varies: true
+    dtype: float32
+    compression: none
+    normalization: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: stomata
+    - id: 1
+      name: pseudothecia
+    alignment: same-grid
+    alignment_notes: 'YOLO txt per tile (same stem): class cx cy w h, normalized to the tile.'
+  - role: label
+    path_pattern: Needl-Bench/keypoint/*/out_annotations/*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    normalization: none
+    encoding: points-table
+    classes:
+    - id: stoma
+      name: stomata
+    - id: pseudothecia
+      name: pseudothecia
+    alignment: same-grid
+    alignment_notes: 'JSON per tile (same stem as out_images/<name>.png): pixel [x, y] centroids per class;
+      values up to 504 in the sample, i.e. on the 512 px grid.'
+  notes: 'Listing: tools/listing.py on the Hugging Face dataset (13,009 files, exact sizes, 1,966,495,492
+    B). PNG headers: 512 x 512 RGB uint8 deflate (two tiles). Sample NRC-NEEDL-AI-CAPTURE_1_0_2_0_0.png:
+    0-253, mean 66 (one sample); its YOLO txt has 5+ boxes of class 0; JSON has 4 pseudothecia and 9 stoma
+    points. Download: tile, txt and json resolve/main URLs pass --download-check (usable, 206). Voxel
+    size: paper says 360 px/mm for 256 x 256 tiles; released tiles are 512 x 512, so unresolved (could
+    be 2x upsampled, 1389 nm, or larger crops at 2778 nm). Checked: PNG headers, HF README (no pixel size),
+    paper HTML.'
