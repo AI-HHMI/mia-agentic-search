@@ -26,8 +26,8 @@ imaging:
   channels: 3
   organism:
   - Mycobacterium tuberculosis
-  sample: Sputum smears from 208 patients, imaged with a camera attached to a light microscope (10x100 magnification
-    as stated on the record); stain not stated
+  sample: Sputum smears from 208 patients, imaged with a camera attached to a light microscope (10x100
+    magnification as stated on the record); stain not stated
   labels_stains: []
 data:
   formats:
@@ -42,8 +42,9 @@ annotations:
   types:
   - bounding-box
   coverage: dense
-  format: YOLO txt, one file per image with lines 'class x_center y_center width height' (normalised); single
-    class 0 = 'AFB Object' (data.yaml and classes.txt). The YOLO archive splits images into train/ and valid/
+  format: YOLO txt, one file per image with lines 'class x_center y_center width height' (normalised);
+    single class 0 = 'AFB Object' (data.yaml and classes.txt). The YOLO archive splits images into train/
+    and valid/
   source: manual
 ml:
   tasks:
@@ -67,12 +68,77 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-21T18:30:00Z'
-notes: 'Zenodo record (v1, two zips of 1.01 GB each, CC BY 4.0) and both zip listings were read. SputumTB-ID.zip
+  last_checked: '2026-10-21T18:20:00Z'
+notes: Zenodo record (v1, two zips of 1.01 GB each, CC BY 4.0) and both zip listings were read. SputumTB-ID.zip
   holds per-patient folders (named like "130-633576 (3+)") with A-E JPGs and a YOLO txt per image, plus
   classes.txt; Sputum-TB YOLO .zip holds the same 1,016 JPG/txt pairs as train/ and valid/ with data.yaml
   (class 0 AFB Object) -- the two archives overlap, so n_items counts 1,016 images once and size_bytes
-  sums both zips. The record says 1,029 images from 208 patients and a 10x100 magnification, annotation by
-  an expert from Rumah Sakit Imelda Pekerja Indonesia; 1,016 JPGs were found in the archives. Stain, microscope
-  model, pixel size, the train/valid split sizes and any paper were not stated on the record (no related
-  identifiers, no matching paper searched beyond the record text).'
+  sums both zips. The record says 1,029 images from 208 patients and a 10x100 magnification, annotation
+  by an expert from Rumah Sakit Imelda Pekerja Indonesia; 1,016 JPGs were found in the archives. Stain,
+  microscope model, pixel size, the train/valid split sizes and any paper were not stated on the record
+  (no related identifiers, no matching paper searched beyond the record text).
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Sputum-TB YOLO .zip  1.01 GB\n  YOLO /data.yaml            (train: train/images, val: valid/images,\
+      \ 0: AFB Object)\n  YOLO /train/images/*.jpg   700\n  YOLO /train/labels/*.txt   700\n  YOLO /valid/images/*.jpg\
+      \   316\n  YOLO /valid/labels/*.txt   316\n  YOLO /{train,valid}/labels.cache, .DS_Store\nSputumTB-ID.zip\
+      \  1.01 GB\n  DATA ASLI TB/<n>-<patient id> (<grade>)/   207 patient folders\n    <patient id> A-E.jpg,\
+      \ <patient id> A-E.txt, classes.txt   (1,016 jpg, 1,218 txt)\n"
+    n_files: 4275
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/22183439/files/Sputum-TB%20YOLO%20.zip::YOLO /train/images/38-621865
+      D.jpg
+    - https://zenodo.org/records/22183439/files/Sputum-TB%20YOLO%20.zip::YOLO /train/labels/38-621865
+      D.txt
+    size_bytes: 607241
+    description: One training image (patient 38-621865, field D) and its YOLO box file (13 boxes)
+  arrays:
+  - role: raw
+    path_pattern: Sputum-TB YOLO .zip/YOLO /*/images/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 960
+    - 1280
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 43
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB colour JPEG (samples differ), 1280 x 960 as the record states. The same images
+      are in SputumTB-ID.zip per patient folder.
+  - role: label
+    path_pattern: Sputum-TB YOLO .zip/YOLO /*/labels/*.txt
+    format: other
+    axes: null
+    shape:
+    - 13
+    - 5
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range: null
+    normalization: rescaled
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: AFB Object
+    alignment: same-grid
+    alignment_notes: 'YOLO txt (space-separated), one line per box: class x_center y_center width height,
+      normalised to [0,1] of the image size. Pairs by stem: train/images/X.jpg <-> train/labels/X.txt
+      (same for valid/).'
+  notes: 'Listing: Zenodo API + both zips expanded, 2 files / 4,275 members, 2,026,633,327 B exact (file-listing;
+    size_bytes counts both zips, which hold the same images). Probed and sampled one training JPEG (606,761
+    B): 960x1280x3 uint8 RGB, range 43-255, mean 226 (one sample). Read its label txt: 13 class-0 boxes,
+    normalised. data.yaml: one class 0 = AFB Object. labels.cache files (YOLO pickled cache) not opened.
+    Voxel size not found; checked: JPEG header, Zenodo API description (10x100 magnification only, no
+    pixel size), no related identifiers, Europe PMC/Crossref title search (no paper). Both zips are direct
+    Zenodo links with range requests; zip members are usable sample links.'
