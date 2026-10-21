@@ -1,11 +1,13 @@
 schema_version: '1.2'
 id: zenodo-21691676-dart-fiducial-markers-microfluidic
-title: DART - phase-contrast images of microfluidic chip fiducial markers with segmentation labels, plus live-cell C. glutamicum imaging
+title: DART - phase-contrast images of microfluidic chip fiducial markers with segmentation labels, plus
+  live-cell C. glutamicum imaging
 short_name: Microfluidic chip fiducial markers (phase)
-description: 319 annotated 2560 x 2160 px phase-contrast images (0.066 um/px, 100x) of fiducial markers (472 crosses, 470 circles)
-  on a microfluidic chip, with per-image YOLO label files, for training a marker detector. The same record holds a
-  live-cell Corynebacterium glutamicum phase-contrast imaging set (1,739 images over 47 stacks) and a stage-coordinate
-  calibration set, both without labels, plus the chip CAD file and trained YOLO weights.
+description: 319 annotated 2560 x 2160 px phase-contrast images (0.066 um/px, 100x) of fiducial markers
+  (472 crosses, 470 circles) on a microfluidic chip, with per-image YOLO label files, for training a marker
+  detector. The same record holds a live-cell Corynebacterium glutamicum phase-contrast imaging set (1,739
+  images over 47 stacks) and a stage-coordinate calibration set, both without labels, plus the chip CAD
+  file and trained YOLO weights.
 landing_url: https://zenodo.org/records/21691676
 doi: 10.5281/zenodo.21691676
 repository: Zenodo
@@ -26,20 +28,18 @@ imaging:
   modality:
   - phase-contrast
   dimensionality: 2D
-  voxel_size_nm:
-    x: 66
-    y: 66
-    z: null
+  voxel_size_nm: null
   channels: 1
   organism:
   - Corynebacterium glutamicum
-  sample: microfluidic chip (Swiss Army Knife, SAK) fiducial markers imaged by phase contrast; live-cell part is C. glutamicum ATCC 13032 in chip chambers
+  sample: microfluidic chip (Swiss Army Knife, SAK) fiducial markers imaged by phase contrast; live-cell
+    part is C. glutamicum ATCC 13032 in chip chambers
   labels_stains: []
 data:
   formats:
   - png
   - tiff
-  size_bytes: 14022209701
+  size_bytes: 14022213608
   n_items: 319
   access: open
   download_url: https://zenodo.org/records/21691676/files/dart_train_test_dataset.zip
@@ -50,7 +50,8 @@ annotations:
   - instance-segmentation
   - bounding-box
   coverage: dense
-  format: per-image YOLO .txt files in labels_segment/ (polygons) and labels_bbox/ (boxes) beside images/ in dmc-dataset/{train,test}, classes cross and circle
+  format: per-image YOLO .txt files in labels_segment/ (polygons) and labels_bbox/ (boxes) beside images/
+    in dmc-dataset/{train,test}, classes cross and circle
   source: manual
 ml:
   tasks:
@@ -75,5 +76,91 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-21T05:15:00Z'
-notes: 'Zenodo record, 6 files, 14.0 GB. peek_archive: dart_train_test_dataset.zip = 319 PNG + 638 txt (train 239, test 80 images, each with labels_bbox and labels_segment). live_cell_experiment.zip = 47 multi-page TIFF stacks (5.05 GB) and the chip CIF, no labels; calibration_data_full.zip (9.7 GB) not listed. Paper (arXiv 2606.18523): markers annotated manually in Label Studio with SAM assistance; 192 / 47 / 80 train / val / test in the paper, but the zip has only train and test folders. Marker images 0.066 um/px, 100x phase contrast; live-cell data Nikon Ti, 0.093 um/px, 1,739 images, unlabelled. The labelled task is detection of chip fiducials, not cells.'
+  last_checked: '2026-10-21T04:55:47Z'
+notes: 'Zenodo record, 6 files, 14.0 GB. dart_train_test_dataset.zip = 319 PNG + 638 txt (train 239, test
+  80, each with labels_bbox and labels_segment). live_cell_experiment.zip = 47 multi-page TIFF stacks
+  and the chip CIF, no labels; calibration_data_full.zip = 1,164 TIFFs + 3 json/csv. Paper: markers annotated
+  manually in Label Studio with SAM assistance; 192/47/80 train/val/test in the paper, but the zip has
+  only train and test. enricher: voxel size set to null (was 66 nm): subsets differ. Marker images 0.066
+  um/px (100x), live-cell data 0.093 um/px (paper). The labelled task is detection of chip fiducials,
+  not cells.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "README.md, chip .cif, YOLO weights (.pt)\ndart_train_test_dataset.zip (879,978,578 B)\n└──\
+      \ dmc-dataset/{train 239, test 80}/\n    ├── images/<uuid>.png          (2160 × 2560 uint8)\n  \
+      \  ├── labels_bbox/<uuid>.txt     (YOLO boxes)\n    └── labels_segment/<uuid>.txt  (YOLO polygons)\n\
+      live_cell_experiment.zip  └── live_cell_experiment/<chamber type>/Kammer <n> Versuch <n>.tif  (47\
+      \ stacks, unlabelled)\ncalibration_data_full.zip └── calibration_data/images/*.tif (1,164, 9.7 GB),\
+      \ 2 json, 1 csv"
+    n_files: 2178
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/21691676/files/dart_train_test_dataset.zip::dmc-dataset/test/images/85eecf1e-defd-416d-8086-04d0505fcb9e.png
+    - https://zenodo.org/records/21691676/files/dart_train_test_dataset.zip::dmc-dataset/test/labels_segment/85eecf1e-defd-416d-8086-04d0505fcb9e.txt
+    - https://zenodo.org/records/21691676/files/dart_train_test_dataset.zip::dmc-dataset/test/labels_bbox/85eecf1e-defd-416d-8086-04d0505fcb9e.txt
+    size_bytes: 2642015
+    description: one test image with 4 markers and its YOLO polygon and box files (image 2,642,015 B;
+      txt files small)
+  arrays:
+  - role: raw
+    path_pattern: dmc-dataset/*/images/*.png
+    format: png
+    axes: yx
+    shape:
+    - 2160
+    - 2560
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+  - role: label
+    path_pattern: dmc-dataset/*/labels_segment/*.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: float32
+    compression: none
+    normalization: rescaled
+    encoding: polygons
+    classes:
+    - id: null
+      name: cross
+    - id: null
+      name: circle
+    alignment: same-grid
+    alignment_notes: 'YOLO segmentation txt per image (same uuid stem): class x1 y1 x2 y2 ... normalized
+      to the image. Some files are empty (images without markers).'
+  - role: label
+    path_pattern: dmc-dataset/*/labels_bbox/*.txt
+    format: other
+    axes: null
+    shape:
+    - 4
+    - 5
+    shape_varies: true
+    dtype: float32
+    compression: none
+    normalization: rescaled
+    encoding: boxes-table
+    classes:
+    - id: null
+      name: cross
+    - id: null
+      name: circle
+    alignment: same-grid
+    alignment_notes: 'YOLO box txt per image (same uuid stem): class cx cy w h, normalized.'
+  notes: 'Listing: tools/listing.py on the Zenodo record with zip expansion (6 files, exact sizes, 14,022,213,608
+    B; 2,172 zip members). Sample test image d386904e-...png: 2160 x 2560 uint8 0-255, mean 57 (one sample;
+    its label files are empty). Read the labels of 85eecf1e-...: bbox file has 4 rows (2 class 0, 2 class
+    1); segment file has one polygon per marker. Class names cross and circle per the README (472 crosses,
+    470 circles); which YOLO id is which is not stated, so ids are null. Download: the zip and its members
+    pass --download-check (usable). Voxel size per subset from the paper (markers 66 nm, live cell 93
+    nm).'
