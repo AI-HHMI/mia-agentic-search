@@ -1,0 +1,144 @@
+schema_version: '1.2'
+id: kaggle-peterwarren-exone-316l-grain-boundaries
+title: ExONE stainless steel 316L grains at 500X with grain-boundary masks
+short_name: 316L steel grain boundaries (optical)
+description: 336 optical-microscope tiles (400 x 300 px PNG, cut from 21 original 1600 x 1200 images taken
+  at 500X) of binder-jet additively manufactured stainless steel 316L, each paired with a grain-boundary
+  mask (JPG, boundaries black, grains white). Includes pretrained HED edge-detector weights.
+landing_url: https://www.kaggle.com/datasets/peterwarren/exone-stainless-steel-316l-grains-500x
+doi: null
+repository: Kaggle
+accession: peterwarren/exone-stainless-steel-316l-grains-500x
+authors:
+- Peter Warren
+publications:
+- title: Grain and Grain Boundary Segmentation using Machine Learning with Real and Generated Datasets
+  doi: null
+  url: https://arxiv.org/abs/2307.05911
+date_published: '2022-12-08'
+imaging:
+  modality:
+  - other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism: []
+  sample: stainless steel 316L printed on an ExOne binder-jet printer, polished microstructure imaged
+    at 500X
+  labels_stains: []
+data:
+  formats:
+  - png
+  - jpeg
+  size_bytes: 157573016
+  n_items: 336
+  access: open
+  download_url: https://www.kaggle.com/api/v1/datasets/download/peterwarren/exone-stainless-steel-316l-grains-500x
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: one grain-boundary mask JPG per image in Segmented/ (<name>_seg.jpg), boundaries 0 and grains
+    255 per the paper
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/Peterwarren623/GrainBoundaryDetection
+license:
+  spdx: CC0-1.0
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-21T04:25:00Z'
+  evidence_urls:
+  - https://www.kaggle.com/api/v1/datasets/view/peterwarren/exone-stainless-steel-316l-grains-500x
+  - https://www.kaggle.com/api/v1/datasets/list/peterwarren/exone-stainless-steel-316l-grains-500x
+  - https://arxiv.org/html/2307.05911
+  - https://www.kaggle.com/api/v1/datasets/download/peterwarren/exone-stainless-steel-316l-grains-500x
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-21T04:25:14Z'
+notes: 'Kaggle API view and file listing: 674 files = Grains/*.png (336), Segmented/*.jpg (336) and two
+  HED weight files (prototxt, caffemodel); 157.6 MB; license CC0: Public Domain; last updated 2022-12-08.
+  The Kaggle description says masks come from traditional image thresholding; the paper says human annotators
+  marked boundaries in a colour that was then thresholded, so source is recorded as mixed. The paper is
+  inconsistent on image counts (640, 480, over 400); the listing shows 336 pairs. Pixel size is not stated
+  (the paper gives mean grain area 1068 um2 only), so voxel size is null. Modality is reflected-light
+  optical microscopy per the paper (no contrast mode stated). Materials-science dataset, not biological.
+  enricher: channels 3 (RGB PNG tiles, was null).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: 'archive.zip  (152,135,492 B; 674 files, 157.6 MB uncompressed)
+
+      ├── Grains/      336 × <A-U>_<NN>_<NN>.png      (400 × 300 RGB)
+
+      ├── Segmented/   336 × <A-U>_<NN>_<NN>_seg.jpg  (400 × 300 grey mask)
+
+      └── weights HED/ deploy.prototxt, hed_pretrained_bsds.caffemodel (58.9 MB)'
+    n_files: 674
+    listing_complete: true
+  sample:
+    urls:
+    - https://www.kaggle.com/api/v1/datasets/download/peterwarren/exone-stainless-steel-316l-grains-500x::Grains/A_01_01.png
+    - https://www.kaggle.com/api/v1/datasets/download/peterwarren/exone-stainless-steel-316l-grains-500x::Segmented/A_01_01_seg.jpg
+    size_bytes: 252710
+    description: one 400 x 300 tile and its grain-boundary mask
+  arrays:
+  - role: raw
+    path_pattern: Grains/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 300
+    - 400
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+  - role: label
+    path_pattern: Segmented/*_seg.jpg
+    format: jpeg
+    axes: yx
+    shape:
+    - 300
+    - 400
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: grain boundary
+    - id: 255
+      name: grain
+    alignment: same-grid
+    alignment_notes: 'Segmented/<name>_seg.jpg pairs with Grains/<name>.png; same 300 x 400 grid. Binary
+      mask stored as lossy JPEG: the sample has values 0-7 and 242-255 (peak at 250), so it must be thresholded.
+      Class meaning (boundaries black, grains white) per the paper.'
+  notes: 'Listing: the archive zip central directory (peek_archive via the Kaggle download URL, which
+    redirects to a signed storage.googleapis.com URL; HEAD returns 404, so a ranged-GET HEAD replacement
+    was used). Kaggle API size 157.6 MB is the uncompressed total; the zip is 152,135,492 B. Sample A_01_01:
+    raw RGB uint8 0-255 (p1 2, p99 224); mask L uint8, 22 values clustered at 0-7 and 242-255 (JPEG artefacts
+    of a binary mask; one sample). Download: the Kaggle URL is direct (206, ranges, zip) but www.kaggle.com
+    is not on TensorSwitch''s allowlist (the redirect target is a 3-day signed GCS URL, not citable).
+    Voxel size not found; checked: PNG headers (no calibration), Kaggle description, paper (500X only,
+    no px size).'
