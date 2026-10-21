@@ -4,8 +4,8 @@ title: 'IPD-Brain: An Indian histopathology dataset for glioma subtype classific
 short_name: Glioma H&E whole-slide images with subtype labels
 description: 547 H&E-stained whole-slide images of brain tumours from 367 patients (Nizam's Institute of Medical Sciences,
   Hyderabad), scanned at 40x. 484 slides from 328 patients (glioblastoma 246, astrocytoma 133, oligodendroglioma 105 slides)
-  carry slide-level labels in a spreadsheet (diagnosis, subtype, WHO grade, IDH1 R132H, ATRX, TP53, Ki67 index); the
-  rest are unlabeled. Slide-level labels, no pixel annotations.
+  carry slide-level labels in a spreadsheet (diagnosis, subtype, WHO grade, IDH1 R132H, ATRX, TP53, Ki67 index); the rest
+  are unlabeled. Slide-level labels, no pixel annotations.
 landing_url: https://figshare.com/articles/dataset/IPD-Brain_An_Indian_histopathology_dataset_for_glioma_subtype_classification/27186087
 doi: 10.6084/m9.figshare.27186087
 repository: Figshare
@@ -48,9 +48,10 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: 'IPD_Brain.csv (one row per case): case number, age, sex, clinical features, radiology, diagnosis, WHO grade, site,
-    subtype (oligodendroglioma, astrocytoma, glioblastoma), Ki-67 percent, IDH1 R132H, ATRX and TP53 status; slide-level
-    labels only.'
+  format: IPD_Brain.csv, 328 rows (one per case) with columns Case Number, Age, Sex, C/F, Radiology, Diagnosis, WHO Grade,
+    SITE, Subtype (OLIGODENDROGLIOMA 72 / ASTROCYTOMA 88 / GLIOBLASTOMA 168 cases), ki67(in %), IDH1R132H (0/1), ATRX (retained
+    / Not Retained), p53 (0/1); slide-level labels only. Slides of a case are named <Case Number>.png or <Case Number>(a).png,
+    (b), ...
   source: manual
 ml:
   tasks:
@@ -70,16 +71,78 @@ provenance:
   - https://ndownloader.figshare.com/files/49727925
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11659595/fullTextXML
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1038%2Fs41597-024-04225-9%22&format=json&resultType=core&pageSize=3
-  confidence: 0.7
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-21T00:16:31Z'
-notes: 'Figshare holds IPD_Brain.csv (95 KB, from the figshare API), labelled.zip (10.8 GB, 482 PNG) and Unlabeled.zip (1.4 GB,
-  63 PNG), the two zips listed with peek_archive; these PNGs are a lower-resolution version (the figshare description points to india-data.org for the full-resolution
-  version, TIFF at four pyramid levels per the paper, after registration), so n_items 545 counts the figshare PNGs (the
-  paper counts 547 slides) and the pixel size of the PNGs is not stated (left null). CC BY 4.0 from the figshare record;
-  the paper itself is CC BY-NC-ND. The CSV was not opened, so the label columns come from the paper
-  Table 1; annotations_verified is false. No split is shipped (the paper used an 80:10:10 patient-wise split with 10-fold
-  cross-validation).'
+  annotations_verified: true
+  last_checked: '2026-10-21T01:36:29Z'
+notes: 'Figshare holds IPD_Brain.csv (95 KB, from the figshare API), labelled.zip (10.8 GB, 482 PNG) and Unlabeled.zip (1.4
+  GB, 63 PNG), the two zips listed with peek_archive; these PNGs (RGBA, alpha constant 255) are a lower-resolution version
+  (the figshare description points to india-data.org for the full-resolution version, TIFF at four pyramid levels per the
+  paper, after registration), so n_items 545 counts the figshare PNGs (the paper counts 547 slides) and the pixel size of
+  the PNGs is not stated (left null). CC BY 4.0 from the figshare record; the paper itself is CC BY-NC-ND. enricher: CSV read
+  (328 cases, columns as in annotations.format; was not opened). No split is shipped (the paper used an 80:10:10 patient-wise
+  split with 10-fold cross-validation).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  3 files, 12.2 GB (figshare API, exact)\n  IPD_Brain.csv     94,905 B   case-level labels (328 rows)\n  labelled.zip\
+      \      10.8 GB    482 png  ('IN Brain-0002.png', 'IN Brain-0004(a).png', ...)\n  Unlabeled.zip      1.4 GB     63 png\
+      \  ('IN Brain-0001.png', ...)\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/49728021::IN Brain-0002.png
+    - https://ndownloader.figshare.com/files/49656543
+    size_bytes: 17501386
+    description: One labelled slide PNG (case IN Brain-0002, oligodendroglioma) and the case-level label CSV.
+  arrays:
+  - role: raw
+    path_pattern: '*.png'
+    format: png
+    axes: yxs
+    shape:
+    - 7936
+    - 3968
+    - 4
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 37
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGBA PNG per slide; alpha is 255 everywhere in the sample (RGB in the first 3 samples). Shape from IN
+      Brain-0002.png. Lower-resolution export of the 0.22 um/px scans; the downsampling factor is not stated.
+  - role: label
+    path_pattern: IPD_Brain.csv
+    format: csv
+    axes: null
+    shape:
+    - 328
+    - 13
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: other
+    classes:
+    - id: null
+      name: OLIGODENDROGLIOMA
+    - id: null
+      name: ASTROCYTOMA
+    - id: null
+      name: GLIOBLASTOMA
+    alignment: not-applicable
+    alignment_notes: 'Slide-level table. Pairing rule: Case Number equals the PNG stem without the (a)/(b) suffix; only slides
+      in labelled.zip have a row.'
+  notes: 'Listed the figshare record and both zips (range requests). Probed and decoded labelled.zip::IN Brain-0002.png (17.2
+    MB): 7936 x 3968 x 4 uint8, RGB range [37..255], alpha 255 (one sample). Read IPD_Brain.csv in full (94,905 B). Voxel
+    size not set: the paper states 0.22 um/px for the 40x scans and TIFF pyramids at downsamples 1/4/16/32 (hosted at india-data.org),
+    but the figshare PNGs are "a lower resolution version" with no stated scale; checked PNG header (probe reports no calibration), figshare
+    API description, paper full text. download_url stays labelled.zip (the main archive); Unlabeled.zip and the CSV are the
+    other two direct figshare files.'
