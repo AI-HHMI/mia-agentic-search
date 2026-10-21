@@ -3,9 +3,9 @@ id: mendeley-8phmy565nk-th-dopaminergic-neurons
 title: Mouse substantia nigra sections with manually annotated TH-positive dopaminergic neuron somata
 short_name: Mouse dopaminergic neuron somata (histology)
 description: 114 whole-section brightfield histology images (8-bit RGB PNG, 0.46 um/pixel, Hamamatsu NanoZoomer
-  20x) of mouse coronal brain sections containing the substantia nigra, stained for tyrosine hydroxylase (TH)
-  with a haematoxylin or Nissl background stain. Each image has a 16-bit label image in which every one of
-  the 18,193 manually labelled TH-positive cell bodies has its own integer value (1..n).
+  20x) of mouse coronal brain sections containing the substantia nigra, stained for tyrosine hydroxylase
+  (TH) with a haematoxylin or Nissl background stain. Each image has a 16-bit label image in which every
+  one of the 18,193 manually labelled TH-positive cell bodies has its own integer value (1..n).
 landing_url: https://data.mendeley.com/datasets/8phmy565nk/1
 doi: 10.17632/8phmy565nk.1
 repository: other
@@ -33,8 +33,8 @@ imaging:
   channels: 3
   organism:
   - Mus musculus
-  sample: 35 um coronal mouse brain sections containing the substantia nigra from several animal studies, TH immunostain
-    with haematoxylin or Nissl counterstain
+  sample: 35 um coronal mouse brain sections containing the substantia nigra from several animal studies,
+    TH immunostain with haematoxylin or Nissl counterstain
   labels_stains:
   - tyrosine hydroxylase
   - haematoxylin
@@ -45,15 +45,15 @@ data:
   size_bytes: 891074279
   n_items: 114
   access: open
-  download_url: https://data.mendeley.com/public-files/datasets/8phmy565nk/files/ff51f2b4-441c-4557-8808-43a3f29b06cd/file_downloaded
+  download_url: https://prod-dcd-datasets-public-files-eu-west-1.s3.eu-west-1.amazonaws.com/d02b6053-d9a3-465d-b7ae-4da5f3d18adf
   download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
   coverage: dense
-  format: one 16-bit PNG label image per RGB image, each TH-positive cell body has a unique value 1..n; the zip
-    holds 228 PNGs under image/ plus a matching label folder
+  format: one 16-bit PNG label image per RGB image (label/<name>.png pairs with image/<name>.png), each
+    TH-positive cell body has a unique value 1..n
   source: manual
 ml:
   tasks:
@@ -71,16 +71,79 @@ provenance:
   - https://data.mendeley.com/datasets/8phmy565nk/1
   - https://data.mendeley.com/public-api/datasets/8phmy565nk
   - https://prod-dcd-datasets-public-files-eu-west-1.s3.eu-west-1.amazonaws.com/d02b6053-d9a3-465d-b7ae-4da5f3d18adf
-  confidence: 0.8
+  confidence: 0.85
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-21T03:26:39Z'
-notes: 'Facts from the Mendeley page and public API record (description, method, licence, file list). The single
-  zip (891 MB, 228 PNG files) was listed with peek_archive via the S3 location the download link redirects to:
-  only the image/ folder names were visible in the first entries, so the label folder name and file names were
-  not confirmed (annotations_verified false). No paper is linked on the record; the method text cites an earlier
-  Genentech neuroanatomy segmentation study (doi 10.1016/j.neuri.2023.100131, not open access in Europe PMC)
-  and an OpenReview submission that could not be read, so it is not listed in publications. No train/test
-  split is provided.'
+  annotations_verified: true
+  last_checked: '2026-10-21T04:11:35Z'
+notes: 'Facts from the Mendeley page and public API record (description, method, licence, file list: one
+  zip, cell_annotations.zip). enricher: zip index read (228 PNGs: 114 image/ + 114 label/, same names)
+  and one pair sampled, so annotations_verified is now true; download_url set to the S3 object the Mendeley
+  link redirects to (the Mendeley URL answers scripted requests with 403). No paper is linked on the record;
+  the method text cites an earlier Genentech neuroanatomy segmentation study (doi 10.1016/j.neuri.2023.100131,
+  not open access) and an OpenReview submission that could not be read, so it is not listed in publications.
+  No train/test split is provided.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: 'cell_annotations.zip  (891,074,279 B; 228 PNGs, 894.9 MB uncompressed)
+
+      ├── image/  114 × SN<NN>_Section<NN>_<L|R>.png  (8-bit RGB)
+
+      └── label/  114 × SN<NN>_Section<NN>_<L|R>.png  (16-bit instance ids)'
+    n_files: 228
+    listing_complete: true
+  sample:
+    urls:
+    - https://prod-dcd-datasets-public-files-eu-west-1.s3.eu-west-1.amazonaws.com/d02b6053-d9a3-465d-b7ae-4da5f3d18adf::image/SN03_Section01_L.png
+    - https://prod-dcd-datasets-public-files-eu-west-1.s3.eu-west-1.amazonaws.com/d02b6053-d9a3-465d-b7ae-4da5f3d18adf::label/SN03_Section01_L.png
+    size_bytes: 2989516
+    description: 'SN03_Section01_L: one 1117 x 1473 RGB section and its instance label image'
+  arrays:
+  - role: raw
+    path_pattern: image/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1117
+    - 1473
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+  - role: label
+    path_pattern: label/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1117
+    - 1473
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 88
+    normalization: none
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1..n
+      name: TH-positive cell body
+    alignment: same-grid
+    alignment_notes: label/<name>.png pairs with image/<name>.png (same file name); same spatial grid
+      in the sample (1117 x 1473). Per the description each cell has a value 1..n.
+  notes: 'Listing: the zip central directory read by range (peek_archive; 228 members). tools/listing.py
+    cannot list this URL (no .zip suffix; it treats the S3 host as a bucket listing, 403). Sample SN03_Section01_L:
+    raw RGB uint8 0-255, mean 182; label uint16 0-88, 89 ids, 5.9% foreground (one sample). Image sizes
+    vary (image PNGs 3.0-3.7+ MB). Download: the zip is direct on S3 (206, ranges, members readable) but
+    prod-dcd-datasets-public-files-eu-west-1.s3.eu-west-1.amazonaws.com is not on TensorSwitch''s allowlist;
+    the data.mendeley.com link returns 403 to tools.'
