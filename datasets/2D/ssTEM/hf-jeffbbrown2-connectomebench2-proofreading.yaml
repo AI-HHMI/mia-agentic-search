@@ -1,0 +1,144 @@
+schema_version: '1.2'
+id: hf-jeffbbrown2-connectomebench2-proofreading
+title: ConnectomeBench2 - EM and mesh renderings of expert connectome proofreading edits (mouse, fly,
+  human, zebrafish)
+short_name: Connectome proofreading EM crops (4 species)
+description: 401,170 samples of real merge and split proofreading edits and synthetic controls from four
+  open EM connectomes (MICrONS mouse, FlyWire fly, H01 human, zebrafish). Each sample has 224 x 224 mesh
+  renderings and, for 251,499 samples, 224 x 224 EM views (xy, xz, yz, oblique) whose channels are raw
+  EM and the masks of one or two segments. Labels are the proofreading decisions, with train, validation
+  and test splits.
+landing_url: https://huggingface.co/datasets/jeffbbrown2/ConnectomeBench2
+doi: null
+repository: HuggingFace
+accession: jeffbbrown2/ConnectomeBench2
+authors:
+- Brown, J.
+- Farkas, T.
+- Razgar, G.
+- Boyden, E. S.
+publications:
+- title: 'ConnectomeBench2: A unified benchmark for automated connectomic proofreading'
+  doi: null
+  url: https://arxiv.org/abs/2606.21116
+date_published: '2026-06-23'
+imaging:
+  modality:
+  - ssTEM
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Mus musculus
+  - Drosophila melanogaster
+  - Homo sapiens
+  - Danio rerio
+  sample: renderings cut from the MICrONS (mouse cortex), FlyWire (fly brain), H01 (human cortex) and
+    fish1 (larval zebrafish) EM connectomes
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: 121357867279
+  n_items: 401170
+  access: open
+  download_url: https://huggingface.co/datasets/jeffbbrown2/ConnectomeBench2
+  download_method: git-lfs
+annotations:
+  present: true
+  types:
+  - classification
+  - instance-segmentation
+  coverage: dense
+  format: parquet rows with proofreading labels (sample_type, same_neuron, task_routing), segment A/B
+    masks in the EM PNG channels and the mesh renderings
+  source: proofread
+ml:
+  tasks:
+  - classification
+  - segmentation
+  splits_provided: true
+  benchmark: ConnectomeBench2
+  baseline_code_url: null
+license:
+  spdx: custom
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-21T04:45:00Z'
+  evidence_urls:
+  - https://huggingface.co/api/datasets/jeffbbrown2/ConnectomeBench2
+  - https://arxiv.org/abs/2606.21116
+  - https://arxiv.org/html/2606.21116v1
+  - https://huggingface.co/datasets/jeffbbrown2/ConnectomeBench2/resolve/main/README.md
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-21T04:42:14Z'
+notes: 'HF listing: 515 files, 121.4 GB (train 403, val 55, test 48 parquet shards, metadata sidecars,
+  croissant.json); 401,170 samples. Main branch is the V1 submission; the card says the v2 revision matches
+  the arXiv paper. Licence: card says "other" and asks users to comply with upstream licenses (MICrONS
+  and H01 CC BY 4.0, FlyWire and fish1 CC BY-NC 4.0 per the paper), so spdx is custom. Labels are expert
+  proofreading edits from CAVE, not pixel annotations; EM views are 224 x 224 slices (render extents 1.5-2.5
+  um, voxel size not stated). Modality ssTEM is a best fit; H01 and fish1 acquisition not checked. enricher:
+  dimensionality 2D (was 3D): the EM inputs are single 224 x 224 PNG slices (xy, xz, yz, oblique) per
+  the card.'
+technical:
+  method: metadata-only
+  size_source: file-listing
+  layout:
+    tree: 'README.md, croissant.json, shards.csv-style index (.parquet)
+
+      figures/  channel_decomposition.png
+
+      metadata/{train,val,test}.parquet   (ids, labels, no image bytes; 19.6 MB)
+
+      train/train-00000..00402.parquet   (403 shards, 96.3 GB)
+
+      val/val-00000..00054.parquet       (55 shards, 13.0 GB)
+
+      test/test-00000..00047.parquet     (48 shards, 12.0 GB)'
+    n_files: 515
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: '*/*-[0-9]*.parquet (em_xy)'
+    format: other
+    axes: yxc
+    shape:
+    - 224
+    - 224
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Per the card: PNG bytes in parquet columns em_xy / em_xz / em_yz / em_best, (224,
+      224, 3) uint8; channel 0 = raw EM, 1 = segment A mask, 2 = segment B mask (so raw and masks share
+      the grid). Null when has_em is false.'
+  - role: other
+    path_pattern: '*/*-[0-9]*.parquet (geometry)'
+    format: other
+    axes: null
+    shape:
+    - 3
+    - 7
+    - 224
+    - 224
+    shape_varies: false
+    dtype: float16
+    compression: other
+    normalization: unknown
+    alignment_notes: 'Mesh renderings: compressed .npz payloads in columns geometry / geometry_single,
+      (3 views, 7 channels, 224, 224) float16 per the card.'
+  notes: 'Listing: tools/listing.py on the HF dataset (515 files, exact sizes, 121,357,867,279 B). Array
+    facts are from the dataset card (README), not from reading shards: parquet needs pyarrow, which is
+    not an allowed inspection library. Proofreading labels are row columns (sample_type, same_neuron,
+    task_routing), not files. Download: no single archive; shards are direct resolve/main URLs on huggingface.co,
+    but a parquet shard is not an image file TensorSwitch converts. Voxel size not found; checked: card
+    (render extents only), paper (per the harvester). Upstream volumes have their own voxel sizes, but
+    the renders are resampled to 224 px views.'
