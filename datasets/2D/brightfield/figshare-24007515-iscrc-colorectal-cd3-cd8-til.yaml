@@ -4,8 +4,8 @@ title: 'ISCRC dataset: ImmunoScore evaluation in ColoRectal Cancer patients'
 short_name: Colorectal CD3/CD8 IHC TIL density (brightfield)
 description: 385 smartphone-camera photographs (4608 x 3456, x200 objective) of CD3 and CD8 immunostained colorectal cancer
   tissue-microarray-style cores from 104 patients (tumour centre and invasive margin per marker), with per-region percentage
-  of positive lymphocytes, Low or High density scores and a spreadsheet of clinical, pathological and follow-up data
-  (Habib Thameur Hospital, Tunis).
+  of positive lymphocytes, Low or High density scores and a spreadsheet of clinical, pathological and follow-up data (Habib
+  Thameur Hospital, Tunis).
 landing_url: https://doi.org/10.6084/m9.figshare.24007515
 doi: 10.6084/m9.figshare.24007515
 repository: Figshare
@@ -50,9 +50,10 @@ annotations:
   - classification
   - counts
   coverage: dense
-  format: 'data_csv.csv and data_excel.xlsx (one row per patient, ID matches the image folder number): percent CD3+ and
-    CD8+ cells with scores for invasive margin (IM) and tumour centre (CT), Low or High density classes, plus clinical,
-    pathological and follow-up variables; Coding.txt explains the codes. Image names are (ID)_(marker)_(area).jpg.'
+  format: 'labels.csv (semicolon-separated, ID;Label (%)): one row per image, ID = image stem (e.g. 38_CD3_CT), value = percent
+    positive lymphocytes; data_csv.csv / data_excel.xlsx (one row per patient): %CD3+/%CD8+ and Low/High scores for IM and
+    CT plus clinical, pathological and follow-up data; Coding.txt explains the codes; Missing.csv lists missing images. Image
+    names are <ID>_<CD3|CD8>_<CT|MI>.jpg.'
   source: manual
 ml:
   tasks:
@@ -76,10 +77,64 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-21T00:16:31Z'
+  last_checked: '2026-10-21T01:45:22Z'
 notes: 'Zip listed with peek_archive: 385 JPEG in Images/<patient 1..104>/ (some patients lack images; folder marked with
   an underscore), plus Coding.txt, data_csv.csv, data_excel.xlsx; the CSV header was read (columns ID, Age, Sex, ... percent
   and score of CD3 and CD8 per IM and CT). Labels are patient-level percentages and Low/High classes from a pathologist semi-quantitative
   estimate, not per-cell annotations; the paper states the images are meant to train models predicting TIL density. Pixel
-  size not stated (smartphone photographs through a microscope, x200). Zip layout: five files stated by the paper, four listed by peek_archive (Coding.txt,
-  data_csv.csv, data_excel.xlsx and a .txt).'
+  size not stated (smartphone photographs through a microscope, x200). enricher: zip root also holds labels.csv (per-image
+  percent labels) and Missing.csv; 103 patient folders (80 has none). Image area code is MI (not IM) in file names.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  1 file, 2,083,021,019 B (figshare API, exact)\n  immunoscore.zip   390 members\n    Coding.txt        3,179\
+      \ B   variable codes\n    data_csv.csv     14,929 B   one row per patient\n    data_excel.xlsx\n    labels.csv     \
+      \   5,265 B   one row per image (ID;Label (%))\n    Missing.csv         389 B\n    Images/<patient ID>/   103 folders\
+      \ (e.g. 38/, 3_/), 385 jpg\n      <ID>_CD3_CT.jpg  <ID>_CD3_MI.jpg  <ID>_CD8_CT.jpg  <ID>_CD8_MI.jpg\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/42101199::Images/38/38_CD3_CT.jpg
+    - https://ndownloader.figshare.com/files/42101199::labels.csv
+    size_bytes: 6456295
+    description: One CD3 tumour-centre photo (patient 38) and the per-image label table.
+  arrays:
+  - role: raw
+    path_pattern: Images/*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 3456
+    - 4608
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    lossy: true
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Smartphone photo through the eyepiece; decoded sample 38_CD3_CT.jpg is 3456 x 4608
+      x 3 uint8, range 0-255 (one sample).'
+  - role: label
+    path_pattern: labels.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'Image-level regression label. Pairing rule: ID column equals the image file stem (<patient>_<CD3|CD8>_<CT|MI>).
+      Patient-level Low/High classes are in data_csv.csv (ID = patient folder).'
+  notes: 'Listed the zip by range requests (385 JPEG + 5 tables). Read Coding.txt, data_csv.csv, labels.csv and Missing.csv
+    in full and decoded Images/38/38_CD3_CT.jpg (6.45 MB). Voxel size not found; checked: JPEG header (no calibration), figshare
+    API record, Coding.txt, paper (x200 smartphone photographs, no um/pixel). download_url is the single direct zip (usable,
+    range requests).'
