@@ -2,9 +2,8 @@ schema_version: '1.2'
 id: edmond-hy5syn-ic-metal-layer-sem
 title: A Real-World Metal-Layer SEM Image Dataset with Partial Labels
 short_name: IC metal-layer SEM tracks and vias (SEM)
-description: >-
-  648 backscattered-electron SEM images (4096 x 3536 px, 14.65 nm/px) of the metal-1 (327 images) and metal-2 (321 images) layers of a commercial 128 nm-node integrated circuit.
-  The metal-2 images come with SVG labels of tracks and vias, the metal-1 images are unlabeled.
+description: 648 backscattered-electron SEM images (4096 x 3536 px, 14.65 nm/px) of the metal-1 (327 images) and metal-2 (321 images) layers of a commercial 128 nm-node integrated circuit. The metal-2 images
+  come with SVG labels of tracks and vias, the metal-1 images are unlabeled.
 landing_url: https://edmond.mpg.de/dataset.xhtml?persistentId=doi:10.17617/3.HY5SYN
 doi: 10.17617/3.HY5SYN
 repository: other
@@ -50,8 +49,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: partial
-  format: SVG files (labels/m2/labelNNNN.svg) with tracks and vias of the metal-2 layer
-  source: mixed
+  format: 'SVG files (dataset/labels/m2/labelNNNN.svg): track polygons as <path> (fill lime), vias as <circle> (fill red)'
+  source: proofread
 ml:
   tasks:
   - segmentation
@@ -70,15 +69,70 @@ provenance:
   - https://github.com/emsec/unsupervised-ic-sem-segmentation
   - https://api.crossref.org/works/10.1145/3605769.3624000
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.21203%2Frs.3.rs-4883147%2Fv1%22&format=json&resultType=core&pageSize=3
+  - https://github.com/emsec/unsupervised-ic-sem-segmentation/blob/main/libs/labels.py
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-21T02:30:00Z'
-notes: >-
-  Materials / hardware-security SEM (an integrated circuit, no organism). The 6.4 GB dataset.zip (Edmond API) was listed from its zip64 index: dataset/sems/m1 (327 PNG), dataset/sems/m2 (321 PNG),
-  dataset/labels/m2 (321 SVG), plus LICENSE and README. Labels are partial: only M2 has them. They were made with thresholding, edge detection and size/position/complexity filtering, then
-  manually validated and corrected; the dataset description warns of duplicate vias and tracks spanning several images missing from some label files. The dataset is intended for unsupervised
-  training (the paper's approach needs no labels), so labels serve evaluation. Paper full text is not open access (checked Europe PMC and Crossref for both the ASHES'23 paper and the extended
-  preprint); the 648-image count comes from the preprint abstract and matches the zip listing. Pixel size from the dataset description. Image dtype not checked.
+  last_checked: '2026-10-21T03:00:00Z'
+notes: 'Materials / hardware-security SEM of an integrated circuit: no organism. Modality: SEM (electron microscopy, backscattered-electron detector); the schema has no plain SEM value, hence other. Labels
+  are partial: only the 321 M2 images (sems/m2) have SVG labels, the 327 M1 images are unlabeled. The README says labels were made with thresholding, edge detection and size/position/complexity filtering,
+  then manually validated and corrected; duplicate vias are possible and tracks spanning several images may be missing from some label files. The dataset targets unsupervised training (labels serve evaluation).
+  Paper full text is not open access. Pixel size 14.65 nm from the README and dataset description. enricher: annotations.source proofread from README (was mixed).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "dataset.zip (6,396,523,974 bytes, 971 files)\n└── dataset/\n    ├── LICENSE, README\n    ├── sems/\n    │   ├── m1/  327 × semNNNN.png (sem0000–sem0326, 3.26 GB)\n    │   └── m2/  321 × semNNNN.png\
+      \ (sem0000–sem0320, 3.09 GB)\n    └── labels/\n        └── m2/  321 × labelNNNN.svg (label0000–label0320, 45 MB)"
+    n_files: 971
+    listing_complete: true
+  sample:
+    urls:
+    - https://edmond.mpg.de/api/access/datafile/223856::dataset/sems/m2/sem0000.png
+    - https://edmond.mpg.de/api/access/datafile/223856::dataset/labels/m2/label0000.svg
+    size_bytes: 9798768
+    description: one M2 SEM tile (4096 x 3536 px) and its SVG label of tracks and vias
+  arrays:
+  - role: raw
+    path_pattern: dataset/sems/*/sem*.png
+    format: png
+    axes: yx
+    shape:
+    - 3536
+    - 4096
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 6
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+  - role: label
+    path_pattern: dataset/labels/m2/label*.svg
+    format: other
+    axes: yx
+    shape:
+    - 3536
+    - 4096
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    normalization: unknown
+    encoding: polygons
+    classes:
+    - id: path
+      name: track
+    - id: circle
+      name: via
+    alignment: same-grid
+    alignment_notes: 'Vector SVG labels: width/height/viewBox 4096 x 3536, the PNG''s pixel grid. labels/m2/labelNNNN.svg pairs with sems/m2/semNNNN.png (same 4-digit number; the authors'' train.py/eval.py
+      load label{tile_nr:04}.svg per tile). <path> elements are track polygons (drawn lime), <circle cx cy r> are vias (drawn red); class mapping from libs/labels.py in the authors'' repo. M1 images have
+      no labels.'
+  notes: 'Listing from the zip''s central directory (tools/peek_archive.py; tools/listing.py could not list this Dataverse URL, which has no .zip suffix and whose presigned S3 redirect answers HEAD with
+    403, so the tools were run with a HEAD fix). Size 6,396,523,974 bytes is the zip''s Content-Range total and the Edmond API file size. PNG header: 3536 x 4096 uint8 grey, deflate. value_range from one
+    sample (sems/m2/sem0000.png: mean 61, std 31, p1 27, p99 194, 0.25% at 255). label0000.svg: 751 <path> tracks, 701 <circle> vias. SVG is vector data with no dtype; it must be rasterized for training.
+    Download: dataset.zip at https://edmond.mpg.de/api/access/datafile/223856 is direct (range requests, zip members readable), but edmond.mpg.de is not on TensorSwitch''s fetch allowlist. Readiness blockers
+    that are facts: 2D, no organism (a chip), no SEM value in the modality enum.'
