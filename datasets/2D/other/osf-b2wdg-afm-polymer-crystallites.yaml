@@ -1,0 +1,151 @@
+schema_version: '1.2'
+id: osf-b2wdg-afm-polymer-crystallites
+title: Crystallites (AFM) - MDS B&MG
+short_name: Spherulite and lamellar crystallites (AFM)
+description: 100 AFM images (512x512 TIFF) of spherulite and lamellar crystals acquired at Lawrence Livermore
+  National Laboratory, with 100 PNG masks of the crystallites. Component of the Materials Data Segmentation
+  Benchmark and Model Garden (MDS B&MG); 13 trained segmentation checkpoints and inference/evaluation
+  scripts are provided alongside.
+landing_url: https://osf.io/b2wdg/
+doi: null
+repository: OSF
+accession: b2wdg
+authors:
+- Lu, Mingjian
+- Ciardi, Thomas
+- Tripathi, Pawan
+- Wu, Yinghui
+- French, Roger H.
+- Bruckman, Laura
+- Kalutotage, Maliesha Sumudumalie
+publications: []
+date_published: '2024-05-20'
+imaging:
+  modality:
+  - other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: Spherulite and lamellar crystallites imaged by atomic force microscopy
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  - png
+  size_bytes: 4911136177
+  n_items: 491
+  access: open
+  download_url: https://osf.io/b2wdg/files/osfstorage
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: 8-bit PNG masks in Masks/, one per image with the same stem; crystallite 255 vs background 0
+    (anti-aliased edges)
+  source: unknown
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: Materials Data Segmentation Benchmark (MDS B&MG)
+  baseline_code_url: null
+license:
+  spdx: BSD-3-Clause
+  url: https://opensource.org/licenses/BSD-3-Clause
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-21T12:25:20Z'
+  evidence_urls:
+  - https://mds3-coe.com/?p=729
+  - https://osf.io/b2wdg/
+  - https://api.osf.io/v2/nodes/b2wdg/
+  - https://api.osf.io/v2/nodes/b2wdg/files/osfstorage/
+  - https://api.osf.io/v2/nodes/b2wdg/wikis/
+  - https://api.osf.io/v2/wikis/kzr3j/content/
+  - https://osf.io/download/n7qpy/
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-21T13:15:00Z'
+notes: 'Materials-science AFM (no organism); the schema has no AFM value, hence modality other. OSF component
+  b2wdg: Images 491 TIFF, Masks 491 PNG, Models 13 checkpoints (4.8 GB), Scripts 2 .py. Image size 512x512
+  and LLNL as acquisition site from the wiki ("~500 annotated images"); pixel size and scan size not stated
+  on the wiki, listing, TIFF header or scripts; no paper found. License BSD 3-Clause from the OSF project
+  license record (a software license applied to data). Annotation procedure and source not described.
+  enricher: n_items 100 -> 491 and size 27.4 MB -> 4,911,136,177 B (full OSF listing incl. models; the
+  harvester saw only the first API page; images + masks are 134,241,832 B); formats + png (masks).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'Images/   491 .tiff  128.8 MB  e.g. FKAA_001_50C_0615A.tiff, FK_FFF11_50C_M_0009A.tiff
+
+      Masks/    491 .png     5.5 MB  same stems as Images/
+
+      Models/   12 .ckpt (U-Net / U-Net++) + sam_vit_h_4b8939.pth  4.78 GB
+
+      Scripts/  dataset.py, evaluate.py
+
+      '
+    n_files: 997
+    listing_complete: true
+  sample:
+    urls:
+    - https://osf.io/download/6659efd6d835c424594ce309/
+    - https://osf.io/download/6659f20f77ff4c4a42e04493/
+    size_bytes: 263932
+    description: Images/FKAA_001_50C_0650A.tiff and Masks/FKAA_001_50C_0650A.png
+  arrays:
+  - role: raw
+    path_pattern: Images/*.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Single-page plain greyscale TIFF (photometric 1, 1 sample per pixel).
+  - role: label
+    path_pattern: Masks/*.png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: crystallite
+    alignment: same-grid
+    alignment_notes: 'Pairing: Masks/<stem>.png <-> Images/<stem>.tiff (all 491 stems match). Sampled
+      pair has identical 512x512 shapes. The sampled mask is 0/255 except 347 anti-aliased edge pixels
+      with values in between, so threshold before training.'
+  notes: 'Listing: OSF API v2 file tree walked folder by folder (1 req/s): 997 files, 4,911,136,177 B
+    exact. probe.py: TIFF 512x512 uint8, plain, uncompressed, no calibration. sample.py on FKAA_001_50C_0650A:
+    raw min 0, max 255, mean 48.8, p1 24, p99 118; mask 157 distinct values, 257,869 px = 0, 3,928 = 255,
+    347 in between. value_range is from this one pair. Scripts/dataset.py (read, not run) loads images
+    as <path><channel>.tiff with channel A and asserts masks are 0/1 after loading. Voxel size not found;
+    checked: TIFF header, OSF node and wiki, Scripts/dataset.py, mds3-coe.com page; no paper. Each OSF
+    file is a direct download (osf.io/download/<id>/); no archive offered, so download_url stays the OSF
+    storage page.'
