@@ -1,0 +1,132 @@
+schema_version: '1.2'
+id: hf-mario-dg-cho-brightfield-single-cell-boxes
+title: Brightfield Microscopy SCC Dataset (filtered, no well edge)
+short_name: CHO single-cell detection boxes (brightfield)
+description: 24,285 brightfield 512x512 patches of eGFP-expressing CHO cells in 96-well plates (CELLAVISTA high-throughput
+  microscope, 10x), with normalised bounding boxes of single cells and train/validation/test splits; patches with visible
+  well edges removed.
+landing_url: https://huggingface.co/datasets/mario-dg/brightfield-microscopy-scc-filtered
+doi: null
+repository: HuggingFace
+accession: mario-dg/brightfield-microscopy-scc-filtered
+authors:
+- de Jesus da Graca, Mario
+- Dahlkemper, Marius
+- Stelldinger, Peer
+publications:
+- title: Diffusion-Based Synthetic Brightfield Microscopy Images for Enhanced Single Cell Detection
+  doi: null
+  url: https://arxiv.org/abs/2512.00078
+date_published: '2024-04-13'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Cricetulus griseus
+  sample: stably transfected CHO-K1 and CHO DG44 cells expressing eGFP, 96-well plates at three seeding densities (300, 150
+    and 1 cell per well)
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: 5795218862
+  n_items: 24285
+  access: open
+  download_url: null
+  download_method: api
+annotations:
+  present: true
+  types:
+  - bounding-box
+  coverage: unknown
+  format: Hugging Face parquet columns objects.bbox (normalised x, y, w, h) and objects.categories per image; label column
+    holds the split
+  source: proofread
+ml:
+  tasks:
+  - detection
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/mario-dg/Diffusion-Based-Brightfield-Image-Generation
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-10T21:19:36Z'
+  evidence_urls:
+  - https://huggingface.co/datasets/mario-dg/brightfield-microscopy-scc-filtered
+  - https://huggingface.co/api/datasets/mario-dg/brightfield-microscopy-scc-filtered
+  - https://arxiv.org/html/2512.00078v1
+  - https://raw.githubusercontent.com/mario-dg/Diffusion-Based-Brightfield-Image-Generation/main/README.md
+  confidence: 0.62
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-10T22:50:00Z'
+notes: 'No license on the Hugging Face card, in the card metadata or in the GitHub repo (no LICENSE file); the arXiv CC BY
+  4.0 covers the paper only. HF lists 20,558 train / 2,527 validation / 1,200 test rows (24,285). Images are 512x512 patches
+  of 3056x3056 CELLAVISTA 3.1 RS HE 10x 8-bit grayscale brightfield images; patches with visible well edges removed. The unfiltered
+  sibling mario-dg/brightfield-microscopy-scc (34,043 rows) and synthetic-mix sets scc_10/30/50 are not covered. Pixel size
+  not stated. Images ship inside parquet (not a listed format), hence formats other. enricher: annotations.source proofread
+  from paper Sec. 3.2 (real images: boxes from binarized eGFP channel, then reviewed and refined by an expert in Roboflow)
+  (was unknown). enricher: size from complete HF file listing (was the card download_size); annotations_verified after reading
+  rows.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./\n  .gitattributes\n  README.md\ndata/   13 files, 5.8 GB\n  train-0000[0-9]-of-00010.parquet   (~470-500 MB\
+      \ each)\n  validation-0000[01]-of-00002.parquet   (~300 MB each)\n  test-00000-of-00001.parquet   (287 MB)\n"
+    n_files: 15
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/mario-dg/brightfield-microscopy-scc-filtered/resolve/main/data/test-00000-of-00001.parquet
+    size_bytes: 286674405
+    description: 'The test split: one parquet shard with 1,200 rows (image PNG bytes + bounding boxes); images and labels
+      share the file.'
+  arrays:
+  - role: raw
+    path_pattern: data/*.parquet
+    format: other
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 4
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Parquet column image: PNG bytes per row (IHDR read from the shard: 512x512, 8-bit, colour type 6 = RGBA).
+      The paper says 8-bit grayscale; the RGBA samples are not identical (alpha channel), RGB equality not checked.'
+  - role: label
+    path_pattern: data/*.parquet
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: float64
+    compression: unknown
+    encoding: boxes-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Same parquet row as the image: objects.bbox (list of [x, y, w, h] floats normalised to the 512x512 patch,
+      e.g. [0.244, 0.667, 0.098, 0.100]) and objects.categories (int64, only 0 seen). Whether x, y is the box corner or centre
+      is not documented. label column = split (0 test, 1 train, 2 val); well_edge bool.'
+  notes: 'Listing: Hugging Face API, 15 files, 5,795,218,862 bytes (complete). Raw header: first 256 KB of test-00000-of-00001.parquet
+    (embedded PNGs; parquet pages look snappy-compressed). value_range from one sample: the datasets-server PNG rendition
+    of test row 1 (512x512x4 uint8, 0..255, mean 230); no parquet reader is available to the enricher, so values are from
+    the server rendition, not the shard bytes. Voxel size not found; checked: HF card and API metadata, datasets-server features,
+    paper (arXiv 2512.00078 HTML, full text: only 10x objective, no um/pixel), GitHub README. Not convertible as is: images
+    are PNG bytes inside parquet, and the dataset is 2D. data.download_url stays null: the dataset is 13 parquet shards (direct
+    resolve/main URLs in the listing), no single archive.'
