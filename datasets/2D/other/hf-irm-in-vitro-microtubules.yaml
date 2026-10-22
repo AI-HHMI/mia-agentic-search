@@ -1,0 +1,144 @@
+schema_version: '1.2'
+id: hf-irm-in-vitro-microtubules
+title: Real IRM Images of in vitro Microtubules (HTW-KI-Werkstatt/IRM-in-vitro-microtubules)
+short_name: In vitro microtubules IRM instance masks
+description: 66 real 512x512 interference reflection microscopy (IRM) images of in vitro reconstituted microtubules
+  growing from stabilized seeds, with manually annotated per-microtubule instance masks (stack of binary masks per
+  image). Real-data companion to the synthetic SynthMT benchmark, used in the paper as the human-labelled evaluation
+  set.
+landing_url: https://huggingface.co/datasets/HTW-KI-Werkstatt/IRM-in-vitro-microtubules
+doi: null
+repository: HuggingFace
+accession: HTW-KI-Werkstatt/IRM-in-vitro-microtubules
+authors:
+- Koddenbrock M
+- Westerhoff J
+- Fachet D
+- Reber S
+- Gers FA
+- Rodner E
+publications:
+- title: Synthetic data enables human-grade microtubule analysis with foundation models for segmentation
+  doi: 10.1371/journal.pcbi.1013901
+  url: https://doi.org/10.1371/journal.pcbi.1013901
+date_published: '2026-01-28'
+imaging:
+  modality:
+  - other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 2
+  organism: []
+  sample: In vitro reconstituted microtubules grown from stabilized seeds (cell-free assay), label-free
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: 29219757
+  n_items: 66
+  access: open
+  download_url: https://huggingface.co/datasets/HTW-KI-Werkstatt/IRM-in-vitro-microtubules/resolve/main/data/train-00000-of-00001.parquet
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: per-image stack of binary instance masks (512x512, one per microtubule), stored as image lists in a parquet
+    file
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/ml-lab-htw/SynthMT
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-08T15:17:30Z'
+  evidence_urls:
+  - https://huggingface.co/datasets/HTW-KI-Werkstatt/IRM-in-vitro-microtubules
+  - https://huggingface.co/api/datasets/HTW-KI-Werkstatt/IRM-in-vitro-microtubules
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13167036/fullTextXML
+  - https://journals.plos.org/ploscompbiol/article/file?type=supplementary&id=10.1371/journal.pcbi.1013901.s001
+  - https://huggingface.co/datasets/HTW-KI-Werkstatt/IRM-in-vitro-microtubules/resolve/main/README.md
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-08T16:50:00Z'
+notes: 'One parquet file (data/train-00000-of-00001.parquet, 29,211,448 B, 66 rows: id, image, mask list), so formats
+  is other. Images are 512x512 crops from 44 IRM videos from two labs; two annotators labelled the 66 images, the
+  card does not say whose masks are released. IRM (label-free reflection microscopy) has no schema value, hence
+  other; seeds imaged by fluorescence on the same widefield systems (S1 Appendix sec. 3). enricher: channels 2 (S1:
+  images "combine the IRM signal of the growing MTs with a separate fluorescence channel for the seeds"). enricher:
+  voxel size stays null: S1 gives "9.0909 to 9.2308 pixels per micrometer" (~108.3-110.0 nm/px) across two setups,
+  not one value. enricher: organism stays empty: tubulin "from various sources, ranging from commercially available
+  mammalian tubulin to protozoan tubulin" (S1), not per image. enricher: download_url is now the direct parquet
+  file. SynthMT (synthetic) not included.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: '.gitattributes
+
+      README.md                                 dataset card (CC-BY-4.0)
+
+      data/train-00000-of-00001.parquet       29,211,448 B, 66 rows (id, image, mask: list of images)
+
+      3 files, 29,219,757 B
+
+      '
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/HTW-KI-Werkstatt/IRM-in-vitro-microtubules/resolve/main/data/train-00000-of-00001.parquet
+    size_bytes: 29211448
+    description: The whole dataset is one 29 MB parquet file (66 image + mask-list rows); it is its own smallest
+      unit.
+  arrays:
+  - role: raw
+    path_pattern: data/train-*.parquet
+    format: other
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range: null
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: 'Parquet column image (HF Image feature): PNG bytes per row; IHDRs read in the file: 512x512,
+      8-bit RGB. Paper: raw videos were histogram-normalized and background-subtracted.'
+  - role: label
+    path_pattern: data/train-*.parquet
+    format: other
+    axes: cyx
+    shape: null
+    shape_varies: true
+    dtype: uint16
+    compression: png
+    value_range: null
+    encoding: binary
+    classes:
+    - id: 1
+      name: microtubule
+    alignment: same-grid
+    alignment_notes: Parquet column mask (list of HF Images), one 512x512 mask per microtubule instance, stacked
+      as (C, 512, 512), C = instance count, background 0 (dataset card); overlapping instances are kept. Row 0 has
+      65 masks (datasets-server rows API).
+  notes: 'Listing via the Hugging Face API (3 files, exact sizes). Parquet header checked (PAR1 magic; probe.py:
+    format not recognised). Pages are snappy-compressed, so no image was decoded: a range read of the first 2 MB
+    and last 1.5 MB found PNG IHDRs of 512x512 8-bit RGB (images) and 512x512 8-bit grey PNGs (probably masks; the
+    card says the masks load as uint16, dtype taken from the card). No value range measured. Mask count per row
+    from the datasets-server rows API (row 0: 65). The parquet URL is direct (download-check usable, range requests,
+    redirects to a HF xet CDN). Conversion would need the PNG images and masks extracted from the parquet rows.
+    Voxel size checked: dataset card, paper full text, S1 Appendix sec. 3 (range 9.0909-9.2308 px/um over two microscopes).'
