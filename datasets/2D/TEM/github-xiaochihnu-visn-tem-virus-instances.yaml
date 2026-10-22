@@ -1,0 +1,151 @@
+schema_version: '1.2'
+id: github-xiaochihnu-visn-tem-virus-instances
+title: 'VISN TEM virus dataset: instance masks of six respiratory viruses'
+short_name: TEM respiratory virus instance segmentation
+description: 622 negative-stain TEM images (900x820, FEI Tecnai 12, 120 kV) with 3,195 virologist-labelled
+  virus particles of six respiratory viruses (SARS-CoV-2, influenza A, RSV, HSV-1, HAdV5, vaccinia), annotated
+  for instance segmentation in COCO format with train/test split.
+landing_url: https://github.com/xiaochiHNU/Virus-Instance-Segmentation-Transformer-Network
+doi: null
+repository: GitHub
+accession: null
+authors: []
+publications:
+- title: 'VISN: virus instance segmentation network for TEM images using deep attention transformer'
+  doi: 10.1093/bib/bbad373
+  url: https://academic.oup.com/bib/article/24/6/bbad373/7333675
+date_published: null
+imaging:
+  modality:
+  - TEM
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Severe acute respiratory syndrome coronavirus 2
+  - Influenza A virus
+  - Human respiratory syncytial virus
+  - Human herpesvirus 1
+  - Human adenovirus 5
+  - Vaccinia virus
+  sample: Negative-stain TEM of virus particles (FEI Tecnai 12, EMSIS Morada G3 CCD, 120 kV)
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: 459036000
+  n_items: 622
+  access: open
+  download_url: https://github.com/xiaochiHNU/Virus-Instance-Segmentation-Transformer-Network/tree/main/dataset
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: 'COCO JSON (dataset/annotations/instances_train.json, instances_test.json): polygon segmentations
+    and boxes, 6 categories (RSV, SARS-CoV-2, FLUAV, HSV1, HAdV5, VACV)'
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/xiaochiHNU/Virus-Instance-Segmentation-Transformer-Network
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-19T09:06:40Z'
+  evidence_urls:
+  - https://github.com/xiaochiHNU/Virus-Instance-Segmentation-Transformer-Network
+  - https://github.com/xiaochiHNU/Virus-Instance-Segmentation-Transformer-Network/tree/main/dataset
+  - https://github.com/xiaochiHNU/Virus-Instance-Segmentation-Transformer-Network/tree/main/dataset/annotations
+  - https://academic.oup.com/bib/article/24/6/bbad373/7333675
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-19T10:20:00Z'
+notes: 'Dataset lives in the GitHub repo (dataset/train, test, annotations/instances_*.json), no separate
+  archive. No license in repo or article; pixel size not reported (only a 400 nm scale bar). Article full
+  text is not open access (abstract and publisher page read). Authors not read from a page, left empty.
+  enricher: git tree lists 499 train + 123 test PNGs (622, matching the README and the paper split) and
+  2 COCO JSONs with 2,554 + 638 = 3,192 instances (README says 3,195); channels 1 from PNG header (8-bit
+  grey). organisms: one virus per image, given by the COCO category_id of its annotations (1 RSV = Human
+  respiratory syncytial virus, 2 SARS-CoV-2, 3 FLUAV = Influenza A virus, 4 HSV1 = Human herpesvirus 1,
+  5 HAdV5, 6 VACV); train and test folders mix all six.'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "README.md\ncode/                          Yolact-Swin training code (not inspected)\ndataset/\n\
+      \  train/0001.png ... 499 PNGs   900 x 820 8-bit grey\n  test/0001.png ...  123 PNGs   900 x 820\
+      \ 8-bit grey\n  annotations/\n    instances_train.json        4,964,498 B, COCO, 499 images, 2,554\
+      \ instances\n    instances_test.json         1,202,134 B, COCO, 123 images, 638 instances"
+    n_files: 664
+    listing_complete: true
+  sample:
+    urls:
+    - https://raw.githubusercontent.com/xiaochiHNU/Virus-Instance-Segmentation-Transformer-Network/main/dataset/test/0001.png
+    - https://raw.githubusercontent.com/xiaochiHNU/Virus-Instance-Segmentation-Transformer-Network/main/dataset/annotations/instances_test.json
+    size_bytes: 1571288
+    description: one test image (900 x 820 uint8 PNG) and the test-split COCO JSON that annotates it
+  arrays:
+  - role: raw
+    path_pattern: dataset/{train,test}/*.png
+    format: png
+    axes: yx
+    shape:
+    - 820
+    - 900
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Greyscale PNG; all 622 COCO image entries are 900 x 820.
+  - role: label
+    path_pattern: dataset/annotations/instances_*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: polygons
+    classes:
+    - id: 1
+      name: RSV
+    - id: 2
+      name: SARS-CoV-2
+    - id: 3
+      name: FLUAV
+    - id: 4
+      name: HSV1
+    - id: 5
+      name: HAdV5
+    - id: 6
+      name: VACV
+    alignment: same-grid
+    alignment_notes: 'COCO: images[].file_name (e.g. 0001.png) with width 900, height 820; instances_train.json
+      annotates dataset/train/, instances_test.json dataset/test/ (file names repeat across the two folders,
+      so the split decides the folder). Each annotation has a polygon segmentation, bbox and category_id
+      (1 RSV, 2 SARS-CoV-2, 3 FLUAV, 4 HSV1, 5 HAdV5, 6 VACV), iscrowd 0, in pixel coordinates of the
+      image.'
+  notes: 'Listing: blobless git clone of the repo tree (no file sizes; GitHub API not reachable from this
+    session): 622 PNGs + 2 JSONs under dataset/, plus README and code. Probed and sampled test/0001.png
+    (369,154 B): PNG grey 820 x 900 uint8, deflate, values 0-255 (p1 52, p50 173, p99 241; from one sample),
+    no physical pixel size in the header. Read both COCO JSONs (6.2 MB): 6 categories, all images 900
+    x 820, polygon segmentations; no info/licenses blocks. Total size not stated anywhere. size estimated
+    (uncompressed): raw 622 x 820x900 uint8 = 459,036,000 B (459.0 MB); JSONs (6.2 MB) not included; PNGs
+    download smaller. No single archive: GitHub archive zip returned 403 to download-check; files are
+    direct on raw.githubusercontent.com. Voxel size not found; checked: PNG header, README, code/config.py,
+    paper (not open access; abstract and publisher page per harvest notes give only a 400 nm scale bar).'
