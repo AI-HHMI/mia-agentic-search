@@ -1,0 +1,168 @@
+schema_version: '1.2'
+id: github-fmd-fluorescence-microscopy-denoising
+title: Fluorescence Microscopy Denoising (FMD) dataset
+short_name: FMD paired noisy/clean fluorescence denoising
+description: 'Real fluorescence microscopy denoising benchmark: 12 imaging configurations (confocal, two-photon
+  and widefield microscopy of fixed BPAE cells stained for nuclei, F-actin and mitochondria, fixed zebrafish
+  embryos and fixed mouse brain tissue). Each configuration has 20 fields of view, each imaged 50 times
+  at low excitation power; the average of the 50 captures is the ground truth, and averages of 2/4/8/16
+  captures give additional noise levels (240 ground-truth images, 12,000 raw and 60,000 noisy images in
+  total). A held-out test set (test_mix) is provided.'
+landing_url: https://github.com/yinhaoz/denoising-fluorescence
+doi: null
+repository: GitHub
+accession: null
+authors:
+- Yide Zhang
+- Yinhao Zhu
+- Evan Nichols
+- Qingfei Wang
+- Siyuan Zhang
+- Cody Smith
+- Scott Howard
+publications:
+- title: A Poisson-Gaussian Denoising Dataset with Real Fluorescence Microscopy Images
+  doi: 10.1109/CVPR.2019.01206
+  url: https://arxiv.org/abs/1812.10366
+date_published: '2019-06-01'
+imaging:
+  modality:
+  - confocal
+  - two-photon
+  - widefield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Bos taurus
+  - Danio rerio
+  - Mus musculus
+  sample: Fixed BPAE cells (nuclei, F-actin, mitochondria), fixed zebrafish embryos (EGFP, 2 dpf), fixed
+    cleared mouse brain tissue (DAPI)
+  labels_stains:
+  - DAPI
+  - MitoTracker
+  - EGFP
+data:
+  formats:
+  - png
+  size_bytes: 8972994560
+  n_items: 240
+  access: open
+  download_url: https://drive.google.com/drive/folders/1aygMzSDdoq63IqSk-ly8cMq0_owup8UM
+  download_method: other
+annotations:
+  present: true
+  types:
+  - restoration-pairs
+  coverage: dense
+  format: 'Paired PNGs: <config>/raw/<fov>/*.png (50 noisy captures per FOV), avg2|avg4|avg8|avg16 (averaged
+    noisy levels) and gt/<fov>/ (average of 50, ground truth); test_mix/{raw,gt,avg*}/<config>_<n>.png'
+  source: automatic
+ml:
+  tasks:
+  - denoising
+  splits_provided: true
+  benchmark: FMD (CVPR 2019) denoising benchmark with a test_mix archive
+  baseline_code_url: https://github.com/bmmi/denoising-fluorescence
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-09T13:30:00Z'
+  evidence_urls:
+  - https://github.com/yinhaoz/denoising-fluorescence
+  - https://arxiv.org/pdf/1812.10366
+  - https://drive.google.com/drive/folders/1aygMzSDdoq63IqSk-ly8cMq0_owup8UM
+  - https://raw.githubusercontent.com/yinhaoz/denoising-fluorescence/master/denoising/download_dataset.sh
+  - https://drive.usercontent.google.com/download?id=13bAS6Ipuk2xZkF99FTdanJ3fenvA3QDj&export=download&confirm=t
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-09T14:35:00Z'
+notes: 'Hosted as 12 configuration tars plus test_mix.tar on Google Drive;  The GitHub repository is MIT-licensed
+  (code); no licence is stated for the data on the repository page, the Drive folder or in the paper.
+  A third-party re-host (AIMD, Hamburg) lists CC BY-SA 4.0 but that was not confirmed at the source. Pixel
+  size not stated in the paper text read or the repository page. The CVPR DOI was not fetched. enricher:
+  formats png (was other), from the tar members; ground-truth pairs verified in test_mix. organisms: Bos
+  taurus = *_BPAE_*, Danio rerio = Confocal_FISH, Mus musculus = *_MICE.'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "Google Drive folder: 13 tar archives (file IDs in the repo's denoising/download_dataset.sh)\n\
+      <config>.tar  x12   0.59-0.87 GB each   Confocal_{BPAE_B,BPAE_G,BPAE_R,FISH,MICE}, TwoPhoton_{BPAE_B,BPAE_G,BPAE_R,MICE},\
+      \ WideField_{BPAE_B,BPAE_G,BPAE_R}\n  <config>/raw/<fov 1..20>/*.png        50 noisy captures per\
+      \ FOV\n  <config>/avg2|avg4|avg8|avg16/<fov>/  averaged noisy images\n  <config>/gt/<fov>/     \
+      \               ground truth (average of 50)\ntest_mix.tar  43.0 MB  test_mix/{raw,avg2,avg4,avg8,avg16,gt}/<config>_<n>.png\
+      \  (49 PNGs each, 294 files)\n"
+    n_files: 13
+    listing_complete: false
+  sample:
+    urls:
+    - https://drive.usercontent.google.com/download?id=13bAS6Ipuk2xZkF99FTdanJ3fenvA3QDj&export=download&confirm=t
+    size_bytes: 42956800
+    description: 'test_mix.tar: 49 noisy/ground-truth pairs (raw, avg2-16, gt) across all configurations,
+      512x512 8-bit PNG'
+  arrays:
+  - role: raw
+    path_pattern: '*/raw/*/*.png'
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 2
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Single noisy captures; test_mix uses <config>_<n>.png in raw/ and gt/.
+  - role: raw
+    path_pattern: '*/avg{2,4,8,16}/*/*.png'
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 3
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Averages of 2/4/8/16 captures (intermediate noise levels).
+  - role: target
+    path_pattern: '*/gt/*/*.png'
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 3
+    - 231
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: 'gt/<fov> pairs with raw/<fov> and avg*/<fov> (same FOV number; test_mix: same file
+      name). Paper: shifts between captures < 0.5 px, no registration needed.'
+  notes: 'Sizes of all 13 tars read from Content-Range of one range request each (8,972,994,560 B total;
+    size_source estimated because this is not a tools/listing.py listing; listing.py timed out on the
+    Drive URLs). Main tars: first tar headers read (folders avg16/1/... with desktop.ini files); per-file
+    counts not walked. test_mix.tar downloaded (42,956,800 B): 294 files, 49 PNGs per folder. Sample (one
+    image each, test_mix Confocal_BPAE_B_1): raw 512x512 uint8 L 2-255, avg2 3-255, gt 3-231. Paper says
+    gain was set to use the dynamic range with <0.2% clipped pixels; normalization left unknown. Voxel
+    size not found; checked: PNG headers, GitHub README, download script, arXiv paper text (setup details
+    are in the supplement, not read). Download links: direct drive.usercontent.google.com URLs with range
+    requests, host not on the TensorSwitch allowlist; tars cannot be read member by member.'
