@@ -1,0 +1,149 @@
+schema_version: '1.2'
+id: cbvcc-treg-behavior-video-classification
+title: Cell Behavior Video Classification Challenge (CBVCC) dataset
+short_name: T-cell direction-change videos (intravital 2P)
+description: 300 two-photon intravital microscopy video patches (50 x 50 px, 20 frames, 0.8 um pixel size,
+  40 x 40 um) cut from 48 acquisitions of T lymphocyte migration in mouse flank skin during a contact-sensitivity
+  response. Each patch is labelled 1 (cell suddenly changes direction) or 0 (linear movement, stationary
+  or background). Split into 210 training, 30 phase-1 test and 60 phase-2 test patches; manual TrackMate
+  tracks are released too.
+landing_url: https://www.dp-lab.info/cbvcc/
+doi: null
+repository: LabWebsite
+accession: null
+authors:
+- Raffaella Fiamma Cabini
+- Diego Ulisse Pizzagalli
+publications:
+- title: Cell Behavior Video Classification Challenge, a benchmark for computer vision methods in time-lapse
+    microscopy
+  doi: 10.48550/arXiv.2601.10250
+  url: https://arxiv.org/abs/2601.10250
+date_published: '2026-01-15'
+imaging:
+  modality:
+  - two-photon
+  dimensionality: 2D+t
+  voxel_size_nm:
+    x: 800
+    y: 800
+    z: null
+  channels: 3
+  organism:
+  - Mus musculus
+  sample: intravital imaging of T lymphocytes (regulatory T cells per the project page) in mouse flank
+    skin under oxazolone contact sensitivity
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: 4836844
+  n_items: 300
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  - points
+  coverage: dense
+  format: per-video binary class label by folder (training/<acquisition>/<0|1>/*.avi); phase-2 labels
+    in phase_2_GT.csv; manual cell tracks in cbvcc_tracks.zip
+  source: mixed
+ml:
+  tasks:
+  - classification
+  splits_provided: true
+  benchmark: Cell Behavior Video Classification Challenge (35 methods compared)
+  baseline_code_url: https://github.com/rcabini/CBVCC
+license:
+  spdx: CC-BY-4.0
+  url: null
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-08T23:13:51Z'
+  evidence_urls:
+  - https://www.dp-lab.info/cbvcc/
+  - https://arxiv.org/abs/2601.10250
+  - https://arxiv.org/html/2601.10250
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-09T02:23:48Z'
+notes: 'Read project page and arXiv HTML; training.zip listed with peek_archive (210 .avi in training/<acquisition>/<0|1>/).
+  Patches are RGB .avi (other: avi not in format list). Page says CC-BY, no version (CC-BY-4.0 assumed);
+  paper states no data license. Mouse strain and Treg reporter not stated in the text read. Points = released
+  manual tracks. enricher: size 4.8 MB from the full zip listing; download_url null (four zips plus a
+  csv).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "data/  5 files, 4.8 MB\n  training.zip      3.2 MB  training/<acq>/<0|1>/<acq>_<n>.avi   210\
+      \ videos (33 acq. class 0, 30 class 1 dirs)\n  test_phase1.zip           test_phase1/<acq>/<0|1>/*.avi\
+      \        30 videos\n  test_phase2.zip           test_phase2/<acq>/*.avi              60 videos (labels\
+      \ in phase_2_GT.csv)\n  cbvcc_tracks.zip          tracks/<acq>/<0|1>/<acq>_<n>.csv     300 track\
+      \ tables (id,x,y,t)\n  phase_2_GT.csv            <video>.avi,<class>\n"
+    n_files: 5
+    listing_complete: true
+  sample:
+    urls:
+    - https://www.dp-lab.info/cbvcc/data/training.zip::training/15/0/15_1.avi
+    - https://www.dp-lab.info/cbvcc/data/cbvcc_tracks.zip::tracks/15/0/15_1.csv
+    size_bytes: null
+    description: One training video patch and its manual track table.
+  arrays:
+  - role: raw
+    path_pattern: training.zip::training/*/*/*.avi
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: RGB .avi video patches, 31 frames at 1-min intervals, resampled to 0.8 um pixels
+      and contrast-adjusted to a common range (project page). AVI is not in the format list.
+  - role: label
+    path_pattern: cbvcc_tracks.zip::tracks/*/*/*.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: tracks-table
+    classes: null
+    alignment: unknown
+    alignment_notes: Columns id,x,y,t (read 14_3.csv); tracks/<acq>/<class>/<acq>_<n>.csv mirrors training/<acq>/<class>/<acq>_<n>.avi.
+      x/y units not stated.
+  - role: label
+    path_pattern: phase_2_GT.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: other
+    classes:
+    - id: 0
+      name: class 0
+    - id: 1
+      name: class 1
+    alignment: not-applicable
+    alignment_notes: 'One row per test_phase2 video: <file>.avi,<0|1>. Training/phase-1 labels are the
+      <0|1> folder names.'
+  notes: Complete listing of the 4 zips and the GT csv linked from the project page (600 zip members,
+    4,836,844 B compressed = size_bytes). The site returns 403 to plain clients without a browser User-Agent;
+    listing.py and peek_archive.py work. Read one track csv (id,x,y,t) and the phase_2_GT.csv head. AVI
+    videos not probed (no reader for AVI among the allowed tools). The host www.dp-lab.info is not on
+    the TensorSwitch fetch allowlist. Voxel size 0.8 um (x/y) from the project page; videos are 2D+t,
+    so z does not apply.
