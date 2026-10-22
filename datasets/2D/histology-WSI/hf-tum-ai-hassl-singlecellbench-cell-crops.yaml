@@ -1,0 +1,140 @@
+schema_version: '1.2'
+id: hf-tum-ai-hassl-singlecellbench-cell-crops
+title: 'HASSL SingleCellBench: single-cell and nucleus crops with masks from 15 public microscopy datasets'
+short_name: HASSL SingleCellBench cell crops (mixed)
+description: Benchmark collection of single-cell / single-nucleus image crops with binary instance masks, aggregated and preprocessed
+  from 15 public datasets (BCCD, CoNIC, Cyto/Cyto2, Data Science Bowl 2018, DynamicNuclearNet, two iPSC datasets, LynSec,
+  MoNuSAC, MoNuSeg, NuInsSeg, Omnipose, PanNuke, Sartorius, TissueNet). Each sample is an original/ and mask/ NumPy array
+  pair, organised dataset/split/(class)/original+mask. Covers H&E histology, brightfield blood smears, fluorescence, multiplex
+  immunofluorescence and phase contrast. Cell-type labels exist for some subsets, otherwise the dataset or folder name is
+  the label.
+landing_url: https://huggingface.co/datasets/tum-ai/HASSL-SingleCellBench
+doi: null
+repository: HuggingFace
+accession: tum-ai/HASSL-SingleCellBench
+authors: []
+publications: []
+date_published: '2026-06-27'
+imaging:
+  modality:
+  - histology-WSI
+  - fluorescence-other
+  - phase-contrast
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: null
+  organism:
+  - Homo sapiens
+  - Mus musculus
+  sample: Cell and nucleus crops from H&E tissue, blood smears, cultured cells, iPSCs and multiplexed tissue images; several
+    subsets also include bacteria (Omnipose)
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: 36374427701
+  n_items: 1787263
+  access: open
+  download_url: https://huggingface.co/datasets/tum-ai/HASSL-SingleCellBench
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - classification
+  coverage: dense
+  format: Per-crop binary segmentation mask as .npy NumPy array (mask/), paired by file name with the cropped image (original/);
+    class folders for some subsets
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  - classification
+  splits_provided: true
+  benchmark: HASSL SingleCellBench
+  baseline_code_url: null
+license:
+  spdx: GPL-3.0-only
+  url: https://www.gnu.org/licenses/gpl-3.0.html
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-19T19:31:47Z'
+  evidence_urls:
+  - https://huggingface.co/datasets/tum-ai/HASSL-SingleCellBench
+  - https://huggingface.co/api/datasets/tum-ai/HASSL-SingleCellBench
+  - https://huggingface.co/datasets/tum-ai/HASSL-SingleCellBench/raw/main/README.md
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-19T21:20:00Z'
+notes: 'Aggregated, processed redistribution of 15 third-party public datasets (most also catalogued individually); GPL-3.0
+  covers the packaging, code and metadata only, and the README says underlying datasets keep their original licenses, so reuse
+  terms vary per subset. No paper or author list found on the card or via Europe PMC/Crossref search. Format: NumPy .npy arrays
+  (not in schema format list, hence other); N_MoNuSeg.zip (48,254 .npy) and N_BCCD.zip (187,172 .npy) listed with peek_archive.
+  n_items = sum of per-subset cell counts in the README (the two iPSC subsets each list 35,308). size_bytes = sum of 16 files
+  in the HF API. Voxel/pixel size not stated. Labels marked U in the README have the dataset/folder name as label. Repo created
+  2026-06-27 (HF API). Downloads are 15 zip archives, one per source dataset.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "HASSL-SingleCellBench/ (Hugging Face, 18 files, 36.4 GB)\n  README.md, Dataloader_example.ipynb, .gitattributes\n\
+      \  N_<source>.zip  x15: BCCD 4.07 GB, CoNIC 0.62, DynamicNuclearNet 2.48, MoNuSAC 0.17, MoNuSeg 0.07, NuInsSeg 0.16,\n\
+      \                  PanNuke 0.71, Satorious 0.32, cyto2 0.65, databowl 0.09, iPSC_Morpologies 0.03, iPSC_QCData 0.90,\n\
+      \                  lynsec13 0.26, omnipose 0.52, tissuenet 25.32\ninside each zip: N_<source>/<split>/[<class>/]{original,mask}/cell_<n>.npy\n\
+      \  e.g. N_MoNuSeg/train/{original,mask}/ 21,720 each; N_MoNuSeg/test/{original,mask}/ 2,409 each\n"
+    n_files: 18
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/tum-ai/HASSL-SingleCellBench/resolve/main/N_MoNuSeg.zip::N_MoNuSeg/test/original/cell_16581.npy
+    - https://huggingface.co/datasets/tum-ai/HASSL-SingleCellBench/resolve/main/N_MoNuSeg.zip::N_MoNuSeg/test/mask/cell_16581.npy
+    size_bytes: 740
+    description: One MoNuSeg nucleus crop (11 x 11 RGB) and its mask, read from inside the zip
+  arrays:
+  - role: raw
+    path_pattern: N_*/**/original/*.npy
+    format: other
+    axes: yxs
+    shape:
+    - 11
+    - 11
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 244
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: NumPy .npy crops of single cells / nuclei, H x W x 3 uint8 in the MoNuSeg and cyto2 samples (11x11, 11x15,
+      18x7, 7x20). Whether the 3 channels are RGB for every source (e.g. fluorescence, TissueNet) is not stated.
+  - role: label
+    path_pattern: N_*/**/mask/*.npy
+    format: other
+    axes: yx
+    shape:
+    - 11
+    - 11
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: Pairs by path, original/ -> mask/ with the same cell_<n>.npy name; same H x W as the crop. Values {0,
+      255} in all four samples. Cell-type label = class folder where present, otherwise the source dataset (README).
+  notes: 'Listing from the Hugging Face API (18 files, exact sizes, 36,374,427,701 B; zips not expanded by listing.py). Opened
+    the central directories of N_MoNuSeg.zip (48,261 entries) and N_cyto2.zip (220,265 entries) over range requests and read
+    2 original/mask pairs from each with a short numpy script (np.load, allow_pickle=False); about 20 MB of range reads in
+    all. tools/probe.py does not read .npy (format other). Value ranges are from these 4 crops only. The other 13 zips, incl.
+    N_tissuenet.zip (25.3 GB), were not opened. Pixel size: not stated on the card; it differs per source dataset, so voxel_size_nm
+    stays null. Dataloader_example.ipynb not opened (untrusted code). No single archive: 15 per-source zips.'
