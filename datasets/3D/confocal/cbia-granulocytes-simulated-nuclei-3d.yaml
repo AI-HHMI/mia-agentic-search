@@ -1,0 +1,136 @@
+schema_version: '1.2'
+id: cbia-granulocytes-simulated-nuclei-3d
+title: Simulated 3D images of granulocyte nuclei with labelled ground truth (digital phantoms)
+short_name: Simulated granulocyte nuclei 3D (confocal)
+description: Synthetic 3D confocal images of granulocyte nuclei (up to 15 nuclei per image set) at a high
+  and a low signal-to-noise ratio, with labelled ground-truth volumes. Offered as ICS, HDF5 and 3D-TIFF
+  zips.
+landing_url: https://cbia.fi.muni.cz/datasets/
+doi: null
+repository: LabWebsite
+accession: null
+authors:
+- David Svoboda
+publications:
+- title: Generation of digital phantoms of cell nuclei and simulation of image formation in 3D image cytometry
+  doi: 10.1002/cyto.a.20714
+  url: https://doi.org/10.1002/cyto.a.20714
+date_published: null
+imaging:
+  modality:
+  - confocal
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 123.806
+    y: 123.806
+    z: 123.8
+  channels: null
+  organism: []
+  sample: Simulated granulocyte nuclei (digital phantoms) imaged by a simulated confocal microscope
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 2959791356
+  n_items: 120
+  access: open
+  download_url: https://datasets.gryf.fi.muni.cz/cytometry2009/Granulocytes_LowNoise_3D_TIFF.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: One 3D TIFF of per-nucleus instance ids (image-labels_NNNN.tif, 0 = background) per image (image-final_NNNN.tif)
+    in the same zip
+  source: automatic
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-10T12:13:30Z'
+  evidence_urls:
+  - https://cbia.fi.muni.cz/datasets/
+  - https://datasets.gryf.fi.muni.cz/cytometry2009/Granulocytes_LowNoise_3D_TIFF.zip
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22Generation+of+digital+phantoms+of+cell+nuclei+and+simulation+of+image+formation+in+3D+image+cytometry%22&format=json&resultType=core&pageSize=3
+  - https://datasets.gryf.fi.muni.cz/cytometry2009/Granulocytes_HighNoise_3D_ICS.zip
+  - https://datasets.gryf.fi.muni.cz/cytometry2009/Granulocytes_HighNoise_3D_TIFF.zip
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-10T14:05:37Z'
+notes: 'Synthetic (simulated) images from the group virtual microscope (modelled Zeiss S100, 63x/1.40
+  oil objective, Atto CARV confocal unit, Micromax CCD), not real microscopy; labels are generated with
+  the images. The CBIA page states no license or terms beyond a citation request,. enricher: voxel size
+  123.806x123.806x123.8 nm from the ICS headers (parameter scale, micrometers) of the same data (was null);
+  the page says ICS, HDF5 and 3D-TIFF copies hold the same data. the high-SNR label sample has 15 non-zero
+  ids (1-15) and the page says each image set holds up to 15 nuclei, so labels are per-nucleus instance
+  ids. Size and n_items are for the 2 3D-TIFF zips (file listing). organism left empty: simulated phantoms;
+  the page names the cell type but no species.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Granulocytes_LowNoise_3D_TIFF.zip   60 files  1.5 GB\nGranulocytes_HighNoise_3D_TIFF.zip  60\
+      \ files  1.4 GB\n  image-final_0000.tif ... image-final_0029.tif   30 per zip (~44 MB each)\n  image-labels_0000.tif\
+      \ ... image-labels_0029.tif  30 per zip (~2.6 MB each)\n(identical data also offered as *_3D_ICS.zip\
+      \ and *_3D_HDF5.zip)\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://datasets.gryf.fi.muni.cz/cytometry2009/Granulocytes_HighNoise_3D_TIFF.zip::image-final_0000.tif
+    - https://datasets.gryf.fi.muni.cz/cytometry2009/Granulocytes_HighNoise_3D_TIFF.zip::image-labels_0000.tif
+    size_bytes: 47218718
+    description: 'Volume 0 of the high-SNR set: one simulated 3D image and its ground-truth label volume'
+  arrays:
+  - role: raw
+    path_pattern: '*_3D_TIFF.zip::image-final_*.tif'
+    format: tiff
+    axes: zyx
+    shape: &id001
+    - 129
+    - 565
+    - 807
+    shape_varies: false
+    dtype: uint16
+    compression: lzw
+    value_range:
+    - 6
+    - 95
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Plain multi-page TIFF, one page per z slice: the page calls the files 3D-TIFF, and
+      the ICS copy of the same image orders x y z with z = 129, matching the 129 TIFF pages.'
+  - role: label
+    path_pattern: '*_3D_TIFF.zip::image-labels_*.tif'
+    format: tiff
+    axes: zyx
+    shape: *id001
+    shape_varies: false
+    dtype: uint16
+    compression: lzw
+    value_range:
+    - 0
+    - 15
+    normalization: none
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: image-labels_NNNN.tif pairs with image-final_NNNN.tif in the same zip (same number);
+      identical shapes and the same ICS voxel scale.
+  notes: 'Exact listing of all 2 3D-TIFF zips (120 TIFFs, 2,959,791,356 bytes). Probed and sampled volume
+    0 of Granulocytes_HighNoise_3D_TIFF.zip (one sample): image 129x565x807 uint16 LZW, values 6-95; labels
+    uint16, values 0-15. TIFFs carry no calibration; voxel size and axis order come from the ICS header
+    of the same image (layout order x y z, sizes match; scale 0.123806 um in x and y, 0.1238 um in z for
+    the image and 0.123806 um for the labels). Identical ICS and HDF5 copies are offered as separate zips
+    and are not counted in the size. No license found.'
