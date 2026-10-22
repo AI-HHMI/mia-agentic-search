@@ -1,0 +1,136 @@
+schema_version: '1.2'
+id: yeast-in-microstructures-instance-seg
+title: An Instance Segmentation Dataset of Yeast Cells in Microstructures
+short_name: Yeast cells in microstructures (brightfield)
+description: 493 densely annotated brightfield time-lapse microscopy images of Saccharomyces cerevisiae cells in microfluidic
+  trap microstructures, with pixel-wise instance masks for cells and traps, class labels, bounding boxes and train/val/test splits.
+landing_url: https://christophreich1996.github.io/yeast_in_microstructures_dataset/
+doi: null
+repository: other
+accession: null
+authors:
+- Reich, Christoph
+- Prangemeier, Tim
+- Françani, André O.
+- Koeppl, Heinz
+publications:
+- title: An Instance Segmentation Dataset of Yeast Cells in Microstructures
+  doi: 10.1109/EMBC40787.2023.10340268
+  url: https://arxiv.org/abs/2304.07597
+date_published: '2023-04-15'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Saccharomyces cerevisiae
+  sample: yeast cells growing in microfluidic trap microstructures (two trap geometries), from several time-lapse experiments
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: null
+  n_items: 493
+  access: open
+  download_url: https://tudatalib.ulb.tu-darmstadt.de/bitstream/handle/tudatalib/3799/yeast_cell_in_microstructures_dataset.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - bounding-box
+  - classification
+  coverage: dense
+  format: per-sample PyTorch .pt tensors in folders inputs, instances ([N,H,W] masks), classes ([N], trap=0 cell=1), bounding_boxes
+    ([N,4])
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  - detection
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/ChristophReich1996/Yeast-in-Microstructures-Dataset
+license:
+  spdx: MIT
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-10T21:19:36Z'
+  evidence_urls:
+  - https://christophreich1996.github.io/yeast_in_microstructures_dataset/
+  - https://github.com/ChristophReich1996/Yeast-in-Microstructures-Dataset
+  - https://arxiv.org/html/2304.07597v4
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: false
+  last_checked: '2026-10-10T22:20:00Z'
+notes: 'The dataset page says the dataset is released under the MIT license (the GitHub README states MIT for the code only).
+  The TUdatalib landing page (handle 3799) and the zip returned 403 to this run, so the zip contents were not listed; folder
+  layout and .pt format come from the GitHub README, whose image-size statements are inconsistent (128x128 vs 256x256). The paper
+  (arXiv v4) states 493 brightfield images from several TLFM experiments with two trap geometries, split randomly then manually
+  curated into train/val/test; split counts are only in an image table. Microscope, objective, pixel size and size on disk
+  are not stated on the dataset page, README or the arXiv text. About 9k unlabeled images exist at TUdatalib handle 2880 (not
+  part of this record). formats is other because the images ship as .pt tensors.'
+technical:
+  method: metadata-only
+  size_source: unknown
+  layout:
+    tree: "yeast_cell_in_microstructures_dataset.zip (structure per GitHub README; not listed)\n  train/ val/ test/\n    inputs/          one .pt per sample (image, [128, 128])\n    instances/       one\
+      \ .pt per sample ([N, 128, 128] instance maps)\n    classes/         one .pt per sample ([N], trap=0 cell=1)\n    bounding_boxes/  one .pt per sample ([N, 4] x0y0x1y1)\n"
+    n_files: null
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: '*/inputs/*.pt'
+    format: other
+    axes: yx
+    shape:
+    - 128
+    - 128
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: PyTorch .pt tensors (pickle-based); shape [128, 128] per README and paper (128 x 128 crops centred on a trap pair).
+  - role: label
+    path_pattern: '*/instances/*.pt'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    encoding: other
+    classes:
+    - id: 0
+      name: trap
+    - id: 1
+      name: cell
+    alignment: same-grid
+    alignment_notes: 'README: [N, 128, 128] stack, one map per instance (N varies); class of each instance in classes/<same file>.pt ([N], trap=0, cell=1); files pair by name across the four folders. Not
+      verified (zip not reachable).'
+  - role: label
+    path_pattern: '*/bounding_boxes/*.pt'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    encoding: boxes-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'README: [N, 4] boxes x0y0x1y1 per sample, matching instances/.'
+  notes: 'Not inspected: tudatalib.ulb.tu-darmstadt.de answered HTTP 403 to every request in this run (zip, handle page 3799, DSpace server API, OAI), so no listing, header or sample; layout, shapes and
+    classes are from the GitHub README and the arXiv paper. The data are PyTorch .pt files, which load only through torch.load (pickle), so they are untrusted data that the enricher must not open, and no
+    listed format applies (data.formats other). The README example says the loader returns [1, 256, 256], which disagrees with the stored size stated as 128x128 in README and paper.
+    Size: no page states it and dtype is unknown, so no estimate. Pixel size not found; checked: dataset page, GitHub README, arXiv v4 full text (crops of 128x128 from higher-resolution raw data, no um/px),
+    Europe PMC (EMBC paper not open access). Download: no direct link usable (403; host also not on TensorSwitch allowlist).'
