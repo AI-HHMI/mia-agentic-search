@@ -1,0 +1,152 @@
+schema_version: '1.2'
+id: yeast-in-microstructures-brightfield-instances
+title: Yeast in Microstructures - instance segmentation of S. cerevisiae cells and traps in brightfield
+  time-lapse images
+short_name: Yeast cells in microstructures (brightfield)
+description: 493 densely annotated brightfield microscopy images of Saccharomyces cerevisiae cells in
+  microfluidic trap microstructures, taken from different time-lapse fluorescence microscopy experiments.
+  Pixel-wise instance masks, a class (trap or cell) and bounding boxes are provided for every instance,
+  with train, validation and test subsets.
+landing_url: https://christophreich1996.github.io/yeast_in_microstructures_dataset/
+doi: null
+repository: other
+accession: null
+authors:
+- Christoph Reich
+- Tim Prangemeier
+- André O. Françani
+- Heinz Koeppl
+publications:
+- title: An Instance Segmentation Dataset of Yeast Cells in Microstructures
+  doi: 10.1109/EMBC40787.2023.10340268
+  url: https://arxiv.org/abs/2304.07597
+date_published: '2023-04-15'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: null
+  organism:
+  - Saccharomyces cerevisiae
+  sample: S. cerevisiae cells in microfluidic trap microstructures
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: null
+  n_items: 493
+  access: open
+  download_url: https://tudatalib.ulb.tu-darmstadt.de/bitstream/handle/tudatalib/3799/yeast_cell_in_microstructures_dataset.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - bounding-box
+  coverage: dense
+  format: per-sample PyTorch .pt files in inputs, instances (N x H x W instance maps), classes (trap=0,
+    cell=1) and bounding_boxes (x0 y0 x1 y1) folders
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: Yeast in Microstructures (EMBC 2023)
+  baseline_code_url: https://github.com/ChristophReich1996/Yeast-in-Microstructures-Dataset
+license:
+  spdx: MIT
+  url: https://christophreich1996.github.io/yeast_in_microstructures_dataset/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-11T03:21:49Z'
+  evidence_urls:
+  - https://christophreich1996.github.io/yeast_in_microstructures_dataset/
+  - https://github.com/ChristophReich1996/Yeast-in-Microstructures-Dataset
+  - https://arxiv.org/abs/2304.07597
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22An+Instance+Segmentation+Dataset+of+Yeast+Cells+in+Microstructures%22&format=json&resultType=core&pageSize=3
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: false
+  last_checked: '2026-10-11T04:24:25Z'
+notes: The TUdatalib host (handle 3799) returned 403 (bot protection) for the landing page and the zip,
+  so the file listing could not be checked; formats, folder layout and class ids come from the GitHub
+  README, and the zip is a PyTorch .pt layout (hence formats other). Paper full text is not open access
+  (Europe PMC abstract read; the arXiv PDF could not be parsed), so microscope, magnification, pixel size
+  and split sizes are not stated on the project page, README or abstract. The README gives input size
+  as 128x128 in one place and 256x256 in another. The MIT license is stated on the project page. No TUdatalib
+  DOI was found. A related, higher-resolution panoptic dataset (TYC, ICCVW 2023) and about 9k unlabeled
+  images (TUdatalib handle 2880) are separate and not included.
+technical:
+  method: metadata-only
+  size_source: unknown
+  layout:
+    tree: "yeast_cell_in_microstructures_dataset.zip   (per GitHub README; not listed)\n  train/ val/\
+      \ test/\n    inputs/<sample>.pt          image tensor [128, 128]\n    instances/<sample>.pt    \
+      \   instance maps [N, 128, 128]\n    classes/<sample>.pt         class per instance (trap 0, cell\
+      \ 1)\n    bounding_boxes/<sample>.pt  [N, 4] x0 y0 x1 y1"
+    n_files: null
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: '*/inputs/*.pt'
+    format: other
+    axes: null
+    shape:
+    - 128
+    - 128
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    alignment: not-applicable
+    alignment_notes: 'PyTorch tensor file per sample (README: shape [128, 128]; the README loader example
+      prints [1, 256, 256], unreconciled). Pickle-based format, not opened.'
+    normalization: unknown
+  - role: label
+    path_pattern: '*/instances/*.pt'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    alignment: same-grid
+    alignment_notes: Instance maps [N, 128, 128], one binary map per instance, same stem in the parallel
+      instances/ folder (README).
+    encoding: one-hot
+    classes:
+    - id: 0
+      name: trap
+    - id: 1
+      name: cell
+  - role: label
+    path_pattern: '*/bounding_boxes/*.pt'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    alignment: same-grid
+    alignment_notes: Boxes [N, 4] (x0 y0 x1 y1) per sample, with the per-instance class in classes/<sample>.pt
+      (README).
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: trap
+    - id: 1
+      name: cell
+  notes: 'Not inspected: tudatalib.ulb.tu-darmstadt.de answered 403 Forbidden to the zip (range request),
+    the handle page and the DSpace REST endpoint in this run, as in the harvest run; no listing, headers
+    or samples. Layout and shapes from the GitHub README. The .pt files are PyTorch (pickle) files: under
+    the untrusted-data rule they would not be unpickled even if downloaded. voxel size not found; checked:
+    project page and GitHub README (harvest), arXiv abstract; paper full text not open. Size not stated
+    anywhere read; no estimate (dtypes unknown). Download: the zip URL is direct per the README (wget),
+    but the host blocks this environment, so --download-check could not run; no other mirror found (Zenodo
+    search: none).'
