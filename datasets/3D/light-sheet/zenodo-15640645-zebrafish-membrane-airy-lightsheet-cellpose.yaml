@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: zenodo-15640645-zebrafish-membrane-airy-lightsheet-cellpose
 title: 3D_ZebrafishCellposeModel
 short_name: Zebrafish membrane 3D instance masks (light-sheet)
-description: One Airy-beam light-sheet volume of a zebrafish with a CaaxmCherry membrane label (763 x 2048 x 2048, uint16), a deskewed/transformed crop (480 x 280 x 140) with a full 3D instance segmentation, 10 hand-segmented 2D training slices in Cellpose _seg.npy format, and the trained 3D Cellpose model.
+description: One Airy-beam light-sheet volume of a zebrafish with a CaaxmCherry membrane label (763 x 2048 x 2048, uint16),
+  a deskewed/transformed crop (480 x 280 x 140) with a full 3D instance segmentation, 10 hand-segmented 2D training slices
+  in Cellpose _seg.npy format, and the trained 3D Cellpose model.
 landing_url: https://zenodo.org/records/15640645
 doi: 10.5281/zenodo.15640645
 repository: Zenodo
@@ -28,14 +30,15 @@ data:
   size_bytes: 3941105825
   n_items: 1
   access: open
-  download_url: https://zenodo.org/records/15640645/files/Data_and_Model.zip?download=1
+  download_url: https://zenodo.org/records/15640645/files/Data_and_Model.zip
   download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
   coverage: partial
-  format: 'Cellpose _seg.npy files next to 10 2D training slices (XY/XZ/YZ_Slice_Raw_NNNN.tif), a uint16 instance-label TIFF stack (Instance Segmented Transformed Raw Data.tif, 140 x 480 x 280) and a 5 GB original-size instance-label TIFF'
+  format: Cellpose _seg.npy files next to 10 2D training slices (XY/XZ/YZ_Slice_Raw_NNNN.tif), a uint16 instance-label TIFF
+    stack (Instance Segmented Transformed Raw Data.tif, 140 x 480 x 280) and a 5 GB original-size instance-label TIFF
   source: unknown
 ml:
   tasks:
@@ -57,5 +60,76 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-22T04:57:45Z'
-notes: 'Zenodo record has a one-line description and no linked paper; web search found none. Contents are from listing the 3.9 GB zip (25 files: Raw Data.tif 763x2048x2048 uint16, Transformed Raw Data.tif, Instance Segmented Transformed Raw Data.tif 140x480x280, a Original Size instance TIFF, 10 training slices with _seg.npy, one Cellpose model file) and TIFF header probes. Pixel/voxel size, what Transformed means (likely a deskew or resample), who made the labels and how are not stated in any source checked (record, headers). The raw TIFF has an unstated page axis. Only 10 slices are hand-labelled training data, the 3D instance volume is probably model output (source unknown). Single volume, so size is at the lower limit.'
+  last_checked: '2026-10-22T06:15:00Z'
+notes: 'Zenodo record has a one-line description and no linked paper; web search found none. Contents are from listing the
+  3.9 GB zip (25 files: Raw Data.tif 763x2048x2048 uint16, Transformed Raw Data.tif, Instance Segmented Transformed Raw Data.tif
+  140x480x280, a Original Size instance TIFF, 10 training slices with _seg.npy, one Cellpose model file) and TIFF header probes.
+  Pixel/voxel size, what Transformed means (likely a deskew or resample), who made the labels and how are not stated in any
+  source checked (record, headers). The raw TIFF has an unstated page axis. Only 10 slices are hand-labelled training data,
+  the 3D instance volume is probably model output (source unknown). Single volume, so size is at the lower limit. enricher:
+  transformed volume axes zxy from the training-slice shapes; labels hold 623 instance ids (sampled).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Data_and_Model.zip  (3,941,105,825 B; 25 members)\n  For the Repository/\n    Raw Data.tif                    \
+      \                           6.4 GB  763 pages x 2048 x 2048 uint16\n    Transformed Raw Data.tif                   \
+      \                37.7 MB 140 x 480 x 280 uint16\n    Instance Segmented Transformed Raw Data.tif                0.7\
+      \ MB  140 x 480 x 280 uint16 (deflate)\n    Instance Segmented Transformed Raw Data Original Size.tif  5.0 GB\n    3DTrainedCellposeModel\
+      \                                     (Cellpose model, no extension)\n    Transformed Training Data/   20 files: {XY,XZ,YZ}_Slice_Raw_NNNN.tif\
+      \ + _seg.npy (10 each)"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/15640645/files/Data_and_Model.zip::For the Repository/Transformed Raw Data.tif
+    - https://zenodo.org/records/15640645/files/Data_and_Model.zip::For the Repository/Instance Segmented Transformed Raw
+      Data.tif
+    size_bytes: 38321922
+    description: The transformed (deskewed/cropped) volume and its 3D instance segmentation, both members of Data_and_Model.zip.
+  arrays:
+  - role: raw
+    path_pattern: For the Repository/Transformed Raw Data.tif
+    format: tiff
+    axes: zxy
+    shape:
+    - 140
+    - 480
+    - 280
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 2702
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Plain 140-page TIFF, no calibration tags. Axes from the training-slice files: XY slices are 480x280
+      and indexed up to 105 (<140), XZ slices are 480x140, YZ slices are 280x140, so pages = z, rows = x (480), columns =
+      y (280). 11.9% zero voxels (likely padding from the transform).'
+  - role: label
+    path_pattern: For the Repository/Instance Segmented Transformed Raw Data.tif
+    format: tiff
+    axes: zxy
+    shape:
+    - 140
+    - 480
+    - 280
+    shape_varies: false
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 623
+    normalization: none
+    encoding: instance-ids
+    n_ids_observed: 624
+    alignment: same-grid
+    alignment_notes: Same shape as Transformed Raw Data.tif (140x480x280); 0 = background, 623 instance ids, 70.6% background.
+  notes: 'Zenodo API description is one sentence; no paper, README or code repo found (web search for author + microscope).
+    Voxel size not found; checked: TIFF tags of Transformed Raw Data.tif (no resolution tags), Raw Data.tif and label headers
+    (probe.py), Zenodo API record (description, notes, related identifiers all empty), web search for a paper. Value ranges
+    from one full sample of each array. The 10 Cellpose _seg.npy training slices were not opened (pickle-based numpy files).
+    Instance Segmented ... Original Size.tif (5 GB, deflated zip member) not probed. Raw Data.tif axes stay null: the page
+    axis of the skewed light-sheet acquisition is not stated anywhere. Raw Data.tif (763x2048x2048 uint16 BigTIFF, uncompressed)
+    is the untransformed acquisition and has no labels on its grid, so it is listed in the layout but not as an array.'
