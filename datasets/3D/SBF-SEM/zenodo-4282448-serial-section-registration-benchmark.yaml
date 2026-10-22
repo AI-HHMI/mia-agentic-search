@@ -1,13 +1,15 @@
 schema_version: '1.2'
 id: zenodo-4282448-serial-section-registration-benchmark
-title: Evaluating registrations of serial sections with distortions of the ground truths. Supplemental data
+title: Evaluating registrations of serial sections with distortions of the ground truths. Supplemental
+  data
 short_name: Serial-section registration benchmark (EM, LS, CT)
-description: 'Benchmark data for registration of serial sections with known ground truth: undistorted 3D stacks
-  of animal lungs (SBF-SEM of adult mouse lung, 1000 images of 1.5k x 1.5k px; UltraMicroscope II light-sheet of
-  rat lung, 300 images of 3.9k x 3.9k px; micro-CT of rabbit lung, 600 images) plus versions with synthetic local
-  distortions, local distortions with global rigid transformations (the benchmark input), SURF-rigid pre-registered
-  versions, distortion maps, the true rigid transformations, visualisations and elastix parameter files. A REAL
-  set holds two real toluidine-blue serial sections of the rabbit lung as reference.'
+description: 'Benchmark data for registration of serial sections with known ground truth: undistorted
+  3D stacks of animal lungs (SBF-SEM of adult mouse lung, 1000 images of 1.5k x 1.5k px; UltraMicroscope
+  II light-sheet of rat lung, 300 images of 3.9k x 3.9k px; micro-CT of rabbit lung, 600 images) plus
+  versions with synthetic local distortions, local distortions with global rigid transformations (the
+  benchmark input), SURF-rigid pre-registered versions, distortion maps, the true rigid transformations,
+  visualisations and elastix parameter files. A REAL set holds two real toluidine-blue serial sections
+  of the rabbit lung as reference.'
 landing_url: https://zenodo.org/records/4282448
 doi: 10.5281/zenodo.4282448
 repository: Zenodo
@@ -31,21 +33,19 @@ imaging:
   - light-sheet
   - X-ray
   dimensionality: 3D
-  voxel_size_nm:
-    x: 150
-    y: 150
-    z: 150
+  voxel_size_nm: null
   channels: 1
   organism:
   - Mus musculus
   - Rattus norvegicus
   - Oryctolagus cuniculus
-  sample: 'Perfusion-fixed lungs: mouse (SBF-SEM), rat (light-sheet, autofluorescence), rabbit (micro-CT and toluidine-blue
-    sections)'
+  sample: 'Perfusion-fixed lungs: mouse (SBF-SEM), rat (light-sheet, autofluorescence), rabbit (micro-CT
+    and toluidine-blue sections)'
   labels_stains: []
 data:
   formats:
-  - other
+  - png
+  - tiff
   size_bytes: 14165292098
   n_items: null
   access: open
@@ -56,8 +56,9 @@ annotations:
   types:
   - other
   coverage: dense
-  format: Undistorted ground-truth stacks (*_ground.7z), distortion maps (*_local-DIST.7z) and true rigid transformations
-    (*_rigid_ground.7z)
+  format: 'Undistorted ground-truth slice stacks (EM_ground-norm, LS_ground, CT_ground: png/tiff), distortion
+    maps (*_local-DIST: png) and true rigid transforms (*_rigid_ground, LS_global-TRANS: one .global.json
+    per slice)'
   source: automatic
 ml:
   tasks:
@@ -81,12 +82,74 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-22T00:33:47Z'
-notes: 'Task is registration of serial sections: ground truth is the undistorted stack, the distortions are synthetic
-  (generated with github.com/olegl/distort), so no manual labels. Files are 22 .7z archives that peek_archive cannot
-  list, so image file format and exact per-set image counts beyond the paper (EM 1000, LS 300, CT 600 + 50 extra
-  at each end in some sets, REAL 2) were not verified; formats is other for that reason. Voxel size varies by modality
-  (paper: EM 0.15 um/voxel in the benchmark crop, assumed isotropic here; light-sheet 5.16 x 5.16 x 15 um; micro-CT
-  7.0 um isotropic; REAL sections 0.22 um/pixel), only the EM value is recorded. Images were reduced to 8 bit and
-  EM/LS were individually normalised per the paper. Paper full text read from the arXiv preprint (CC BY-NC-ND);
-  the Zenodo record states CC-BY-4.0 for the data.'
+  last_checked: '2026-10-22T01:32:23Z'
+notes: 'Task is registration of serial sections: ground truth is the undistorted stack, distortions are
+  synthetic (github.com/olegl/distort), so no manual labels. Voxel size differs by subset, so voxel_size_nm
+  is null (paper): EM 0.15 um/voxel, LS 5.16 x 5.16 x 15 um/voxel, CT 7.0 um isometric, REAL 0.22 um/pixel.
+  Images reduced to 8 bit; EM/LS normalised per the paper. Paper read from the arXiv preprint (CC BY-NC-ND);
+  Zenodo states CC-BY-4.0 for the data. organisms: Mus musculus = EM_*.7z, Rattus norvegicus = LS_*.7z,
+  Oryctolagus cuniculus = CT_*.7z and REAL_challenge.7z. modality: SBF-SEM = EM_*, light-sheet = LS_*,
+  X-ray (micro-CT) = CT_*; REAL = toluidine-blue light micrographs. enricher: voxel_size_nm null (was
+  150x150x150, EM only); formats png, tiff from the 7z indexes (was other).'
+technical:
+  method: metadata-only
+  size_source: file-listing
+  layout:
+    tree: "Zenodo 4282448: 22 .7z archives, 14,165,292,098 B (exact sizes, Zenodo API)\n  EM_challenge.7z\
+      \      1000 png  global_NNNN.png        (benchmark input)\n  EM_ground-norm.7z    1000 png  norm_NNNN.png\
+      \          (ground truth)\n  EM_local-only.7z     1000 png  local_NNNN.png\n  EM_local-DIST.7z \
+      \    1000 png  local_NNNN.png-local.png (distortion maps)\n  EM_SURF-rigid.7z     1000 tiff rigid2_0_NNNN.tiff\n\
+      \  EM_rigid_ground.7z   1000 json global_NNNN.png.global.json + README.global\n  LS_challenge.7z\
+      \       300 tiff global_NNNN.tiff\n  LS_ground.7z          300 tiff square_input_NNNN.tiff\n  LS_local-only\
+      \ / LS_SURF-rigid / LS_vis.7z  300 tiff each\n  LS_local-DIST.7z      300 png;  LS_global-TRANS.7z\
+      \ 300 json; LS_rigid_ground.7z 300 json + README\n  CT_challenge.7z       600 png  input_NNNN.png\n\
+      \  CT_ground.7z          700 png  191146-1_E1-denoise_000300..000999.png\n  CT_local-only.7z   \
+      \   700 png; CT_local-DIST.7z 700 png; CT_SURF-rigid.7z 600 tiff\n  CT_rigid_ground.7z    700 json\
+      \ + README.global\n  REAL_challenge.7z     wide_150_S0.tiff, wide_150_S8.tiff + 2 jpeg previews\n\
+      \  elastix_params.7z     Par0003.bs-R4-ug.txt, HOWTO, HOWTO.7z"
+    n_files: 22
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/4282448/files/EM_challenge.7z
+    - https://zenodo.org/records/4282448/files/EM_ground-norm.7z
+    size_bytes: 470011228
+    description: The EM benchmark input stack and its ground truth, as the two whole .7z archives (members
+      of a 7z cannot be fetched one by one).
+  arrays:
+  - role: raw
+    path_pattern: EM_challenge.7z/global_*.png
+    format: png
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Benchmark input (local distortions + global rigid transforms), one PNG per slice.
+      LS_challenge (tiff) and CT_challenge (png) are the same for the other modalities. dtype uint8 per
+      the paper (8 bit), not from a header.
+  - role: target
+    path_pattern: EM_ground-norm.7z/norm_*.png
+    format: png
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: transform-provided
+    alignment_notes: Undistorted, normalised ground truth; slice NNNN pairs with global_NNNN.png. The
+      rigid part of the distortion is in EM_rigid_ground (global_NNNN.png.global.json), the local part
+      in EM_local-DIST maps. LS_ground (tiff) and CT_ground (png, slices 300-999 vs 600 challenge slices)
+      likewise.
+  notes: 'Listing: Zenodo API (22 files, exact sizes) plus each 7z header read by range request (start
+    header + LZMA-encoded header, ~10 KB per archive) for member names and counts. Members of a 7z are
+    inside compressed (often solid) streams, so no image header could be probed or sampled without downloading
+    a whole archive; shapes, dtypes and value ranges are not from files. Paper (arXiv 2011.11060): EM
+    crop 1000 images at 1.5k x 1.5k, LS 300 images 3.9k x 3.9k, 8 bit, extended to a larger square. Sample
+    = the two EM archives (470 MB), the smallest raw/target pair; whether TensorSwitch unpacks .7z is
+    not known here. Voxel size: see notes (differs per subset).'
