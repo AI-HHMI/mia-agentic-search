@@ -1,0 +1,169 @@
+schema_version: '1.2'
+id: uoi-sipakmed-pap-smear-cells
+title: SIPaKMeD Database
+short_name: SIPaKMeD Pap smear cervical cells (brightfield)
+description: 4,049 images of isolated cervical cells manually cropped from 966 Pap smear cluster images
+  (also included), classified by expert cytopathologists into five classes (Superficial-Intermediate,
+  Parabasal, Koilocytotic, Dyskeratotic, Metaplastic). The paper states that the boundaries of the cytoplasm
+  and nucleus of each cell were manually defined by experts and their contour coordinates are provided
+  for both single-cell and cluster images. Hand-crafted cell features and deep features are also distributed.
+landing_url: https://www.cs.uoi.gr/~marina/sipakmed.html
+doi: null
+repository: LabWebsite
+accession: null
+authors:
+- Marina E. Plissiti
+- Panagiotis Dimitrakopoulos
+- Giorgos Sfikas
+- Christophoros Nikou
+- Olga Krikoni
+- Antonia Charchanti
+publications:
+- title: 'SIPAKMED: A new dataset for feature and image based classification of normal and pathological
+    cervical cells in Pap smear images'
+  doi: null
+  url: https://www.cs.uoi.gr/~sfikas/sipakmed2018.pdf
+date_published: '2018-10-07'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: Papanicolaou-stained cervical smear slides; isolated squamous cervical cells and cell clusters
+  labels_stains:
+  - Papanicolaou
+data:
+  formats:
+  - other
+  size_bytes: 5624145067
+  n_items: 5015
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  - semantic-segmentation
+  coverage: dense
+  format: per-cell class (one archive per class) plus manually defined nucleus and cytoplasm contour coordinates
+  source: manual
+ml:
+  tasks:
+  - classification
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: custom
+  url: https://www.cs.uoi.gr/~marina/sipakmed.html
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-15T02:38:57Z'
+  evidence_urls:
+  - https://www.cs.uoi.gr/~marina/sipakmed.html
+  - https://www.cs.uoi.gr/~sfikas/sipakmed2018.pdf
+  - https://www.cs.uoi.gr/~marina/SIPAKMED/Description_of_Features.pdf
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-15T04:01:01Z'
+notes: 'From the lab page (relative links resolved to https://www.cs.uoi.gr/~marina/SIPAKMED/) and the
+  ICIP 2018 paper. Images come as one .7z per class (5.18 GB total, sizes from HTTP headers); n_items
+  = 4,049 cells + 966 clusters per the paper. CCD camera (Infinity 1 Lumenera) on an Olympus BX53F; magnification,
+  pixel size and splits not stated. enricher: license custom; page and Description_of_Features.pdf: "publicly
+  available and it can be used for experimental purposes with the request to cite" the ICIP 2018 paper.
+  enricher: 7z headers read: BMP images, contour .dat files per cell (formats other: BMP is not a schema
+  format); size from full listing.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "im_<class>.7z  (5 archives: Dyskeratotic, Koilocytotic, Metaplastic, Parabasal, Superficial-Intermediate;\
+      \ 5.4 GB)\n  im_<class>/NNN.bmp                 cluster images: 223 / 238 / 271 / 108 / 126 = 966\
+      \ files (9,437,238 B each)\n  im_<class>/NNN_cytKK.dat, NNN_nucKK.dat   contours per cell in the\
+      \ cluster image (8,098 files)\n  im_<class>/CROPPED/NNN_KK.bmp      isolated cells: 813 / 825 /\
+      \ 793 / 787 / 831 = 4,049 files\n  im_<class>/CROPPED/NNN_KK_cyt.dat, NNN_KK_nuc.dat   contours\
+      \ (8,098 files)\nFeatures_CELL.7z  Features_CELL/<CLASS>_{CYTOPLASM,NUCLEI}_FEAT.dat  10 tables\n\
+      Features_IMAGE_DEEP/ConvFeatures.rar, FcFeatures.rar  VGG-19 features (.mat)\nDescription_of_Features.pdf\n"
+    n_files: 9
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: im_*.7z::im_*/[0-9][0-9][0-9].bmp
+    format: other
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Cluster images; the class is the archive/folder name (im_<class>).
+  - role: raw
+    path_pattern: im_*.7z::im_*/CROPPED/[0-9][0-9][0-9]_[0-9][0-9].bmp
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Isolated cells cropped from cluster image NNN (cell KK); file sizes vary, so crop
+      shapes vary.
+  - role: label
+    path_pattern: im_*.7z::im_*/[0-9][0-9][0-9]_{cyt,nuc}[0-9][0-9].dat
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: polygons
+    classes:
+    - id: cyt
+      name: cytoplasm
+    - id: nuc
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: Contour coordinates (per docs) for cell KK of cluster image NNN.bmp; pairing by the
+      NNN stem.
+  - role: label
+    path_pattern: im_*.7z::im_*/CROPPED/[0-9][0-9][0-9]_[0-9][0-9]_{cyt,nuc}.dat
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: polygons
+    classes:
+    - id: cyt
+      name: cytoplasm
+    - id: nuc
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: Contours for the isolated cell NNN_KK.bmp; pairing by the NNN_KK stem.
+  notes: 'Listing: all 9 files linked from the page (5,624,145,067 B, exact HTTP sizes). The 5 image .7z
+    archives and Features_CELL.7z were listed by reading only each 7z end header with range requests (stdlib
+    lzma; ~0.2 MB per archive); counts match the paper (966 cluster + 4,049 cropped images). The archives
+    are solid 7z, so no member can be fetched or sampled without downloading a whole class archive (0.5-1.2
+    GB, over the 500 MB budget): no sample, no BMP header probe. Every cluster BMP is 9,437,238 B, consistent
+    with 2048x1536 24-bit (not verified from a header). The .dat contour files (cytoplasm/nucleus coordinates
+    per Description_of_Features.pdf) were not read. Voxel size not found; checked: landing page, Description_of_Features.pdf,
+    ICIP 2018 paper (camera and microscope only, no magnification/pixel size). No direct single-file download:
+    five class archives; host www.cs.uoi.gr not on the TensorSwitch allowlist. Uncompressed size not computed.'
