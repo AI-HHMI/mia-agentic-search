@@ -1,0 +1,152 @@
+schema_version: '1.2'
+id: tudatalib-3799-yeast-microstructures-instance
+title: Yeast Cells in Microstructures Dataset (An Instance Segmentation Dataset of Yeast Cells in Microstructures)
+short_name: Yeast in microtraps instance masks (brightfield)
+description: 493 densely annotated 128x128 brightfield images of Saccharomyces cerevisiae cells in microfluidic
+  trap microstructures, with manual pixel-wise instance masks for cells and traps, class labels and bounding boxes,
+  and a train/val/test split (296/49/148).
+landing_url: https://christophreich1996.github.io/yeast_in_microstructures_dataset/
+doi: null
+repository: other
+accession: '3799'
+authors:
+- Reich C
+- Prangemeier T
+- Françani AO
+- Koeppl H
+publications:
+- title: An Instance Segmentation Dataset of Yeast Cells in Microstructures
+  doi: 10.1109/embc40787.2023.10340268
+  url: https://arxiv.org/abs/2304.07597
+date_published: '2023-07-01'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Saccharomyces cerevisiae
+  sample: Yeast cells trapped in microfluidic chip microstructures (two trap geometries), time-lapse experiments
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: null
+  n_items: 493
+  access: open
+  download_url: https://tudatalib.ulb.tu-darmstadt.de/bitstream/handle/tudatalib/3799/yeast_cell_in_microstructures_dataset.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - bounding-box
+  coverage: dense
+  format: PyTorch .pt per sample; folders inputs, instances, classes, bounding_boxes (cell=1, trap=0)
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/ChristophReich1996/Yeast-in-Microstructures-Dataset
+license:
+  spdx: MIT
+  url: https://christophreich1996.github.io/yeast_in_microstructures_dataset/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-08T12:52:02Z'
+  evidence_urls:
+  - https://christophreich1996.github.io/yeast_in_microstructures_dataset/
+  - https://github.com/ChristophReich1996/Yeast-in-Microstructures-Dataset
+  - https://arxiv.org/abs/2304.07597
+  - https://arxiv.org/pdf/2304.07597
+  - https://arxiv.org/html/2304.07597
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: false
+  last_checked: '2026-10-09T01:04:03Z'
+notes: 'Hosted at TUdatalib (handle 3799); the project page gives the direct zip URL (wget) and states the dataset
+  is released under MIT. TUdatalib returned HTTP 403 / bot protection to these runs, so no file listing, size or
+  headers were seen. Files are PyTorch .pt tensors (not in the format enum, hence other). Images are 128x128 brightfield
+  crops from higher-resolution raw data (arXiv). Pixel size not stated in the paper, project page or GitHub README;
+  voxel_size_nm null. Split 296/49/148 (arXiv Table II). Labels manual. Related but different dataset: tudatalib-3930-tyc-yeast-microstructures.
+  enricher: channels 1 from arXiv (brightfield channel only; inputs [128,128]) (was null); download_url = zip URL
+  from project page (was null).'
+technical:
+  method: metadata-only
+  inspected_at: '2026-10-09T01:04:03Z'
+  inspected_urls:
+  - https://tudatalib.ulb.tu-darmstadt.de/bitstream/handle/tudatalib/3799/yeast_cell_in_microstructures_dataset.zip
+  - https://tudatalib.ulb.tu-darmstadt.de/handle/tudatalib/3799
+  bytes_downloaded: 0
+  size_source: unknown
+  layout:
+    tree: "(from the GitHub README Dataformat section, not from a listing)\n{train,val,test}/\n  inputs/       \
+      \   one .pt per sample, image [128, 128]\n  instances/       one .pt per sample, instance masks [N, 128, 128]\n\
+      \  classes/         one .pt per sample, class per instance [N]\n  bounding_boxes/  one .pt per sample, boxes\
+      \ [N, 4] (x0 y0 x1 y1)\n"
+    n_files: null
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: '{train,val,test}/inputs/*.pt'
+    format: other
+    axes: yx
+    shape:
+    - 128
+    - 128
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '{train,val,test}/instances/*.pt'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: none
+    encoding: one-hot
+    classes:
+    - id: 0
+      name: trap
+    - id: 1
+      name: cell
+    alignment: same-grid
+    alignment_notes: Per README, every sample has one .pt file of the same name in inputs/, instances/, classes/
+      and bounding_boxes/. instances is [N, 128, 128] (one mask per instance, non-overlapping) on the input grid;
+      the class of instance i is classes[i] (trap=0, cell=1, README).
+  - role: label
+    path_pattern: '{train,val,test}/bounding_boxes/*.pt'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: none
+    encoding: boxes-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: '[N, 4] boxes, x0 y0 x1 y1 in pixels of the 128x128 input (README).'
+  notes: 'Not inspected: every TUdatalib URL (record page, bitstream zip, REST, OAI-PMH, DSpace 7 API) returned
+    HTTP 403 (Apache "Forbidden") to this run; probe --download-check on the zip: usable false (HTTP 403; host tudatalib.ulb.tu-darmstadt.de
+    not on the TensorSwitch allowlist). Layout, shapes and class ids are from the GitHub README (Dataformat section);
+    per-instance mask stacks [N,H,W] rather than an ID image. The .pt files can only be read with torch.load (pickle),
+    which the enricher never runs, so dtype, compression and value ranges need a human check. Voxel size not found;
+    checked: project page, GitHub README, arXiv HTML full text (only figure scale bars 1 mm / 10 um, crops 128x128
+    from higher-resolution raw data, possibly resampled), Europe PMC (no open full text); TUdatalib metadata unreachable.
+    No size: no listing, dtypes unknown, so no estimate. Open: listing, size, dtypes, sample urls once TUdatalib
+    is reachable.'
