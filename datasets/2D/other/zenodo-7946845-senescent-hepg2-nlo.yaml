@@ -1,0 +1,149 @@
+schema_version: '1.2'
+id: zenodo-7946845-senescent-hepg2-nlo
+title: Deep Ensemble Learning and Transfer Learning Methods for Classification of Senescent Cells from
+  Nonlinear Optical Microscopy Images
+short_name: Senescent HepG2 classification (SRS/TPEF)
+description: 224 co-registered three-channel label-free nonlinear optical images (SRS lipid channel, two-photon
+  excited fluorescence and transmission, 250 x 300 px) of HepG2 cells, labelled senescent (therapy-induced
+  senescence) or control, released as pickled train (170) and test (54) sets.
+landing_url: https://zenodo.org/records/7946845
+doi: 10.5281/zenodo.7946845
+repository: Zenodo
+accession: '7946845'
+authors:
+- Sorrentino, Salvatore
+- Manetti, Francesco
+- Bresci, Arianna
+- Vernuccio, Federico
+- Ceconello, Chiara
+- Ghislanzoni, Silvia
+- Bongarzone, Italia
+- Vanna, Renzo
+- Cerullo, Giulio
+- Polli, Dario
+publications:
+- title: Deep ensemble learning and transfer learning methods for classification of senescent cells from
+    nonlinear optical microscopy images
+  doi: 10.3389/fchem.2023.1213981
+  url: https://doi.org/10.3389/fchem.2023.1213981
+date_published: '2023-05-17'
+imaging:
+  modality:
+  - other
+  - two-photon
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 350
+    y: 350
+    z: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: HepG2 hepatic cancer cells on quartz slides, untreated controls and drug-treated (therapy-induced
+    senescence)
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: 403204286
+  n_items: 224
+  access: open
+  download_url: https://zenodo.org/records/7946845
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  coverage: dense
+  format: 'Image-level labels in the pickles'' *_label arrays (object, N x 2): a 0/1 float class and a
+    condition string (0h, 12h, 24h, 72h, 7days, Radio 20gg)'
+  source: manual
+ml:
+  tasks:
+  - classification
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/salvasorrentino/deep_learning_senescence
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-15T13:45:00Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/7946845
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10326547/fullTextXML
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-15T14:27:12Z'
+notes: 'Imaging is label-free SRS (lipid channel), TPEF and transmission on a lab-built multimodal NLO
+  microscope; modality other for that reason. Two Python pickles (dct_train.pickle 306 MB, dct_test.pickle
+  97 MB); not unpickled. enricher: structure read from pickle opcodes (pickletools, nothing executed):
+  train_data 170x250x300x3 float64 + train_label (170x2 object), test_data 54x250x300x3 float64 + test_label
+  (54x2). Class 1.0 occurs 95x in train (paper: 95 senescent), so 1 = senescent is inferred; 75 zeros
+  in train vs 65 controls in the paper. 350 nm pixel size from the paper. Labels by visual inspection
+  against NLO markers (paper).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  2 files  403.2 MB\n  dct_train.pickle  306.0 MB  {train_data: (170,250,300,3) f8, train_label:\
+      \ (170,2) object}\n  dct_test.pickle    97.2 MB  {test_data: (54,250,300,3) f8, test_label: (54,2)\
+      \ object}"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/7946845/files/dct_test.pickle/content
+    size_bytes: 97201179
+    description: 'Test pickle: 54 images and their labels'
+  arrays:
+  - role: raw
+    path_pattern: dct_*.pickle
+    format: other
+    axes: null
+    shape:
+    - 54
+    - 250
+    - 300
+    - 3
+    shape_varies: false
+    dtype: float64
+    compression: none
+    value_range:
+    - -0.3167
+    - 4.4007
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One C-order float64 array per pickle (numpy _frombuffer), image index first, last
+      axis = 3 channels (SRS, TPEF, transmission per the paper; order not stated). Shape shown is the
+      test array; train is 170x250x300x3.
+  - role: label
+    path_pattern: dct_*.pickle
+    format: other
+    axes: null
+    shape:
+    - 54
+    - 2
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes:
+    - id: 0
+      name: control (inferred)
+    - id: 1
+      name: senescent (inferred)
+    alignment: not-applicable
+    alignment_notes: 'Object array: per image [class float, condition string]; same order as the image
+      array. Test: 30x 1.0, 24x 0.0; train: 95x 1.0, 75x 0.0.'
+  notes: 'Untrusted pickles were never unpickled: structure, shapes, dtypes and label values come from
+    pickletools.genops (opcode disassembly) of the first/last bytes of each file. value_range from one
+    test image buffer (bytes 73-1,800,072 of dct_test.pickle) read with np.frombuffer: channel ranges
+    -0.32..0.91, -0.07..4.40, -0.07..0.09, so the data are processed floats (negative values), normalization
+    not documented. Loading needs pickle (object label array), which is unsafe for automated conversion.
+    Direct links: both Zenodo content URLs are usable; no archive, so data.download_url stays the record
+    page.'
