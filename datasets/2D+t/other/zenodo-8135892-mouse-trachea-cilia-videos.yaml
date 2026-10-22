@@ -1,0 +1,148 @@
+schema_version: '1.2'
+id: zenodo-8135892-mouse-trachea-cilia-videos
+title: Video Dataset of Respiratory Cilia Motion Phenotypes
+short_name: Mouse trachea cilia motion videos with masks
+description: 872 one-second high-speed videos (250 fps, 800x800 px) of beating cilia in mouse trachea samples under temperature,
+  drug and ACE2-manipulation conditions, with ground-truth masks of the ciliary area for segmentation and a CSV of ciliary
+  beat frequency per video.
+landing_url: https://zenodo.org/records/8135892
+doi: 10.5281/zenodo.8135892
+repository: Zenodo
+accession: '8135892'
+authors:
+- Chenxiao Li
+- Shannon Quinn
+- Karl Lechtreck
+- Jonathan Eggenschwiler
+- Anna Brinck
+- Riya Patel
+publications: []
+date_published: '2023-07-11'
+imaging:
+  modality:
+  - other
+  dimensionality: 2D+t
+  voxel_size_nm:
+    x: 79.87
+    y: 79.87
+    z: null
+  channels: 1
+  organism:
+  - Mus musculus
+  sample: mouse trachea samples treated with different temperatures, drugs (e.g. ATP, terbutaline, NAC, amphotericin B) and
+    ACE2 manipulation
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: 63125896143
+  n_items: 872
+  access: open
+  download_url: https://zenodo.org/records/8135892
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: masks.zip with one JPG mask per video (e.g. masks/m4_azl100_2.jpg) labelling the ciliary area; Video_info.csv gives
+    ciliary beat frequency (CBF), its SEM and the treatment group per video
+  source: unknown
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-09T13:05:00Z'
+  evidence_urls:
+  - https://zenodo.org/records/8135892
+  - https://zenodo.org/api/records/8135892
+  - https://par.nsf.gov/biblio/10528496
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-09T14:12:00Z'
+notes: 'File listing (Zenodo API): 11 treatment/control zips of AVI videos (about 63.1 GB in all; control.zip lists 160 MB
+  AVI files), masks.zip (6.8 MB, JPG masks named like the videos) and Video_info.csv (columns vid, CBF, SEM, Group). The Zenodo
+  description says 872 videos with ground-truth masks. Pixel size 0.07987 um, 800x800 px, 250 fps for 1 s, per the description.
+  Imaging modality beyond "high-speed video microscope" and the mouse strain are not stated on the page or the NSF record,
+  so modality is other. Who made the masks and how is not described; the first author''s 2023 UGA dissertation (not readable,
+  HTTP 403) apparently covers the dataset, and no paper is listed on the page, so publications is empty. No train/test split.
+  The page DOI is the version DOI; the concept DOI is 10.5281/zenodo.8104788. enricher: masks.zip read in full: 872 JPG masks,
+  one per video name in Video_info.csv (872 rows).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  12 files  63.1 GB\n  ca_treatment.zip            16.8 GB  *.avi\n  temperature_treatment.zip    9.7 GB  *.avi\n\
+      \  AmphotericinB_treatment.zip  8.8 GB  *.avi\n  ACE2_treatment.zip           5.9 GB  *.avi\n  AZL_treatment.zip   \
+      \         5.1 GB  *.avi\n  Terbutaline_treatment.zip    4.5 GB  *.avi\n  NAC_treatment.zip            4.2 GB  *.avi\n\
+      \  TFP_treatment.zip            4.1 GB  *.avi\n  ATP_treatment.zip            3.1 GB  47 *.avi at zip root\n  control.zip\
+      \                  1.1 GB  14 *.avi at zip root (160 MB each)\n  masks.zip                    6.8 MB  masks/<video name>.jpg\
+      \ (872)\n  Video_info.csv              34.6 KB  vid, CBF, SEM, Group (872 rows)\n"
+    n_files: 12
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/8135892/files/control.zip/content::m1_22_4.avi
+    - https://zenodo.org/api/records/8135892/files/masks.zip/content::masks/m1_22_4.jpg
+    size_bytes: null
+    description: One 1 s control video (250 frames of 800x800, 160,011,686 B uncompressed, 81,295,213 B in the zip) and its
+      ciliary-area mask
+  arrays:
+  - role: raw
+    path_pattern: '*.zip::*.avi'
+    format: other
+    axes: tyx
+    shape:
+    - 250
+    - 800
+    - 800
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: masks.zip::masks/*.jpg
+    format: jpeg
+    axes: yx
+    shape:
+    - 800
+    - 800
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: ciliary area
+    alignment: same-grid
+    alignment_notes: 'one 2D mask per video, same 800x800 grid as each frame, applies to all 250 frames; pairing by name:
+      <group>.zip::<name>.avi <-> masks.zip::masks/<name>.jpg (Video_info.csv vid = <name>). Masks are lossy JPEG, so edges
+      carry intermediate grey values (71-76 unique values seen): threshold at 128.'
+  notes: 'Listing: Zenodo API (12 files, exact sizes, 63,125,896,143 B) plus zip central directories of control.zip (14 AVI,
+    2,240.2 MB uncompressed) and ATP_treatment.zip (47 AVI, 7,520.5 MB). AVI header of control.zip::m1_22_4.avi (first 64
+    KB of the deflated member, read by range and inflated): RIFF AVI, 1 video stream, 800x800, 250 frames, FourCC Y800 (uncompressed
+    8-bit grey), bitcount 8; the header frame period is 33,333 us (30 fps playback) while the description says recorded at
+    250 fps for 1 s. AVI is not a schema format, so raw format is other; frame values not sampled. masks.zip (6,775,920 B)
+    downloaded once and read with PIL: 872 masks, mode L, 800x800 uint8, 0-255 with JPEG edge artifacts, ciliary area 3-7%
+    of pixels in 3 masks checked; Video_info.csv 872 rows (ca 233, temperature 132, AmphotericinB 124, ACE2 84, AZL 69, Terbutaline
+    60, NAC 60, TFP 49, ATP 47, control 14). Direct links: every zip is range-readable on zenodo.org (download-check usable);
+    12 files and no single archive, so download_url is the record page. Voxel size: 79.87 nm lateral from the Zenodo description
+    ("Each pixel is 0.07987 um"); 2D+t, no z.'
