@@ -1,0 +1,133 @@
+schema_version: '1.2'
+id: erda-ucph-cristae-fib-sem-hippocampus
+title: UCPH mitochondrial cristae annotations on mouse hippocampus FIB-SEM (EPFL volume)
+short_name: Mitochondria and cristae masks (FIB-SEM)
+description: 150 image/mask PNG pairs from the EPFL mouse CA1 hippocampus FIB-SEM volume (about 5 nm voxels), with manual annotations of mitochondrial outer membrane, crista membrane and intracristal space
+  used to train a multiplanar 2D U-Net for cristae analysis. Hosted by the University of Copenhagen (ERDA).
+landing_url: https://erda.ku.dk/workgroup/dikuUltrastructures/UCPH_IMAGE_cristae_dataset.zip
+doi: null
+repository: other
+accession: null
+authors: []
+publications:
+- title: A semi-automatic method for extracting mitochondrial cristae characteristics from 3D focused ion beam scanning electron microscopy data
+  doi: 10.1038/s42003-024-06045-4
+  url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10978844/fullTextXML
+date_published: null
+imaging:
+  modality:
+  - FIB-SEM
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 5
+    y: 5
+    z: null
+  channels: 1
+  organism:
+  - Mus musculus
+  sample: mouse hippocampus CA1 tissue (EPFL FIB-SEM volume)
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: 10739252
+  n_items: 150
+  access: open
+  download_url: https://erda.ku.dk/workgroup/dikuUltrastructures/UCPH_IMAGE_cristae_dataset.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  - organelle
+  coverage: dense
+  format: PNG masks in masks/ paired by file name with images/
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-12T23:47:40Z'
+  evidence_urls:
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10978844/fullTextXML
+  - https://erda.ku.dk/workgroup/dikuUltrastructures/UCPH_IMAGE_cristae_dataset.zip
+  - https://erda.ku.dk/workgroup/dikuUltrastructures/
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-13T01:40:00Z'
+notes: 'peek_archive listing: UCPH_IMAGE_cristae_dataset/images (150 png) and /masks (150 png), 10.7 MB compressed. Paper (Commun Biol 2024, Data availability): the images come from the EPFL CA1 hippocampus
+  FIB-SEM volume (about 5 nm voxels, image registered by the authors) and the zip holds their cristae annotations; mask class values (outer membrane, crista membrane, intracristal space) are described in
+  the paper. No license stated for the zip or on the Data availability section. Paper Methods: the 150 slices are 256x256 crops from nine resliced planes, chosen by active learning, so 2D. Related to epfl-hippocampus-mitochondria-em
+  (mitochondria-only labels of the same volume); this record adds cristae labels. enricher: size_bytes 10,739,252 from exact zip listing (was null); z of voxel size set null for 2D slices (was 5; volume
+  is ~5x5x5 nm per paper).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "UCPH_IMAGE_cristae_dataset.zip (10.7 MB)\n  UCPH_IMAGE_cristae_dataset/\n    images/  150 files  9.8 MB  .png (00000.png ... 00149.png)\n    masks/   150 files  1.0 MB  .png (same names)\n"
+    n_files: 300
+    listing_complete: true
+  sample:
+    urls:
+    - https://erda.ku.dk/workgroup/dikuUltrastructures/UCPH_IMAGE_cristae_dataset.zip::UCPH_IMAGE_cristae_dataset/images/00000.png
+    - https://erda.ku.dk/workgroup/dikuUltrastructures/UCPH_IMAGE_cristae_dataset.zip::UCPH_IMAGE_cristae_dataset/masks/00000.png
+    size_bytes: 69596
+    description: One 256x256 FIB-SEM slice and its cristae mask
+  arrays:
+  - role: raw
+    path_pattern: UCPH_IMAGE_cristae_dataset.zip::UCPH_IMAGE_cristae_dataset/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 77
+    - 213
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Grey stored as RGB: the three samples are identical in 00000.png.'
+  - role: label
+    path_pattern: UCPH_IMAGE_cristae_dataset.zip::UCPH_IMAGE_cristae_dataset/masks/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: unknown
+    classes:
+    - id: null
+      name: outer mitochondrial membrane / mitochondrion
+    - id: null
+      name: crista membrane
+    - id: null
+      name: intracristal space
+    alignment: same-grid
+    alignment_notes: 'Pairing: same file name in images/ and masks/; identical 256x256 shape. Masks are RGB with continuous values, not class IDs: R is 0 everywhere, G 2-203 (nonzero in every pixel), B
+      0-255 (about 3-5% of pixels > 0), in 00000.png and 00149.png. The paper draws crista membrane cyan and intracristal space red; how the PNG channels map to the classes is not documented.'
+  notes: 'Exact range-request listing of the one zip (300 members, 10,739,252 B). Probed and sampled images/00000.png and masks/00000.png; per-channel stats also read for masks/00149.png. Value ranges are
+    from one sample each. Slices are 256x256 crops resliced from nine planes of the ~5 nm isotropic EPFL CA1 volume (paper Methods), so they are 2D samples, not a stack. Mask class encoding unknown (continuous
+    G/B channels). Direct zip URL works with range requests, but host erda.ku.dk is not on the TensorSwitch allowlist. No license found: ERDA folder page, zip listing (no README/LICENSE) and paper Data
+    availability checked.'
