@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: figshare-18551300-diatom-life-cycle-14-species
 title: Diatom Life Cycle Dataset
 short_name: Diatom species across life cycle (brightfield)
-description: 1,880 PNG micrographs of 14 diatom species (Eunotia, Fragilariforma, Gomphonema, Stauroneis, Luticola, Nitzschia, Sellaphora) covering different life-cycle stages, already split into train, validation and test folders with the species as the class folder.
+description: 976 brightfield PNG micrographs of 14 diatom species (Eunotia, Fragilariforma, Gomphonema,
+  Stauroneis, Luticola, Nitzschia, Sellaphora) covering different life-cycle stages, split into train,
+  validation and test folders with the species as the class folder, plus 904 binary valve masks.
 landing_url: https://doi.org/10.6084/m9.figshare.18551300.v2
 doi: 10.6084/m9.figshare.18551300
 repository: Figshare
@@ -41,7 +43,7 @@ data:
   formats:
   - png
   size_bytes: 41493412
-  n_items: 1880
+  n_items: 976
   access: open
   download_url: https://ndownloader.figshare.com/files/34144662
   download_method: http
@@ -49,12 +51,16 @@ annotations:
   present: true
   types:
   - classification
+  - semantic-segmentation
   coverage: dense
-  format: Species class given by the folder name (e.g. dataset/train/001_Eunotia_tenella/*.png); train, val and test folders provided
+  format: Species class given by the folder name (e.g. dataset/train/001_Eunotia_tenella/*.png; train,
+    val and test folders), plus binary masks masks/<stem>_imag_res_fill.png (0/255, same size as the image)
+    for 799 of the images
   source: manual
 ml:
   tasks:
   - classification
+  - segmentation
   splits_provided: true
   benchmark: null
   baseline_code_url: null
@@ -71,5 +77,74 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-22T00:55:00Z'
-notes: 'Zip listed with peek_archive: 1,880 PNG (50 MB) in dataset/{train,val,test}/<NNN_Genus_species>/, 14 class folders; per-split image counts were not tallied. The figshare description says the images come from Blanco 2018 (figshare 7077725; brightfield and oblique, 60x, 7.91 px/um), the DIADIST diatom size-reduction sets (Mann and Bayer) and Mann et al. 2004 (Sellaphora pupula complex), so pixel size varies by source and is not stated for the whole set. No paper is listed on the record; an LNCS chapter, Diatom Classification Including Morphological Adaptations Using CNNs (10.1007/978-3-030-31332-6_28), reports a 14-class set of 1,085 images, so its link to this 1,880-image set is unconfirmed. Figshare 7077725 (4 species, TIFF) is one of the source sets.'
+  last_checked: '2026-10-22T01:21:23Z'
+notes: 'Zip: 976 images in dataset/{train 780, val 97, test 99}/<NNN_Genus_species>/ and 904 masks in
+  masks/. The figshare description says the images come from Blanco 2018 (figshare 7077725; brightfield
+  and oblique, 60x, 7.91 px/um), the DIADIST diatom size-reduction sets (Mann and Bayer) and Mann et al.
+  2004 (Sellaphora pupula complex), so pixel size varies by source and is not stated for the whole set.
+  No paper is listed on the record; an LNCS chapter, Diatom Classification Including Morphological Adaptations
+  Using CNNs (10.1007/978-3-030-31332-6_28), reports a 14-class set of 1,085 images, so its link to this
+  set is unconfirmed. enricher: masks/ found (n_items 1880 -> 976 images; segmentation added); mask provenance
+  not documented. organisms: each species = its class folder <NNN_Genus_species>/ and masks/<NNN_Genus_species>_*.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Diatoms.zip (figshare file 34144662): 41,493,412 B, 1,880 members, 50,321,402 B uncompressed\n\
+      \  dataset/\n    train/  780 png in 14 folders 001_Eunotia_tenella ... 014_Sellaphora_lanceolata\n\
+      \    val/     97 png (same 14 folders)\n    test/    99 png (same 14 folders)\n      <NNN_Genus_species>/<NNN_Genus_species>_<nnnn>.png\n\
+      \  masks/   904 png  <NNN_Genus_species>_<nnnn>_imag_res_fill.png (flat folder, all splits)"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/34144662::dataset/train/001_Eunotia_tenella/001_Eunotia_tenella_0001.png
+    - https://ndownloader.figshare.com/files/34144662::masks/001_Eunotia_tenella_0001_imag_res_fill.png
+    size_bytes: 4933
+    description: One training image (001_Eunotia_tenella_0001.png) and its binary mask.
+  arrays:
+  - role: raw
+    path_pattern: dataset/*/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 30
+    - 79
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 67
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Greyscale stored as RGB (the 3 samples are identical in both sampled images). Crops
+      of single valves; size varies (30x79 and 140x486 sampled).
+  - role: label
+    path_pattern: masks/*_imag_res_fill.png
+    format: png
+    axes: yxs
+    shape:
+    - 30
+    - 79
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: masks/<stem>_imag_res_fill.png pairs with dataset/<split>/<class>/<stem>.png; shapes
+      match in both sampled pairs. 799 images have a mask, 177 images have none, and 105 masks have no
+      image in dataset/. Mask values 0/255, grey stored as RGB.
+  notes: 'Complete listing of the one zip (central directory by range). Probes and samples (two pairs,
+    Eunotia tenella 0001 and Sellaphora capitata 0001): raw 30x79x3 and 140x486x3 uint8, values 84..255
+    and 67..255, samples identical (grey as RGB); masks the same shapes, 2 values (0, 255). Pairing counted
+    from the listing by stem. Value ranges are from two samples. Voxel size not found for the whole set;
+    checked: PNG headers (no physical size), figshare API description (lists three source collections;
+    Blanco 2018 is 7.91 px/um per the harvester, other sources not stated). No README in the zip; mask
+    provenance (manual or automatic) not documented.'
