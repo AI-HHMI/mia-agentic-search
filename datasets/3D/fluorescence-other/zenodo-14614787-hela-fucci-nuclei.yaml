@@ -1,0 +1,120 @@
+schema_version: '1.2'
+id: zenodo-14614787-hela-fucci-nuclei
+title: Labeled HeLa nuclei
+short_name: HeLa nuclei cell-cycle phase (PIP-FUCCI)
+description: Subset of HeLa Kyoto nuclei images (SiR-DNA, PIP-FUCCI red and green channels, plus a binary
+  segmentation mask) annotated with cell cycle phase G1, S or G2/M. It is a subset of the BioImage Archive
+  study S-BIAD1659 and is meant for the cell_cycle_classification notebooks.
+landing_url: https://zenodo.org/records/14614787
+doi: 10.5281/zenodo.14614787
+repository: Zenodo
+accession: '14614787'
+authors:
+- Thomas Bonte
+publications:
+- title: A deep learning approach for time-consistent cell cycle phase prediction from microscopy data
+  doi: 10.1371/journal.pcbi.1013800
+  url: https://doi.org/10.1371/journal.pcbi.1013800
+date_published: '2025-01-08'
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 102
+    y: 102
+    z: 1000
+  channels: 4
+  organism:
+  - Homo sapiens
+  sample: HeLa Kyoto cells with SiR-DNA and PIP-FUCCI markers, live-cell time-lapse
+  labels_stains:
+  - SiR-DNA
+  - PIP-FUCCI
+data:
+  formats:
+  - tiff
+  size_bytes: 769550779
+  n_items: 1463
+  access: open
+  download_url: https://zenodo.org/records/14614787/files/nuclei_subset.7z
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  - semantic-segmentation
+  coverage: dense
+  format: 'Per nucleus crop: binary nucleus mask as channel 4 of the TIFF; cell cycle phase encoded as
+    the file name suffix _c0/_c1/_c2 (mapping to G1/S/G2M not documented in the files)'
+  source: mixed
+ml:
+  tasks:
+  - classification
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/15bonte/cell_cycle_classification
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-22T07:42:57Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/14614787
+  - https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD1659
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12711074/fullTextXML
+  confidence: 0.55
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-22T09:15:00Z'
+notes: 'Single 7z archive (769.6 MB); Lateral pixel size 0.102 um is from the parent study S-BIAD1659
+  (Opera Phenix Plus, 63x water, 5 focal planes 1 um apart, 20 min frames); it is not stated on the Zenodo
+  page. Labels in the parent study: G1 217,465, S 257,984, G2/M 160,855 nuclei, cell-cycle phase assigned
+  manually from PIP-FUCCI intensity along Cellpose-segmented, TrackMate-tracked nuclei with all 15,026
+  tracks reviewed (paper Methods); the segmentation mask itself is automatic (Cellpose 2.0 fine-tuned).
+  Full study CC0 on BIA; this subset CC-BY-4.0. enricher: 7z header read: 1463 TIFF nucleus crops, CZYX
+  4x5 planes; dimensionality 3D (was 2D), z 1000 nm from S-BIAD1659 (5 focal planes 1 um apart), formats
+  tiff (was other), n_items 1463.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  1 file  769.6 MB  nuclei_subset.7z\nnuclei_subset.7z/  1463 files (flat)  .tiff  <well\
+      \ r..c..f..>_n<id>_c<0|1|2>.tiff\n  per field: r04c04f05 78, r04c05f04 120, ... (17 fields)"
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: nuclei_subset.7z/*_c[0-2].tiff
+    format: tiff
+    axes: czyx
+    shape:
+    - 4
+    - 5
+    - 171
+    - 136
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 87
+    - 390
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: Channels 0-2 are intensity (ranges 96-390, 87-136, 95-142 in one crop), channel 3
+      is the binary nucleus mask (values 0/1) on the same grid. Which of channels 0-2 is SiR-DNA vs PIP-FUCCI
+      red/green is not stated in the files. Phase class from the _c0/_c1/_c2 suffix (314/716/433 files).
+  notes: 'Listing: Zenodo API (1 file, 769,550,779 bytes, complete). The 7z (LZMA2, solid) cannot be listed
+    by listing.py/peek_archive; a scratch script (requests + stdlib lzma) read its 32-byte start header
+    and the 18 KB LZMA-encoded end header: 1463 .tiff entries, no folders, names <plate well field>_n<id>_c<k>.tiff
+    with k 0/1/2 (314/716/433). It then decompressed the first 3 MB of the solid stream (6.0 MB fetched
+    in total) and read the first 2 files with tifffile: ImageJ-less tifffile CZYX uint16 deflate, shapes
+    (4,5,171,136) and (4,5,171,148) (crop size varies). Channel 3 is binary {0,1}. Normalization none:
+    integer values in a low detector range, unclipped (inferred). Sample null: TensorSwitch cannot read
+    7z members, so no small direct unit exists; the whole archive is the only download. Phase-class mapping
+    of _c0/_c1/_c2 and channel order not documented in the Zenodo record or S-BIAD1659 metadata; code
+    repo (github.com/15bonte/cell_cycle_classification) README read, loaders not.'
