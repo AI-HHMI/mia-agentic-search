@@ -1,0 +1,148 @@
+schema_version: '1.2'
+id: zenodo-6879227-exllsm-synapse-ground-truth
+title: Ground truth data used to train the synapse classifier used in Lillvis et al., 2022 for ExLLSM circuit reconstruction
+short_name: Drosophila brain synapse ground truth (ExLLSM)
+description: 31 crops of 8x expanded Drosophila melanogaster brain tissue imaged with expansion lattice light-sheet
+  microscopy (ExLLSM), with the presynaptic marker Bruchpilot labelled by nc82 antibody. Each raw crop (RAWDATA.nrrd)
+  comes with manually annotated ground truth presynaptic sites (SYNAPSES.nrrd or SYNAPSEMASKS.nrrd), from optic
+  lobe, protocerebrum, lateral horn, mushroom body, ellipsoid body and antennal lobe. Used to train the U-Net synapse
+  classifier of the ExLLSM circuit reconstruction pipeline.
+landing_url: https://zenodo.org/records/6879227
+doi: 10.5281/zenodo.6879227
+repository: Zenodo
+accession: '6879227'
+authors:
+- Joshua Lillvis
+publications:
+- title: Rapid reconstruction of neural circuits using tissue expansion and light sheet microscopy.
+  doi: 10.7554/eLife.81248
+  url: https://doi.org/10.7554/eLife.81248
+date_published: '2022-07-21'
+imaging:
+  modality:
+  - light-sheet
+  - expansion
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 104
+    y: 104
+    z: 180
+  channels: 1
+  organism:
+  - Drosophila melanogaster
+  sample: Brain regions (optic lobe, protocerebrum, lateral horn, mushroom body, ellipsoid body, antennal lobe),
+    8x expanded, Bruchpilot (nc82) labelled
+  labels_stains:
+  - nc82 (anti-Bruchpilot)
+data:
+  formats:
+  - other
+  size_bytes: 5311015659
+  n_items: 31
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - synapse
+  coverage: dense
+  format: NRRD volumes per crop (SYNAPSES / SYNAPSEMASKS), aligned with the RAWDATA crop of the same name
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  - detection
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/JaneliaSciComp/exllsm-synapse-detector
+license:
+  spdx: CC0-1.0
+  url: null
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-19T14:40:05Z'
+  evidence_urls:
+  - https://zenodo.org/records/6879227
+  - https://zenodo.org/api/records/6879227
+  - https://zenodo.org/api/records/6879227/files/README.txt/content
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9651950/fullTextXML
+  confidence: 0.85
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-19T16:30:00Z'
+notes: 'Zenodo file list (63 files, 5.3 GB): 31 RAWDATA crops and 31 matching SYNAPSES/SYNAPSEMASKS crops plus README;
+  crops are 100^3 to 500^3 voxels (2 MB, 250 MB). Paper Methods: ground truth presynaptic sites were manually segmented
+  on 100^3 and 500^3 crops of nc82 (Bruchpilot) signal; the paper also points to the same ground truth at Dryad
+  (doi 10.5061/dryad.5hqbzkh8b). Voxel size 104 x 104 x 180 nm is the original voxel size the paper gives for the
+  ExLLSM data in expanded-sample coordinates (8x expansion; effective resolution 30 x 30 x 100 nm); the paper does
+  not restate it per crop. formats is other because .nrrd is not a listed format. Raw pixel type not checked. enricher:
+  NRRD headers read; opticlobe1 RAWDATA header space directions 0.104/0.104/0.18 agree with the paper voxel size.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  63 files, 5.3 GB (flat)\n  <region><n>_..._<x>-<y>-<z>_RAWDATA.nrrd        31 files (100^3: 2.0 MB,\
+      \ 500^3: 250 MB)\n  <region><n>_..._<x>-<y>-<z>_SYNAPSES.nrrd       16 files\n  <region><n>_..._<x>-<y>-<z>_SYNAPSEMASKS.nrrd\
+      \   15 files\n  README.txt\n"
+    n_files: 63
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/6879227/files/lateralhorn3_20200729_ch2_nc82_2219-2287-1979_RAWDATA.nrrd/content
+    - https://zenodo.org/api/records/6879227/files/lateralhorn3_20200729_ch2_nc82_2219-2287-1979_SYNAPSES.nrrd/content
+    size_bytes: 3000483
+    description: One 100^3 lateral horn crop (RAWDATA, 2.0 MB) and its ground-truth synapse mask (SYNAPSES, 1.0
+      MB).
+  arrays:
+  - role: raw
+    path_pattern: '*_RAWDATA.nrrd'
+    format: other
+    axes: zyx
+    shape:
+    - 100
+    - 100
+    - 100
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 4453
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '*_SYNAPSE*.nrrd'
+    format: other
+    axes: zyx
+    shape:
+    - 100
+    - 100
+    - 100
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: presynaptic site
+    alignment: same-grid
+    alignment_notes: Pairs share the stem before _RAWDATA / _SYNAPSES|_SYNAPSEMASKS (e.g. lateralhorn3_20200729_ch2_nc82_2219-2287-1979).
+      Sampled pairs have identical sizes (100 100 100). The numbers in the stem look like the crop origin in the
+      source volume (not documented).
+  notes: 'NRRD (NRRD0004, encoding raw, endian big, uncompressed); header sizes are fastest-first x y z, so arrays
+    are zyx in C order. Crops are 100^3 (raw 2,000,242 B) or 500^3 (raw 250,000,242 B), going by file sizes and
+    headers read. Sampled (one sample each, 6.0 MB total): lateralhorn3 RAWDATA uint16 0..4453 (mean 33, p99.9 670),
+    its SYNAPSES uint8 {0,255} (0.5% foreground); lateralhorn9 SYNAPSEMASKS uint8 {0,255}, RAWDATA uint16 0..697.
+    Label dtype varies: mushroombody1 SYNAPSEMASKS header says uint16 500^3 (values not sampled), mushroombody0
+    SYNAPSEMASKS uint8. Most headers carry unit spacing (1.0, "pixel"); opticlobe1 RAWDATA carries 0.104/0.104/0.18
+    (labelled "pixel"), which matches the paper in um. NRRD is not a listed format (other); TensorSwitch may not
+    read it.'
