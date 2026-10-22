@@ -1,0 +1,141 @@
+schema_version: '1.2'
+id: herlev-pap-smear-single-cell-classes
+title: Herlev Pap smear database (new, 2005) of single cervical cells in seven classes
+short_name: Herlev Pap smear single-cell classes
+description: The new (2005) Herlev Pap-smear database from the MDE-Lab at the University of the Aegean,
+  hosting 917 single-cell Pap smear images in seven classes (three normal and four abnormal), each with
+  a matching segmentation image (file names ending -d), in class folders.
+landing_url: https://mde-lab.aegean.gr/?p=21
+doi: null
+repository: LabWebsite
+accession: null
+authors: []
+publications: []
+date_published: null
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 201
+    y: 201
+    z: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: Pap-stained cervical smear cells (single cells per image)
+  labels_stains:
+  - Papanicolaou
+data:
+  formats:
+  - other
+  size_bytes: 89310390
+  n_items: 917
+  access: open
+  download_url: https://mde-lab.aegean.gr/images/stories/docs/smear2005.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  - semantic-segmentation
+  coverage: dense
+  format: Class given by folder (normal_superficiel, normal_intermediate, normal_columnar, light_dysplastic,
+    moderate_dysplastic, severe_dysplastic, carcinoma_in_situ); BMP segmentation image per cell (file
+    names ending -d)
+  source: proofread
+ml:
+  tasks:
+  - classification
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-12T17:19:29Z'
+  evidence_urls:
+  - https://mde-lab.aegean.gr/?p=21
+  - https://mde-lab.aegean.gr/images/stories/docs/smear2005.zip
+  - https://mde-lab.aegean.gr/images/stories/docs/smear2005.zip::smear2005/B22b_p_Jantzen.pdf
+  - https://mde-lab.aegean.gr/images/stories/docs/smear2005.zip::smear2005/martin2003.pdf
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-12T19:05:00Z'
+notes: 'No license on the download page, which only asks users to cite the link and related studies (Pap-Smear
+  Benchmark, Jantzen and Dounias 2006); the PDFs in the zip say only that the data are on the Internet
+  "for public use", so license is unknown. smear2005.zip: seven class folders under New database pictures/
+  with 917 cell BMPs and 917 segmentation BMPs (-d), plus three PDFs (benchmark paper, two theses), an
+  Excel feature file and a nested copy as New database pictures.zip. The older Part I database (smear.zip)
+  is not covered. enricher: voxel size 201x201 nm from Martin 2003 thesis ("resolution of 0.201 um/pixel")
+  and the Jantzen benchmark PDF (was null). enricher: annotations.source proofread: CHAMP software segmentation
+  by cyto-technicians, each picture examined and corrected (Martin 2003) (was unknown).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "smear2005.zip (89.3 MB, 1839 members)\n  smear2005/  5 files 46.4 MB: B22b_p_Jantzen.pdf, martin2003.pdf,\
+      \ norup2005.pdf, new_database_results.xls, New database pictures.zip (nested copy)\n  smear2005/New\
+      \ database pictures/\n    carcinoma_in_situ/       300 files   4.8 MB  .BMP + -d.bmp\n    light_dysplastic/\
+      \        364 files  23.6 MB\n    moderate_dysplastic/     292 files  10.6 MB\n    normal_columnar/\
+      \         196 files   3.8 MB\n    normal_intermediate/     140 files  22.2 MB\n    normal_superficiel/\
+      \      148 files  30.5 MB\n    severe_dysplastic/       394 files   8.0 MB"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://mde-lab.aegean.gr/images/stories/docs/smear2005.zip::smear2005/New database pictures/carcinoma_in_situ/149143370-149143378-001.BMP
+    - https://mde-lab.aegean.gr/images/stories/docs/smear2005.zip::smear2005/New database pictures/carcinoma_in_situ/149143370-149143378-001-d.bmp
+    size_bytes: 10127
+    description: One carcinoma-in-situ cell image (70x69 RGB) and its segmentation image
+  arrays:
+  - role: raw
+    path_pattern: smear2005/New database pictures/*/*[0-9].BMP
+    format: other
+    axes: yxs
+    shape:
+    - 70
+    - 69
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 62
+    - 214
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Windows BMP, RGB colour; one cell per image, image size varies per cell (70x69 and
+      234x189 seen). Class = parent folder.
+  - role: label
+    path_pattern: smear2005/New database pictures/*/*-d.bmp
+    format: other
+    axes: yx
+    shape:
+    - 70
+    - 69
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 4
+    encoding: semantic-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Palette (P-mode) BMP with indices 0-4 (palette colours black, grey, blue, dark blue,
+      red). Martin 2003: every picture segmented into background, cytoplasm and nucleus; which index is
+      which is not documented, so classes is null. Pairs with the cell image by name (<id>.BMP <-> <id>-d.bmp);
+      the sampled pair has the same 70x69 grid.'
+  notes: 'Zip listed with tools/listing.py --expand-zips (requests with Accept-Encoding: identity; the
+    server gzips otherwise and drops range support). Sample (read with Pillow from the zip members, 11,014
+    B): cell image 70x69x3 uint8 RGB, 62-214 (one sample); segmentation 70x69 uint8 palette image, 5 values
+    {0..4}; a normal_superficiel -d.bmp is 234x189 with the same 5 values. BMP is not a listed format,
+    hence other. Download links work by range (zip members usable) but host mde-lab.aegean.gr is not on
+    the TensorSwitch allowlist.'
