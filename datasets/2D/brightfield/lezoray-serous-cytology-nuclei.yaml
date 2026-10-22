@@ -1,0 +1,141 @@
+schema_version: '1.2'
+id: lezoray-serous-cytology-nuclei
+title: Serous cytology image database with nucleus ground truth (Lezoray & Cardot)
+short_name: Serous cytology nuclei segmentation (color)
+description: Ten colour microscopy images of serous cytology samples, each paired with a ground-truth
+  label image in which every labeled region is one nucleus (background label 1). Distributed as a single
+  ZIP of BMP files.
+landing_url: https://lezoray.users.greyc.fr/researchDatabasesSerousImages.php
+doi: null
+repository: LabWebsite
+accession: null
+authors:
+- Olivier Lezoray
+- Hubert Cardot
+publications:
+- title: 'Cooperation of color pixel classification schemes and color watershed: a study for microscopic
+    images'
+  doi: 10.1109/TIP.2002.800889
+  url: https://doi.org/10.1109/TIP.2002.800889
+date_published: null
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 349
+    y: 349
+    z: null
+  channels: 3
+  organism: []
+  sample: Serous cytology samples; staining not stated
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: 5947889
+  n_items: 10
+  access: open
+  download_url: https://lezoray.users.greyc.fr/databases/SerousDatabase.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: BMP label images (*-reg.bmp), one label per nucleus, background=1
+  source: unknown
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: custom
+  url: https://lezoray.users.greyc.fr/researchDatabasesSerousImages.php
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-17T02:21:39Z'
+  evidence_urls:
+  - https://lezoray.users.greyc.fr/researchDatabasesSerousImages.php
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1109%2FTIP.2002.800889%22&format=json&resultType=core&pageSize=3
+  - https://hal.science/hal-00964895/file/ECS98.pdf
+  confidence: 0.55
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-17T03:00:00Z'
+notes: 'Terms (landing page): free for non-commercial research and educational purposes, cite the paper;
+  custom licence. The 2002 paper is not open access (abstract only). Staining, organism and annotation
+  procedure not stated. enricher: types instance-segmentation (was semantic): page says each region is
+  one nucleus with its own label; 15-110 ids per image observed. enricher: modality brightfield (was other)
+  and voxel size 349x349 nm (was null) from the authors'' serous cytology imaging system paper (Lezoray
+  et al., HAL hal-00964895: Olympus BX-50, 20x, slide illuminated, 512x512 24-bit colour, "pixel separation
+  corresponds to 0.349µm"); the database page does not restate it, the images match its 512x512 24-bit
+  format. channels 3 = RGB. Only 10 images.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  1 file, 5,947,889 B\n  SerousDatabase.zip\n    20 .bmp, 10.5 MB unpacked:\n      <slide>-<nn>.bmp\
+      \       10 RGB images, 786,486 B each (77048-02.bmp 787,464 B)\n      <slide>-<nn>-reg.bmp   10\
+      \ label images, 263,222 B each\n    e.g. 74427-01.bmp, 74427-01-reg.bmp, 77048-02.bmp, 77048-02-reg.bmp\n"
+    n_files: 21
+    listing_complete: true
+  sample:
+    urls:
+    - https://lezoray.users.greyc.fr/databases/SerousDatabase.zip::74427-01.bmp
+    - https://lezoray.users.greyc.fr/databases/SerousDatabase.zip::74427-01-reg.bmp
+    size_bytes: 1049708
+    description: one RGB image and its nucleus label image (BMP members of the 5.9 MB zip)
+  arrays:
+  - role: raw
+    path_pattern: SerousDatabase.zip/[0-9]*-[0-9][0-9].bmp
+    format: other
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 199
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Uncompressed 24-bit BMP (BGR on disk, rows stored bottom-up, positive height), 512x512
+      in all 10 files.
+  - role: label
+    path_pattern: SerousDatabase.zip/*-reg.bmp
+    format: other
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 101
+    encoding: instance-ids
+    classes:
+    - id: 1
+      name: background
+    - id: null
+      name: nucleus (one id per nucleus)
+    alignment: same-grid
+    alignment_notes: 'Pairing: <stem>-reg.bmp labels <stem>.bmp; 8-bit palette BMP with a grey palette,
+      same 512x512 grid and row order as the image. Background = 1 (page); each other id is one nucleus.
+      Cytoplasm is not labelled (page). Value 0 also occurs in 74427-01-reg and 83686-02-reg (meaning
+      not documented).'
+  notes: 'Sampled with a small numpy/struct BMP reader (tools/sample.py and probe.py do not read BMP):
+    whole zip downloaded once (5,947,889 B, temp dir, deleted). value_range from the sample pair 74427-01;
+    across all 10 images raw spans [0, 222]; label ids per image 15-110 (max id 110). BMP is not a schema
+    format, so formats/format stay other. Size: listing.py file-listing of the zip, the only file offered.
+    Voxel size from the authors'' 1999 imaging-system paper (HAL hal-00964895), not the database page.
+    Host lezoray.users.greyc.fr is not on the TensorSwitch fetch allowlist.'
