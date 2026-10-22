@@ -1,0 +1,153 @@
+schema_version: '1.2'
+id: zenodo-8136295-emdiffuse-em-denoising-sr
+title: EMDiffuse dataset - mouse tissue SEM denoising and super-resolution training pairs
+short_name: EMDiffuse mouse tissue SEM denoising/SR pairs
+description: Paired scanning electron microscopy images of mouse tissue sections for EM denoising and
+  super-resolution. Each region is imaged several times with different dwell times (noisy inputs) and
+  once with a long dwell time (ground truth); super-resolution inputs are taken at 20,000x and the target
+  at 40,000x. Folders hold a mouse brain cortex training set (70 regions) and test set (3 regions), plus
+  mouse heart (10), liver (17) and bone marrow (10) regions for transfer learning.
+landing_url: https://zenodo.org/records/8136295
+doi: 10.5281/zenodo.8136295
+repository: Zenodo
+accession: '8136295'
+authors:
+- Lu Chixiang
+- Qi Xiaojuan
+- Jiang Haibo
+publications:
+- title: 'EMDiffuse: a diffusion-based deep learning method augmenting ultrastructural imaging and volume
+    electron microscopy'
+  doi: 10.1101/2023.07.12.548636
+  url: https://doi.org/10.1101/2023.07.12.548636
+date_published: '2023-07-11'
+imaging:
+  modality:
+  - ssSEM
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 3.3
+    y: 3.3
+    z: null
+  channels: 1
+  organism:
+  - Mus musculus
+  sample: 500 nm sections of mouse brain cortex, heart, liver and bone marrow on silicon wafers, imaged
+    with backscattered electrons (FEI Verios SEM)
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 5236286562
+  n_items: 802
+  access: open
+  download_url: https://zenodo.org/api/records/8136295/files/EMDiffuse_dataset.zip/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - restoration-pairs
+  coverage: dense
+  format: 'paired TIFFs per region: noisy raw images (short dwell time) and a long dwell time (about 130
+    s for brain) ground-truth image'
+  source: automatic
+ml:
+  tasks:
+  - denoising
+  - super-resolution
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/Luchixiang/EMDiffuse
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-08T07:20:59Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/8136295
+  - https://zenodo.org/api/records/8136295/files/EMDiffuse_dataset.zip/content
+  - https://www.biorxiv.org/content/biorxiv/early/2023/07/12/2023.07.12.548636.source.xml
+  - https://raw.githubusercontent.com/Luchixiang/EMDiffuse/master/RAFT/core/register.py
+  - https://zenodo.org/api/records/10205819
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-08T07:50:16Z'
+notes: 'Single zip (802 .tif) listed: brain_train 70 region folders, brain_test 3, Heart 10, Liver 17,
+  BM 10. No license on this record, its newer version or the paper (Data availability only gives the record
+  URL). Pixel size from the paper figure legend: 6.6 nm at 20,000x (SR inputs) and 3.3 nm at 40,000x (target);
+  transfer-learning tissues were imaged at 30,000x, pixel size not stated. Ground truth is a long dwell-time
+  acquisition of the same region, registered by the authors'' code, not manual labels. enricher: per the
+  code (RAFT/core/register.py, read not run) <Tissue>__4w_09.tif is the ground truth, 4w_04-08 the noisy
+  denoising inputs and 2w_01-03 the super-resolution inputs. The EMDiffuse README links a newer version,
+  Zenodo 10205819 (same concept, 5.30 GB zip, also no license).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "EMDiffuse_dataset.zip  5,236,286,562 B, 805 members\n  EMDiffuse_dataset/\n    brain_train/<region>/\
+      \  70 dirs, 628 tif: Brain__2w_01..03.tif, Brain__4w_04..09.tif\n    brain_test/<region>/    3 dirs,\
+      \  27 tif\n    Heart/<region>/        10 dirs,  40 tif\n    Liver/<region>/        17 dirs,  67\
+      \ tif\n    BM/<region>/           10 dirs,  40 tif (e.g. BM__4w_05,06,07,09)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/8136295/files/EMDiffuse_dataset.zip::EMDiffuse_dataset/brain_train/61/Brain__4w_04.tif
+    - https://zenodo.org/records/8136295/files/EMDiffuse_dataset.zip::EMDiffuse_dataset/brain_train/61/Brain__4w_09.tif
+    size_bytes: 14547330
+    description: 'One brain region: a noisy short-dwell image and the long-dwell ground truth'
+  arrays:
+  - role: raw
+    path_pattern: EMDiffuse_dataset.zip::EMDiffuse_dataset/*/*/*__4w_0[4-8].tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1768
+    - 2048
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Noisy (short dwell time) inputs for denoising at 40,000x; not pixel-registered to
+      the target in the files (the authors register them with RAFT/core/register.py).
+  - role: raw
+    path_pattern: EMDiffuse_dataset.zip::EMDiffuse_dataset/*/*/*__2w_0[1-3].tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1768
+    - 2048
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Super-resolution inputs at 20,000x (brain only).
+  - role: target
+    path_pattern: EMDiffuse_dataset.zip::EMDiffuse_dataset/*/*/*__4w_09.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1768
+    - 2048
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 8224
+    - 48634
+    normalization: unknown
+    alignment: unknown
+    alignment_notes: 'One per region folder; pairs with every other file in the same folder. Same pixel
+      grid size but not registered: the authors align inputs to it with homography + optical flow (register.py),
+      and the 2w inputs cover a 2x larger field.'
+  notes: 'Listing: zip index, 1 file, 5,236,286,562 B exact, 805 members. Probed brain_train/61 4w_07
+    and 2w_01: 1768x2048 uint16 uncompressed single page. Sampled the target Brain__4w_09.tif (7.0 MB):
+    range 8,224-48,634, mean 33,136 (one sample; the sample.py hint "instance labels?" does not apply,
+    it is an image). Sampling the raw 4w_04 failed twice on Zenodo TLS errors. Voxel size kept from the
+    paper (3.3 nm at 40,000x); TIFF headers carry no calibration.'
