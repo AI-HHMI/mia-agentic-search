@@ -1,0 +1,137 @@
+schema_version: '1.2'
+id: unist-skeletal-muscle-mitochondria-tem
+title: Mouse skeletal muscle mitochondria TEM dataset with segmentation masks (UNIST Yoon Lab)
+short_name: Skeletal muscle mitochondria masks (TEM)
+description: 2560 x 2560 px transmission electron micrographs of mouse skeletal muscle (quadriceps, wild type and mdx), with segmentation masks
+  of mitochondria for each image, released by the UNIST Yoon Lab alongside the DeepPI-EM interactive mitochondria segmentation framework (27 image/mask
+  pairs, 21 train + 6 test). Shared as a Google Drive folder together with CEM500k pre-trained and DeepPI-EM models trained on Lucchi++ and on
+  this skeletal muscle set.
+landing_url: https://yoonlab.unist.ac.kr/index.php/research/mitochondria-tem-dataset/
+doi: null
+repository: LabWebsite
+accession: null
+authors: []
+publications:
+- title: Deep learning-driven automated mitochondrial segmentation for analysis of complex transmission electron microscopy images
+  doi: 10.1038/s41598-025-03311-1
+  url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12125239/fullTextXML
+date_published: null
+imaging:
+  modality:
+  - TEM
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Mus musculus
+  sample: Quadriceps skeletal muscle of C57BL/6J and mdx mice, 65 nm sections stained with uranyl acetate and lead citrate
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  - png
+  size_bytes: 1061683200
+  n_items: 27
+  access: open
+  download_url: https://drive.google.com/drive/folders/1n2ZqbJEHPyMB_6a6OTBBACt5Jct2PZJc?usp=sharing
+  download_method: other
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  - organelle
+  coverage: dense
+  format: 'PNG binary masks (0/255, stored as RGB), one per TIFF image: train/target/y_N.png for train/input/x_N.tif'
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/LAIT-CVLab/DeepPI-EM
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-21T03:34:16Z'
+  evidence_urls:
+  - https://yoonlab.unist.ac.kr/index.php/research/mitochondria-tem-dataset/
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12125239/fullTextXML
+  - https://drive.google.com/embeddedfolderview?id=1n2ZqbJEHPyMB_6a6OTBBACt5Jct2PZJc
+  - https://raw.githubusercontent.com/LAIT-CVLab/DeepPI-EM/main/README.md
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-21T06:45:00Z'
+notes: 'Download is a Google Drive folder (mitoseg_deploy/: datasets/Skeletal_muscle/{train,test}/{input,target} plus two DeepPI-EM .pth checkpoints).
+  No license: page says data and models are available for public access and use, footer Copyright UNIST All Rights Reserved; GitHub README says
+  research use; repo has no LICENSE. Pixel size not stated (JEM-1011 80 kV, RADIUS CCD). The public Lucchi++ benchmark used in the same paper
+  is a separate dataset. enricher: formats [tiff, png] and n_items 27 (21 train + 6 test pairs) from the Drive folder listing (was other / 21).
+  enricher: annotations.source manual (paper: skeletal muscle gold standard based on manually segmented masks, Photoshop) (was unknown). enricher:
+  files are 2560 x 2560 px, not the 2048 x 2048 the paper states.'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "mitoseg_deploy/\n  datasets/Skeletal_muscle/\n    train/input/   x_0.tif .. x_23.tif   21 files (x_6, x_14, x_21 absent)\n    train/target/\
+      \  y_0.png .. y_23.png   21 files\n    test/input/    x_0.tif .. x_5.tif     6 files\n    test/target/   y_0.png .. y_5.png     6 files\n\
+      \    (.DS_Store files in every folder)\n  weight_checkpoints/  deepPI_lucchi_deploy.pth, deepPI_skeletalMuscle_deploy.pth\n__MACOSX/"
+    n_files: 63
+    listing_complete: true
+  sample:
+    urls:
+    - https://drive.usercontent.google.com/download?id=1jWKWF9hqYLdzwbnohbVsY1MG8ZiCCRjh&export=download
+    - https://drive.usercontent.google.com/download?id=1CYVBGMiN3hRj39QJeJO9aTGw6DmoiRgd&export=download
+    size_bytes: 19742359
+    description: 'train pair 0: input/x_0.tif (19.7 MB) + target/y_0.png (81 KB)'
+  arrays:
+  - role: raw
+    path_pattern: mitoseg_deploy/datasets/Skeletal_muscle/*/input/x_*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 2560
+    - 2560
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Plain single-page RGB TIFF (photometric 2, 3 samples); the 3 samples are identical in the sample (grey TEM stored as RGB),
+      so s is not a real channel.
+  - role: label
+    path_pattern: mitoseg_deploy/datasets/Skeletal_muscle/*/target/y_*.png
+    format: png
+    axes: yxs
+    shape:
+    - 2560
+    - 2560
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - {id: 0, name: background}
+    - {id: 255, name: mitochondria}
+    alignment: same-grid
+    alignment_notes: 'Pairing: input/x_N.tif <-> target/y_N.png in the same split folder. Same 2560 x 2560 grid. Mask is RGB with identical samples,
+      values {0,255}; 255 = mitochondria (only class annotated).'
+  notes: 'Listing: Google Drive embeddedfolderview pages walked recursively (Drive gives names, not sizes): 27 x_*.tif + 27 y_*.png, 2 .pth checkpoints,
+    .DS_Store files; 63 files in all (incl. 9 .DS_Store, excl. __MACOSX). Probed train/input/x_0.tif (plain TIFF, uncompressed, 2560x2560x3 uint8,
+    no resolution tag). Sampled x_0.tif (19,660,940 B; min 0, max 255, mean 126.6, samples identical) and y_0.png (81,419 B; values {0,255}, 33%
+    foreground); value ranges from one sample. size estimated (uncompressed): raw 27 x 2560x2560x3 uint8 + label 27 x 2560x2560x3 uint8 = 1,061,683,200
+    B (1.1 GB); PNG masks download far smaller. Voxel size not found; checked: TIFF header, landing page, paper full text (Methods: JEM-1011,
+    RADIUS CCD, no magnification or nm/px), DeepPI-EM README and config.py. Direct files: drive.usercontent.google.com/download?id=<file id>&export=download
+    (range requests OK); host not on the TensorSwitch allowlist. No single archive; data.download_url stays the Drive folder.'
