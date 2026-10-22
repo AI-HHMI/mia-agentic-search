@@ -1,0 +1,150 @@
+schema_version: '1.2'
+id: osf-w38uf-plantseg-arabidopsis-ovules
+title: PlantSeg core dataset - Arabidopsis ovules (confocal, 3D cell instance segmentation)
+short_name: Arabidopsis ovules 3D cell segmentation (confocal)
+description: Confocal stacks of fixed Arabidopsis thaliana ovules at all developmental stages with hand-curated
+  3D cell instance segmentation, used to train and evaluate PlantSeg. Stored as HDF5 with train/validate/test
+  folders (39 train, 2 validation, 7 test stacks per the paper).
+landing_url: https://osf.io/w38uf/
+doi: null
+repository: OSF
+accession: w38uf
+authors: []
+publications:
+- title: Accurate and versatile 3D segmentation of plant tissues at cellular resolution
+  doi: 10.7554/eLife.57613
+  url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7447435/fullTextXML
+date_published: null
+imaging:
+  modality:
+  - confocal
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 75
+    y: 75
+    z: 235
+  channels: null
+  organism:
+  - Arabidopsis thaliana
+  sample: fixed ovules, all developmental stages
+  labels_stains: []
+data:
+  formats:
+  - hdf5
+  size_bytes: 3434527614
+  n_items: 31
+  access: open
+  download_url: https://osf.io/w38uf/
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: HDF5 'label' dataset (uint16 cell instance IDs) next to 'raw' in each file
+  source: proofread
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/hci-unihd/plant-seg
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-08T04:30:00Z'
+  evidence_urls:
+  - https://api.osf.io/v2/nodes/uzq3w/
+  - https://api.osf.io/v2/wikis/t9gzp/content/
+  - https://api.osf.io/v2/nodes/w38uf/
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7447435/fullTextXML
+  - https://api.osf.io/v2/nodes/8jz7e/files/osfstorage/
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-08T07:20:00Z'
+notes: 'Paper: ground truth bootstrapped with ilastik then hand-curated. Voxel size 0.235 x 0.075 x 0.075
+  um (ZYX) from the project wiki and paper (Wolny et al. 2020). No license is stated on the OSF project,
+  its components, the wiki or the paper. enricher: files are in child components train (x9yns, 22 files),
+  val (xp5uf, 2) and test (8jz7e, 7): 31 HDF5 files, 3,434,527,614 bytes from the OSF files API (the paper''s
+  39/2/7 split differs; n_items now 31). File names end in _ds2x / _final_crop_ds2, yet the wiki gives
+  the voxel size above for these files; the HDF5 resolution attrs are 1,1,1. Coverage: train files also
+  hold label_with_ignore (-1 = unlabelled cells), so training labels are partial.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "osf.io/w38uf (PlantSeg Ovules)   31 .h5   3.43 GB (OSF files API)\n  train/ (component x9yns)\
+      \   22 .h5   N_<id>_ds2x.h5 (e.g. N_404_ds2x.h5, N_405_A_ds2x.h5)   2.29 GB\n  val/   (component\
+      \ xp5uf)    2 .h5   N_420_ds2x.h5, N_464_ds2x.h5                          291 MB\n  test/  (component\
+      \ 8jz7e)    7 .h5   N_<id>_final_crop_ds2.h5                              850 MB\n  each file: raw\
+      \ (uint8), label (uint16); train/test files also label_with_ignore (int16)\n"
+    n_files: 31
+    listing_complete: true
+  sample:
+    urls:
+    - https://osf.io/download/ar9yc/
+    size_bytes: 47721660
+    description: 'Smallest test file N_590_final_crop_ds2.h5: raw and label volumes (170 x 555 x 770)
+      in one HDF5.'
+  arrays:
+  - role: raw
+    path_pattern: '*.h5 (raw)'
+    format: hdf5
+    axes: zyx
+    shape:
+    - 170
+    - 555
+    - 770
+    shape_varies: true
+    dtype: uint8
+    compression: gzip
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: HDF5 dataset raw, chunks 11x70x97; attrs offset [0,0,0], resolution [1,1,1] (placeholder).
+      Axis order ZYX per the wiki voxel-size statement.
+  - role: label
+    path_pattern: '*.h5 (label)'
+    format: hdf5
+    axes: zyx
+    shape:
+    - 170
+    - 555
+    - 770
+    shape_varies: true
+    dtype: uint16
+    compression: gzip
+    value_range:
+    - 0
+    - 2299
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same file and shape as raw; 937 cell IDs in the sampled test volume (0 = background).
+  - role: label
+    path_pattern: '*.h5 (label_with_ignore)'
+    format: hdf5
+    axes: zyx
+    shape:
+    - 170
+    - 555
+    - 770
+    shape_varies: true
+    dtype: int16
+    compression: gzip
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Wiki: unlabelled cells set to -1 (ignore). Present in the sampled test file too,
+      although the wiki mentions it for training files.'
+  notes: 'Files from the OSF files API of the three child components (sizes exact; tools/listing.py does
+    not read OSF). Range reads on OSF storage returned 429, so the smallest test file (47,721,660 bytes)
+    was downloaded whole, read with h5py and deleted: raw uint8 0-255 mean 12.5; label uint16 0-2299,
+    937 unique; label_with_ignore int16. One sample only. Wiki read for the file layout and voxel size.'
