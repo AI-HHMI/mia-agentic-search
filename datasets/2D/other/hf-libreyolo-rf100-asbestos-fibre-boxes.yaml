@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: hf-libreyolo-rf100-asbestos-fibre-boxes
 title: 'RF100 asbestos: fibre detection in microscope images (Roboflow 100)'
 short_name: Asbestos fibre boxes in microscope images (RF100)
-description: 1,331 grayscale microscope images (640x640) of asbestos fibre samples with YOLO bounding boxes for four classes
-  (thick/thin, dark/light mark) and train/valid/test splits; the asbestos subset of the Roboflow 100 object detection benchmark,
-  mirrored on Hugging Face.
+description: 1,331 grayscale microscope images (640x640) of asbestos fibre samples with YOLO bounding
+  boxes for four classes (thick/thin, dark/light mark) and train/valid/test splits; the asbestos subset
+  of the Roboflow 100 object detection benchmark, mirrored on Hugging Face.
 landing_url: https://huggingface.co/datasets/LibreYOLO/asbestos
 doi: null
 repository: HuggingFace
@@ -19,8 +19,8 @@ imaging:
   voxel_size_nm: null
   channels: null
   organism: []
-  sample: Asbestos fibre samples on a grey background; all 1,331 file names start with "pc" and some contain "synt", so the
-    set may include synthetic images (not confirmed)
+  sample: Asbestos fibre samples on a grey background; all 1,331 file names start with "pc" and some contain
+    "synt", so the set may include synthetic images (not confirmed)
   labels_stains: []
 data:
   formats:
@@ -35,7 +35,8 @@ annotations:
   types:
   - bounding-box
   coverage: unknown
-  format: YOLO txt per image (class x_center y_center width height, normalized), train/valid/test labels folders
+  format: YOLO txt per image (class x_center y_center width height, normalized), train/valid/test labels
+    folders
   source: unknown
 ml:
   tasks:
@@ -63,11 +64,90 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-22T16:31:48Z'
-notes: 'LibreYOLO mirror (2026-01-20) of the Roboflow 100 ''microscopic'' subset. Licence CC BY 4.0 from data.yaml and README.dataset.txt.
-  Split sizes 932 / 266 / 133 (train/valid/test). Classes: thick-dark-mark, thick-light-mark, thin-dark-mark, thin-light-mark
-  (data.yaml ids 0-3). The RF100 copy is version 1 release-640 (Roboflow export, resize to 640x640). Original Roboflow project
-  ''asbestos'' by an unnamed ''Roboflow user''; no authors or paper are listed. One image viewed (grey field with thin dark
-  fibres) and one label file read (3 boxes, classes 2 and 0). Microscope, magnification, pixel size, sample origin and how
-  the boxes were drawn are not stated on the card, README files or data.yaml, so voxel size, organism and annotation source
-  are left empty/unknown.'
+  last_checked: '2026-10-22T17:15:00Z'
+notes: 'LibreYOLO mirror (2026-01-20) of the Roboflow 100 ''microscopic'' subset. Licence CC BY 4.0 from
+  data.yaml and README.dataset.txt. Split sizes 932 / 266 / 133 (train/valid/test). Classes: thick-dark-mark,
+  thick-light-mark, thin-dark-mark, thin-light-mark (data.yaml ids 0-3). The RF100 copy is version 1 release-640
+  (Roboflow export, resize to 640x640). Original Roboflow project ''asbestos'' by an unnamed ''Roboflow
+  user''; no authors or paper are listed. One image viewed (grey field with thin dark fibres) and one
+  label file read (3 boxes, classes 2 and 0). Microscope, magnification, pixel size, sample origin and
+  how the boxes were drawn are not stated on the card, README files or data.yaml, so voxel size, organism
+  and annotation source are left empty/unknown. enricher: technical block from HF listing, probe and one
+  sample.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './             5 files  data.yaml, README.dataset.txt, README.roboflow.txt, README.md, .gitattributes
+
+      train/images/  932 files  28.7 MB  .jpg  (<name>_jpg.rf.<hash>.jpg)
+
+      train/labels/  932 files  .txt  (same stem)
+
+      valid/images/  266 files  8.2 MB  .jpg
+
+      valid/labels/  266 files  .txt
+
+      test/images/   133 files  4.1 MB  .jpg
+
+      test/labels/   133 files  .txt
+
+      '
+    n_files: 2667
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/LibreYOLO/asbestos/resolve/main/train/images/pc450BP0006_synt1_jpg.rf.18afce185a630a0954e46c480af71131.jpg
+    - https://huggingface.co/datasets/LibreYOLO/asbestos/resolve/main/train/labels/pc450BP0006_synt1_jpg.rf.18afce185a630a0954e46c480af71131.txt
+    size_bytes: 31524
+    description: One 640x640 training image and its YOLO label file
+  arrays:
+  - role: raw
+    path_pattern: '*/images/*.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 640
+    - 640
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 48
+    - 154
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: JPEG exports (Roboflow release-640, 640x640). The sampled file is grey stored as
+      RGB (3 identical samples per pixel), so axes yxs.
+  - role: label
+    path_pattern: '*/labels/*.txt'
+    format: other
+    axes: null
+    shape:
+    - 18
+    - 5
+    shape_varies: true
+    dtype: float32
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: thick-dark-mark
+    - id: 1
+      name: thick-light-mark
+    - id: 2
+      name: thin-dark-mark
+    - id: 3
+      name: thin-light-mark
+    alignment: same-grid
+    alignment_notes: '<split>/labels/<stem>.txt pairs with <split>/images/<stem>.jpg. One row per box:
+      class x_center y_center width height, normalized to the 640x640 image (YOLO). Class ids from data.yaml
+      names.'
+  notes: 'HF listing complete: 2667 files, 41,407,976 B. Probe/sample: 640x640x3 uint8 JPEG, no calibration.
+    Sample image values 48-154 (one sample). sample.py: the 3 samples per pixel are identical (grey stored
+    as RGB). Label file read: 18 rows of 5 values (YOLO txt; plain text, so format other; dtype float32
+    is nominal). data.yaml: nc 4, license CC BY 4.0. Pixel size not found; checked: JPEG header, data.yaml,
+    README.dataset.txt, README.roboflow.txt, HF card; no paper. Images are Roboflow 640x640 resized exports,
+    so any original pixel size would not apply without the resize factor. Organism not stated anywhere
+    checked. Single files only, no archive: download_url stays the dataset page; direct files are https://huggingface.co/datasets/LibreYOLO/asbestos/resolve/main/<split>/{images,labels}/<file>.'
