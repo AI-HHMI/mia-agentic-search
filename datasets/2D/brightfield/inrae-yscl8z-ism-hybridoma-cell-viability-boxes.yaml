@@ -1,0 +1,172 @@
+schema_version: '1.2'
+id: inrae-yscl8z-ism-hybridoma-cell-viability-boxes
+title: 'Replication data for : Deep in situ microscopy for real-time analysis of mammalian cell populations in bioreactors'
+short_name: Hybridoma cell viability boxes (in situ LM)
+description: 4,000 bitmap images (1392 x 1040) from an in situ transmitted-light microscope in suspended murine hybridoma
+  bioreactor cultures with viability from 90% to 20%, in 16 folders of 250. Cells are labelled with YOLO-style bounding boxes
+  in per-image text files according to 18 classes (viable, apoptotic, necrotic, doublet and others, including over- and under-exposed
+  variants); 14 of the classes were merged into 6 for training the paper's detector.
+landing_url: https://entrepot.recherche.data.gouv.fr/dataset.xhtml?persistentId=doi:10.57745/YSCL8Z
+doi: 10.57745/YSCL8Z
+repository: other
+accession: YSCL8Z
+authors:
+- Jean-Sébastien Guez
+- Pierre-Yves Lacroix
+- Hans-Berti Wiegemann
+- Hajo Suhr
+publications:
+- title: Deep in situ microscopy for real-time analysis of mammalian cell populations in bioreactors
+  doi: 10.1038/s41598-023-48733-x
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC10716407/
+date_published: '2024-02-22'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Mus musculus
+  sample: BALB/c murine hybridoma cells (DGB02/C7021) in suspended bioreactor culture, imaged in situ with a pulsed transmitted
+    light microscope, 40x water immersion objective, NA 0.75
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: 4303973904
+  n_items: 4000
+  access: open
+  download_url: https://entrepot.recherche.data.gouv.fr/api/access/datafile/174196
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  coverage: partial
+  format: Per image .txt with class and box coordinates next to the .bmp, classes.txt per folder (18 classes); Read_me.txt
+    describes the labelling rules
+  source: manual
+ml:
+  tasks:
+  - detection
+  - classification
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: etalab-2.0
+  url: https://spdx.org/licenses/etalab-2.0.html
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-11T18:05:00Z'
+  evidence_urls:
+  - https://entrepot.recherche.data.gouv.fr/api/datasets/:persistentId/?persistentId=doi:10.57745/YSCL8Z
+  - https://entrepot.recherche.data.gouv.fr/api/access/datafile/174502
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10716407/fullTextXML
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-11T17:45:00Z'
+notes: 'Files: Labeled_DB_CNRSResearchData.zip (4.3 GB) and Read_me.txt (read). The zip central directory was read with range
+  requests: 4,000 .bmp, 926 .txt (16 classes.txt plus 910 label files, so about 910 of 4,000 images carry boxes; images without
+  a cellular object have no label file, per Read_me), 2 Thumbs.db and one .lnk. Read_me states 18 classes, of which four (cornet,
+  corps_apoptotique, bizarre, agglomerat) were not used for training and the rest merged into 6. Camera pixel size 6.45 um
+  and field 0.16 x 0.22 mm are stated; the pixel size in the object plane is not stated directly, so voxel_size_nm is null.
+  The paper trained on 3,400 images of the labelled database. Licence on the dataset page is Etalab Open License 2.0. enricher:
+  data.formats stays other (8-bit greyscale BMP, no schema value). enricher: size_bytes includes Read_me.txt (was the zip
+  only).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Read_me.txt\nLabeled_DB_CNRSResearchData.zip (4.30 GB)\n  Labeled_DB_CNRSResearchData/<date>_<time>_Age<h>h/  \
+      \ 16 folders (e.g. 0110_9h_Age189h, 2309_15h_Age3h)\n    IM*.bmp                     250 per folder, 4,000 in all (1392x1040,\
+      \ 8-bit grey)\n    IM*.txt or IM*.xml.txt      box labels for images with cells: 762 + 148 = 910\n    classes.txt  \
+      \               18 class names, one per folder\n  plus 2 Thumbs.db, 1 .lnk"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://entrepot.recherche.data.gouv.fr/api/access/datafile/174196::Labeled_DB_CNRSResearchData/0110_9h_Age189h/IM_2008_10_1_09_03_06_906.bmp
+    - https://entrepot.recherche.data.gouv.fr/api/access/datafile/174196::Labeled_DB_CNRSResearchData/0110_9h_Age189h/IM_2008_10_1_09_03_06_906.xml.txt
+    - https://entrepot.recherche.data.gouv.fr/api/access/datafile/174196::Labeled_DB_CNRSResearchData/0110_9h_Age189h/classes.txt
+    size_bytes: 1449080
+    description: one image with its YOLO box file and the folder class list
+  arrays:
+  - role: raw
+    path_pattern: Labeled_DB_CNRSResearchData/*/IM*.bmp
+    format: other
+    axes: yx
+    shape:
+    - 1040
+    - 1392
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 52
+    - 236
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 8-bit greyscale BMP (PIL mode L), 1,448,758 bytes each
+  - role: label
+    path_pattern: Labeled_DB_CNRSResearchData/*/IM*.txt
+    format: other
+    axes: null
+    shape:
+    - 1
+    - 5
+    shape_varies: true
+    dtype: float32
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: agglomerat
+    - id: 1
+      name: apoptotique
+    - id: 2
+      name: necrotique
+    - id: 3
+      name: doublet
+    - id: 4
+      name: vivante
+    - id: 5
+      name: bizarre
+    - id: 6
+      name: apoptotique_surexp
+    - id: 7
+      name: necrotique_surexp
+    - id: 8
+      name: doublet_surexp
+    - id: 9
+      name: vivante_surexp
+    - id: 10
+      name: vivante blob
+    - id: 11
+      name: apoptotique_sousexp
+    - id: 12
+      name: necrotique_sousexp
+    - id: 13
+      name: doublet_sousexp
+    - id: 14
+      name: vivante_sousexp
+    - id: 15
+      name: corps_apoptotique
+    - id: 16
+      name: necrotique_late_stage
+    - id: 17
+      name: cornet
+    alignment: same-grid
+    alignment_notes: 'YOLO lines: class x_center y_center width height, normalised; label file = image stem + .txt or + .xml.txt
+      in the same folder; images without cells have no label file (Read_me). Class ids index classes.txt (0-based, YOLO convention;
+      order read from 0110_9h_Age189h/classes.txt).'
+  notes: 'Listing: zip central directory by range (4,929 members) plus Read_me.txt; Dataverse lists 2 files, 4,303,973,904
+    bytes. Sample (one image, value_range from it): IM_2008_10_1_09_03_06_906.bmp 1040x1392 uint8 [52,236], p1/p50/p99 106/164/214;
+    its label: 1 line ''4 0.795977 0.949519 0.086207 0.100962''. Label file naming mixes <stem>.txt (762) and <stem>.xml.txt
+    (148). Voxel size not found: paper Methods give objective x40, object field 0.16 x 0.22 mm and camera pixel 6.45 um, not
+    an object-plane pixel size; Read_me the same. Download: zip members by range work, but probe/peek need a range-GET size
+    (HEAD after the 303 redirect is wrong) and the host is not on the TensorSwitch allowlist.'
