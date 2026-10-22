@@ -1,0 +1,140 @@
+schema_version: '1.2'
+id: mdf-71ek-dyij-defecttrack-situ-tem-defect-tracking
+title: DefectTrack training dataset, in-situ irradiation TEM video of nickel with tracked defect cluster
+  boxes
+short_name: In-situ TEM defect cluster tracking (nickel)
+description: Annotated in-situ irradiation TEM video of annealed nickel (1,200 frames, 2048x2048 pixels
+  in the paper, split into video sequences for training) with bounding boxes and unique track IDs for
+  every cascade-induced defect cluster, in MOTChallenge style; training data of the DefectTrack real-time
+  multi-object tracker.
+landing_url: https://doi.org/10.18126/71ek-dyij
+doi: 10.18126/71ek-dyij
+repository: other
+accession: defecttrack_training_v1.2
+authors:
+- Rajat Sainju
+- Wei-Ying Chen
+- Samuel Schaefer
+- Qian Yang
+- Caiwen Ding
+- Meimei Li
+- Yuanyuan Zhu
+publications:
+- title: 'DefectTrack: a deep learning-based multi-object tracking algorithm for quantitative defect analysis
+    of in-situ TEM videos in real-time'
+  doi: 10.1038/s41598-022-19697-1
+  url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9489724/fullTextXML
+date_published: null
+imaging:
+  modality:
+  - TEM
+  dimensionality: 2D+t
+  voxel_size_nm:
+    x: 0.38
+    y: 0.38
+    z: null
+  channels: 1
+  organism: []
+  sample: Annealed nickel under in-situ ion irradiation in a TEM
+  labels_stains: []
+data:
+  formats:
+  - hdf5
+  size_bytes: 5044531458
+  n_items: 1200
+  access: open
+  download_url: https://data.materialsdatafacility.org/foundry/defecttrack_training_v1.2/data2foundry/Defecttrack.h5
+  download_method: http
+annotations:
+  present: true
+  types:
+  - tracking
+  - bounding-box
+  coverage: dense
+  format: HDF5 groups images/00000-01199 (one 2048x2048 uint8 frame each) and groundtruths/00000-01199
+    (float32 table per frame, columns image_id, defect_id, top, left, width, height)
+  source: manual
+ml:
+  tasks:
+  - tracking
+  - detection
+  splits_provided: false
+  benchmark: MOTChallenge-style in-situ TEM tracking benchmark
+  baseline_code_url: null
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-22T08:17:14Z'
+  evidence_urls:
+  - https://search.api.globus.org/v1/index/1a57bbe5-5272-477f-9d31-343b8258b7a5/search?q=mdf.source_id:defecttrack_training_v1.2%20AND%20mdf.resource_type:dataset&advanced=true&limit=3
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9489724/fullTextXML
+  - https://data.materialsdatafacility.org/foundry/defecttrack_training_v1.2/data2foundry/Defecttrack.h5
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-22T10:55:00Z'
+notes: 'From the Foundry/MDF entry (DOI 10.18126/71ek-dyij, one file Defecttrack.h5, folder total_size
+  5,044,531,458 B in the MDF record) and the Scientific Reports paper (PMC9489724: VIA annotation of a
+  1,200-frame TEM video at 2048x2048, 0.38 nm per pixel, 103 FPS; split into eight sequences of 1200 frames
+  at 1024x512 for training). The paper points to a figshare private link for the data (not reachable,
+  HTTP 202 bot check); the MDF copy is what was reachable. MDF lists no license (rightsList empty); the
+  CC BY 4.0 link in the paper is the article licence. MDF gives the year 2023 only, so no date is set.
+  enricher: HDF5 layout read from the file (1,200 images + 1,200 box tables); annotations verified.'
+technical:
+  method: header
+  size_source: page-stated
+  layout:
+    tree: "MDF foundry/defecttrack_training_v1.2/ (Globus + HTTPS, no directory index)\n  data2foundry/Defecttrack.h5\
+      \   5,039,914,944 B\n    images/00000 ... images/01199              1,200 x (2048, 2048) uint8\n\
+      \    groundtruths/00000 ... groundtruths/01199  1,200 x (n_boxes, 6) float32\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://data.materialsdatafacility.org/foundry/defecttrack_training_v1.2/data2foundry/Defecttrack.h5
+    size_bytes: 5039914944
+    description: The single HDF5 file (all 1,200 frames and box tables); no smaller unit is offered
+  arrays:
+  - role: raw
+    path_pattern: data2foundry/Defecttrack.h5 (images/*)
+    format: hdf5
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One dataset per video frame (images/00000-01199, contiguous, uncompressed); frame
+      order = time (103 FPS, paper).
+  - role: label
+    path_pattern: data2foundry/Defecttrack.h5 (groundtruths/*)
+    format: hdf5
+    axes: null
+    shape:
+    - 37
+    - 6
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: tracks-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'groundtruths/<n> pairs with images/<n>; rows = boxes, columns image_id, defect_id
+      (track ID), top, left, width, height in pixels (Foundry key description); e.g. frame 0 row 1: 1,
+      1, 1149.12, 147.64, 18.06, 18.06; 37 boxes in frame 0, rising to 92 by frame 23.'
+  notes: 'Header inspection of Defecttrack.h5 by range requests (tools/probe.py lists 2,400 datasets;
+    h5py over fsspec read images/00000 and the first rows of groundtruths/00000); no image pixels sampled.
+    The folder has no HTTP index (tools/listing.py got a 4 KB page), so the MDF record''s total_size (5,044,531,458
+    B, 4.6 MB more than the h5) is used as page-stated; the other files were not seen. data.download_url
+    is the direct h5 (range requests OK) on data.materialsdatafacility.org, not on the TensorSwitch allowlist.
+    License not found: MDF/Foundry record has none, figshare private link unreachable.'
