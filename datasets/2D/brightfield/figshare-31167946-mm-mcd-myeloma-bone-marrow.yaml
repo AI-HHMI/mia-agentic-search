@@ -1,0 +1,158 @@
+schema_version: '1.2'
+id: figshare-31167946-mm-mcd-myeloma-bone-marrow
+title: 'MM-MCD: Multiple Myeloma Bone Marrow Smear Analysis Dataset'
+short_name: Myeloma bone marrow smear cells (brightfield)
+description: Expert-annotated 1024x1024 px bone marrow smear images from multiple myeloma patients for
+  multi-cell segmentation and fine-grained classification of 49 bone marrow cell categories (plasma cell
+  subtypes, erythroid, myeloid, lymphoid, monocytic, megakaryocytic). Two zips with JPG images and per-image
+  annotation files (rectangle boxes in labelme-style JSON in one, polygon masks with NIfTI label volumes
+  in the other). Annotated by independent labelling, cross-review and senior hematologist adjudication
+  (Cohen's Kappa > 0.85, per the description).
+landing_url: https://figshare.com/articles/dataset/MM-MCD_Multiple_Myeloma_Bone_Marrow_Smear_Analysis_Dataset/31167946
+doi: 10.6084/m9.figshare.31167946.v2
+repository: Figshare
+accession: '31167946'
+authors:
+- Qingyue Chen
+publications: []
+date_published: '2026-01-28'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: Bone marrow smears from multiple myeloma patients, acquired under standardized clinical conditions
+  labels_stains: []
+data:
+  formats:
+  - jpeg
+  - nifti
+  size_bytes: 1243498791
+  n_items: 2752
+  access: open
+  download_url: https://ndownloader.figshare.com/files/61418515
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  - instance-segmentation
+  - classification
+  coverage: dense
+  format: 'dataset1: per-image labelme-style JSON with rectangle boxes labelled by numeric cell-category
+    id, plus a per-image *_Label.tar; dataset2: per-image JSON polygons and .nii.gz label volumes with
+    colour-overlay JPGs; 5folds_devision.xlsx for cross-validation'
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  - detection
+  - classification
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-12T06:45:00Z'
+  evidence_urls:
+  - https://api.figshare.com/v2/articles/31167946
+  confidence: 0.55
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-12T07:38:18Z'
+notes: 'Figshare API reports the Figshare licence as CC BY 4.0 but the description says "intended for
+  non-commercial research and educational use", so the terms conflict and spdx is left unknown. Two zips
+  (dataset1.zip 0.52 GB, dataset2.zip 0.72 GB) listed with peek_archive: dataset1 has 1,148 Label.tar
+  archives and 1,142 .nii.gz, dataset2 1,604 of each, so about 2,750 annotated images are present, far
+  fewer than the roughly 20,000 images the description mentions (5folds_devision.xlsx not opened). Cell-category
+  ids are numeric (49 categories); the id-to-name mapping, stain and magnification are not stated on the
+  page and no paper was found in Europe PMC, so pixel size is unknown. Splits: 8:2 train/validation and
+  five-fold lists per the description.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  3 files, 1.24 GB: dataset1.zip (521.5 MB), dataset2.zip (721.7 MB), 5folds_devision.xlsx\n\
+      dataset1.zip/dataset1/G<case>/          245 case dirs: 1,168 .jpg, 1,144 *_jpg_Label.tar, 498 .json\n\
+      \  G<case>_<n>.jpg                       raw smear image\n  G<case>_<n>.json                   \
+      \   labelme rectangles, numeric category ids\n  G<case>_<n>_jpg_Label/                1,142 dirs:\
+      \ _Label.jpg, _Label_color.jpg, .json, .nii.gz\ndataset2.zip/dataset2/G<case>/          299 case\
+      \ dirs: 1,657 .jpg, 1,604 .tar, 113 .json\n  G<case>_<n>_jpg_Label/                1,604 dirs: _Label.jpg,\
+      \ _Label_color.jpg, .json, .nii.gz (+4 .py)\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/61418515::dataset1/G2108444/G2108444_1.jpg
+    - https://ndownloader.figshare.com/files/61418515::dataset1/G2108444/G2108444_1_jpg_Label/G2108444_1_jpg_Label.nii.gz
+    size_bytes: 244886
+    description: One dataset1 smear image and its NIfTI label mask (zip members).
+  arrays:
+  - role: raw
+    path_pattern: dataset[12]/*/G*_[0-9]*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1824
+    - 2736
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 33
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: dataset[12]/*/*_jpg_Label/*_jpg_Label.nii.gz
+    format: nifti
+    axes: yx
+    shape:
+    - 1824
+    - 2736
+    shape_varies: null
+    dtype: uint16
+    compression: gzip
+    value_range:
+    - 0
+    - 2
+    encoding: unknown
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'G<case>_<n>_jpg_Label/G<case>_<n>_jpg_Label.nii.gz belongs to G<case>_<n>.jpg in
+      the same case folder. NIfTI stores x first: nibabel returns 2736x1824 (the transpose of the JPEG),
+      header spacing 1x1 (uncalibrated). The paired .json (annotation-tool export) lists generic "Label
+      1".."Label 6" with no class names.'
+  - role: label
+    path_pattern: dataset1/*/G*_[0-9]*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: boxes-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'labelme JSON beside G<case>_<n>.jpg: rectangle shapes in pixel coordinates, label
+      = numeric cell-category id (49 categories per the description; id-to-name map not found).'
+  notes: 'Figshare listing plus zip central directories: 3 files, 1,243,498,791 B, complete, 17,194 zip
+    members. Probes: dataset1/G2108444/G2108444_1.jpg and dataset2/G2208700/G2208700_1.jpg 1824x2736x3
+    uint8 JPEG (the description says 1024x1024; not what the files show); _Label.nii.gz uint16 1824x2736
+    gzip; _Label.jpg 1824x2736 greyscale. Sample (one pair, values from one sample; scratch script, sample.py
+    needs a .zip URL suffix): raw 33..255; label values {0: 4,906,013, 1: 60,871, 2: 23,580}, so per-image
+    label ids, encoding not documented. The *_jpg_Label.tar files and 4 .py files in dataset2 were not
+    opened (untrusted). 5folds_devision.xlsx not opened. Voxel size not found: JPEG headers none, NIfTI
+    spacing 1.0 (default), label JSON Spacing [1,1,1]; Figshare description gives none; no paper in Europe
+    PMC.'
