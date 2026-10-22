@@ -1,0 +1,148 @@
+schema_version: '1.2'
+id: github-zt089-bmgd-mammary-nuclei
+title: Breast Mammary Gland Dataset (BMGD) - DAPI-labeled nuclei of mammary epithelial cells with masks
+short_name: Mammary epithelial DAPI nuclei masks (confocal)
+description: 819 DAPI-stained confocal image patches (256 x 256, 12-bit) of mammary epithelial cell cultures
+  grown at four substrate stiffnesses (250-1800 Pa), with binary and labeled nuclear masks for more than
+  9,500 nuclei and an 80:10:10 train/validation/test split described in the preprint.
+landing_url: https://github.com/zt089/Breast-Mammary-Gland-Dataset-BMGD
+doi: null
+repository: GitHub
+accession: null
+authors: []
+publications:
+- title: Breast Mammary Gland Dataset (BMGD) (Research Square preprint rs-8263420)
+  doi: null
+  url: https://assets-eu.researchsquare.com/files/rs-8263420/v1/921b938da2b95841dc61675a.html
+date_published: null
+imaging:
+  modality:
+  - confocal
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 250
+    y: 250
+    z: null
+  channels: 1
+  organism: []
+  sample: Mammary epithelial cell cultures (called organoids in the abstract) grown at substrate stiffness
+    250 Pa to 1800 Pa; Zeiss LSM 710, 40x/1.1 water objective
+  labels_stains:
+  - DAPI
+data:
+  formats:
+  - tiff
+  size_bytes: 40454989
+  n_items: 819
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  - instance-segmentation
+  coverage: dense
+  format: Binary mask TIFFs (uint8, 0/255) with the same file name as the image, in <stiffness>/mask/
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-20T04:17:36Z'
+  evidence_urls:
+  - https://github.com/zt089/Breast-Mammary-Gland-Dataset-BMGD
+  - https://assets-eu.researchsquare.com/files/rs-8263420/v1/921b938da2b95841dc61675a.html
+  - https://raw.githubusercontent.com/zt089/Breast-Mammary-Gland-Dataset-BMGD/main/README.md
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-20T06:03:38Z'
+notes: 'Repository holds four 7z archives (250/950/1200/1800 Pa) and a README. No license in README, repo
+  tree (no LICENSE file) or preprint. Preprint: 12-bit patches "standardized to 256 x 256", voxel 0.25
+  x 0.25 x 1 um (z null, 2D patches), masks from Labkit random-forest pre-masks manually verified, split
+  655/82/82, stiffness counts 453/54/114/198. Species not stated (only mammary epithelial cell cultures),
+  so organism left empty. Authors not listed in the HTML read. enricher: formats tiff (was other): 950
+  Pa.7z holds image/ and mask/ TIFFs. annotations_verified true. size 40,454,989 B from the listing of
+  the four 7z files + README. enricher: sampled patches are 189x200 and 220x231 px, not 256x256 as the
+  preprint says; 950 Pa has only binary masks, the labeled (instance) masks the preprint mentions were
+  not seen.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: '250 Pa.7z   10.5 MB  (not listed: 7z has no remote member listing)
+
+      950 Pa.7z    1.6 MB  950 Pa/image/img (<n>).tif  54 files; 950 Pa/mask/img (<n>).tif  54 files (7.2
+      MB uncompressed)
+
+      1200 Pa.7z   5.4 MB  (not listed)
+
+      1800 Pa.7z  22.9 MB  (not listed)
+
+      README.md
+
+      '
+    n_files: 5
+    listing_complete: true
+  sample:
+    urls:
+    - https://raw.githubusercontent.com/zt089/Breast-Mammary-Gland-Dataset-BMGD/main/950%20Pa.7z
+    size_bytes: 1596373
+    description: 'The smallest stiffness archive (950 Pa): 54 DAPI patches and their 54 binary masks.
+      7z, so no single-member download.'
+  arrays:
+  - role: raw
+    path_pattern: '*.7z::*/image/*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 189
+    - 200
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 4095
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '*.7z::*/mask/*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 189
+    - 200
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: 255
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: 'Pairs by file name: <stiffness>/image/img (<n>).tif with <stiffness>/mask/img (<n>).tif;
+      all 54 pairs in 950 Pa have identical shapes. 255 = nucleus, 0 = background.'
+  notes: 'Downloaded 950 Pa.7z (1,596,373 B; 111 entries: 54 image + 54 mask TIFFs) and read every TIFF
+    with tifffile. Images: single-page uint16, uncompressed, no calibration, shapes 189x200 or 220x231,
+    values 0-4095 over all 54 (12-bit, as the preprint says; "original 12-bit dynamic range", hence normalization
+    none). Masks: uint8 {0,255}, ImageJ files with default 1 px = 1 um calibration (ignored). The other
+    three 7z archives were not downloaded (7z needs the whole file to list), so their contents and the
+    labeled masks are unverified; the listing of the five repository files is complete and exact. Voxel
+    size 250 nm from the preprint Methods; the files carry none. No single archive: download_url stays
+    null, the four 7z files are direct raw.githubusercontent.com links.'
