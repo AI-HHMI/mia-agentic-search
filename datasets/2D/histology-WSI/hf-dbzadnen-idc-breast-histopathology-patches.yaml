@@ -1,0 +1,135 @@
+schema_version: '1.2'
+id: hf-dbzadnen-idc-breast-histopathology-patches
+title: Breast Histopathology Images (IDC patches, pre-split mirror)
+short_name: Breast IDC histopathology patches (H&E)
+description: About 277,000 50 x 50 px RGB patches cut from 162 whole-mount breast cancer slides scanned
+  at 40x, each labelled invasive ductal carcinoma (IDC) positive or negative, pre-split on the Hugging
+  Face Hub into train (249,300), validation (13,850) and test (13,850). The card says it is a copy of
+  the Kaggle dataset of the same name (277,524 patches, 198,738 negative and 78,786 positive).
+landing_url: https://huggingface.co/datasets/dbzadnen/breast-histopathology-images
+doi: null
+repository: HuggingFace
+accession: null
+authors: []
+publications: []
+date_published: null
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: breast cancer whole-mount slides (162 slides, invasive ductal carcinoma), patches extracted
+    at 40x
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: 1678115537
+  n_items: 277000
+  access: open
+  download_url: https://huggingface.co/datasets/dbzadnen/breast-histopathology-images
+  download_method: git-lfs
+annotations:
+  present: true
+  types:
+  - classification
+  coverage: dense
+  format: binary label per patch (0 = IDC negative, 1 = IDC positive) in the label column of the parquet
+    files
+  source: unknown
+ml:
+  tasks:
+  - classification
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC0-1.0
+  url: https://huggingface.co/datasets/dbzadnen/breast-histopathology-images
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-11T18:21:28Z'
+  evidence_urls:
+  - https://huggingface.co/datasets/dbzadnen/breast-histopathology-images
+  - https://huggingface.co/api/datasets/dbzadnen/breast-histopathology-images
+  - https://huggingface.co/datasets/dbzadnen/breast-histopathology-images/raw/main/README.md
+  - https://datasets-server.huggingface.co/first-rows?dataset=dbzadnen/breast-histopathology-images&config=default&split=train
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC4977982/fullTextXML
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-11T19:15:00Z'
+notes: 'Mirror of the Kaggle dataset (paultimothymooney/breast-histopathology-images, not fetched here);
+  the card names no authors or paper. The 50 x 50 patch size, 40x scan and the IDC task match the IDC
+  use case in Janowczyk and Madabhushi 2016 (full text read on Europe PMC), which says the patches came
+  from the authors of an earlier paper, but that this mirror is the same data is an inference, so no paper
+  is listed. Split sizes sum to 277,000, not the 277,524 in the card text. First rows read through the
+  datasets server: 50 x 50 RGB, label 0/1. Patient/slide IDs and the stain (presumably H&E) are not stated
+  in the card, and the images are stored inside parquet files (5 files, 1.68 GB). enricher: the embedded
+  image bytes are PNG (signatures in the test parquet); formats stays other (parquet). The license CC0-1.0
+  is stated on the card.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "README.md, .gitattributes\ndata/\n  train-0000{0,1,2}-of-00003.parquet   490 / 492 / 529 MB\
+      \   249,300 rows\n  validation-00000-of-00001.parquet     84 MB               13,850 rows\n  test-00000-of-00001.parquet\
+      \           84 MB               13,850 rows\n  columns: image (HF Image: PNG bytes), label (ClassLabel\
+      \ 0/1)\n"
+    n_files: 7
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/dbzadnen/breast-histopathology-images/resolve/main/data/test-00000-of-00001.parquet
+    size_bytes: 83873833
+    description: The test split parquet (13,850 patches with labels in one file)
+  arrays:
+  - role: raw
+    path_pattern: data/*.parquet
+    format: other
+    axes: yxs
+    shape:
+    - 50
+    - 50
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: png
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Parquet "image" column of HF Image structs holding PNG bytes (47 PNG signatures in
+      the first 256 KB of the test file); the datasets server reports 50 x 50 RGB for the first rows.
+  - role: label
+    path_pattern: data/*.parquet
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes:
+    - id: 0
+      name: IDC negative
+    - id: 1
+      name: IDC positive
+    alignment: not-applicable
+    alignment_notes: Parquet "label" column (ClassLabel names "0", "1"), one per row next to its image;
+      0/1 meaning from the card text (record).
+  notes: 'Listing: tools/listing.py on the HF repo: 7 files (5 parquet + README + .gitattributes), 1,678,115,537
+    bytes, complete, exact. Read the datasets-server /info (features image + ClassLabel; splits 249,300
+    / 13,850 / 13,850) and /rows (first 3 train rows: 50x50, label 0), and the first 256 KB of the test
+    parquet (PAR1 magic, PNG-encoded images). No pyarrow in the inspection environment, so the parquet
+    schema was not read directly. Patch file names (patient IDs) are not in the parquet columns, so a
+    patient-level split is not possible from this mirror. Voxel size not found; checked: card, Hub API,
+    datasets server, parquet bytes; Janowczyk & Madabhushi 2016 (harvester) describes 40x scans but this
+    mirror is not confirmed to be that data. download_url stays the repo page (5 files, no archive); parquet
+    files are direct /resolve/main/ URLs.'
