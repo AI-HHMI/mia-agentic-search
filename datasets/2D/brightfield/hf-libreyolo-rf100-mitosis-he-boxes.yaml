@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: hf-libreyolo-rf100-mitosis-he-boxes
 title: 'RF100 mitosis: mitotic figure detection in H&E images (Roboflow 100)'
 short_name: Mitotic figure boxes in H&E images (RF100)
-description: 304 H&E-stained histology images (640x640) with YOLO bounding boxes for one class, mitosis, and train/valid/test
-  splits; the mitosis subset of the Roboflow 100 object detection benchmark, mirrored on Hugging Face.
+description: 304 H&E-stained histology images (640x640) with YOLO bounding boxes for one class, mitosis,
+  and train/valid/test splits; the mitosis subset of the Roboflow 100 object detection benchmark, mirrored
+  on Hugging Face.
 landing_url: https://huggingface.co/datasets/LibreYOLO/mitosis-gjs3g
 doi: null
 repository: HuggingFace
@@ -18,7 +19,8 @@ imaging:
   voxel_size_nm: null
   channels: null
   organism: []
-  sample: H&E-stained tissue sections showing cell nuclei; tissue and species not stated in the files read
+  sample: H&E-stained tissue sections showing cell nuclei; tissue and species not stated in the files
+    read
   labels_stains:
   - hematoxylin and eosin
 data:
@@ -34,7 +36,8 @@ annotations:
   types:
   - bounding-box
   coverage: unknown
-  format: YOLO txt per image (class x_center y_center width height, normalized), train/valid/test labels folders
+  format: YOLO txt per image (class x_center y_center width height, normalized), train/valid/test labels
+    folders
   source: unknown
 ml:
   tasks:
@@ -62,11 +65,83 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-22T16:40:00Z'
-notes: 'LibreYOLO mirror (2026-01-20) of the Roboflow 100 ''microscopic'' subset, 613 files, 27.6 MB (train 213, valid 61,
-  test 30 images with one label file each). Licence CC BY 4.0 from data.yaml and README.dataset.txt. The original Roboflow
-  project was created by an anonymous user (universe.roboflow.com/20029-tkmce-ac-in/mitosis-dwute); the RF100 copy is
-  version 1 release-640, exported 2023-04-03 with auto-orient and a stretch resize to 640x640, no augmentation. One image
-  viewed (H&E-stained tissue, pink eosin with purple nuclei) and one label file read (2 boxes, class 0 = Mitosis). Tissue
-  or species, magnification, pixel size, scanner and how the boxes were drawn are not stated on the card, README files or
-  data.yaml, so organism, voxel size and annotation source are left empty/unknown. No paper is listed.'
+  last_checked: '2026-10-22T17:05:00Z'
+notes: 'LibreYOLO mirror (2026-01-20) of the Roboflow 100 ''microscopic'' subset, 613 files, 27.6 MB (train
+  213, valid 61, test 30 images with one label file each). Licence CC BY 4.0 from data.yaml and README.dataset.txt.
+  The original Roboflow project was created by an anonymous user (universe.roboflow.com/20029-tkmce-ac-in/mitosis-dwute);
+  the RF100 copy is version 1 release-640, exported 2023-04-03 with auto-orient and a stretch resize to
+  640x640, no augmentation. One image viewed (H&E-stained tissue, pink eosin with purple nuclei) and one
+  label file read (2 boxes, class 0 = Mitosis). Tissue or species, magnification, pixel size, scanner
+  and how the boxes were drawn are not stated on the card, README files or data.yaml, so organism, voxel
+  size and annotation source are left empty/unknown. No paper is listed. enricher: technical block from
+  HF listing, probe and one sample.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './             5 files  data.yaml, README.dataset.txt, README.roboflow.txt, README.md, .gitattributes
+
+      train/images/  213 files  19.3 MB  .jpg  (<name>_jpg.rf.<hash>.jpg)
+
+      train/labels/  213 files  .txt  (same stem)
+
+      valid/images/  61 files  5.6 MB  .jpg
+
+      valid/labels/  61 files  .txt
+
+      test/images/   30 files  2.7 MB  .jpg
+
+      test/labels/   30 files  .txt
+
+      '
+    n_files: 613
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/LibreYOLO/mitosis-gjs3g/resolve/main/train/images/image__000--10-_jpg.rf.a2bb121ca40022ad9d042516697fca6e.jpg
+    - https://huggingface.co/datasets/LibreYOLO/mitosis-gjs3g/resolve/main/train/labels/image__000--10-_jpg.rf.a2bb121ca40022ad9d042516697fca6e.txt
+    size_bytes: 93717
+    description: One 640x640 training image and its YOLO label file
+  arrays:
+  - role: raw
+    path_pattern: '*/images/*.jpg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 640
+    - 640
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 28
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB JPEG exports of H&E images (Roboflow release-640, stretched to 640x640).
+  - role: label
+    path_pattern: '*/labels/*.txt'
+    format: other
+    axes: null
+    shape:
+    - 2
+    - 5
+    shape_varies: true
+    dtype: float32
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: Mitosis
+    alignment: same-grid
+    alignment_notes: '<split>/labels/<stem>.txt pairs with <split>/images/<stem>.jpg. One row per box:
+      class x_center y_center width height, normalized to the 640x640 image (YOLO). Class ids from data.yaml
+      names.'
+  notes: 'HF listing complete: 613 files, 27,566,607 B. Probe: 640x640x3 uint8 JPEG, no calibration. Sample
+    image values 28-255 (one sample). Label file read: 2 rows of 5 values (YOLO txt; plain text, so format
+    other; dtype float32 is nominal). data.yaml: nc 1 (Mitosis), license CC BY 4.0. Pixel size not found;
+    checked: JPEG header, data.yaml, README.dataset.txt, README.roboflow.txt, HF card; no paper. Images
+    are Roboflow 640x640 stretch-resized exports, so any original pixel size would not apply without the
+    resize factor. Single files only, no archive: download_url stays the dataset page; direct files are
+    https://huggingface.co/datasets/LibreYOLO/mitosis-gjs3g/resolve/main/<split>/{images,labels}/<file>.'
