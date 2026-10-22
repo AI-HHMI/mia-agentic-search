@@ -1,0 +1,142 @@
+schema_version: '1.2'
+id: zenodo-17093439-micrographcleaner-cryoem-masks
+title: Dataset for "MicrographCleaner - A python package for cryo-EM micrograph cleaning using deep learning"
+short_name: Cryo-EM micrograph contamination masks
+description: 'Training data of MicrographCleaner: cryo-EM micrographs from EMPIAR entries (one folder per EMPIAR ID, with
+  mics/ and masks_proc/ NumPy arrays) with manually segmented binary masks marking regions that are unsuitable for particle
+  picking (carbon, high-contrast contamination) versus usable regions. The accompanying paper describes 539 manually segmented
+  training micrographs drawn from 16 EMPIAR entries.'
+landing_url: https://zenodo.org/records/17093439
+doi: 10.5281/zenodo.17093439
+repository: Zenodo
+accession: '17093439'
+authors:
+- Ruben Sanchez Garcia
+publications:
+- title: 'MicrographCleaner: a python package for cryo-EM micrograph cleaning using deep learning'
+  doi: 10.1016/j.jsb.2020.107498
+  url: https://www.biorxiv.org/content/10.1101/677542v2.full
+date_published: '2025-09-10'
+imaging:
+  modality:
+  - cryo-EM
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: Single-particle cryo-EM micrographs from multiple EMPIAR projects (various specimens)
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: 1816815416
+  n_items: null
+  access: open
+  download_url: https://zenodo.org/records/17093439/files/micrographCleaner_dataset.tar.gz
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: NumPy .npy float64 {0,1} masks in masks_proc/, same file names as the micrographs in mics/
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/rsanchezgarc/micrograph_cleaner_em
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-11T15:40:14Z'
+  evidence_urls:
+  - https://zenodo.org/records/17093439
+  - https://zenodo.org/api/records/17093439
+  - https://zenodo.org/records/17093439/files/micrographCleaner_dataset.tar.gz
+  - https://www.biorxiv.org/content/10.1101/677542v2.full
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1016%2Fj.jsb.2020.107498%22&format=json&resultType=core&pageSize=3
+  - https://www.biorxiv.org/content/biorxiv/early/2020/03/04/677542.source.xml
+  - https://raw.githubusercontent.com/rsanchezgarc/micrograph_cleaner_em/master/README.md
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-11T17:20:00Z'
+notes: 'Listed the Zenodo record (CC BY 4.0): the dataset is one tar.gz (1,816,815,416 B); deepMicrographCleaner.tgz is the
+  model checkpoint. Archive layout trainingdataMySegmentation/<EMPIAR id>/{mics,masks_proc}/*.npy; paper: 539 manually segmented
+  training micrographs from 16 EMPIAR entries. enricher: sampled the first 40 MB of the tarball: micrographs are float64 595x595
+  arrays, intensity- and size-normalized by the authors (robust scaling, constant-particle-size downsampling per paper), so
+  pixel size differs per EMPIAR entry and is not stated: voxel size stays null. Masks are float64 {0,1}. Organism varies per
+  EMPIAR entry; the entries are not listed in the main text (Supplementary S5 not read), so organism stays empty.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  1 file, 1,816,815,416 B (tools/listing.py, complete)\n  micrographCleaner_dataset.tar.gz\ninside the tar.gz\
+      \ (first 40 MB streamed only):\ntrainingdataMySegmentation/\n  10077/\n    masks_proc/  *.npy (2,832,328 B each, e.g.\
+      \ sb1_210512_pos_98_3-2_1.npy)\n    mics/        *.npy (same names)\n  <other EMPIAR ids>/  (not reached in the streamed\
+      \ part)"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/17093439/files/micrographCleaner_dataset.tar.gz
+    size_bytes: 1816815416
+    description: 'No per-file download: the only direct file is the 1.8 GB tar.gz (no random access to members). Smallest
+      pair inside: trainingdataMySegmentation/10077/mics/sb1_210512_pos_98_3-2_1.npy + masks_proc/sb1_210512_pos_98_3-2_1.npy
+      (2.8 MB each).'
+  arrays:
+  - role: raw
+    path_pattern: trainingdataMySegmentation/*/mics/*.npy
+    format: other
+    axes: null
+    shape:
+    - 595
+    - 595
+    shape_varies: null
+    dtype: float64
+    compression: none
+    value_range:
+    - -1.8236545068938281
+    - 2.1483469380794755
+    normalization: standardized
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: trainingdataMySegmentation/*/masks_proc/*.npy
+    format: other
+    axes: null
+    shape:
+    - 595
+    - 595
+    shape_varies: null
+    dtype: float64
+    compression: none
+    value_range:
+    - 0.0
+    - 1.0
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: suitable for particle picking
+    - id: 1
+      name: unsuitable region (carbon, contamination, aggregation)
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: masks_proc/<name>.npy labels mics/<name>.npy in the same EMPIAR folder; both 595x595 in
+      the sampled pair. Class polarity from the paper (mask marks non-suitable regions; observed ~0.5% of pixels = 1 in the
+      samples).'
+  notes: 'Format is NumPy .npy (not in the schema enum, hence other); 2D C-order arrays, axis names not stated in the files,
+    so axes null. Inspected by streaming the first 40,042,496 B of the tar.gz with a short requests+tarfile script (np.load
+    allow_pickle=False): 46 members seen, all masks_proc/ of folder 10077 first, then mics/. value_range from two sampled
+    pairs only (mics -1.82..2.15, mean ~0.009, std ~0.32-0.34). normalization standardized = paper: "normalized in both intensity
+    and size using a robust scaling strategy and a constant particle size downsampling" (std not 1). Full member count, image
+    sizes of other folders and any test split are unverified (the tarball is not seekable; a full listing would mean streaming
+    1.8 GB). voxel size not found; checked: Zenodo API description, the tar members read, bioRxiv full text (Methods: per-dataset
+    particle-size downsampling, no pixel size), GitHub README. TensorSwitch cannot pull members out of a tar.gz, and .npy
+    is not a format it converts.'
