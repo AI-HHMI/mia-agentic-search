@@ -61,10 +61,64 @@ provenance:
   - https://zenodo.org/api/records/23535439
   - https://zenodo.org/api/records/23535439/files/Data.zip/content
   - https://zenodo.org/api/records/23535439/files/Classes.json/content
+  - https://zenodo.org/api/records/23535439/files/project.qpproj/content
+  - https://zenodo.org/api/records/23535439/files/115-23-47.svs/content
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-22T18:53:08Z'
-notes: 'No associated paper found (Europe PMC title search and web search), so Methods could not be read; sampling, staining and animal details come from the Zenodo description only. Pixel size 0.262238 um from the QuPath server metadata of the slides sampled in Data.zip. Annotations are sparse training regions (Positive/Negative/Region/Ignore classes, from the per-image summary.json), not full-slide labels. Classes.json also lists unused default classes (Tumor, Stroma, ...).'
+  last_checked: '2026-10-22T20:05:00Z'
+notes: 'No associated paper found (Europe PMC title search and web search), so Methods could not be read; sampling, staining and animal details come from the Zenodo description only. Pixel size 0.262238 um from the QuPath server metadata of the slides sampled in Data.zip. Annotations are sparse training regions (Positive/Negative/Region/Ignore classes, from the per-image summary.json), not full-slide labels. Classes.json also lists unused default classes (Tumor, Stroma, ...). enricher: 41 SVS on Zenodo but 42 QuPath entries (115-23-53.svs is in project.qpproj with no image file).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Data.zip (1.5 MB; 168 members)\n  <entry id 1..46, 42 folders>/\n    data.qpdata      QuPath annotation hierarchy (one per slide)\n    server.json      image server metadata (slide name, size, pixel calibration)\n    summary.json     annotation counts per class\n    thumbnail.jpg\n115-23-21.svs ... 81-22-9.svs   41 Aperio SVS slides, 30.6 MB - 530.8 MB each\nSARS-CoV-2_Pixel_Classifier.json   trained QuPath pixel classifier\nproject.qpproj                     QuPath project (entry id -> slide name)\nClasses.json                       QuPath class list"
+    n_files: 45
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/23535439/files/115-23-47.svs/content
+    - https://zenodo.org/api/records/23535439/files/Data.zip/content::43/data.qpdata
+    size_bytes: 30689985
+    description: smallest slide 115-23-47.svs (QuPath entry 43) and its annotation file 43/data.qpdata from Data.zip
+  arrays:
+  - role: raw
+    path_pattern: '*.svs'
+    format: svs
+    axes: yxs
+    shape:
+    - 19867
+    - 9566
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB brightfield H-DAB (photometric RGB, samples not identical); level 0 of an Aperio pyramid (downsamples 1, 4, 16 plus thumbnail/label pages)
+  - role: label
+    path_pattern: Data.zip/*/data.qpdata
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    encoding: other
+    classes:
+    - id: null
+      name: Positive
+    - id: null
+      name: Negative
+    - id: null
+      name: Region*
+    - id: null
+      name: Ignore*
+    alignment: same-grid
+    alignment_notes: 'QuPath annotation objects (not raster masks) in the level-0 pixel frame of the slide: server.json/summary.json width x height equal the SVS level-0 size (9566 x 19867 for entry 43). Pairing: Data.zip/<entryID>/ <-> slide named by entryID in project.qpproj (also server.json metadata.name).'
+  notes: 'Listing: Zenodo API, 45 files, 8,657,311,383 bytes (complete). Probed and sampled 115-23-47.svs (30,613,354 bytes): BigTIFF, tiled 512x512 JPEG Q75, uint8 RGB, level 0 19867x9566, Aperio MPP 0.262238 (matches record voxel size). value_range from this one sample (mean 236.6, background near 255). Labels are QuPath .qpdata files (QuPath''s own serialized object hierarchy, not opened: no listed tool reads it and it is a Java-serialized format); per-slide class counts come from summary.json. Masks would have to be exported with QuPath (e.g. a label-image export), so automatic conversion of the labels is not possible from these files. No single archive for the whole dataset: download_url stays null; direct files are the Zenodo API file links in the listing.'
