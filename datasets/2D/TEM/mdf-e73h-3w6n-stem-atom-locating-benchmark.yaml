@@ -1,0 +1,142 @@
+schema_version: '1.2'
+id: mdf-e73h-3w6n-stem-atom-locating-benchmark
+title: Benchmark Dataset for Locating Atoms in STEM images
+short_name: Atom column locating benchmark (atomic-res STEM)
+description: 300 simulated and experimental atomic-resolution STEM images (SrTiO3 [100], WS2 [0001] and
+  46 experimental images of other lattices, defects and interfaces), each labeled with atomic column positions,
+  with image series varying pixel size, resolution, contrast, noise, flyback error, drift and dose. Packaged
+  as an HDF5 file on the Foundry / Materials Data Facility.
+landing_url: https://acdc.alcf.anl.gov/mdf/detail/foundry_wei_atom_locating_benchmark_v1.1
+doi: 10.18126/E73H-3W6N
+repository: other
+accession: foundry_wei_atom_locating_benchmark_v1.1
+authors:
+- Jingrui Wei
+- Ben Blaiszik
+- Dane Morgan
+- Paul Voyles
+publications:
+- title: Benchmark tests of atom segmentation deep learning models with a consistent dataset
+  doi: 10.1093/micmic/ozac043
+  url: https://arxiv.org/abs/2207.10173
+date_published: null
+imaging:
+  modality:
+  - TEM
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: null
+  organism: []
+  sample: Simulated and experimental atomic-resolution (ADF) STEM images of SrTiO3 [100], monolayer WS2
+    [0001] and other crystal lattices
+  labels_stains: []
+data:
+  formats:
+  - hdf5
+  size_bytes: 233921879
+  n_items: 299
+  access: open
+  download_url: https://data.materialsdatafacility.org/foundry/foundry_wei_atom_locating_benchmark_v1.1/wei_atom.h5
+  download_method: http
+annotations:
+  present: true
+  types:
+  - points
+  coverage: dense
+  format: 'HDF5 datasets coords/<NNNN>: (x, y) atom-column positions in pixels, one table per image'
+  source: mixed
+ml:
+  tasks:
+  - detection
+  splits_provided: false
+  benchmark: Wei et al. 2023 atom-locating benchmark (Microscopy and Microanalysis)
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-22T06:05:47Z'
+  evidence_urls:
+  - https://acdc.alcf.anl.gov/mdf/detail/foundry_wei_atom_locating_benchmark_v1.1
+  - https://arxiv.org/pdf/2207.10173
+  - https://search.api.globus.org/v1/index/1a57bbe5-5272-477f-9d31-343b8258b7a5/search?q=mdf.source_id:foundry_wei_atom_locating_benchmark_v1.1&advanced=true&limit=3
+  - https://data.materialsdatafacility.org/foundry/foundry_wei_atom_locating_benchmark_v1.1/wei_atom.h5
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-22T07:05:00Z'
+notes: 'Counts, labeling (simulated: known positions; experimental: manually labeled then refined by 2D
+  Gaussian fitting, hence source mixed) and the HDF5 packaging come from the arXiv paper (Methods, Table
+  1); paper.py found no open full text, so the arXiv PDF was read. No fixed train/test split. Pixel size
+  varies per image, so voxel_size_nm is null. enricher: direct https file link from the MDF search API
+  (was Globus only); downloaded wei_atom.h5: 299 images, not 300 (195 simulated, 104 experimental), n_items
+  300 -> 299; coords seen, annotations_verified true; size from file listing; per-image pixel size 2.7-60
+  pm (metadata table pixelsize_pm).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  1 file  233.9 MB  .h5\n  wei_atom.h5\n    imgs/0000..0298    8-bit images\n    raw/0000..0298\
+      \     raw images\n    coords/0000..0298  atom positions\n    metadata/table     per-image metadata\
+      \ (pandas/PyTables)"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.materialsdatafacility.org/foundry/foundry_wei_atom_locating_benchmark_v1.1/wei_atom.h5
+    size_bytes: 233921879
+    description: the whole dataset is one 234 MB HDF5 file; image NNNN is raw/NNNN (or imgs/NNNN) with
+      labels coords/NNNN
+  arrays:
+  - role: raw
+    path_pattern: wei_atom.h5 (raw/0000)
+    format: hdf5
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: true
+    dtype: float64
+    compression: none
+    value_range:
+    - 495.8
+    - 528.4
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: one dataset per image raw/0000..raw/0298; 256 float64, 43 uint16; 15 shapes from
+      180x200 to 1024x1024 (252 are 256x256)
+  - role: label
+    path_pattern: wei_atom.h5 (coords/0000)
+    format: hdf5
+    axes: null
+    shape:
+    - 647
+    - 2
+    shape_varies: true
+    dtype: float64
+    compression: none
+    value_range:
+    - 11.1
+    - 494.6
+    encoding: points-table
+    classes:
+    - id: null
+      name: atom column
+    alignment: same-grid
+    alignment_notes: coords/NNNN pairs with raw/NNNN; columns are x, y in pixels of that image (paper,
+      Foundry keys); 27-3767 points per image, 123254 total
+  notes: 'Whole file downloaded once (233,921,879 bytes) and read with h5py; nothing unpickled (pandas
+    column names read from raw PyTables attributes). 299 groups per key (imgs, raw, coords, metadata row),
+    not 300 as the paper says. axes yx: 2D arrays, rows = y. value_range of raw and coords are from image
+    0000 only; raw ranges differ per image (e.g. uint16 2185-7667 for 0150). imgs normalization: every
+    sampled image spans exactly 0-255 and the paper calls it an 8-bit image for visualization, so contrast-stretched.
+    raw normalization none: the paper calls it the raw image (simulated values are float counts). metadata/table
+    columns: Atoms/px, contrast, dose, peak intensity, pixelsize_pm, probe current, resolution_pm, flyback
+    error, Poisson dB, random drift, key, material/orientation, space group, type (simulated/experimental).
+    Voxel size varies per image (pixelsize_pm 2.7-60) and is in that table, so imaging.voxel_size_nm stays
+    null. Non-biological samples (crystal lattices), so organism stays empty. The file also holds imgs/NNNN,
+    an 8-bit uint8 copy of raw/NNNN for visualization (paper), same shapes, each spanning 0-255 (contrast-stretched);
+    left out of arrays because it is not a separate label or target.'
