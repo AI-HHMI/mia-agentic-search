@@ -1,0 +1,144 @@
+schema_version: '1.2'
+id: bbbc027-colon-tissue-nuclei-phantoms-3d
+title: BBBC027 - Synthetic 3D digital phantoms of colon tissue nuclei (high and low SNR)
+short_name: Synthetic colon-tissue nuclei phantoms (3D)
+description: 30 simulated 3D fluorescence stacks (1300x1030x129, 16-bit ICS) of clustered nuclei in a digital phantom of colon
+  tissue, each provided in a high-SNR and a low-SNR rendering, with binary foreground/background ground-truth volumes for
+  every image. Made with a virtual microscope imitating a Zeiss S100 63x/1.40 oil objective with an Atto CARV confocal unit.
+landing_url: https://bbbc.broadinstitute.org/BBBC027
+doi: null
+repository: other
+accession: BBBC027
+authors:
+- David Svoboda
+- Ondřej Homola
+- Stanislav Stejskal
+publications:
+- title: Generation of 3D Digital Phantoms of Colon Tissue
+  doi: 10.1007/978-3-642-21596-4_4
+  url: https://doi.org/10.1007/978-3-642-21596-4_4
+date_published: null
+imaging:
+  modality:
+  - confocal
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 123.806
+    y: 123.806
+    z: 123.8
+  channels: 1
+  organism: []
+  sample: Simulated image formation of a digital phantom of human colon tissue (no real specimen)
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: 9136894615
+  n_items: 60
+  access: open
+  download_url: https://bbbc.broadinstitute.org/BBBC027
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: Binary foreground/background volumes as ICS files (image-labels_NNNN.ics, 16-bit, same 1300x1030x129 grid as the
+    images), 10 per zip part, 3 parts per SNR level
+  source: automatic
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-3.0
+  url: https://creativecommons.org/licenses/by/3.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-22T04:50:32Z'
+  evidence_urls:
+  - https://bbbc.broadinstitute.org/BBBC027
+  - https://data.broadinstitute.org/bbbc/BBBC027/BBBC027_lowSNR_images_part1.zip
+  - https://data.broadinstitute.org/bbbc/BBBC027/BBBC027_lowSNR_foreground_part1.zip
+  - https://muni.cz/en/research/publications/936280
+  - https://doi.org/10.1007/978-3-642-21596-4_4
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-22T06:30:00Z'
+notes: 'Fully synthetic: images come from a simulator and the ground truth is the phantom itself (source automatic). Voxel
+  size is from the ICS headers (range request; x,y 0.123806 um, z 0.1238 um). 60 images and 60 label volumes = 3 parts x 2
+  SNR levels x 10 files; part 1 of each was listed with peek_archive, parts 2 and 3 only by HEAD (12 zips, 9.14 GB). Page
+  calls the ground truth binary foreground masks;  Paper (ICIAR 2011) is paywalled and not in Europe PMC: only the abstract
+  on muni.cz was read; doi.org redirects to Springer. Format other = ICS. enricher: labels are binary {0,1} (sampled); full
+  listing 12 zips, 120 ICS members.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  12 zips, 9,136,894,615 B\n  BBBC027_{lowSNR,highSNR}_images_part{1,2,3}.zip\n    BBBC027_<snr>_images_part<k>/image-final_NNNN.ics\
+      \      (10 per part, 30 per SNR; 4.2 GB low, 4.7 GB high)\n  BBBC027_{lowSNR,highSNR}_foreground_part{1,2,3}.zip\n \
+      \   BBBC027_<snr>_foreground_part<k>/image-labels_NNNN.ics (10 per part, 30 per SNR; ~3.5 MB each)"
+    n_files: 12
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.broadinstitute.org/bbbc/BBBC027/BBBC027_lowSNR_images_part1.zip::BBBC027_lowSNR_images_part1/image-final_0000.ics
+    - https://data.broadinstitute.org/bbbc/BBBC027/BBBC027_lowSNR_foreground_part1.zip::BBBC027_lowSNR_foreground_part1/image-labels_0000.ics
+    size_bytes: 141282767
+    description: One low-SNR phantom volume (image 0000) and its binary foreground volume, both single-file ICS 2.0 members
+      of the part-1 zips.
+  arrays:
+  - role: raw
+    path_pattern: BBBC027_*SNR_images_part?/image-final_*.ics
+    format: other
+    axes: zyx
+    shape:
+    - 129
+    - 1030
+    - 1300
+    shape_varies: false
+    dtype: uint16
+    compression: gzip
+    value_range:
+    - 68
+    - 543
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ICS 2.0 single-file (header + gzip data), layout order bits x y z, sizes 1300 1030 129, so C-order zyx.
+      Range [68, 207] low SNR / [68, 543] high SNR from the first ~25% of image 0000 of each.
+  - role: label
+    path_pattern: BBBC027_*SNR_foreground_part?/image-labels_*.ics
+    format: other
+    axes: zyx
+    shape:
+    - 129
+    - 1030
+    - 1300
+    shape_varies: false
+    dtype: uint16
+    compression: gzip
+    value_range:
+    - 0
+    - 1
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: nuclei foreground
+    n_ids_observed: 2
+    alignment: same-grid
+    alignment_notes: image-labels_NNNN.ics pairs with image-final_NNNN.ics in the same SNR level and part (same index). Same
+      ICS sizes 1300x1030x129 and scale 0.123806 um.
+  notes: 'ICS 2.0 files (not readable by probe.py): headers read via zip range requests with a scratch script. Header scale
+    x,y 0.123806 um, z 0.1238 um (images) / 0.123806 um (labels), units micrometers, software i3dlib. Label volume 0000 (low
+    SNR) decoded fully: values {0,1}, 21% foreground, binary (not instance ids). Raw value ranges are from one partial sample
+    per SNR level. Normalization unknown (simulated images). Data are offered as 12 zips (no single archive); download_url
+    is the landing page, the zip URLs are in the layout and sample. Zip members are stored (no zip compression) and support
+    range reads; the ICS data inside are gzip-compressed.'
