@@ -3,8 +3,8 @@ id: zenodo-4765599-saureus-sem-stardist
 title: Effect of local topography on cell division of Staphylococci sp.
 short_name: S. aureus cell segmentation on surfaces (SEM)
 description: Eight scanning electron microscopy images of surface-attached Staphylococcus aureus (four on flat silicon, four
-  on silicon nanowire surfaces) with a matching label image for each, used to train a StarDist 2D segmentation model with the
-  ZeroCostDL4Mic notebook. The record also ships the trained StarDist 2D model.
+  on silicon nanowire surfaces) with a matching label image for each, used to train a StarDist 2D segmentation model with
+  the ZeroCostDL4Mic notebook. The record also ships the trained StarDist 2D model.
 landing_url: https://zenodo.org/records/4765599
 doi: 10.5281/zenodo.4765599
 repository: Zenodo
@@ -19,7 +19,10 @@ authors:
 - Jo Forthergill
 - Rasmita Raval
 - Yuri A. Diaz Fernandez
-publications: []
+publications:
+- title: Effect of Local Topography on Cell Division of Staphylococcus spp.
+  doi: 10.3390/nano12040683
+  url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8877970/fullTextXML
 date_published: '2021-05-16'
 imaging:
   modality:
@@ -60,16 +63,77 @@ provenance:
   discovered_at: '2026-10-22T12:05:47Z'
   evidence_urls:
   - https://zenodo.org/api/records/4765599
-  confidence: 0.55
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8877970/fullTextXML
+  - https://raw.githubusercontent.com/ioritzsb/Cocci_on_SiNW/main/Colony_Morphology.ijm
+  confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-22T12:10:00Z'
-notes: 'Modality is scanning electron microscopy (record keyword "Scanning Electron Microscopy (SEM)"); the schema has no SEM
-  value, so it is listed as other. Dataset.zip (302 KB) was listed with peek_archive: Dataset/Images/{1-4_flat,5-8_sinw}.tif
-  and Dataset/Labels/ with the same eight names (about 0.2 MB each). Label encoding (StarDist instance labels) is inferred
-  from the record text and was not inspected. Record size is the sum of Dataset.zip and Stardist2d_Model.zip (30.8 MB model);
-  the images and labels alone are about 1.6 MB uncompressed. The associated paper is listed as in progress with no DOI, so
-  there is no paper to read; pixel size, SEM settings and the annotation procedure are not stated on the record. Small
-  dataset (8 image/label pairs), just under the usual ~10-image bar.'
+  last_checked: '2026-10-22T13:20:00Z'
+notes: 'Modality is scanning electron microscopy (JEOL JSM-7001F FE-SEM at 10 kV per the paper); the schema has no plain SEM
+  value, so it is listed as other. Dataset.zip holds Dataset/Images/{1-4_flat,5-8_sinw}.tif and Dataset/Labels/ with the same
+  eight names. Record size is Dataset.zip plus Stardist2d_Model.zip (30.8 MB trained model); the images and labels alone are
+  1.6 MB. Small dataset (8 image/label pairs, 200x200 px), just under the usual ~10-image bar. enricher: paper found (Nanomaterials
+  2022, doi 10.3390/nano12040683): Methods say the StarDist 2D model was trained on 8 paired 200x200 patches; it does not
+  say how the labels were made (annotations.source stays unknown) and states no pixel size. enricher: label encoding confirmed
+  as int32 instance IDs from a sample.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Dataset.zip (302 KB)\n  Dataset/Images/  8 files  321.2 KB  .tif  (1_flat..4_flat, 5_sinw..8_sinw)\n  Dataset/Labels/\
+      \  8 files    1.3 MB  .tif  (same names)\nStardist2d_Model.zip (30.8 MB): trained StarDist 2D model, not training data\n\
+      \  Stardist2d_Model/  7 files  (config.json, weights_best.h5, weights_last.h5, TF_SavedModel.zip, thresholds.json, ...)\n\
+      \  Stardist2d_Model/Quality Control/  3 files\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/4765599/files/Dataset.zip::Dataset/Images/1_flat.tif
+    - https://zenodo.org/records/4765599/files/Dataset.zip::Dataset/Labels/1_flat.tif
+    size_bytes: 202143
+    description: One SEM image (flat Si) and its instance label image
+  arrays:
+  - role: raw
+    path_pattern: Dataset.zip::Dataset/Images/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 200
+    - 200
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 54
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: Dataset.zip::Dataset/Labels/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 200
+    - 200
+    shape_varies: false
+    dtype: int32
+    compression: none
+    value_range:
+    - 0
+    - 34
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Label file has the same name as its image (Dataset/Labels/<name>.tif <-> Dataset/Images/<name>.tif);
+      identical 200x200 shape; 0 = background.
+  notes: 'Exact listing of the Zenodo record (2 zips, 26 members, 31,134,597 bytes). All 8 images and 8 labels have identical
+    member sizes (40,148 / 161,995 B), so all are 200x200. Probed 1_flat/2_flat image and label headers; sampled 1_flat: raw
+    uint8 min 54 max 255 (saturated at 255, p50 97), label int32 0..34 with 34 distinct values, 81% background. Values are
+    from one sample. Voxel size not found; checked: TIFF headers (label SCIFIO scale 1.0, no unit), Zenodo API record, paper
+    full text (Methods, figure legends; only a 71.8 um field of view for a different confocal figure), GitHub repo ioritzsb/Cocci_on_SiNW.
+    Its Colony_Morphology.ijm sets scale 199 px = 10 um for the full-size low-magnification SEM images it measures, but nothing
+    says the 200x200 training patches share that scale, so it is not recorded.'
