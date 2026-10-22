@@ -1,0 +1,169 @@
+schema_version: '1.2'
+id: leafnet-stomata-pavement-cells
+title: 'LeafNet supplemental data: stomata and pavement cell segmentation training and validation images'
+short_name: Leaf stomata and pavement cells (brightfield)
+description: 'Supplemental image sets for LeafNet: 140 training images and 30 held-out test images of
+  leaf epidermis, with label images for stomata and pavement cells (PNG). A further 140 manually labelled
+  and 960 roughly labelled training images, and larger test sets, are listed on the same page.'
+landing_url: http://leafnet.whu.edu.cn/suppdata
+doi: null
+repository: LabWebsite
+accession: null
+authors:
+- Shaopeng Li
+- Linmao Li
+- Weiliang Fan
+- Suiwen Ma
+- Chi Zhang
+- Jung Kim
+- Kun Wang
+- Eugenia Russinova
+- Ying Zhu
+- Yu Zhou
+publications:
+- title: 'LeafNet: a tool for segmenting and quantifying stomata and pavement cells'
+  doi: 10.1093/plcell/koac021
+  url: https://doi.org/10.1093/plcell/koac021
+date_published: null
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: null
+  organism: []
+  sample: leaf epidermal images (species not stated on the supplemental page)
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: 235247359
+  n_items: 170
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: RGB PNG label images in label/ folders, one per image (black background, green cell walls, blue stomata)
+  source: unknown
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-20T08:50:54Z'
+  evidence_urls:
+  - http://leafnet.whu.edu.cn/suppdata
+  - http://leafnet.whu.edu.cn/media/download/F1_training_data.zip
+  - http://leafnet.whu.edu.cn/doc
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1093%2Fplcell%2Fkoac021%22&format=json&resultType=core&pageSize=3
+  confidence: 0.55
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-20T10:20:00Z'
+notes: 'No license or terms on the supplemental page. Paper is not open access in Europe PMC (abstract
+  read only: bright-field leaf epidermal images, confocal added by transfer learning); species, pixel
+  size, microscope and annotation procedure not found. peek_archive: F1_training_data.zip (214 MB) = 280
+  PNG (label/ folder plus images); F6_ABC_manual_training_data.zip has 280 PNG with label/ folder; whether
+  F1 and F6 manual sets overlap was not checked. Modality of the Figure 1/6 sets is brightfield per the
+  paper abstract only. Page also lists 960 roughly labelled images, 47 + 223 test images and 30 validation
+  images with ground truth zips. enricher: labels are RGB colour masks, (0,255,0) cell walls and (0,0,255) stomata on black, per the /doc annotation procedure and samples; F2 labels have stomata only. Code repo conda recipe says MIT (software), no data license found.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |-
+      ./                                    2 files    235.2 MB  .zip
+      zip contents:
+      F1_training_data.zip/label/         140 files     10.4 MB  .png
+      F1_training_data.zip/sample/        140 files    213.9 MB  .png
+      F2_validation_data.zip/label/        30 files    365.2 KB  .png
+      F2_validation_data.zip/sample/       30 files     21.2 MB  .png
+      files are named 0.png, 1.png, ... in both sample/ and label/
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - http://leafnet.whu.edu.cn/media/download/F2_validation_data.zip::sample/0.png
+    - http://leafnet.whu.edu.cn/media/download/F2_validation_data.zip::label/0.png
+    size_bytes: 833650
+    description: F2 validation image 0 and its stoma label image
+  arrays:
+  - role: raw
+    path_pattern: F1_training_data.zip/sample/*.png
+    format: png
+    axes: yxs
+    shape: [1040, 1040, 3]
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range: [5, 255]
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Training images (140). Probed 0.png RGB 1040x1040x3 (grey stored as RGB, 3 identical samples) and 1.png RGBA 1040x1260x4, so width and sample count vary.
+  - role: raw
+    path_pattern: F2_validation_data.zip/sample/*.png
+    format: png
+    axes: yx
+    shape: [1040, 1392]
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range: [5, 255]
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Validation images (30). Palette (mode P) PNGs, 1040x1392 in both probed files.
+  - role: label
+    path_pattern: F1_training_data.zip/label/*.png
+    format: png
+    axes: yxs
+    shape: [1040, 1040, 3]
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range: [0, 255]
+    encoding: rgb-colors
+    classes:
+    - {id: '0,0,0', name: background}
+    - {id: '0,255,0', name: pavement cell wall}
+    - {id: '0,0,255', name: stoma}
+    alignment: same-grid
+    alignment_notes: >-
+      Pairing rule: sample/N.png pairs with label/N.png in the same zip (same height and width in every probed pair).
+      Colours: (0,0,0) background, (0,255,0) pavement cell walls, (0,0,255) stomata, per the LeafNet /doc annotation
+      procedure; 0.png also has ~200 rare anti-aliased shades, 1.png exactly the 3 colours.
+  - role: label
+    path_pattern: F2_validation_data.zip/label/*.png
+    format: png
+    axes: yxs
+    shape: [1040, 1392, 3]
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range: [0, 255]
+    encoding: rgb-colors
+    classes:
+    - {id: '0,0,0', name: background}
+    - {id: '0,0,255', name: stoma}
+    alignment: same-grid
+    alignment_notes: Pairing rule as for F1 (sample/N.png with label/N.png). Probed labels 0 and 1 hold only (0,0,0) and (0,0,255), i.e. stomata ground truth only (F2 evaluates StomaNet).
+  notes: >-
+    Scope: Figure 1 training set (140) and Figure 2 validation set (30) from the supplemental page; the page lists
+    further zips (F5/F6/F7 raw, ground truth, rough and manual training sets) not covered by this record. Listing:
+    tools/listing.py on both zips, 340 members, 235,247,359 bytes (file-listing, complete for these two zips). Value
+    ranges from one sample per raw set. Voxel size not found; checked: PNG headers (no pHYs reported), supplemental
+    page, /doc and /help pages, GitHub repo zhouyulab/leafnet README and train_model.py (2.17 px/um is only the
+    model's default target resolution, not a stated value for these files), paper (not open access, abstract only).
+    Download: both zips are direct HTTP files with range requests, but host leafnet.whu.edu.cn is not on the
+    TensorSwitch allowlist; no single archive for the whole record, so data.download_url stays null.
