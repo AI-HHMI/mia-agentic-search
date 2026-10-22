@@ -1,0 +1,160 @@
+schema_version: '1.2'
+id: kaggle-remylivecellimaging-ecoli-mother-machine-gnn-tracking
+title: E.coli cells tracking dataset for GNN
+short_name: E. coli mother-machine tracking (fluorescence)
+description: Fluorescence time-lapse stacks of E. coli MG1655 cells in mother-machine microchannels (0.11
+  um per pixel) as NumPy arrays, with per-cell lookup tables (bounding boxes, centroids, cell size and
+  angle) and a ground-truth adjacency matrix linking cells across frames, used to train a graph neural
+  network tracker.
+landing_url: https://www.kaggle.com/datasets/remylivecellimaging/e-coli-cells-tracking-dataset-for-gnn
+doi: null
+repository: Kaggle
+accession: remylivecellimaging/e-coli-cells-tracking-dataset-for-gnn
+authors:
+- R. A. A. Ripandelli
+- S. H. Mueller
+- A. Robinson
+- A. M. van Oijen
+publications:
+- title: 'A Single-Cell Interrogation System from Scratch: Microfluidics and Deep Learning'
+  doi: 10.1021/acs.jpcb.4c02745
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC11613446/
+date_published: null
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 2D+t
+  voxel_size_nm:
+    x: 110
+    y: 110
+    z: null
+  channels: null
+  organism:
+  - Escherichia coli
+  sample: E. coli MG1655 expressing a cytosolic mKate2 marker, grown in mother-machine microfluidic channels
+  labels_stains:
+  - mKate2
+data:
+  formats:
+  - other
+  size_bytes: 1003743448
+  n_items: 152
+  access: open
+  download_url: https://www.kaggle.com/api/v1/datasets/download/remylivecellimaging/e-coli-cells-tracking-dataset-for-gnn
+  download_method: http
+annotations:
+  present: true
+  types:
+  - tracking
+  - bounding-box
+  coverage: dense
+  format: 'NumPy .npy files: images (frames, height, width) uint16, look_up_table (one row per cell per
+    frame: bounding box, centroid, width, height, angle) and adjacency_matrix_gt (cell-to-cell links)'
+  source: unknown
+ml:
+  tasks:
+  - tracking
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-08T20:40:00Z'
+  evidence_urls:
+  - https://www.kaggle.com/api/v1/datasets/view/remylivecellimaging/e-coli-cells-tracking-dataset-for-gnn
+  - https://www.kaggle.com/datasets/remylivecellimaging/e-coli-cells-tracking-dataset-for-gnn
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11613446/fullTextXML
+  - https://www.kaggle.com/api/v1/datasets/list/remylivecellimaging/e-coli-cells-tracking-dataset-for-gnn
+  confidence: 0.55
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-08T22:18:43Z'
+notes: 'Kaggle API record read (license shown as Unknown, 1.0 GB, .npy files, 0.11 um per pixel, array
+  layout described) plus the open-access JPCB paper full text (mother machine, Nikon Ti2, 100x 1.49 NA,
+  EM-CCD, mKate2 marker, GNN tracking after detection and segmentation). No license or terms stated anywhere
+  found, so spdx unknown. The number of files/frames, how the ground-truth adjacency matrix was produced
+  (manual vs corrected automatic) and the file listing were not seen (Kaggle page is JavaScript-rendered;
+  paper has no data availability link to this set). The 0.11 um pixel size comes from the Kaggle description.
+  Uploader name is the Kaggle account name; real authors per the paper are Ripandelli, Mueller, Robinson
+  and van Oijen. enricher: 152 .npy files in train/ (142) and val/ (10), so splits_provided true; arrays
+  seen in one file.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      ./ (Kaggle bundle archive.zip, 1.0 GB)   152 files   1.00 GB  .npy
+      train/    142 files  954.9 MB  .npy  (<date>_<strain>_sNNN_roiNmatrix_corr.npy, Adjacency_data_Results_of_Bg_Corr_SeriesNNN_568_roiN_corr*_new.npy, ...)
+      val/       10 files   48.9 MB  .npy
+    n_files: 152
+    listing_complete: true
+  sample:
+    urls:
+    - https://www.kaggle.com/api/v1/datasets/download/remylivecellimaging/e-coli-cells-tracking-dataset-for-gnn::train/Adjacency_data_Results_of_Bg_Corr_Series024_568_roi2_corr_cut_off_after_frame_36_new.npy
+    size_bytes: 2752092
+    description: 'One .npy file (one channel ROI): 77-frame 64x256 uint16 stack, its 161-cell lookup table
+      and 161x161 adjacency matrix'
+  arrays:
+  - role: raw
+    path_pattern: '{train,val}/*.npy'
+    format: other
+    axes: tyx
+    shape:
+    - 77
+    - 64
+    - 256
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 48594
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Third array in each .npy file (several np.save arrays concatenated in one file);
+      axes from the Kaggle description: (frames, height, width).'
+  - role: label
+    path_pattern: '{train,val}/*.npy'
+    format: other
+    axes: null
+    shape:
+    - 161
+    - 16
+    shape_varies: true
+    dtype: float64
+    compression: none
+    encoding: boxes-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Second array in each file: look-up table, one row per cell per frame (16 columns
+      per the Kaggle description: series, ROI, frame, cells in ROI, cell number, box centroid x/y, box
+      min/max x/y, cell centroid x/y, width and height in um, angle).'
+  - role: label
+    path_pattern: '{train,val}/*.npy'
+    format: other
+    axes: null
+    shape:
+    - 161
+    - 161
+    shape_varies: true
+    dtype: float64
+    compression: none
+    value_range:
+    - 0
+    - 1
+    encoding: graph
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'First array in each file: ground-truth adjacency matrix over the look-up table rows
+      (values {0, 1}, at most 2 links per row in the sample: division).'
+  notes: 'Each .npy holds 5 arrays one after another (np.save repeated into one file): adjacency (N x
+    N float64, {0,1}), look-up table (N x 16 float64), images (T x 64 x 256 uint16), a scalar int32 and
+    a <U84 string; read by parsing the .npy headers (no unpickling; object arrays would be skipped). Sample
+    values from one file. Kaggle answers HEAD with 404; the download redirects to a signed storage.googleapis.com
+    URL that supports ranges. License not stated on Kaggle (licenseName Unknown) or in the paper (CC BY-NC-ND
+    4.0 there is the article''s license).'
