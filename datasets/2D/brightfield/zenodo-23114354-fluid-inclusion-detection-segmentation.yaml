@@ -1,0 +1,150 @@
+schema_version: '1.2'
+id: zenodo-23114354-fluid-inclusion-detection-segmentation
+title: Dataset for automated fluid inclusion homogenization temperature measurement (detection and gas-liquid segmentation)
+short_name: Fluid inclusions in quartz (brightfield)
+description: Thin-section microscope images of fluid inclusions in quartz veins (Yaogangxian tungsten deposit and a porphyry copper deposit), with 4,362 images with YOLO bounding boxes and 14,057 single-inclusion crops with 3-class masks (background, liquid, gas), both split 8:1:1, plus raw heating-stage experiment records.
+landing_url: https://zenodo.org/records/23114354
+doi: 10.5281/zenodo.23114354
+repository: Zenodo
+accession: '23114354'
+authors:
+- Shijie Li
+- Weiqiang Li
+- Guoguang Wang
+- Rubing Shao
+publications: []
+date_published: '2026-10-03'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism: []
+  sample: Fluid inclusions in quartz-vein wolframite (Yaogangxian tungsten deposit, Hunan) and porphyry copper deposit quartz veins, thin sections on an Olympus CX40M at 200x/500x (geological sample, no organism)
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: 18123370676
+  n_items: 18419
+  access: open
+  download_url: https://zenodo.org/records/23114354
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  - semantic-segmentation
+  coverage: dense
+  format: YOLO text boxes (class inclusion) for detection; single-channel PNG masks (0 background, 1 liquid, 2 gas) for segmentation
+  source: manual
+ml:
+  tasks:
+  - detection
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-21T23:22:32Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/23114354
+  - https://zenodo.org/api/records/23114354/files/README.md/content
+  - https://zenodo.org/api/records/23114354/files/detection_dataset.zip/content
+  - https://zenodo.org/api/records/23114354/files/segmentation_dataset.zip/content
+  - https://zenodo.org/api/records/23114354/files/raw_experimental_data.zip/content
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-22T00:45:00Z'
+notes: 'README read in full; zip listings: detection_dataset 4,362 PNGs plus 4,362 YOLO labels, segmentation_dataset 28,114 PNGs (14,057 images plus 14,057 masks) in train/val/test. n_items is 4,362 + 14,057. The 14 GB raw_experimental_data.zip (heating-stage frame sequences) is not annotated training data. Paper: Computers & Geosciences, DOI not yet assigned (README says to be added on publication), so publications is empty. Images are preprocessed (grey-world white balance, Laplacian sharpening). Pixel size not stated (voxel size null). Size is the sum of the Zenodo files. enricher: annotations.source manual (zip READMEs: boxes drawn in LabelImg, masks from LabelMe polygons); channels 3 (RGB PNG). Probed sizes contradict the READMEs: detection images vary (512x337, 762x503, 919x862), segmentation crops are small and vary (13x17 to 66x89), not 1024 / 256 px.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  5 files, 18.1 GB: README.md, LICENSE, 3 zips\ndetection_dataset.zip (3.9 GB)   detection_dataset/  dataset.yaml, README.md\n  {train,val,test}/images/*.png  3,489 / 436 / 437\n  {train,val,test}/labels/*.txt  same stems, YOLO\nsegmentation_dataset.zip (47 MB)  segmentation_dataset/  dataset.yaml, README.md\n  {train,val,test}/images/*.png  11,245 / 1,405 / 1,407  ('<det stem>_<k>.png' crops)\n  {train,val,test}/masks/*.png   same names, class ids 0/1/2\nraw_experimental_data.zip (14.2 GB)  raw_experimental_data/  (heating-stage runs, no training labels)\n  batch_59inclusions/Fluorite/batch_*/<target>/{full_detection_images,full_screenshots,roi_raw_images,segmentation_visualizations}/*.png\n  global_scan/scan_*/{images,images_with_boxes,labels,roi_masks,...}/\n  repeatability_test/...  (also .py scripts, .json, .csv, .xlsx)"
+    n_files: 68453
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/23114354/files/segmentation_dataset.zip/content::segmentation_dataset/train/images/1-1_zone10 (11)_1.png
+    - https://zenodo.org/api/records/23114354/files/segmentation_dataset.zip/content::segmentation_dataset/train/masks/1-1_zone10 (11)_1.png
+    size_bytes: 10176
+    description: one segmentation crop and its 3-class mask
+  arrays:
+  - role: raw
+    path_pattern: detection_dataset.zip/detection_dataset/*/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 337
+    - 512
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 249
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'preprocessed per README: grey-world white balance, Laplacian sharpening'
+  - role: label
+    path_pattern: detection_dataset.zip/detection_dataset/*/labels/*.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: float64
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: inclusion
+    alignment: same-grid
+    alignment_notes: YOLO text (class cx cy w h, normalised); <split>/labels/<stem>.txt pairs with <split>/images/<stem>.png
+  - role: raw
+    path_pattern: segmentation_dataset.zip/segmentation_dataset/*/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 66
+    - 89
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: single-inclusion crops cut with the detection boxes; crop <det stem>_<k>.png
+  - role: label
+    path_pattern: segmentation_dataset.zip/segmentation_dataset/*/masks/*.png
+    format: png
+    axes: yx
+    shape:
+    - 66
+    - 89
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: liquid
+    - id: 2
+      name: gas
+    alignment: same-grid
+    alignment_notes: <split>/masks/<name>.png pairs with <split>/images/<name>.png; shapes match in the sampled pair
+  notes: 'Listing: Zenodo API + 3 zip central directories, 68,450 members, exact sizes (18,123,370,676 bytes; raw_experimental_data.zip is 14.2 GB of it). Probed 5 segmentation and 7 detection PNGs; sampled one seg pair (10,176 bytes: image 0-255, mask values 0-2) and one detection image (218,377 bytes, 0-249). One sample each. Read both zip READMEs and dataset.yaml files. raw_experimental_data holds .py scripts (not run). voxel size not found; checked: PNG headers, Zenodo API record, README.md and both zip READMEs (Olympus CX40M, 200x/500x, no pixel size); the paper has no DOI yet; no code repository is linked. No single archive (3 zips, all direct Zenodo links). 2D record: not covered by the miao layout yet.'
