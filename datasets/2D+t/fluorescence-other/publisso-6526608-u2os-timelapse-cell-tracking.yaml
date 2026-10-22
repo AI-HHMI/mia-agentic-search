@@ -1,0 +1,150 @@
+schema_version: '1.2'
+id: publisso-6526608-u2os-timelapse-cell-tracking
+title: Large-Scale Time-Lapse Microscopy Dataset for Cell Tracking
+short_name: U2OS cell tracking time-lapse (fluorescence)
+description: '309 fluorescence time-lapse videos (1024x1024 px, 3 reporter channels: hGeminin-CFP, NR1D1::VNP,
+  p53-mKate) of human U-2 OS cancer cells with and without cisplatin treatment; 274 videos carry cell
+  tracks, mitosis and apoptosis annotations in COCO format, plus Cell Tracking Challenge-format silver-truth
+  masks.'
+landing_url: https://repository.publisso.de/resource/frl:6526608
+doi: 10.4126/FRL01-006526608
+repository: other
+accession: frl:6526608
+authors:
+- Florian Bürger
+- Martim Dias Gomes
+- Nica Gutu
+- Adrián E. Granada
+- Noémie Moreau
+- Katarzyna Bozek
+publications:
+- title: Understanding cell fate decisions with temporal attention
+  doi: 10.1371/journal.pcbi.1014813
+  url: https://doi.org/10.1371/journal.pcbi.1014813
+- title: 'TransientTrack: Advanced Multi-Object Tracking and Classification of Cancer Cells with Transient
+    Fluorescent Signals'
+  doi: 10.48550/arXiv.2512.01885
+  url: https://arxiv.org/abs/2512.01885
+date_published: null
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 2D+t
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: U-2 OS osteosarcoma cell line, live-cell time-lapse, untreated and cisplatin-treated (7, 10,
+    13 uM)
+  labels_stains:
+  - hGeminin-CFP
+  - NR1D1::VNP
+  - p53-mKate
+data:
+  formats:
+  - tiff
+  size_bytes: 317397376503
+  n_items: 309
+  access: open
+  download_url: https://frl.publisso.de/data/frl:6526608
+  download_method: http
+annotations:
+  present: true
+  types:
+  - tracking
+  - bounding-box
+  - instance-segmentation
+  coverage: partial
+  format: COCO annotations.json (detections with cell ids), MOT16 csv tracks, CTC-format masks and tracks
+    in ctc_files/
+  source: mixed
+ml:
+  tasks:
+  - tracking
+  - detection
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/bozeklab/TransientTrack
+license:
+  spdx: CC-BY-4.0
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-22T01:51:39Z'
+  evidence_urls:
+  - https://repository.publisso.de/resource/frl:6526608
+  - https://frl.publisso.de/data/frl:6526608
+  - https://arxiv.org/html/2512.01885
+  - https://github.com/bozeklab/Cell-Fate-Prediction
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-22T01:57:58Z'
+notes: 'Pixel size, objective, microscope and physical pixel size are not stated on the PUBLISSO page
+  or in the arXiv paper. Tracks, mitosis and apoptosis were annotated manually on 274 of 309 videos (186
+  frames each); CTC-format masks are computer-generated silver truth. Source gives duration as 93 h and
+  117 h (234 frames x 30 min = 117 h). Modality unspecified, hence fluorescence-other. Only the publication
+  year (2025) is given. enricher: size 317,397,376,503 B exact from the file server (was 294 GB rounded);
+  splits_provided true (train/val/test video lists in annotations.json info).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "frl.publisso.de/data/frl:6526608/ (Apache index): 18 files, 317,397,376,503 B\n  annotations.json\
+      \      966,899,095 B  (COCO-style: info with train/val/test/tracking video lists, categories living_cell/dead_cell,\
+      \ videos, images, annotations with cell_id, centroid, bbox)\n  explanations.json           4,209\
+      \ B  (annotated schema of annotations.json)\n  video_1-20.tar.gz ... video_281-300.tar.gz   15 x\
+      \ ~20.4-20.6 GB\n  video_301-309.tar.gz      9,246,658,210 B\n    <NNN>/images/<frame>.tif   (one\
+      \ TIFF per frame, ~4.3 MB)\n    (ctc_files/ and per-video track files not reached in the 30 MB read)"
+    n_files: 18
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: '*/images/*.tif'
+    format: tiff
+    axes: yxc
+    shape:
+    - 1024
+    - 1024
+    - 3
+    shape_varies: false
+    dtype: uint16
+    compression: lzw
+    value_range:
+    - 77
+    - 1614
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 'One plain TIFF per frame; 3 samples per pixel (photometric RGB) that are the three
+      fluorescent reporters (hGeminin-CFP, NR1D1::VNP, p53-mKate per the record), hence c. Values 77..1614
+      in 16-bit: unscaled camera range (inferred).'
+  - role: label
+    path_pattern: annotations.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: tracks-table
+    classes:
+    - id: 1
+      name: living_cell
+    - id: 2
+      name: dead_cell
+    alignment: same-grid
+    alignment_notes: 'COCO-style: images[].file_name = "<NNN>/images/<frame>.tif" (width/height 1024);
+      annotations carry cell_id (constant across frames), parent_label (divisions), centroid and bbox
+      normalized by image size. Train/val/test/tracking video ids in info.'
+  notes: 'Listing: Apache index + one 1-byte range per file for exact sizes (complete). The archives are
+    gzip tars (no index), so I streamed the first 30 MB of video_301-309.tar.gz (decompressed 30.7 MB:
+    7 frames of video 301) and decoded 2 frames: 1024x1024x3 uint16, LZW, plain TIFF, no resolution tags;
+    77..1541 and 105..1614 (two frames). annotations.json head (3 KB) and explanations.json read. CTC
+    masks and MOT csv files were not reached. No sample unit: frames only exist inside ~20 GB tar.gz archives.
+    Voxel size not found; checked: TIFF tags, annotations.json info, explanations.json, PUBLISSO page,
+    arXiv paper (per harvester). frl.publisso.de is not on the TensorSwitch allowlist.'
