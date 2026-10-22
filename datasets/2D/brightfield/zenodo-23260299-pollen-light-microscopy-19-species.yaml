@@ -16,7 +16,7 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Aesculus hippocastanum
   - Ajuga reptans
@@ -76,5 +76,120 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-21T22:57:03Z'
-notes: 'README (read in full) and file sizes: 880 full fields, 2,517 crops (each also as 256x256 JPEG), 19 species-specific field ZIPs plus two crop ZIPs; images.csv gives species per file. Labels are the donor plant species, not verified grain identity; donor numbers unknown, no pixel-size calibration (so voxel size null), microscope model unknown, camera E3ISPM08300KPC. No associated paper listed on the record or README. The Zenodo license field is empty; CC BY 4.0 is stated in README and LICENSE.txt. n_items counts crops. Size is the sum of all files.'
+  last_checked: '2026-10-22T00:05:00Z'
+notes: 'README (read in full) and file sizes: 880 full fields, 2,517 crops (each also as 256x256 JPEG), 19 species-specific field ZIPs plus two crop ZIPs; images.csv gives species per file. Labels are the donor plant species, not verified grain identity; donor numbers unknown, no pixel-size calibration (so voxel size null), microscope model unknown, camera E3ISPM08300KPC. No associated paper listed on the record or README. The Zenodo license field is empty; CC BY 4.0 is stated in README and LICENSE.txt. n_items counts crops. Size is the sum of all files. enricher: channels 3 (RGB PNG/JPEG, probed). organisms: one per <Genus_species>/ folder in every zip (Genus_species = organism name).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                              24 files  9.8 GB\n  README.md, LICENSE.txt, images.csv (5,914 rows)\n  pollen_crops_512_png.zip   866 MB  images/crops_512_png/<Genus_species>/*.png  (2,517)\n  pollen_crops_256_jpg.zip   200 MB  images/crops_256_jpg/<Genus_species>/*.jpg  (2,517)\n  pollen_full_fields_<Genus_species>.zip  x19, 382-693 MB each\n                             images/full_fields/<Genus_species>/*.png (880 in total, 38-69 per species)"
+    n_files: 5917
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/23260299/files/pollen_crops_512_png.zip/content::images/crops_512_png/Aesculus_hippocastanum/20230517144005894_1.png
+    - https://zenodo.org/api/records/23260299/files/images.csv/content
+    size_bytes: 1739347
+    description: one 512x512 PNG crop plus images.csv, which holds its species label
+  arrays:
+  - role: raw
+    path_pattern: pollen_crops_512_png.zip/images/crops_512_png/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 1
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'README: cut from the full fields without resizing, padding or retouching'
+  - role: other
+    path_pattern: pollen_crops_256_jpg.zip/images/crops_256_jpg/*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    normalization: unknown
+    alignment: scaled
+    alignment_notes: 'README: downsampled copies of the 512x512 PNG crops, same stem'
+  - role: raw
+    path_pattern: pollen_full_fields_*.zip/images/full_fields/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 2160
+    - 3840
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 1
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: source fields; crop <stem>_<n>.png derives from field <stem>.png
+  - role: label
+    path_pattern: images.csv
+    format: csv
+    axes: null
+    shape:
+    - 5914
+    - 6
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes:
+    - id: null
+      name: Aesculus hippocastanum
+    - id: null
+      name: Ajuga reptans
+    - id: null
+      name: Alliaria petiolata
+    - id: null
+      name: Arabidopsis arenosa
+    - id: null
+      name: Barbarea vulgaris
+    - id: null
+      name: Bellis perennis
+    - id: null
+      name: Berteroa incana
+    - id: null
+      name: Chelidonium majus
+    - id: null
+      name: Ficaria verna
+    - id: null
+      name: Fragaria vesca
+    - id: null
+      name: Glechoma hederacea
+    - id: null
+      name: Lamium album
+    - id: null
+      name: Lamium purpureum
+    - id: null
+      name: Ranunculus repens
+    - id: null
+      name: Stellaria holostea
+    - id: null
+      name: Taraxacum officinale
+    - id: null
+      name: Veronica chamaedrys
+    - id: null
+      name: Veronica serpyllifolia
+    - id: null
+      name: Viola palustris
+    alignment: not-applicable
+    alignment_notes: 'one row per image file: file_path, image_type, donor_plant_species, crop_id, source_field_path, derived_from_path; the <Genus_species> folder name gives the same class'
+  notes: 'Listing: Zenodo API (24 files, exact sizes, 9,770,089,998 bytes) + zip central directories (20 of 21 zips expanded, 5,870 members; with the remaining field zip this matches the README total of 5,914 images). Probed one member of each image kind; sampled one 512 PNG crop (338,026 bytes) and one full field (10,952,290 bytes): RGB, samples not identical, values 1-255 (one sample each). Labels are image-level donor species (classification), no masks or boxes. voxel size not found; checked: PNG headers (no pHYs calibration reported), Zenodo API record, README ("Physical pixel-size calibration and detailed acquisition settings are unavailable"); no paper or code repository is linked. No single archive: the data come as 21 zips, all direct Zenodo file links (files[].links.self). 2D record: not covered by the miao layout yet.'
