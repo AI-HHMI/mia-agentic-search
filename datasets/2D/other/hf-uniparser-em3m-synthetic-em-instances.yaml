@@ -1,0 +1,140 @@
+schema_version: '1.2'
+id: hf-uniparser-em3m-synthetic-em-instances
+title: 'EM3M (UniEM-3M): electron micrographs with instance masks and captions'
+short_name: Materials SEM/TEM instance masks (EM3M)
+description: Hugging Face release of EM3M / UniEM-3M, a materials-science electron micrograph (SEM and
+  TEM) dataset for microstructure instance segmentation and text-to-image generation. The released parquet
+  files (file names "synthesized_data_*") hold images with captions or structured attribute descriptions,
+  and, in the image-captions split, COCO-style instance segmentation labels.
+landing_url: https://huggingface.co/datasets/UniParser/EM3M
+doi: null
+repository: HuggingFace
+accession: null
+authors:
+- Zhiyi Xia
+- Yiming Li
+- Shi Tang
+- Zuxin Fan
+- Xi Fang
+- Haoyi Tao
+- Xiaochen Cai
+- Guolin Ke
+- Linfeng Zhang
+- Yanhui Hong
+publications:
+- title: 'UniEM-3M: A Universal Electron Micrograph Dataset for Microstructural Segmentation and Generation'
+  doi: null
+  url: https://arxiv.org/abs/2508.16239
+date_published: null
+imaging:
+  modality:
+  - other
+  - TEM
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: null
+  organism: []
+  sample: Materials micrographs (nanoparticles, powders, metallic microstructures, nanofibers)
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: 47973478839
+  n_items: 28122
+  access: open
+  download_url: https://huggingface.co/datasets/UniParser/EM3M
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: unknown
+  format: COCO-style label string per image (bbox, segmentation polygons, area) inside parquet
+  source: unknown
+ml:
+  tasks:
+  - segmentation
+  - other
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: MIT
+  url: https://huggingface.co/datasets/UniParser/EM3M
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-16T19:27:33Z'
+  evidence_urls:
+  - https://huggingface.co/datasets/UniParser/EM3M
+  - https://huggingface.co/datasets/UniParser/EM3M/raw/main/README.md
+  - https://huggingface.co/api/datasets/UniParser/EM3M/tree/main?recursive=true
+  - https://datasets-server.huggingface.co/first-rows?dataset=UniParser/EM3M&config=default&split=data_image_captions
+  - https://arxiv.org/pdf/2508.16239
+  - https://arxiv.org/html/2508.16239v2
+  confidence: 0.5
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-16T20:20:00Z'
+notes: 'Parquet only (103 data files + README, 48 GB). SEM and TEM images; schema has no SEM value, so
+  modality is other (SEM) + TEM. Paper: 5,091 real micrographs, ~3M instances; it also trains an SDXL
+  generator for synthetic augmentation. The released files are named synthesized_data_* (28,122 rows),
+  so they may be generated images, not the real set; unverified. MIT license is from the dataset card.
+  Pixel size not stated in card or paper. No split files. enricher: label strings are numpy reprs; 8 of
+  70 sampled image_captions rows hold polygons elided by numpy (''n, ..., n''), so those masks can''t
+  be rebuilt; structured_descriptions labels empty in its first 100 rows. Confidence 0.5 (was 0.6).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "./  3 files, 2.8 MB  .gitattributes, README.md, em3m.png\ndata/  103 files, 48.0 GB  .parquet\n\
+      \  synthesized_data_image_captions-000NN-of-00075.parquet        75 files  34.28 GB  (19,016 rows)\n\
+      \  synthesized_data_structured_descriptions-000NN-of-00028.parquet  28 files  13.69 GB  (9,106 rows)\n"
+    n_files: 106
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/UniParser/EM3M/resolve/main/data/synthesized_data_image_captions-00071-of-00075.parquet
+    size_bytes: 440225716
+    description: smallest image_captions parquet shard; each row holds the image and its COCO-style label
+      string
+  arrays:
+  - role: raw
+    path_pattern: data/synthesized_data_*.parquet
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: data/synthesized_data_image_captions-*.parquet
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    encoding: polygons
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Parquet column ''label'' (string) in the same row as ''image'': a Python/numpy repr
+      of a COCO annotation list (area, bbox, category_id, id, image_id, iscrowd, segmentation as flat
+      x,y arrays). bbox coordinates fall inside the 1024x1024 images. Only category_id 0 seen. Long polygons
+      are elided by numpy repr (''n, ..., n''): 8 of 70 sampled rows; those masks are incomplete.'
+  notes: 'HF listing: 106 files, 47,973,478,839 B, complete (tools/listing.py). Parquet (magic PAR1; probe.py
+    can''t read parquet). Rows inspected through the HF datasets-server API (first-rows, and /rows at
+    offsets 0, 10, 20, 30, 5000, 12000, 18000, 10 rows each of data_image_captions; first 100 rows of
+    data_structured_descriptions), no files downloaded. Images reported 1024x1024 (width/height from the
+    server; dtype, channels and the stored codec are not exposed, so shape/axes/dtype stay null). Labels:
+    present in every image_captions row read (1-52 instances per row), empty in all 100 structured_descriptions
+    rows read. Voxel size not found; checked: dataset card, arXiv 2508.16239v2 HTML full text (no pixel
+    size; images resized to 1024x1024 for training). Not convertible as is: format other (parquet with
+    embedded images and string labels). No single archive: download_url stays the landing page; per-file
+    resolve URLs work (download-check usable).'
