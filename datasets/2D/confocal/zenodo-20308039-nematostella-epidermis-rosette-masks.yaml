@@ -1,0 +1,73 @@
+schema_version: '1.2'
+id: zenodo-20308039-nematostella-epidermis-rosette-masks
+title: Epithelial cell extrusion underlies starvation-induced cell loss in a sea anemone (rosette identification training data)
+short_name: Nematostella epidermis rosette masks (confocal)
+description: 268 confocal frames (1024x1024, uint16) of the Nematostella vectensis epidermis, each stored in an HDF5 file with the raw image, a binary and an instance mask of epithelial rosettes, and segmented cell outlines, with an 80/20 train/validation split manifest. The same Zenodo record also holds the 1,653 raw pre-segmentation TIFFs of the live-imaging series and the cell-measurement tables.
+landing_url: https://zenodo.org/records/20308039
+doi: 10.5281/zenodo.20308039
+repository: Zenodo
+accession: '20308039'
+authors:
+- Ines Fournon-Berodia
+- Noah Bruderer
+- Lionel Christiaen
+- Patrick R. H. Steinmetz
+publications:
+- title: Epithelial cell extrusion underlies starvation-induced cell loss in a sea anemone
+  doi: 10.64898/2025.12.12.693960
+  url: https://doi.org/10.64898/2025.12.12.693960
+date_published: '2026-05-20'
+imaging:
+  modality:
+  - confocal
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 133.6517
+    y: 133.6517
+    z: null
+  channels: 1
+  organism:
+  - Nematostella vectensis
+  sample: Live Nematostella vectensis polyps imaged on an Olympus FV3000 confocal at room temperature; epidermis of starved and fed animals
+  labels_stains: []
+data:
+  formats:
+  - hdf5
+  size_bytes: 406028947
+  n_items: 268
+  access: open
+  download_url: https://zenodo.org/records/20308039/files/rosetteID_training_data.zip?download=1
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  - instance-segmentation
+  coverage: dense
+  format: 'HDF5 per frame (training_data/<sample>/processed_data_<sample>.h5): datasets raw_data (uint16), rosettes_binary (uint8), rosettes_individual (uint16), segmentation_outlines (uint8), all 1024x1024; attributes num_cells and num_rosettes; split_manifest JSON with 214 train / 54 validation samples'
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-22T05:01:49Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/20308039
+  - https://zenodo.org/records/20308039/files/rosetteID_training_data.zip?download=1
+  - https://zenodo.org/records/20308039/files/raw_image_data_pre-segmentation_tiffs.zip?download=1
+  - https://www.biorxiv.org/content/10.64898/2025.12.12.693960v1.full
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.64898%2F2025.12.12.693960%22&format=json&resultType=core&pageSize=3
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-22T05:01:49Z'
+notes: 'Dataset names and shapes come from probing two HDF5 files (h5py) and the zip listing (268 h5); counts match the split manifest (268 samples, 214 train, 54 val). Pixel size 133.6517 nm is the ImageJ calibration in the raw TIFFs of the same record, not in the h5 files. Paper (bioRxiv preprint, first 100k characters read): about 250 of 500 time-series images were manually corrected to train the Cellpose model that gives cell outlines, and an Attention U-Net was trained on 268 manually annotated images for rosette identification, so rosette masks are manual and outlines are model output corrected by hand (source mixed). The preprint does not state the live-imaging objective or the z-step, and the remaining 155k characters were not read; the stain or reporter shown in raw_data was not confirmed. Rosette frames come from live-imaging time series, but each file is a single 2D frame.'
