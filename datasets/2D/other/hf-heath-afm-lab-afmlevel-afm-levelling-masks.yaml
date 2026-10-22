@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: hf-heath-afm-lab-afmlevel-afm-levelling-masks
 title: afMLevel, paired raw and levelled AFM height images with foreground masks
 short_name: AFM raw/levelled image pairs and masks
-description: 2,165 atomic force microscopy height images (2,001 train, 164 test) of mixed biological samples such as DNA, DNA origami and proteins, each paired with a
-  manually levelled reference image and a binary foreground mask, used to train U-Nets for automated AFM background estimation and masking.
+description: 2,165 atomic force microscopy height images (2,001 train, 164 test) of mixed biological samples
+  such as DNA, DNA origami and proteins, each paired with a manually levelled reference image and a binary
+  foreground mask, used to train U-Nets for automated AFM background estimation and masking.
 landing_url: https://huggingface.co/datasets/Heath-AFM-Lab/afMLevel-data
 doi: null
 repository: HuggingFace
@@ -18,7 +19,8 @@ imaging:
   voxel_size_nm: null
   channels: 1
   organism: []
-  sample: Atomic force microscopy topography of mixed samples from several labs (DNA supercoils, kinetoplast DNA, DNA origami and unpublished membrane and protein data)
+  sample: Atomic force microscopy topography of mixed samples from several labs (DNA supercoils, kinetoplast
+    DNA, DNA origami and unpublished membrane and protein data)
   labels_stains: []
 data:
   formats:
@@ -34,7 +36,8 @@ annotations:
   - semantic-segmentation
   - restoration-pairs
   coverage: dense
-  format: 'Per image: reference-levelled height TIFF (manual levelling in NanoLocz) and a binary foreground mask as CSV; train and test folders, paired by index'
+  format: 'Per image: reference-levelled height TIFF (manual levelling in NanoLocz) and a binary foreground
+    mask as CSV; train and test folders, paired by index'
   source: mixed
 ml:
   tasks:
@@ -58,9 +61,96 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-22T11:40:00Z'
-notes: 'Counts from the file tree (6,499 files, 4.09 GB): train 2,001 triplets, test 164 triplets (Image, Levelled and Mask folders). The levelled images
-  are manual (NanoLocz); the card says the masks are derived from the levelled images by a sigmoid and Otsu threshold, hence source mixed. Pixel and scan size
-  are deliberately omitted by the authors (images 128x128 to 1024x1024, z in nm), so voxel size is null. Contributors are listed on the card (Leeds AFM Facility,
-  Scheuring and Heath labs, Pyne Lab, Paderborn); part of the images come from published CC BY datasets (figshare 13116890, Sheffield 26869993, Zenodo 14275812).
-  The card has no paper yet (citation TODO), so none was read. Not independent images: up to 20 frames per HS-AFM movie.'
+  last_checked: '2026-10-22T10:20:00Z'
+notes: 'Counts from the file tree (6,499 files, 4.09 GB): train 2,001 triplets, test 164 triplets (Image,
+  Levelled and Mask folders). The levelled images are manual (NanoLocz); the card says the masks are derived
+  from the levelled images by a sigmoid and Otsu threshold, hence source mixed. Pixel and scan size are
+  deliberately omitted by the authors (images 128x128 to 1024x1024, z in nm), so voxel size is null. Contributors
+  are listed on the card (Leeds AFM Facility, Scheuring and Heath labs, Pyne Lab, Paderborn); part of
+  the images come from published CC BY datasets (figshare 13116890, Sheffield 26869993, Zenodo 14275812).
+  The card has no paper yet (citation TODO), so none was read. Not independent images: up to 20 frames
+  per HS-AFM movie.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Hugging Face Heath-AFM-Lab/afMLevel-data   6,499 files, 4.09 GB\n./      README.md, .gitattributes\n\
+      train/  training_data_sources.csv\n  Image/     2,001 x train_image_NNNN.tiff\n  Levelled/  2,001\
+      \ x train_levelled_NNNN.tiff\n  Mask/      2,001 x train_mask_NNNN.csv\ntest/   test_data_sources.csv\n\
+      \  Image/       164 x test_image_NNN.tiff\n  Levelled/    164 x test_levelled_NNN.tiff\n  Mask/\
+      \        164 x test_mask_NNN.csv\n"
+    n_files: 6499
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/Heath-AFM-Lab/afMLevel-data/resolve/main/test/Image/test_image_147.tiff
+    - https://huggingface.co/datasets/Heath-AFM-Lab/afMLevel-data/resolve/main/test/Levelled/test_levelled_147.tiff
+    - https://huggingface.co/datasets/Heath-AFM-Lab/afMLevel-data/resolve/main/test/Mask/test_mask_147.csv
+    size_bytes: 164170
+    description: 'Smallest test triplet (index 147, 128 x 128): raw height image, levelled reference and
+      mask'
+  arrays:
+  - role: raw
+    path_pattern: '*/Image/*_image_*.tiff'
+    format: tiff
+    axes: yx
+    shape:
+    - 128
+    - 128
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range:
+    - -1.288
+    - 4.371
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Raw AFM height image, single-page float32 TIFF, z in nm (README); 128x128 to 1024x1024,
+      some non-square.
+  - role: target
+    path_pattern: '*/Levelled/*_levelled_*.tiff'
+    format: tiff
+    axes: yx
+    shape:
+    - 128
+    - 128
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range:
+    - -1.141
+    - 4.111
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: Manually levelled reference (NanoLocz); same index and shape as the raw image (checked
+      for test 147).
+  - role: label
+    path_pattern: '*/Mask/*_mask_*.csv'
+    format: csv
+    axes: yx
+    shape:
+    - 128
+    - 128
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range:
+    - 0
+    - 1
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: foreground
+    alignment: same-grid
+    alignment_notes: 'Binary foreground mask as a comma-separated 128 x 128 grid of 0/1 (test 147: 64.5
+      % foreground); paired by index (README).'
+  notes: 'Listing: tools/listing.py on the HF repo, 6,499 files, 4,094,672,745 bytes, complete, exact
+    (train 2,001 and test 164 triplets + 2 source CSVs). Sample: test index 147 (smallest), raw and levelled
+    TIFF and mask CSV, 164 KB in total; values from this one sample. The raw sample has mean ~0 (2.8e-9),
+    std 0.64 nm; the README says z is in nm; a mean of ~0 suggests the heights are offset-subtracted,
+    so normalization is unknown. Mask CSV read with numpy: shape 128x128, values {0,1}. Voxel size not
+    found: the README gives no scan size or pixel size, the TIFF has no resolution tags, and *_data_sources.csv
+    only names the source lab and reference per file.'
