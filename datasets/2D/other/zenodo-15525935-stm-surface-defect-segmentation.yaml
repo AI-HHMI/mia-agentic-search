@@ -1,0 +1,154 @@
+schema_version: '1.2'
+id: zenodo-15525935-stm-surface-defect-segmentation
+title: STM images of Si(001), Ge(001) and TiO2(110) surfaces with defect segmentation masks
+short_name: STM surface defect masks (Si, Ge, TiO2)
+description: Scanning tunnelling microscopy data for few-shot defect segmentation. 14 fully segmented
+  512 x 512 px scans (5 Si(001):H:AsH3 at 100 nm, 5 Ge(001):AsH3 at 50 nm, 4 TiO2(110) at 10 nm field
+  of view) with two-class masks (defect / no defect), plus small crops of individual defects (1085 on
+  Si, 198 on Ge, 121 on TiO2) in one array file.
+landing_url: https://zenodo.org/records/15525935
+doi: 10.5281/zenodo.15525935
+repository: Zenodo
+accession: '15525935'
+authors:
+- Nikola L. Kolev
+- Taylor J. Z. Stock
+publications:
+- title: Overcoming Data Scarcity in Scanning Tunnelling Microscopy Image Segmentation
+  doi: null
+  url: https://arxiv.org/abs/2506.01678
+date_published: null
+imaging:
+  modality:
+  - other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: Si(001)-H with adsorbed AsH3, Ge(001) with adsorbed AsH3, and TiO2(110) crystal surfaces
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: 108890441
+  n_items: 14
+  access: open
+  download_url: https://zenodo.org/records/15525935/files/Data.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: NumPy .npy mask per scan under Data/Segmentation_data/<surface>/masks (two classes, defect and
+    no defect); defect crops in Data/Crops/defSTM.npy
+  source: unknown
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/nickkolev97/FSL_STM
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-21T04:05:00Z'
+  evidence_urls:
+  - https://zenodo.org/records/15525935
+  - https://zenodo.org/records/15525935/files/Data.zip
+  - https://arxiv.org/html/2506.01678v1
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-21T04:22:49Z'
+notes: 'Zip: 33 .npy files (images/ and masks/ for Ge(001)-AsH3 5 pairs, Si(001)-H-AsH3 7 pairs, TiO2(110)
+  4 pairs, plus Data/Crops/defSTM.npy). The listing has 7 Si scans while the paper reports 5, and the
+  paper is inconsistent about TiO2 (4 vs 5); n_items counts the 14 scans in the paper tables. Pixel size
+  is not stored in the files; the paper gives fields of view of 100, 50 and 10 nm, different per surface,
+  so voxel size is null. The paper does not state whether masks were drawn manually, so annotation source
+  is unknown. Instrument per paper: Omicron STM. Not a biological dataset (surface science). enricher:
+  size from the Zenodo file listing (was 114.2 MB stated); Si and Ge images are 1024 x 1024 while their
+  masks are 512 x 512.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Data.zip  (108,890,441 B; 33 .npy)\n└── Data/\n    ├── Crops/defSTM.npy                   \
+      \   (3014 × 2 × 40 × 40 float64, 77.2 MB)\n    └── Segmentation_data/\n        ├── Ge(001)-AsH3/{images,masks}/\
+      \       5 + 5   (<scan>.npy, <scan>_mask.npy)\n        ├── Si(001)-H-AsH3/{images,masks}/     7\
+      \ + 7   (<scan>.npy, <scan>_mask_full.npy)\n        └── TiO2(110)/{images,masks}/          4 + 4\
+      \   (m<N>.npy, m<N>_mask.npy)"
+    n_files: 33
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/15525935/files/Data.zip::Data/Segmentation_data/TiO2(110)/images/m70.npy
+    - https://zenodo.org/records/15525935/files/Data.zip::Data/Segmentation_data/TiO2(110)/masks/m70_mask.npy
+    size_bytes: 4194560
+    description: one TiO2(110) scan (512 x 512 float64) and its defect mask
+  arrays:
+  - role: raw
+    path_pattern: Data/Segmentation_data/*/images/*.npy
+    format: other
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: true
+    dtype: float64
+    compression: none
+    value_range:
+    - 0.0
+    - 1.0
+    normalization: rescaled
+    alignment: not-applicable
+    alignment_notes: NumPy .npy (no pickle). TiO2 scans are 512 x 512; the Ge and Si scans read are 1024
+      x 1024.
+  - role: label
+    path_pattern: Data/Segmentation_data/*/masks/*_mask*.npy
+    format: other
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: float64
+    compression: none
+    value_range:
+    - 0.0
+    - 1.0
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: no defect
+    - id: 1
+      name: defect
+    alignment: unknown
+    alignment_notes: '<scan>_mask.npy (Ge, TiO2) or <scan>_mask_full.npy (Si; two Si masks drop the trailing
+      _0) pairs with images/<scan>.npy. TiO2: same 512 x 512 grid. Ge and Si: masks 512 x 512 for 1024
+      x 1024 images (2x; how they map is not stated).'
+  - role: other
+    path_pattern: Data/Crops/defSTM.npy
+    format: other
+    axes: null
+    shape:
+    - 3014
+    - 2
+    - 40
+    - 40
+    shape_varies: false
+    dtype: float64
+    compression: none
+    normalization: unknown
+  notes: 'Listing: tools/listing.py on the Zenodo record (1 file, exact size 108,890,441 B, 33 zip members).
+    npy headers read from the zip members with numpy (allow_pickle=False); sample.py does not read .npy.
+    Sample TiO2 m70: image float64 0.0-1.0 (mean 0.35, 253 values; looks rescaled, one sample); mask {0:
+    225952, 1: 36192}. Class names (defect / no defect) from the paper. defSTM.npy axes are not documented
+    in the sources read (3014 crops; record says 1085+198+121 = 1404 defects). Download: Data.zip and
+    its members pass --download-check (usable, 206, ranges). Voxel size: fields of view differ per surface
+    (paper), so null.'
