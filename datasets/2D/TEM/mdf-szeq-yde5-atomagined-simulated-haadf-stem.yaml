@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: mdf-szeq-yde5-atomagined-simulated-haadf-stem
 title: atomagined, simulated atomic-resolution HAADF-STEM images of unique ICSD structure prototypes
 short_name: Simulated atomic-resolution HAADF-STEM prototypes
-description: About 67,871 simulated atomic-resolution HAADF-STEM images (PRISM) of unique ICSD crystal structure prototypes viewed along set crystallographic
-  directions, post-processed with blur, count noise, scan distortion, background and defect conditions, with retrieval target and choice splits and
-  structure-based peak position suggestions, for image retrieval and structure identification in materials microscopy.
+description: About 67,871 simulated atomic-resolution HAADF-STEM images (PRISM) of unique ICSD crystal
+  structure prototypes viewed along set crystallographic directions, post-processed with blur, count noise,
+  scan distortion, background and defect conditions, with retrieval target and choice splits and structure-based
+  peak position suggestions, for image retrieval and structure identification in materials microscopy.
 landing_url: https://www.materialsdatafacility.org/detail/atomagined_v1.1
 doi: 10.18126/szeq-yde5
 repository: other
@@ -29,6 +30,7 @@ imaging:
 data:
   formats:
   - hdf5
+  - png
   size_bytes: null
   n_items: 67871
   access: open
@@ -39,7 +41,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: Per simulation structure identity (ICSD code, space group, viewing direction) in the HDF5 files; retrieval targets and choices subsets
+  format: Per simulation structure identity (ICSD code, space group, viewing direction) in the HDF5 files;
+    retrieval targets and choices subsets
   source: automatic
 ml:
   tasks:
@@ -57,13 +60,52 @@ provenance:
   - https://search.api.globus.org/v1/index/1a57bbe5-5272-477f-9d31-343b8258b7a5/search?q=mdf.source_id:atomagined_v1.1&advanced=true&limit=3
   - https://huggingface.co/datasets/Stemson-AI/atomagined/raw/main/README.md
   - https://doi.org/10.18126/szeq-yde5
+  - https://raw.githubusercontent.com/MaterialEyes/atomagined/master/README.md
   confidence: 0.55
 verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-22T12:00:00Z'
-notes: 'Simulated data. Record from the Materials Data Facility search API (title, CC BY 4.0, authors, Globus path mdf_open/atomagined_v1.1, description of
-  retrieval testbed and peak suggestions); the image count (about 67,871), 256x256 size and h5 layout come from a Hugging Face card that repackages a 299-sample
-  subset (Stemson-AI/atomagined). The MDF page is a JavaScript app and its file listing, size and a paper were not found (Europe PMC and Crossref searches),
-  so size is null, formats unverified and no paper was read. Pixel size not stated.'
+  last_checked: '2026-10-22T10:20:00Z'
+notes: 'Simulated data. Record from the Materials Data Facility search API (title, CC BY 4.0, authors,
+  Globus path mdf_open/atomagined_v1.1, description of retrieval testbed and peak suggestions); the image
+  count (about 67,871), 256x256 size and h5 layout come from a Hugging Face card that repackages a 299-sample
+  subset (Stemson-AI/atomagined). The MDF page is a JavaScript app and its file listing, size and a paper
+  were not found (Europe PMC and Crossref searches), so size is null, formats unverified and no paper
+  was read. Pixel size not stated. enricher: GitHub README (MaterialEyes/atomagined) mirrors the MDF folders:
+  retrieval set (2,400 supercells) and general set (67,869 supercells x 3 = 203,607 images), h5 and png
+  per split; added png to formats.'
+technical:
+  method: metadata-only
+  size_source: unknown
+  layout:
+    tree: "MDF mdf_open/atomagined_v1.1/ (Globus; layout from the GitHub README, which mirrors it)\n \
+      \ key.csv            structure prototypes, symmetry, [uvw], ICSD CollCode\n  retrieval/ ...    \
+      \ targets / choices splits, h5/ and png/\n  general/   ...     67,869 oriented supercells x 3 conditions,\
+      \ h5/ and png/\n"
+    n_files: null
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: '**/h5/*.h5'
+    format: hdf5
+    axes: null
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 256 x 256 PRISM simulations, several distortion variants per h5 (README); png copies
+      are 250 x 250 rescaled crops. Shape from the README, not a header.
+  notes: 'Not inspectable: the files are on the MDF Globus endpoint (82f1b5c6-6e9b-11e5-ba47-22000b92c6ec,
+    /mdf_open/atomagined_v1.1/). Its HTTPS gateway (data.materialsdatafacility.org/mdf_open/atomagined_v1.1/)
+    answers 200 with an empty body, no directory listing, and the MDF search record has total_size 0 and
+    no file list, so no file names, sizes or direct links could be derived. No direct download: Globus
+    only. The Hugging Face repackaging Stemson-AI/atomagined (one 79 MB tar, 299 samples as .npy) is a
+    different, reformatted subset. Voxel size not found: checked MDF record, GitHub README (supercells
+    25 x 25 x 25 A on 256 px, no pixel size stated), HF card; no paper (README cites it as in progress).'
