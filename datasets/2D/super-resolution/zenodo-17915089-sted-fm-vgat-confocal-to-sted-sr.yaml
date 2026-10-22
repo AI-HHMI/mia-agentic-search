@@ -1,0 +1,121 @@
+schema_version: '1.2'
+id: zenodo-17915089-sted-fm-vgat-confocal-to-sted-sr
+title: Algorithmic Super-Resolution - STED-FM
+short_name: VGAT confocal-to-STED paired images (SR)
+description: Registered pairs of confocal and STED images of the synaptic protein VGAT (Atto490LS) in
+  fixed mouse brain slices, cropped to 224x224 pixels and split into train, validation and test tar archives,
+  for training algorithmic super-resolution (confocal to STED) models.
+landing_url: https://zenodo.org/records/17915089
+doi: 10.5281/zenodo.17915089
+repository: Zenodo
+accession: '17915089'
+authors:
+- Thériault, Kamylle
+- Bilodeau, Anthony
+- Beaupré, Frédéric
+- Lavoie-Cardinal, Flavie
+publications:
+- title: A Self-Supervised Foundation Model for Robust and Generalizable Representation Learning in STED
+    Microscopy
+  doi: 10.1101/2025.06.06.656993
+  url: https://doi.org/10.1101/2025.06.06.656993
+date_published: '2025-12-12'
+imaging:
+  modality:
+  - super-resolution
+  - confocal
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Mus musculus
+  sample: Fixed 40 um C57BL/6 mouse brain slices, VGAT immunostained (Atto490LS), imaged on an Abberior
+    Infinity STED microscope (60x/1.42 oil)
+  labels_stains:
+  - Atto490LS
+data:
+  formats:
+  - other
+  size_bytes: 1011394560
+  n_items: 2510
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - restoration-pairs
+  coverage: dense
+  format: Paired confocal (input) and STED (target) 224x224 crops in tar archives; pairing layout inside
+    the members not inspected
+  source: automatic
+ml:
+  tasks:
+  - super-resolution
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/FLClab/STED-FM
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/legalcode
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-08T19:13:36Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/17915089
+  - https://zenodo.org/records/17915089
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1101%2F2025.06.06.656993%22&format=json&resultType=core&pageSize=3
+  confidence: 0.55
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: false
+  last_checked: '2026-10-08T22:50:15Z'
+notes: Three tar archives (train 710 MB, valid 151 MB, test 151 MB). The first 4 MB of test-dataset.tar
+  (range request) list members like Gephyrin_STARRED-A8.tif-224-0, 402,112 bytes each (one 224x224 crop,
+  apparently a raw array, not a TIFF), hence formats other. n_items 2510 is estimated from tar sizes (about
+  1,760 train, 375 valid, 375 test). Member names say Gephyrin while the description says VGAT, so the
+  structure per archive is unverified. Per the description, confocal was registered onto STED by translation
+  (SimpleITK) and cropped to 224x224; pixel size is not stated. This is a downstream dataset of the STED-FM
+  paper (read on bioRxiv); data code at github.com/FLClab/STED-FM.
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      ./                     3 files   1.01 GB  .tar
+      train-dataset.tar      709,990,400 B
+      valid-dataset.tar      150,702,080 B
+      test-dataset.tar       150,702,080 B
+        members: <name>.tif-<y>-<x> (e.g. Gephyrin_STARRED-A8.tif-0-0, -224-0), each an .npz with image.npy + metadata.npy
+    n_files: 3
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: '*-dataset.tar'
+    format: other
+    axes: cyx
+    shape:
+    - 2
+    - 224
+    - 224
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - 0.0
+    - 0.441
+    normalization: rescaled
+    alignment: not-applicable
+    alignment_notes: image.npy in each tar member (an uncompressed .npz) stacks the two images of a pair
+      on axis 0 (confocal input and STED target per the Zenodo description; which index is which is not
+      stated). Registered by translation (SimpleITK) per the description, so the pair shares one grid.
+  notes: 'Read the first member of test-dataset.tar by range request (403 KB): npz with image.npy float32
+    (2, 224, 224) (ch0 0-0.441 mean 0.028, ch1 0-0.400 mean 0.025) and metadata.npy of object dtype (pickled;
+    not read). Values from one crop. Member names start with Gephyrin_ while the Zenodo description says
+    VGAT; the paper lists both VGAT-SR and a Gephyrin super-resolution set, so which one this deposit
+    holds is unverified. No sample unit: TensorSwitch can fetch zip members but not tar members, and the
+    pair sits inside one npz. Voxel size not found; checked: Zenodo API description (STED settings, objective,
+    no pixel size), bioRxiv full text (Methods, Data availability), STED-FM and DRAFT GitHub READMEs.
+    No single archive (3 tars).'
