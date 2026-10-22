@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: github-michaelwwan-noise-mouse-osteoclast-masks
 title: NOISe mouse osteoclast instance segmentation dataset (TRAP-stained culture wells)
 short_name: Mouse osteoclast instance masks (brightfield)
-description: Expert-annotated instance segmentation masks of in vitro mouse osteoclasts (TRAP-stained, cultured on 96-well plastic plates), released with the NOISe paper (CVPR 2024 CVMI workshop). The repository describes full slide images with instance segmentation annotations plus the patches used for training and validation, split into batches m1-m5 with images/ and labels/ folders (YOLOv8 layout). The paper reports about 2e5 expert osteoclast masks in ~150 mouse well images and 20,784 point-annotated nuclei in a subset.
+description: Expert-annotated instance segmentation of in vitro mouse osteoclasts (TRAP-stained, cultured on 96-well plastic
+  plates), released with the NOISe paper (CVPR 2024 CVMI workshop). The released Mouse.zip holds 35,587 RGB 832x832 PNG patches
+  in five batches m1-m5, each with a YOLOv8 polygon label file per patch. The paper reports about 2e5 expert osteoclast masks
+  in ~150 mouse well images.
 landing_url: https://github.com/michaelwwan/noise
 doi: null
 repository: other
@@ -20,7 +23,7 @@ authors:
 publications:
 - title: 'NOISe: Nuclei-Aware Osteoclast Instance Segmentation for Mouse-to-Human Domain Transfer'
   doi: 10.1109/cvprw63382.2024.00686
-  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC11629985
+  url: https://openaccess.thecvf.com/content/CVPR2024W/CVMI/papers/Manne_NOISe_Nuclei-Aware_Osteoclast_Instance_Segmentation_for_Mouse-to-Human_Domain_Transfer_CVPRW_2024_paper.pdf
 date_published: null
 imaging:
   modality:
@@ -30,7 +33,7 @@ imaging:
     x: 778.4
     y: 778.4
     z: null
-  channels: null
+  channels: 3
   organism:
   - Mus musculus
   sample: In vitro osteoclast cultures on 96-well plastic plates, TRAP-stained (purple)
@@ -38,19 +41,21 @@ imaging:
   - TRAP stain
 data:
   formats:
-  - other
-  size_bytes: null
-  n_items: null
+  - png
+  size_bytes: 19326270671
+  n_items: 35587
   access: open
-  download_url: null
-  download_method: other
+  download_url: https://drive.usercontent.google.com/download?id=1WgIKqd346BtTpU_N5lBzIFw0zPHOXNOP&export=download&confirm=t
+  download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
+  - bounding-box
   coverage: dense
-  format: YOLOv8-style label files in labels/ folders (per README), batches m1-m5
-  source: manual
+  format: 'YOLOv8 segmentation txt per patch (Mouse/m<k>/labels/<name>.txt, same stem as the image): class 0 = Osteoclast
+    polygons, class 1 = 4-corner boxes; coordinates normalized to [0,1]'
+  source: mixed
 ml:
   tasks:
   - segmentation
@@ -70,10 +75,80 @@ provenance:
   - https://pmc.ncbi.nlm.nih.gov/articles/PMC11629985
   - https://drive.google.com/drive/folders/1hwGVKH4pN1Ftcl9bDKUykTIU8mcZfmiu
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1109%2Fcvprw63382.2024.00686%22&format=json&resultType=core&pageSize=3
-  confidence: 0.55
+  - https://openaccess.thecvf.com/content/CVPR2024W/CVMI/papers/Manne_NOISe_Nuclei-Aware_Osteoclast_Instance_Segmentation_for_Mouse-to-Human_Domain_Transfer_CVPRW_2024_paper.pdf
+  - https://drive.usercontent.google.com/download?id=1WgIKqd346BtTpU_N5lBzIFw0zPHOXNOP&export=download&confirm=t
+  - https://raw.githubusercontent.com/michaelwwan/noise/main/osteo.yaml
+  confidence: 0.6
 verification:
   url_ok: true
   license_found: false
-  annotations_verified: false
-  last_checked: '2026-10-22T12:24:17Z'
-notes: 'Data are a single Mouse.zip (18 GB) on a Google Drive folder linked from the GitHub README, so there is no dataset DOI or repository record. The zip contents could not be listed (peek_archive: server reports no size), so image format and counts come from the paper/README, not a file listing; formats=other is a placeholder. The repository LICENSE is AGPL-3.0 and covers the code; no separate license for the data was found in the README, the paper abstract or the PMC page, so license is unknown. The paper full text is not open access (only the abstract and the PMC page summary were read). Pixel size 0.7784 um/px is the README default for the training images. The paper also describes human osteoclast slides (24 images on bone chips); the README only describes the mouse dataset, so only mouse is recorded. README mentions a follow-up paper (2026) under review.'
+  annotations_verified: true
+  last_checked: '2026-10-22T13:45:00Z'
+notes: 'Data are one Mouse.zip (19.3 GB) in a Google Drive folder linked from the GitHub README; no dataset DOI. The repository
+  LICENSE is AGPL-3.0 for the code; no data license found in the README, the Drive folder, the zip listing or the paper, so
+  license is unknown. Pixel size 0.7784 um/px is the README value for the training images. The paper also describes human
+  osteoclast images (H1-H2); only mouse data are released. enricher: zip listed (35,587 PNG + 35,587 txt, paired by stem;
+  patches only, no whole-well images despite the README wording); formats other -> png, size and n_items from the listing.
+  enricher: annotations.source mixed: per the paper, osteoclast masks are ImageJ colour-filter candidates curated and completed
+  by experts; it also describes weak nuclei boxes made by a detector on the whole mouse set, which class 1 (unnamed in osteo.yaml)
+  appears to be.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Mouse.zip (19,326,270,671 B; Google Drive file 1WgIKqd346BtTpU_N5lBzIFw0zPHOXNOP)\n  Mouse/m1/images/  6,800 .png\
+      \  3.50 GB    Mouse/m1/labels/  6,800 .txt  369 MB\n  Mouse/m2/images/  7,908 .png  3.63 GB    Mouse/m2/labels/  7,908\
+      \ .txt  399 MB\n  Mouse/m3/images/ 10,253 .png  3.60 GB    Mouse/m3/labels/ 10,253 .txt  458 MB\n  Mouse/m4/images/\
+      \  7,372 .png  6.35 GB    Mouse/m4/labels/  7,372 .txt  396 MB\n  Mouse/m5/images/  3,254 .png  1.91 GB    Mouse/m5/labels/\
+      \  3,254 .txt  184 MB\n  Mouse/m1,m4,m5/.DS_Store\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://drive.usercontent.google.com/download?id=1WgIKqd346BtTpU_N5lBzIFw0zPHOXNOP&export=download&confirm=t::Mouse/m1/images/img_21_12_5.png
+    - https://drive.usercontent.google.com/download?id=1WgIKqd346BtTpU_N5lBzIFw0zPHOXNOP&export=download&confirm=t::Mouse/m1/labels/img_21_12_5.txt
+    size_bytes: 320630
+    description: One 832x832 RGB patch from batch m1 and its YOLO label file
+  arrays:
+  - role: raw
+    path_pattern: Mouse.zip::Mouse/m[1-5]/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 832
+    - 832
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 48
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: Mouse.zip::Mouse/m[1-5]/labels/*.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: polygons
+    classes:
+    - id: 0
+      name: Osteoclast
+    alignment: same-grid
+    alignment_notes: 'Pairing: Mouse/m<k>/labels/<name>.txt <-> Mouse/m<k>/images/<name>.png (all 35,587 stems paired). One
+      object per line: class id, then x y vertex pairs normalized to the 832x832 patch (YOLOv8 segmentation format). Class
+      0 = Osteoclast (osteo.yaml); class 1 lines are axis-aligned 4-corner boxes (~28-30 px), not named in osteo.yaml.'
+  notes: 'Listed the whole Mouse.zip central directory with range requests (71,177 entries; Drive folder holds only this file).
+    Probed PNG headers of m1/img_21_12_5 and m4/img_17_20_7, m4/img_21_12_5: all 832x832x3 uint8 RGB. Decoded two patches
+    with a scratch script (tools/sample.py could not pick the PNG reader for a URL without an extension): m1 min 48 max 255
+    mean 238; m4 min 21 max 178 mean 137; RGB channels differ (true colour). value_range is from the m1 sample. Read 2 label
+    files: m1/img_21_12_5.txt has 5 class-0 polygons and 221 class-1 boxes; m3/img_1_4_3.txt 1 class-0 and 159 class-1. Direct
+    link: drive.usercontent.google.com download URL supports range requests and zip members, but the host is not on the TensorSwitch
+    fetch allowlist.'
