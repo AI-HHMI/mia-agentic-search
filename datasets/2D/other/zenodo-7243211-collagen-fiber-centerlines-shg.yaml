@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-7243211-collagen-fiber-centerlines-shg
 title: Collagen fiber images and centerline annotations based on SHG imaging
 short_name: Collagen fiber centerlines (SHG)
-description: Second-harmonic generation (SHG) images of collagen fibers from human breast, pancreas and kidney tissue
-  sections, cut into 1,188 training and 199 test crops, each with a manually annotated fiber centerline mask, an overlay
-  and a JSON file of topological properties.
+description: Second-harmonic generation (SHG) images of collagen fibers from human breast, pancreas and kidney tissue sections,
+  cut into 1,188 training and 199 test crops, each with a manually annotated fiber centerline mask, an overlay and a JSON
+  file of topological properties.
 landing_url: https://zenodo.org/records/7243211
 doi: 10.5281/zenodo.7243211
 repository: Zenodo
@@ -37,10 +37,10 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: 132593000
+  size_bytes: 132593855
   n_items: 1387
   access: open
-  download_url: https://zenodo.org/api/records/7243211/files/collagen-centerlines.zip/content
+  download_url: https://zenodo.org/records/7243211/files/collagen-centerlines.zip
   download_method: http
 annotations:
   present: true
@@ -65,18 +65,113 @@ provenance:
   evidence_urls:
   - https://zenodo.org/records/7243211
   - https://zenodo.org/api/records/7243211
-  - https://zenodo.org/api/records/7243211/files/collagen-centerlines.zip/content
   - https://pmc.ncbi.nlm.nih.gov/articles/PMC10591913/
+  - https://zenodo.org/records/7243211/files/collagen-centerlines.zip
+  - https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=10591913&rettype=xml
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-22T20:50:00Z'
+  last_checked: '2026-10-22T21:05:00Z'
 notes: 'Zip listing: final_train_test/{train,test}/{images,labels,overlays,properties}, i.e. 1,188 train and 199 test crops
-  of each (PNG, JSON), plus index2fname.txt mapping crops to source ROIs. The paper (Park et al., Med Image Anal 2023)
-  reports 268 source ROIs (116 breast, 89 pancreas, 63 kidney; 512x512, crops 256x256), 227 ROIs for training and 41 for
-  testing; the Methods name breast, pancreas and kidney while the abstract says pancreas, liver and breast. Microscope,
-  pixel size and annotation tool not stated in the paper (it cites earlier work; images come from three platforms in the
-  Eliceiri lab), so voxel_size_nm is null. SHG is a nonlinear modality with no matching schema value, hence other. The Zenodo
-  description states only images and manual centerline annotations from pancreas, kidney and breast.'
+  of each (PNG, JSON), plus index2fname.txt mapping crops to source ROIs. The paper (Park et al., Med Image Anal 2023) reports
+  268 source ROIs (116 breast, 89 pancreas, 63 kidney; 512x512, crops 256x256), 227 ROIs for training and 41 for testing;
+  the Methods name breast, pancreas and kidney while the abstract says pancreas, liver and breast. Microscope, pixel size
+  and annotation tool not stated in the paper (it cites earlier work; images come from three platforms in the Eliceiri lab),
+  so voxel_size_nm is null. SHG is a nonlinear modality with no matching schema value, hence other. The Zenodo description
+  states only images and manual centerline annotations from pancreas, kidney and breast. enricher: size_bytes exact from Zenodo
+  listing (was 132593000); download_url now the direct zip.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "collagen-centerlines.zip  132.6 MB (5,553 members, 133.7 MB uncompressed)\n  collagen-centerlines/final_train_test/\n\
+      \    train/index2fname.txt          crop id -> source ROI (round_<roi>_<..>_<..>)\n    train/images/      1188 .png\
+      \   39.7 MB   (1.png ... 1188.png)\n    train/labels/      1188 .png    1.9 MB\n    train/overlays/    1188 .png   71.6\
+      \ MB\n    train/properties/  1188 .json   0.2 MB\n    test/index2fname.txt\n    test/images/        199 .png    7.1\
+      \ MB\n    test/labels/        199 .png    0.3 MB\n    test/overlays/      199 .png   12.8 MB\n    test/properties/ \
+      \   199 .json   0.03 MB\n  (+3 .DS_Store files)"
+    n_files: 5553
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7243211/files/collagen-centerlines.zip::collagen-centerlines/final_train_test/train/images/1.png
+    - https://zenodo.org/records/7243211/files/collagen-centerlines.zip::collagen-centerlines/final_train_test/train/labels/1.png
+    size_bytes: 23876
+    description: 'Training crop 1: SHG image and its centerline mask (zip members)'
+  arrays:
+  - role: raw
+    path_pattern: collagen-centerlines/final_train_test/*/images/*.png
+    format: png
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Grey PNG crops (256x256) of 512x512 SHG ROIs (paper 4.1.1); index2fname.txt maps crop number to source
+      ROI.
+  - role: label
+    path_pattern: collagen-centerlines/final_train_test/*/labels/*.png
+    format: png
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: fiber centerline
+    alignment: same-grid
+    alignment_notes: 'Pairing: same file name in images/ and labels/ of the same split (train/1.png <-> train/1.png); shapes
+      match (sample).'
+  - role: other
+    path_pattern: collagen-centerlines/final_train_test/*/overlays/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: RGB visualisation of centerline over image; same file name as images/.
+  - role: other
+    path_pattern: collagen-centerlines/final_train_test/*/properties/*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Per-crop fiber properties: cir_mean, cir_var, len_mean, len_var, waviness, intensity (train/properties/1.json).'
+  notes: 'Listing: Zenodo record, 1 zip, 132,593,855 B exact, 5,553 members (4,161 PNG, 1,387 JSON, 2 TXT, 3 .DS_Store). Probed
+    train/images/1.png and train/labels/1.png (256x256 uint8 grey, deflate), test/images/1*.png (3 x 256x256), test/overlays/1.png
+    (256x256x3 RGB). Sampled train crop 1 (23,876 B): raw min 0 max 255, mean 13.3, 68% zeros, 170 unique values (one sample;
+    normalization not documented); label values {0: 64528, 255: 1008}, binary. Voxel size not found; checked: PNG headers
+    (no pHYs), Zenodo record, index2fname.txt, properties JSON, paper full text (PMC efetch: SHG from three imaging platforms,
+    20x and 40x objectives, refers to earlier papers for systems), GitHub repo README (not reachable). Mixed 20x/40x means
+    no single pixel size, and the crop-to-ROI map does not name magnification. The zip is a direct link; samples are zip members.'
