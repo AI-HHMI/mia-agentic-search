@@ -39,7 +39,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: null
+  size_bytes: 19641619361
   n_items: 20
   access: open
   download_url: null
@@ -71,11 +71,81 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-23T16:26:10Z'
-notes: 'Voxel size varies per sample (5 um for NF44-45 up to 40 um for the adult female, per paper Methods;
-  per-sample values are in the paper''s Supplementary Table S1 and info.txt files, not captured here),
-  so voxel_size_nm is null. Annotations are surface meshes (.stl) only for selected stages/structures,
-  not voxel masks; the annotation procedure is not described in the paper, so source is unknown and training
-  use needs mesh voxelisation. Checked Zenodo record (file list), and paper Methods/Data availability
-  (GigaScience, full text via Europe PMC). Paper also deposits the TIFFs in GigaDB. Marginal as a training
-  set: primarily an anatomical atlas.'
+  last_checked: '2026-10-23T17:30:00Z'
+notes: 'Annotations are surface meshes (.stl) only for selected stages/structures, not voxel masks; the
+  annotation procedure is not described in the paper, so source is unknown and training use needs mesh
+  voxelisation. Checked Zenodo record (file list), and paper Methods/Data availability (GigaScience, full
+  text via Europe PMC). Paper also deposits the TIFFs in GigaDB. Marginal as a training set: primarily
+  an anatomical atlas. enricher: voxel size varies, so null (isotropic, from <stage>_info.txt): NF44-45,
+  NF52, NF53 5 um; NF54, NF57 15 um; NF59, NF62, NF66 15.06 um; Male, Female 40 um.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "zenodo.org/records/10951411  95 files, 19,641,619,361 bytes\n  info.txt, <stage>_info.txt (11)\
+      \              voxel size per stage, in mm\n  <stage>_native.tar.gz, <stage>_stained.tar.gz   20\
+      \ volumes (+8 extra native scans *_2/_3 of NF62, NF66, Male, Female); 11.7 MB - 1.82 GB\n    <stage>_native/<stage>_nativeNNN.tif\
+      \          one 8-bit TIFF per z slice (NF54_native: 336 slices of 514x1091)\n  <stage>_{body,bones,skull,brain,guts}.stl\
+      \ (56)  surface meshes, VGL 4.2 STL, unit millimetre\n  stages: NF44-45, NF52, NF53, NF54, NF57,\
+      \ NF59, NF62, NF66, Male, Female"
+    n_files: 95
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/10951411/files/NF54_native.tar.gz/content
+    - https://zenodo.org/api/records/10951411/files/NF54_bones.stl/content
+    size_bytes: 16733242
+    description: Smallest volume (NF54 native scan, 336 slices of 514x1091 uint8 in a tar.gz) and the
+      NF54 skeleton surface mesh.
+  arrays:
+  - role: raw
+    path_pattern: '*_*.tar.gz/*/*[0-9][0-9][0-9].tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 514
+    - 1091
+    shape_varies: true
+    dtype: uint8
+    compression: packbits
+    value_range:
+    - 0
+    - 61
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One single-page plain TIFF per z slice; a volume is the folder <stage>_<native|stained>/
+      inside each tar.gz, slices in name order (NNN). Shape given for NF54_native (336 slices); other
+      volumes differ.
+  - role: label
+    path_pattern: '*_{body,bones,skull,brain,guts}.stl'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    normalization: unknown
+    encoding: other
+    classes:
+    - id: null
+      name: body
+    - id: null
+      name: bones
+    - id: null
+      name: skull
+    - id: null
+      name: brain
+    - id: null
+      name: guts
+    alignment: unknown
+    alignment_notes: STL surface meshes (header '[Unit:Millimeter] (Written by VGL 4.2.0)'), one per structure
+      and stage, in millimetres; which scan (native or stained) each mesh was made from and its origin
+      are not stated, so mapping onto the voxel grid needs the per-stage voxel size and an unknown offset.
+      Must be voxelised to get masks.
+  notes: 'Zenodo listing complete and exact (95 files). Downloaded NF54_native.tar.gz (11,744,858 bytes)
+    and read it with tarfile without extracting: 336 TIFFs, 35,090,422 bytes; slices 000 and 168: 514x1091
+    uint8, PackBits, single page, no ImageJ metadata; values 0-0 and 0-61 (mean 10.5), so value range
+    is from two slices of one volume. tar.gz members can''t be read by range, so other volumes were not
+    opened. Read all 11 info.txt files (voxel sizes) and the first 120 bytes of NF54_bones.stl. Voxel
+    size varies by stage (5 / 15 / 15.06 / 40 um), so imaging.voxel_size_nm stays null. No single archive:
+    data.download_url stays null; every file is a direct Zenodo link with range requests.'
