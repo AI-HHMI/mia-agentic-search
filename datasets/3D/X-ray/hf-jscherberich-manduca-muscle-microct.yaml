@@ -2,8 +2,8 @@ schema_version: '1.2'
 id: hf-jscherberich-manduca-muscle-microct
 title: Manduca muscle segmentation (micro-CT)
 short_name: Manduca muscle segmentation (micro-CT)
-description: Micro-CT slice stacks of three body regions (thorax, abdomen, postabdomen) of six Manduca specimens, each
-  stack paired with a label stack of identical slice count, plus trained Dragonfly Attention U-Net 2.5D models.
+description: Micro-CT slice stacks of three body regions (thorax, abdomen, postabdomen) of six Manduca specimens, each stack
+  paired with a label stack of identical slice count, plus trained Dragonfly Attention U-Net 2.5D models.
 landing_url: https://huggingface.co/datasets/JScherberich/manduca_muscle_segmentation
 doi: null
 repository: HuggingFace
@@ -19,22 +19,22 @@ imaging:
   channels: null
   organism:
   - Manduca
-  sample: Micro-CT scans of Manduca specimens (folders PMA_1_10, PMA_2_11, PMA_27, PTA_1, PTA_18, PTA_23), one scan per
-    body region
+  sample: Micro-CT scans of Manduca specimens (folders PMA_1_10, PMA_2_11, PMA_27, PTA_1, PTA_18, PTA_23), one scan per body
+    region
   labels_stains: []
 data:
   formats:
   - tiff
-  size_bytes: 13035029893
+  size_bytes: 19415097512
   n_items: 18
   access: open
-  download_url: null
+  download_url: https://huggingface.co/datasets/JScherberich/manduca_muscle_segmentation/tree/main/datasets
   download_method: http
 annotations:
   present: true
   types:
   - semantic-segmentation
-  coverage: dense
+  coverage: sparse
   format: TIFF label slices in a <scan>_label folder beside each <scan> image folder
   source: unknown
 ml:
@@ -54,16 +54,97 @@ provenance:
   - https://huggingface.co/api/datasets/JScherberich/manduca_muscle_segmentation/tree/main/datasets
   - https://huggingface.co/datasets/JScherberich/manduca_muscle_segmentation/resolve/main/datasets/abdominal_segment_dataset.zip
   - https://huggingface.co/datasets/JScherberich/manduca_muscle_segmentation/resolve/main/datasets/example.tiff
+  - https://huggingface.co/datasets/JScherberich/manduca_muscle_segmentation/resolve/main/dragonfly_models/Postabdomen/U-Net%202.5D/U_Net_Postabdomen_PMA_1_10/training_parameter_20260201_02h26m05s.json
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-22T22:00:00Z'
-notes: 'The dataset card holds only front matter (license cc-by-4.0, tags micro-ct, manduca, muscle, segmentation); there is
-  no description, no paper, no voxel size, no label classes and no stated annotation procedure, so those fields are null/unknown.
+  last_checked: '2026-10-23T00:30:00Z'
+notes: 'The dataset card holds only front matter (license cc-by-4.0, tags micro-ct, manduca, muscle, segmentation); there
+  is no description, no paper, no voxel size, no label classes and no stated annotation procedure, so those fields are null/unknown.
   Species is given only as "manduca" in the tags (genus used; Manduca sexta not confirmed). Structure from peek_archive: three
   zips (abdominal 9,150 files, postabdominal 6,946, thoracal 6,436 TIFF slices), each with six scan folders and six matching
   _label folders with identical slice counts, i.e. 18 image/label volume pairs, 13.0 GB in total. The repository also ships
-  trained Dragonfly (.ORSModel) models under dragonfly_models/ and a 1334x1448 uint8 example.tiff. Which tissue (muscle) classes
-  the labels hold was not read from file contents.'
+  trained Dragonfly (.ORSModel) models under dragonfly_models/ and a 1334x1448 uint8 example.tiff. enricher: coverage sparse
+  (was dense): only every 42nd slice has labels (13 of 512 in postabdominal PMA_2_11). enricher: class names from the Postabdomen
+  Dragonfly training_parameter json; size 19.4 GB = whole repo incl. 6.4 GB of models (was 13.0 GB zips only).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                     2 files   12.3 KB  .gitattributes, README.md\ndatasets/                \
+      \              4 files   13.0 GB  .zip 3, .tiff 1 (example.tiff)\ndragonfly_models/{Abdomen,Postabdomen,Thorax}/<arch>/<model>/\
+      \  ~124 files  6.4 GB  .ORSModel, .csv, .json\nzip contents:\ndatasets/\n  abdominal_segment_dataset.zip/{PMA_1_10,PMA_27,PMA_2_11,PTA_1,PTA_18,PTA_23}/\
+      \        4575 files  5.9 GB  .tiff\n  abdominal_segment_dataset.zip/{...}_label/ (x6)                              \
+      \          4575 files  222 MB  .tiff\n  postabdominal_segment_dataset.zip/{PMA_1_10,PMA_27,PMA_2_11,PTA_1,PTA_18,PTA_23}/\
+      \    3473 files  3.5 GB  .tiff\n  postabdominal_segment_dataset.zip/{...}_label/ (x6)                              \
+      \      3473 files  139 MB  .tiff\n  thoracal_segment_dataset.zip/{PMA_1_10,PMA_27,PMA_2_11,PTA_1,PTA_18,PTA_23}/   \
+      \      3218 files  3.9 GB  .tiff\n  thoracal_segment_dataset.zip/{...}_label/ (x6)                                 \
+      \        3218 files  167 MB  .tiff"
+    n_files: 130
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/JScherberich/manduca_muscle_segmentation/resolve/main/datasets/postabdominal_segment_dataset.zip::PMA_2_11/PMA(2)(11)045.tiff
+    - https://huggingface.co/datasets/JScherberich/manduca_muscle_segmentation/resolve/main/datasets/postabdominal_segment_dataset.zip::PMA_2_11_label/Frames
+      from 'Data set 1' (as Image)045.tiff
+    size_bytes: 637810
+    description: one annotated z slice of postabdominal scan PMA_2_11 (1184x1257) and its label slice
+  arrays:
+  - role: raw
+    path_pattern: datasets/*_segment_dataset.zip/P?A_*[0-9]/*.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 1184
+    - 1257
+    shape_varies: true
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 254
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: one single-page 2D TIFF per z slice; a scan folder is one volume (z = slice number in the file name)
+  - role: label
+    path_pattern: datasets/*_segment_dataset.zip/*_label/*.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 1184
+    - 1257
+    shape_varies: true
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 6
+    encoding: semantic-ids
+    classes:
+    - id: null
+      name: KM oben
+    - id: null
+      name: KM unten
+    - id: null
+      name: Längsmuskel (longitudinal muscle)
+    - id: null
+      name: Vertikalmuskel (vertical muscle)
+    - id: null
+      name: Darmmuskel (gut muscle)
+    - id: null
+      name: Hintergrund (background)
+    alignment: same-grid
+    alignment_notes: <scan>_label/ beside each <scan>/ in the same zip, same slice count; label slice NNN pairs with raw slice
+      NNN (file names "Frames from 'Data set 1' (as Image)NNN.tiff"). Shapes match. Only every 42nd slice is annotated (others
+      are all 0). Classes from the postabdomen model's training json; other body regions may use other class sets.
+  notes: 'Listing: HF API, 130 files, 19,415,097,512 B (exact), zips expanded: 22,532 TIFF slices in 18 scan folders + 18
+    label folders. Headers: plain single-page uint8 LZW TIFFs, slice shapes vary per scan (1184x1257, 1544x1316, 1835x1742);
+    no resolution tags. Some scan folders are ''Resampled''/''derived'' per their file names. value_range from one sample
+    slice each; label slice 045 of PMA_2_11 holds values 0-6 (0 = 70% unlabelled, 6 = 29%, 1-5 < 0.2% each); the value-to-class
+    mapping is not stated (six names listed in the model json, presumably 1-6 in order, 0 unannotated). Labelled slices: 13
+    of 512 in postabdominal PMA_2_11 (every 42nd). Voxel size not found; checked: TIFF headers (raw, label, example.tiff),
+    HF API/card (front matter only), training_parameter json, Europe PMC/Crossref title search (no paper). Download: three
+    zips on HF (range requests work); no single archive, so download_url is the datasets/ folder. Trained Dragonfly models
+    (6.4 GB) are part of the repo size.'
