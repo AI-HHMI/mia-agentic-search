@@ -2,8 +2,8 @@ schema_version: '1.2'
 id: zenodo-10827523-bactsam-b-subtilis-fluorescence
 title: BactSAM dataset
 short_name: B. subtilis fluorescence patches with masks
-description: Patched and augmented fluorescence microscopy images of Bacillus subtilis with corresponding
-  segmentation masks, stored as a Hugging Face datasets (Arrow) export.
+description: Patched and augmented fluorescence microscopy images of Bacillus subtilis with corresponding segmentation
+  masks, stored as a Hugging Face datasets (Arrow) export.
 landing_url: https://zenodo.org/records/10827523
 doi: 10.5281/zenodo.10827523
 repository: Zenodo
@@ -34,14 +34,14 @@ data:
 annotations:
   present: true
   types:
-  - other
+  - instance-segmentation
   coverage: dense
   format: 256x256 int16 label arrays (Hugging Face datasets Arrow shards)
   source: unknown
 ml:
   tasks:
   - segmentation
-  splits_provided: false
+  splits_provided: true
   benchmark: null
   baseline_code_url: null
 license:
@@ -54,17 +54,76 @@ provenance:
   - https://zenodo.org/records/10827523
   - https://zenodo.org/api/records/10827523
   - https://zenodo.org/records/10827523/files/bact_dataset.tar.xz
-  confidence: 0.55
+  confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-23T22:39:04Z'
-notes: 'Zenodo page says only "patched and augmented fluorescent microscopy images of B. subtilis and
-  their corresponding segmentation masks"; no paper, pixel size, microscope, image counts or annotation
-  method are stated on the page or API record (no related publication found by web search). The single
-  bact_dataset.tar.xz (712 MB) was inspected by reading its first ~3 MB: it contains bact_dataset/dataset_dict.json
-  and train/*.arrow shards (first shard 406 MB); the embedded Hugging Face features metadata gives image
-  = int16 array shape [3,256,256] and label = int16 array shape [256,256]. Whether labels are binary or
-  instance IDs, whether a test split exists (only train/ was seen in the first 3 MB) and the total image count were not determined. Images are augmented,
-  so the number of independent source images is likely smaller than the patch count.'
+  last_checked: '2026-10-23T23:05:00Z'
+notes: 'Zenodo page and API say only "patched and augmented fluorescent microscopy images of B. subtilis and their
+  corresponding segmentation masks"; no paper, pixel size, microscope or annotation method stated (no publication
+  or code repo found). Single bact_dataset.tar.xz = Hugging Face datasets export (Arrow IPC shards): image int16
+  [3,256,256], label int16 [256,256]. enricher: splits_provided true (dataset_dict.json lists train and validation);
+  train has 4 shards (data-0000N-of-00004.arrow); shard 0 holds 768 patches = 192 distinct patches x 4 rot90 augmentations,
+  so independent source images are far fewer than patches. enricher: annotation type other -> instance-segmentation;
+  labels look like instance IDs (0..234 across shard 0, median 4 IDs per patch), inferred from the sample. Voxel
+  size not stated anywhere.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "bact_dataset.tar.xz  (711.7 MB; xz, one block, 1,758,549,504 B uncompressed)\n└── bact_dataset/\n   \
+      \ ├── dataset_dict.json   {\"splits\": [\"train\", \"validation\"]}\n    ├── .gitkeep\n    ├── train/\n  \
+      \  │   ├── data-00000-of-00004.arrow  (405,816,128 B, 768 rows)\n    │   ├── data-00001-of-00004.arrow  (405,816,128\
+      \ B)\n    │   └── data-0000[23]-of-00004.arrow, metadata files (not reached)\n    └── validation/  (not reached)"
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: bact_dataset/*/data-*.arrow
+    format: other
+    axes: null
+    shape:
+    - 3
+    - 256
+    - 256
+    shape_varies: false
+    dtype: int16
+    compression: none
+    value_range:
+    - -32750
+    - 32714
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Column "image" of each Arrow record batch (HF Array3D, shape [3,256,256]); the 3-sized leading
+      dimension is presumably channels, but no axis names are stored.
+  - role: label
+    path_pattern: bact_dataset/*/data-*.arrow
+    format: other
+    axes: null
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: int16
+    compression: none
+    value_range:
+    - 0
+    - 234
+    normalization: none
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Column "label" in the same Arrow row as its image (HF Array2D [256,256]); row i of "label"
+      pairs with row i of "image", same 256x256 grid.
+  notes: 'Inspected by streaming the first 220 MB (compressed) of bact_dataset.tar.xz, which decompressed to the
+    full first train shard; the Arrow record batch was parsed by hand (no pyarrow; no dataset code run). Arrow body
+    is uncompressed; only the outer .tar.xz is compressed. xz is a single block, so later members (train shards
+    2-3, validation, state.json/dataset_info.json) cannot be read without downloading the whole archive; total patch
+    count unknown. Value ranges are from shard 0 only (768 patches). Raw channel ranges: c0 1063-9405, c1 -32750..32714
+    (looks like uint16 values wrapped into int16), c2 78-2190. Labels: 235 distinct values 0..234 in shard 0, 1-37
+    per patch, ~3.8% foreground; read as instance IDs (inferred). Format other: Hugging Face datasets Arrow IPC
+    stream inside tar.xz; not convertible by TensorSwitch. No sample unit smaller than the whole 712 MB archive.
+    voxel size not found; checked: Arrow schema metadata, Zenodo record + API (description, notes, related identifiers,
+    versions: 1), dataset_dict.json, Europe PMC/Crossref title search, web search for a paper or GitHub repo.'
