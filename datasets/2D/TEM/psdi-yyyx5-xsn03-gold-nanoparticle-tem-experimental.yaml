@@ -2,10 +2,11 @@ schema_version: '1.2'
 id: psdi-yyyx5-xsn03-gold-nanoparticle-tem-experimental
 title: Segmented Transmission Electron Microscopy (TEM) Images of Gold Nano-particles
 short_name: Gold nanoparticle TEM segmentation (synthetic)
-description: 'PSDI TEM-ParticlesDB record with three zips: 1,650 synthetic TEM images of gold nanoparticles generated with the TEMPOS
-  software (1,501 train and 149 val PNGs with COCO instances and VIA region json plus the generator settings json), 156 experimental
-  TEM images of gold nanoparticles grown under different conditions (PNG), and the experimental images segmented by a Detectron2
-  model trained on the synthetic data (159 PNG overlays plus a particle statistics CSV).'
+description: 'PSDI TEM-ParticlesDB record with three zips: 1,650 synthetic TEM images of gold nanoparticles
+  generated with the TEMPOS software (1,501 train and 149 val PNGs with COCO instances and VIA region
+  json plus the generator settings json), 156 experimental TEM images of gold nanoparticles grown under
+  different conditions (PNG), and the experimental images segmented by a Detectron2 model trained on the
+  synthetic data (159 PNG overlays plus a particle statistics CSV).'
 landing_url: https://data-collections.psdi.ac.uk/records/yyyx5-xsn03
 doi: null
 repository: other
@@ -25,8 +26,8 @@ imaging:
   voxel_size_nm: null
   channels: 1
   organism: []
-  sample: Gold nanoparticles grown under different conditions (experimental images courtesy of Lee Cronin; synthetic images generated
-    with TEMPOS)
+  sample: Gold nanoparticles grown under different conditions (experimental images courtesy of Lee Cronin;
+    synthetic images generated with TEMPOS)
   labels_stains: []
 data:
   formats:
@@ -41,9 +42,9 @@ annotations:
   types:
   - instance-segmentation
   coverage: dense
-  format: 'COCO instances json (instances_train.json 296 MB, instances_val.json 29 MB) and VIA via_region_data.json for the synthetic
-    images in synthetic_gold.zip; the experimental images carry no labels, only Detectron2 prediction overlays (PNG) and a particle
-    statistics CSV (postprocessed_stats.csv, 123 MB)'
+  format: COCO instances json (instances_train.json 296 MB, instances_val.json 29 MB) and VIA via_region_data.json
+    for the synthetic images in synthetic_gold.zip; the experimental images carry no labels, only Detectron2
+    prediction overlays (PNG) and a particle statistics CSV (postprocessed_stats.csv, 123 MB)
   source: automatic
 ml:
   tasks:
@@ -69,10 +70,80 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-23T15:50:00Z'
-notes: 'Zip indexes read with ranged GETs: synthetic zip 1,650 PNG (train 1,501, val 149) with COCO and VIA json and generator
-  settings; experimental zip 156 PNG; segmented zip 159 PNG plus one CSV. Synthetic labels are exact by construction; the experimental
-  images have no ground-truth labels here (Detectron2 predictions only), so source is automatic. Pixel size and image size not
-  stated on the record, in the files read or in the related paper (robotic synthesis, no TEM acquisition details); label json
-  not parsed. Sibling records: cobalt (9gkqa-pty79), polymer spheres (rz59r-rcr81), and the separate synthetic-only gold set
-  (sgvf0-j3g53) with different files.'
+  last_checked: '2026-10-23T16:10:00Z'
+notes: 'Zip indexes read with ranged GETs: synthetic zip 1,650 PNG (train 1,501, val 149) with COCO and
+  VIA json and generator settings; experimental zip 156 PNG; segmented zip 159 PNG plus one CSV. Synthetic
+  labels are exact by construction; the experimental images have no ground-truth labels here (Detectron2
+  predictions only), so source is automatic. Pixel size not stated on the record, in the files read or
+  in the related paper (robotic synthesis, no TEM acquisition details); label json not parsed. Sibling
+  records: cobalt (9gkqa-pty79), polymer spheres (rz59r-rcr81), and the separate synthetic-only gold set
+  (sgvf0-j3g53) with different files. enricher: size from the 3 zip sizes in the files API; label json
+  read (VIA polygons).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "data-collections.psdi.ac.uk/api/records/yyyx5-xsn03/files  3 zips, 2,358,020,511 bytes\n  synthetic_gold.zip\
+      \ (960 MB, 1,658 members, 1.89 GB unzipped)\n    glasgow_new.json                     TEMPOS generator\
+      \ settings\n    20250321185511_glasgow3/train/       1,501 PNG (0.png ...), instances_train.json\
+      \ 296 MB, via_region_data.json 570 MB\n    20250321185511_glasgow3/val/         149 PNG, instances_val.json\
+      \ 29 MB, via_region_data.json 56 MB\n  expermental_gold.zip (559 MB)          156 PNG (L1-1-A.png\
+      \ ...), no labels\n  segmented_experimental.zip (839 MB)    159 PNG Detectron2 overlays + postprocessed_stats.csv\
+      \ (123 MB)"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://data-collections.psdi.ac.uk/api/records/yyyx5-xsn03/files/synthetic_gold.zip/content::20250321185511_glasgow3/val/444.png
+    - https://data-collections.psdi.ac.uk/api/records/yyyx5-xsn03/files/synthetic_gold.zip/content::20250321185511_glasgow3/val/instances_val.json
+    size_bytes: 29669886
+    description: Smallest validation image (val/444.png, 1024x1024) and the val COCO json holding its
+      instances (uncompressed member sizes).
+  arrays:
+  - role: raw
+    path_pattern: synthetic_gold.zip/20250321185511_glasgow3/*/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Synthetic TEM images (TEMPOS, 'Synthetic data with experimental background' per the
+      COCO info); COCO images[] lists 1024x1024 for every entry read, matching the generator setting img_size
+      1024.
+  - role: label
+    path_pattern: synthetic_gold.zip/20250321185511_glasgow3/*/instances_*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    normalization: unknown
+    encoding: polygons
+    classes:
+    - id: null
+      name: particle
+    alignment: same-grid
+    alignment_notes: COCO instances json per split (train/val); images[].file_name names the PNG in the
+      same folder, so polygons are in that image's pixel coordinates. The VIA via_region_data.json beside
+      it holds the same regions as polygon shape_attributes (all_points_x/y). Class name 'particle' from
+      the generator settings (class_name).
+  notes: 'Files API lists 3 zips with exact sizes (2,358,020,511 bytes). The content links redirect to
+    S3 presigned URLs valid 60 s; HEAD on them fails, so listing.py/peek_archive.py could not read the
+    zips. Zip indexes and members were read with a short requests script (range GETs, ~5 MB in all): synthetic
+    1,658 members, experimental 156 PNG, segmented 160 members. Sampled train/0.png: 1024x1024 uint8 greyscale,
+    values 0-255, mean 201 (one sample). Read the first bytes of instances_train.json (COCO: info, images
+    1024x1024) and via_region_data.json (polygon regions). Annotation count not computed. Pixel size:
+    synthetic images have none; not in the files API record, generator settings (sizes in px), COCO info
+    or the related paper (robot synthesis, TEM figures without pixel size). No single archive: three zips,
+    so data.download_url stays null. TensorSwitch: host data-collections.psdi.ac.uk not on the allowlist,
+    and zip members fail its check because HEAD on the presigned redirect fails. Experimental images (expermental_gold.zip,
+    156 PNG) have no ground truth and are not listed as an array.'
