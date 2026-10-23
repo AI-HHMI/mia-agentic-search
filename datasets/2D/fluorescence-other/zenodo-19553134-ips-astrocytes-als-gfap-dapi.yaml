@@ -2,11 +2,10 @@ schema_version: '1.2'
 id: zenodo-19553134-ips-astrocytes-als-gfap-dapi
 title: Cultures of healthy and ALS iPSCs-derived astrocytes immunolabeled for DAPI and GFAP
 short_name: iPSC astrocytes ALS vs control, GFAP/DAPI
-description: Fluorescence images of iPSC-derived astrocytes from healthy controls and VCP-mutant ALS lines,
-  immunolabeled for DAPI and GFAP, from four experimental batches in 96-well plates (untreated, A1 high and
-  A1 low conditions). Provided as raw multi-plane images and as 19,326 processed RGB crops (maximum projection,
-  1/16 of each field of view), with a per-crop table giving experiment, plate, well, cell line, ALS/control
-  label, mutation and condition.
+description: Fluorescence images of iPSC-derived astrocytes from healthy controls and VCP-mutant ALS lines, immunolabeled
+  for DAPI and GFAP, from four experimental batches in 96-well plates (untreated, A1 high and A1 low conditions).
+  Provided as raw multi-plane images and as 19,326 processed RGB crops (maximum projection, 1/16 of each field of
+  view), with a per-crop table giving experiment, plate, well, cell line, ALS/control label, mutation and condition.
 landing_url: https://zenodo.org/records/19553134
 doi: 10.5281/zenodo.19553134
 repository: Zenodo
@@ -36,7 +35,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 28218909913
+  size_bytes: 28220909913
   n_items: 19326
   access: open
   download_url: https://zenodo.org/records/19553134
@@ -46,7 +45,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: CSV per crop (annotations_processed_crops.csv) with als_label (als/control), mutation (VCP/CTRL), cell_line, condition, experiment, plate, well and entropy-based cluster
+  format: CSV per crop (annotations_processed_crops.csv) with als_label (als/control), mutation (VCP/CTRL), cell_line,
+    condition, experiment, plate, well and entropy-based cluster
   source: unknown
 ml:
   tasks:
@@ -69,13 +69,114 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-23T01:25:00Z'
-notes: 'processed_crops.zip (peek_archive): 19,326 TIFF crops, matching 19,326 rows of annotations_processed_crops.csv
-  (als: 10,074, control: 9,252; conditions untreated / A1 high / A1 low; cell lines CTRL1-4, MUT1-4, all VCP
-  mutants). The raw archive (fluoACs_raw.zip, 26.4 GB) has 10-12 fields of view per well, 4-5 planes, 2 channels;
-  not listed. Pixel size 0.316 um/px and 1080x1080 FOV from the dataset description. The description mentions an
-  accompanying bioRxiv manuscript and a GitHub repository but gives no title or DOI, and a web search did not
-  find it, so no paper was read and publications is empty. Microscope, objective and acquisition mode are not
-  stated, hence modality fluorescence-other. The labels are sample-level (genotype, treatment) rather than
-  hand annotations, so the training signal is classification of ALS vs control. size_bytes is the Zenodo
-  total. Sources checked: Zenodo record and file API, archive listing, annotation CSV.'
+  last_checked: '2026-10-23T02:45:00Z'
+notes: 'processed_crops.zip: 19,326 RGB TIFF crops = 19,326 rows of annotations_processed_crops.csv (als 10,074,
+  control 9,252; conditions untreated / A1 high / A1 low; cell lines CTRL1-4, MUT1-4, all VCP). Pixel size 0.316
+  um/px and 1080x1080 FOV from the Zenodo description. The description mentions a bioRxiv manuscript and GitHub
+  code without title or DOI; not found, so publications is empty. Microscope not stated, hence fluorescence-other.
+  Labels are sample-level (genotype, treatment), not hand annotations. enricher: size_bytes 28,220,909,913 from
+  the complete Zenodo listing (was 28,218,909,913). fluoACs_raw.zip: 20,272 single-plane uint16 TIFFs, 6 acquisition
+  folders, channel suffixes 001 and 003 only (GFAP, DAPI per annotations_raw_wells.csv, which lists 4 channels).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "processed_crops.zip (1.79 GB, 19,326 files)\n  images/images/E<e>-P<p>-RW<r>-CW<c>-F<f>-CR<k>_16.tif\
+      \     270x270 RGB crops (R empty, G=GFAP, B=DAPI)\nfluoACs_raw.zip (26.4 GB, 20,284 members)\n  fluoACs_raw/<acquisition\
+      \ dir>/<RRR><CCC>-<F>-00100<P>00<H>.tif   20,272 uint16 1080x1080 planes (H = 1 GFAP, 3 DAPI)\n    2020-09-21T120325+0100[11100]/\
+      \    2241\n    2020-09-21T122635+0100[11101]/    2466\n    2021-05-18T125820+0100[13173]/    6722\n    2021-05-20T145215+0100[13198]/\
+      \    3362\n    2021-05-20T152301+0100[13201]/    2690\n    2021-06-09T155249+0100[13570]/    2802\n  (+ 6\
+      \ .DS_Store, 6 .dircksum)\nannotations_processed_crops.csv   19,326 rows x 21 columns (one per crop)\nannotations_raw_wells.csv\
+      \         128 rows x 18 columns (one per well)"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/19553134/files/processed_crops.zip::images/images/E2-P1-RW2-CW2-F1-CR1_16.tif
+    - https://zenodo.org/records/19553134/files/annotations_processed_crops.csv
+    size_bytes: 2896988
+    description: One processed RGB crop and the per-crop label table (row img_id = file name)
+  arrays:
+  - role: raw
+    path_pattern: https://zenodo.org/records/19553134/files/processed_crops.zip::images/images/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 270
+    - 270
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 205
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: 'Processed crops (max projection, contrast enhancement, channel merge, 1/16 of a 1080x1080
+      FOV, per the Zenodo description). RGB: channel_R empty, G = GFAP, B = DAPI (CSV channel columns); sample R
+      plane all zero (zero fraction 0.336).'
+  - role: raw
+    path_pattern: https://zenodo.org/records/19553134/files/fluoACs_raw.zip::fluoACs_raw/*/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1080
+    - 1080
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 73
+    - 514
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: Raw single-plane images, one file per well/FOV/plane/channel (name RRRCCC-F-00100P00H.tif);
+      these are the planes behind the processed crops.
+  - role: label
+    path_pattern: https://zenodo.org/records/19553134/files/annotations_processed_crops.csv
+    format: csv
+    axes: null
+    shape:
+    - 19326
+    - 21
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes:
+    - id: als
+      name: ALS (VCP mutant)
+    - id: control
+      name: healthy control
+    alignment: not-applicable
+    alignment_notes: 'One row per crop, keyed by img_id (= crop file name). Class columns: als_label (als / control),
+      mutation (VCP / CTRL), condition (untreated / A1 high / A1 low), cell_line; plus experiment, plate, well,
+      fov, crop and entropy features/cluster.'
+  - role: label
+    path_pattern: https://zenodo.org/records/19553134/files/annotations_raw_wells.csv
+    format: csv
+    axes: null
+    shape:
+    - 128
+    - 18
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'One row per well: acquisition folder (subdirectory), row/col (= RRR/CCC in raw file names),
+      experiment, plate, condition, cell_line, als_label, channel names.'
+  notes: 'Complete Zenodo listing: 4 files, 28,220,909,913 bytes. Zip central directories read with peek_archive
+    (processed 19,326 TIFF; raw 20,272 TIFF, 44.3 GB uncompressed). Probed and sampled processed crop E2-P1-RW2-CW2-F1-CR1_16.tif
+    (270x270x3 uint8, plain TIFF, uncompressed, [0, 205], samples not identical) and raw 007003-10-001002003.tif
+    (1080x1080 uint16, [73, 514], 12-bit range); value_range is from one sample each. Labels are sample-level (genotype
+    / treatment) table rows, not image annotations; annotations.source stays unknown (they come from the experimental
+    design, not a person or a model). Voxel size 316 nm/px is from the Zenodo description; neither TIFF header carries
+    a calibration. No paper found (Europe PMC title search, web search). 2D record: not convertible by the miao
+    layout yet.'
