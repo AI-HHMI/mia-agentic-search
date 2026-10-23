@@ -38,10 +38,10 @@ imaging:
 data:
   formats:
   - ome-zarr
-  size_bytes: 489000000000
-  n_items: 23
+  size_bytes: 489136814211
+  n_items: 24
   access: open
-  download_url: null
+  download_url: https://huggingface.co/datasets/AugustHoeg/VoDaSuRe
   download_method: http
 annotations:
   present: false
@@ -57,8 +57,8 @@ ml:
   benchmark: null
   baseline_code_url: https://github.com/AugustHoeg/VoxelSR
 license:
-  spdx: CC-BY-4.0
-  url: https://huggingface.co/datasets/AugustHoeg/VoDaSuRe
+  spdx: CC-BY-SA-4.0
+  url: https://huggingface.co/datasets/AugustHoeg/VoDaSuRe/raw/main/_LICENSE_
 provenance:
   discovered_by: harvest-literature
   discovered_at: '2026-10-23T10:31:08Z'
@@ -68,18 +68,72 @@ provenance:
   - https://augusthoeg.github.io/VoDaSuRe/
   - https://arxiv.org/pdf/2603.23153v1
   - https://export.arxiv.org/api/query?search_query=all:VoDaSuRe&max_results=2
+  - https://huggingface.co/datasets/AugustHoeg/VoDaSuRe
+  - https://huggingface.co/datasets/AugustHoeg/VoDaSuRe/raw/main/_LICENSE_
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-23T10:31:08Z'
+  last_checked: '2026-10-23T11:09:26Z'
 notes: 'Lab micro-CT (Zeiss Xradia Versa 520 for wood/cardboard/MDF/ox bone; Nikon XT H 225 for femurs/vertebrae),
   i.e. X-ray volumes of mostly non-biological and bone samples, not microscopy of cells. Training signal
   is paired real low/high-resolution scans (restoration pairs), no labels. Voxel size differs per sample
   and per resolution level (paper supplementary Table 4 lists, e.g., HR 1.199-2.031 um and LR 4.8-8.1
-  um for Zeiss samples), so voxel_size_nm is left null. Archives: HF lists 23 tar.gz archives (14 train,
-  10 test, ~489 GB total per README); the paper counts 16 samples / 32 scans. License CC-BY-4.0 from the
-  Hugging Face dataset card; the project page itself is CC BY-SA. Organisms: human femur/vertebra and
-  ox bone; plant species of the wood samples not listed as NCBI names. Paper has no DOI yet (arXiv 2603.23153,
-  CVPR 2026); not read via tools/paper.py (not indexed by Europe PMC), full text read from the arXiv PDF.'
+  um for Zeiss samples), so voxel_size_nm is left null. Archives: 24 tar.gz (14 train, 10 test; wood/MDF/cardboard/ox
+  bone split into _0 test and _1 train parts), 489.1 GB exact; the paper counts 16 samples / 32 scans.
+  enricher: license CC-BY-4.0 -> CC-BY-SA-4.0 from the _LICENSE_ file in the HF repo ("licensed under
+  CC BY-SA 4.0"); the dataset card metadata says cc-by-4.0, the project page CC BY-SA. organisms: Homo
+  sapiens = Femur_*, Vertebrae_*; Bos taurus = Ox_bone_*; wood species not given as NCBI names. Paper:
+  arXiv 2603.23153 (CVPR 2026), read from the arXiv PDF.'
+technical:
+  method: metadata-only
+  size_source: file-listing
+  layout:
+    tree: "ome/test/   10 files   55.2 GB\n  Bamboo_A_bin1x1_ome_0.zarr.tar.gz      5.49 GB  (also Cardboard_A,\
+      \ Cypress_A, Elm_A, Larch_B, MDF_A, Oak_A, Ox_bone_A: 5.45-5.61 GB each)\n  Femur_01_80kV_ome.zarr.tar.gz\
+      \          1.62 GB\n  Vertebrae_D_80kV_ome.zarr.tar.gz       9.31 GB\nome/train/  14 files  434.0\
+      \ GB\n  Bamboo_A_bin1x1_ome_1.zarr.tar.gz     55.28 GB  (also Cardboard_A, Cypress_A, Elm_A, Larch_B,\
+      \ MDF_A, Oak_A, Ox_bone_A: 41.1-54.7 GB each)\n  Femur_15/21/74_80kV_ome.zarr.tar.gz   1.86-2.33\
+      \ GB\n  Vertebrae_A/B/C_80kV_ome.zarr.tar.gz  7.95-10.10 GB\nREADME.md, _LICENSE_, extract_files.sh,\
+      \ .gitattributes\neach archive: <name>.zarr/{HR/0-3, LR/0-3, REG/0-1} (zarr v3 chunks c/..., README)\n"
+    n_files: 28
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: ome/*/*.zarr.tar.gz
+    format: ome-zarr
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: LR group (unregistered low-resolution scan, levels 0-3) inside each archive; REG
+      group = LR registered and intensity-matched to HR (levels 0-1), per README.
+  - role: target
+    path_pattern: ome/*/*.zarr.tar.gz
+    format: ome-zarr
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: scaled
+    alignment_notes: HR group (levels 0-3) in the same archive as its LR/REG pair. REG is the LR scan
+      registered to HR; the HR/REG voxel-size ratio differs per sample (paper suppl. Table 4), so the
+      pairing rule is same archive, HR vs REG.
+  notes: 'Listing: HF tree API (tools/listing.py), 28 files, 489,136,814,211 B exact. Every array is inside
+    a .zarr.tar.gz (1.6-55 GB each), so no headers can be read by range: the first 8 MB of Femur_01_80kV_ome.zarr.tar.gz
+    (smallest, 1.62 GB) decompressed to 15 tar members, all HR/2 chunks (zarr v3 layout c/0/z/y/x); zarr.json
+    metadata comes later in the stream. Shape, dtype, compression and per-scale transforms are therefore
+    unknown. Sample: none (smallest self-contained unit is a 1.6 GB archive, over the 500 MB budget).
+    Download: tar.gz files are direct (probe --download-check usable, range requests, redirect to HF CDN),
+    but TensorSwitch needs the extracted zarr; no single archive for the whole dataset, so download_url
+    is the HF repo. Voxel size: differs per sample and per resolution (paper suppl. Table 4, per the harvest),
+    so voxel_size_nm stays null.'
