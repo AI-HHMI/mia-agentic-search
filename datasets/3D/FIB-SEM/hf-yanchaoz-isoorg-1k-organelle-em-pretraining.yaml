@@ -43,7 +43,7 @@ data:
   size_bytes: null
   n_items: 928
   access: open
-  download_url: null
+  download_url: https://huggingface.co/datasets/yanchaoz/OrgMIM-datasets
   download_method: http
 annotations:
   present: true
@@ -74,19 +74,139 @@ provenance:
   - https://huggingface.co/api/datasets/yanchaoz/OrgMIM-datasets/tree/main
   - https://huggingface.co/datasets/yanchaoz/OrgMIM-datasets/resolve/main/%5BPretraining%5D%20IsoOrg-1K-meta.csv
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1109%2Ftmi.2026.3667612%22&format=json&resultType=core&pageSize=3
-  confidence: 0.55
+  - https://huggingface.co/datasets/yanchaoz/OrgMIM-datasets
+  - https://drive.google.com/drive/folders/13ybWYaCtwuRcRfhyEZ-_mY8fVUBFgGKS?usp=sharing
+  confidence: 0.6
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-23T10:37:22Z'
+  annotations_verified: true
+  last_checked: '2026-10-23T11:16:56Z'
 notes: 'Derived collection: the pretraining volumes are re-packaged OpenOrganelle FIB-SEM datasets (original
   OpenOrganelle licenses/DOIs are listed per dataset in the metadata sheet); the MIT license is the Hugging
   Face card license and the data licence of the underlying OpenOrganelle volumes is not restated by the
   authors. Hosted on Hugging Face (~2.96 GB membrane attention maps rar, four downstream rar archives
   of 0.16-0.57 GB, metadata xlsx saved as .csv) and Google Drive (full pretraining set, not fetched).
-  Contents of the rar archives could not be listed (peek_archive handles zip only), so file formats (tiff
-  per the README) and label layout are unverified. Metadata sheet: 40 source datasets, resolution 4/6/8
-  nm per dataset (voxel_size_nm left null since it varies), 24 mouse, 13 human, 3 monkey (monkey species
-  not named). The paper (IEEE TMI) is not open access; abstract read via Europe PMC, details from the
-  GitHub README. Possible overlap with OpenOrganelle records in this catalog.'
+  enricher: rar headers walked by range: all members are TIFF; downstream sets hold raw/label TIFF pairs
+  (annotations_verified true). Metadata sheet: 40 source datasets, resolution 4/6/8 nm per dataset (voxel_size_nm
+  left null since it varies), 24 mouse, 13 human, 3 monkey (monkey species not named). The paper (IEEE
+  TMI) is not open access; abstract read via Europe PMC, details from the GitHub README. Overlaps OpenOrganelle,
+  BetaSeg and ASEM records.'
+technical:
+  method: metadata-only
+  size_source: unknown
+  layout:
+    tree: "OrgMIM-datasets (Hugging Face, 8 files, 4,427,874,342 B)\n  [Pretraining] IsoOrg-1K-MAMs.rar\
+      \   2.96 GB  IsoOrg-1K-MAMs/<dataset>_<n>.tif (membrane maps; first 15 members 134,302,810 B each)\n\
+      \  [Pretraining] IsoOrg-1K-meta.csv   13.9 KB  (xlsx: 40 OpenOrganelle datasets, 928 volumes)\n\
+      \  [Downstream] ASEM-ER.rar  416.6 MB  {training,test}/{raw,er}_46-{1,2}.tif        2 pairs\n  [Downstream]\
+      \ BetaSeg.rar  572.6 MB  BetaSeg/{training,test/cell N}/high_cN_{raw,gt}.tif  4 pairs\n  [Downstream]\
+      \ CMCC.rar     322.9 MB  CMCC/{training,test}/cropN_{raw,gt}.tif       30 pairs\n  [Downstream]\
+      \ CMCT.rar     160.5 MB  CMCT/{training,test}/<jrc dataset>_cropN{,_gt}.tif 24 pairs\n  README.md,\
+      \ .gitattributes\nGoogle Drive folder (not listable): volumes/ (928 pretraining volumes), metadata.csv\n"
+    n_files: 8
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: '*/*/*_raw.tif'
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: BetaSeg and CMCC raw crops (inside BetaSeg.rar, CMCC.rar).
+  - role: label
+    path_pattern: '*/*/*_gt.tif'
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    encoding: unknown
+    classes: null
+    alignment: unknown
+    alignment_notes: 'Pairs with *_raw.tif of the same stem. BetaSeg: raw and gt members have identical
+      uncompressed sizes. CMCC: gt members are exactly 2x the raw size (wider dtype or finer grid; not
+      resolved).'
+  - role: raw
+    path_pattern: CMCT/*/jrc_*_crop[0-9]*.tif
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: CMCT raw crops from OpenOrganelle jrc_mus-kidney/liver datasets.
+  - role: label
+    path_pattern: CMCT/*/jrc_*_crop*_gt.tif
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    encoding: unknown
+    classes: null
+    alignment: same-grid
+    alignment_notes: Pairs with the same stem without _gt; each gt is 48 B smaller than its raw (same
+      voxel count, header difference).
+  - role: raw
+    path_pattern: '*/raw_46-*.tif'
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ASEM-ER raw (training raw_46-1, test raw_46-2).
+  - role: label
+    path_pattern: '*/er_46-*.tif'
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    encoding: unknown
+    classes: null
+    alignment: same-grid
+    alignment_notes: ER labels; er_46-N pairs with raw_46-N, same uncompressed size.
+  - role: other
+    path_pattern: IsoOrg-1K-MAMs/*.tif
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Precomputed membrane attention maps for pretraining (SAM-derived), one per pretraining
+      volume (<dataset>_<n>.tif).
+  notes: 'Listing: HF tree (tools/listing.py) 8 files, 4,427,874,342 B exact, but the 928 pretraining
+    volumes are only in a Google Drive folder (volumes/, not listable or fetchable), so the listing is
+    incomplete and the size unknown. RAR members listed by walking RAR5 headers with range requests (custom
+    script, ~560 KB read, no decompression): CMCT 48 files, CMCC 60, ASEM-ER 4, BetaSeg 8 (all .tif),
+    MAMs first 15 of ~928 members. Members are RAR-compressed, so TIFF headers (shape, dtype, axes) cannot
+    be read without extracting; no extractor available and TensorSwitch cannot read rar, so sample is
+    null. Voxel size not set: metadata sheet gives 4, 6 or 8 nm per source dataset (varies); downstream
+    sets inherit their sources. README: inputs normalised by /255.'
