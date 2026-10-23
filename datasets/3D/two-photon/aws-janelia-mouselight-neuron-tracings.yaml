@@ -1,0 +1,169 @@
+schema_version: '1.2'
+id: aws-janelia-mouselight-neuron-tracings
+title: 'Mouse Brain Anatomy: MouseLight Imagery'
+short_name: MouseLight whole-brain neuron tracings (2-photon)
+description: Whole-brain serial two-photon block-face images of sparsely labelled mouse brains from Janelia's
+  MouseLight project, with consensus single-neuron axon and dendrite tracings (SWC), machine-generated
+  neurite fragments, and registrations to the Allen CCF. The bucket is organised by imaging date, one
+  date per brain.
+landing_url: https://registry.opendata.aws/janelia-mouselight
+doi: null
+repository: other
+accession: null
+authors:
+- Johan Winnubst
+- Erhan Bas
+- Tiago A. Ferreira
+- Zhuhao Wu
+- Michael N. Economo
+- Jayaram Chandrashekar
+publications:
+- title: Reconstruction of 1,000 Projection Neurons Reveals New Cell Types and Organization of Long-Range
+    Connectivity in the Mouse Brain
+  doi: 10.1016/j.cell.2019.07.042
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC6754285/
+date_published: null
+imaging:
+  modality:
+  - two-photon
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 300
+    y: 300
+    z: 1000
+  channels: 2
+  organism:
+  - Mus musculus
+  sample: Whole mouse brains with sparsely labelled projection neurons, imaged with an automated two-photon
+    block-face microscope with an integrated vibratome
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: null
+  n_items: 66
+  access: open
+  download_url: s3://janelia-mouselight-imagery/
+  download_method: s3
+annotations:
+  present: true
+  types:
+  - skeleton
+  coverage: sparse
+  format: 'SWC neuron tracings per brain and neuron (tracings/tracing_complete/<date>/<neuron>/: base.swc,
+    consensus.swc, dendrite.swc, soma.txt); machine neurite fragments as SWC under segmentation/'
+  source: proofread
+ml:
+  tasks:
+  - other
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/MouseLightProject/Analysis-Paper
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-23T10:16:03Z'
+  evidence_urls:
+  - https://registry.opendata.aws/janelia-mouselight
+  - https://janelia-mouselight-imagery.s3.amazonaws.com/README.md
+  - https://janelia-mouselight-imagery.s3.amazonaws.com/?delimiter=/&prefix=images/
+  - https://janelia-mouselight-imagery.s3.amazonaws.com/?delimiter=/&prefix=tracings/tracing_complete/
+  - https://pmc.ncbi.nlm.nih.gov/articles/PMC6754285/
+  - https://janelia-mouselight-imagery.s3.amazonaws.com/images/2014-06-24/default.0.tif
+  - https://janelia-mouselight-imagery.s3.amazonaws.com/images/2014-06-24/transform.txt
+  - https://janelia-mouselight-imagery.s3.amazonaws.com/tracings/tracing_complete/2014-06-24/G-011/consensus.swc
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-23T11:26:56Z'
+notes: 'Public S3 bucket s3://janelia-mouselight-imagery (us-east-1, no account needed); download_url
+  null because it is a prefix tree. Listing 2026-10-23: images/ 66 brain-date prefixes (excluding nws_test,
+  zarrtest); tracings/tracing_complete/ 51 brains, one folder per neuron; segmentation/ 29; registration/
+  45. Paper: >1,000 neurons, two annotators each, consensus after random-forest segmentation and proofreading.
+  Voxel size 0.3x0.3x1 um is the acquisition value (stored resampled to 0.25x0.25x1); images are a KTX/TIFF
+  octree for HortaCloud (default.*.tif is a low-res overview), so raw-image format, per-brain size and
+  total size were not verified. Only some brains have tracings. CC BY 4.0 is from the AWS registry; the
+  Janelia project page states no license. enricher: channels 2 (default.0/1.tif, one channel each per
+  README); full-res imagery is a KTX octree (no listed format).'
+technical:
+  method: header
+  size_source: unknown
+  layout:
+    tree: "s3://janelia-mouselight-imagery/   (public, us-east-1; README.md)\n  images/<date>/       \
+      \                66 brains (+ nws_test, zarrtest)\n    default.0.tif, default.1.tif       low-res\
+      \ overview, one channel each (2014-06-24: 92,192,408 B, uint16 480x480 pages)\n    ktx/block_8_xy_.ktx,\
+      \ ktx/<1-8>/.../block_8_xy_<n>.ktx   octree (7 levels) of KTX textures = full-res imagery for Horta\n\
+      \    tilebase.cache.yml, transform.txt (origin, scale, nl), neurons.json\n  images/zarrtest/fused.zarr\
+      \           test OME-Zarr [1,1,29173,29101,62686] uint16 (brain not stated)\n  registration/<date>/\
+      \                 45 brains: <date>.nrrd, Transformed_<date>.nrrd, Transform.<date>.h5, HortaObj/*.obj\n\
+      \  segmentation/<date>/                 29 brains: machine neurite fragments (SWC)\n  tracings/tracing_complete/<date>/<color>-<n>/\
+      \   51 brains, one folder per neuron\n    base.swc, consensus.swc (axon), dendrite.swc, soma.txt,\
+      \ uni1.swc, uni2.swc, somaLoc.png, somaOnt.png\n  tracings/Finished_Neurons/           internal\
+      \ working copies\n"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://janelia-mouselight-imagery.s3.amazonaws.com/images/2014-06-24/default.0.tif
+    - https://janelia-mouselight-imagery.s3.amazonaws.com/tracings/tracing_complete/2014-06-24/G-011/consensus.swc
+    size_bytes: 92236910
+    description: Low-res overview of brain 2014-06-24 (channel 0) and the axon tracing of one of its neurons
+      (G-011)
+  arrays:
+  - role: raw
+    path_pattern: images/*/default.[01].tif
+    format: tiff
+    axes: zyx
+    shape: null
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Plain multi-page TIFF, pages 480x480 uint16, uncompressed; README: "single channel
+      of entire image in low resolution", so the page axis is z (zyx). 2014-06-24: 92,192,408 B, i.e.
+      about 200 pages (from the size, not counted).'
+  - role: raw
+    path_pattern: images/*/ktx/**/*.ktx
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Full-resolution imagery as a KTX texture octree for the Horta viewer (7 levels per
+      transform.txt nl: 7); KTX is not a format TensorSwitch reads.'
+  - role: label
+    path_pattern: tracings/tracing_complete/*/*/consensus.swc
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: graph
+    classes: null
+    alignment: transform-provided
+    alignment_notes: 'SWC skeletons (id type x y z r parent) with a header "# OFFSET x y z" (G-011: 73954.8
+      46412.0 20469.7); dendrite.swc alongside. Folder <date> matches images/<date>. Coordinates appear
+      to be in um relative to OFFSET in sample space; images/<date>/transform.txt gives the octree origin
+      (ox, oy, oz) and extent; mapping not verified.'
+  notes: 'No complete listing: the KTX octrees hold very many objects per brain, so total size is unknown
+    and no estimate is possible (KTX shapes unknown). Listed one brain (2014-06-24) top level, ktx/ and
+    ktx/1/ (block_8_xy_1.ktx 26,333,312 B), and its tracing folders (G-001..G-015). Probed default.0.tif
+    header: plain TIFF, uint16, 480x480 pages, no compression (page count >= 16, stopped). transform.txt
+    2014-06-24: ox 70187544, oy 39728257, oz 15550717, sx 19285.99, sy 19464.04, sz 64054.95, nl 7 (sx/2^6
+    = 301 nm, sz/2^6 = 1001 nm, consistent with the record voxel size of the finest level). Read G-011
+    consensus.swc head and soma.txt ("Secondary motor area, layer 5"). Download check: default.0.tif and
+    consensus.swc usable (range requests, host allowed). images/zarrtest/fused.zarr is an OME-Zarr test
+    store (748 x 748 x 1000 nm), brain not stated, not used.'
