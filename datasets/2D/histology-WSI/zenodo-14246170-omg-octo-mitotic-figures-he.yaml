@@ -12,7 +12,7 @@ repository: Zenodo
 accession: '14246170'
 authors:
 - Zhuoyan Shen
-- "Mika\xEBl Simard"
+- Mikaël Simard
 - Douglas Brand
 - Carlos A. Collins-Fekete
 publications:
@@ -37,7 +37,7 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: 624755988
+  size_bytes: 624794308
   n_items: 77087
   access: open
   download_url: https://zenodo.org/records/14246170/files/images.tar.gz
@@ -71,18 +71,85 @@ provenance:
   - https://zenodo.org/records/14246170/files/image_list.csv
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11659629/fullTextXML
   - https://github.com/SZY1234567/OMG-Net
+  - https://zenodo.org/api/records/14246170
+  - https://zenodo.org/records/14246170/files/OMG-Net-master.zip
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-23T22:59:02Z'
-notes: 'Small PNG patches (~8 KB) of mitotic figures, not WSIs. images.tar.gz and masks.tar.gz listed
-  from their first entries (paired images/<n>.png, masks/<n>.png); image_list.csv read in full: 77,087
-  rows, all class 1, sources CCMCT 40,190, CMC 13,907, MIDOG 11,937, STMF 8,400, TUPAC16 1,999, ICPR2012
-  654, with human/canine tumour type per row. Masks are Segment Anything outputs prompted by the source
-  bounding boxes (STMF: pathologist/pHH3-assisted labels), with the human MIDOG++ masks reviewed (8%,
-  5%, 16% adjusted), so mask quality is automatic with review. Paper: the open-source slides were scanned
-  at 40x, ~0.25 um pixel; patch and STMF pixel size not stated, so voxel_size_nm is null. No split provided.
-  Re-curation of ICPR, TUPAC, CCMCT, CMC and MIDOG++ (a MIDOG 2022 record exists in the catalog; this
-  one adds masks and the STMF set). Latest version of concept DOI 10.5281/zenodo.11521639.'
+  last_checked: '2026-10-23T23:59:00Z'
+notes: 'Small 64x64 RGB PNG patches of mitotic figures, not WSIs; paired images/<n>.png and masks/<n>.png.
+  image_list.csv: 77,087 rows, all class 1, sources CCMCT 40,190, CMC 13,907, MIDOG 11,937, STMF 8,400,
+  TUPAC16 1,999, ICPR2012 654. Masks: SAM outputs prompted by source boxes; human MIDOG++ and STMF masks
+  reviewed, canine fully automatic, so source is mixed. organisms: Homo sapiens and Canis lupus familiaris
+  per row of image_list.csv (tumour type column, e.g. "human soft tissue tumour"); images/ and masks/
+  mix both. Voxel size: paper states only ~0.25 um for the source slides (40x); patch and STMF pixel size
+  not stated, so null. No split provided. enricher: size from Zenodo file listing (was 624,755,988).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  4 files  624.8 MB\n  images.tar.gz   609.6 MB  -> images/<n>.png (77,087 RGB patches)\n\
+      \  masks.tar.gz     11.4 MB  -> masks/<n>.png (binary nucleus masks)\n  image_list.csv    3.7 MB\
+      \  (filename, class, source, tumour type)\n  OMG-Net-master.zip 38 KB (code: Configs, Dataloader,\
+      \ Inference, Models, Training, Utils)"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/14246170/files/images.tar.gz
+    - https://zenodo.org/records/14246170/files/masks.tar.gz
+    size_bytes: 621035728
+    description: The two archives are the only direct files (tar members cannot be fetched singly); first
+      members images/23947.png + masks/23947.png were read by streaming the first 32 KB / 16 KB.
+  arrays:
+  - role: raw
+    path_pattern: images.tar.gz/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 64
+    - 64
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 8
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: masks.tar.gz/masks/*.png
+    format: png
+    axes: yx
+    shape:
+    - 64
+    - 64
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: mitotic figure nucleus
+    alignment: same-grid
+    alignment_notes: masks/<n>.png pairs with images/<n>.png (same stem); <n> is the filename column of
+      image_list.csv. Shapes match (64x64) in the 3 pairs sampled.
+  notes: 'Sampled by streaming the start of each tar.gz with a short requests+tarfile script (32 KB images,
+    16 KB masks): images/23947.png, 57862.png, 74605.png are 64x64x3 uint8 RGB, ranges [21,255], [18,255],
+    [8,255]; the matching masks are 64x64 uint8 with values {0,255}. value_range is from these 3 samples
+    only. Dataset ships as tar.gz, which TensorSwitch cannot open member by member: the sample unit is
+    the two archives (621 MB). image_list.csv (77,087 rows x 4 columns: filename, class, source, tumour
+    type; read in full by the harvester) is per-patch metadata, not listed as an array. Voxel size not
+    found; checked: PNG headers (no calibration), Zenodo API description, OMG-Net config (Input_Size 64x64,
+    Downscale_Factor 1), paper Methods (only "pixel size of ~0.25 um" for the open-source slides, STMF
+    not stated). Dimensionality 2D: not covered by the miao layout yet.'
