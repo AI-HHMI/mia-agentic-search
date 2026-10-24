@@ -2,7 +2,11 @@ schema_version: '1.2'
 id: figshare-29086454-vs-fpm-virtual-he-pairs
 title: 'VS-FPM: large-format, label-free virtual histopathology microscopy'
 short_name: Registered FPM and H&E colon polyp images
-description: Registered images of FFPE colonic polyp sections (3 patients, 18 sections). Each section has four registered images - a Hamamatsu NanoZoomer H&E whole slide image, the Fourier ptychographic microscopy (FPM) amplitude image and raw 4x brightfield image of the H&E-stained section, and a virtual H&E image generated from FPM phase of the unstained section - supporting supervised virtual staining (unstained phase to H&E) and WSI versus FPM comparison.
+description: Registered images of FFPE colonic polyp sections (3 patients, 18 sections). Each section
+  has four registered images - a Hamamatsu NanoZoomer H&E whole slide image, the Fourier ptychographic
+  microscopy (FPM) amplitude image and raw 4x brightfield image of the H&E-stained section, and a virtual
+  H&E image generated from FPM phase of the unstained section - supporting supervised virtual staining
+  (unstained phase to H&E) and WSI versus FPM comparison.
 landing_url: https://figshare.com/articles/dataset/VS-FPM_large-format_label-free_virtual_histopathology_microscopy/29086454
 doi: 10.6084/m9.figshare.29086454
 repository: Figshare
@@ -28,7 +32,8 @@ imaging:
   channels: 3
   organism:
   - Homo sapiens
-  sample: Formalin-fixed paraffin-embedded colonic polyp biopsies (tubular adenomata with low-grade dysplasia), 4 um sections, imaged unstained and after H&E staining
+  sample: Formalin-fixed paraffin-embedded colonic polyp biopsies (tubular adenomata with low-grade dysplasia),
+    4 um sections, imaged unstained and after H&E staining
   labels_stains:
   - H&E
 data:
@@ -44,7 +49,8 @@ annotations:
   types:
   - restoration-pairs
   coverage: dense
-  format: registered image sets of the same section (WSI, FPM amplitude, brightfield, virtual stain); no label masks
+  format: registered image sets of the same section (WSI, FPM amplitude, brightfield, virtual stain);
+    no label masks
   source: automatic
 ml:
   tasks:
@@ -66,5 +72,63 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-24T07:17:08Z'
-notes: 'Figshare record (API read): 72 JPEG files, 879 MB, license CC BY 4.0; description says 3 patients and 4 registered images per section. The listing shows file names 0-5.jpeg repeated, so the folder-to-section mapping was not inspected. Per the paper (read in full on PMC), the 18 sections gave 12 for virtual-stain training (17,199 paired 256x256 patches), 6 held out (3,498 patches); the deposited files are full images, not the patches. FPM: Olympus 4x/0.16, effective NA about 0.7, 4.8x2.8 mm field, 5,056x2,960 px raw images; pixel size at the sample is not reported; NanoZoomer WSIs scanned at 40x (230 nm pixel). Modality listed as brightfield plus other because FPM is not in the schema list. Labels are paired images, not manual masks.'
+  last_checked: '2026-10-24T08:57:35Z'
+notes: 'Figshare record (API read): 72 JPEG files, 879 MB, license CC BY 4.0; description says 3 patients
+  and 4 registered images per section. The listing shows file names 0-5.jpeg repeated, so the folder-to-section
+  mapping was not inspected. Per the paper (read in full on PMC), the 18 sections gave 12 for virtual-stain
+  training (17,199 paired 256x256 patches), 6 held out (3,498 patches); the deposited files are full images,
+  not the patches. FPM: Olympus 4x/0.16, effective NA about 0.7, 4.8x2.8 mm field, 5,056x2,960 px raw
+  images; pixel size at the sample is not reported; NanoZoomer WSIs scanned at 40x (230 nm pixel). Modality
+  listed as brightfield plus other because FPM is not in the schema list. Labels are paired images, not
+  manual masks. enricher: 72 files = 18 sections x 4 registered images; files of one section share a pixel
+  grid (see technical).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  72 files, 879.5 MB, flat figshare listing (no folders)\n  0.jpeg .. 5.jpeg   each name\
+      \ used 12 times (ndownloader.figshare.com/files/<id>)\n  18 sections x 4 registered images (WSI,\
+      \ FPM amplitude, 4x brightfield, virtual stain);\n  the 4 images of a section share one shape (18\
+      \ distinct shapes, 4 files each)"
+    n_files: 72
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/54595721
+    - https://ndownloader.figshare.com/files/54595760
+    - https://ndownloader.figshare.com/files/54595766
+    - https://ndownloader.figshare.com/files/54595835
+    size_bytes: 21352348
+    description: 'One section: the 4 registered 5189x11860 RGB JPEGs (all named 3.jpeg); which file is
+      which image type is not stated'
+  arrays:
+  - role: raw
+    path_pattern: '*.jpeg'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 5189
+    - 11860
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 253
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: 'All 72 files are 8-bit RGB JPEGs, shapes 5189x11714 to 18093x20986. Pairing rule:
+      the 4 files of a section have identical shapes (checked by header for all 72: 18 shapes x 4 files)
+      and the same file name digit; file names do not say which is WSI, FPM amplitude, brightfield or
+      virtual stain. One sampled file has 3 identical samples (grey stored as RGB, probably the FPM amplitude,
+      not confirmed); its set partner was colour.'
+  notes: 'Listing: figshare API, 72 files with exact sizes (879,476,949 bytes, complete). Headers of all
+    72 JPEGs probed (shape, uint8, yxs). Sampled two files of one section (54595760, 3.7 MB, grey-as-RGB,
+    range [0,253]; 54595835, 4.6 MB, RGB, range [0,246]); value_range from that one file. Role: all files
+    are listed as raw because the image type of each file cannot be told from names or metadata; the virtual-stain
+    training input (unstained FPM phase) is not in the deposit, only the stained images and the VS output.
+    Voxel size not set: paper (PMC, read by harvester) gives 230 nm for the NanoZoomer WSI at 40x but
+    not the pixel size of the deposited registered images; JPEG headers carry no calibration. Download:
+    every file is a direct figshare link (usable, range requests); no single archive, so data.download_url
+    stays null. Not convertible yet: 2D records are outside the miao layout.'
