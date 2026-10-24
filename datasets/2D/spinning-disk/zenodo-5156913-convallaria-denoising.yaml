@@ -28,8 +28,8 @@ imaging:
   channels: 1
   organism:
   - Convallaria
-  sample: Fixed Convallaria (lily-of-the-valley) tissue section imaged repeatedly as a static sample, plus a calibration
-    stack of diaphragm images
+  sample: Fixed Convallaria (lily-of-the-valley) tissue section imaged repeatedly as a static sample,
+    plus a calibration stack of diaphragm images
   labels_stains: []
 data:
   formats:
@@ -37,7 +37,7 @@ data:
   size_bytes: 347874446
   n_items: 200
   access: open
-  download_url: https://zenodo.org/api/records/5156913/files/Convallaria_diaphragm.zip/content
+  download_url: https://zenodo.org/records/5156913/files/Convallaria_diaphragm.zip
   download_method: http
 annotations:
   present: false
@@ -63,16 +63,78 @@ provenance:
   - https://zenodo.org/api/records/5156913
   - https://zenodo.org/api/records/5156913/files/Convallaria_diaphragm.zip/content
   - https://arxiv.org/pdf/1911.12291
+  - https://www.frontiersin.org/articles/10.3389/fcomp.2020.00005/full
   confidence: 0.65
 verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-24T17:00:00Z'
+  last_checked: '2026-10-24T17:10:00Z'
 notes: 'Zip listing (peek_archive): Convallaria_diaphragm/20190726_tl_50um_500msec_wf_130EM_FD.tif and
-  20190520_tl_25um_50msec_05pc_488_130EM_Conv.tif, 210.1 MB each. Paper (arXiv 1911.12291, Experiments): Convallaria
-  data is 100 calibration images (diaphragm images) and 100 noisy images of a Convallaria section, acquired on a
-  spinning disc confocal microscope; averaging static noisy acquisitions gives a pseudo ground truth. No clean target
-  files are shipped (annotations.present false), so usable for unsupervised denoising rather than as restoration
-  pairs. Pixel size, species and stain are not stated on the Zenodo page or in the paper text read. Companion of
-  the catalog record zenodo-5156937 (Mouse actin) from the same benchmark; different sample and files.'
+  20190520_tl_25um_50msec_05pc_488_130EM_Conv.tif, 210.1 MB each. Paper (arXiv 1911.12291, Experiments):
+  Convallaria data is 100 calibration images (diaphragm images) and 100 noisy images of a Convallaria
+  section, acquired on a spinning disc confocal microscope; averaging static noisy acquisitions gives
+  a pseudo ground truth. No clean target files are shipped (annotations.present false), so usable for
+  unsupervised denoising rather than as restoration pairs. Pixel size, species and stain are not stated
+  on the Zenodo page or in the paper text read. Companion of the catalog record zenodo-5156937 (Mouse
+  actin) from the same benchmark; different sample and files. enricher: download_url set to the direct
+  zip (download-check usable); voxel size still not found (TIFF headers uncalibrated).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Convallaria_diaphragm.zip  347,874,446 B\n  Convallaria_diaphragm/20190520_tl_25um_50msec_05pc_488_130EM_Conv.tif\
+      \  210,110,726 B  Convallaria noisy stack (100 frames)\n  Convallaria_diaphragm/20190726_tl_50um_500msec_wf_130EM_FD.tif\
+      \        210,110,380 B  diaphragm calibration stack (100 frames)\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5156913/files/Convallaria_diaphragm.zip::Convallaria_diaphragm/20190520_tl_25um_50msec_05pc_488_130EM_Conv.tif
+    size_bytes: 210110726
+    description: The Convallaria noisy-realization stack (100 frames of 1024x1024)
+  arrays:
+  - role: raw
+    path_pattern: Convallaria_diaphragm/*_Conv.tif
+    format: tiff
+    axes: tyx
+    shape:
+    - 100
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 271
+    - 7053
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 100 noisy realizations of the same static Convallaria field (paper; Andor protocol
+      "Repeat T - 100 times"); the frame axis is repeats, named t as in the TIFF series axes (TYX).
+  - role: raw
+    path_pattern: Convallaria_diaphragm/*_FD.tif
+    format: tiff
+    axes: tyx
+    shape:
+    - 100
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    alignment: not-applicable
+    alignment_notes: 'Calibration stack for the noise model: 100 images of a half-closed, out-of-focus
+      field diaphragm (paper). Shape, dtype and compression from its first IFD and Andor protocol text
+      ("Repeat T - 100 times", 1024x1024, 16 bit, compression 1); not sampled.'
+  notes: 'Zenodo API: one file, Convallaria_diaphragm.zip, 347,874,446 B (listing.py complete). Zip: 2
+    deflated TIFF members. probe.py could not read the deflated headers, so sample.py fetched the _Conv.tif
+    member (160,198,578 B compressed): 100x1024x1024 uint16, tifffile axes TYX, values 271-7053 (one sample;
+    p50 673). normalization none is inferred: raw Andor iQ 3.6.2 acquisitions (iXon Ultra 888 EMCCD, EM
+    gain 130), far below the 16-bit range, no clipping. First IFD of each member read by a range + inflate
+    script (~600 KB): uncompressed 16-bit, XResolution/YResolution 0/10000 (no calibration), Andor protocol
+    text without pixel size. Voxel size not found; checked: TIFF tags and Andor description of both files,
+    Zenodo API description, PN2V paper full text (Frontiers 10.3389/fcomp.2020.00005: spinning disk Andor
+    Revolution WD Borealis Mosaic, 1024x1024 images, no pixel size), arXiv 1911.12291 (per harvest notes).
+    download_url is the direct zip (download-check usable, range requests yes); both members usable as
+    zip::member.'
