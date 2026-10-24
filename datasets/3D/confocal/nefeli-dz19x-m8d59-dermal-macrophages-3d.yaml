@@ -1,0 +1,134 @@
+schema_version: '1.2'
+id: nefeli-dz19x-m8d59-dermal-macrophages-3d
+title: A large-scale expert-annotated 3D image dataset of dermal tissue macrophages
+short_name: Dermal macrophage 3D instance masks (confocal)
+description: 31 five-channel confocal z-stacks of mouse ear dermis (20 steady-state, 11 five days after Staphylococcus
+  aureus infection) stained for Collagen IV, F4/80, CD206 and DAPI, with 3D instance segmentation masks of 947
+  individual macrophages that were generated automatically and corrected by experts.
+landing_url: https://doi.org/10.82296/hmgu-nefeli.dz19x-m8d59
+doi: 10.82296/hmgu-nefeli.dz19x-m8d59
+repository: other
+accession: dz19x-m8d59
+authors:
+- Amirhossein Kardoost
+- Nisreen Ghanem
+- Tianru Li
+- Julia Kolter
+- Carsten Marr
+publications:
+- title: A large-scale expert-annotated 3D image dataset of dermal tissue macrophages
+  doi: 10.1038/s41597-026-08556-7
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC13683376/
+date_published: '2026-05-26'
+imaging:
+  modality:
+  - confocal
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 210
+    y: 210
+    z: 1510
+  channels: 5
+  organism:
+  - Mus musculus
+  sample: Whole-mount adult mouse ear dermis (C57BL/6), steady-state and five days after Staphylococcus aureus infection
+  labels_stains:
+  - Collagen IV
+  - F4/80
+  - CD206
+  - DAPI
+data:
+  formats:
+  - tiff
+  size_bytes: null
+  n_items: 31
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: partial
+  format: Single-channel TIFF z-stacks in masks/ with one unique integer ID per 3D macrophage, matching the images/ folder names
+  source: proofread
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/legalcode
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-24T12:25:00Z'
+  evidence_urls:
+  - https://pmc.ncbi.nlm.nih.gov/articles/PMC13683376/
+  - https://api.datacite.org/dois/10.82296/hmgu-nefeli.dz19x-m8d59
+  - https://raw.githubusercontent.com/Amirhk-dev/macrophage-image-processor/main/README.md
+  confidence: 0.5
+verification:
+  url_ok: false
+  license_found: true
+  annotations_verified: false
+  last_checked: '2026-10-24T13:15:00Z'
+notes: 'Landing page (Nefeli RDM) was unreachable this run (503), so no file listing, sizes or direct download URL
+  were seen; size_bytes and download_url are null. Facts are from the paper Data Records and Methods (PMC13683376) and
+  DataCite (CC-BY-4.0, SPDX). Layout per paper: images/ and masks/, each with AdultMice (20 stacks) and AdultMice-Infected
+  (11 stacks); 5-channel TIFFs (Collagen IV, F4/80, CD206, DAPI, brightfield), 22 slices of 1024x1024, pixel ~0.21 um,
+  slice spacing ~1.51 um (Zeiss LSM 880, 40x). Masks: YOLO, Otsu, Cellpose and SAM2, corrected by experts in Napari.
+  Coverage partial: only macrophages with visible nuclei. About 85 development volumes are not released. No splits. enricher: voxel size 210x210x1510 nm confirmed by the code repo config (pixel_size_xy 0.21, pixel_size_z 1.51 microns); paper says ~0.21/~1.51 um.'
+technical:
+  method: metadata-only
+  size_source: unknown
+  layout:
+    tree: |-
+      images/
+        AdultMice/            20 folders, one TIF z-stack each
+        AdultMice-Infected/   11 folders, one TIF z-stack each
+      masks/
+        AdultMice/            20 folders, one TIF mask each (same names as images/)
+        AdultMice-Infected/   11 folders, one TIF mask each
+    n_files: null
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: images/*/*/*.tif
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Per paper: 5 channels (Collagen IV, F4/80, CD206, DAPI, brightfield), 22 slices of 1024x1024 px;
+      axis order inside the TIFF not stated.'
+  - role: label
+    path_pattern: masks/*/*/*.tif
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    encoding: instance-ids
+    classes:
+    - id: null
+      name: macrophage
+    alignment: unknown
+    alignment_notes: 'Paper: single-channel z-stacks, one unique integer ID per 3D macrophage, 0 not stated; mask folders
+      follow the images/ naming convention (pair by folder name). Grid match not verified (files not reachable).'
+  notes: 'Not inspected: the Nefeli RDM host (nefeli.helmholtz-munich.de) timed out on every request this run (landing
+    page, /records/dz19x-m8d59, /api/records/dz19x-m8d59; 45-240 s) and also serves an incomplete TLS chain (sends the
+    GEANT TLS ECC 1 intermediate for an RSA leaf), so no file listing, headers, sizes or direct links were obtained.
+    Layout, channel order and mask encoding are from the paper (Data Records). Size not estimated: dtype unknown. No
+    direct download found: DataCite lists no contentUrl, the paper and both GitHub READMEs point only to the Nefeli
+    record. Voxel size from the macrophage-image-processor config (0.21 um xy, 1.51 um z). To do on a later run: list
+    the record files via the InvenioRDM API, probe one image and one mask, set axes/dtype and sample.urls.'
