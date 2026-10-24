@@ -1,0 +1,142 @@
+schema_version: '1.2'
+id: edinburgh-datashare-8881-yeast-nuclear-localisation-tiles
+title: Quantifying the nuclear localisation of transcription factors
+short_name: Yeast nuclear localisation cell tiles
+description: Masked single-cell image tiles (117x117 px; bright-field, transcription factor-GFP and nuclear
+  marker-mCherry channels) of budding yeast strains carrying Msn2-GFP, Dot6-GFP or Mig1-GFP, imaged in
+  a microfluidic device over time. Each tile has a ground-truth nuclear localisation value listed in an
+  accompanying table, used to train a CNN that predicts nuclear localisation from the GFP (and optionally
+  bright-field) channels.
+landing_url: https://datashare.ed.ac.uk/handle/10283/8881
+doi: 10.7488/ds/7820
+repository: other
+accession: 10283/8881
+authors:
+- Julien Hurbain
+- Pieter Rein ten Wolde
+- Peter S. Swain
+publications:
+- title: Quantifying the nuclear localization of fluorescently tagged proteins
+  doi: 10.1101/2024.10.31.621290
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC12133273/
+date_published: '2025-04-23'
+imaging:
+  modality:
+  - widefield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Saccharomyces cerevisiae
+  sample: Budding yeast strains Msn2-GFP, Dot6-GFP, Mig1-GFP with Nhp6a-mCherry nuclear marker in a microfluidic
+    device (glucose switches), single-cell crops
+  labels_stains:
+  - GFP
+  - mCherry
+data:
+  formats:
+  - other
+  size_bytes: 1141536970
+  n_items: 183190
+  access: open
+  download_url: https://datashare.ed.ac.uk/server/api/core/bitstreams/fab87923-e479-4dd9-afc8-e8a69b0ef9e3/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - other
+  coverage: dense
+  format: per-cell nuclear localisation value in the AllInfo_2002.dat table inside Tiles.zip, keyed by
+    tile file name
+  source: automatic
+ml:
+  tasks:
+  - other
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://git.ecdf.ed.ac.uk/v1jhurba/neunet-nucloc.git
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-24T07:17:08Z'
+  evidence_urls:
+  - https://datashare.ed.ac.uk/handle/10283/8881
+  - https://datashare.ed.ac.uk/server/api/core/bitstreams/a536e3e8-8b1f-4284-8d7c-68fe459198fa/content
+  - https://datashare.ed.ac.uk/server/api/core/bitstreams/fab87923-e479-4dd9-afc8-e8a69b0ef9e3/content
+  - https://pmc.ncbi.nlm.nih.gov/articles/PMC12133273/
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-24T09:14:17Z'
+notes: 'Tiles.zip (1.14 GB) lists 183,190 .pt PyTorch tensor files (1x3x117x117, about 0.3 MB each uncompressed)
+  in All/<strain>_<n>/sorted/ plus one .dat table with the ground truth; .pt files are pickles and must
+  not be unpickled untrusted. Labels are computed, not manual: the paper derives nuclear localisation
+  from the Nhp6a-mCherry marker with Otsu thresholding (paper: about 180,000 single-cell images, 90/10
+  train/validation split, 5-min intervals, 5 z-sections 0.6 um apart). Microscope Nikon Ti Eclipse, 60x
+  NA 1.4, Prime 95B (11 um camera pixel); effective pixel size not stated. The paper is inconsistent on
+  which strains were used for training. The zip holds the full set; a reduced example set is in the GitLab
+  repository. Data license is the DataShare record CC BY 4.0. enricher: .pt read without unpickling: float64
+  1x3x117x117, each channel in [0,1].'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  3 files, 1.14 GB (DataShare bitstreams)\n  Tiles.zip  1.14 GB (183,191 members, 60.4 GB\
+      \ uncompressed)\n    All/<strain>_<n>/sorted/E<exp>_S<strain>_P<pos>_t<trap>_c<cell>_tp<timepoint>.pt\
+      \  (183,190, ~0.33 MB each)\n    All/AllInfo_2002.dat   8.6 MB   one row per cell: [exp, strain,\
+      \ pos, trap, cell, timepoint, nuclear localisation]\n  NN_training_LargeDataset.py  10.7 KB\n  README.txt\
+      \  1.7 KB"
+    n_files: 3
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: Tiles.zip::All/*/sorted/*.pt
+    format: other
+    axes: null
+    shape:
+    - 1
+    - 3
+    - 117
+    - 117
+    shape_varies: false
+    dtype: float64
+    compression: none
+    value_range:
+    - 0
+    - 1
+    normalization: rescaled
+    alignment: not-applicable
+    alignment_notes: 'PyTorch .pt (zip of data.pkl + raw storage). README: dims are individual x channel
+      x 117 x 117; channels bright-field, TF-GFP, Nhp6a-mCherry; cell-masked (96% zeros in the sample).
+      Read without unpickling: pickle opcodes disassembled (DoubleStorage, size (1,3,117,117), contiguous)
+      and data/0 read as little-endian float64.'
+  - role: label
+    path_pattern: Tiles.zip::All/AllInfo_2002.dat
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: float64
+    compression: none
+    normalization: none
+    encoding: other
+    alignment: unknown
+    alignment_notes: 'Text file, one JSON-like list per line: [experiment, strain, position, trap, cell,
+      timepoint, nuclear localisation score]; rows map to .pt names E<exp>_S<strain>_P<pos>_t<trap>_c<cell>_tp<tp>.
+      The training script splits classes at a threshold of 1.65 on the score (regression with MSE). Only
+      the first 2 KB were read.'
+  notes: 'Listing: DataShare REST API (Tiles.zip 1,141,524,598 + script 10,656 + README 1,716 = 1,141,536,970
+    bytes, complete) and the Tiles.zip central directory (183,190 .pt + 1 .dat). Sampled: one .pt member
+    (6.8 KB compressed, 329,846 bytes) and the first 2 KB of AllInfo_2002.dat via range requests. Each
+    channel of the sampled tile spans [0,1] (rescaled per channel, inferred from one tile). No sample
+    unit is set: .pt is not a format TensorSwitch reads and the files are pickles (must not be unpickled),
+    so any loader needs a pickle-free reader. Voxel size not found; checked: README.txt, training script,
+    DataShare metadata, .pt content (no calibration); the paper (PMC12133273, read by the harvester) gives
+    60x objective and an 11 um camera pixel but no effective pixel size (not computed from specs). Download:
+    Tiles.zip is direct (range requests) but host datashare.ed.ac.uk is not on the TensorSwitch allowlist;
+    data.download_url keeps it as the single archive. 2D records are outside the miao layout.'
