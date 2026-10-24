@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: zenodo-1134848-deepfocus-wsi-focus-patches
 title: DeepFocus out-of-focus tile dataset (H&E and IHC whole-slide image patches with focus labels)
 short_name: Whole-slide histology focus-quality tiles (40x)
-description: HDF5 file of 64x64-pixel tiles cut from whole-slide scans of H&E, Ki67, CD21 and CD10 stained slides, acquired at systematically perturbed focal planes (offsets of -2.5 to +2.5 um around an operator-set focus), released as the training data of the DeepFocus out-of-focus (blur) detector. Labels derive from the focus offset (in-focus within +/-0.5 um, blurry otherwise).
+description: HDF5 file of 64x64-pixel tiles cut from whole-slide scans of H&E, Ki67, CD21 and CD10 stained
+  slides, acquired at systematically perturbed focal planes (offsets of -2.5 to +2.5 um around an operator-set
+  focus), released as the training data of the DeepFocus out-of-focus (blur) detector. Labels derive from
+  the focus offset (in-focus within +/-0.5 um, blurry otherwise).
 landing_url: https://zenodo.org/records/1134848
 doi: 10.5281/zenodo.1134848
 repository: Zenodo
@@ -28,7 +31,8 @@ imaging:
   channels: 3
   organism:
   - Homo sapiens
-  sample: Slides from four patients stained with H&E, Ki67, CD21 and CD10, scanned on an Aperio ScanScope at 40x; tiles of 64x64 pixels
+  sample: Slides from four patients stained with H&E, Ki67, CD21 and CD10, scanned on an Aperio ScanScope
+    at 40x; tiles of 64x64 pixels
   labels_stains:
   - H&E
   - Ki67
@@ -38,16 +42,17 @@ data:
   formats:
   - hdf5
   size_bytes: 10027826144
-  n_items: null
+  n_items: 204000
   access: open
-  download_url: https://zenodo.org/records/1134848/files/outoffocus2017_patches5Classification.h5?download=1
+  download_url: https://zenodo.org/records/1134848/files/outoffocus2017_patches5Classification.h5
   download_method: http
 annotations:
   present: true
   types:
   - classification
   coverage: dense
-  format: Per-tile focus-quality class derived from the acquisition focus offset (in-focus vs blurry in the paper); internal HDF5 layout not inspected
+  format: 'HDF5 dataset Y: one float32 class value per tile (integers 0-10, 11 classes) aligned with the
+    tiles in X; the meaning of each value is not documented'
   source: automatic
 ml:
   tasks:
@@ -66,10 +71,77 @@ provenance:
   - https://zenodo.org/api/records/1134848
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6201886/fullTextXML
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1371%2Fjournal.pone.0205387%22&format=json&resultType=core&pageSize=3
-  confidence: 0.6
+  confidence: 0.65
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-24T16:30:00Z'
-notes: 'Zenodo record holds a single 10.0 GB HDF5 file (outoffocus2017_patches5Classification.h5) whose description is only "Deepfocus dataset"; the file name suggests 5 classes while the paper describes in-focus vs blurry labels from 8 focus offsets, and the HDF5 contents could not be inspected (no range-readable listing), so the exact class scheme and tile count in the file are unverified. The paper states 360,000 tiles of 64x64 px were generated for training, with 108,000 per class used; pixel size 0.2461 um at 40x (Aperio ScanScope). Labels come from the focus offset, not from manual annotation. The paper describes IRB-approved patient slides (organism recorded as Homo sapiens) but does not name the tissue type in the text read. A separate record, 10.5281/zenodo.1184621 (DeepSlides, 7z archive), was not listed.'
+  annotations_verified: true
+  last_checked: '2026-10-24T17:50:00Z'
+notes: 'Zenodo record holds one 10.0 GB HDF5 file (outoffocus2017_patches5Classification.h5), described
+  only as "Deepfocus dataset". Paper: tiles of 64x64 px from four slides scanned at 40x (Aperio ScanScope,
+  pixel size 0.2461 um) at offsets of -2.5 to +2.5 um; in-focus = offset within +/-0.5 um, blurry otherwise;
+  360,000 tiles generated, 108,000 per class used for training. Labels come from the focus offset, not
+  manual annotation. Tissue type not named in the text read. enricher: HDF5 probed and sampled: X 204000x64x64x3
+  float32 in [0,1], Y 204000 values 0-10 (11 classes, mapping to offsets undocumented); n_items 204000
+  from X (was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "outoffocus2017_patches5Classification.h5  10,027,826,144 B\n  /X  204000 x 64 x 64 x 3 float32\
+      \ (contiguous, uncompressed)\n  /Y  204000 float32\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/1134848/files/outoffocus2017_patches5Classification.h5
+    size_bytes: 10027826144
+    description: 'The only file (10.0 GB): HDF5 datasets X (tiles) and Y (per-tile class). No smaller
+      unit exists; read crops of X by range (contiguous layout).'
+  arrays:
+  - role: raw
+    path_pattern: outoffocus2017_patches5Classification.h5 (X)
+    format: hdf5
+    axes: null
+    shape:
+    - 204000
+    - 64
+    - 64
+    - 3
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - 0.0117647
+    - 1.0
+    normalization: rescaled
+    alignment: not-applicable
+    alignment_notes: 204,000 RGB tiles of 64x64; axis order (tile, y, x, RGB) is not stated in the file
+      or docs, so axes stays null. Values are multiples of 1/255 (8-bit RGB divided by 255).
+  - role: label
+    path_pattern: outoffocus2017_patches5Classification.h5 (Y)
+    format: hdf5
+    axes: null
+    shape:
+    - 204000
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - 0
+    - 10
+    encoding: other
+    classes: null
+    alignment: unknown
+    alignment_notes: 'One class value per tile, paired with X by index. Counts: 0, 5 and 6 have 36,000
+      each; 1-4 and 7-10 have 12,000 each. The paper defines 8 offsets plus in-focus and a binary in-focus/blurry
+      label; how 0-10 map to offsets is not documented.'
+  notes: 'Listing: Zenodo record, one file (listing.py complete, 10,027,826,144 B). probe.py read the
+    HDF5 header (262 KB): datasets X [204000,64,64,3] float32 and Y [204000] float32, contiguous, no compression,
+    no attributes (sizes add up to the file size). sample.py read one contiguous crop of X (796 tiles,
+    39.6 MB): values 0.0118-1.0, p50 0.686, hint rescaled; Y was read in full (1.08 MB) and counted with
+    h5py over HTTP: 11 integer values 0-10. The paper describes 8 offsets and a binary label, so the class
+    scheme of the 11 values is unresolved; classes left null. The tile count (204,000) differs from the
+    paper (360,000 generated). Voxel size 246.1 nm from the paper (Aperio ScanScope 40x), unchanged. The
+    cialab/DeepFocus README only links this record and a MEGA mirror. download_url is the direct file
+    (download-check usable, range requests yes).'
