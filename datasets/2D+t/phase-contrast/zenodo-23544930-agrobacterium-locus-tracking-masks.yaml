@@ -1,0 +1,163 @@
+schema_version: '1.2'
+id: zenodo-23544930-agrobacterium-locus-tracking-masks
+title: Agrobacterium Chromosome Locus Tracking
+short_name: Agrobacterium phase images with cell masks
+description: Processed microscopy data for chromosome locus tracking in 16 Agrobacterium strains (two
+  replicates per strain, typically six movies each). Each movie folder has the first phase-contrast frame,
+  a segmentation mask derived from it, and SMALL-LABS single-molecule tracking results; one example movie
+  ships with its raw phase and YFP data.
+landing_url: https://zenodo.org/records/23544930
+doi: 10.5281/zenodo.23544930
+repository: Zenodo
+accession: '23544930'
+authors:
+- Xiaofeng Dai
+- Qin Liao
+- Julie Biteen
+- Xindan Wang
+publications: []
+date_published: '2026-10-21'
+imaging:
+  modality:
+  - phase-contrast
+  - fluorescence-other
+  dimensionality: 2D+t
+  voxel_size_nm: null
+  channels: null
+  organism:
+  - Agrobacterium
+  sample: 16 Agrobacterium strains, chromosome locus labelled with a YFP-tagged marker, imaged in time-lapse
+  labels_stains:
+  - YFP
+data:
+  formats:
+  - tiff
+  - png
+  - nd2
+  size_bytes: 4822332561
+  n_items: 227
+  access: open
+  download_url: https://zenodo.org/api/records/23544930/files/Dataset.zip/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - tracking
+  coverage: dense
+  format: PNG masks in masks/ folders per movie (phase-contrast derived) and MATLAB Tracks_all.mat from
+    SMALL-LABS
+  source: automatic
+ml:
+  tasks:
+  - segmentation
+  - tracking
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-24T07:17:08Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/23544930
+  - https://zenodo.org/api/records/23544930/files/Dataset.zip/content
+  confidence: 0.5
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-24T09:08:10Z'
+notes: 'Dataset.zip (4.8 GB, 727 files) listed with peek_archive and its README.md read: 228 PNG masks
+  (file names end in _cp_masks, which suggests Cellpose output, not stated), 227 TIFF (phaseRef first
+  frames plus one 1.27 GB example movie), 264 MATLAB files (Tracks_all.mat etc.) and one 1.27 GB YFP .nd2
+  for the example movie. Masks and tracks are algorithmic (phase-contrast segmentation, SMALL-LABS tracking),
+  not manual, so this is silver-standard labelling. Full raw movies are not included (available on request).
+  No paper is linked on the record, so none was read; species, pixel size, objective and frame interval
+  are not stated. enricher: 225 phaseRef/mask/Tracks_all sets over 16 strains; one mask pair sampled (instance
+  IDs).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Dataset.zip  4.82 GB (727 members, 7.0 GB uncompressed)\n  Dataset/README.md\n  Dataset/<strain\
+      \ AtWX###>/Rep1|Rep2/rep<r>_movie<m>/   (16 strains, 225 movie folders)\n    <strain>_rep<r>_movie<m>_phaseRef.tif\
+      \     (or _PhaseRef.tif) 2048x2044 uint16, ~8.4 MB\n    masks/<strain>_rep<r>_movie<m>_phaseRef_cp_masks.png\n\
+      \    Tracks_all.mat                             SMALL-LABS tracks\n  Dataset/Example_raw&processed/\
+      \   one complete movie (AtWX346 rep1 movie1)\n    AtWX346_rep1_movie1_Phase.tif  1265.6 MB   phase\
+      \ movie\n    AtWX346_rep1_movie1_YFP.nd2    1265.0 MB   fluorescence movie\n    AtWX346_rep1_movie1_PhaseRef.tif,\
+      \ masks/, Results/ (*.mat, *.png), Subregion/ (9 subregion *.mat)"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/23544930/files/Dataset.zip::Dataset/AtWX611/Rep1/rep1_movie1/AtWX611_rep1_movie1_PhaseRef.tif
+    - https://zenodo.org/records/23544930/files/Dataset.zip::Dataset/AtWX611/Rep1/rep1_movie1/masks/AtWX611_rep1_movie1_PhaseRef_cp_masks.png
+    size_bytes: 8499859
+    description: 'AtWX611 rep1 movie1: first phase-contrast frame and its segmentation mask (zip members)'
+  arrays:
+  - role: raw
+    path_pattern: Dataset.zip::Dataset/*/*/*/*_[Pp]haseRef.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 2044
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 1184
+    - 8849
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: First frame of each phase-contrast movie (README). 225 files, all about 8.4 MB (2048x2044x2
+      bytes, uncompressed).
+  - role: label
+    path_pattern: Dataset.zip::Dataset/*/*/*/masks/*_cp_masks.png
+    format: png
+    axes: yx
+    shape:
+    - 2048
+    - 2044
+    shape_varies: false
+    dtype: uint16
+    compression: png
+    value_range:
+    - 0
+    - 414
+    normalization: none
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    - id: null
+      name: cell
+    alignment: same-grid
+    alignment_notes: 'Pairing: <movie folder>/<stem>.tif <-> <movie folder>/masks/<stem>_cp_masks.png
+      (225 pairs). Same 2048x2044 grid; 16-bit PNG, 0 = background, 1..N one ID per cell (414 IDs in the
+      sample).'
+  - role: label
+    path_pattern: Dataset.zip::Dataset/*/*/*/Tracks_all.mat
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    encoding: tracks-table
+    alignment: unknown
+    alignment_notes: MATLAB .mat SMALL-LABS tracking results of the YFP-labelled locus per movie (225
+      files, 292 MB); not opened. The YFP movies themselves are not included except the one example.
+  notes: 'Listing: Zenodo API (1 file, 4,822,332,561 bytes, complete) plus the zip central directory (727
+    members; 225 phaseRef TIFF / 225 masks / 225 Tracks_all.mat matched by the globs, over 16 strains).
+    Sampled one pair (5.9 MB + 65 KB downloaded): raw uint16 2048x2044, range [1184, 8849] in that one
+    frame; mask uint16 PNG, 415 unique values incl. 0 (instance IDs). Mask file names end in _cp_masks
+    (Cellpose naming, not stated). probe.py could not parse the deflated TIFF members (tool error); the
+    1.27 GB example Phase.tif and YFP.nd2 were not opened (frame counts unknown). Each raw is one frame,
+    so as a 2D+t dataset only the example movie has time series. Voxel size not found; checked: TIFF header
+    (sample read via tifffile, no calibration reported), Zenodo API description (no paper, no related
+    identifiers), README.md in the zip; Europe PMC search for a paper returned HTTP 503. Download: Dataset.zip
+    is a direct Zenodo link (usable, range requests) and its members are fetchable as zip::member.'
