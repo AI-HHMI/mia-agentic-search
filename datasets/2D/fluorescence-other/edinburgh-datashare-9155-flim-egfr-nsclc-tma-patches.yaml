@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: edinburgh-datashare-9155-flim-egfr-nsclc-tma-patches
 title: Fluorescence Lifetime Imaging Data of EGFR Mutation Non-Small Cell Lung Cancer Tissue
 short_name: EGFR-mutant vs wildtype lung FLIM patches
-description: 224x224 px fluorescence lifetime imaging (FLIM) patches from tissue microarray cores of surgically resected non-small cell lung cancer, acquired on a Leica STELLARIS 8 FALCON. Four folders hold patches from cores with known EGFR status (EGFR wildtype, EGFR mutant, exon-19 deletion, exon-21 L858R), prepared as direct inputs for the deep-learning classifier of the associated manuscript.
+description: 224x224 px fluorescence lifetime imaging (FLIM) patches from tissue microarray cores of surgically
+  resected non-small cell lung cancer, acquired on a Leica STELLARIS 8 FALCON. Four folders hold patches
+  from cores with known EGFR status (EGFR wildtype, EGFR mutant, exon-19 deletion, exon-21 L858R), prepared
+  as direct inputs for the deep-learning classifier of the associated manuscript.
 landing_url: https://datashare.ed.ac.uk/handle/10283/9155
 doi: 10.7488/ds/8075
 repository: other
@@ -23,7 +26,8 @@ imaging:
   channels: null
   organism:
   - Homo sapiens
-  sample: Tissue microarray cores of resected non-small cell lung adenocarcinoma (EGFR status from next-generation sequencing)
+  sample: Tissue microarray cores of resected non-small cell lung adenocarcinoma (EGFR status from next-generation
+    sequencing)
   labels_stains: []
 data:
   formats:
@@ -38,7 +42,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: class given by folder (Wildtype, Mutant, exon_19_19_del, exon_21_L858R); each folder holds patches from one TMA core
+  format: class given by folder (Wildtype, Mutant, exon_19_19_del, exon_21_L858R); each folder holds patches
+    from one TMA core
   source: automatic
 ml:
   tasks:
@@ -60,5 +65,54 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-24T07:17:08Z'
-notes: 'Four zips (28.6, 23.0, 10.7 and 28.4 MB) listed with peek_archive: 198 + 179 + 78 + 177 = 632 PNG patches. The README says the images are examples for reproducing and evaluating the classifier; each folder comes from a single TMA core, so there are few independent samples. The linked manuscript is under review and was not available (no DOI), so no paper was read; pixel size, FLIM channel and lifetime encoding are not stated. Labels are patient-level EGFR status from sequencing, inherited by the patches.'
+  last_checked: '2026-10-24T09:11:26Z'
+notes: 'Four zips (28.6, 23.0, 10.7 and 28.4 MB) listed with peek_archive: 198 + 179 + 78 + 177 = 632
+  PNG patches. The README says the images are examples for reproducing and evaluating the classifier;
+  each folder comes from a single TMA core, so there are few independent samples. The linked manuscript
+  is under review and was not available (no DOI), so no paper was read; pixel size, FLIM channel and lifetime
+  encoding are not stated. Labels are patient-level EGFR status from sequencing, inherited by the patches.
+  enricher: patches are RGBA PNGs (FLIM rendered as colour), class = zip/folder name.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  5 files, 90.6 MB (DataShare bitstreams)\n  exon_19_19_del.zip  28.6 MB -> exon_19_19_del/<TMA\
+      \ row/col>-x_<x>_y_<y>.png (198)\n  exon_21_L858R.zip   23.0 MB -> exon_21_L858R/B_Row-2_Col-1-x_<x>_y_<y>.png\
+      \ (179)\n  Mutant.zip          10.7 MB -> Mutant/A_Row-1_Col-3-x_<x>_y_<y>.png (78)\n  Wildtype.zip\
+      \        28.4 MB -> Wildtype/A_Row-1_Col-2-x_<x>_y_<y>.png (177)\n  readme.txt          1 KB"
+    n_files: 5
+    listing_complete: true
+  sample:
+    urls:
+    - https://datashare.ed.ac.uk/server/api/core/bitstreams/9cb5410c-a989-4ad6-8043-4de380a3fe64/content
+    size_bytes: 10707892
+    description: 'Mutant.zip: 78 patches of one EGFR-mutant TMA core (class from the folder name)'
+  arrays:
+  - role: raw
+    path_pattern: '*.zip::*/*.png'
+    format: png
+    axes: yxs
+    shape:
+    - 224
+    - 224
+    - 4
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'RGBA 8-bit patches (all 78 in Mutant.zip are 224x224x4, not grey-as-RGB), i.e. a
+      colour rendering of FLIM data, not raw lifetimes; the lifetime colour map is not documented. Labels:
+      one class per zip/folder (Wildtype, Mutant, exon_19_19_del, exon_21_L858R); file names give TMA
+      row/column and the patch x/y offset in the core image.'
+  notes: 'Listing: DataShare REST API, 4 zips + readme.txt, exact sizes (90,642,741 bytes, complete);
+    zip central directories read (198+179+78+177 = 632 PNG). Sampled: Mutant.zip downloaded whole (10.7
+    MB) and all 78 PNGs read: RGBA uint8 224x224, range [0,255] over those 78. readme.txt confirms 224x224
+    patches from full core images, Leica STELLARIS 8 FALCON. Voxel size not found; checked: PNG headers
+    (no pHYs), readme.txt, DataShare item metadata; the manuscript is unpublished and the code repo (github.com/qiangwang57/lung_EGFR_classification)
+    was not reachable from this run. Download: zips are direct with range requests, but host datashare.ed.ac.uk
+    is not on the TensorSwitch allowlist; no single archive for the whole dataset, so data.download_url
+    stays null. 2D records are outside the miao layout.'
