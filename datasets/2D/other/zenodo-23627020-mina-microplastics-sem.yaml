@@ -1,0 +1,178 @@
+schema_version: '1.2'
+id: zenodo-23627020-mina-microplastics-sem
+title: 'MiNa dataset: SEM images of micro- and nanoplastic particles'
+short_name: Micro- and nanoplastic particles (SEM)
+description: 105 scanning electron micrographs (1280 x 960 px) of micro- and nanoplastic particles weathered
+  from consumer PP, PE, PS and PET plastics, with a polygon outline for every particle in COCO and YOLO
+  formats, plus 256 x 256 px patches (train/val/test, labelled by polymer type or as a single particle class)
+  and per-particle crops with binary masks for polymer identification.
+landing_url: https://zenodo.org/records/23627020
+doi: 10.5281/zenodo.23627020
+repository: Zenodo
+accession: '23627020'
+authors:
+- Navid Zarrabi
+- Hadi Rezvani
+- Ishaan Mehta
+- Christopher Kolios
+- Hussein Ali Jaafar
+- Cheng-Hao Kao
+- Sajad Saeedi
+- Nariman Yousefi
+publications:
+- title: Morphological Detection and Classification of Microplastics and Nanoplastics Emerged from Consumer
+    Products by Deep Learning
+  doi: 10.48550/arXiv.2409.13688
+  url: https://arxiv.org/abs/2409.13688
+date_published: '2026-10-24'
+imaging:
+  modality:
+  - other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: Particles shed from PP and expanded-PS food containers, LDPE shopping bags and PET bottles under
+    accelerated UV weathering, collected on gold-coated polycarbonate membranes
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: 898401920
+  n_items: 105
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - bounding-box
+  - classification
+  coverage: dense
+  format: COCO and YOLO files per polymer folder (polygon per particle) in full_images; patches in COCO and
+    YOLO (detection boxes and segmentation polygons), with polymer-type and single-class COCO variants; particles
+    folder holds one cropped image and one binary mask per particle
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  - detection
+  - classification
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/naviiidz/MiNa-dataset
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-25T18:21:49Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/23627020
+  - https://zenodo.org/records/23627020/files/full_images.zip
+  - https://zenodo.org/records/23627020/files/patches.zip
+  - https://arxiv.org/pdf/2409.13688
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-25T19:10:00Z'
+notes: 'Modality is other because the schema has no scanning-EM value for particle samples (Zeiss EVO LS15 SEM,
+  20 kV secondary electrons, 100x to 1000x). Pixel size is not stated on the Zenodo page, in the paper or in
+  the file listing (each image carries a scale bar), so voxel_size_nm is null. The paper (arXiv 2409.13688)
+  reports 105 micrographs; the archive holds 206 PNGs because images sit once under each annotation format.
+  Annotation was done on V7 with SAM point prompts and manual refinement (mixed). The 70/15/15 split applies
+  to the 256 px patches. particles.zip could not be listed with peek_archive (no zip directory found), so
+  its contents are taken from the Zenodo description. The linked GitHub repository was empty when fetched.
+  enricher: particles.zip lacks a zip directory (probably truncated). Modality family is EM (SEM).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  3 files, 898,401,920 bytes (Zenodo API)\n  full_images.zip  213.8 MB  (316 members)\n    Full_Images/COCO\
+      \ Format/{PE,PET,PP,PS}/   101 .png + 1 .tif, one <polymer>_COCO.json per folder\n    Full_Images/Yolo Format/{PE,PET,PP,PS}/\
+      \   105 .png + 105 .txt (same stems)\n  patches.zip  665.2 MB  (8,108 members)\n    patches/coco/{train,val,test}/images/*.png\
+      \   1,100 / 260 / 260\n    patches/coco/{train,val,test}/annotations.json, annotations_single_class.json\n    patches/yolo_det/{images,labels}/{train,val,test}/,\
+      \ data.yaml\n    patches/yolo_seg/{images,labels}/{train,val,test}/, data.yaml\n  particles.zip  19.4 MB  (not listable:\
+      \ no zip end-of-central-directory record)"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/23627020/files/full_images.zip::Full_Images/COCO Format/PE/PE 3000X.png
+    - https://zenodo.org/records/23627020/files/full_images.zip::Full_Images/COCO Format/PE/PE_COCO.json
+    size_bytes: 1293292
+    description: one full PE micrograph and the PE folder's COCO file (614 polygons over 25 images)
+  arrays:
+  - role: raw
+    path_pattern: Full_Images/COCO Format/*/*.png
+    format: png
+    axes: yx
+    shape:
+    - 960
+    - 1280
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Palette-mode PNGs (PIL mode P) with a 256-entry grey palette that is not the identity, so stored
+      values are palette indices; map through the palette to get grey levels. The same images are repeated under
+      Yolo Format/. PET/PET-5000X-3.tif is an RGBA PNG with a .tif name.
+  - role: label
+    path_pattern: Full_Images/COCO Format/*/*_COCO.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    normalization: unknown
+    encoding: polygons
+    classes:
+    - id: 4258593460
+      name: PE
+    alignment: same-grid
+    alignment_notes: 'One COCO file per polymer folder (V7 export): images[].file_name is <polymer>/<image>.png (1280x960),
+      annotations carry segmentation polygons, bbox, area in pixel coordinates; one category per file named after
+      the polymer (PE id 4258593460 seen; other folders not read). Yolo Format/<polymer>/<stem>.txt pairs by stem.'
+  - role: raw
+    path_pattern: patches/coco/*/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 256 px RGB patches cut from the full images (header only); file names <polymer>_<image>_patch_<row>_<col>.png.
+  - role: label
+    path_pattern: patches/coco/*/annotations*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    normalization: unknown
+    encoding: polygons
+    alignment: same-grid
+    alignment_notes: Per split, annotations.json labels particles by polymer type and annotations_single_class.json
+      as one particle class (per the Zenodo description; not read). YOLO det/seg copies under patches/yolo_*.
+  notes: 'value_range is from one sample (PE 3000X.png, palette indices). Size and file count from the Zenodo API
+    listing (3 files) and zip directories of full_images.zip and patches.zip. particles.zip (19,374,080 B) has a
+    local file header at offset 0 but no end-of-central-directory record, so it is probably truncated; its
+    contents were not listed. COCO Format/ holds 102 images, the paper says 105. No direct single archive for
+    the whole dataset: the three zips are separate Zenodo files. voxel size not found; checked: PNG header (dpi
+    254, a default), Zenodo API description, COCO info, arXiv 2409.13688 full text (states 1280x960 px and a
+    scale bar, magnification 100x-1000x, no pixel size); file names show magnifications up to 10000X, so pixel
+    size varies per image.'
