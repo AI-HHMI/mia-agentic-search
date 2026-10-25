@@ -1,11 +1,13 @@
 schema_version: '1.2'
 id: hf-cross-channel-cell-from-hoechst
-title: Cross-channel cell-from-Hoechst dataset (paired Hoechst-channel images and whole-cell instance masks)
+title: Cross-channel cell-from-Hoechst dataset (paired Hoechst-channel images and whole-cell instance
+  masks)
 short_name: Toxoplasma HFF cell segmentation (fluorescence)
-description: '3029 paired fields: images/ holds the input channel (the dataset name indicates Hoechst) and masks/ the
-  matching instance-labelled cell ground truth (same file stem = same field). Fields come from a Toxoplasma screen
-  in HFF host cells (per split_by_well.csv). A train/test split by well is provided (2578 train / 451 test fields,
-  283,055 labelled objects in total). Prepared with spaCR and used to train a Cellpose-SAM model.'
+description: '3029 paired fields: images/ holds the input channel (the dataset name indicates Hoechst)
+  and masks/ the matching instance-labelled cell ground truth (same file stem = same field). Fields come
+  from a Toxoplasma screen in HFF host cells (per split_by_well.csv). A train/test split by well is provided
+  (2578 train / 451 test fields, 283,055 labelled objects in total). Prepared with spaCR and used to train
+  a Cellpose-SAM model.'
 landing_url: https://huggingface.co/datasets/einarolafsson/cross-channel-cell-from-hoechst
 doi: null
 repository: HuggingFace
@@ -60,11 +62,76 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-25T12:50:00Z'
-notes: 'Checked dataset page, README, API file listing (3029 files each in images/ and masks/; images 13.2 GB, masks
-  166 MB) and split_by_well.csv/fields.csv (split and object counts). No paper is linked. Pixel size, microscope,
-  exact stains, annotation procedure (manual vs model-generated) are not stated in these sources, so left
-  null/unknown. Modality recorded as fluorescence-other because the input channel is not named beyond the dataset
-  title; host cell line HFF taken from the split_by_well.csv host column. Sibling of the catalog record
-  hf-cross-channel-nuclei-from-cellmask (same screens, same author, nuclei masks from the cell-mask channel); this
-  one pairs a different input channel with cell masks. Field overlap between the two is not documented.'
+  last_checked: '2026-10-25T13:12:00Z'
+notes: 'Checked dataset page, README, API file listing (3029 files each in images/ and masks/; images
+  13.2 GB, masks 166 MB) and split_by_well.csv/fields.csv (split and object counts). No paper is linked.
+  Pixel size, microscope, exact stains, annotation procedure (manual vs model-generated) are not stated
+  in these sources, so left null/unknown. Modality recorded as fluorescence-other because the input channel
+  is not named beyond the dataset title; host cell line HFF taken from the split_by_well.csv host column.
+  Sibling of the catalog record hf-cross-channel-nuclei-from-cellmask (same screens, same author, nuclei
+  masks from the cell-mask channel); this one pairs a different input channel with cell masks. Field overlap
+  between the two is not documented. enricher: technical block from HF listing and one sampled pair.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './           4 files    1.3 MB  .csv 2 (fields.csv, split_by_well.csv), .gitattributes, README.md
+
+      images/   3029 files   13.2 GB  .tif
+
+      masks/    3029 files  165.6 MB  .tif
+
+      '
+    n_files: 6062
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/einarolafsson/cross-channel-cell-from-hoechst/resolve/main/images/CSA_screen__screen_20250124_133156__plate1_A01_8_1.tif
+    - https://huggingface.co/datasets/einarolafsson/cross-channel-cell-from-hoechst/resolve/main/masks/CSA_screen__screen_20250124_133156__plate1_A01_8_1.tif
+    size_bytes: 4955564
+    description: 'One field (plate1_A01_8_1, train, 292 objects per fields.csv): input-channel image and
+      its cell instance mask'
+  arrays:
+  - role: raw
+    path_pattern: images/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1998
+    - 1998
+    shape_varies: null
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 5099
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: masks/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1998
+    - 1998
+    shape_varies: null
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 292
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: images/<stem>.tif pairs with masks/<stem>.tif (same stem = same field, per README);
+      the sampled pair has identical shapes.
+  notes: 'Complete HF listing (6062 files, 13,415,836,795 B, exact sizes). One pair sampled (plate1_A01_8_1):
+    raw uint16 0-5099 (mean 231); mask uint16 0-292 with 293 distinct values = background + 292 IDs, matching
+    n_objects 292 in fields.csv, so instance IDs. Single-page deflate TIFFs (tiff_layout shaped, axes
+    yx), no pixel calibration in the headers; only one field probed, shapes of others assumed equal (not
+    checked). Files are direct resolve/main links; no single archive, so download_url stays the repo tree page.
+    Voxel size not found; checked: TIFF headers, dataset README, HF API record, fields.csv/split_by_well.csv,
+    the cpsam model card, no paper linked. Annotation source not stated (the masks may be model-generated;
+    the model card says only that a model was trained on them).'
