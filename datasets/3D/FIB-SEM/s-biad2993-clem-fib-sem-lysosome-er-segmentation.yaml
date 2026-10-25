@@ -30,10 +30,7 @@ imaging:
   - super-resolution
   - widefield
   dimensionality: 3D
-  voxel_size_nm:
-    x: 6
-    y: 6
-    z: 6
+  voxel_size_nm: null
   channels: null
   organism:
   - Mus musculus
@@ -48,7 +45,8 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 37012206131
+  - czi
+  size_bytes: 36999549817
   n_items: 2
   access: open
   download_url: null
@@ -82,11 +80,122 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-25T18:50:00Z'
-notes: Voxel size is the FIB-SEM voxel of dataset 1 (6 x 6 x 6 nm); dataset 2 is 5 x 5 x 5 nm, and the SIM
-  volume of dataset 1 is 31.3 x 31.3 x 109.6 nm (all from the BioImage Archive study record). The
-  segmentation covers only a region of interest. The study record says one strategy was automatic Empanada-MitoNet
-  segmentation, so the masks may mix automatic and semi-manual labels; which class is stored in which
-  file is not stated in the listing, and the preprint full text is not open access (Europe PMC abstract
-  only, bioRxiv returned 429), so class encoding and ROI size are unknown. Dataset 2 holds a 10 GB denoised
-  volume next to raw and aligned EM. data.download_url left null because the study spans many folders.
+  last_checked: '2026-10-25T19:45:00Z'
+notes: 'FIB-SEM voxels differ per dataset (BioImage Archive study record): dataset 1 6 x 6 x 6 nm (also in
+  the ImageJ headers), dataset 2 5 x 5 x 5 nm; SIM of dataset 1 is 31.3 x 31.3 x 109.6 nm. Enricher set voxel_size_nm
+  to null (was 6 x 6 x 6) because the two EM volumes do not share one. organisms: Mus musculus = clemdataset1-ipp2026/,
+  Homo sapiens = dataset2-NalanLiv-IPP/. Modality: EM = */EM/ and */segmentation, */seg; light = clemdataset1-ipp2026/LM
+  (lattice SIM, CZI) and dataset2-NalanLiv-IPP/LM (widefield TIFF). Annotation source mixed: the study says automatic
+  Empanada-MitoNet segmentation, or a retrained model with semi-manual nnInteractive GT; which file is which is
+  not stated. Coverage: dataset 1 labels a 468 x 495 px crop over all 728 slices, dataset 2 a 492 x 519 px crop
+  over 449 slices. Enricher added czi and set size from the BioStudies file lists.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "Files/  6,209 files, 36,999,549,817 bytes (BioStudies file lists)\n  dataset1_clem.json/.tsv, dataset2_clem.json/.tsv,      \ segmentation.json   file lists\n  clemdataset1-ipp2026/   (Mus musculus, 6 nm)\n    acquisition_parameters_fibsem.json\n      \    EM/raw/slice_NNNN.tif                          1,535  uint8 522x3786\n    EM/aligned_taturtle/slice_NNNNN.tif                 \ 1,476\n    EM/aligned_taturtle_amst/slice_NNNNN.tif         886\n    EM/aligned_amst2/slice_NNNNN.tif                 886      \  uint8 569x3812\n    EM/aligned_taturtle_amst_registered/amst-taturtle-1-1.tif-registered.tif   7.2 GB\n    LM/Image60_SIM.czi      \                             2.6 GB\n    landmarks/landmarks3.csv\n    segmentation/segcrop-Composite.tif             675      \ MB\n  dataset2-NalanLiv-IPP/   (Homo sapiens, 5 nm)\n    EM/raw/Image-SliceImage-NNN.tif                  968\n      \    EM/aligned/slice_NNNNN.tif                       449  uint8 1330x4189\n    EM/aligned_denoised/predictions_449.tif      \          10.0 GB\n    LM/Dish03_Z_01_R3D_D3D_cell1.tif                21 MB\n    seg/dataset3-amst2-n2v2-predictions_449-ground_truth.tif      \   1.6 MB\n  segmentation/segcrop-Composite.tif   same size as the dataset 1 copy"
+    n_files: 6209
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/993/S-BIAD2993/Files/dataset2-NalanLiv-IPP/seg/dataset3-amst2-n2v2-predictions_449-ground_truth.tif
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/993/S-BIAD2993/Files/dataset2-NalanLiv-IPP/EM/aligned/slice_00000.tif
+    size_bytes: 3700672
+    description: dataset 2 label volume (449 slices, crop) and its first aligned EM slice; the full raw stack is 449
+      slices
+  arrays:
+  - role: raw
+    path_pattern: clemdataset1-ipp2026/EM/aligned_taturtle_amst_registered/*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 728
+    - 3672
+    - 3276
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Dataset 1 EM, aligned (taturtle + AMST) and registered to the SIM volume; ImageJ hyperstack,
+      6 nm spacing in the header; ImageJ min/max 0-254.
+  - role: label
+    path_pattern: clemdataset1-ipp2026/segmentation/segcrop-Composite.tif
+    format: tiff
+    axes: zcyx
+    shape:
+    - 728
+    - 4
+    - 468
+    - 495
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: one-hot
+    alignment: cropped
+    alignment_notes: 'ImageJ composite, 4 channels, each a 0/255 mask; palette TIFF. The study names lysosome, late
+      endosome, mitochondria and ER, but not which channel is which. Same 728 slices and 6 nm spacing as the registered
+      EM volume, cropped to 468 x 495 px in xy; the crop offset is not stated. Masks are sparse in z (z 364: channels
+      2-3 empty, z 600: all empty). A second copy sits at segmentation/segcrop-Composite.tif.'
+  - role: raw
+    path_pattern: dataset2-NalanLiv-IPP/EM/aligned/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1330
+    - 4189
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Dataset 2 aligned EM, one 2D TIFF per z slice (449 files, slice_00000 to slice_00448).
+  - role: raw
+    path_pattern: dataset2-NalanLiv-IPP/EM/aligned_denoised/*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 449
+    - 1330
+    - 4189
+    shape_varies: false
+    dtype: float32
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Dataset 2 aligned EM after N2V denoising (ImageJ header min/max -17.65 to 254.5).
+  - role: label
+    path_pattern: dataset2-NalanLiv-IPP/seg/*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 449
+    - 492
+    - 519
+    shape_varies: false
+    dtype: int32
+    compression: deflate
+    value_range:
+    - 0
+    - 32
+    normalization: none
+    encoding: unknown
+    alignment: cropped
+    alignment_notes: 'Page axis z: 449 pages match the 449 aligned slices and the file name (amst2-n2v2-predictions_449-ground_truth).
+      Cropped to 492 x 519 px in xy of the 1330 x 4189 slices; offset not stated. 33 integer values (0-32) in the
+      full volume; instance or class IDs not documented.'
+  notes: 'Sizes and file count from the BioStudies file lists (dataset1_clem.json 4,788 files, dataset2_clem.json
+    1,420, segmentation.json 1; study info says 6,209 files); listing.py on the FTP index gave 4,739 files with
+    approximate sizes, so size_source is page-stated. Header probes: registered EM (dataset 1), segcrop-Composite,
+    dataset 2 seg, aligned_denoised, aligned and raw slices. Sampled: dataset 2 seg (whole, 1.6 MB), aligned slice_00000
+    (2.1 MB), three z planes x 4 channels of segcrop-Composite (by range). Not inspected: the CZI and LM TIFF. No
+    single archive; files are served individually from ftp.ebi.ac.uk (https), so download_url stays null. voxel
+    size: 6 nm (dataset 1, study record + ImageJ header) and 5 nm (dataset 2, study record); not set because they
+    differ.'
