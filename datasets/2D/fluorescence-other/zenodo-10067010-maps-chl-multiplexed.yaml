@@ -2,11 +2,10 @@ schema_version: '1.2'
 id: zenodo-10067010-maps-chl-multiplexed
 title: 'Data for MAPS: Pathologist-level Cell Type Annotation from Tissue Images through Machine Learning'
 short_name: Hodgkin lymphoma multiplexed MIBI/CODEX cells
-description: Channel images and cell segmentation masks of classical Hodgkin lymphoma (cHL) tissue imaged with
-  46-marker MIBI-TOF (two cohorts, cHL 1 with 18 patients plus one reactive lymph node, cHL 2 with six FOVs)
-  and one large 49-marker CODEX field of view. Cells carry pathologist-reviewed phenotype ground truth used
-  to train and benchmark the MAPS, ASTIR and CellSighter cell-annotation methods (Source_Data.zip holds
-  the per-cell tables). Supports cell segmentation and cell-phenotype classification.
+description: Channel images and cell segmentation masks of classical Hodgkin lymphoma (cHL) tissue imaged with 46-marker MIBI-TOF
+  (two cohorts, cHL 1 with 18 patients plus one reactive lymph node, cHL 2 with six FOVs) and one large 49-marker CODEX field
+  of view. Cells carry pathologist-reviewed phenotype ground truth used to train and benchmark the MAPS, ASTIR and CellSighter
+  cell-annotation methods (Source_Data.zip holds the per-cell tables). Supports cell segmentation and cell-phenotype classification.
 landing_url: https://zenodo.org/records/10067010
 doi: 10.5281/zenodo.10067010
 repository: Zenodo
@@ -31,7 +30,7 @@ publications:
 - title: 'MAPS: pathologist-level cell type annotation from tissue images through machine learning'
   doi: 10.1038/s41467-023-44188-w
   url: https://pmc.ncbi.nlm.nih.gov/articles/PMC10761896/
-date_published: null
+date_published: '2023-11-02'
 imaging:
   modality:
   - fluorescence-other
@@ -41,18 +40,18 @@ imaging:
   channels: 49
   organism:
   - Homo sapiens
-  sample: FFPE human classical Hodgkin lymphoma biopsies and reactive lymph node; MIBI-TOF (46 markers) and CODEX
-    (49 markers, 20x/0.75 objective)
+  sample: FFPE human classical Hodgkin lymphoma biopsies and reactive lymph node; MIBI-TOF (46 markers) and CODEX (49 markers,
+    20x/0.75 objective)
   labels_stains:
   - metal-labelled antibody panel (MIBI)
   - oligo-conjugated antibody panel and DAPI (CODEX)
 data:
   formats:
   - tiff
-  size_bytes: 17400000000
-  n_items: null
+  size_bytes: 17357624842
+  n_items: 39
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/10067010
   download_method: http
 annotations:
   present: true
@@ -60,8 +59,8 @@ annotations:
   - instance-segmentation
   - classification
   coverage: dense
-  format: per-cell segmentation maps as TIFF (segmentation/ folders, deepcell), cell phenotype ground truth
-    in CSV tables (Source_Data.zip)
+  format: per-cell segmentation maps as TIFF (segmentation/ folders, deepcell), cell phenotype ground truth in CSV tables
+    (Source_Data.zip)
   source: mixed
 ml:
   tasks:
@@ -81,15 +80,134 @@ provenance:
   - https://zenodo.org/records/10067010/files/cHL_CODEX.zip
   - https://zenodo.org/records/10067010/files/cHL_1_MIBI.zip
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10761896/fullTextXML
-  confidence: 0.7
+  - https://zenodo.org/api/records/10067010
+  - https://zenodo.org/records/10067010/files/cHL_2_MIBI.zip
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-25T17:30:00Z'
-notes: 'Four zips (cHL_1_MIBI 11.9 GB, cHL_2_MIBI 1.2 GB, cHL_CODEX 3.4 GB, Source_Data 0.85 GB), so no single
-  download URL. peek_archive: cHL_CODEX has 49 channel TIFFs, a segmentation TIFF and one CSV; the MIBI zips hold
-  per-FOV channel TIFFs and deepcell segmentationMap.tif files. Phenotype labels are per-cell CSV values, not drawn
-  on images; ground truth came from clustering plus visual checks and pathologist review (paper Methods). Pixel
-  size, n_items and publication date are not stated on the Zenodo page, archive listings or paper text read.
-  Modality is taken from the paper: CODEX is multiplexed fluorescence, MIBI is ion-beam imaging (other).'
+  annotations_verified: true
+  last_checked: '2026-10-25T18:30:00Z'
+notes: 'Four zips (cHL_1_MIBI, cHL_2_MIBI, cHL_CODEX, Source_Data), no single archive. Phenotype labels are per-cell CSV rows
+  (cellLabel -> Annotation) linked to instance segmentation maps. Pixel size is not stated (see technical.notes). Modality
+  from the paper: CODEX is multiplexed fluorescence, MIBI is ion-beam imaging (other); files: cHL_CODEX.zip = CODEX, cHL_1_MIBI.zip
+  and cHL_2_MIBI.zip = MIBI. channels: 49 for CODEX, 46 for MIBI. enricher: annotations.source mixed = segmentation automatic
+  (deepcell), phenotypes from clustering plus manual curation and pathologist review (paper Methods). coverage: 92.2% of cHL1
+  cells and 96.5% of CODEX cells got a final class, rest "Other". enricher: n_items 39 FOVs (32 cHL1 + 6 cHL2 + 1 CODEX) from
+  listing; size from file listing; date from Zenodo API.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "cHL_1_MIBI.zip (11.9 GB)\n  cHL_1_MIBI/cHL1_metadata.csv            (case_id, image_id, control_sample)\n  cHL_1_MIBI/annotation_csv/cHL1_MIBI.csv\
+      \ (1.1 GB per-cell table)\n  cHL_1_MIBI/raw_image/<1..32>/           46 channel TIFFs + Segmentation.tiff per FOV\n\
+      \  cHL_1_MIBI/segmentation/<1..32>/H3_memSUM_noCD163_deepcell060_AutoHist_mpp1.75/\n      segmentationMap.tif, segmentationMask_boundary.tif,\
+      \ segmentation_overlay.png, segmentationParams.mat\ncHL_2_MIBI.zip (1.2 GB)\n  cHL_2_MIBI/cHL2_metadata.csv\n  cHL_2_MIBI/annotation_csv/<1..6>.csv\
+      \    per-cell tables, one per FOV\n  cHL_2_MIBI/raw_image/<1..6>/            46 channel TIFFs per FOV\n  cHL_2_MIBI/segmentation/<1..6>/H3_memSUM_noCD163_deepcell060_AutoHist_mpp1.75/\
+      \ (same 4 files)\ncHL_CODEX.zip (3.4 GB)\n  cHL_CODEX/raw_image/<marker>.tiff       49 channel TIFFs, 8011 x 8085\n\
+      \  cHL_CODEX/segmentation/cHL_CODEX_segmentation.tiff\n  cHL_CODEX/annotation_csv/cHL_CODEX_annotation.csv\nSource_Data.zip\
+      \ (0.85 GB)\n  Source Data/<Figure ...>/*.csv          50 figure source-data tables"
+    n_files: 2042
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/10067010/files/cHL_2_MIBI.zip::cHL_2_MIBI/raw_image/1/dsDNA.tiff
+    - https://zenodo.org/records/10067010/files/cHL_2_MIBI.zip::cHL_2_MIBI/segmentation/1/H3_memSUM_noCD163_deepcell060_AutoHist_mpp1.75/segmentationMap.tif
+    - https://zenodo.org/records/10067010/files/cHL_2_MIBI.zip::cHL_2_MIBI/annotation_csv/1.csv
+    size_bytes: 46200453
+    description: 'cHL 2 MIBI FOV 1 (control rLN): one of its 46 channel TIFFs (dsDNA), its deepcell instance map and its per-cell
+      phenotype table'
+  arrays:
+  - role: raw
+    path_pattern: cHL_[12]_MIBI.zip/cHL_[12]_MIBI/raw_image/*/{[!S]*,S[!e]*}.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 1536
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range:
+    - 0.0
+    - 484.03
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: MIBI, one single-page TIFF per marker per FOV folder (46 markers); the pattern excludes cHL1 raw_image/*/Segmentation.tiff.
+      FOV shapes vary (e.g. 2048x1536, 2560x2560).
+  - role: label
+    path_pattern: cHL_[12]_MIBI.zip/cHL_[12]_MIBI/segmentation/*/*/segmentationMap.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 1536
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range:
+    - 0.0
+    - 38115.0
+    normalization: none
+    encoding: instance-ids
+    alignment: same-grid
+    alignment_notes: segmentation/<N>/ pairs with raw_image/<N>/ (same shape in sample). Cell IDs stored as float32 integers;
+      IDs match cellLabel in annotation_csv. cHL1 raw_image/<N>/Segmentation.tiff has the same size as segmentationMap.tif
+      (not compared).
+  - role: label
+    path_pattern: cHL_[12]_MIBI.zip/cHL_[12]_MIBI/annotation_csv/*.csv
+    format: csv
+    axes: null
+    shape: null
+    dtype: unknown
+    compression: none
+    encoding: points-table
+    alignment: same-grid
+    alignment_notes: 'per-cell rows: cellLabel, X_cent, Y_cent, cellSize, Annotation, Annotation_num, then mean marker intensities.
+      cHL2: <N>.csv = FOV N; cHL1: one table for all FOVs. Classes seen in cHL2 FOV 3 (Annotation_num: name): 1 B, 2 CD4 T,
+      4 CD4 Treg, 5 CD8 T, 6 DC, 7 Endothelial, 8 M1, 9 M2, 10 Neutrophil, 11 NK, 12 Other, 14 Tumor.'
+  - role: raw
+    path_pattern: cHL_CODEX.zip/cHL_CODEX/raw_image/*.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 8011
+    - 8085
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: CODEX, one stitched FOV, one TIFF per marker (49).
+  - role: label
+    path_pattern: cHL_CODEX.zip/cHL_CODEX/segmentation/cHL_CODEX_segmentation.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 8011
+    - 8085
+    shape_varies: false
+    dtype: int32
+    compression: none
+    encoding: instance-ids
+    alignment: same-grid
+    alignment_notes: deepcell cell segmentation per paper Methods (header only, not sampled); same shape as the channel TIFFs.
+  - role: label
+    path_pattern: cHL_CODEX.zip/cHL_CODEX/annotation_csv/cHL_CODEX_annotation.csv
+    format: csv
+    axes: null
+    shape: null
+    dtype: unknown
+    compression: none
+    encoding: points-table
+    alignment: same-grid
+    alignment_notes: per-cell phenotype table for the CODEX FOV (16 phenotypes per paper); not read.
+  notes: 'Listing: Zenodo API, 4 zips, 2046 files, 17,357,624,842 bytes (exact). Headers probed: MIBI channel and segmentationMap
+    (float32, 2048x1536), cHL1 Segmentation.tiff (float32, 2560x2560), CODEX channel (uint16) and segmentation (int32), 8011x8085,
+    all uncompressed single-page TIFFs. Sample (one FOV, cHL2 #1): dsDNA range [0, 484.03] (one sample only), 76.6% zeros;
+    segmentationMap 0..38115. Normalization unknown: paper says MIBI images had crosstalk removed, were denoised (UNET foreground
+    mask) and scaled to Histone H3 counts across FOVs. Voxel size not found; checked: TIFF headers (no calibration), Zenodo
+    API record, metadata CSVs in the zips, paper full text (Methods list only typical MIBI acquisition parameters: 400x400
+    um image area, 512x512 pixels per tile; no pixel size stated for released stitched FOVs or for CODEX), MAPS GitHub README.
+    The "mpp1.75" folder name is a deepcell parameter, not the image pixel size. No single archive: data.download_url keeps
+    the landing page; direct files are the four zips at zenodo.org/records/10067010/files/<name>.zip.'
