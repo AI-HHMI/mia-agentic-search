@@ -39,7 +39,7 @@ imaging:
 data:
   formats:
   - other
-  size_bytes: 590466445
+  size_bytes: 590469966
   n_items: 4350
   access: open
   download_url: null
@@ -75,10 +75,69 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-25T18:40:00Z'
+  last_checked: '2026-10-25T19:20:00Z'
 notes: The images are BMP, a format the schema lacks, so formats is other. Patch pixel size and magnification
   are not stated on the Zenodo page, README, file listing or the open-access Sci Rep paper that describes
   the source slides (only the slide scanner model is given), and the classification paper is not open
   access (abstract and Crossref only), so voxel_size_nm is null; each patch is about 0.2 MB. Patches were
   cut from the same source WSIs, so patch-level splits can leak; no train/val/test split is provided.
-  Only multi-HnE.zip was listed with peek_archive; multi-Nissl.zip mirrors it per the README.
+  Only multi-HnE.zip was listed with peek_archive; multi-Nissl.zip mirrors it per the README. Enricher set size
+  to 590,469,966 B from the Zenodo file listing incl. README (was 590,466,445); both zips listed.
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  3 files, 590,469,966 bytes (4,350 zip members)\n  README.md        3.5 kB\n  multi-HnE.zip    310.4 MB\n\
+      \    multi-HnE/lesion/lesion_m001.bmp ...   725 .bmp  142.6 MB\n    multi-HnE/necro/necro_m001.bmp ...     725 .bmp  142.5\
+      \ MB\n    multi-HnE/normal/normal_m001.bmp ...   725 .bmp  142.6 MB\n  multi-Nissl.zip  280.0 MB\n    multi-Nissl/{lesion,necro,normal}/<class>_mNNN.bmp\
+      \   725 .bmp each, 142.6 MB each"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/21787811/files/multi-HnE.zip::multi-HnE/lesion/lesion_m001.bmp
+    size_bytes: 196662
+    description: one H&E lesion patch (class from its folder name; there are no label files)
+  arrays:
+  - role: raw
+    path_pattern: multi-HnE/*/*.bmp
+    format: other
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 245
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Uncompressed 24-bit RGB BMP patches. The class is the parent folder (lesion = photothrombotic
+      lesion, necro = necrotic neuronal cells, normal = contralesional normal tissue, per README); no label files.
+      4,147 of 4,350 files are 196,662 B (256x256x3), 203 are 195,894 B (one row fewer, inferred from the BMP size).'
+  - role: raw
+    path_pattern: multi-Nissl/*/*.bmp
+    format: other
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Cresyl violet (Nissl) patches, same layout and classes as multi-HnE/.
+  notes: 'Format is BMP (schema lacks it, so other). value_range from three sampled patches (H&E lesion_m001
+    49-245, H&E normal_m001 0-243, Nissl necro_m001 0-255). Labels are folder names only, 725 patches per class
+    and stain. voxel size not found; checked: BMP header (300 dpi, a default), Zenodo API description, README.md,
+    Sci Rep 2021 source paper full text (Europe PMC; names the Zeiss Axio Scan.Z1, no pixel size or objective),
+    classification paper (not open access). download_url stays null: the dataset is two separate zips plus a
+    README on Zenodo (direct file URLs in the listing).'
