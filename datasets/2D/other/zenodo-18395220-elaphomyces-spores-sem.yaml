@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: zenodo-18395220-elaphomyces-spores-sem
 title: SEM micrograph dataset of Elaphomyces spores for AI-based species identification
 short_name: Elaphomyces ascospores by species (SEM)
-description: 640 raw TIFF scanning electron micrographs of Elaphomyces ascospores from four morphologically similar species,
-  160 images per species, in species-named folders, released to support AI-based species identification and classification.
+description: 640 raw TIFF scanning electron micrographs of Elaphomyces ascospores from four morphologically
+  similar species, 160 images per species, in species-named folders, released to support AI-based species
+  identification and classification.
 landing_url: https://zenodo.org/records/18395220
 doi: 10.5281/zenodo.18395220
 repository: Zenodo
@@ -22,8 +23,11 @@ imaging:
   modality:
   - other
   dimensionality: 2D
-  voxel_size_nm: null
-  channels: null
+  voxel_size_nm:
+    x: 41.63
+    y: 41.63
+    z: null
+  channels: 1
   organism:
   - Elaphomyces aculeatus
   - Elaphomyces americanus
@@ -44,8 +48,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: Species label per image from the folder name (species, collection code and GenBank accession, e.g. "Elaphomyces
-    aculeatus AKATA TT 153 (PV069102.1)")
+  format: Species label per image from the folder name (species, collection code and GenBank accession,
+    e.g. "Elaphomyces aculeatus AKATA TT 153 (PV069102.1)")
   source: unknown
 ml:
   tasks:
@@ -67,10 +71,57 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-25T16:20:00Z'
-notes: 'Zenodo API record (CC BY 4.0, open, one 566.9 MB ZIP) and the ZIP listing were read: 640 TIFF files in four folders of
-  160 images each (E. aculeatus, E. americanus, E. septatus, E. virgatosporus), each folder named with a collection code and
-  GenBank accession. The record text mentions accompanying metadata but the ZIP contains only TIFFs. No paper is cited on the
-  record and a title search of Europe PMC and Crossref found none, so no publication is listed. Pixel size, magnification, image
-  dimensions and SEM instrument are not stated on the record or visible in the listing, so they are null; the labels come from
-  folder names and the record does not say who identified the species (source unknown).'
+  last_checked: '2026-10-25T16:35:00Z'
+notes: 'Read: Zenodo API record (CC BY 4.0, one 566.9 MB ZIP) and the ZIP listing: 640 TIFFs in four species
+  folders of 160, each named with collection code and GenBank accession. The ZIP holds no metadata files
+  beyond the TIFFs. No paper found (Europe PMC, Crossref title search). Labels come from folder names;
+  who identified the species is not stated (source unknown). modality other = conventional SEM (FEI Quanta
+  FEG, per TIFF header). enricher: voxel size 41.63 nm from the FEI TIFF metadata PixelWidth/PixelHeight
+  4.16295e-8 m (HFW 42.63 um / 1024 px), identical in 12 files across all 4 folders (was null). enricher:
+  channels 1 (grey stored as RGB; was null). organisms: one per species folder (E. aculeatus/, E. americanus/,
+  E. septatus/, E. virgatosporus/).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  1 zip, 566,895,706 B (640 members)\n  SEM_ELAPHOMYCES_SPORE_IMAGES.zip/SEM_ELAPHOMYCES_SPORE_IMAGES/\n\
+      \    Elaphomyces aculeatus AKATA TT 153 (PV069102.1)/       160 .tif (04_NNN.tif), 465.2 MB\n  \
+      \  Elaphomyces americanus AKATA TT 160 (PV069103.1)/      160 .tif (03_NNN.tif), 465.2 MB\n    Elaphomyces\
+      \ septatus AKATA TT 356 (PV069107.1)/        160 .tif (1_NNN.tif), 465.2 MB\n    Elaphomyces virgatosporus\
+      \ AKATA TT 358 (PV069108.1)/   160 .tif (02_NNN.tif), 465.2 MB\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/18395220/files/SEM_ELAPHOMYCES_SPORE_IMAGES.zip::SEM_ELAPHOMYCES_SPORE_IMAGES/Elaphomyces
+      aculeatus AKATA TT 153 (PV069102.1)/04_001.tif
+    size_bytes: 2907250
+    description: One SEM micrograph of E. aculeatus; its class is the folder name
+  arrays:
+  - role: raw
+    path_pattern: SEM_ELAPHOMYCES_SPORE_IMAGES.zip/SEM_ELAPHOMYCES_SPORE_IMAGES/*/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 943
+    - 1024
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB TIFF with three identical samples (grey stored as RGB, checked in 2 files), axes
+      yxs. The FEI header gives ResolutionY 884, so the bottom 59 rows are the instrument data bar, not
+      image. Class label = the species folder name; no pixel annotations.
+  notes: 'Zip listed in place (640 members, exact sizes). Probed and sampled 04_001.tif (aculeatus) and
+    1_081.tif (septatus): plain single-page TIFF, RGB uint8 943x1024, uncompressed, samples identical,
+    values 0-255 in both (full range incl. the data bar; normalization unknown). Read the FEI metadata
+    (tag 34682) of 12 members (first, middle, last of each folder; 9,979,602 B compressed): Quanta FEG,
+    30 kV, PixelWidth = PixelHeight = 4.16295e-8 m, HFW 4.26286e-5 m, ResolutionX/Y 1024x884 in all 12;
+    the other 628 files were not read, so a different magnification in some files cannot be ruled out.
+    Voxel size sources checked: TIFF headers (found), Zenodo record (silent), zip (no docs), paper (none
+    found).'
