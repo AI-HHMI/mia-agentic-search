@@ -1,0 +1,153 @@
+schema_version: '1.2'
+id: zenodo-13357732-rat-liver-sbem-mito-er
+title: Volumetric electron microscopy of rat liver section, raw data + mitochondria and ER predictions
+short_name: Rat liver mitochondria and ER (SBF-SEM)
+description: A serial block-face SEM volume of rat liver (219 sections, 50 nm thick, 7000 x 7000 px tiles at 8 nm
+  per pixel) as a VAST project, together with whole-volume mitochondria and endoplasmic reticulum segmentations
+  predicted by a transfer-learned 3D ResU-Net, released with a paper on cross-tissue transfer learning for organelle
+  segmentation.
+landing_url: https://zenodo.org/records/13357732
+doi: 10.5281/zenodo.13357732
+repository: Zenodo
+accession: '13357732'
+authors:
+- Ronald Xie
+- Ben Mulcahy
+- Ali Darbandi
+- Sagar Marwah
+- Fez Ali
+- Yuna Lee
+- Gunes Parlakgul
+- Gokhan Hotamisligil
+- Bo Wang
+- Sonya MacParland
+- Mei Zhen
+- Gary D. Bader
+publications:
+- title: Transfer learning improves performance in volumetric electron microscopy organelle segmentation across
+    tissues
+  doi: 10.1093/bioadv/vbaf021
+  url: https://doi.org/10.1093/bioadv/vbaf021
+date_published: '2024-08-22'
+imaging:
+  modality:
+  - SBF-SEM
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 8
+    y: 8
+    z: 50
+  channels: 1
+  organism:
+  - Rattus norvegicus
+  sample: Liver of a 4-month-old male rat, perfused with glutaraldehyde and paraformaldehyde, fBROPA-style heavy-metal
+    staining, Epon-embedded, imaged on a Gatan 3View in a Zeiss Gemini SEM (56 x 56 x 11 um)
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: 30229679068
+  n_items: 1
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  - organelle
+  coverage: dense
+  format: VAST segmentation file (mito_er_model_prediction.vsseg) for mitochondria and ER over the whole volume;
+    the image project is EM20-324-200_series_processed.vsv
+  source: automatic
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-25T18:21:49Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/13357732
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11974384/fullTextXML
+  confidence: 0.55
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-25T19:55:00Z'
+notes: 'The Zenodo labels are model predictions (source automatic), not manual ground truth. The paper says the
+  manual ground-truth annotation (120 patches, 18 slices) is shared on a GitHub repository, but that URL (github.com/Xrioen/cross-tissue-transfer-learning-in-VEM)
+  returned 404, so manual labels were not seen. Voxel size 8 x 8 x 50 nm from the paper Methods and Zenodo text.
+  Both files are VAST formats (open with VAST Lite), hence formats other; their internal layout was not inspected.
+  The two files total 30.2 GB. enricher: both VAST headers store a 7000 x 7000 x 219 grid and 8, 8, 50 voxel size,
+  matching the record.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "./  2 files  30.2 GB\n  EM20-324-200_series_processed.vsv  13.0 GB  (raw EM, VAST volume)\n  mito_er_model_prediction.vsseg\
+      \     17.2 GB  (mitochondria + ER prediction, VAST segmentation)"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/13357732/files/EM20-324-200_series_processed.vsv/content
+    - https://zenodo.org/api/records/13357732/files/mito_er_model_prediction.vsseg/content
+    size_bytes: 30229679068
+    description: The dataset is one volume in two files (raw + segmentation); no smaller unit exists, so the sample
+      is the whole dataset.
+  arrays:
+  - role: raw
+    path_pattern: EM20-324-200_series_processed.vsv
+    format: other
+    axes: zyx
+    shape:
+    - 219
+    - 7000
+    - 7000
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: VAST volume file (magic VSV2). Header stores x=7000, y=7000, z=219 and voxel size 8, 8, 50;
+      the Zenodo text states 219 sections of 7000 x 7000 px, giving zyx. Storage is VAST-internal (tiled, multi-resolution);
+      dtype and compression not readable without VAST.
+  - role: label
+    path_pattern: mito_er_model_prediction.vsseg
+    format: other
+    axes: zyx
+    shape:
+    - 219
+    - 7000
+    - 7000
+    shape_varies: false
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    encoding: unknown
+    classes:
+    - id: null
+      name: mitochondria
+    - id: null
+      name: endoplasmic reticulum
+    alignment: same-grid
+    alignment_notes: VAST segmentation file (magic VSS2). Header stores the same 7000 x 7000 x 219 grid and 8, 8,
+      50 voxel size as the raw .vsv, so one label volume covers the whole raw volume. Segment IDs and names are
+      stored VAST-internally and were not decoded; class names from the Zenodo title.
+  notes: 'Listed via the Zenodo API (2 files, 30,229,679,068 bytes, complete). Read the first 4 KB of both files,
+    256 KB more of the .vsv (probe.py) and the last 64 KB plus 64 KB after the header of the .vsseg: magic VSV2
+    / VSS2, grid 7000 x 7000 x 219, three float fields 8.0, 8.0, 50.0 (voxel size, units not labelled in the header;
+    nm per the Zenodo text and paper). VAST formats are not readable by probe.py/sample.py or TensorSwitch, so dtype,
+    compression, value range and label IDs stay unknown. Both direct Zenodo file links pass download-check (range
+    requests); there is no single archive, so data.download_url stays null. The paper says manual GT patches are
+    on GitHub (Xrioen/cross-tissue-transfer-learning-in-VEM); the harvester saw 404 and this run could not reach
+    github.com (proxy 403).'
