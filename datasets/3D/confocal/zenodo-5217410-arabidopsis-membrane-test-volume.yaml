@@ -60,11 +60,71 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-26T14:23:55Z'
+  last_checked: '2026-10-26T15:20:00Z'
 notes: 'The Zenodo description is one line and gives no modality, organism, voxel size or annotation method. Organism, confocal
   modality and membrane labelling are taken from sibling record zenodo 5217341 (same author, same date; "3D dataset of confocal
   imaged arabidopsis for testing membrane segmentation models"), not from this page, so confidence is low. File headers (tools/probe.py):
   test.tif uint8 [52,724,724] zyx, testGT.tif uint16 [52,724,724] with values 1..3351; ImageJ spacing 0.195312 with unit "pixel"
   is not a usable physical size, so voxel_size_nm is null. Whether label 0 is background and whether the labels are manual
   or model output is not stated. Only one volume pair, so it is a test set rather than a training set. Sibling 5217341 holds
-  four label volumes without raw images and is not proposed here. No paper is cited on the page.'
+  four label volumes without raw images and is not proposed here. No paper is cited on the page. enricher: technical block
+  from sample; voxel size still not found (see technical.notes).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  2 files  81.8 MB\n  test.tif    27,266,089 B  raw volume\n  testGT.tif  54,523,243 B  instance labels"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5217410/files/test.tif?download=1
+    - https://zenodo.org/records/5217410/files/testGT.tif?download=1
+    size_bytes: 81789332
+    description: 'The whole dataset: one raw volume and its instance-label volume'
+  arrays:
+  - role: raw
+    path_pattern: test.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 52
+    - 724
+    - 724
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ TIFF, 52 slices; axes zyx from the ImageJ header (tiff_layout imagej).
+  - role: label
+    path_pattern: testGT.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 52
+    - 724
+    - 724
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 3350
+    normalization: none
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Pairs with test.tif (same name + GT); identical shape and ImageJ spacing, so same grid. 0 covers 29.5%
+      of voxels (background, presumably; not documented).
+  notes: 'Listing: Zenodo API, 2 files, 81,789,332 B exact (complete). Probe: both ImageJ TIFFs, uncompressed, 52 pages of
+    724x724; header spacing 0.195312 with unit "pixel" (no physical calibration). Sample (whole dataset, 81.8 MB): raw uint8
+    0-255, mean 40.4, p99 174, 16% zeros; label uint16 0-3350, 933 distinct IDs (instance labels), 29.5% zeros. Value ranges
+    are from this one sample. Voxel size not found; checked: TIFF/ImageJ headers, Zenodo API of 5217410 and siblings 5217341/5217394/5217367
+    (one-line descriptions), VollSeg GitHub README, SciPy 2021 VollSeg paper (no Arabidopsis data details), Europe PMC title
+    search; no paper cites this record. Annotation source (manual or model) not stated anywhere checked. No single archive:
+    download_url stays the landing page; the two files are direct links (sample.urls, the landing page ?download=1 links;
+    the API /content form ends in "content", which the TensorSwitch planner cannot match to a .tif array).'
