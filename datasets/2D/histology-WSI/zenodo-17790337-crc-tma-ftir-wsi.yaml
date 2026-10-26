@@ -77,12 +77,110 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-26T02:42:58Z'
+  last_checked: '2026-10-26T03:28:38Z'
 notes: 'Zip (24.3 GB, CC-BY-4.0 on the Zenodo page and README) listed with peek_archive: 9 .mrxs slides
   with .dat folders (13.5 GB), 353 FT-IR spectra .txt (21.1 GB uncompressed) with .json and .stg files,
   353 BMP reference images (7.0 GB) and 10 CSV files. Core counts come from the nine metadata CSVs (432
   rows: CRC 150, CRLM 142, NC 139, one ''simple liver''; 353 with MIR data; 415 on a WSI). Formats: MRXS
   slides, BMP images and FT-IR text tables have no matching schema format, so ''other''. The second modality
-  is mid-infrared hyperspectral imaging, listed as ''other''. Pixel size, scanner and stain are not stated
-  in the README or Zenodo page and the data paper is closed access (abstract empty), so voxel size is
-  null; who assigned the core labels is not stated.'
+  is mid-infrared hyperspectral imaging, listed as ''other''. Stain is not stated in the README or Zenodo
+  page and the data paper full text is not online; voxel size is null because the parts differ (WSI 0.2425
+  um/px per Slidedat.ini, MIR 25 um/px per the MIR JSON; see technical.notes); who assigned the core labels
+  is not stated.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "multimodal_CRC_dataset.zip   24.3 GB (41.6 GB uncompressed, 1,770 members)\nmultimodal_CRC_dataset/\n\
+      \  README.txt  checksums.md5  tma_protocol.pdf (core layout per TMA)\n  TMA<1-9>/\n    TMA<n>_core_metadata.csv\
+      \            cores, cancer (NC/CRC/CRLM), patient, has_MIR, on_WSI\n    WSI/24_TMA<n>_PA.mrxs  \
+      \             9   3DHISTECH MRXS index\n    WSI/24_TMA<n>_PA/Slidedat.ini + Data*.dat   327 .dat,\
+      \ 13.5 GB\n    MIR/spectra/tma<n>_<core>_res8_co16_2.2int_25.txt    353  21.1 GB  CSV table X,Y,wavenumbers\n\
+      \    MIR/metadata/tma<n>_<core>_res8_co16_2.2int_25.json  353\n    MIR/visible_images/tma<n>_<core>_cut.bmp\
+      \  353  7.0 GB  RGB reference images\n    MIR/visible_images/tma<n>_<core>_cut.stg  353  Perkin\
+      \ Elmer helper files\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/17790337/files/multimodal_CRC_dataset.zip/content::multimodal_CRC_dataset/TMA1/MIR/visible_images/tma1_F6_cut.bmp
+    - https://zenodo.org/api/records/17790337/files/multimodal_CRC_dataset.zip/content::multimodal_CRC_dataset/TMA1/TMA1_core_metadata.csv
+    size_bytes: 19742995
+    description: One RGB core image from the MIR microscope and the TMA1 core label table (core F6)
+  arrays:
+  - role: raw
+    path_pattern: multimodal_CRC_dataset/TMA*/WSI/*.mrxs
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: '3DHISTECH MRXS (index .mrxs + Slidedat.ini + Data*.dat): Pannoramic scanner, Plan-Apochromat
+      20x, Adimec camera, 8-bit, JPEG tiles, level 0 0.24253 x 0.24265 um/px (Slidedat.ini, identical
+      in all 9 TMAs). Not readable with the allowed tools (needs OpenSlide); shape not read.'
+  - role: raw
+    path_pattern: multimodal_CRC_dataset/TMA*/MIR/visible_images/*_cut.bmp
+    format: other
+    axes: yxs
+    shape:
+    - 2531
+    - 2600
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range:
+    - 20
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: BMP RGB images of the MIR measurement area, one per core (<core> = core ID in the
+      metadata CSV); pixel size not stated.
+  - role: raw
+    path_pattern: multimodal_CRC_dataset/TMA*/MIR/spectra/*.txt
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: none
+    alignment: unknown
+    alignment_notes: 'Hyperspectral table: header ",X,Y,4000..." (X, Y in um, then transmittance % per
+      wavenumber); JSON metadata: 88x88 pixels, x/y_delta 25 um, 814 wavenumbers 4000-748 cm-1 step 4.
+      README: FT-IR pixels may not align exactly with the WSI.'
+  - role: label
+    path_pattern: multimodal_CRC_dataset/TMA*/TMA*_core_metadata.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes:
+    - id: NC
+      name: normal colon
+    - id: CRC
+      name: primary colorectal carcinoma
+    - id: CRLM
+      name: colorectal liver metastasis
+    alignment: not-applicable
+    alignment_notes: Per-core class label keyed by core ID (e.g. B1); the core position on the WSI is
+      given only in tma_protocol.pdf.
+  notes: 'Single Zenodo file (multimodal_CRC_dataset.zip, 24,276,540,218 B per the Zenodo API and the
+    range check); members listed with tools/peek_archive.py (1,770 files, 41.6 GB uncompressed). Read
+    README.txt, Slidedat.ini of all 9 TMAs, one MIR JSON and TMA1_core_metadata.csv inside the zip. Sampled
+    tma1_F6_cut.bmp (11,284,999 B compressed) with a scratch script (PIL): 2531x2600x3 uint8, min 20 max
+    255 mean 157, value range from one sample. MRXS slides not opened (no allowed reader). Voxel size
+    by part: WSI 242.53 x 242.65 nm (Slidedat.ini MICROMETER_PER_PIXEL_X/Y, level 0); MIR 25 um (JSON
+    x_delta/y_delta); BMP not stated; record value left null because they differ. TensorSwitch cannot
+    read MRXS, BMP or the spectra tables. Paper (Sci Data 10.1038/s41597-026-07873-1): full text not online
+    yet (article page shows abstract only).'
