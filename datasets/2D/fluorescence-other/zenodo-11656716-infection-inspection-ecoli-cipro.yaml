@@ -1,12 +1,12 @@
 schema_version: '1.2'
 id: zenodo-11656716-infection-inspection-ecoli-cipro
-title: 'Infection Inspection: 49,061 single-cell fluorescence images of ciprofloxacin-treated E. coli clinical isolates with response labels'
+title: 'Infection Inspection: 49,061 single-cell fluorescence images of ciprofloxacin-treated E. coli clinical isolates with
+  response labels'
 short_name: Ciprofloxacin-treated E. coli cells (fluorescence)
-description: 49,061 PNG images of Nile Red (membrane) and DAPI (DNA) stained Escherichia coli cells from clinical
-  isolates grown with varying ciprofloxacin concentrations, imaged on a Nanoimager-S fluorescence microscope. A
-  metadata table gives, per image, the isolate, its MIC, the treatment concentration, the expected sensitive or
-  resistant response and the Zooniverse volunteer classifications (about 1.05 million classifications), for antibiotic
-  response phenotype classification.
+description: 49,061 PNG images of Nile Red (membrane) and DAPI (DNA) stained Escherichia coli cells from clinical isolates
+  grown with varying ciprofloxacin concentrations, imaged on a Nanoimager-S fluorescence microscope. A metadata table gives,
+  per image, the isolate, its MIC, the treatment concentration, the expected sensitive or resistant response and the Zooniverse
+  volunteer classifications (about 1.05 million classifications), for antibiotic response phenotype classification.
 landing_url: https://zenodo.org/records/11656716
 doi: 10.5281/zenodo.11656716
 repository: Zenodo
@@ -49,12 +49,13 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: CSV tables (DATA_ANON.csv, and 1_Metadata.csv inside the zip) with isolate, MIC, treatment concentration, expected response and volunteer classification per image ID
+  format: CSV tables (DATA_ANON.csv, and 1_Metadata.csv inside the zip) with isolate, MIC, treatment concentration, expected
+    response and volunteer classification per image ID
   source: mixed
 ml:
   tasks:
   - classification
-  splits_provided: false
+  splits_provided: true
   benchmark: null
   baseline_code_url: https://github.com/kapanidislab
 license:
@@ -69,17 +70,78 @@ provenance:
   - https://zenodo.org/api/records/11656716/files/Read.me.txt/content
   - https://zenodo.org/api/records/11656716/files/InfectionInspection.zip/content
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10645916/fullTextXML
+  - https://zenodo.org/records/11656716/files/Read.me.txt
+  - https://zenodo.org/records/11656716/files/DATA_ANON.csv
   confidence: 0.65
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-26T10:45:00Z'
+  last_checked: '2026-10-26T12:50:00Z'
 notes: 'InfectionInspection.zip (733.7 MB) lists 49,061 PNG (ID0.png ...) plus a 1.6 GB 1_Metadata.csv with the volunteer
-  classifications (1,045,200 rows per the README); size_bytes is the sum of the four Zenodo files. License conflict:
-  the Zenodo metadata says CC BY 4.0 but the README in the record says "CC BY-NC", so the more restrictive CC-BY-NC-4.0
-  is recorded. Labels are the expected sensitive/resistant response per image plus citizen-science classifications,
-  not pixel masks or boxes. The CSV has a dataset column (first rows read say Test) that may mark a split, not verified, so
-  splits_provided is false. Pixel size is not stated in the paper Methods (Nanoimager-S, 100x oil NA 1.4, sCMOS, 405
-  and 532 nm excitation), so left null; the image sizes were not inspected. Organism is E. coli (clinical isolates EC1-6
-  plus the reference strain MG1655 in the paper).'
+  classifications (1,045,200 rows per the README); size_bytes is the sum of the four Zenodo files. License conflict: the Zenodo
+  metadata says CC BY 4.0 but the README says "CC BY-NC", so the more restrictive CC-BY-NC-4.0 is recorded. Labels are the
+  expected sensitive/resistant response per image plus citizen-science classifications, not masks or boxes. Organism is E.
+  coli (clinical isolates EC1-6). enricher: splits_provided true: README, "dataset: whether the image is part of the Test
+  or Training dataset" (was false). enricher: voxel size not applicable as one value: README says 64x64 RGB images, and the
+  paper resizes each cell to 64x64 (zero-padding or downscaling), so pixel size varies per cell.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "Read.me.txt                  5 KB\nDATA_ANON.csv              137.7 MB  one row per classification (Our_ID, anon_strain,\
+      \ MIC, treatment_concentration, dataset, expected_response, classification, classifier, user_call)\nFEATURES_DF_COMPARISON.csv\
+      \   1.6 MB\nInfectionInspection.zip    733.7 MB (9.25 GB uncompressed, Deflate64)\n  1_Metadata.csv           1.6 GB\n\
+      \  ID0.png ... ID49060.png  49,061 files, flat\n"
+    n_files: 49065
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/11656716/files/InfectionInspection.zip::ID0.png
+    - https://zenodo.org/records/11656716/files/DATA_ANON.csv
+    size_bytes: 137689046
+    description: One single-cell PNG (ID0) and the anonymised classification table that labels it by Our_ID
+  arrays:
+  - role: raw
+    path_pattern: InfectionInspection.zip/ID*.png
+    format: png
+    axes: null
+    shape:
+    - 64
+    - 64
+    - 3
+    shape_varies: false
+    dtype: unknown
+    compression: png
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Shape from the README ("64x64 RGB images"), not from a header: the zip members are Deflate64-compressed
+      (method 9), which probe.py and sample.py cannot decode. Paper: DAPI and Nile Red channels, cells resized to 64x64 and
+      histogram-equalised; which RGB channel holds which stain is not stated for these PNGs.'
+  - role: label
+    path_pattern: DATA_ANON.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes:
+    - id: Sensitive
+      name: Sensitive
+    - id: Resistant
+      name: Resistant
+    alignment: not-applicable
+    alignment_notes: Table, one row per classification (many per image). Pairs with raw by Our_ID (IDn = IDn.png). expected_response
+      (Sensitive / Resistant) is the label derived from MIC vs treatment concentration; classification is the volunteer or
+      DL-model call; dataset = Test / Training split. 14 columns (header read).
+  notes: 'Listing: Zenodo API + zip central directory, 4 files / 49,062 members, 872,899,836 B exact. PNG members (12-18 KB
+    compressed each) use Deflate64 (zip method 9): probe.py and sample.py fail ("unsupported zip compression method 9"), so
+    dtype and value range are unknown. A TensorSwitch zip::member fetch will likely fail the same way, although the range
+    check passes; the whole zip is a direct link. Read the first rows of DATA_ANON.csv (3 KB) and the README. Voxel size:
+    none per dataset (cells resized to 64x64 per the paper Methods); checked README, Zenodo description, paper full text (PMC10645916:
+    100x oil NA 1.4, Orca Flash V4, no pixel size).'
