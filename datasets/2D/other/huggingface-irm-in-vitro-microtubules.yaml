@@ -1,0 +1,144 @@
+schema_version: '1.2'
+id: huggingface-irm-in-vitro-microtubules
+title: Real IRM Images of in vitro Microtubules (HTW-KI-Werkstatt/IRM-in-vitro-microtubules)
+short_name: In vitro microtubule instance masks (IRM)
+description: 66 real interference reflection microscopy (IRM) crops of in vitro reconstituted microtubules (512x512
+  px), each with manually annotated per-instance microtubule masks. Released as the real-data benchmark companion
+  of the synthetic SynthMT dataset.
+landing_url: https://huggingface.co/datasets/HTW-KI-Werkstatt/IRM-in-vitro-microtubules
+doi: null
+repository: HuggingFace
+accession: null
+authors:
+- Mario Koddenbrock
+- Justus Westerhoff
+- Dominik Fachet
+- Simone Reber
+- Felix A. Gers
+- Erik Rodner
+publications:
+- title: Synthetic data enables human-grade microtubule analysis with foundation models for segmentation
+  doi: 10.1371/journal.pcbi.1013901
+  url: https://doi.org/10.1371/journal.pcbi.1013901
+date_published: '2026-01-28'
+imaging:
+  modality:
+  - other
+  - widefield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 2
+  organism: []
+  sample: In vitro reconstituted microtubules imaged by interference reflection microscopy (label-free)
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: 29219757
+  n_items: 66
+  access: open
+  download_url: https://huggingface.co/datasets/HTW-KI-Werkstatt/IRM-in-vitro-microtubules/resolve/main/data/train-00000-of-00001.parquet
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: Per-instance masks, array of shape (C, 512, 512) uint16 per image (C = number of microtubules), stored
+    as images inside a Parquet file
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: Real-data evaluation set for the SynthMT microtubule segmentation benchmark
+  baseline_code_url: https://github.com/ml-lab-htw/SynthMT
+license:
+  spdx: CC-BY-4.0
+  url: https://huggingface.co/datasets/HTW-KI-Werkstatt/IRM-in-vitro-microtubules/raw/main/README.md
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-26T04:17:18Z'
+  evidence_urls:
+  - https://huggingface.co/api/datasets/HTW-KI-Werkstatt/IRM-in-vitro-microtubules
+  - https://huggingface.co/datasets/HTW-KI-Werkstatt/IRM-in-vitro-microtubules/raw/main/README.md
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13167036/fullTextXML
+  - https://journals.plos.org/ploscompbiol/article/file?type=supplementary&id=10.1371/journal.pcbi.1013901.s001
+  confidence: 0.85
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-26T04:52:41Z'
+notes: 'Single parquet file (data/train-00000-of-00001.parquet) with PNG images and per-instance mask images; no
+  train/test split. 66 512x512 crops, one annotated frame each, from 44 real IRM videos of two labs; two annotators
+  labelled each frame in Label Studio (not stated which annotator the released masks are from). Synthetic companion
+  SynthMT not included. enricher: annotations verified (binary mask PNGs in the parquet); size from Hub listing;
+  channels 2 = IRM + seed fluorescence and widefield added (S1 Appendix sec. 3: Nikon widefield microscopes, IRM
+  is the primary modality). Voxel size null: S1 Appendix sec. 3 gives 9.0909 to 9.2308 px/um (about 110 / 108.3
+  nm/px) for two setups, per-image setup not stated. Organism not set: tubulin from various sources, mammalian to
+  protozoan (S1 Appendix).'
+technical:
+  method: sample
+  inspected_at: '2026-10-26T04:52:41Z'
+  inspected_urls:
+  - https://huggingface.co/datasets/HTW-KI-Werkstatt/IRM-in-vitro-microtubules/resolve/main/data/train-00000-of-00001.parquet
+  - https://huggingface.co/api/datasets/HTW-KI-Werkstatt/IRM-in-vitro-microtubules/tree/main?recursive=true
+  - https://datasets-server.huggingface.co/first-rows?dataset=HTW-KI-Werkstatt/IRM-in-vitro-microtubules&config=default&split=train
+  bytes_downloaded: 29211448
+  size_source: file-listing
+  layout:
+    tree: "IRM-in-vitro-microtubules/  3 files, 29,219,757 B (Hub API tree)\n  data/train-00000-of-00001.parquet\
+      \   29,211,448 B (66 rows)\n  README.md  .gitattributes\nparquet columns: id (string), image (Image, PNG bytes),\
+      \ mask (list of Image, one PNG per microtubule)\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/HTW-KI-Werkstatt/IRM-in-vitro-microtubules/resolve/main/data/train-00000-of-00001.parquet
+    size_bytes: 29211448
+    description: The single parquet file holds all 66 image/mask-list rows; there is no smaller file unit.
+  arrays:
+  - role: raw
+    path_pattern: data/train-*.parquet
+    format: other
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: 'Column "image": PNG bytes inside parquet. IHDR of 43 embedded image PNGs: 512x512, 8-bit,
+      colour type 2 (RGB). Per S1 Appendix sec. 3 the colour combines the IRM signal (MTs) with a fluorescence channel
+      for the seeds, so s holds a colour composite.'
+  - role: label
+    path_pattern: data/train-*.parquet
+    format: other
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    encoding: binary
+    classes:
+    - id: 255
+      name: microtubule (one instance per mask image)
+    alignment: same-grid
+    alignment_notes: 'Column "mask": list of PNG images per row, one binary mask per microtubule instance (README:
+      stacked as (C, 512, 512) uint16 on load, background 0). Decoded mask PNGs are 512x512 uint8 with values {0,
+      255}, same grid as the image. Row 0 has 65 masks, row 1 has 4, row 2 has 19 (datasets-server first-rows).'
+  notes: 'Hub API tree: 3 files, 29,219,757 B, complete (= size_bytes). Downloaded the whole parquet (29,211,448
+    B) and scanned it for embedded PNGs without a parquet reader (pyarrow is not an allowed tool): 4 mask PNGs decoded
+    (512x512 uint8, values {0,255}); the image PNGs span compressed parquet pages, so only their IHDR headers (512x512,
+    8-bit RGB) were read and no raw value_range was measured. normalization contrast-stretched: paper Methods (Real
+    data) says the raw videos were histogram-normalized and background-subtracted, with no additional processing.
+    Parquet is not a schema format and TensorSwitch cannot read it, so arrays use format other. Download: the parquet
+    is a direct Hub URL (passes --download-check, range requests, xet CDN redirect). Voxel size: S1 Appendix sec.
+    3 states 9.0909 to 9.2308 px/um across two microscope setups, so no single value; checked also README, dataset
+    card, paper main text, GitHub README.'
