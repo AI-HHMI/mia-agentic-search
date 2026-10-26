@@ -28,7 +28,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 2141843772618
+  size_bytes: 2141843791393
   n_items: 508
   access: open
   download_url: s3://leopard-challenge/training/
@@ -59,17 +59,103 @@ provenance:
   - https://registry.opendata.aws/leopard/
   - https://leopard-challenge.s3.us-west-2.amazonaws.com/?list-type=2&delimiter=/
   - https://leopard-challenge.s3.us-west-2.amazonaws.com/training
+  - https://leopard.grand-challenge.org/data/
   confidence: 0.65
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-26T02:28:19Z'
+  last_checked: '2026-10-26T03:12:52Z'
 notes: 'Bucket listed in full: 508 case_radboud_*.tif slides (2.14 TB) and 508 *_tissue.tif masks (0.65
   GB) under training/, plus the label CSV as the root object ''training'' (508 rows: 87 with event 1,
   421 with event 0, with follow_up_years). Labels are clinical outcomes per slide, not image annotations,
   so this is a weak training signal (prognosis regression and classification); confidence is lowered for
   that. Licence is as written on the AWS registry page (''CC BY NC SA''), read as CC BY-NC-SA 4.0; the
   bucket has no licence file. Pixel spacing, scanner and the number of patients are not stated on the
-  registry page, in the bucket listing or in the CSV, and the challenge site (leopard.grand-challenge.org)
-  was not read, so voxel size is null. No dataset paper is listed by the registry.'
+  registry page, in the bucket listing or in the CSV, nor on the challenge Data page, so voxel size is
+  null (TIFF headers: see technical.notes). No dataset paper is listed by the registry.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 's3://leopard-challenge/   1,017 objects, 2.14 TB
+
+      training                          18.8 KB  label CSV (case_id, event, follow_up_years), 508 rows
+
+      training/case_radboud_NNNN.tif          508  pyramidal TIFF, JPEG, level 0 up to ~250k px
+
+      training/case_radboud_NNNN_tissue.tif   508  0.65 GB  binary tissue masks
+
+      '
+    n_files: 1017
+    listing_complete: true
+  sample:
+    urls:
+    - https://leopard-challenge.s3.amazonaws.com/training/case_radboud_0466.tif
+    - https://leopard-challenge.s3.amazonaws.com/training/case_radboud_0466_tissue.tif
+    - https://leopard-challenge.s3.amazonaws.com/training
+    size_bytes: 1050773597
+    description: Smallest slide (case_radboud_0466, 1.05 GB), its tissue mask and the label CSV
+  arrays:
+  - role: raw
+    path_pattern: training/case_radboud_[0-9][0-9][0-9][0-9].tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 91136
+    - 90112
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Pyramidal TIFF, levels downsampled by 4 (Data page; 0466: 5 levels from 91136x90112);
+      axes for page 0, photometric 6 (YCbCr JPEG) = RGB colour. Most WSIs pack several slides together
+      (Data page).'
+  - role: label
+    path_pattern: training/case_radboud_*_tissue.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 5696
+    - 5632
+    shape_varies: true
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 1
+    normalization: unknown
+    encoding: binary
+    classes: null
+    alignment: scaled
+    alignment_notes: Tissue mask <case>_tissue.tif; level 0 is 1/16 of the slide level 0 (= slide level
+      2, 5696x5632 for 0466). Tissue/background, not a training annotation.
+  - role: label
+    path_pattern: training
+    format: csv
+    axes: null
+    shape:
+    - 508
+    - 3
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'Bucket-root object "training" (= training_labels.csv per the Data page): case_id
+      (file name), event (biochemical recurrence 0/1), follow_up_years.'
+  notes: 'Full bucket listing (tools/listing.py https://leopard-challenge.s3.us-west-2.amazonaws.com/:
+    1,017 objects, 2,141,843,791,393 B, complete, exact; the record omitted the 18.8 KB label CSV). Probed
+    page shapes of slides 0000, 0250 and 0466 and mask 0466. Sampled tissue mask 0466 (310,422 B): values
+    {0,1}. No slide pixels sampled (smallest slide 1.05 GB). Voxel size: not stated on the AWS registry
+    page or the challenge Data page; TIFF XResolution of all three probed slides is 10555189/256 px/cm
+    (= 0.2425 um/px), not used because no document confirms it. No single archive: download_url stays
+    the S3 prefix; sample URLs use the global endpoint leopard-challenge.s3.amazonaws.com (the us-west-2
+    host is not on the TensorSwitch allowlist). Data page: publication embargo until the challenge papers
+    are out.'
