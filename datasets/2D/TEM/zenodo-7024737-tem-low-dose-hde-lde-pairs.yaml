@@ -62,13 +62,102 @@ provenance:
   - https://zenodo.org/api/records/7024737/files/val3_SiC.zip/content
   - https://arxiv.org/abs/2106.01718
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22Fast+Improvement+of+TEM+Images+with+Low-Dose+Electrons+by+Deep+Learning%22&format=json&resultType=core&pageSize=3
+  - https://arxiv.org/html/2106.01718
+  - https://raw.githubusercontent.com/hiroyasukatsuno/Fast-Improvement-Low-Dose-TEMimages/main/README.md
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-26T06:13:56Z'
+  last_checked: '2026-10-26T06:54:25Z'
 notes: 'Pixel size not stated on the Zenodo record, arXiv abstract page or the journal abstract (full text not open access).
   n_items is the sum of the per-zip image counts in the record table (1,740 images = 1,160 HDE/LDE pairs counted by the authors
   as 1,160 pairs). Peeked val3_SiC.zip: 30 TIFFs, HDE about 40 MB and LDE about 0.4 MB, matching the described numbering.
-  Samples are materials-science specimens, not biological. Sizes are the sum of the ten zip files.'
+  Samples are materials-science specimens, not biological. Sizes are the sum of the ten zip files. enricher: technical block
+  from listing, header probe and one sampled triplet; voxel size still not stated anywhere (checked header, Zenodo, GitHub
+  README, arXiv full text).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'zenodo record 7024737 (10 zips, 22.3 GB; 1,740 TIFF members)
+
+      train1_Ni.zip/train1_Ni/NNNN.tif          336 files  4.6 GB
+
+      train2_FeNi.zip/train2_FeNi/NNNN.tif      390 files  5.2 GB
+
+      train3_SiC.zip/train3_SiC/NNNN.tif        210 files  2.9 GB
+
+      train4_Silicate.zip/train4_Silicate/      264 files  3.6 GB
+
+      train5_Alumina.zip/train5_Alumina/        300 files  4.1 GB
+
+      val1_Ni.zip/val1_Ni/                       54 files  732 MB
+
+      val2_FeNi.zip/val2_FeNi/                   60 files  805 MB
+
+      val3_SiC.zip/val3_SiC/                     30 files  416 MB
+
+      val4_Silicate.zip/val4_Silicate/           36 files  495 MB
+
+      val5_Alumina.zip/val5_Alumina/             60 files  830 MB
+
+      each folder: triplets 3k.tif (HDE ~40 MB), 3k+1.tif, 3k+2.tif (LDE ~0.4 MB)'
+    n_files: 10
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7024737/files/val3_SiC.zip::val3_SiC/0211.tif
+    - https://zenodo.org/records/7024737/files/val3_SiC.zip::val3_SiC/0212.tif
+    - https://zenodo.org/records/7024737/files/val3_SiC.zip::val3_SiC/0210.tif
+    size_bytes: 41966780
+    description: 'SiC validation triplet: LDE inputs 0211.tif and 0212.tif (512x512) with HDE target 0210.tif (4096x4096);
+      zip member sizes.'
+  arrays:
+  - role: raw
+    path_pattern: '*.zip/*/[0-9][0-9][0-9][0-9].tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint16
+    compression: lzw
+    value_range:
+    - 0
+    - 1401
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'LDE (low-dose, 3.3 ms, camera binning 8 mode per paper). Same glob as the HDE target: only the index
+      (3k+1, 3k+2) distinguishes them. Pairing rule: consecutive 4-digit numbering inside each zip folder; index divisible
+      by 3 = HDE target (4096x4096), the next two indices = its two LDE inputs (512x512); checked on all 1,740 members by
+      size (580 HDE, 1,160 LDE, no exceptions). The Zenodo text says 0001=HDE, 0002/0003=LDE, but files start at 0000.'
+  - role: target
+    path_pattern: '*.zip/*/[0-9][0-9][0-9][0-9].tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 4096
+    - 4096
+    shape_varies: false
+    dtype: uint16
+    compression: unknown
+    value_range:
+    - 8480
+    - 62485
+    normalization: unknown
+    alignment: scaled
+    alignment_notes: 'HDE (5 s) of the same field of view; shape ratio 8 matches the binning-8 LDE mode (paper). Paper: before
+      training the HDE position was adjusted to fit the LDE image to compensate drift, so released pairs may carry a small
+      offset. Pairing rule: consecutive 4-digit numbering inside each zip folder; index divisible by 3 = HDE target (4096x4096),
+      the next two indices = its two LDE inputs (512x512); checked on all 1,740 members by size (580 HDE, 1,160 LDE, no exceptions).
+      The Zenodo text says 0001=HDE, 0002/0003=LDE, but files start at 0000.'
+  notes: 'Listing: Zenodo API, 10 zips, 22,335,369,400 bytes, 1,740 members (complete). Probed LDE val3_SiC/0211.tif header
+    (uint16, LZW, 512x512, plain single page, no calibration); HDE member header could not be range-read (deflated in zip),
+    so its compression is unknown. Sampled val3_SiC 0210 (HDE) / 0211, 0212 (LDE): value ranges are from these single files.
+    Paper: images converted from Digital Micrograph to 16-bit TIFF with dark current subtracted (intensity rescaling applied
+    only in preprocessing). Voxel size not found; checked: TIFF header, Zenodo API record, GitHub README, arXiv full text
+    (Methods give magnification 25,000x/30,000x only, no pixel size). No single archive: data.download_url stays the Zenodo
+    record; direct files are the ten https://zenodo.org/records/7024737/files/<name>.zip links. Specimens are inorganic nanoparticles
+    (materials science), so organism is empty.'
