@@ -1,0 +1,197 @@
+schema_version: '1.2'
+id: chimera-prostate-bladder-wsi-aws
+title: 'CHIMERA challenge training data: H&E whole-slide images with clinical, MRI and RNA data (AWS Open
+  Data)'
+short_name: CHIMERA prostate and bladder WSIs with outcomes
+description: 'Version 2 of the CHIMERA challenge training data in the public S3 bucket chimera-challenge:
+  548 H&E whole-slide images (TIFF, 1.19 TB) with tissue masks, plus clinical JSON files - task 1: 190
+  prostate WSIs from 95 patients with MRI and biochemical-recurrence labels; task 2: 182 bladder WSIs;
+  task 3: 176 bladder WSIs with progression outcome and RNA-seq JSON. Includes precomputed tile features.'
+landing_url: https://registry.opendata.aws/chimera/
+doi: null
+repository: other
+accession: null
+authors:
+- Radboud University Medical Center Computational Pathology Group
+publications: []
+date_published: null
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: Prostatectomy specimens (prostate cancer) and bladder cancer specimens, H&E stained whole-slide
+    images
+  labels_stains:
+  - hematoxylin and eosin
+data:
+  formats:
+  - tiff
+  size_bytes: 1607859072471
+  n_items: 548
+  access: open
+  download_url: s3://chimera-challenge/v2/
+  download_method: s3
+annotations:
+  present: true
+  types:
+  - classification
+  - other
+  coverage: sparse
+  format: per-patient clinical JSON (task 1 includes BCR and time_to_follow-up/BCR; task 3 includes progression
+    and Time_to_prog_or_FUend), tissue masks (*_tissue.tif, *_HE_mask.tif), RNA JSON for task 3; no region
+    annotations
+  source: unknown
+ml:
+  tasks:
+  - classification
+  - other
+  splits_provided: false
+  benchmark: CHIMERA challenge
+  baseline_code_url: null
+license:
+  spdx: CC-BY-NC-SA-4.0
+  url: https://creativecommons.org/licenses/by-nc-sa/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-26T02:31:24Z'
+  evidence_urls:
+  - https://registry.opendata.aws/chimera/
+  - https://chimera-challenge.s3.us-west-2.amazonaws.com/?list-type=2&delimiter=/
+  - https://chimera-challenge.s3.us-west-2.amazonaws.com/v1/README.md
+  - https://chimera-challenge.s3.us-west-2.amazonaws.com/v2/task1/clinical_data/1003.json
+  - https://chimera-challenge.s3.us-west-2.amazonaws.com/v2/task3/data/3A_001/3A_001_CD.json
+  - https://chimera-challenge.s3.us-west-2.amazonaws.com/v2/task2/data/task2_quality_control.csv
+  confidence: 0.55
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-26T03:16:15Z'
+notes: 'Bucket listed in full: v2 holds 548 H&E WSIs (190 task 1, 182 task 2, 176 task 3), 95 patients''
+  MRI (380 .mha), 169 RNA_masks TIFFs, PyTorch tile features and coordinates; 1.61 TB for v2. A v1 folder
+  holds an earlier layout (task1 896 TIFFs, task2 264, task3 252) and is not counted. Labels are clinical
+  outcomes per patient (one task 1 JSON shows BCR 1 with time to follow-up; one task 3 JSON shows progression
+  0 with follow-up days); a task 2 JSON read has no outcome field, so task 2 labels were not confirmed.
+  Weak, outcome-level training signal and multimodal, so confidence is low. Licence is CC BY-NC-SA 4.0
+  as stated on the AWS registry page; the bucket has no licence file. Pixel size, scanner, patient counts
+  for tasks 2 and 3 and the meaning of RNA_masks were not stated on the pages read (challenge site not
+  read), so voxel size is null. The bucket README is a stub.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 's3://chimera-challenge/v2/   3,469 objects, 1.61 TB (bucket incl. v1: 5,548 objects, 3.98 TB)
+
+      README (stub)
+
+      RNA_masks/<A_NNN>.tif                         169   0.35 GB  pyramidal LZW masks
+
+      task1/clinical_data/<patient>.json             95
+
+      task1/pathology/images/<patient>/<patient>_<n>.tif + _tissue.tif   380 (190 WSI + 190 masks)  404.6
+      GB
+
+      task1/pathology/features/{features/*.pt,coordinates/*.npy}  190 each (160 GB)
+
+      task1/radiology/images/<patient>/*.mha        380   1.5 GB   MRI
+
+      task1/radiology/features/*.pt                  95
+
+      task2/data/task2_quality_control.csv
+
+      task2/data/<2X_NNN>/{_HE.tif,_HE_mask.tif,_CD.json}   182 cases  398.8 GB
+
+      task2/features/{features/*.pt,coordinates/*.npy}      182 each
+
+      task3/data/*.csv
+
+      task3/data/<3X_NNN>/{_HE.tif,_HE_mask.tif,*.json}     176 cases  386.8 GB
+
+      task3/features/{features/*.pt,coordinates/*.npy}      176 each
+
+      '
+    n_files: 3469
+    listing_complete: true
+  sample:
+    urls:
+    - https://chimera-challenge.s3.amazonaws.com/v2/task1/pathology/images/1195/1195_2.tif
+    - https://chimera-challenge.s3.amazonaws.com/v2/task1/pathology/images/1195/1195_2_tissue.tif
+    - https://chimera-challenge.s3.amazonaws.com/v2/task1/clinical_data/1195.json
+    size_bytes: 310397640
+    description: 'Task 1 patient 1195: smallest slide (310 MB), its tissue mask and the clinical JSON'
+  arrays:
+  - role: raw
+    path_pattern: task1/pathology/images/*/*[0-9].tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 48640
+    - 33792
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Pyramidal TIFF, levels downsampled by 4 (1195_2: 4 levels from 48640x33792); axes
+      for page 0, photometric 6 (YCbCr JPEG) = RGB colour. Task 2/3 H&E slides are task*/data/*/*_HE.tif.'
+  - role: raw
+    path_pattern: task[23]/data/*/*_HE.tif
+    format: tiff
+    axes: yxs
+    shape: null
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Bladder-cancer H&E slides; not probed (mask level 0 of 2A_025 is 18400x17048).
+  - role: label
+    path_pattern: task1/pathology/images/*/*_tissue.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 12160
+    - 8448
+    shape_varies: true
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 1
+    normalization: unknown
+    encoding: binary
+    classes: null
+    alignment: scaled
+    alignment_notes: <patient>_<n>_tissue.tif next to <patient>_<n>.tif; level 0 = slide level 1 (1/4).
+      Tissue/background mask, not a training annotation. Task 2/3 *_HE_mask.tif similar (not sampled).
+  - role: label
+    path_pattern: task*/clinical_data/*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'Per-patient clinical JSON (task 1: Gleason, ISUP, PSA, BCR, time_to_follow-up/BCR,
+      pT stage ...); task 2/3 have *_CD.json per case.'
+  notes: 'Full listing of the bucket (tools/listing.py https://chimera-challenge.s3.us-west-2.amazonaws.com/:
+    5,548 objects, 3,983,639,214,583 B, complete, exact); the v2 prefix the record cites is 3,469 objects,
+    1,607,859,072,471 B, equal to the record. Probed page shapes of 1195_2.tif, its tissue mask, 2A_025_HE_mask.tif
+    and RNA_masks/A_001.tif (level 0 294400x272768, 10 levels; meaning not documented). Sampled 1195_2_tissue.tif
+    (716,228 B): values {0,1}. No slide pixels sampled (310 MB+). .pt/.npy feature files not opened (untrusted).
+    Voxel size: not stated on the registry page or the challenge pages read (home, dataset-download);
+    TIFF XResolution of 1195_2 is 10555189/512 px/cm (= 0.485 um/px), not used without a document. No
+    single archive: download_url stays the v2 prefix; sample URLs use the global endpoint chimera-challenge.s3.amazonaws.com
+    (us-west-2 host not on the TensorSwitch allowlist).'
