@@ -2,10 +2,11 @@ schema_version: '1.2'
 id: zenodo-12809470-nsclc-challenging-resection-subtyping-wsi
 title: Kludt et al. Cell Reports Medicine - Challenging Subtyping Cases (Resection)
 short_name: NSCLC challenging resection WSIs, subtype (H&E)
-description: 'Anonymized H&E whole-slide images of non-small cell lung cancer (lung adenocarcinoma, LUAD, and squamous cell
-  carcinoma, LUSC): "challenging" resection cases (about 2/3 misclassified by the authors'' AI algorithm or borderline) with
-  subtype ground truth revealed by immunohistochemistry. 30 slides with a CSV of slide-level subtype ground truth. Released
-  with the lung cancer pathology platform paper (Kludt et al., Cell Reports Medicine 2024) as a test set for subtyping algorithms.'
+description: 'Anonymized H&E whole-slide images of non-small cell lung cancer (lung adenocarcinoma, LUAD,
+  and squamous cell carcinoma, LUSC): "challenging" resection cases (about 2/3 misclassified by the authors''
+  AI algorithm or borderline) with subtype ground truth revealed by immunohistochemistry. 30 slides with
+  a CSV of slide-level subtype ground truth. Released with the lung cancer pathology platform paper (Kludt
+  et al., Cell Reports Medicine 2024) as a test set for subtyping algorithms.'
 landing_url: https://zenodo.org/records/12809470
 doi: 10.5281/zenodo.12809470
 repository: Zenodo
@@ -13,7 +14,8 @@ accession: '12809470'
 authors:
 - Yuri Tolkach
 publications:
-- title: 'Next-generation lung cancer pathology: Development and validation of diagnostic and prognostic algorithms'
+- title: 'Next-generation lung cancer pathology: Development and validation of diagnostic and prognostic
+    algorithms'
   doi: 10.1016/j.xcrm.2024.101697
   url: https://doi.org/10.1016/j.xcrm.2024.101697
 date_published: '2024-07-24'
@@ -64,11 +66,73 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-26T17:46:03Z'
-notes: 'Zenodo lists no license; the description states "The dataset can be used for academic research purposes only", so
-  spdx is custom (research use only). Files read from the Zenodo API listing: 30 slide files plus CHALLENGING_GT_RES.csv (opened:
-  GT/file-name columns). 30 cases (16 LUAD, 14 LUSC). Labels are slide-level (no pixel annotations); the paper (PMC11524894,
-  Methods and key resources table) lists this deposit among the released test datasets and gives subtype ground truth from
-  pathology reports/immunohistochemistry. The paper states the WNS and UKK biopsy cohorts were digitized with different scanners
-  but not per file, and gives no pixel size for this release, so voxel size is null. The companion annotated tile dataset
+  last_checked: '2026-10-26T19:35:00Z'
+notes: 'Zenodo lists no license; the description states "The dataset can be used for academic research
+  purposes only", so spdx is custom (research use only). Files read from the Zenodo API listing: 30 slide
+  files plus CHALLENGING_GT_RES.csv (opened: GT/file-name columns). 30 cases (16 LUAD, 14 LUSC). Labels
+  are slide-level (no pixel annotations); the paper (PMC11524894, Methods and key resources table) lists
+  this deposit among the released test datasets and gives subtype ground truth from pathology reports/immunohistochemistry.
+  The paper states the WNS and UKK biopsy cohorts were digitized with different scanners but not per file,
+  and gives no pixel size for this release. enricher: Aperio headers of all 30 SVS: MPP 0.263296 um (27)
+  and 0.262780 um (Case19, 20, 29), so voxel_size_nm stays null. The companion annotated tile dataset
   (UKK L1 SEGM, Zenodo 12818382) is already in the catalog and is a different dataset.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "Zenodo 12809470 (flat)  43,960,504,954 B\n  Case01.svs ... Case30.svs   30  726,497,282 - about\
+      \ 2.3 GB each\n  CHALLENGING_GT_RES.csv       1  31,958 B\n"
+    n_files: 31
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/12809470/files/Case21.svs/content
+    - https://zenodo.org/api/records/12809470/files/CHALLENGING_GT_RES.csv/content
+    size_bytes: 726529240
+    description: The smallest slide (Case21.svs, 726,497,282 B) and the ground-truth CSV for all 30 cases.
+  arrays:
+  - role: raw
+    path_pattern: Case*.svs
+    format: svs
+    axes: yxs
+    shape:
+    - 56257
+    - 67458
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Aperio GT450 DX SVS, AppMag 40, JPEG/YCC Q=91, 256x256 tiles, BigTIFF; 5 TIFF pages
+      (pyramid levels plus associated images). Shape is the base level of Case21.svs. Slide CaseNN pairs
+      with CSV row CASE_NR = N.
+  - role: label
+    path_pattern: CHALLENGING_GT_RES.csv
+    format: csv
+    axes: null
+    shape:
+    - 30
+    - 2
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes:
+    - id: LUAD
+      name: lung adenocarcinoma
+    - id: LUSC
+      name: lung squamous cell carcinoma
+    alignment: not-applicable
+    alignment_notes: 'Columns CASE_NR, TYPE (plus empty columns): row N gives the subtype of CaseNN.svs
+      (1-30; 16 LUAD, 14 LUSC). Slide-level labels, no coordinates.'
+  notes: 'Listing: Zenodo API (31 files, exact sizes, complete; total = size_bytes). Headers of all 30
+    SVS read with tifffile by range (first page and ImageDescription only): all Aperio GT450 DX, AppMag
+    40, JPEG, base levels 56257x67458 to 88433x133643 px. MPP 0.263296 um in 27 slides and 0.262780 um
+    in Case19, Case20 and Case29, so no single voxel size; per-slide MPP is in each header. probe.py on
+    Case21.svs: tiff_layout plain, 5 pages, photometric 6 (YCbCr JPEG: RGB colour, hence yxs). CSV read
+    in full. No sample download (slides are 0.7-2.3 GB). Download: Case21.svs and the CSV pass --download-check
+    (zenodo.org, range requests); no single archive, so download_url stays null and the files are the
+    per-file Zenodo API URLs. Voxel size: headers (above), Zenodo description (none), paper full text
+    (MPP only for the algorithms: 1.0 um/px), so null.'
+  inspected_at: '2026-10-26T19:35:00Z'
