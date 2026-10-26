@@ -1,0 +1,143 @@
+schema_version: '1.2'
+id: kaggle-lijiajin521314-shdet-sperm-head-detection
+title: Sperm Head Detection (SHDet) Dataset
+short_name: Sperm head detection boxes (brightfield)
+description: 397 high-resolution (1920x1200) bright-field images of sperm captured on an Olympus IX73
+  inverted microscope with a 60x water-immersion objective (NA 1.2), with manually annotated sperm positions
+  and bounding boxes, pre-split into 298 training and 99 test images. Released by the MTCA-Net authors
+  to train the detection module.
+landing_url: https://www.kaggle.com/datasets/lijiajin521314/sperm-head-detection-shdet-dataset
+doi: null
+repository: Kaggle
+accession: lijiajin521314/sperm-head-detection-shdet-dataset
+authors:
+- Jiajin Li
+publications:
+- title: 'MTCA-Net: Multi-Task Cascade Analysis Network for Real-Time Sperm Quality Analysis'
+  doi: 10.1002/aisy.202501452
+  url: https://doi.org/10.1002/aisy.202501452
+date_published: null
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: Sperm in various states, imaged with an Olympus IX73 inverted microscope and a 60x water-immersion
+    objective (NA 1.2)
+  labels_stains: []
+data:
+  formats:
+  - jpeg
+  size_bytes: 149605475
+  n_items: 397
+  access: open
+  download_url: https://www.kaggle.com/api/v1/datasets/download/lijiajin521314/sperm-head-detection-shdet-dataset
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  - points
+  coverage: dense
+  format: 'YOLO text, one SHDet/labels/{train,val}/<n>.txt per image: "class x_center y_center width height",
+    normalised to the image size (class 0 in the file read)'
+  source: manual
+ml:
+  tasks:
+  - detection
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/Lijiajin0719/MTCA-Net
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-26T17:18:22Z'
+  evidence_urls:
+  - https://www.kaggle.com/datasets/lijiajin521314/sperm-head-detection-shdet-dataset
+  - https://www.kaggle.com/api/v1/datasets/view/lijiajin521314/sperm-head-detection-shdet-dataset
+  - https://hit.globalimpact.cn/en/publications/mtca-net-multi-task-cascade-analysis-network-for-real-time-sperm-/
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1002%2Faisy.202501452%22&format=json&resultType=core&pageSize=3
+  - https://api.crossref.org/works/10.1002/aisy.202501452
+  - https://raw.githubusercontent.com/Lijiajin0719/MTCA-Net/master/README.md
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-26T19:15:00Z'
+notes: 'Kaggle API record (CC BY 4.0, 397 images of 1920x1200 px, 298 train / 99 test, 150 MB) and the
+  MTCA-Net paper page (abstract only, Adv. Intell. Syst. 2026, three released datasets of 3,563 images
+  in total) were read. The paper is not open access and the harvester could not see the file list. Pixel
+  size and species are not stated. Companion of the segmentation sets SHSeg and SHSegHR (separate records,
+  same Kaggle owner); this one holds the detection images with boxes and is a different image set from
+  them. enricher: the Kaggle API download (anonymous, redirects to a signed GCS zip) lists 397 JPEG +
+  397 YOLO txt labels in train/val; formats other -> jpeg, annotations_verified true, download_url set
+  to the API zip.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "archive.zip (Kaggle bundle)  148,009,926 B (149,605,475 B uncompressed, 798 files)\n  SHDet/\n\
+      \    images/train/<n>.jpg   298  110,273,598 B\n    images/val/<n>.jpg      99   38,545,923 B\n\
+      \    labels/train/<n>.txt   298      291,806 B\n    labels/val/<n>.txt      99       83,482 B\n\
+      \    labels/*.cache           4      410,666 B (YOLO label caches, not opened)\n"
+    n_files: 798
+    listing_complete: true
+  sample:
+    urls:
+    - https://www.kaggle.com/api/v1/datasets/download/lijiajin521314/sperm-head-detection-shdet-dataset
+    size_bytes: 148009926
+    description: 'The whole Kaggle bundle (the smallest unit that can be fetched: zip members cannot be
+      read through the Kaggle redirect). Smallest pair inside: SHDet/images/train/321.jpg + SHDet/labels/train/321.txt.'
+  arrays:
+  - role: raw
+    path_pattern: SHDet/images/*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1200
+    - 1920
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 30
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Greyscale stored as RGB: the 3 samples are identical in the sampled image (sample.py
+      samples_identical: true).'
+  - role: label
+    path_pattern: SHDet/labels/*/*.txt
+    format: other
+    axes: null
+    shape:
+    - 50
+    - 5
+    shape_varies: true
+    dtype: float32
+    compression: none
+    encoding: boxes-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'SHDet/labels/<split>/<n>.txt pairs with SHDet/images/<split>/<n>.jpg (same split
+      folder and stem). Space-separated YOLO rows: class, x_center, y_center, width, height, normalised
+      to [0, 1] of the image; shape is train/321.txt (50 boxes, class 0 only). Class names not stated
+      (no data.yaml in the zip).'
+  notes: 'Listing: zip central directory of the Kaggle API bundle, read by range (798 members, exact sizes;
+    listing.py cannot follow the Kaggle redirect, so zipfile on the signed GCS URL). size_bytes = uncompressed
+    contents (149,605,475 B, matches the record). probe.py on train/321.jpg: 1200x1920x3 uint8. sample.py
+    on it: values [30, 255], mean 118, std 8, samples identical (one sample; grey stored as RGB). Label
+    txt read with peek_archive. *.cache files are YOLO pickled caches: not opened. Download: the Kaggle
+    API URL (whole zip) works without login (302 to a signed storage.googleapis.com URL, range requests)
+    but www.kaggle.com is not on the TensorSwitch allowlist; <url>::<member> specs fail --download-check
+    (zip index not readable through the redirect). Voxel size not found; checked: JPEG header, Kaggle
+    API record, zip contents (no README), MTCA-Net GitHub README, paper (abstract only, not open access).
+    Organism not stated anywhere read.'
+  inspected_at: '2026-10-26T19:15:00Z'
+  bytes_downloaded: 496103
