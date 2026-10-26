@@ -2,11 +2,11 @@ schema_version: '1.2'
 id: zenodo-10067274-sbb-benthic-foraminifera-images
 title: 'Santa Barbara Basin microfossil images: 46,820 individual object images with species identifications and 2D outlines'
 short_name: Benthic foraminifera images with species labels
-description: Photographic images from the AutoMorph high-throughput imaging pipeline of more than 36,000 microfossil
-  objects from two Santa Barbara Basin sediment cores (about 22,000 benthic foraminifera plus planktonic foraminifera,
-  ostracods, pteropods, diatoms, radiolarians, fish teeth and fragments). It provides bulk images with detected objects
-  boxed, extended-depth-of-field images of individual objects, per-object identification CSVs (species or general
-  category with a confidence score), extracted 2D outline coordinates and 2D shape properties.
+description: Photographic images from the AutoMorph high-throughput imaging pipeline of more than 36,000 microfossil objects
+  from two Santa Barbara Basin sediment cores (about 22,000 benthic foraminifera plus planktonic foraminifera, ostracods,
+  pteropods, diatoms, radiolarians, fish teeth and fragments). It provides bulk images with detected objects boxed, extended-depth-of-field
+  images of individual objects, per-object identification CSVs (species or general category with a confidence score), extracted
+  2D outline coordinates and 2D shape properties.
 landing_url: https://zenodo.org/records/10067274
 doi: 10.5281/zenodo.10067274
 repository: Zenodo
@@ -27,7 +27,10 @@ authors:
 - Chloe Latt
 - Heather Fergus
 - Seth Finnegan
-publications: []
+publications:
+- title: An 800-year record of benthic foraminifer images and 2D morphometrics from the Santa Barbara Basin
+  doi: 10.1038/s41597-024-02934-9
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC10828449/
 date_published: '2023-11-02'
 imaging:
   modality:
@@ -44,7 +47,7 @@ data:
   size_bytes: 24540608764
   n_items: 46820
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/10067274
   download_method: http
 annotations:
   present: true
@@ -52,12 +55,14 @@ annotations:
   - classification
   - other
   coverage: dense
-  format: One CSV per sample in identification_files.zip (Sample Name, Obj. #, Species, Confidence, Origin) and 2D outline coordinates and properties as CSV
+  format: 'One CSV per sample in identification_files.zip (Sample Name, Obj. #, Species, Confidence, Proloculous), paired
+    with individual images by object number; 2D outline coordinates and properties as CSV; forams.zip image-labels.csv (species,
+    broken/unbroken) for its train/val/test subset'
   source: mixed
 ml:
   tasks:
   - classification
-  splits_provided: false
+  splits_provided: true
   benchmark: null
   baseline_code_url: null
 license:
@@ -71,15 +76,83 @@ provenance:
   - https://zenodo.org/api/records/10067274
   - https://zenodo.org/api/records/10067274/files/individual_images.zip/content
   - https://zenodo.org/api/records/10067274/files/identification_files.zip/content
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10828449/fullTextXML
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22An+800-year+record+of+benthic+foraminifer+images+and+2D+morphometrics+from+the+Santa+Barbara+Basin%22&format=json&resultType=core&pageSize=3
+  - https://zenodo.org/records/10067274/files/identification_files.zip::identification_files/MV1012-BC_individual_identification_files/MV1012-BC-12_species_final.csv
+  - https://zenodo.org/records/10067274/files/forams.zip::forams/README.txt
   confidence: 0.55
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-26T11:15:00Z'
+  last_checked: '2026-10-26T13:10:00Z'
 notes: 'Nine Zenodo files (bulk_images 16.8 GB, outline_images 5.7 GB, individual_images 1.4 GB, outline/properties CSV zips,
-  scripts, metadata tables, forams.zip); size_bytes is their sum and download_url is null. individual_images.zip lists
-  46,820 .jpg plus 45 CSV files, which is the n_items. CSV and outline tables sit beside the JPEG images. identification_files.zip CSVs give a species or category per object with a confidence score; some categories
-  are junk or non-foraminifera objects. Images are reflected-light photographs of picked microfossils (extended depth of
-  field), hence modality other; the imaging instrument and pixel size are not stated on the record. The record mentions a
-  forthcoming data descriptor, no paper was found by title, so none is cited. No train/val/test split.'
+  scripts, metadata tables, forams.zip); size_bytes is their sum. individual_images.zip holds 46,820 .jpg (n_items). Some
+  categories are junk or non-foraminifera objects. Reflected-light EDF images from a Keyence VHX-7000 digital microscope (paper
+  Methods), hence modality other. enricher: paper added, the Sci Data 2024 data descriptor (Europe PMC by title). enricher:
+  splits_provided true: forams.zip has train/ 8,653, val/ 1,100, test/ 1,074 images resized to 224x224 (paper). enricher:
+  pixel size varies by sample (burned-in image labels; paper Table 4 lists corrected scales 1.2-2.38 um/px), so null. Organism
+  left empty: dozens of species labels per object in the CSVs.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "individual_images.zip   1.4 GB  individual_images/MV1012-BC/MV1012-BC-<n>_identify/ (36 dirs), MV1012-KC1/... (14\
+      \ dirs)\n    <sample>_obj<00001>_plane000.jpg  46,820 EDF object images; <sample>_species_*.csv\nidentification_files.zip\
+      \  228 KB  MV1012-BC_/MV1012-KC_individual_identification_files/<sample>_species_final.csv (45)\nbulk_images.zip   \
+      \     16.8 GB  bulk_images/MV1012-BC/ 37 .jpg, MV1012-KC1/ 13 .jpg (boxed slide images)\noutline_images.zip      5.7\
+      \ GB  outline_images/<core>/<sample>_outlines/*.tif  (45,824)\n2d_coordinates.zip    311.6 MB  per-object outline CSVs\
+      \ (89,329)\n2d_properties.zip        3.6 MB  50 CSV\nforams.zip            314.1 MB  forams/train 8,653, val 1,100,\
+      \ test 1,074 .jpg; image-labels.csv; forams.py; tfrecords\nmetadata_tables.zip, cleaning_scripts.zip\n"
+    n_files: 375350
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/10067274/files/individual_images.zip::individual_images/MV1012-BC/MV1012-BC-12_identify/MV1012-BC-12_obj00002_plane000.jpg
+    - https://zenodo.org/records/10067274/files/identification_files.zip::identification_files/MV1012-BC_individual_identification_files/MV1012-BC-12_species_final.csv
+    size_bytes: 49464
+    description: 'One individual object image (sample MV1012-BC-12, object 2) and that sample''s identification CSV (row Obj.
+      # 2)'
+  arrays:
+  - role: raw
+    path_pattern: individual_images.zip/individual_images/*/*_identify/*_obj*_plane000.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 404
+    - 639
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Colour EDF crop of one object with an AutoMorph metadata label (sample, object, pixel size) burned into
+      the image; size varies per object.
+  - role: label
+    path_pattern: identification_files.zip/identification_files/*/*_species_final.csv
+    format: csv
+    axes: null
+    shape:
+    - 323
+    - 5
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'One row per object: Sample Name, Obj. #, Species (species name or category such as planktic, junk, fragment),
+      Confidence, Proloculous. Pairs with raw: <Sample Name>_obj<Obj. # zero-padded to 5>_plane000.jpg. Shape is MV1012-BC-12
+      (323 rows + header). Not every sample uses _final; some folders only have _SSK / _msf CSVs.'
+  notes: 'Listing: Zenodo API + 9 zip central directories, 375,350 members (182,341 AppleDouble/OS files hidden), 24,540,608,764
+    B exact. Sampled one object JPEG (35 KB read): 404x639x3 uint8, 0-255, p50 56 (dark plate background), one sample. Read
+    forams/README.txt and the head of forams/image-labels.csv (sample_name, Broken, species, object_num, age); forams.py,
+    the .pyc and tfrecords not opened (dataset code). Voxel size not set: per-sample pixel scale in the burned-in image labels
+    and paper Table 4; checked Zenodo record, paper full text (PMC10828449), metadata_tables listing (Table3 Calibrations.xlsx
+    not parsed). No single archive: 9 direct Zenodo files.'
