@@ -1,0 +1,246 @@
+schema_version: '1.2'
+id: tiger-training-breast-wsi-aws
+title: 'TIGER training dataset: whole-slide images with tissue, cell, tumor-bulk and TILs-score annotations
+  (AWS)'
+short_name: TIGER breast cancer WSIs with TIL annotations
+description: '371 breast cancer H&E whole-slide images (multiresolution TIFF, 0.5 um/px) from the TIGER
+  challenge training set in the public S3 bucket tiger-training: 196 WSIROIS slides with tissue-compartment
+  masks and cell annotations (RUMC, Jules Bordet Institute, TCGA-BRCA) plus 2,032 cropped ROI PNGs with
+  masks and COCO cell boxes, 93 WSIBULK slides with manual tumor-bulk masks and XML, and 82 WSITILS slides
+  with a TILs score per slide.'
+landing_url: https://registry.opendata.aws/tiger/
+doi: null
+repository: other
+accession: null
+authors:
+- Mart van Rijthoven
+- Witali Aswolinskiy
+- Leslie Tessier
+- Maschenka Balkenhol
+- Joep Bogaerts
+- Jeroen van der Laak
+- Roberto Salgado
+- Francesco Ciompi
+publications:
+- title: 'Tumor-infiltrating lymphocytes in breast cancer through artificial intelligence: biomarker analysis
+    from the results of the TIGER challenge'
+  doi: 10.1101/2025.02.28.25323078
+  url: https://api.biorxiv.org/details/biorxiv/10.1101/2025.02.28.25323078
+date_published: null
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 500
+    y: 500
+    z: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: Her2-positive and triple-negative breast cancer core-needle biopsies and surgical resections,
+    H&E (RUMC, Jules Bordet Institute, TCGA-BRCA)
+  labels_stains:
+  - hematoxylin and eosin
+data:
+  formats:
+  - tiff
+  - png
+  size_bytes: 181720422453
+  n_items: 371
+  access: open
+  download_url: s3://tiger-training
+  download_method: s3
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  - bounding-box
+  - other
+  coverage: partial
+  format: TIFF masks and XML polygons (tissue-bcss, tissue-cells, tumor-bulk), ROI PNG masks, tiger-coco.json
+    cell boxes (COCO), and tiger-til-scores-wsitils.csv (image-id,tils-score,comment)
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  - detection
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-NC-4.0
+  url: https://creativecommons.org/licenses/by-nc/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-26T02:18:00Z'
+  evidence_urls:
+  - https://registry.opendata.aws/tiger/
+  - https://tiger-training.s3.us-west-2.amazonaws.com/?list-type=2&delimiter=/
+  - https://tiger-training.s3.us-west-2.amazonaws.com/data-structure.txt
+  - https://tiger-training.s3.us-west-2.amazonaws.com/license.txt
+  - https://tiger-training.s3.us-west-2.amazonaws.com/wsitils/tiger-til-scores-wsitils.csv
+  - https://zenodo.org/api/records/6014422
+  - https://api.biorxiv.org/details/biorxiv/10.1101/2025.02.28.25323078
+  - https://tiger.grand-challenge.org/Data/
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-26T03:06:18Z'
+notes: 'Bucket listed in full: wsirois 196 WSIs (79 GB) with 151 BCSS-derived and 168 tissue-cells mask/XML
+  pairs, 2,032 ROI PNGs; wsibulk 93 WSIs (48 GB) with tumor-bulk masks and XMLs; wsitils 82 WSIs (36 GB),
+  CSV with 82 scores (a TILs score and a free-text comment); 181.7 GB total. Differs from zenodo-6014422-tiger-wsirois-breast-rois,
+  which is only the ROI-level PNG crops of WSIROIS (2.6 GB); that record says the WSI-level annotations,
+  WSIBULK and WSITILS are available only through the challenge data section, here mirrored on AWS. License:
+  bucket license.txt says annotations and RUMC/JB slides are CC BY-NC 4.0; TCGA-BRCA slides keep the original
+  TCGA terms. Paper: bioRxiv abstract only (full text not open). no train/val split was found. enricher:
+  tissue class ids 1-7 from the challenge Data page (now readable).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "s3://tiger-training/   5,633 objects, 181.7 GB\ndata-structure.txt  license.txt\nwsirois/\n\
+      \  wsi-level-annotations/\n    images/*.tif                          195  79.3 GB  pyramidal TIFF,\
+      \ JPEG (+ gdc-manifest-tiger.txt)\n    annotations-tissue-bcss-masks/*.tif   151  class masks (TCGA)\n\
+      \    annotations-tissue-bcss-xmls/*.xml    151\n    annotations-tissue-cells-masks/*.tif  168  class\
+      \ masks (RUMC, JB, TCGA)\n    annotations-tissue-cells-xmls/*.xml   168\n    tissue-masks/*_tissue.tif\
+      \             196\n  roi-level-annotations/\n    tissue-bcss/images/*.png  152 (+ Thumbs.db)   masks/*.png\
+      \ 151\n    tissue-cells/images/*.png 1879                masks/*.png 1879\n    tissue-cells/tiger-coco.json\
+      \          cell boxes (COCO)\nwsibulk/\n  images/*.tif                             93  48.3 GB\n\
+      \  annotations-tumor-bulk/{masks/*.tif,xmls/*.xml}  93 each\n  tissue-masks/*_tissue.tif       \
+      \         93\nwsitils/\n  images/*.tif                             82  36.4 GB\n  tissue-masks/*_tissue.tif\
+      \                82\n  tiger-til-scores-wsitils.csv\n"
+    n_files: 5633
+    listing_complete: true
+  sample:
+    urls:
+    - https://tiger-training.s3.amazonaws.com/wsirois/wsi-level-annotations/images/TCGA-OL-A5RW-01Z-00-DX1.E16DE8EE-31AF-4EAF-A85F-DB3E3E2C3BFF.tif
+    - https://tiger-training.s3.amazonaws.com/wsirois/wsi-level-annotations/annotations-tissue-cells-masks/TCGA-OL-A5RW-01Z-00-DX1.E16DE8EE-31AF-4EAF-A85F-DB3E3E2C3BFF.tif
+    - https://tiger-training.s3.amazonaws.com/wsirois/wsi-level-annotations/annotations-tissue-bcss-masks/TCGA-OL-A5RW-01Z-00-DX1.E16DE8EE-31AF-4EAF-A85F-DB3E3E2C3BFF.tif
+    size_bytes: 32826314
+    description: Smallest annotated WSIROIS slide (32.7 MB, TCGA) with its tissue-cells and tissue-bcss
+      class masks
+  arrays:
+  - role: raw
+    path_pattern: '*/images/*.tif'
+    format: tiff
+    axes: yxs
+    shape:
+    - 13618
+    - 12879
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 15
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Pyramidal TIFF: page 0 full resolution (XResolution 20000 px/cm = 0.5 um/px), pages
+      1+ REDUCEDIMAGE levels halving; axes for page 0, photometric 6 (YCbCr JPEG) = RGB colour. Shape
+      of the sampled TCGA-OL-A5RW slide.'
+  - role: label
+    path_pattern: wsirois/wsi-level-annotations/annotations-tissue-*-masks/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 13618
+    - 12879
+    shape_varies: true
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 5
+    normalization: unknown
+    encoding: semantic-ids
+    classes: &id001
+    - id: 1
+      name: invasive tumor
+    - id: 2
+      name: tumor-associated stroma
+    - id: 3
+      name: in-situ tumor
+    - id: 4
+      name: healthy glands
+    - id: 5
+      name: necrosis not in-situ
+    - id: 6
+      name: inflamed stroma
+    - id: 7
+      name: rest
+    alignment: same-grid
+    alignment_notes: Same stem as images/<stem>.tif; same level-0 shape, same 6-level pyramid and XResolution
+      as the slide. 0 = not annotated (outside ROIs). Classes from the challenge Data page.
+  - role: raw
+    path_pattern: wsirois/roi-level-annotations/*/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 139
+    - 157
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ROI crops; file name <slide>_[x0, y0, x1, y1].png gives the ROI box in level-0 pixels.
+  - role: label
+    path_pattern: wsirois/roi-level-annotations/*/masks/*.png
+    format: png
+    axes: yx
+    shape:
+    - 139
+    - 157
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    encoding: semantic-ids
+    classes: *id001
+    alignment: same-grid
+    alignment_notes: Same file name under masks/ as under images/; probed pair has the same 139x157 grid.
+  - role: label
+    path_pattern: wsirois/roi-level-annotations/tissue-cells/tiger-coco.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: boxes-table
+    classes: null
+    alignment: unknown
+    alignment_notes: COCO boxes of lymphocytes and plasma cells in the tissue-cells ROIs (8x8 um boxes
+      centred on point annotations, per the Data page).
+  - role: label
+    path_pattern: wsibulk/annotations-tumor-bulk/masks/*.tif
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    encoding: unknown
+    classes: null
+    alignment: unknown
+    alignment_notes: Tumor-bulk masks, same stem as wsibulk/images; not probed.
+  notes: 'Full bucket listing (tools/listing.py https://tiger-training.s3.us-west-2.amazonaws.com/: 5,633
+    objects, 181,720,422,453 B, complete, exact; equals the record). Probed and read page shapes of the
+    smallest annotated WSIROIS slide TCGA-OL-A5RW (13618x12879x3, 6 levels) and both its masks, and one
+    tissue-cells ROI pair. Sampled the slide (32,717,928 B; min 15 max 255 mean 233), its tissue-cells
+    mask (32,438 B; values {0,1,2}) and tissue-bcss mask (75,948 B; values {0,1,2,5}); value ranges from
+    one sample. XML polygons, COCO JSON, tumor-bulk masks and tissue masks not opened. No single archive:
+    download_url stays the S3 bucket; objects are direct https URLs from the listing. Pixel size: Data
+    page "released at a spacing (pixel size) of approximately 0.5 um/px"; TIFF XResolution 20000 px/cm
+    agrees.'
