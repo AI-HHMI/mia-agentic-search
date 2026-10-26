@@ -65,12 +65,13 @@ provenance:
   - https://reg2026-challenge-dataset.s3.ap-northeast-2.amazonaws.com/manifest.json
   - https://reg2026-challenge-dataset.s3.ap-northeast-2.amazonaws.com/train_CoT.json
   - https://reg2026-challenge-dataset.s3.ap-northeast-2.amazonaws.com/manifest_test1_20260610.json
+  - https://reg2026.grand-challenge.org/data-description/
   confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-26T02:36:07Z'
+  last_checked: '2026-10-26T03:19:20Z'
 notes: 'Bucket listed in full (ap-northeast-2, 2.48 TB): train/ 11,220 TIFF slides (2.29 TB), test1/ 350
   slides (195 GB, manifest says 280 original plus 70 uterus slides), debug/ 7 slides. train_CoT.json has
   11,220 entries whose ids match the train files one to one; first-step organ counts: Prostate 2,418,
@@ -78,5 +79,76 @@ notes: 'Bucket listed in full (ap-northeast-2, 2.48 TB): train/ 11,220 TIFF slid
   244, Nipple 1, Anus 1 (the registry says 7 organs). The registry says about 12,000 cases and a second
   test phase to follow; counts here are what the bucket held when read. The labels are structured report
   content in JSON rather than region annotations. Licence CC BY-NC-SA as written on the registry page
-  (read as 4.0); the bucket has no licence file. Pixel size and scanners are not stated on the pages read
-  (challenge site not read), so voxel size is null. No dataset paper is listed.'
+  (read as 4.0); the bucket has no licence file. Pixel size is not stated (challenge data page: 20x magnification
+  only, scanners differ by institution), so voxel size is null. No dataset paper is listed.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 's3://reg2026-challenge-dataset/   11,580 objects, 2.48 TB (ap-northeast-2)
+
+      manifest.json                   file list (CloudFront URLs, sizes, etags)
+
+      manifest_test1_20260610.json
+
+      train_CoT.json                  35.2 MB  chain-of-thought report steps per training slide
+
+      train/PIT_NN_NNNNN_NN.tiff      11,220  2.29 TB  single-level TIFF, JPEG, RGB
+
+      test1/PIT_NNNNNN.tiff              350  195 GB  (no reference released)
+
+      debug/PIT_*.tiff                     7  2.3 GB
+
+      '
+    n_files: 11580
+    listing_complete: true
+  sample:
+    urls:
+    - https://reg2026-challenge-dataset.s3.amazonaws.com/train/PIT_06_00633_01.tiff
+    - https://reg2026-challenge-dataset.s3.amazonaws.com/train_CoT.json
+    size_bytes: 36453401
+    description: Smallest training slide (1.3 MB) and the training label JSON
+  arrays:
+  - role: raw
+    path_pattern: train/*.tiff
+    format: tiff
+    axes: yxs
+    shape:
+    - 31104
+    - 29917
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Single-page (non-pyramidal) TIFF, RGB samples (s). Probed sizes 3722x2627, 31104x29917,
+      17480x73773. Resolution tags are inconsistent (10 px/cm default in PIT_01_00019_01, 43389 px/cm
+      in PIT_06_00281_01), so they are not used.
+  - role: label
+    path_pattern: train_CoT.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: One entry per training slide (id = file name) with question/answer/next_question
+      steps (organ, procedure, histologic type, grade).
+  notes: 'Full bucket listing (tools/listing.py https://reg2026-challenge-dataset.s3.ap-northeast-2.amazonaws.com/:
+    11,580 objects, 2,482,527,669,350 B, complete, exact; equals the record). Probed 3 training TIFFs
+    (page shapes, resolution tags). Sampled the smallest, PIT_06_00633_01.tiff (1,275,764 B): 3722x2627x3
+    uint8, min 0 max 255 mean 228, samples not identical; value range from one sample. Voxel size not
+    found; checked: TIFF tags (inconsistent, one is the 10 px/cm default), AWS registry page, challenge
+    data-description page (20x magnification only), manifest.json (no spacing). No single archive: download_url
+    stays the bucket; sample URLs use the global endpoint reg2026-challenge-dataset.s3.amazonaws.com (the
+    ap-northeast-2 host is not on the TensorSwitch allowlist). manifest.json also lists CloudFront mirrors
+    (d2ffc588b8gysg.cloudfront.net), not checked.'
