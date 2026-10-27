@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-5863317-u373-glioblastoma-brightfield-tracking
 title: Tracking Glioblastoma-astrocytoma cells imaged in brightfield with TrackMate-Cellpose
 short_name: U373 glioblastoma cell tracking (brightfield)
-description: One bright-field time-lapse (115 frames, 520 x 696 px, uint8, 650 nm pixels) of U373 glioblastoma-astrocytoma cells
-  migrating on a polyacrylamide gel, with the TrackMate XML (custom Cellpose segmentation, Simple LAP tracking) and the custom
-  Cellpose model trained with the ZeroCostDL4Mic notebook.
+description: One bright-field time-lapse (115 frames, 520 x 696 px, uint8, 650 nm pixels) of U373 glioblastoma-astrocytoma
+  cells migrating on a polyacrylamide gel, with the TrackMate XML (custom Cellpose segmentation, Simple
+  LAP tracking) and the custom Cellpose model trained with the ZeroCostDL4Mic notebook.
 landing_url: https://zenodo.org/records/5863317
 doi: 10.5281/zenodo.5863317
 repository: Zenodo
@@ -42,8 +42,8 @@ annotations:
   - instance-segmentation
   - tracking
   coverage: dense
-  format: Glioblastoma_brightfield.xml (TrackMate XML from Cellpose segmentation and the Simple LAP tracker); the trained Cellpose
-    model is in 'Cellpose model 171121-20211118T111402Z-001.zip'
+  format: Glioblastoma_brightfield.xml (TrackMate XML from Cellpose segmentation and the Simple LAP tracker);
+    the trained Cellpose model is in 'Cellpose model 171121-20211118T111402Z-001.zip'
   source: automatic
 ml:
   tasks:
@@ -67,12 +67,76 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-27T03:40:00Z'
-notes: 'Single time-lapse stack, so size is at the lower bound of the usable criteria. Zenodo page and the imagej.net TrackMate-Cellpose
-  tutorial: U373 cells on polyacrylamide gel, bright-field, custom Cellpose model (cell size about 60 um) and Simple LAP tracker;
-  the tutorial says the model was trained with the ZeroCostDL4Mic Cellpose notebook for 500 epochs on 214 paired 520 x 696 patches
-  starting from cyto2, but not how the training masks were made, so annotation source is automatic here (model output) and the
-  training pairs are not part of this record. TIFF header read by range request: ImageJ TIFF, 115 x 520 x 696 (t,y,x), uint8,
-  uncompressed, 650.0007 nm pixels (z spacing equals xy in the header, but this is a 2D time series). The XML was not opened (spot
-  and track counts unknown). Microscope, objective and frame interval are not stated. Zenodo listing: TIF 41,642,176 B, model ZIP
-  25,003,020 B, XML 2,898,446 B, PNG 382,855 B (size_bytes is their sum).'
+  last_checked: '2026-10-27T03:22:20Z'
+notes: 'Single time-lapse stack, so size is at the lower bound of the usable criteria. Zenodo page and
+  the imagej.net TrackMate-Cellpose tutorial: U373 cells on polyacrylamide gel, bright-field, custom Cellpose
+  model (cell size about 60 um) and Simple LAP tracker; the tutorial says the model was trained with the
+  ZeroCostDL4Mic Cellpose notebook for 500 epochs on 214 paired 520 x 696 patches starting from cyto2,
+  but not how the training masks were made, so annotation source is automatic here (model output) and
+  the training pairs are not part of this record. Microscope and objective are not stated. size_bytes
+  = Zenodo listing total. enricher: XML read: 520 spots with ROI polygons in 6 tracks, CELLPOSE_DETECTOR
+  (custom model, diameter 50) with KALMAN_TRACKER (not Simple LAP as the tutorial says); frame interval
+  15 min (header + XML).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'zenodo record 5863317 (4 files, flat, 69.9 MB)
+
+      A_Glioblastoma_brightfield.png  (382,855 B)
+
+      Cellpose model 171121-20211118T111402Z-001.zip  (25,003,020 B)
+
+      Glioblastoma_brightfield.tif  (41,642,176 B)
+
+      Glioblastoma_brightfield.xml  (2,898,446 B)'
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5863317/files/Glioblastoma_brightfield.tif
+    - https://zenodo.org/records/5863317/files/Glioblastoma_brightfield.xml
+    size_bytes: 44540622
+    description: 'The whole dataset: the one time-lapse and its TrackMate XML.'
+  arrays:
+  - role: raw
+    path_pattern: Glioblastoma_brightfield.tif
+    format: tiff
+    axes: tyx
+    shape:
+    - 115
+    - 520
+    - 696
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 24
+    - 186
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'ImageJ stack, 115 frames, calibration 0.65 micron/px, frame interval 15 min (ImageJ
+      finterval 15; TrackMate time unit min). The header z spacing is a leftover: this is a 2D time series.'
+  - role: label
+    path_pattern: Glioblastoma_brightfield.xml
+    format: other
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: tracks-table
+    classes:
+    - id: null
+      name: cell
+    n_ids_observed: 6
+    alignment: same-grid
+    alignment_notes: 'TrackMate XML: ImageData names Glioblastoma_brightfield.tif (696x520, 115 frames,
+      pixel 0.6500 micron, interval 15.0 min). CELLPOSE_DETECTOR, KALMAN_TRACKER; 520 spots (all with
+      ROI polygons: True), 513 edges, 6 tracks, 0 splits. Positions in micron.'
+  notes: 'Listing (Zenodo API, tools/listing.py): 4 files, 69,926,497 B, complete, exact sizes. Probe:
+    ImageJ TIFF, uint8, uncompressed, 115x520x696 (tyx), 650.0007 nm. Sample (whole TIFF, 41.6 MB): range
+    [24, 186], median 87 (normalization not documented). XML read in full (2.9 MB): nspots 520 over 115
+    frames, 6 tracks, 513 edges, 0 splits. The Cellpose model zip (25 MB) was not opened. Labels exist
+    only as TrackMate spots/ROI polygons/tracks (automatic); no masks shipped. TrackMate XML is not a
+    schema format, hence format other. download_url stays the record page; direct files are https://zenodo.org/records/5863317/files/<name>.'
