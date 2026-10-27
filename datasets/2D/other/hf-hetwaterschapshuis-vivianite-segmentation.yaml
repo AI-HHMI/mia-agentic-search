@@ -1,0 +1,133 @@
+schema_version: '1.2'
+id: hf-hetwaterschapshuis-vivianite-segmentation
+title: Vivianite segmentation dataset
+short_name: Vivianite binary segmentation (microscopy)
+description: 36 manually annotated microscopy image tiles (896 px wide) from three microscope samples with binary
+  masks marking vivianite (an iron phosphate mineral), annotated in CVAT and released as PNG image/mask pairs.
+landing_url: https://huggingface.co/datasets/hetwaterschapshuis/vivianite-segmentation-dataset
+doi: null
+repository: HuggingFace
+accession: hetwaterschapshuis/vivianite-segmentation-dataset
+authors:
+- Het Waterschapshuis
+publications: []
+date_published: '2026-08-13'
+imaging:
+  modality:
+  - other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: null
+  organism: []
+  sample: Microscope samples 00017, 0002 and 0003 containing vivianite; no sample preparation or instrument stated
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: 46158997
+  n_items: 36
+  access: open
+  download_url: https://huggingface.co/datasets/hetwaterschapshuis/vivianite-segmentation-dataset/tree/main
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: 'Binary PNG masks (0 background, 255 vivianite) in all/masks/, paired with all/images/ by all/metadata.jsonl;
+    CVAT export in source/annotations.xml'
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-27T17:45:00Z'
+  evidence_urls:
+  - https://huggingface.co/datasets/hetwaterschapshuis/vivianite-segmentation-dataset
+  - https://huggingface.co/datasets/hetwaterschapshuis/vivianite-segmentation-dataset/raw/main/README.md
+  - https://huggingface.co/api/datasets/hetwaterschapshuis/vivianite-segmentation-dataset
+  - https://huggingface.co/datasets/hetwaterschapshuis/vivianite-segmentation-dataset/raw/main/source/annotations.xml
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-27T18:25:00Z'
+notes: 'Dataset card says only "microscopy"; no instrument, imaging technique (modality set to other), pixel size,
+  magnification or sample preparation is stated on the card, the file listing or annotations.xml, and there is no
+  linked paper (checked: card, HF API record, file listing, CVAT annotations.xml). The card says tiles are 896 x 916
+  px while the HF viewer shows width 896; the exact height was not verified. 36 image/mask pairs in a 3x4 tile grid
+  per sample (00017: 12, 0002: 12, 0003: 12) per the file listing; the CVAT job lists 168 frames, so the released
+  set is a subset. enricher: size_bytes 46,158,997 B from the full HF file listing (was HF usedStorage 44,364,857 B); tiles confirmed 896 x 916 px. Authors given as the
+  organisation Het Waterschapshuis (copyright holder). No split is provided; the card advises splitting by sample_id.
+  Files are downloaded from the HF repository (no single archive).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      ./               3 files   22.4 KB  .gitattributes, LICENSE, README.md
+      all/             1 file     4.1 KB  metadata.jsonl (image/mask pairs, sample_id)
+      all/images/     36 files   43.6 MB  .png  (<sample>_r<row>_c<col>.png; samples 00017, 0002, 0003)
+      all/masks/      36 files  730.8 KB  .png  (same names as images)
+      source/          1 file     1.8 MB  annotations.xml (CVAT 1.1 export, RLE masks)
+    n_files: 77
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/hetwaterschapshuis/vivianite-segmentation-dataset/resolve/main/all/images/00017_r00_c00.png
+    - https://huggingface.co/datasets/hetwaterschapshuis/vivianite-segmentation-dataset/resolve/main/all/masks/00017_r00_c00.png
+    size_bytes: 1309745
+    description: One RGB tile (916x896) and its binary vivianite mask
+  arrays:
+  - role: raw
+    path_pattern: all/images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 916
+    - 896
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 89
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: all/masks/*.png
+    format: png
+    axes: yx
+    shape:
+    - 916
+    - 896
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: vivianite
+    alignment: same-grid
+    alignment_notes: Mask has the same file name as its image (all/images/X.png with all/masks/X.png), paired in all/metadata.jsonl; same 916x896 grid, the image has 3 RGB samples (not identical, so real colour).
+  notes: 'Full HF file listing (77 files, exact sizes). Probed 3 images (00017_r00_c00, 0002_r02_c03, 0003_r02_c03): all
+    PNG 916x896 RGB uint8, deflate. Sampled 00017_r00_c00 image + mask and 0003_r02_c03 image: mask values {0: 691266,
+    255: 129470} (16% vivianite), image values 89-255 in 0003_r02_c03 (one sample; p1 160, median 229), samples not
+    identical. Voxel size not found; checked: PNG headers (no pHYs calibration reported), dataset card, HF API record,
+    metadata.jsonl, CVAT annotations.xml, the organisation''s other HF repos (one model repo), no paper. Direct
+    download: no archive; every file is a direct HF resolve URL (all/images/*.png, all/masks/*.png).'
