@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-8182297-ecoli-growth-omnipose-tracking
 title: Tracking bacterial growth with TrackMate-Omnipose
 short_name: E. coli growth tracking (phase contrast)
-description: One phase-contrast time-lapse (61 frames, 1896 x 1824 px, uint16, stabilized and cropped) of E. coli bacteria from
-  the Barras lab (Institut Pasteur), with the TrackMate XML produced by the Omnipose integration (segmentation of each bacterium
-  and tracking).
+description: One phase-contrast time-lapse (61 frames, 1896 x 1824 px, uint16, stabilized and cropped)
+  of E. coli bacteria from the Barras lab (Institut Pasteur), with the TrackMate XML produced by the Omnipose
+  integration (segmentation of each bacterium and tracking).
 landing_url: https://zenodo.org/records/8182297
 doi: 10.5281/zenodo.8182297
 repository: Zenodo
@@ -20,11 +20,15 @@ imaging:
   modality:
   - phase-contrast
   dimensionality: 2D+t
-  voxel_size_nm: null
+  voxel_size_nm:
+    x: 70
+    y: 70
+    z: null
   channels: 1
   organism:
   - Escherichia coli
-  sample: E. coli bacteria imaged by phase contrast (Barras lab, Institut Pasteur); file name suggests a washed culture, position XY1
+  sample: E. coli bacteria imaged by phase contrast (Barras lab, Institut Pasteur); file name suggests
+    a washed culture, position XY1
   labels_stains: []
 data:
   formats:
@@ -40,7 +44,8 @@ annotations:
   - instance-segmentation
   - tracking
   coverage: dense
-  format: 20230331_washed_XY1.ome-1_stabilized_cropped.xml (TrackMate XML with Omnipose-segmented bacteria as spots and tracks)
+  format: '20230331_washed_XY1.ome-1_stabilized_cropped.xml (TrackMate XML: 10,215 Omnipose-segmented
+    bacteria as spots with ROI polygons, linked by the overlap tracker into 53 tracks)'
   source: automatic
 ml:
   tasks:
@@ -58,16 +63,79 @@ provenance:
   evidence_urls:
   - https://zenodo.org/api/records/8182297
   - https://zenodo.org/api/records/8182297/files/20230331_washed_XY1.ome-1_stabilized_cropped.tif/content
+  - https://imagej.net/plugins/trackmate/detectors/trackmate-omnipose
   confidence: 0.55
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-27T03:25:00Z'
-notes: 'Single time-lapse stack, so size is at the lower bound of the usable criteria; the Zenodo page is brief and points to the
-  TrackMate-Omnipose page on imagej.net, which returned 404 when fetched, so how the XML was produced is taken from the title
-  and description only (Omnipose detector in TrackMate). TIFF header read by range request: ImageJ TIFF, 61 frames x 1896 x 1824
-  (t,y,x), uint16, uncompressed, value range 0-4117; the header stores no x/y calibration (only a 0.07 micron spacing), so pixel
-  size is null. The XML was not opened, so spot and track counts are unknown and the annotations are assumed to be the automatic
-  Omnipose output without manual curation. Zenodo listing: TIF 421,932,542 B, XML 27,813,173 B, PNG 812,019 B (size_bytes is their
-  sum). No paper is named.'
+  last_checked: '2026-10-27T03:05:56Z'
+notes: 'Single time-lapse stack, so size is at the lower bound of the usable criteria; the Zenodo page
+  is brief and points to the TrackMate-Omnipose page on imagej.net, which returned 404 when fetched, so
+  how the XML was produced is taken from the title and description only (Omnipose detector in TrackMate).
+  Annotations are the automatic Omnipose output; no manual curation is stated. Zenodo listing: TIF 421,932,542
+  B, XML 27,813,173 B, PNG 812,019 B (size_bytes is their sum). No paper is named. enricher: voxel size
+  70x70 nm from the imagej.net TrackMate-Omnipose page ("small pixel size (70 nm)"), the TIFF XResolution
+  (0.07 micron/px, ImageJ unit microns) and the XML pixelwidth (was null); the page now loads.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'zenodo record 8182297 (3 files, flat, 450.6 MB)
+
+      20230331_washed_XY1.ome-1_stabilized_cropped.tif   (421,932,542 B, raw time-lapse)
+
+      20230331_washed_XY1.ome-1_stabilized_cropped.xml   (27,813,173 B, TrackMate spots + tracks)
+
+      0-trackmate-omnipose-01.png   (812,019 B, screenshot)'
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/8182297/files/20230331_washed_XY1.ome-1_stabilized_cropped.tif
+    - https://zenodo.org/records/8182297/files/20230331_washed_XY1.ome-1_stabilized_cropped.xml
+    size_bytes: 449745715
+    description: 'The whole dataset: the one time-lapse (61x1896x1824 uint16) and its TrackMate XML.'
+  arrays:
+  - role: raw
+    path_pattern: 20230331_washed_XY1.ome-1_stabilized_cropped.tif
+    format: tiff
+    axes: tyx
+    shape:
+    - 61
+    - 1896
+    - 1824
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 384
+    - 2685
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ hyperstack, 61 frames; stabilized and cropped per the file name (borders may
+      hold fill values; ImageJ display range 0-4117).
+  - role: label
+    path_pattern: 20230331_washed_XY1.ome-1_stabilized_cropped.xml
+    format: other
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: tracks-table
+    classes:
+    - id: null
+      name: bacterium
+    n_ids_observed: 53
+    alignment: same-grid
+    alignment_notes: 'TrackMate XML: ImageData names this TIFF (1824x1896, 61 frames, pixel 0.07 micron,
+      interval 120 s). OMNIPOSE_DETECTOR (model BACT_PHASE), OVERLAP_TRACKER; 10,215 spots, each with
+      a ROI polygon, 10,161 edges, 53 tracks. Positions in micron: divide by 0.07 for pixels.'
+  notes: 'Listing (tools/listing.py, Zenodo API): 3 files, 450,557,734 B, complete, exact sizes. Probe:
+    ImageJ TIFF, uint16, uncompressed, 61x1896x1824 (tyx); XResolution 14.2857/unit = 0.07 micron/px (ImageJ
+    unit microns). Sample: first 42 MB by range, frame 0 only parsed: range [384, 2685], median 1365 (one
+    frame; normalization not documented). XML read in full (27.8 MB): nspots 10,215 in all 61 frames,
+    all with ROI polygons, 53 tracks. No label masks are shipped: segmentation exists only as spot ROI
+    polygons. TrackMate XML is not a schema format, hence format other. download_url stays the record
+    page; direct files are https://zenodo.org/records/8182297/files/<name>.'
