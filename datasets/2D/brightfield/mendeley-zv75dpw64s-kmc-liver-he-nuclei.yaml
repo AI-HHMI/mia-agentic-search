@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: mendeley-zv75dpw64s-kmc-liver-he-nuclei
 title: Segmentation of Liver Cancer H&E Histopathology Images (KMC liver dataset)
 short_name: KMC liver cancer nuclei segmentation (H&E)
-description: 80 H&E-stained liver cancer histopathology images (40x, Olympus scanner, 1920x1440 px) with pathologist-annotated
-  nuclei; the zip holds 239 image/label PNG pairs in Train, Validation and Test folders.
+description: 80 H&E-stained liver cancer histopathology images (40x, Olympus scanner, 1920x1440 px) with
+  pathologist-annotated nuclei; the zip holds 239 image/label PNG pairs in Train, Validation and Test
+  folders.
 landing_url: https://data.mendeley.com/datasets/zv75dpw64s
 doi: 10.17632/zv75dpw64s.1
 repository: other
@@ -11,7 +12,8 @@ accession: null
 authors:
 - Shyam Lal
 publications:
-- title: 'NucleiSegNet: Robust deep learning architecture for the nuclei segmentation of liver cancer histopathology images'
+- title: 'NucleiSegNet: Robust deep learning architecture for the nuclei segmentation of liver cancer
+    histopathology images'
   doi: 10.1016/j.compbiomed.2020.104075
   url: https://doi.org/10.1016/j.compbiomed.2020.104075
 date_published: '2026-09-08'
@@ -62,10 +64,84 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-27T03:45:00Z'
-notes: 'KMC_LIverSegmentation.zip (135 MB) holds 478 PNGs: Train 195 pairs, Validation 39, Test 5 (data/ and label/ folders,
-  counted with peek_archive). Mendeley says 80 images of 1920x1440 px, but the zip has 239 pairs, so these are
-  probably tiles cut from the 80 images; tile size not verified. Mendeley v1 is dated 2026-09-08, the paper is from 2021.
-  The paper full text is not open access (abstract only); the GitHub README says the same data is also sent on email
-  request with its own non-commercial terms, while the Mendeley record states CC BY 4.0. Label type (binary vs instance) is
-  not stated on the Mendeley page; README speaks of binary labels. Pixel size is not stated.'
+  last_checked: '2026-10-27T03:29:47Z'
+notes: 'KMC_LIverSegmentation.zip (135 MB) holds 478 PNGs: Train 195 pairs, Validation 39, Test 5 (data/
+  and label/ folders, counted with peek_archive). Mendeley says 80 images of 1920x1440 px, but the zip
+  has 239 pairs, so these are probably tiles cut from the 80 images; tiles are 512x512 (enricher sample).
+  Mendeley v1 is dated 2026-09-08, the paper is from 2021. The paper full text is not open access (abstract
+  only); the GitHub README says the same data is also sent on email request with its own non-commercial
+  terms, while the Mendeley record states CC BY 4.0.  Pixel size is not stated. enricher: labels are near-binary
+  RGB PNGs with compression noise (background ~[0,1,5], nuclei ~white): threshold before use.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'KMC_LIverSegmentation.zip (134,824,094 B; 478 PNG members, 135.0 MB uncompressed)
+
+      KMC_LIverSegmentation/Train/data/<N>.png        195
+
+      KMC_LIverSegmentation/Train/label/<N>.png       195
+
+      KMC_LIverSegmentation/Validation/data/<N>.png    39
+
+      KMC_LIverSegmentation/Validation/label/<N>.png   39
+
+      KMC_LIverSegmentation/Test/data/<N>.png           5
+
+      KMC_LIverSegmentation/Test/label/<N>.png          5'
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.mendeley.com/public-files/datasets/zv75dpw64s/files/f2a4c8a8-7313-4304-9bb4-baf9f6907ed9/file_downloaded::KMC_LIverSegmentation/Test/data/0.png
+    - https://data.mendeley.com/public-files/datasets/zv75dpw64s/files/f2a4c8a8-7313-4304-9bb4-baf9f6907ed9/file_downloaded::KMC_LIverSegmentation/Test/label/0.png
+    size_bytes: 574256
+    description: 'Test pair 0: 512x512 RGB H&E tile and its label PNG.'
+  arrays:
+  - role: raw
+    path_pattern: KMC_LIverSegmentation/*/data/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 1
+    - 236
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB H&E tiles (512x512) cut from 1920x1440 images; tiling not documented.
+  - role: label
+    path_pattern: KMC_LIverSegmentation/*/label/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: null
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: same split and file name under data/ and label/ (e.g. Test/data/0.png
+      <-> Test/label/0.png); same 512x512 shape. Label is RGB, not exactly binary: background ~[0,1,5]
+      (90% of pixels) and nuclei near white, with thousands of slightly different colours (lossy-compression
+      artefacts), so threshold e.g. channel 0 > 127. README (NucleiSegNet): binary labels.'
+  notes: 'Listing: Mendeley public API (1 file, 134,824,094 B) plus the zip index (peek_archive): 478
+    PNGs, 239 pairs (Train 195, Validation 39, Test 5). listing.py did not expand the zip (URL has no
+    .zip suffix); tree from peek_archive. Probe: Test data/label 0.png 512x512x3 uint8 PNG. Sample (zip
+    members by range, 1.1 MB): Test 0 and Train 100 raw [1, 236] mean ~185; labels 0-255 with 4,351-6,011
+    unique RGB colours, foreground 6-9%. Values from two pairs only. No voxel size: Mendeley description
+    gives only 40x and 1920x1440 px, GitHub README none, paper not open access (abstract only). download_url
+    is the direct zip (usable, range requests, S3 redirect).'
