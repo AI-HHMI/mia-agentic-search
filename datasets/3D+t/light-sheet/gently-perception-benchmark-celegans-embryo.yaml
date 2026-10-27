@@ -1,13 +1,11 @@
 schema_version: '1.2'
 id: gently-perception-benchmark-celegans-embryo
-title: 'Gently Perception Agent Benchmark: C. elegans embryo light-sheet timelapses
-  with stage labels'
+title: 'Gently Perception Agent Benchmark: C. elegans embryo light-sheet timelapses with stage labels'
 short_name: C. elegans embryo stage benchmark (light-sheet)
-description: Dual-view selective plane illumination (diSPIM, view A) timelapses of
-  histone-labelled C. elegans embryos. Embryos 1-8 (1,474 3D timepoints) carry human-annotated
-  developmental stage transitions (early, bean, comma, 1.5-fold, 2-fold, pretzel,
-  hatched) for evaluating perception agents; embryos 9-105 (11,447 timepoints) are
-  an unannotated corpus.
+description: Dual-view selective plane illumination (diSPIM, view A) timelapses of histone-labelled C.
+  elegans embryos. Embryos 1-8 (1,474 3D timepoints) carry human-annotated developmental stage transitions
+  (early, bean, comma, 1.5-fold, 2-fold, pretzel, hatched) for evaluating perception agents; embryos 9-105
+  (11,447 timepoints) are an unannotated corpus.
 landing_url: https://huggingface.co/datasets/gently-project/gently-perception-benchmark
 doi: null
 repository: HuggingFace
@@ -24,7 +22,7 @@ imaging:
   - light-sheet
   dimensionality: 3D+t
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism:
   - Caenorhabditis elegans
   sample: embryo
@@ -33,7 +31,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: null
+  size_bytes: 311561322474
   n_items: 12921
   access: open
   download_url: null
@@ -44,7 +42,7 @@ annotations:
   - classification
   coverage: partial
   format: JSON (annotations.json with stage-transition timepoints per embryo)
-  source: manual
+  source: mixed
 ml:
   tasks:
   - classification
@@ -53,23 +51,98 @@ ml:
   baseline_code_url: null
 license:
   spdx: CC-BY-4.0
-  url: null
+  url: https://huggingface.co/datasets/gently-project/gently-perception-benchmark
 provenance:
   discovered_by: harvest-literature
   discovered_at: '2026-10-27T19:15:59Z'
   evidence_urls:
   - https://huggingface.co/datasets/gently-project/gently-perception-benchmark/raw/main/README.md
   - https://huggingface.co/api/datasets/gently-project/gently-perception-benchmark
+  - https://huggingface.co/datasets/gently-project/gently-perception-benchmark/resolve/main/data/volumes/embryo_1/annotations.json
   confidence: 0.7
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-27T19:15:59Z'
-notes: Annotations are embryo-level stage-transition timepoints (classification),
-  only for embryos 1-8; embryos 9-105 are unlabelled and their predicted_stages/predictions.jsonl
-  are model output, not labels. Voxel size not stated on the dataset card or API record;
-  no associated paper listed (card gives a 2026 BibTeX only), so no paper to check.
-  Volumes are int32 TIFF, shape (1,50,512,1024). n_items counts timepoints (1,474
-  annotated + 11,447 unannotated). Annotation file listing not inspected directly,
-  so annotations_verified is false.
+  annotations_verified: true
+  last_checked: '2026-10-27T19:51:13Z'
+notes: 'Annotations are embryo-level stage-transition timepoints (classification), only for embryos 1-8;
+  embryos 9-105 are unlabelled and their predicted_stages/predictions.jsonl are model output, not labels.
+  No associated paper found. n_items counts timepoints (1,474 annotated + 11,447 unannotated). enricher:
+  annotations.source mixed: early-pretzel transitions human-annotated (Dec 2024); embryo_1 annotations.json
+  says hatched transitions were added March 2026 from VLM classification breakpoints. enricher: channels
+  1 (single histone marker, one view per file); size from full HF file listing; annotations verified (annotations.json
+  read). enricher: voxel size still not found (card, API, JSON sidecars, web search).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "data/\n  reference_images/{early,bean,comma,1.5fold,2fold,pretzel}/  three_view.jpg, progression.jpg,\
+      \ metadata.json\n  volumes/\n    embryo_1/ .. embryo_8/        annotated: embryo_N_<YYYYMMDD_HHMMSS>.tif\
+      \ (one per timepoint), annotations.json\n      embryo_1/annotations.json\n      embryo_1/embryo_1_20251222_175656.tif\n\
+      \      embryo_1/embryo_1_20251222_180032.tif\n    embryo_9/ .. embryo_105/      unannotated: *.tif,\
+      \ annotations.json (provenance + model predictions),\n                                  predictions.jsonl,\
+      \ traces/tNNNN.json (embryo_9-75)\nREADME.md\n.gitattributes\n# 12,921 .tif (311.5 GB, 23-49 MB\
+      \ each), 105 annotations.json, 97 predictions.jsonl, 8,936 trace json"
+    n_files: 22079
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/gently-project/gently-perception-benchmark/resolve/main/data/volumes/embryo_1/embryo_1_20251222_175656.tif
+    - https://huggingface.co/datasets/gently-project/gently-perception-benchmark/resolve/main/data/volumes/embryo_1/annotations.json
+    size_bytes: 24197623
+    description: one annotated timepoint volume of embryo_1 plus its embryo-level stage annotations
+  arrays:
+  - role: raw
+    path_pattern: data/volumes/embryo_*/embryo_*_*.tif
+    format: tiff
+    axes: null
+    shape:
+    - 1
+    - 50
+    - 512
+    - 1024
+    shape_varies: false
+    dtype: int32
+    compression: deflate
+    value_range:
+    - 34
+    - 531
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: one file per timepoint; card states shape (1, 50, 512, 1024) with Z=50, Y=512, X=1024;
+      the leading size-1 axis is not named (tifffile reports QQYX), so axes left null.
+  - role: label
+    path_pattern: data/volumes/embryo_[1-8]/annotations.json
+    format: json
+    axes: null
+    shape: null
+    dtype: unknown
+    compression: none
+    normalization: unknown
+    encoding: other
+    classes:
+    - id: early
+      name: early
+    - id: bean
+      name: bean
+    - id: comma
+      name: comma
+    - id: 1.5fold
+      name: 1.5fold
+    - id: 2fold
+      name: 2fold
+    - id: pretzel
+      name: pretzel
+    - id: hatched
+      name: hatched
+    alignment: not-applicable
+    alignment_notes: one JSON per embryo with stage_transitions = first timepoint index of each stage;
+      a stage lasts until the next begins. Timepoint index = order of the timestamped .tif files in the
+      embryo folder (per card). annotations.json in embryo_9-105 is provenance/model output, not labels.
+  notes: 'Listing: HF API, 22,079 files, 311,561,322,474 bytes, complete. Probe: tiff (shaped), int32,
+    deflate, (1,50,512,1024). Sample (1 file, 24.2 MB): min 34, max 531, mean 105.8, std 11.8 (value range
+    from one sample). Labels are embryo-level stage-transition timepoints, not per-voxel. Axes null: leading
+    size-1 axis unnamed by the card or file. No single archive: files are per-timepoint TIFFs on HF (resolve/main
+    URLs from the listing are direct, range-capable). voxel size not found; checked: TIFF header (no calibration),
+    HF dataset card and API, annotations.json / reference metadata.json / traces json, paper search (Europe
+    PMC by title: none; web search: none), GitHub repo (not linked).'
