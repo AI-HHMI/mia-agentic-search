@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: zenodo-5864646-breast-cancer-collective-migration-tracking
 title: Tracking breast cancer cells migrating collectively and imaged in fluorescence with TrackMate-Cellpose
 short_name: Breast cancer collective migration (fluorescence)
-description: One fluorescence time-lapse (92 frames, 3 channels, 1024 x 1024 px, uint8, 634 nm pixels) of breast cancer cells
-  migrating collectively, supplied as RGB images split into three components (red nuclei, green cytoplasm, empty blue), with
-  the TrackMate XML from pretrained Cellpose cyto3 segmentation and the Overlap tracker.
+description: One fluorescence time-lapse (92 frames, 3 channels, 1024 x 1024 px, uint8, 634 nm pixels)
+  of breast cancer cells migrating collectively, supplied as RGB images split into three components (red
+  nuclei, green cytoplasm, empty blue), with the TrackMate XML from pretrained Cellpose cyto3 segmentation
+  and the Overlap tracker.
 landing_url: https://zenodo.org/records/5864646
 doi: 10.5281/zenodo.5864646
 repository: Zenodo
@@ -25,7 +26,8 @@ imaging:
     z: null
   channels: 3
   organism: []
-  sample: Breast cancer cells migrating collectively; cell line and species not named on the Zenodo page or the tutorial
+  sample: Breast cancer cells migrating collectively; cell line and species not named on the Zenodo page
+    or the tutorial
   labels_stains: []
 data:
   formats:
@@ -41,8 +43,8 @@ annotations:
   - instance-segmentation
   - tracking
   coverage: dense
-  format: BreastCancerCells_multiC.xml (TrackMate XML from Cellpose cyto3 segmentation of the cytoplasm channel and the Overlap
-    tracker)
+  format: BreastCancerCells_multiC.xml (TrackMate XML from Cellpose cyto3 segmentation of the cytoplasm
+    channel and the Overlap tracker)
   source: automatic
 ml:
   tasks:
@@ -66,12 +68,77 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-27T03:40:00Z'
-notes: 'Single time-lapse stack, so size is at the lower bound of the usable criteria. Facts from the Zenodo page and the imagej.net
-  TrackMate-Cellpose tutorial: red channel nuclei, green cytoplasm with variable staining, blue empty; segmentation with the pretrained
-  cyto3 model (cell diameter about 40 um, channel 2 target, channel 1 optional); Overlap tracker (scale 1.2, min IoU 0.3, precise
-  mode) because LAP gave too many false divisions; the tutorial notes some divisions are still missed. TIFF header read by range
-  request: ImageJ TIFF, 92 frames x 3 channels x 1024 x 1024, uint8, uncompressed, 633.7449 nm pixels. The cell line (species), stains,
-  microscope and frame interval are not stated, so organism is empty. The XML was not opened (spot and track counts unknown); the
-  publication date is not shown on the Zenodo page content read, so it is null. Zenodo listing: TIF 289,457,066 B, XML 103,040,812 B,
-  PNG 506,889 B (size_bytes is their sum).'
+  last_checked: '2026-10-27T03:24:35Z'
+notes: 'Single time-lapse stack, so size is at the lower bound of the usable criteria. Facts from the
+  Zenodo page and the imagej.net TrackMate-Cellpose tutorial: red channel nuclei, green cytoplasm with
+  variable staining, blue empty; segmentation with the pretrained cyto3 model (cell diameter about 40
+  um, channel 2 target, channel 1 optional); Overlap tracker (scale 1.2, min IoU 0.3, precise mode) because
+  LAP gave too many false divisions; the tutorial notes some divisions are still missed. The cell line
+  (species), stains, microscope and frame interval are not stated, so organism is empty. The publication
+  date is not shown on the Zenodo page content read, so it is null. enricher: the shipped XML says CELLPOSE_DETECTOR
+  model CYTO (diameter 30, target ch 2) and SIMPLE_SPARSE_LAP_TRACKER, not cyto3/Overlap as on the tutorial
+  page; 20,857 spots with ROI polygons in 460 tracks; interval 10 min.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'zenodo record 5864646 (3 files, flat, 393.0 MB)
+
+      A_ BreastCancerCells_schreenshot.png  (506,889 B)
+
+      BreastCancerCells_multiC.tif  (289,457,066 B)
+
+      BreastCancerCells_multiC.xml  (103,040,812 B)'
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5864646/files/BreastCancerCells_multiC.tif
+    - https://zenodo.org/records/5864646/files/BreastCancerCells_multiC.xml
+    size_bytes: 392497878
+    description: 'The whole dataset: the one time-lapse and its TrackMate XML.'
+  arrays:
+  - role: raw
+    path_pattern: BreastCancerCells_multiC.tif
+    format: tiff
+    axes: tcyx
+    shape:
+    - 92
+    - 3
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ composite hyperstack, 92 frames x 3 channels (c0 red nuclei, c1 green cytoplasm,
+      c2 blue empty per the tutorial; c2 was all 0 in the sample), calibration 0.6337 micron/px, interval
+      10 min.
+  - role: label
+    path_pattern: BreastCancerCells_multiC.xml
+    format: other
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: tracks-table
+    classes:
+    - id: null
+      name: cell
+    n_ids_observed: 460
+    alignment: same-grid
+    alignment_notes: 'TrackMate XML: ImageData names BreastCancerCells_multiC.tif (1024x1024, 92 frames,
+      pixel 0.6337 micron, interval 10.0 min). CELLPOSE_DETECTOR, SIMPLE_SPARSE_LAP_TRACKER; 20,857 spots
+      (all with ROI polygons: True), 20,247 edges, 460 tracks, 0 splits. Positions in micron.'
+  notes: 'Listing (Zenodo API, tools/listing.py): 3 files, 393,004,767 B, complete, exact sizes. Probe:
+    ImageJ TIFF, uint8, uncompressed, 92x3x1024x1024 (tcyx), 633.7449 nm. Sample: first 60 MB by range
+    (57 pages = 19 frames x 3 channels, read as contiguous data): c0 [0, 255] mean 26.2, c1 [0, 255] mean
+    18.6, c2 all 0; values from those frames only, normalization not documented. XML read in full (103
+    MB): nspots 20,857 in all 92 frames, 460 tracks, 20,247 edges, 0 splits. Labels exist only as TrackMate
+    spots/ROI polygons/tracks (automatic); no masks shipped. TrackMate XML is not a schema format, hence
+    format other. download_url stays the record page; direct files are https://zenodo.org/records/5864646/files/<name>.'
