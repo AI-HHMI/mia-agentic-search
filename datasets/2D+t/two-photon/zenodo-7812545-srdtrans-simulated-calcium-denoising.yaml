@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: zenodo-7812545-srdtrans-simulated-calcium-denoising
 title: 'SRDTrans dataset: simulated calcium imaging data at different imaging speeds'
 short_name: Simulated 2P calcium denoising pairs (SRDTrans)
-description: Six pairs of simulated two-photon calcium imaging recordings (NAOMi simulator) at imaging speeds of 0.1, 0.3, 1,
-  3, 10 and 30 Hz, each 1,000 frames of 490 x 490 pixels (pixel size 1.02 um). Each noisy stack (mixed Poisson-Gaussian noise,
-  SNR about -0.3 to -0.9 dB) has a noise-free ground-truth stack, released with the SRDTrans self-supervised denoising method.
+description: Six pairs of simulated two-photon calcium imaging recordings (NAOMi simulator) at imaging
+  speeds of 0.1, 0.3, 1, 3, 10 and 30 Hz, each 1,000 frames of 490 x 490 pixels (pixel size 1.02 um).
+  Each noisy stack (mixed Poisson-Gaussian noise, SNR about -0.3 to -0.9 dB) has a noise-free ground-truth
+  stack, released with the SRDTrans self-supervised denoising method.
 landing_url: https://zenodo.org/records/7812545
 doi: 10.5281/zenodo.7812545
 repository: Zenodo
@@ -43,8 +44,8 @@ annotations:
   types:
   - restoration-pairs
   coverage: dense
-  format: 'clean_<rate>Hz_50mWpower_1000frames.tif (noise-free ground truth) paired with noise_<rate>Hz_50mWpower_1000frames_<SNR>dBSNR_1000x490x490.tif
-    for six rates'
+  format: clean_<rate>Hz_50mWpower_1000frames.tif (noise-free ground truth) paired with noise_<rate>Hz_50mWpower_1000frames_<SNR>dBSNR_1000x490x490.tif
+    for six rates
   source: automatic
 ml:
   tasks:
@@ -66,10 +67,77 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-27T02:20:00Z'
-notes: 'Synthetic data, not recorded from a specimen: the paper Methods state the noise-free calcium imaging data were generated
-  with the NAOMi simulator and mixed Poisson-Gaussian noise was added at several levels; the paper gives 490 x 490 pixels and
-  1.02 um pixel size for all simulated calcium imaging data. The Zenodo description is only the title; the clean/noisy pairing
-  is read from the 12 file names in the Zenodo listing (6 clean, 6 noisy, 486,216,016 B each), the pairing was not checked at
-  file level. Frame rate is encoded in file names (0.1-30 Hz); z is null (2D+t). Paper Data availability points to the
-  GitHub repository for datasets; the Zenodo record was what was fetched.'
+  last_checked: '2026-10-27T03:02:10Z'
+notes: 'Synthetic data, not recorded from a specimen: the paper Methods state the noise-free calcium imaging
+  data were generated with the NAOMi simulator and mixed Poisson-Gaussian noise was added at several levels;
+  the paper gives 490 x 490 pixels and 1.02 um pixel size for all simulated calcium imaging data. The
+  Zenodo description is only the title; the clean/noisy pairing is read from the 12 file names in the
+  Zenodo listing (6 clean, 6 noisy, 486,216,016 B each), the pairing was not checked at file level. Frame
+  rate is encoded in file names (0.1-30 Hz); z is null (2D+t). Paper Data availability points to the GitHub
+  repository for datasets; the Zenodo record was what was fetched. enricher: pairing checked on the 0.1
+  Hz pair (same 490x490 int16 pages, first-20-frame means 488.5 vs 488.9).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'zenodo record 7812545 (12 files, 5.8 GB, flat; 486,216,016 B each)
+
+      clean_<rate>Hz_50mWpower_1000frames.tif                          (6, noise-free GT)
+
+      noise_<rate>Hz_50mWpower_1000frames_<SNR>dBSNR_1000x490x490.tif  (6, noisy input)
+
+      rates 0.1, 0.3, 1, 3, 10, 30 Hz; SNR -0.85, -0.83, -0.86, -0.29, -0.36, -0.32 dB'
+    n_files: 12
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7812545/files/noise_0.1Hz_50mWpower_1000frames_-0.85dBSNR_1000x490x490.tif
+    - https://zenodo.org/records/7812545/files/clean_0.1Hz_50mWpower_1000frames.tif
+    size_bytes: 972432032
+    description: 'The 0.1 Hz pair: one noisy stack and its noise-free GT, each 1000x490x490 int16. No
+      smaller unit exists.'
+  arrays:
+  - role: raw
+    path_pattern: noise_*Hz_50mWpower_1000frames_*dBSNR_1000x490x490.tif
+    format: tiff
+    axes: tyx
+    shape:
+    - 1000
+    - 490
+    - 490
+    shape_varies: false
+    dtype: int16
+    compression: none
+    value_range:
+    - -194
+    - 14187
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 'Plain multi-page BigTIFF (no ImageJ/OME axes); page axis is time: 1000 frames per
+      the file names and the paper (2D+t calcium recordings at the stated rate).'
+  - role: target
+    path_pattern: clean_*Hz_50mWpower_1000frames.tif
+    format: tiff
+    axes: tyx
+    shape:
+    - 1000
+    - 490
+    - 490
+    shape_varies: false
+    dtype: int16
+    compression: none
+    value_range:
+    - 2
+    - 11304
+    normalization: none
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: noise_<rate>Hz_... pairs frame by frame with clean_<rate>Hz_... (same
+      rate). Same page shape and file size; mean of the first 20 frames agrees (488.5 noisy vs 488.9 clean),
+      as expected for zero-mean added noise.'
+  notes: 'Listing (tools/listing.py, Zenodo API): 12 files, 5,834,592,192 B, complete, exact sizes. Headers:
+    plain BigTIFF, int16, uncompressed, 490x490 pages in 55 strips; 1000 pages from file size (486,216,016
+    B = 1000 x 490 x 490 x 2 + IFDs) and names. Value ranges from the first 20 frames of the 0.1 Hz noisy
+    and clean stacks only (10 MB range read each; sample.py stalled on the page-wise read and was stopped).
+    Normalization none: simulated photon counts, noisy data go negative (noise added post hoc), inferred.
+    2D+t: no z; organism not applicable (NAOMi simulation). No archive: download_url stays the record
+    page; direct files are https://zenodo.org/records/7812545/files/<name>.'
