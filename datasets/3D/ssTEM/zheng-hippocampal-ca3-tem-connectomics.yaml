@@ -1,0 +1,172 @@
+schema_version: '1.2'
+id: zheng-hippocampal-ca3-tem-connectomics
+title: Mouse hippocampal CA3 serial-section TEM connectomics volume with automated segmentation and synapses
+short_name: Mouse hippocampal CA3 connectomics (ssTEM)
+description: 0.088 mm3 serial-section TEM volume of mouse dorsal hippocampal CA3 (2,048 sections, 18 x 18 x 45 nm voxels)
+  with a U-Net/affinity-based dense automatic segmentation (partly proofread), nuclei and synapse detections, hosted as CloudVolume
+  precomputed layers and on CAVE.
+landing_url: https://github.com/seung-lab/ca3_paper
+doi: null
+repository: other
+accession: null
+authors:
+- Zhihao Zheng
+- Christopher Park
+- Eric W. Hammerschmith
+- Ran Lu
+- Szi-chieh Yu
+- Marwan Sorek
+- Ben Silverman
+- Chris S. Jordan
+- Amy R. Sterling
+- William M. Silversmith
+- Philipp Schlegel
+- Gregory S. X. E. Jefferis
+- Forrest Collman
+- H. Sebastian Seung
+- David W. Tank
+publications:
+- title: Hippocampal CA3 connectomics reveals a gradient of mossy fiber inputs and selective feedforward inhibition onto pyramidal
+    cells
+  doi: 10.1038/s41593-026-02388-9
+  url: https://doi.org/10.1038/s41593-026-02388-9
+date_published: '2026-08-05'
+imaging:
+  modality:
+  - ssTEM
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 18
+    y: 18
+    z: 45
+  channels: null
+  organism:
+  - Mus musculus
+  sample: Dorsal hippocampus (CA3) of an adult female C57BL/6J mouse, reduced osmium (rOTO) stained, 2,048 aligned sections
+  labels_stains: []
+data:
+  formats:
+  - precomputed
+  size_bytes: 81086345986048
+  n_items: 1
+  access: open
+  download_url: https://storage.googleapis.com/zheng_mouse_hippocampus_production/v2/seg_m195
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - synapse
+  coverage: dense
+  format: CloudVolume (graphene/precomputed) segmentation layer seg_m195 (materialization 195) plus nuclei layer and synaptic
+    cleft/assignment tables on CAVE
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/seung-lab/ca3_paper
+license:
+  spdx: CC-BY-NC-4.0
+  url: https://github.com/seung-lab/ca3_paper
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-27T04:34:18Z'
+  evidence_urls:
+  - https://github.com/seung-lab/ca3_paper
+  - https://pyr.ai
+  - https://storage.googleapis.com/storage/v1/b/zheng_mouse_hippocampus_production/o?prefix=v2/&delimiter=/&maxResults=20
+  - https://storage.googleapis.com/zheng_mouse_hippocampus_production/v2/seg_m195/info
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13533834/fullTextXML
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-27T05:20:00Z'
+notes: 'Landing page is the paper''s code repo, whose README gives the data access (CloudVolume path gs://zheng_mouse_hippocampus_production/v2/seg_m195,
+  CAVE, https://pyr.ai) and says the work is CC BY-NC 4.0; no separate data license was found, so this is a best reading.
+  The bucket (public listing) holds img_aligned_18nm, seg_m153/m195/m357, nuclei, ws and mask layers; the seg_m195 info file
+  was fetched. Voxel size and volume (51,421 x 57,385 x 2,048 voxels, ~4 trillion voxels) are from the paper Methods. Segmentation
+  is automatic (affinity U-Net fine-tuned on manual annotations, agglomerated), with about 40% of voxels proofread (pyramidal
+  and mossy-fiber axons); the README asks for contact with the Seung Lab for a full volume copy. Total size in bytes not stated.
+  pyr.ai (proofreading portal) is a separate request-access route. Exact image-layer format/size was not inspected. enricher:
+  size estimated from info shapes (was null).'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: 'gs://zheng_mouse_hippocampus_production/v2/   (top-level prefixes from the GCS JSON API; not fully listed)
+
+      img_aligned_sharded_18nm/   info, provenance; 5 scales 18-288 nm, sharded raw uint8 (gzip shards)
+
+      img_aligned_18nm/           info; only 36_36_45/ present, unsharded 3072x3072x1 chunks (gzip)
+
+      seg_m195/                   info, provenance; 8 scales 18-2304 nm, compressed_segmentation uint64; l2/, mesh_mip_1_err_40/,
+      skeletons_mip_1/
+
+      seg_m153/, seg_m357/        other materializations of the segmentation
+
+      ws/                         watershed supervoxels (data_dir of the graphene segmentation)
+
+      nuclei/{seg,com,ws}/        nucleus layers (one timestamped folder each)
+
+      mask_img_aligned_288nm/, mask_aff_aligned_288nm/   masks at 288 nm'
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://storage.googleapis.com/zheng_mouse_hippocampus_production/v2/img_aligned_sharded_18nm
+    - https://storage.googleapis.com/zheng_mouse_hippocampus_production/v2/seg_m195
+    size_bytes: null
+    description: Precomputed layer roots (read remotely); one 128x128x16 image chunk is ~260 KB raw, one 256x256x32 segmentation
+      chunk ~0.5 MB compressed.
+  arrays:
+  - role: raw
+    path_pattern: v2/img_aligned_sharded_18nm
+    format: precomputed
+    axes: zyx
+    shape:
+    - 3388
+    - 98304
+    - 98304
+    shape_varies: false
+    dtype: uint8
+    compression: gzip
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: v2/seg_m195
+    format: precomputed
+    axes: zyx
+    shape:
+    - 2048
+    - 57385
+    - 51421
+    shape_varies: false
+    dtype: uint64
+    compression: compressed-segmentation
+    value_range:
+    - 0
+    - 648518346466623960
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: cropped
+    alignment_notes: 'Same 18x18x45 nm grid as the image (both info files); the segmentation covers a sub-volume starting
+      at voxel_offset [20511, 19839, 96] (x, y, z) of the image grid, 51421x57385x2048 voxels. In the sample slice, raw intensity
+      inside labelled voxels (mean 169) differs from unlabelled ones (mean 95), consistent with alignment. IDs are 64-bit
+      CAVE root ids flattened from materialization 195 (provenance: ImageShardTransferTask from graphene://.../zheng_ca3).'
+  notes: 'Bucket has no complete listing (GCS JSON API, top-level prefixes only; the full-res image alone is ~32.7 TB uncompressed),
+    so size_bytes is estimated. Probed info files: image 5 levels, raw encoding, gzip-sharded, 18x18x45 nm at level 0; seg_m195
+    8 levels, compressed_segmentation, level 0 sharded, lower levels unsharded. Sampled (own decoder, requests only): image
+    chunk img_aligned_18nm/36_36_45/24576-27648_24576-27648_1700-1701 (8.75 MB gzip) uint8 min 0 max 255, p1 30 p99 221, mean
+    153.7; seg chunk seg_m195/36_36_45/24335-24591_24511-24767_1696-1728 (0.52 MB) uint64, 279 ids, 14.6% zero. Ranges from
+    one chunk each. seg_m195 is a static precomputed export of the CAVE segmentation, readable without the chunkedgraph server;
+    its info still carries graphene keys. Nucleus layers (nuclei/seg) and synapse tables (CAVE) not inspected. size estimated
+    (uncompressed): raw 1 x 3388x98304x98304 uint8 + label 1 x 2048x57385x51421 uint64 = 81,086,345,986,048 B (81.1 TB).'
