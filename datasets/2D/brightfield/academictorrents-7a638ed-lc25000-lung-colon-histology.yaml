@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: academictorrents-7a638ed-lc25000-lung-colon-histology
 title: LC25000 Lung and colon histopathological image dataset
 short_name: LC25000 lung and colon histology classes (H&E)
-description: 25,000 color H&E histology images (768x768 px JPEG) in five classes of 5,000 each (colon adenocarcinoma, benign
-  colon, lung adenocarcinoma, lung squamous cell carcinoma, benign lung), augmented by rotation and flips from 1,250
-  images captured from pathology slides.
+description: 25,000 color H&E histology images (768x768 px JPEG) in five classes of 5,000 each (colon
+  adenocarcinoma, benign colon, lung adenocarcinoma, lung squamous cell carcinoma, benign lung), augmented
+  by rotation and flips from 1,250 images captured from pathology slides.
 landing_url: https://academictorrents.com/details/7a638ed187a6180fd6e464b3666a6ea0499af4af
 doi: null
 repository: other
@@ -29,16 +29,17 @@ imaging:
   channels: 3
   organism:
   - Homo sapiens
-  sample: Human lung and colon tissue (benign, adenocarcinoma, lung squamous cell carcinoma) on pathology glass slides, from a Veterans hospital pathology service
+  sample: Human lung and colon tissue (benign, adenocarcinoma, lung squamous cell carcinoma) on pathology
+    glass slides, from a Veterans hospital pathology service
   labels_stains: []
 data:
   formats:
   - jpeg
-  size_bytes: null
+  size_bytes: 1890299770
   n_items: 25000
   access: open
-  download_url: null
-  download_method: other
+  download_url: https://archive.org/download/LC25000-dataset/LC25000.zip
+  download_method: http
 annotations:
   present: true
   types:
@@ -63,14 +64,70 @@ provenance:
   - https://github.com/tampapath/lung_colon_image_set
   - https://arxiv.org/abs/1912.12142
   - https://arxiv.org/pdf/1912.12142
+  - https://academictorrents.com/download/7a638ed187a6180fd6e464b3666a6ea0499af4af.torrent
+  - https://archive.org/metadata/LC25000-dataset
   confidence: 0.6
 verification:
   url_ok: true
   license_found: false
-  annotations_verified: false
-  last_checked: '2026-10-27T03:30:00Z'
-notes: 'Well-known benchmark. Per the paper, 750 lung and 500 colon slide images were cropped to 768x768 px and augmented
-  to 25,000 (rotations, flips), so augmented copies of one image can land on both sides of a split. No license is stated
-  on the Academic Torrents page, GitHub README or paper (only "freely available"), hence unknown. Torrent/magnet only
-  (1.85 GB LC25000.zip), so download_url and size_bytes are null; the zip was not listed. Who assigned the class labels
-  is not stated beyond "validated". Pixel size, magnification and publication date are not stated.'
+  annotations_verified: true
+  last_checked: '2026-10-27T03:10:04Z'
+notes: 'Well-known benchmark. Per the paper, 750 lung and 500 colon slide images were cropped to 768x768
+  px and augmented to 25,000 (rotations, flips), so augmented copies of one image can land on both sides
+  of a split. No license is stated on the Academic Torrents page, GitHub README or paper (only "freely
+  available"), hence unknown. Who assigned the class labels is not stated beyond "validated". Pixel size,
+  magnification and publication date are not stated. enricher: the .torrent names HTTP web seeds; download_url
+  = archive.org copy of LC25000.zip (1,890,299,770 B, same length as the torrent), size from it (was null);
+  25,000 JPEGs in the 5 class folders seen in the zip listing.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'LC25000.zip (1,890,299,770 B; 25,000 members)
+
+      lung_colon_image_set/colon_image_sets/colon_aca/colonca<N>.jpeg   5000  488.7 MB
+
+      lung_colon_image_set/colon_image_sets/colon_n/colonn<N>.jpeg      5000  471.1 MB
+
+      lung_colon_image_set/lung_image_sets/lung_aca/lungaca<N>.jpeg     5000  317.8 MB
+
+      lung_colon_image_set/lung_image_sets/lung_n/lungn<N>.jpeg         5000  276.8 MB
+
+      lung_colon_image_set/lung_image_sets/lung_scc/lungscc<N>.jpeg     5000  335.2 MB'
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://archive.org/download/LC25000-dataset/LC25000.zip::lung_colon_image_set/lung_image_sets/lung_scc/lungscc1.jpeg
+    - https://archive.org/download/LC25000-dataset/LC25000.zip::lung_colon_image_set/colon_image_sets/colon_n/colonn1.jpeg
+    size_bytes: 155907
+    description: Two images (lung_scc, colon_n), each 768x768 RGB JPEG; the class is the folder name.
+  arrays:
+  - role: raw
+    path_pattern: LC25000.zip/lung_colon_image_set/*_image_sets/*/*.jpeg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 768
+    - 768
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    lossy: true
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'RGB colour (samples s). Classification by folder: colon_aca = colon adenocarcinoma,
+      colon_n = benign colon, lung_aca = lung adenocarcinoma, lung_scc = lung squamous cell carcinoma,
+      lung_n = benign lung (README); 5,000 files each. No separate label files.'
+  notes: 'Listing (tools/listing.py --expand-zips on the archive.org zip): 1 file, 1,890,299,770 B, 25,000
+    JPEG members in 5 folders of 5,000, no README or LICENSE inside. Probe: lungscc1 and colonn1 768x768x3
+    uint8 JPEG. Sample (sample.py, 155 KB): both [0, 255]; lungscc1 mean 147, colonn1 mean 222 (hint:
+    saturated at an end); value range from two images. Torrent web seeds: archive.org (works, range requests)
+    and host1.academictorrents.com (does not resolve). archive.org is not on the TensorSwitch allowlist.
+    No voxel size: README, paper (arXiv PDF; acquisition deferred to its ref. 8, not read), torrent, archive.org
+    metadata and JPEG headers state none. No license: GitHub README (no LICENSE file), Academic Torrents,
+    archive.org metadata (no licenseurl), zip members.'
