@@ -1,12 +1,12 @@
 schema_version: '1.2'
 id: empiar-10092-guinea-pig-psoas-sbfsem
-title: Serial Block Face Scanning Electron Microscopy dataset of fetal day 64 guinea pig psoas muscle in
-  transverse
+title: Serial Block Face Scanning Electron Microscopy dataset of fetal day 64 guinea pig psoas muscle
+  in transverse
 short_name: Guinea pig fetal psoas muscle (SBF-SEM)
-description: 'Aligned stack of 93 SBF-SEM images (1024 x 1024) of a transverse section of late-fetal (day
+description: Aligned stack of 93 SBF-SEM images (1024 x 1024) of a transverse section of late-fetal (day
   64) guinea pig psoas skeletal muscle, with an Amira surface model ("Labels.surf") of segmented structures.
   The stack accompanies the Journal of Microscopy guide to analysis and reconstruction of SBF-SEM data,
-  in which the nucleus, nucleolus, chromatin and mitochondria are segmented in Fiji, Amira and MIB.'
+  in which the nucleus, nucleolus, chromatin and mitochondria are segmented in Fiji, Amira and MIB.
 landing_url: https://www.ebi.ac.uk/empiar/EMPIAR-10092/
 doi: 10.6019/EMPIAR-10092
 repository: EMPIAR
@@ -38,7 +38,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 273678336
+  size_bytes: 277221498
   n_items: 93
   access: open
   download_url: https://ftp.ebi.ac.uk/empiar/world_availability/10092/data/
@@ -46,10 +46,11 @@ data:
 annotations:
   present: true
   types:
-  - instance-segmentation
+  - semantic-segmentation
+  - organelle
   coverage: unknown
-  format: Amira surface file (Prefix_3VBSED_roi_00_slice_0007.dm3.Labels.surf.surf, 78.6 MB)
-  source: manual
+  format: Amira HyperSurface binary mesh (.surf, 78.2 MB) with 7 materials; no label volume
+  source: mixed
 ml:
   tasks:
   - segmentation
@@ -66,18 +67,89 @@ provenance:
   - https://www.ebi.ac.uk/empiar/api/entry/EMPIAR-10092/
   - https://ftp.ebi.ac.uk/empiar/world_availability/10092/data/
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5947172/fullTextXML
-  confidence: 0.55
+  confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-27T22:25:37Z'
-notes: 'A single small volume. The only annotation file is an Amira surface model of one ROI (name refers
-  to slice 0007); which structures it contains is not stated on the EMPIAR entry or the paper, which
-  segments nucleus, nucleolus, chromatin and mitochondria in this dataset with Fiji, Amira and MIB, so
-  annotation coverage is unknown and the .surf must be converted to label volumes before training. The
-  EMPIAR entry gives pixel size 0.0067628 um (6.7628 nm) and the paper gives 70 nm section thickness
-  (z). Species name is derived from "guinea pig" in the paper (Duncan Hartley guinea pigs). License
-  CC0 as listed by EMPIAR (the paper itself is CC BY 4.0). size_bytes is the total of the HTTP index
-  of the data folder (rounded sizes); EMPIAR states 264.4 MB. The same paper also cites EMPIAR-10152
-  (adult locust optic lobe), not covered here.'
+  last_checked: '2026-10-27T23:20:00Z'
+notes: 'A single small volume. The only annotation is an Amira surface model (.surf mesh, not a label
+  volume; must be rasterized before training). Its header names materials Exterior, Inside, Mito, Nucleus,
+  Nucleolus_1, Chromatin_, Material6 on a 1026x1026x95 grid (the stack plus 1 voxel padding). EMPIAR gives
+  pixel size 0.0067628 um and z 70 nm; the .surf GridBox (um) agrees. Species from "guinea pig" in the
+  paper (Duncan Hartley). License CC0 per EMPIAR. The same paper also cites EMPIAR-10152 (locust), not
+  covered here. enricher: annotations.types semantic-segmentation+organelle (were instance-segmentation;
+  the .surf holds per-class materials). enricher: annotations.source mixed (paper: Amira models used manual
+  segmentation every 5th slice with interpolation, mitochondria thresholded). enricher: size_bytes 277221498
+  from exact per-file listing (was HTTP index estimate).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './                         1 file     3.7 KB  10092.xml
+
+      data/                      1 file    78.2 MB  Prefix_3VBSED_roi_00_slice_0007.dm3.Labels.surf.surf
+
+      data/Raw TIFFs/           93 files  199.0 MB  Prefix_3VBSED_roi_00_slice_0007..0099.dm3.tif'
+    n_files: 95
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/empiar/world_availability/10092/data/Raw%20TIFFs/Prefix_3VBSED_roi_00_slice_0007.dm3.tif
+    - https://ftp.ebi.ac.uk/empiar/world_availability/10092/data/Prefix_3VBSED_roi_00_slice_0007.dm3.Labels.surf.surf
+    size_bytes: 80324588
+    description: one raw z-slice (2D TIFF) and the single Amira surface model covering the whole stack;
+      the volume is only complete with all 93 slices
+  arrays:
+  - role: raw
+    path_pattern: data/Raw TIFFs/Prefix_3VBSED_roi_00_slice_*.dm3.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 65535
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: one file per z-slice (70 nm); slice index in the file name; 93 slices form the 1024x1024x93
+      volume
+  - role: label
+    path_pattern: data/*.Labels.surf.surf
+    format: other
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes:
+    - id: 0
+      name: Exterior
+    - id: 1
+      name: Inside
+    - id: 2
+      name: Mito
+    - id: 3
+      name: Nucleus
+    - id: 4
+      name: Nucleolus_1
+    - id: 5
+      name: Chromatin_
+    - id: 6
+      name: Material6
+    alignment: same-grid
+    alignment_notes: 'Amira HyperSurface mesh in um: GridBox x,y -0.0067628..6.9251, z -0.07..6.51, GridSize
+      1026x1026x95, i.e. the raw stack at 6.7628x6.7628x70 nm with one voxel padding each side; rasterize
+      on that grid to get a label volume'
+  notes: 'Exact sizes from Content-Length of all 95 files (FTP listing timed out). value_range from one
+    sample slice (slice_0050): uint16 0..65535 with ~3% zeros and p99=65535, i.e. saturated at both ends,
+    so contrast-stretched (inferred). Header: ImageJ TIFF, 1 page, unit micron, pixel 0.0067628 um (agrees
+    with EMPIAR). Label is an Amira binary HyperSurface (3,640,749 vertices); classes read from its ASCII
+    header (Material6 is unnamed). Not convertible by TensorSwitch as is: raw is a folder of 2D slices
+    and the label is a surface mesh. data.download_url stays the folder: there is no single archive; direct
+    per-file URLs are under data/ and data/Raw TIFFs/.'
