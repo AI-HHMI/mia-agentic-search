@@ -1,0 +1,138 @@
+schema_version: '1.2'
+id: zenodo-4550300-tma-bf-shg-registration
+title: Multimodal Biomedical Dataset for Evaluating Registration Methods (Full-size TMA Cores)
+short_name: H&E bright-field and SHG aligned TMA pairs
+description: 206 aligned pairs (412 TIFF images) of bright-field (H&E) and second-harmonic generation (SHG, collagen) images
+  of human tissue microarray cores, 2048x2048 pixels each, split into train (40 pairs), two validation sets (25 and 7 pairs)
+  and a test set (134 pairs), for evaluating multimodal registration and BF-to-SHG image synthesis.
+landing_url: https://zenodo.org/records/4550300
+doi: 10.5281/zenodo.4550300
+repository: Zenodo
+accession: '4550300'
+authors:
+- Kevin Eliceiri
+- Bin Li
+- Adib Keikhosravi
+publications:
+- title: Non-disruptive collagen characterization in clinical histopathology using cross-modality image synthesis
+  doi: 10.1038/s42003-020-01151-5
+  url: https://doi.org/10.1038/s42003-020-01151-5
+date_published: '2021-02-19'
+imaging:
+  modality:
+  - brightfield
+  - other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 2
+  organism:
+  - Homo sapiens
+  sample: Human breast and pancreatic cancer tissue microarray (TMA) cores, H&E-stained bright-field images paired with label-free
+    SHG collagen images
+  labels_stains:
+  - H&E
+data:
+  formats:
+  - tiff
+  size_bytes: 1756666103
+  n_items: 412
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: false
+  types: []
+  coverage: unknown
+  format: null
+  source: unknown
+ml:
+  tasks:
+  - registration
+  - other
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-27T11:44:29Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/4550300
+  - https://zenodo.org/api/records/4550300/files/train.zip/content
+  - https://zenodo.org/api/records/4550300/files/test.zip/content
+  - https://zenodo.org/api/records/4550300/files/validation1.zip/content
+  - https://zenodo.org/api/records/4550300/files/validation2.zip/content
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7395097/fullTextXML
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: false
+  last_checked: '2026-10-27T13:45:00Z'
+notes: 'Four zips (train 80, test 268, validation1 50, validation2 14 TIFFs; 412 total, peek_archive). Names are <core>_BF/_SHG
+  in test and <core>_WB/_MI in train/validation. The paper registered BF and SHG with a mutual-information affine method,
+  so pairs are aligned but carry no labels (annotations.present false). Pixel size not stated on the record or in the paper
+  text; pancreatic BF was scanned on an Aperio CS2 at 40x, breast on a custom SHG/BF system. Sibling deposit zenodo.org/records/3874362
+  holds 834x834 patches of the same 206 pairs and is not proposed separately. enricher: inspected one sampled pair; SHG treated
+  as the target array (aligned cross-modality pair).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "train.zip (339,410,763 B)\n  train/                 80 .tif  (40 pairs <core>_WB.tif + <core>_MI.tif)\nvalidation1.zip\
+      \ (207,472,955 B)\n  validation1/           50 .tif  (25 pairs, _WB / _MI)\nvalidation2.zip (57,125,962 B)\n  validation2/\
+      \           14 .tif  (7 pairs, _WB / _MI)\ntest.zip (1,152,656,423 B)\n  test/                 268 .tif  (134 pairs\
+      \ <core>_BF.tif + <core>_SHG.tif)"
+    n_files: 412
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/4550300/files/validation2.zip/content::validation2/1B_D9_WB.tif
+    - https://zenodo.org/api/records/4550300/files/validation2.zip/content::validation2/1B_D9_MI.tif
+    size_bytes: 16779576
+    description: 'one aligned pair from validation2: bright-field H&E (1B_D9_WB.tif, RGB) and SHG (1B_D9_MI.tif)'
+  arrays:
+  - role: raw
+    path_pattern: '*/*_{WB,BF}.tif'
+    format: tiff
+    axes: yxs
+    shape:
+    - 2048
+    - 2048
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 9
+    - 154
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: bright-field H&E colour image; stored as 3 samples per pixel with photometric minisblack (MATLAB writer),
+      samples differ (RGB colour), so axes yxs
+  - role: target
+    path_pattern: '*/*_{MI,SHG}.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: 'SHG image of the same core, already registered to the BF image (paper: mutual-information affine registration);
+      pair by stem: <core>_WB.tif <-> <core>_MI.tif in train/validation, <core>_BF.tif <-> <core>_SHG.tif in test'
+  notes: 'Members listed from the four zips central directories (412 TIFFs, 3,456,592,656 B uncompressed; tools/listing.py
+    under-reported during Zenodo 502/504 errors, so size_bytes is the Zenodo API file-size total, 1,756,666,103 B). Shapes
+    and dtypes from one sampled pair (validation2/1B_D9, 8.8 MB downloaded); value ranges are from that one sample. Zenodo
+    description states all images are 2048x2048. No pixel calibration in the TIFFs (no resolution tags; Software=MATLAB).
+    Voxel size not found; checked: TIFF headers, Zenodo API record (description, related identifiers), Keikhosravi et al.
+    2020 full text (Methods), Lu et al. 2022 PLoS ONE full text (uses the 834px patch version), MultiRegEval GitHub README.
+    No single archive: the dataset is four direct zips (train, validation1, validation2, test), all usable per probe.py --download-check.'
