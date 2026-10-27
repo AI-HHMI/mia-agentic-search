@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: mendeley-9bsc36jyrt-ocdc-oscc-he-tumor-masks
 title: H&E-stained oral squamous cell carcinoma histological images dataset (OCDC)
 short_name: Oral squamous cell carcinoma H&E tumor masks
-description: 1,020 H&E-stained histology image patches (640 x 640 px, 20x) of oral squamous cell carcinoma, randomly extracted
-  from 15 whole slide images, with pixel-level hand-annotated tumor-region masks validated by a pathologist; 840 train / 180
-  test split described in the data article.
+description: 1,020 H&E-stained histology image patches (640 x 640 px, 20x) of oral squamous cell carcinoma, randomly extracted from
+  15 whole slide images, with pixel-level hand-annotated tumor-region masks validated by a pathologist; 840 train / 180 test split described
+  in the data article.
 landing_url: https://data.mendeley.com/datasets/9bsc36jyrt/1
 doi: 10.17632/9bsc36jyrt.1
 repository: other
@@ -32,7 +32,8 @@ imaging:
   channels: 3
   organism:
   - Homo sapiens
-  sample: Surgical tissue samples from 15 OSCC patients (Federal University of Uberlandia archive, 2006-2013), scanned with an Aperio AT2
+  sample: Surgical tissue samples from 15 OSCC patients (Federal University of Uberlandia archive, 2006-2013), scanned with an Aperio
+    AT2
   labels_stains:
   - hematoxylin
   - eosin
@@ -49,7 +50,7 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: binary PNG masks (tumor regions in white), same file names as the images
+  format: RGBA PNG masks (RGB 0/255, tumor white), same file name as the image in a parallel 02-mask/ folder
   source: manual
 ml:
   tasks:
@@ -68,17 +69,101 @@ provenance:
   - https://data.mendeley.com/public-api/datasets/9bsc36jyrt
   - https://data.mendeley.com/public-files/datasets/9bsc36jyrt/files/33368887-7fb7-4422-bf1e-c33c16104051/file_downloaded
   - https://api.crossref.org/works/10.1016/j.bspc.2021.102921
+  - https://data.mendeley.com/public-api/datasets/9bsc36jyrt/folders/1
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-27T21:45:00Z'
-notes: 'The Mendeley API lists 2,459 files: 2,458 PNG (about 1.08 GB) plus the data-article PDF. Almost every PNG name occurs twice
-  (a large file and a ~3 KB file, e.g. 1009009_r10c2.png), consistent with an image plus a same-named binary mask; the folder
-  layout is not shown by the API, so image/mask folders were not seen directly. The README PDF (data article) states 1,020 images
-  of 640x640 px at 20x, pixel size 0.5025 um, tumor regions drawn in GIMP by a specialist and validated by a pathologist, tumor
-  shown in white, and a random split into 840 training and 180 test images; the split assignment is not given in the Mendeley
-  file list (the GitHub repository dalifreire/tumor_regions_segmentation holds a copy under datasets/OCDC; not fetched). The
-  related research article (BSPC 2021) was identified via the PDF and Crossref; its full text was not read. Images come from
-  only 15 patients/WSIs, so patches are strongly correlated.'
+  last_checked: '2026-10-27T22:15:00Z'
+notes: 'The Mendeley API lists 2,459 files: 2,458 PNG plus the data-article PDF. The README PDF (data article) states 1,020 images of
+  640x640 px at 20x, pixel size 0.5025 um, tumor regions drawn in GIMP by a specialist and validated by a pathologist, tumor shown in
+  white, and a random split into 840 training and 180 test images. The related research article (BSPC 2021) was identified via the PDF
+  and Crossref; its full text was not read. Images come from only 15 patients/WSIs, so patches are strongly correlated. enricher: folder
+  tree read from the Mendeley folders API: training/ (840 images) and testing/ (180) under tumor/patch/640x640/<slide>/{01-roi,02-non_roi}/{01-original,02-mask},
+  so the split is in the folder names; annotations_verified true (mask sampled).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "MendeleyData_OCDC_2022.pdf                       17.4 MB (data article)\ntraining/tumor/patch/640x640/<slide>/  7 slides,\
+      \ 2,098 files, 933 MB\n  <slide>_1..4.png                                 4 per slide, larger overview images (e.g. 1002x933)\n\
+      \  01-roi/01-original/<slide>_r<row>c<col>.png      tumor-containing patches (raw)\n  01-roi/02-mask/<same name>.png         \
+      \          their masks\n  01-roi/03-roi/<same name>.png                    a third image per ROI patch (not documented)\n  02-non_roi/01-original/*.png,\
+      \ 02-non_roi/02-mask/*.png   patches without tumor\ntesting/tumor/patch/640x640/<slide>/  6 slides, 360 files, 132 MB\n  01-roi/{01-original,02-mask}/,\
+      \ 02-non_roi/{01-original,02-mask}/\n"
+    n_files: 2459
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.mendeley.com/public-files/datasets/9bsc36jyrt/files/af7ff51e-4ffa-418a-8c95-7e60f8a0c67c/file_downloaded
+    - https://data.mendeley.com/public-files/datasets/9bsc36jyrt/files/2cae4bab-726c-4ee8-a6c1-61933815d2f3/file_downloaded
+    size_bytes: 809625
+    description: training/tumor/patch/640x640/1009009/01-roi/01-original/1009009_r16c0.png and its mask in 01-roi/02-mask/
+  arrays:
+  - role: raw
+    path_pattern: '*/tumor/patch/640x640/*/*/01-original/*.png'
+    format: png
+    axes: yxs
+    shape:
+    - 640
+    - 640
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 18
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB H&E patches; 840 in training/, 180 in testing/ (01-roi + 02-non_roi), matching the data article split.
+  - role: label
+    path_pattern: '*/tumor/patch/640x640/*/*/02-mask/*.png'
+    format: png
+    axes: yxs
+    shape:
+    - 640
+    - 640
+    - 4
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: non-tumor
+    - id: 255
+      name: tumor
+    alignment: same-grid
+    alignment_notes: 'Pairing: same file name in the sibling 02-mask/ folder of 01-original/. Mask is RGBA: R=G=B in {0,255} (tumor
+      white per the data article); the alpha channel is 255 except where RGB is 0 (0 or a few low values). Use one RGB channel as the
+      label.'
+  - role: other
+    path_pattern: training/tumor/patch/640x640/*/01-roi/03-roi/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 640
+    - 640
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 8
+    - 255
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: Training ROI patches only, same names as 01-original; contents not described in the data-article text read by the
+      harvester (probably the image with the ROI applied).
+  notes: 'Listing: Mendeley public API files + folders/1 (106 folders), 2,459 files, 1,081,967,447 B from per-file sizes (page-stated:
+    tools/listing.py does not walk Mendeley folders). Sampled 1009009_r16c0 original (804,230 B): uint8 640x640x3, range 18-255, p50
+    218; its mask (5,395 B): RGBA, RGB binary 0/255; the 03-roi image (707,336 B): uint8 640x640x3, range 8-255 (one sample each). Probed
+    one per-slide overview (1009009_1.png): 1002x933x3 uint8. Download: every file is a direct Mendeley link (redirects to S3); there
+    is no single archive in the API, so data.download_url stays the landing page. Voxel size 502.5 nm from the data article (harvester);
+    not in PNG headers.'
