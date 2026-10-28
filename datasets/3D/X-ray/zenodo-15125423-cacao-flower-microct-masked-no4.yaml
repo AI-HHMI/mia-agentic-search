@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-15125423-cacao-flower-microct-masked-no4
 title: Cacao flower micro-CT - clean, small, masked - Dataset No. 4
 short_name: Cacao flower microCT with masks (UNETR)
-description: 31 Theobroma cacao flower micro-CT volumes (cropped NIfTI, 24.8 GB zipped) each with a segmentation mask (_seg.nii.gz),
-  described as the cleaner dataset with the best quality CT scans and cleanest segmentations used to train a UNETR model for
-  automated segmentation. Dataset No. 4 of a numbered series of related Zenodo records.
+description: 31 Theobroma cacao flower micro-CT volumes (cropped NIfTI, 24.8 GB zipped) each with a segmentation
+  mask (_seg.nii.gz), described as the cleaner dataset with the best quality CT scans and cleanest segmentations
+  used to train a UNETR model for automated segmentation. Dataset No. 4 of a numbered series of related Zenodo records.
 landing_url: https://zenodo.org/records/15125423
 doi: 10.5281/zenodo.15125423
 repository: Zenodo
@@ -36,7 +36,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: unknown
-  format: NIfTI masks (*_seg.nii.gz) paired with *_crop.nii.gz volumes
+  format: NIfTI binary masks (*_seg.nii.gz, uint8 0/1) paired by name stem with *_crop_mask.nii.gz, *_crop.nii.gz
+    or plain *.nii.gz image volumes, same grid
   source: unknown
 ml:
   tasks:
@@ -58,9 +59,74 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-28T18:10:00Z'
-notes: 'peek_archive of nii_gzs4.zip (24.8 GB, 62 .nii.gz): 31 image volumes (24.75 GB, names ending _crop or _) and 31 masks
-  named *_seg.nii.gz (54 MB in total). The Zenodo description is a single line plus a one-row table with unexplained numbers
-  (N 4, 19, 4, 0.24), so voxel size, scanner, staining (file names mention PTA 14d for some), who segmented and how are not
-  stated and no paper is linked. Sibling records exist for Dataset No. 3 (zenodo 15123180, full dataset before exclusion criteria),
-  No. 5 (15123160) and a training notebook (15126203); this record is only No. 4.'
+  last_checked: '2026-10-28T19:00:00Z'
+notes: 'peek_archive of nii_gzs4.zip (24.8 GB, 62 .nii.gz): 31 image volumes (24.75 GB, names ending _crop_mask,
+  _crop or none) and 31 masks named *_seg.nii.gz (54 MB in total). The Zenodo description is a single line plus
+  a one-row table with unexplained numbers (N 4, 19, 4, 0.24), so voxel size, scanner, staining (file names mention
+  PTA 14d for some), who segmented and how are not stated and no paper is linked. Sibling records exist for Dataset
+  No. 3 (zenodo 15123180, full dataset before exclusion criteria), No. 5 (15123160) and a training notebook (15126203);
+  this record is only No. 4. enricher: NIfTI headers give a different isotropic voxel size per volume (13.97-18.70
+  um in 3 probed), so voxel_size_nm stays null.'
+technical:
+  method: sample
+  inspected_at: '2026-10-28T19:00:00Z'
+  inspected_urls:
+  - https://zenodo.org/api/records/15125423
+  - https://zenodo.org/records/15125423/files/nii_gzs4.zip
+  bytes_downloaded: 12790182
+  size_source: file-listing
+  layout:
+    tree: "nii_gzs4.zip  24,795,179,690 B, 62 members (flat)\n  <name>[_crop_mask|_crop].nii.gz   31 image volumes\
+      \ (12.4 MB - 1.52 GB)\n  <name>_seg.nii.gz                 31 masks (about 1-3 MB each)\n"
+    n_files: 62
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/15125423/files/nii_gzs4.zip::thecac_fbg_cg_220622_03_crop_mask.nii.gz
+    - https://zenodo.org/records/15125423/files/nii_gzs4.zip::thecac_fbg_cg_220622_03_seg.nii.gz
+    size_bytes: 13454762
+    description: Smallest image volume (898x514x528) and its mask.
+  arrays:
+  - role: raw
+    path_pattern: '*.nii.gz'
+    format: nifti
+    axes: zyx
+    shape:
+    - 898
+    - 514
+    - 528
+    shape_varies: true
+    dtype: uint16
+    compression: gzip
+    normalization: unknown
+    value_range:
+    - 0
+    - 40727
+    alignment: not-applicable
+    alignment_notes: 'Every member not ending _seg.nii.gz is an image; *_crop_mask volumes are zero outside the
+      flower (97% zeros in the sample). Per-file isotropic voxel size in the header (pixdim, mm): 18.70, 17.82,
+      13.97 um in the 3 probed.'
+  - role: label
+    path_pattern: '*_seg.nii.gz'
+    format: nifti
+    axes: zyx
+    shape:
+    - 898
+    - 514
+    - 528
+    shape_varies: true
+    dtype: uint8
+    compression: gzip
+    encoding: binary
+    classes:
+    - id: 1
+      name: unknown (not documented)
+    alignment: same-grid
+    alignment_notes: 'Pair by stem: <stem>_seg.nii.gz with <stem>_crop_mask.nii.gz, <stem>_crop.nii.gz or <stem>.nii.gz;
+      same shape and pixdim as the image (sample).'
+  notes: 'Listing: Zenodo API + zip index, 1 file, 24,795,179,690 B, 62 members, complete. Probed 3 images and 1
+    mask (NIfTI headers): uint16 images, uint8 masks, isotropic pixdim 0.018696 / 0.017816 / 0.013970 mm, shapes
+    898x514x528, 860x639x677, 963x932x1051 (zyx). Sampled the smallest pair: image range [0, 40727], 97.5% zeros;
+    mask {0: 18,268,740, 1: 478,185}, same grid. raw path_pattern *.nii.gz also matches the masks; images are the
+    members without _seg. What the mask segments is not documented. Voxel size not set (differs per volume); checked:
+    NIfTI headers, Zenodo description (no values, no paper). Download: zip and members pass --download-check.'
