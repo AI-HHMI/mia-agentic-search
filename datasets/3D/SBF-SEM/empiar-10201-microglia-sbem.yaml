@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: empiar-10201-microglia-sbem
 title: Three-dimensional nanostructure of an intact microglia cell
 short_name: Microglia cell organelle models (SBEM)
-description: Two serial block-face EM (SBEM) stacks (389 and 515 sections) of mouse hippocampus CA1
-  containing one intact microglia cell, with manually segmented 3D IMOD models of the cell body, nucleus,
-  mitochondria and lyso-/phagosomes, plus mesh exports (OBJ, Blender).
+description: Two serial block-face EM (SBEM) stacks (389 and 515 sections) of mouse hippocampus CA1 containing
+  one intact microglia cell, with manually segmented 3D IMOD models of the cell body, nucleus, mitochondria
+  and lyso-/phagosomes, plus mesh exports (OBJ, Blender).
 landing_url: https://www.ebi.ac.uk/empiar/EMPIAR-10201/
 doi: 10.6019/EMPIAR-10201
 repository: EMPIAR
@@ -28,11 +28,11 @@ imaging:
     x: 10
     y: 10
     z: 25
-  channels: null
+  channels: 1
   organism:
   - Mus musculus
-  sample: Mouse hippocampus CA1 stratum radiatum, tdTomato-labelled microglia located by CLEM; imaged with
-    3View/GeminiSEM at 5 nm pixels, 25 nm sections, binned 2x in xy to 10 nm
+  sample: Mouse hippocampus CA1 stratum radiatum, tdTomato-labelled microglia located by CLEM; imaged
+    with 3View/GeminiSEM at 5 nm pixels, 25 nm sections, binned 2x in xy to 10 nm
   labels_stains: []
 data:
   formats:
@@ -48,8 +48,8 @@ annotations:
   - organelle
   - instance-segmentation
   coverage: partial
-  format: 'IMOD models (Dataset1Model, Dataset2Model; open with 3dmod together with the stacks), plus Segmented.obj
-    meshes and a Blender project'
+  format: IMOD binary models (IMODV1.2 contour models, Dataset1Model / Dataset2Model, 13 objects each,
+    on the grid of Dataset1.tif / Dataset2.tif), plus Segmented.obj meshes and a Blender project
   source: manual
 ml:
   tasks:
@@ -58,8 +58,8 @@ ml:
   benchmark: null
   baseline_code_url: null
 license:
-  spdx: unknown
-  url: null
+  spdx: CC0-1.0
+  url: https://www.ebi.ac.uk/empiar/policies/
 provenance:
   discovered_by: harvest-repositories
   discovered_at: '2026-10-28T11:46:42Z'
@@ -70,14 +70,84 @@ provenance:
   - https://ftp.ebi.ac.uk/empiar/world_availability/10201/data/additional_details.txt
   - https://ftp.ebi.ac.uk/empiar/world_availability/10201/10201.xml
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6290067/fullTextXML
-  confidence: 0.65
+  - https://ftp.ebi.ac.uk/empiar/world_availability/10201/data/Generate_3D_image_stacks.ijm
+  - https://www.ebi.ac.uk/empiar/policies/
+  confidence: 0.8
 verification:
   url_ok: true
-  license_found: false
+  license_found: true
   annotations_verified: true
-  last_checked: '2026-10-28T11:46:42Z'
-notes: 'No license or terms text on the EMPIAR page, API record or XML, so spdx is unknown. Sources checked:
-  EMPIAR page, API, file listing, additional_details.txt, entry XML and paper full text (Methods). Segmentation
-  is partial: selected objects of one cell (cell body, nucleus, mitochondria, lyso-phagosomes), not the whole
-  volume. Models are in IMOD format (the model files are not rasterised label images). Stack size 7.4 GB
-  total incl. models, OBJ, Blender project and a video.'
+  last_checked: '2026-10-28T13:10:00Z'
+notes: 'License CC0-1.0 from the EMPIAR policies page ("All data in EMPIAR is freely and publicly available
+  ... under the CC0 licence"). Segmentation is partial: selected objects of one cell (cell body, nucleus,
+  mitochondria, lyso-phagosomes), not the whole volume. Labels are IMOD contour models, not rasterised
+  label images. Size 7.4 GB total incl. models, OBJ, Blender project and a video. enricher: license CC0-1.0
+  from EMPIAR policies (was unknown); voxel size 10x10x25 nm confirmed by the dataset macro Generate_3D_image_stacks.ijm
+  (unit nm); channels 1 from TIFF headers (was null).'
+technical:
+  method: header
+  size_source: page-stated
+  layout:
+    tree: "https://ftp.ebi.ac.uk/empiar/world_availability/10201/data/ (9 files, 7,931,642,980 B by HTTP\
+      \ Content-Length)\n  Dataset1.tif                  2,936,750,109 B  (raw, 389 slices)\n  Dataset2.tif\
+      \                  3,887,985,345 B  (raw, 515 slices)\n  Dataset1Model                   140,544,763\
+      \ B  (IMOD model for Dataset1)\n  Dataset2Model                   140,544,763 B  (IMOD model for\
+      \ Dataset2)\n  Segmented.obj                    68,361,579 B\n  Segmented.blend                \
+      \ 348,940,180 B\n  Blendervideo.avi                468,745,302 B\n  Generate_3D_image_stacks.ijm\
+      \          2,448 B\n  additional_details.txt                1,917 B\n"
+    n_files: 9
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/empiar/world_availability/10201/data/Dataset1.tif
+    - https://ftp.ebi.ac.uk/empiar/world_availability/10201/data/Dataset1Model
+    size_bytes: 3077294872
+    description: First SBEM stack (389 slices) and its IMOD model
+  arrays:
+  - role: raw
+    path_pattern: Dataset?.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 389
+    - 2380
+    - 3172
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ hyperstacks, one page per section; Dataset1 389 slices, Dataset2 515 slices,
+      both 2380 x 3172 px. The dataset macro concatenates Dataset1 and Dataset2 into one stack.
+  - role: label
+    path_pattern: Dataset?Model
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: polygons
+    classes:
+    - id: null
+      name: microglia cell body
+    - id: null
+      name: nucleus
+    - id: null
+      name: mitochondria
+    - id: null
+      name: lyso-phagosomes
+    alignment: same-grid
+    alignment_notes: 'IMOD binary models (IMODV1.2) of contours, not raster labels: header xmax/ymax/zmax
+      = 3172/2380/389 for Dataset1Model and 3172/2380/515 for Dataset2Model, i.e. the grid of the matching
+      Dataset<N>.tif; 13 objects each. Pairing rule: DatasetN.tif <-> DatasetNModel. Classes from additional_details.txt
+      (video description); object-to-class mapping not read.'
+  notes: 'Listing from the EMPIAR HTTP index (rounded sizes); exact per-file sizes from HTTP HEAD Content-Length,
+    total 7,931,642,980 B (7.39 GiB, matching the 7.4 GB stated on the EMPIAR entry), kept as page-stated
+    because listing.py could not confirm exact sizes (FTP timed out). Headers: Dataset1.tif / Dataset2.tif
+    uint8, uncompressed, ImageJ zyx, 389/515 x 2380 x 3172; no spatial calibration in the TIFF header.
+    Labels are IMOD contour models (header read, 256 B each); they must be rasterised (e.g. IMOD imodmop)
+    before training, so automatic conversion does not apply. No sample downloaded (raw stack 2.9 GB uncompressed,
+    untiled, above budget); value_range not measured. Voxel size 10 x 10 x 25 nm: record value, confirmed
+    by Generate_3D_image_stacks.ijm (xSize=10, ySize=10, zSize=25, unit=nm). Direct downloads: every file
+    on ftp.ebi.ac.uk https, range requests OK; no single archive, so download_url stays the folder.'
