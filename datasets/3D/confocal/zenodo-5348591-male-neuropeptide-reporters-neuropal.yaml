@@ -1,11 +1,11 @@
 schema_version: '1.2'
 id: zenodo-5348591-male-neuropeptide-reporters-neuropal
-title: Visualizing the organization and differentiation of the male-specific nervous system of C. elegans
-  (male neuropeptide reporter expression image volumes and annotations)
+title: Visualizing the organization and differentiation of the male-specific nervous system of C. elegans (male
+  neuropeptide reporter expression image volumes and annotations)
 short_name: Male C. elegans neuropeptide reporters (confocal)
 description: Confocal CZI image volumes of adult male C. elegans carrying flp-3::GFP, flp-27::GFP or nlp-51::GFP
-  reporters together with the NeuroPAL multicolor transgene (otIs669), with an Excel sheet per reporter
-  annotating which identified neurons express it. 23 volumes (heads and tails) across three reporter folders.
+  reporters together with the NeuroPAL multicolor transgene (otIs669), with an Excel sheet per reporter annotating
+  which identified neurons express it. 23 volumes (heads and tails) across three reporter folders.
 landing_url: https://zenodo.org/records/5348591
 doi: 10.5281/zenodo.5348591
 repository: Zenodo
@@ -26,10 +26,11 @@ imaging:
   - confocal
   dimensionality: 3D
   voxel_size_nm: null
-  channels: null
+  channels: 6
   organism:
   - Caenorhabditis elegans
-  sample: adult male C. elegans heads and tails, reporter::GFP;NeuroPAL[otIs669]; him-5, mounted on agarose pads with sodium azide
+  sample: adult male C. elegans heads and tails, reporter::GFP;NeuroPAL[otIs669]; him-5, mounted on agarose pads
+    with sodium azide
   labels_stains:
   - NeuroPAL
   - flp-3::GFP
@@ -48,7 +49,8 @@ annotations:
   types:
   - classification
   coverage: partial
-  format: 'Excel (.xlsx) per reporter folder (flp-3, flp-27, nlp-51) annotating neuron expression per image'
+  format: 'Excel (.xlsx), one sheet per reporter folder (flp-3, flp-27, nlp-51): per image, the names of the NeuroPAL-identified
+    neurons expressing the reporter (no positions)'
   source: manual
 ml:
   tasks:
@@ -67,13 +69,77 @@ provenance:
   - https://zenodo.org/api/records/5348591/files/Tekieli%20T%202021%20Male%20Neuropeptide%20Expression.zip/content
   - https://pmc.ncbi.nlm.nih.gov/articles/PMC8489020/
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A34415309+AND+SRC%3AMED&format=json&resultType=core&pageSize=3
+  - https://github.com/amin-nejat/CELL_ID/blob/master/+DataHandling/imreadCZI.m
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-28T22:47:47Z'
-notes: 'Voxel size, channel count and z-step not stated on the Zenodo page, README or paper Methods (PMC8489020: Zeiss LSM880,
-  40x, not stated further); CZI headers not inspected. Annotation content of the .xlsx files inferred from file names and
-  README, not opened. Companion of Zenodo 5348578 (male NeuroPAL head volumes with *_ID.mat atlas annotations), a different
-  file set. The zip size is 2.38 GB compressed, 4.2 GB uncompressed.'
+  last_checked: '2026-10-29T00:40:00Z'
+notes: 'Zip: 23 CZI volumes (flp-3 13, flp-27 4, nlp-51 6) + 3 .xlsx, README, LICENSE. Annotations are image-level
+  lists of expressing neurons (enricher: opened the 3 sheets), not positions or masks. Archive LICENSE.md and README
+  say MIT; Zenodo record states CC-BY-4.0, kept. Voxel size differs per volume (CZI Scaling, metres per CELL_ID
+  imreadCZI.m): nlp-51 male_head_a3 207.5x207.5x1217.4 nm; flp-3 34_AMp 217.0x217.0x1021.5 nm, so voxel_size_nm
+  stays null; each CZI carries its own scaling. Paper: Zeiss LSM880, 40x. Companion of Zenodo 5348578 (male NeuroPAL
+  volumes with *_ID.mat atlas annotations), a different file set. Zip is 2.38 GB compressed, 4.2 GB uncompressed.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Tekieli T 2021 Male Neuropeptide Expression.zip (28 files, 2.38 GB; 4.23 GB uncompressed)\nTekieli T\
+      \ 2021 Male Neuropeptide Expression/\n  README.md, LICENSE.md\n  flp-3/   13 x <n>_AM[pm].czi (135-262 MB)\
+      \ + flp-3 NeuroPAL expression.xlsx\n  flp-27/   4 x OH17034_flp-27_him-5_otIs669_*_{head,tail}_a<k>_<date>.czi\
+      \ (163-239 MB) + flp-27 NeuroPAL expression.xlsx\n  nlp-51/   6 x OH17099_syb3936_nlp-51_otIs669_him-5_male_{head,tail}_a<k>_<date>.czi\
+      \ (76-211 MB) + nlp-51.xlsx"
+    n_files: 28
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/5348591/files/Tekieli%20T%202021%20Male%20Neuropeptide%20Expression.zip/content::Tekieli
+      T 2021 Male Neuropeptide Expression/nlp-51/OH17099_syb3936_nlp-51_otIs669_him-5_male_head_a3_5-6-21.czi
+    - https://zenodo.org/api/records/5348591/files/Tekieli%20T%202021%20Male%20Neuropeptide%20Expression.zip/content::Tekieli
+      T 2021 Male Neuropeptide Expression/nlp-51/nlp-51.xlsx
+    size_bytes: 75979429
+    description: Smallest volume (nlp-51 male_head_a3, 6 channels x 21 z x 309 x 972, uint16) and the nlp-51 sheet
+      that lists its expressing neurons.
+  arrays:
+  - role: raw
+    path_pattern: Tekieli T 2021 Male Neuropeptide Expression/*/*.czi
+    format: czi
+    axes: czyx
+    shape:
+    - 6
+    - 21
+    - 309
+    - 972
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 65535
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'CZI XML: SizeC 6, SizeZ 21, SizeY 309, SizeX 972, Gray16, subblocks uncompressed (flp-3/34_AMp:
+      6x26x406x1065). Channels Ch1-T1, Ch2-T1, T PMT-T1 (transmitted), ChS1-T2, Ch2-T2, Ch2-T3; NeuroPAL colours
+      plus the GFP reporter. Scaling stored per file (metres).'
+  - role: label
+    path_pattern: Tekieli T 2021 Male Neuropeptide Expression/*/*.xlsx
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: deflate
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'One sheet per reporter folder; rows name an image and list the neurons expressing the reporter
+      (e.g. nlp-51 male_head_a3: ''RIP and AIM''). Pairing by image name: flp-3 rows use the file stem (37_AMp,
+      27_AMm; ''29_Amm'' for 29_AMm.czi); flp-27 / nlp-51 rows drop the date suffix and flp-27 writes ''NP'' for
+      otIs669. Image-level labels, no voxel coordinates.'
+  notes: 'Listing (zip central directory via peek_archive.py, Zenodo API): one zip, 2,380,817,940 B, 28 members
+    (23 .czi, 3 .xlsx, 2 .md), 4,226,361,160 B uncompressed. CZI read with a stdlib header/XML parser (probe.py
+    doesn''t read CZI): nlp-51 male_head_a3 (76.0 MB, all 126 subblocks: value range 0-65535 from this one sample),
+    flp-3 34_AMp (135.1 MB, XML only). xlsx sheets read as XML (21 KB). Voxel size per file, not one value for the
+    dataset.'
