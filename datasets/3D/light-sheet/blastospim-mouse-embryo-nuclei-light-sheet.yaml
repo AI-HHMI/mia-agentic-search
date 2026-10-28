@@ -1,0 +1,145 @@
+schema_version: '1.2'
+id: blastospim-mouse-embryo-nuclei-light-sheet
+title: BlastoSPIM - 3D nuclear instance segmentation ground truth in preimplantation mouse embryos (light-sheet)
+short_name: BlastoSPIM mouse embryo nuclei (light-sheet)
+description: 653 manually annotated 3D light-sheet (InVi SPIM) images of H2B-miRFP720-expressing preimplantation mouse embryos
+  (BlastoSPIM 1.0 - 573 images from 31 embryos; BlastoSPIM 2.0 - 80 late-blastocyst images from 25 embryos) with full 3D nuclear
+  instance labels (18,336 nuclei in total). Provided as train/validation/test (low and moderate SNR) zip archives of .npy
+  image and mask arrays.
+landing_url: https://users.flatironinstitute.org/~awatters/blastospim/html/series.html
+doi: null
+repository: LabWebsite
+accession: null
+authors: []
+publications:
+- title: Nuclear instance segmentation and tracking for preimplantation mouse embryos
+  doi: 10.1242/dev.202817
+  url: https://journals.biologists.com/dev/article/151/21/dev202817/362603/Nuclear-instance-segmentation-and-tracking-for
+date_published: null
+imaging:
+  modality:
+  - light-sheet
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 208
+    y: 208
+    z: 2000
+  channels: 1
+  organism:
+  - Mus musculus
+  sample: Live preimplantation mouse embryos (two-cell/eight-cell to late blastocyst) expressing the nuclear reporter H2B-miRFP720
+  labels_stains:
+  - H2B-miRFP720
+data:
+  formats:
+  - other
+  size_bytes: 60605540609
+  n_items: 653
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: One .npy label array per 3D image (images/ and masks/ sub-folders per series; masks hold per-nucleus instance labels)
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: BlastoSPIM train/validation/test (low and moderate SNR) splits; seven CNNs benchmarked in the paper (Stardist-3D
+    best)
+  baseline_code_url: null
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-11T15:26:17Z'
+  evidence_urls:
+  - https://blastospim.flatironinstitute.org/
+  - https://users.flatironinstitute.org/~awatters/blastospim/html/series.html
+  - https://users.flatironinstitute.org/~awatters/blastospim/sample/BlastoSPIM1_val.zip
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11574361/fullTextXML
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-11T17:55:00Z'
+notes: 'Hosted on the Flatiron Institute BlastoSPIM site (users.flatironinstitute.org serves the 8 zips). No license or terms
+  for the data on the site, the code page or the paper (the article is CC BY 4.0; the linked processing-pipeline GitHub repo
+  is GPL-3.0, which covers code), so license is unknown. .npy has no schema format value, hence other. Voxel size 0.208 um
+  xy, 2.0 um z: landing page and paper Methods. Paper also reports 10 spinning-disk confocal embryos (461 nuclei) for generalisation;
+  not found in the downloads. enricher: size_bytes 60,605,540,609 from the complete listing of all 8 zips (was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'BlastoSPIM1_train.zip (32.9 GB)  F*/H*/M*/O*/T* series: <series>/images/<series>_image_NNNN.npy, masks/<series>_masks_NNNN.npy,
+      crop/<series>_crop_NNNN.npy
+
+      BlastoSPIM1_val.zip (2.4 GB), BlastoSPIM1_test_lowSNR.zip (3.3 GB), BlastoSPIM1_test_modSNR.zip (2.2 GB)
+
+      BlastoSPIM2_train.zip (16.5 GB)  Blast_NNN/images/Blast_NNN_image_0001.npy, masks/Blast_NNN_masks_0001.npy
+
+      BlastoSPIM2_val.zip, BlastoSPIM2_test_lowSNR.zip, BlastoSPIM2_test_modSNR.zip
+
+      1,882 zip members in all (images, masks and 136-byte crop scalars); O_* series have no crop file'
+    n_files: 8
+    listing_complete: true
+  sample:
+    urls:
+    - https://users.flatironinstitute.org/~awatters/blastospim/sample/BlastoSPIM1_train.zip::H10_011/images/H10_011_image_0001.npy
+    - https://users.flatironinstitute.org/~awatters/blastospim/sample/BlastoSPIM1_train.zip::H10_011/masks/H10_011_masks_0001.npy
+    size_bytes: 151213216
+    description: smallest image/mask pair (series H10_011, 71 x 986 x 720), 30 MB compressed in the zip
+  arrays:
+  - role: raw
+    path_pattern: '*/images/*_image_*.npy'
+    format: other
+    axes: null
+    shape:
+    - 71
+    - 986
+    - 720
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 229
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: NumPy .npy, deflated inside the zips; BlastoSPIM1 arrays fortran_order True, BlastoSPIM2 False; shapes
+      71x986x720 to 91x2048x2048
+  - role: label
+    path_pattern: '*/masks/*_masks_*.npy'
+    format: other
+    axes: null
+    shape:
+    - 71
+    - 986
+    - 720
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 8
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    alignment: same-grid
+    alignment_notes: 'mask has the image shape; pairing: <series>/images/<series>_image_NNNN.npy <-> <series>/masks/<series>_masks_NNNN.npy;
+      crop/<series>_crop_NNNN.npy holds an int64 scalar (1 for H10_011), meaning not documented'
+  notes: 'Listing: listing.py over all 8 zips (60,605,540,609 bytes, exact; 1,882 members). npy headers read by range (no
+    unpickling): H10_011 image (71,986,720) uint16, mask same shape uint8; O_111 image (56,2048,2048); Blast_001 image/mask
+    (91,2048,2048). Sample H10_011 pair (30.2 MB compressed): image [0,229] p1/p50/p99 109/118/128; mask ids 0-8 (8 nuclei);
+    value_range from that one pair. axes left null: .npy stores no axis names and the docs do not give the order; the first
+    axis is the shortest (71-91), consistent with z at 2 um. Conversion: .npy is not a format TensorSwitch reads, and users.flatironinstitute.org
+    is not on its allowlist (member links pass --download-check otherwise). License: none found (site, code page, paper Data
+    availability, pipeline repo).'
