@@ -1,0 +1,142 @@
+schema_version: '1.2'
+id: kaggle-remylivecellimaging-ecoli-mother-machine-crops-masks
+title: Ecoli cell 13050 Crops Contours and Masks
+short_name: E. coli mother-machine cell masks (fluorescence)
+description: Fluorescence crops of single E. coli MG1655 cells in mother-machine microchannels with binary cell
+  masks and contour coordinates, grouped into four crop sizes ('anchors', 32x32 to 32x168 px; 4,857, 2,104, 438
+  and 74 training samples) with matching validation files. Stored as NumPy arrays; used to train a U-Net cell segmentation
+  model.
+landing_url: https://www.kaggle.com/datasets/remylivecellimaging/ecoli-cell-13050-crops-contours-and-masks
+doi: null
+repository: Kaggle
+accession: remylivecellimaging/ecoli-cell-13050-crops-contours-and-masks
+authors:
+- R. A. A. Ripandelli
+publications:
+- title: 'A Single-Cell Interrogation System from Scratch: Microfluidics and Deep Learning'
+  doi: 10.1021/acs.jpcb.4c02745
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC11613446/
+date_published: '2024-12-28'
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 110
+    y: 110
+    z: null
+  channels: 1
+  organism:
+  - Escherichia coli
+  sample: E. coli MG1655 expressing cytosolic mKate2 in mother-machine microchannels, 100x 1.49 NA objective, EM-CCD
+    camera
+  labels_stains:
+  - mKate2
+data:
+  formats:
+  - other
+  size_bytes: 203389510
+  n_items: 8099
+  access: open
+  download_url: https://www.kaggle.com/api/v1/datasets/download/remylivecellimaging/ecoli-cell-13050-crops-contours-and-masks
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: 'Each .npy file is a stream of six Python pickles (not NumPy .npy format): images (n x 32 x W float64),
+    binary masks (same shape), per-cell contour arrays (k x 2 int32), source-cell names, crop height 32 and the
+    anchor width; files segmentation_examples_4anchors_{TRAIN,VAL}_anchor{0-3}.npy'
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-28T02:15:21Z'
+  evidence_urls:
+  - https://www.kaggle.com/api/v1/datasets/view/remylivecellimaging/ecoli-cell-13050-crops-contours-and-masks
+  - https://www.kaggle.com/api/v1/datasets/list/remylivecellimaging/ecoli-cell-13050-crops-contours-and-masks
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11613446/fullTextXML
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-28T05:00:00Z'
+notes: 'Kaggle API record (license Unknown, version 2, 203 MB, eight .npy files: TRAIN and VAL for anchors 0-3)
+  and the open-access paper (Ripandelli et al. 2024, J Phys Chem B), whose data statement links this set as the
+  cell segmentation training data; about 3,000 manually segmented cells were used for first U-Net training; Nikon
+  Ti-2, 1.49 NA 100x, EM-CCD, mKate2. The page states 1 pixel = 0.11 um and that this adapted set has 7,000+ samples
+  instead of 13,050;  No license anywhere (the paper is CC BY-NC-ND but covers the text). enricher: the .npy files
+  are pickles (opcodes read statically, never unpickled); n_items 8,099 crops = train 4,857/2,104/438/74 + val 403/178/40/5
+  from the pickled array shapes (was 7,473, train only).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "archive.zip (Kaggle bundle, 8 files, 203.4 MB uncompressed, 21.7 MB compressed)\n  segmentation_examples_4anchors_TRAIN_anchor0.npy\
+      \   93.5 MB   4857 crops 32x32\n  segmentation_examples_4anchors_TRAIN_anchor1.npy   59.6 MB   2104 crops\
+      \ 32x48\n  segmentation_examples_4anchors_TRAIN_anchor2.npy   27.5 MB    438 crops 32x112\n  segmentation_examples_4anchors_TRAIN_anchor3.npy\
+      \    7.0 MB     74 crops 32x168\n  segmentation_examples_4anchors_VAL_anchor0.npy      7.7 MB    403 crops\
+      \ 32x32\n  segmentation_examples_4anchors_VAL_anchor1.npy      5.0 MB    178 crops 32x48\n  segmentation_examples_4anchors_VAL_anchor2.npy\
+      \      2.5 MB     40 crops 32x112\n  segmentation_examples_4anchors_VAL_anchor3.npy      0.5 MB      5 crops\
+      \ 32x168\n  (each file: pickled images, masks, contours, cell names, crop height, anchor width)"
+    n_files: 8
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: segmentation_examples_4anchors_*_anchor[0-3].npy
+    format: other
+    axes: null
+    shape:
+    - 5
+    - 32
+    - 168
+    shape_varies: true
+    dtype: float64
+    compression: none
+    value_range:
+    - 0
+    - 39862
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 'First pickle in each file: n single-cell crops stacked on axis 0 (crop height 32, width 32/48/112/168
+      by anchor). Which of the two image axes is y or x is not documented. Integer-valued intensities stored as
+      float64.'
+  - role: label
+    path_pattern: segmentation_examples_4anchors_*_anchor[0-3].npy
+    format: other
+    axes: null
+    shape:
+    - 5
+    - 32
+    - 168
+    shape_varies: true
+    dtype: float64
+    compression: none
+    value_range:
+    - 0
+    - 1
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Second pickle in the same file: one binary mask per crop, same shape and order as the images
+      (one cell per crop). A third pickle holds per-cell contour coordinates (k x 2 int32).'
+  notes: 'Listing: peek_archive on the Kaggle bundle (signed storage.googleapis.com redirect): 8 members, 203.4
+    MB uncompressed, 21.7 MB zip; size_bytes 203,389,510 is the Kaggle-stated total. The .npy files are not NumPy
+    format but concatenated pickles (protocol 4). Per CLAUDE.md they were not unpickled: pickletools opcodes were
+    read statically and the raw array bytes of VAL_anchor3 (67,998 B compressed, the whole member) were decoded
+    with numpy.frombuffer: images 5x32x168 float64, 0-39862 (one file); masks 5x32x168 float64 {0, 1}; contours
+    5 int32 arrays (k x 2); 5 cell names; 32; anchor scalar. Array shapes of all 8 files from the pickle headers.
+    Normalization none: integer camera counts as float (inferred). Voxel size 110 nm is from the Kaggle page (record,
+    kept). No sample unit: the files need unpickling, which TensorSwitch and the download agents must not do; www.kaggle.com
+    is not on the allowlist either.'
