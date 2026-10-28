@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-3229434-crcn-ne-metaphase-chromosomes
 title: CRCN-NE Chromosomes DataSet
 short_name: Metaphase chromosome crops (brightfield)
-description: 'Metaphase spread images (74 colour images from a Leica microscope, Biological Dosimetry Laboratory CRCN-NE, Recife) with
-  expected labels, 74 adaptive-threshold segmented versions, and cropped chromosome / non-chromosome image patches in colour and segmented
-  form, organised per metaphase (Met1..Met74).'
+description: Metaphase spread images (74 colour images from a Leica microscope, Biological Dosimetry Laboratory
+  CRCN-NE, Recife) with expected labels, 74 adaptive-threshold segmented versions, and cropped chromosome
+  / non-chromosome image patches in colour and segmented form, organised per metaphase (Met1..Met74).
 landing_url: https://zenodo.org/records/3229434
 doi: 10.5281/zenodo.3229434
 repository: Zenodo
@@ -38,9 +38,11 @@ data:
 annotations:
   present: true
   types:
+  - semantic-segmentation
   - classification
   coverage: unknown
-  format: per-metaphase folders of chromosome / non-chromosome TIFF crops (colour and adaptive-threshold segmented)
+  format: 'rotulated_images/<n>.tif: hand-painted label images (RGB TIFF, black background, white chromosomes);
+    chromosome / non-chromosome TIFF crops per metaphase (colour and adaptive-threshold versions)'
   source: unknown
 ml:
   tasks:
@@ -63,10 +65,104 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-28T04:53:09Z'
-notes: 'Single 1.94 GB tar. Tar headers read by range request: adaptative_segmentation_cutouts/{chromosome,non-chromosome}/Met<N>/<k>.tif
-  and colorful_cutouts/{chromosome,non_chromosome}/Met<N>/<k>.tif (thousands of small crops). The 74 full metaphase images and their label
-  files described on the record were not located in the headers sampled, so their format and the exact labelling (LabelMe coordinates per
-  the description) are unverified. No paper is listed on the record and none was found (Europe PMC / Crossref). Pixel size, magnification
-  and species are not stated. Not a segmentation-mask dataset as far as verified: the supervised signal seen is chromosome vs non-chromosome
-  patches.'
+  last_checked: '2026-10-28T06:40:30Z'
+notes: 'Single 1.94 GB tar (see technical.notes for its layout). original_images/ (74 RGB 2048x1536 TIFFs)
+  and rotulated_images/ (74 label images of the same size, saved by Adobe Photoshop CS6, black with white
+  chromosome regions) form raw/label pairs by file number. Cutout folders hold chromosome / non-chromosome
+  crops (OpenCV from the labelled image; non-chromosome points via LabelMe, per the record). No paper
+  is listed on the record and none was found (Europe PMC / Crossref). Pixel size, magnification and species
+  are not stated. enricher: annotation types + semantic-segmentation (label images found in the tar).'
+technical:
+  method: sample
+  inspected_at: '2026-10-28T06:40:30Z'
+  inspected_urls:
+  - https://zenodo.org/api/records/3229434
+  - https://zenodo.org/records/3229434/files/CRCN_NE_chromosomes_dataset.tar
+  bytes_downloaded: 54000000
+  size_source: file-listing
+  layout:
+    tree: "CRCN_NE_chromosomes_dataset.tar  (1 file, 1.94 GB; folder order as in the tar)\nCRCN_NE_chromosomes_dataset/\n\
+      \  adaptative_segmentation_cutouts/chromosome/Met<n>/<k>.tif   small LZW crops (adaptive threshold)\n\
+      \  adaptative_segmentation_cutouts/exemples_cutouts/<k>.tif    larger examples (~345 KB)\n  colorful_cutouts/chromosome_and_fragments/Met<n>/<k>.tif\
+      \    colour crops\n  colorful_cutouts/non_chromosome/Met<n>/<k>.tif              colour crops\n\
+      \  original_images/1..74.tif     RGB 2048x1536, 9,437,492 bytes each\n  rotulated_images/1..74.tif\
+      \    label images, 2048x1536 RGB, ~9.46-9.69 MB each"
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: CRCN_NE_chromosomes_dataset.tar/CRCN_NE_chromosomes_dataset/original_images/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 1536
+    - 2048
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 3
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'RGB colour (photometric 2), samples differ: s axis.'
+  - role: label
+    path_pattern: CRCN_NE_chromosomes_dataset.tar/CRCN_NE_chromosomes_dataset/rotulated_images/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 1536
+    - 2048
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    encoding: other
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairs with original_images by file number; same 2048x1536 shape. Not a clean mask:
+      6,411 RGB colours, 97.8% black, 1.6% white, the rest anti-aliased near-white edges (Photoshop).'
+  - role: label
+    path_pattern: CRCN_NE_chromosomes_dataset.tar/CRCN_NE_chromosomes_dataset/colorful_cutouts/*/Met*/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 38
+    - 26
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 78
+    - 166
+    encoding: other
+    classes:
+    - id: chromosome_and_fragments
+      name: chromosome (and fragments)
+    - id: non_chromosome
+      name: non-chromosome
+    alignment: cropped
+    alignment_notes: Crops of the colour metaphase images; the folder name is the class label and Met<n>
+      names the source metaphase. Crop coordinates are not stored.
+  notes: 'Zenodo lists one file (1,944,609,280 bytes, exact). The tar has no index, so it was read by
+    range: headers at 60 + 30 + 18 + 8 + 12 spread offsets, then header walks across original_images/
+    and rotulated_images/ (~35 MB read). Member counts per folder are not known for the cutout folders;
+    the full-size images are 74 + 74 by the record text and by offsets (74 x 9,438,208 bytes span original_images
+    exactly). Sampled original_images/1.tif and rotulated_images/1.tif in full (18.9 MB) and two crops:
+    values from single files. The 74 adaptive-threshold full images named on the record were not located.
+    sample is null: TensorSwitch can fetch zip members but not tar members, and the only direct file is
+    the 1.94 GB tar (data.download_url, usable, range requests). TIFF resolution tags: original 300 per
+    inch (scanner default), label 300 per inch; no physical pixel size. Voxel size not found: checked
+    TIFF tags, Zenodo API description, no paper found (record lists none).'
