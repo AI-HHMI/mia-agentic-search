@@ -29,7 +29,7 @@ imaging:
 data:
   formats:
   - jpeg
-  size_bytes: null
+  size_bytes: 192827088300
   n_items: 1
   access: open
   download_url: null
@@ -61,16 +61,96 @@ provenance:
   - https://abd1.5.catmaid.virtualflybrain.org/projects/
   - https://abd1.5.catmaid.virtualflybrain.org/1/stack/1/info
   - https://abd1.5.catmaid.virtualflybrain.org/1/skeletons/
+  - https://virtualflybrain.org/data/EM/abd1.5/200/
   confidence: 0.55
 verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-10-28T19:15:00Z'
+  last_checked: '2026-10-28T19:30:00Z'
 notes: 'No license or terms are stated on the VFB page (open read-only access, citation guidelines only). The VFB page says
   the volume is not actively worked on and holds all reconstructions regardless of completeness or review status; the papers
   annotation marks the subset published in Valdes-Aleman et al. 2021 (doi 10.1016/j.neuron.2020.10.004, called Control-2 there).
   That paper could not be read (publisher 403, Europe PMC 503), so it is not listed in publications. Voxel size follows the
   CATMAID stack metadata (4 x 4 x 45 nm); the page text says 3.8 x 3.8 x 40 nm, so the two disagree. Image tiles are JPEG
-  pyramids (VFB base https://virtualflybrain.org/data/EM/abd1.5/, not probed). Stored size is not stated. Related volumes
-  hosted at VFB: IAV-Robo, IAV-TNT and L1EM.'
+  pyramids (VFB base https://virtualflybrain.org/data/EM/abd1.5/, probed by the enricher: 256x256 uint8 JPEG). Stored size
+  is not stated. Related volumes hosted at VFB: IAV-Robo, IAV-TNT and L1EM.'
+technical:
+  method: header
+  inspected_at: '2026-10-28T19:30:00Z'
+  inspected_urls:
+  - https://abd1.5.catmaid.virtualflybrain.org/1/stack/1/info
+  - https://virtualflybrain.org/data/EM/abd1.5/200/
+  - https://virtualflybrain.org/data/EM/abd1.5/200/30_40_0.jpg
+  - https://abd1.5.catmaid.virtualflybrain.org/1/skeletons/
+  - https://abd1.5.catmaid.virtualflybrain.org/1/skeletons/14393658/compact-detail?with_connectors=true
+  bytes_downloaded: 74709
+  size_source: estimated
+  layout:
+    tree: "VFB tile mirror https://virtualflybrain.org/data/EM/abd1.5/\n  0/ ... 461/                 462 sections\n    <row>_<col>_<zoom>.jpg\
+      \     zoom 0-5; section 200: 9,216 tiles at zoom 0, 2,304 / 576 / 144 / 36 / 9 at zoom 1-5\nCATMAID API https://abd1.5.catmaid.virtualflybrain.org/\n\
+      \  1/stack/1/info               stack geometry, resolution, mirrors\n  1/skeletons/                 731 skeleton ids\n\
+      \  1/skeletons/<id>/compact-detail?with_connectors=true   per-skeleton nodes + synapses (JSON)"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://virtualflybrain.org/data/EM/abd1.5/200/30_40_0.jpg
+    - https://abd1.5.catmaid.virtualflybrain.org/1/skeletons/14393658/compact-detail?with_connectors=true
+    size_bytes: 74709
+    description: One 256x256 full-resolution JPEG tile (section 200, row 30, column 40) and the compact-detail JSON (nodes
+      + connectors, project coordinates in nm) of skeleton 14393658.
+  arrays:
+  - role: raw
+    path_pattern: '[0-9]*/*_*_0.jpg'
+    format: jpeg
+    axes: zyx
+    shape:
+    - 462
+    - 18326
+    - 22775
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    lossy: true
+    chunks:
+    - 1
+    - 256
+    - 256
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'CATMAID tile source type 1 (<section>/<row>_<col>_<zoom>.jpg), 256x256 JPEG tiles, zoom 0-5 on the VFB
+      mirror (stack info: num_zoom_levels -1, i.e. automatic); full-resolution tiles end in _0.jpg. Stack 22775 x 18326 x
+      462 (x, y, z) at 4 x 4 x 45 nm, translation 0; slices 99, 349, 350, 351 listed as broken. Mirrors: virtualflybrain.org/data/EM/abd1.5/
+      and neurocean.janelia.org/data-4-tiles/abd1.5/.'
+  - role: label
+    path_pattern: 1/skeletons/*/compact-detail
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: graph
+    classes: null
+    alignment: transform-provided
+    alignment_notes: 'CATMAID REST API, one JSON per skeleton: [nodes, connectors, tags, ...]; nodes are [id, parent, user,
+      x, y, z, radius, confidence] in project coordinates (nm); stack translation is 0, so voxel = coordinate / (4, 4, 45).
+      Skeleton 14393658: 943 nodes, 54 connector links. 731 skeletons in /1/skeletons/ (all reconstructions, reviewed or not,
+      per the VFB page).'
+  notes: 'Inspected via the CATMAID stack info, one tile header and one skeleton JSON. No archive or chunked store (OME-Zarr
+    / N5 / precomputed) exists: the EM is a JPEG tile pyramid (one file per 256x256 tile per section per zoom), and the tracings
+    come from the CATMAID REST API, so data.download_url stays null and download_method api. Download link search: tile URL
+    works with range requests but host virtualflybrain.org is not on TensorSwitch''s allowlist; the API JSON has no range
+    requests and its host abd1.5.catmaid.virtualflybrain.org is not allowed either. Tile listing not crawled (462 section
+    folders, ~5.7M files with pyramid), so no file-listing size. Voxel size: the stack info says 4 x 4 x 45 nm, the VFB page
+    text says 3.8 x 3.8 x 40 nm; the record keeps the stack metadata value (unchanged) and the conflict stays open (paper
+    unread, Europe PMC 503). The page''s sentence and the broken-slice list (99, 349-351) are identical to the IAV-Robo instance,
+    which hints the page text may be copied from there, but this is not confirmed. Value range not sampled. License: none
+    found; checked the VFB hosted page, VFB knowledge base (no DataSet for ABD1.5; only Valdes_Aleman2021, CC-BY-4.0, which
+    covers that paper''s neurons, not this whole instance). size estimated (uncompressed): raw 1 x 462x18326x22775 uint8 =
+    192,827,088,300 B (192.8 GB).'
