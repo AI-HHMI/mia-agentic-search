@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: platelet-em-sbfsem-organelles
 title: 3D Platelet EM - dense organelle segmentation of human platelets (SBF-SEM)
 short_name: Human platelet organelles (SBF-SEM)
-description: Labeled serial block-face SEM volumes of human blood platelets from Guay et al. 2021 (NIH/NIBIB LCIMB with UAMS), packaged on Hugging Face as multipage TIFF. Train and eval volumes come from donor 1, a held-out test volume from donor 2. Dense 7-class semantic labels (background, cell, mitochondrion, alpha granule, canalicular vessel, dense granule, dense granule core), plus instance maps for train and eval.
+description: Labeled serial block-face SEM volumes of human blood platelets from Guay et al. 2021 (NIH/NIBIB LCIMB with UAMS),
+  packaged on Hugging Face as multipage TIFF. Train and eval volumes come from donor 1, a held-out test volume from donor
+  2. Dense 7-class semantic labels (background, cell, mitochondrion, alpha granule, canalicular vessel, dense granule, dense
+  granule core), plus instance maps for train and eval.
 landing_url: https://huggingface.co/datasets/MedOtter/3D-Platelet-EM
 doi: null
 repository: HuggingFace
@@ -28,7 +31,7 @@ imaging:
     x: 10
     y: 10
     z: 50
-  channels: null
+  channels: 1
   organism:
   - Homo sapiens
   sample: Human blood platelets from two donors
@@ -36,10 +39,10 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 178000000
+  size_bytes: 177581716
   n_items: 3
   access: open
-  download_url: null
+  download_url: https://huggingface.co/datasets/MedOtter/3D-Platelet-EM/tree/main
   download_method: http
 annotations:
   present: true
@@ -68,10 +71,135 @@ provenance:
   - https://huggingface.co/datasets/MedOtter/3D-Platelet-EM/raw/main/README.md
   - https://leapmanlab.github.io/dense-cell
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7844272/fullTextXML
-  confidence: 0.75
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-19T20:14:21Z'
-notes: 'Hugging Face mirror of the original platelet-em data (original hosted as platelet_data_1219.zip on Dropbox, linked from leapmanlab.github.io/dense-cell). License is the HF tag nih-public-release ("US-Government work (LCIMB, NIH/NIBIB)"); the lab page states no terms, so spdx is custom. Voxel size: the paper states 10 nm lateral and 50 nm axial for the source subjects; the HF README says ~40 nm z. The paper value is used here; the discrepancy is unresolved. Volumes are crops (train 50x800x800, eval 24x800x800, test 121x609x400) of the paper images (250x2000x2000 and 239x2000x2000). The README notes the released label indices 3=alpha granule and 4=canalicular vessel are the reverse of the paper text. n_items counts the three volumes (train/eval/test). download_url is null because the files are listed in the repo tree, not one archive.'
+  last_checked: '2026-10-28T17:40:00Z'
+notes: 'Hugging Face mirror of the original platelet-em data (original hosted as platelet_data_1219.zip on Dropbox, linked
+  from leapmanlab.github.io/dense-cell). License is the HF tag nih-public-release ("US-Government work (LCIMB, NIH/NIBIB)");
+  the lab page states no terms, so spdx is custom. Voxel size: the paper states 10 nm lateral and 50 nm axial for the source
+  subjects; the HF README says ~40 nm z. The paper value is used here; the discrepancy is unresolved. Volumes are crops (train
+  50x800x800, eval 24x800x800, test 121x609x400) of the paper images (250x2000x2000 and 239x2000x2000). The README notes the
+  released label indices 3=alpha granule and 4=canalicular vessel are the reverse of the paper text. n_items counts the three
+  volumes (train/eval/test). enricher: size 177,581,716 B from the HF file listing (was ~178 MB); channels 1 from headers;
+  download_url = repo tree (no single archive). Test labels cover a single cell (paper: test MIoU(org) only).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './                 2 files   5.4 KB   .gitattributes, README.md
+
+      data/              3 files  22.9 MB   {train,eval,test}-00000-of-00001.parquet (5-slice previews)
+
+      images/            3 files 150.3 MB   train.tif, eval.tif, test.tif
+
+      labels-instance/   4 files   2.8 MB   {train,eval}-{cell,organelle}.tif
+
+      labels-semantic/   3 files   1.6 MB   train.tif, eval.tif, test.tif'
+    n_files: 15
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/MedOtter/3D-Platelet-EM/resolve/main/images/eval.tif
+    - https://huggingface.co/datasets/MedOtter/3D-Platelet-EM/resolve/main/labels-semantic/eval.tif
+    - https://huggingface.co/datasets/MedOtter/3D-Platelet-EM/resolve/main/labels-instance/eval-cell.tif
+    - https://huggingface.co/datasets/MedOtter/3D-Platelet-EM/resolve/main/labels-instance/eval-organelle.tif
+    - https://huggingface.co/datasets/MedOtter/3D-Platelet-EM/resolve/main/images/test.tif
+    - https://huggingface.co/datasets/MedOtter/3D-Platelet-EM/resolve/main/labels-semantic/test.tif
+    size_bytes: 91192068
+    description: 'eval split (24 x 800 x 800: raw, semantic labels, both instance maps) plus the test volume and its semantic
+      labels (one file per raw array)'
+  arrays:
+  - role: raw
+    path_pattern: images/{train,eval}.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 24
+    - 800
+    - 800
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 65535
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: 'train 50x800x800 (deflate), eval 24x800x800 (uncompressed, ImageJ zyx). README: train/eval use the canonical
+      contrast-normalized range; z x y x x per README.'
+  - role: raw
+    path_pattern: images/test.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 121
+    - 609
+    - 400
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 'Donor 2 held-out test volume; README: retains the raw detector range.'
+  - role: label
+    path_pattern: labels-semantic/*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 24
+    - 800
+    - 800
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 6
+    normalization: none
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: cell
+    - id: 2
+      name: mitochondrion
+    - id: 3
+      name: alpha granule
+    - id: 4
+      name: canalicular vessel
+    - id: 5
+      name: dense granule
+    - id: 6
+      name: dense granule core
+    alignment: same-grid
+    alignment_notes: labels-semantic/<split>.tif pairs with images/<split>.tif, identical shapes. Index 3 = alpha granule,
+      4 = canalicular vessel per README (swapped vs paper prose).
+  - role: label
+    path_pattern: labels-instance/*.tif
+    format: tiff
+    axes: zyxs
+    shape:
+    - 24
+    - 800
+    - 800
+    - 4
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 188
+    normalization: none
+    encoding: rgb-colors
+    alignment: same-grid
+    alignment_notes: labels-instance/<split>-{cell,organelle}.tif pairs with images/<split>.tif (train, eval only). RGBA colour
+      per object (README), photometric RGB with 4 samples; colours must be mapped to ids.
+  notes: 'Listing: HF API, 15 files, 177,581,716 B (complete). Probed all images and labels; sampled eval raw (30.7 MB) and
+    eval semantic + instance labels. value_range from one sample each (eval). Semantic eval values 0-6, all 7 present. Train
+    raw is a plain multi-page deflate TIFF; axes zyx from the README (z x y x x). Voxel size 10x10x50 nm from paper (Methods:
+    lateral 10 nm, axial 50 nm); the HF README says ~40 nm z, conflict noted. Volumes are crops of the 250x2000x2000 Subject
+    1 and 239x2000x2000 Subject 2 acquisitions (offsets in paper Methods).'
