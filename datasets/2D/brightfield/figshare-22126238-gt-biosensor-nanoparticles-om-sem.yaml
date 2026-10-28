@@ -2,11 +2,11 @@ schema_version: '1.2'
 id: figshare-22126238-gt-biosensor-nanoparticles-om-sem
 title: Facile quantification of nanosized bioparticles in bright-field micrograph via deep learning
 short_name: Nanoparticle counting, paired OM and SEM
-description: Paired bright-field optical microscope (OM, JPEG) and scanning electron microscope (SEM, TIFF)
-  images of nanosized bioparticles on a Gires-Tournois (GT) resonator biosensor, with per-image CSV point
-  annotations of the particles. 1,614 OM/SEM pairs of 100 nm particles (1,596 annotated) for the main model,
-  plus 50, 200 and 300 nm sets (120, 251, 230 pairs) for transfer learning and 139 hard-negative OM images
-  (defects, impurities).
+description: Paired bright-field optical microscope (OM, JPEG) and scanning electron microscope (SEM,
+  TIFF) images of nanosized bioparticles on a Gires-Tournois (GT) resonator biosensor, with per-image
+  CSV point annotations of the particles. 1,614 OM/SEM pairs of 100 nm particles (1,596 annotated) for
+  the main model, plus 50, 200 and 300 nm sets (120, 251, 230 pairs) for transfer learning and 139 hard-negative
+  OM images (defects, impurities).
 landing_url: https://figshare.com/articles/dataset/Facile_quantification_of_nanosized_bioparticles_in_bright-field_micrograph_via_deep_learning/22126238
 doi: 10.6084/m9.figshare.22126238.v2
 repository: Figshare
@@ -31,17 +31,17 @@ imaging:
   - other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism: []
-  sample: Nanosized bioparticles (100 nm main set; 50, 200 and 300 nm transfer-learning sets) captured on
-    a Gires-Tournois resonator biosensor, imaged by bright-field optical microscopy (colour micrographs)
+  sample: Nanosized bioparticles (100 nm main set; 50, 200 and 300 nm transfer-learning sets) captured
+    on a Gires-Tournois resonator biosensor, imaged by bright-field optical microscopy (colour micrographs)
     and by SEM at several magnifications (10k to 100k)
   labels_stains: []
 data:
   formats:
   - jpeg
   - tiff
-  size_bytes: 3749700000
+  size_bytes: 3749720852
   n_items: 2215
   access: open
   download_url: https://ndownloader.figshare.com/files/39596812
@@ -51,8 +51,8 @@ annotations:
   types:
   - points
   coverage: dense
-  format: 'CSV per image under <set>/Annotation/, rows "index,x,y" with fractional pixel coordinates (e.g. 1,880.5,453.5);
-    file names match the OM image names'
+  format: CSV per image under <set>/Annotation/, rows "index,x,y" (no header) with pixel coordinates in
+    the SEM image (1536 x 1094 px); file names match the OM and SEM image names
   source: unknown
 ml:
   tasks:
@@ -79,11 +79,97 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-28T12:10:00Z'
-notes: 'Zip listing (peek_archive, 6,777 files): 100 nm set has OM jpg 1,614, SEM tif 1,614, annotation csv 1,596;
-  transfer sets 50 nm (120), 200 nm (251), 300 nm (230) with csv; 139 hard-negative OM jpgs without annotations.
-  n_items 2215 = OM/SEM pairs. Only one CSV was read (rows index,x,y); how the points were made (e.g. from SEM)
-  is not stated on the figshare page or thesis abstract, so source is unknown. Image Format.txt gives the OM
-  field of view (169 x 141.4 um^2) but no pixel size, so voxel_size_nm is null. The paper (Nano Today 2023)
-  is not open access: only Crossref, a news article and the GIST thesis abstract were read. No splits are
-  provided. SEM is filed as other (no plain-SEM modality in the schema).'
+  last_checked: '2026-10-28T13:20:00Z'
+notes: 'Zip listing (6,777 files): 100 nm set has OM jpg 1,614, SEM tif 1,614, annotation csv 1,596; transfer
+  sets 50 nm (120), 200 nm (251), 300 nm (230) with csv; 139 hard-negative OM jpgs without annotations.
+  n_items 2215 = OM/SEM pairs. How the points were made is not stated, so source is unknown. Image Format.txt
+  gives the OM field of view (169 x 141.4 um^2) and SEM crop sizes per magnification but no pixel size,
+  so voxel_size_nm is null. The paper (Nano Today 2023) is not open access. No splits. SEM is filed as
+  other. organism: none (nanoparticles on a biosensor, no organism named). enricher: size_bytes exact
+  from figshare API / file listing (was 3.7497e9 rounded); channels 3 (RGB) from headers (was null); annotation
+  CSV coordinates are in SEM pixels (sampled).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Data available.zip (3,749,720,852 B; 6,777 members, 11.2 GB uncompressed)\n  Data available/Main\
+      \ DL model/\n    Dataset indexing.xlsx            per-image layers / clusters / particle-count classes\n\
+      \    Image Format.txt                 OM FoV, SEM crop sizes per magnification\n    100 nm particles/OM/<1-8>/*.jpg\
+      \          1,614  (e.g. OM/1/1_001.jpg, 8.7 KB)\n    100 nm particles/SEM/<1-8>/*.tif         1,614\
+      \  (e.g. SEM/1/1_001.tif, 5.1 MB) + 9 MATLAB .m scripts\n    100 nm particles/Annotation/<1-8>/*.csv\
+      \  1,596  (e.g. Annotation/1/1_001.csv)\n    Hard negative samples/{Big defects,Small defects,Impurities}/*.jpg\
+      \  50 + 50 + 39\n  Data available/Transfer learning/\n    {50,200,300} nm particles/OM/*.jpg   \
+      \       120 / 251 / 230\n    {50,200,300} nm particles/SEM/*.tif         120 / 251 / 230\n    {50,200,300}\
+      \ nm particles/Annotation/*.csv  120 / 251 / 230\n"
+    n_files: 6777
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/39596812::Data available/Main DL model/100 nm particles/SEM/1/1_001.tif
+    - https://ndownloader.figshare.com/files/39596812::Data available/Main DL model/100 nm particles/OM/1/1_001.jpg
+    - https://ndownloader.figshare.com/files/39596812::Data available/Main DL model/100 nm particles/Annotation/1/1_001.csv
+    size_bytes: 5071869
+    description: One OM/SEM pair of 100 nm particles (set 1, image 001) and its point CSV
+  arrays:
+  - role: raw
+    path_pattern: Data available/*/SEM/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 1094
+    - 1536
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 46
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: SEM micrographs stored as RGB (photometric 2); the three samples are not identical
+      in the sample. Same shape in a 50 nm transfer-set file.
+  - role: raw
+    path_pattern: Data available/*/OM/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 41
+    - 61
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 61
+    - 103
+    normalization: unknown
+    alignment: unknown
+    alignment_notes: Bright-field OM crops; size varies with SEM magnification (41x61 in set 1, 21x31
+      in a 50 nm file; Image Format.txt lists crop sizes 307x205 to 31x21 px per magnification). Registration
+      between OM crop and SEM frame is not documented.
+  - role: label
+    path_pattern: Data available/*/Annotation/*.csv
+    format: csv
+    axes: null
+    shape:
+    - 14
+    - 3
+    shape_varies: true
+    dtype: float64
+    compression: none
+    encoding: points-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: same file stem in OM/, SEM/ and Annotation/ (e.g. 1/1_001.*). Columns
+      index, x, y (no header, CRLF). Sampled coordinates (x 595-891, y 354-715 over three files) lie inside
+      the 1536 x 1094 SEM frame and exceed the OM crop size, so points are in SEM pixel coordinates.'
+  notes: 'Listing: figshare API (one file, Data available.zip, 3,749,720,852 B) and the zip central directory
+    (peek_archive, 6,777 members). Sample: 1,697,204 B read as zip members by a scratch script (tools/sample.py
+    cannot open the extensionless figshare zip URL): SEM 1_001.tif, OM 1_001.jpg, three CSVs, OM 50_1_003.jpg
+    and Dataset indexing.xlsx. value_range from one sample each. The SEM folders also hold MATLAB scripts
+    (CropSEM.m: rgb2gray, imadjust, 70-px bottom crop, 3x3x3 median filter) used to preprocess the SEM
+    images for training; the shipped tifs are the 1536x1094 RGB originals (bottom bar not cropped). Voxel
+    size not found; checked: TIFF and JPEG headers, figshare API description, Image Format.txt, Dataset
+    indexing.xlsx, paper (not open access, abstract only). Hard-negative OM images (139) have no CSV and
+    no SEM. Download: the zip is direct (figshare ndownloader, range requests OK).'
