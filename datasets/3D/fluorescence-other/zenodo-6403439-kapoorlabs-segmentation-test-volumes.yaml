@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-6403439-kapoorlabs-segmentation-test-volumes
 title: Test datasets for segmentation (2D, 3D, timelapses)
 short_name: Fluorescence segmentation test volumes with GT
-description: Six small fluorescence test datasets for U-Net/StarDist/denoising models (Arabidopsis membranes
-  3D, ascidian embryo light-sheet 3D, carcinoma cells 3D+t, tissue 2D+t, nuclei 3D and 2D nuclear masks);
-  the nuclei sets and the ascidian volume ship raw, ground truth and model prediction folders.
+description: Six small fluorescence test datasets for U-Net/StarDist/denoising models (Arabidopsis membranes 3D,
+  ascidian embryo light-sheet 3D, carcinoma cells 3D+t, tissue 2D+t, nuclei 3D and 2D nuclear masks); the nuclei
+  sets and the ascidian volume ship raw, ground truth and model prediction folders.
 landing_url: https://zenodo.org/records/6403439
 doi: 10.5281/zenodo.6403439
 repository: Zenodo
@@ -21,13 +21,13 @@ imaging:
   voxel_size_nm: null
   channels: null
   organism: []
-  sample: Arabidopsis with membrane labelling; ascidian embryo (light-sheet); carcinoma cells over time
-    at low SNR; tissue time-lapse; nuclei imaged by Mari Tolonen (University of Copenhagen)
+  sample: Arabidopsis with membrane labelling; ascidian embryo (light-sheet); carcinoma cells over time at low SNR;
+    tissue time-lapse; nuclei imaged by Mari Tolonen (University of Copenhagen)
   labels_stains: []
 data:
   formats:
   - tiff
-  size_bytes: 960900000
+  size_bytes: 960913865
   n_items: null
   access: open
   download_url: null
@@ -35,10 +35,11 @@ data:
 annotations:
   present: true
   types:
-  - other
+  - instance-segmentation
+  - semantic-segmentation
   coverage: partial
-  format: GT/ folders of TIFF label volumes next to Raw/ and Prediction/ (Nuclei3D.zip, Nuclei_cell_mask.zip),
-    GT/Astec-Pm2_fuse_t001.tif in Ascadian_data_GT_model.zip
+  format: TIFF label images in GT/ folders next to Raw/ and Prediction/ (Nuclei3D.zip, Nuclei_cell_mask.zip) and
+    GT/Astec-Pm2_fuse_t001.tif in Ascadian_data_GT_model.zip; same file name as the raw image
   source: unknown
 ml:
   tasks:
@@ -63,10 +64,181 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-28T02:45:00Z'
-notes: 'Small bundle of test cases, not a full training set (zip listings via peek_archive): Nuclei3D.zip
-  is one 3D stack with Raw/GT/Prediction TIFFs, Nuclei_cell_mask.zip one 2D image with Raw/GT/Prediction,
-  Ascadian_data_GT_model.zip one time point (206 MB) with GT, a VollSeg prediction and UNet weights; test_datasets_segmentation.zip
-  lists raw TIFFs only. GT is verified only for the nuclei sets and the ascidian time point; label type,
-  annotator, voxel size, species and image counts are not stated, so types is other, source unknown. No
-  paper is linked on the record. Dimensionality 3D reflects the largest volumes; two sets are 2D or 2D+t.'
+  last_checked: '2026-10-28T03:40:00Z'
+notes: 'Small bundle of test cases, not a full training set (zip listings via peek_archive): Nuclei3D.zip is one
+  3D stack with Raw/GT/Prediction TIFFs, Nuclei_cell_mask.zip one 2D image with Raw/GT/Prediction, Ascadian_data_GT_model.zip
+  one time point (206 MB) with GT, a VollSeg prediction and UNet weights; test_datasets_segmentation.zip lists raw
+  TIFFs only. GT exists only for Nuclei3D, Nuclei_cell_mask and the ascidian time point; annotator, voxel size and
+  species are not stated (source unknown). No paper is linked on the record. Dimensionality 3D reflects the largest
+  volumes; two sets are 2D or 2D+t. enricher: annotation types from samples (instance IDs in Nuclei3D and ascidian
+  GT, binary mask in Nuclei_cell_mask; was other). Pixel size differs by subset (Nuclei_cell_mask header 0.69 um,
+  others uncalibrated), so voxel_size_nm stays null.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './                                               6 files  960.9 MB  .zip 4, .tif 2 (Astec-Pm2_fuse_t001.tif,
+      carcinoma_xyzt.tif)
+
+      zip contents:
+
+      Nuclei3D.zip/Nuclei3D/Raw/                      1 files   10.2 MB  .tif
+
+      Nuclei3D.zip/Nuclei3D/GT/                       1 files   10.2 MB  .tif
+
+      Nuclei3D.zip/Nuclei3D/Prediction/               1 files   72.7 KB  .tif
+
+      Nuclei_cell_mask.zip/Nuclei_cell_mask/Raw/      1 files    5.5 MB  .tif
+
+      Nuclei_cell_mask.zip/Nuclei_cell_mask/GT/       1 files    5.5 MB  .tif
+
+      Nuclei_cell_mask.zip/Nuclei_cell_mask/Prediction/ 1 files 37.3 KB  .tif
+
+      Ascadian_data_GT_model.zip/                     1 files  206.1 MB  .tif (Astec-Pm2_fuse_t001.tif, raw)
+
+      Ascadian_data_GT_model.zip/GT/                  1 files  206.1 MB  .tif
+
+      Ascadian_data_GT_model.zip/VollSeg_Prediction/BinaryMask/ 1 files 206.1 MB .tif
+
+      Ascadian_data_GT_model.zip/VollSeg_Prediction/Skeleton/   1 files 206.1 MB .tif
+
+      Ascadian_data_GT_model.zip/Model/UNETAscadian/  6 files   65.6 MB  .h5 2, .json 1, tfevents 3
+
+      Ascadian_data_GT_model.zip/Metrics/             1 files  488.7 KB  .png
+
+      test_datasets_segmentation.zip/Arabidopsis/     1 files   27.5 MB  .tif
+
+      test_datasets_segmentation.zip/Ascadian3D/      3 files  447.7 MB  .tif
+
+      test_datasets_segmentation.zip/Carcinoa_3DT/    1 files  239.2 MB  .tif
+
+      test_datasets_segmentation.zip/Tissue/          1 files   66.5 MB  .tif'
+    n_files: 29
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/6403439/files/Nuclei3D.zip::Nuclei3D/Raw/stk_0050_concatenated-h2b_tiltcorrected_cropped.tif
+    - https://zenodo.org/records/6403439/files/Nuclei3D.zip::Nuclei3D/GT/stk_0050_concatenated-h2b_tiltcorrected_cropped.tif
+    - https://zenodo.org/records/6403439/files/Nuclei_cell_mask.zip::Nuclei_cell_mask/Raw/h2b_to_mask_0072.tif
+    - https://zenodo.org/records/6403439/files/Nuclei_cell_mask.zip::Nuclei_cell_mask/GT/h2b_to_mask_0072.tif
+    size_bytes: 31415826
+    description: Nuclei3D stack and Nuclei_cell_mask image, each with its ground truth (the ascidian pair, 2 x 206
+      MB, is left out)
+  arrays:
+  - role: raw
+    path_pattern: Nuclei3D.zip/Nuclei3D/Raw/*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 22
+    - 513
+    - 450
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One H2B nuclei stack (ImageJ TIFF, axes ZYX). uint16 container holding values 0-255.
+  - role: label
+    path_pattern: Nuclei3D.zip/Nuclei3D/GT/*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 22
+    - 513
+    - 450
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 182
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: Raw/<name>.tif pairs with GT/<name>.tif (same file name, same shape). 181 distinct
+      IDs incl. background 0.'
+  - role: raw
+    path_pattern: Nuclei_cell_mask.zip/Nuclei_cell_mask/Raw/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2355
+    - 2355
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One 2D H2B image (ImageJ TIFF, palette photometric). Header calibration 0.6905 um/px.
+  - role: label
+    path_pattern: Nuclei_cell_mask.zip/Nuclei_cell_mask/GT/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2355
+    - 2355
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 1
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: Raw/<name>.tif pairs with GT/<name>.tif (same name, same shape). Values {0,
+      1}; what 1 marks (nuclei or cells) is not documented.'
+  - role: raw
+    path_pattern: Ascadian_data_GT_model.zip/Astec-Pm2_fuse_t001.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 401
+    - 482
+    - 533
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Ascidian light-sheet time point at the zip root (ImageJ TIFF, ZYX). The separate top-level
+      Astec-Pm2_fuse_t001.tif is a different 670x482x533 uint16 version, not the GT grid.
+    value_range:
+    - 94
+    - 580
+  - role: label
+    path_pattern: Ascadian_data_GT_model.zip/GT/Astec-Pm2_fuse_t001.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 401
+    - 482
+    - 533
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 100
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: zip-root Astec-Pm2_fuse_t001.tif pairs with GT/Astec-Pm2_fuse_t001.tif (same
+      name, same 401x482x533 shape). 66 distinct IDs incl. 0 (cells).'
+  notes: 'Listing: tools/listing.py on the Zenodo record with --expand-zips: 6 files, 23 zip members, 960,913,865
+    B (file-listing, complete). Samples (value ranges from one file each): Nuclei3D raw/GT 22x513x450 uint16, raw
+    0-255, GT 181 IDs; Nuclei_cell_mask raw/GT 2355x2355 uint8, GT {0,1}; ascidian raw/GT 401x482x533 uint16, raw
+    94-580, GT 66 IDs, 0-100. Prediction/ and VollSeg_Prediction/ folders are model outputs, not ground truth; Model/
+    holds Keras weights (not opened). test_datasets_segmentation.zip, Astec-Pm2_fuse_t001.tif (670x482x533 uint16)
+    and carcinoma_xyzt.tif (12x35x512x512 uint16, TZYX) are raw only. Voxel size not found; checked: TIFF headers
+    (Nuclei_cell_mask 0.6905 um/px, ascidian spacing 0.3 unit pixel, i.e. uncalibrated), Zenodo API record (no paper,
+    no related identifiers), zip contents. Organism not stated on the record; the ascidian file name matches the
+    ASTEC Phallusia mammillata series (Guignard et al. 2020) but no read source ties this file to it. No single
+    archive: data.download_url stays null; direct files are the six Zenodo file URLs.'
