@@ -1,0 +1,135 @@
+schema_version: '1.2'
+id: recherche-data-gouv-uadenq-diatom-atlas-images
+title: 'Dataset for publication: Usefulness of synthetic datasets for diatom automatic detection using a deep-learning approach'
+short_name: Freshwater diatom species images, 166 taxa (LM)
+description: 9,230 individual light-microscopy images of freshwater diatoms from 166 species, automatically extracted from
+  three published diatom atlases (RA, IDF, BRG) by PDF scraping and verified by diatom taxonomists, organised in one folder
+  per species with sub-folders for the source atlas, plus 600 debris objects cut from real microscopy images. The repository
+  also holds the code of a synthetic-image generator used to build detection training sets.
+landing_url: https://entrepot.recherche.data.gouv.fr/dataset.xhtml?persistentId=doi:10.12763/UADENQ
+doi: 10.12763/UADENQ
+repository: other
+accession: UADENQ
+authors:
+- Martin Laviale
+- Aishwarya Venkataramanan
+publications: []
+date_published: '2023-07-21'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: Freshwater diatoms (166 species) and debris objects
+  labels_stains: []
+data:
+  formats:
+  - jpeg
+  size_bytes: 50188610
+  n_items: 10512
+  access: open
+  download_url: https://entrepot.recherche.data.gouv.fr/api/access/datafile/539256
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  coverage: dense
+  format: 'Species label = folder name (166 species folders; sub-folders RA/IDF/BRG give the source atlas); debris objects
+    in a separate set. Archive: data_individual_images.zip'
+  source: proofread
+ml:
+  tasks:
+  - classification
+  - detection
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: custom
+  url: https://spdx.org/licenses/etalab-2.0.html
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-28T18:20:00Z'
+  evidence_urls:
+  - https://entrepot.recherche.data.gouv.fr/api/datasets/:persistentId/?persistentId=doi:10.12763/UADENQ
+  - https://b2find.eudat.eu/dataset/70dbae79-0ae4-5f53-9c5f-de634edad6d7
+  - https://zenodo.org/api/records/14018390
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: false
+  last_checked: '2026-10-28T20:05:00Z'
+notes: 'Cropped single-organism images extracted from published atlases (scale, magnification and microscope vary and are
+  not stated). enricher: zip central directory read: 9,772 diatom + 740 debris jpgs, 166 taxa (n_items was 9,830 from the
+  description). Describing paper (Venkataramanan et al., Eng. Appl. Artif. Intell. 2023, doi 10.1016/j.engappai.2022.105594)
+  not listed: full text unavailable (Europe PMC 503, HAL access denied), so pixel size is unchecked. License: Etalab 2.0 on
+  the Recherche Data Gouv record (Zenodo mirror 14018390 says CC-BY-4.0). Differs from zenodo-16260887 (DIATLAS, 38,719 images
+  from French regional atlases): this is a smaller RA/IDF/BRG selection with debris objects and a generator.'
+technical:
+  method: sample
+  inspected_at: '2026-10-28T20:05:00Z'
+  inspected_urls:
+  - https://entrepot.recherche.data.gouv.fr/api/datasets/:persistentId/?persistentId=doi:10.12763/UADENQ
+  - https://entrepot.recherche.data.gouv.fr/api/access/datafile/539256
+  bytes_downloaded: 1589793
+  size_source: page-stated
+  layout:
+    tree: "UADENQ (Dataverse, 12 files)\n  data_individual_images.zip   50,188,610 B, stored (uncompressed) zip, 11,033 entries\n\
+      \    data_aishwarya/individual_diatoms/<4-letter taxon code>/<RA|IDF|BRG>/<CODE>_<nnnnn>.jpg   9,772 jpg, 166 taxa (RA\
+      \ 3,921, IDF 4,621, BRG 1,230)\n    data_aishwarya/individual_debris/<n>.jpg   740 jpg\n  eaai_code/  generator.py,\
+      \ dataset_generator_multithread.py, data_utils.py, image_utils.py, utils.py, variables.py,\n              var.yaml,\
+      \ synt_environment.yml, README.md, example_data/{model_id_map.tab, ref_img.jpg}\n"
+    n_files: 12
+    listing_complete: true
+  sample:
+    urls:
+    - https://entrepot.recherche.data.gouv.fr/api/access/datafile/539256::data_aishwarya/individual_diatoms/CAEX/IDF/CAEX_00036.jpg
+    size_bytes: 4240
+    description: One diatom crop (taxon CAEX, IDF atlas); the label is the taxon folder.
+  arrays:
+  - role: raw
+    path_pattern: data_aishwarya/individual_diatoms/*/*/*.jpg
+    format: jpeg
+    axes: yx
+    shape:
+    - 185
+    - 73
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 58
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Greyscale (mode L) crops of single diatoms scraped from atlas plates; size varies (73x185, 89x196 px
+      in two samples). Class = <taxon code> folder, source atlas = sub-folder.
+  - role: raw
+    path_pattern: data_aishwarya/individual_debris/*.jpg
+    format: jpeg
+    axes: yx
+    shape:
+    - 193
+    - 181
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 29
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Greyscale debris crops (class 'debris'), used as distractors by the synthetic-image generator.
+  notes: 'Listing: Dataverse API (12 files; zip 50,188,610 B per filesize) plus the zip''s central directory read by range
+    GETs with a short requests-only script, because the access URL redirects to a presigned S3 URL that rejects HEAD (listing.py/peek_archive.py
+    saw only a 231-byte error body). The zip is stored (no compression): 9,772 diatom jpgs in 166 taxon folders and 740 debris
+    jpgs (the description says 9,230 and 600). Read 3 members (15,419 B): JPEG mode L, 73x185, 89x196, 181x193 px; ranges
+    58-255, 25-255, 29-255; no dpi. size_bytes is the Dataverse filesize of the zip (the code files add ~48 KB), so page-stated.
+    Voxel size not found: JPEG headers carry no dpi, the Dataverse record and README do not state it, the crops come from
+    atlas plates of varying magnification; the EAAI 2023 paper was not readable (Europe PMC 503 this run). Download: the zip
+    is a direct file (206 on range), but host entrepot.recherche.data.gouv.fr is not on TensorSwitch''s allowlist, and its
+    zip-member reader fails on the redirect.'
