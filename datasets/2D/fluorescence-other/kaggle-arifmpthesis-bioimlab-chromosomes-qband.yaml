@@ -1,0 +1,119 @@
+schema_version: '1.2'
+id: kaggle-arifmpthesis-bioimlab-chromosomes-qband
+title: BioImLAB Chromosome Data Set for Classification
+short_name: Q-band chromosome images, 24 classes (karyotype)
+description: 5,474 single human chromosome images (monochrome 8-bit BMP) manually segmented and classified by expert
+  cytologists from 119 Q-band karyotypes of normal and pathological subjects. The images are grouped into 24 classes
+  of 119 chromosomes, all rotated to the ISCN orientation, with a folder per class and file names carrying cell
+  number and class.
+landing_url: https://www.kaggle.com/datasets/arifmpthesis/bioimlab-chromosome-data-set-for-classification
+doi: null
+repository: Kaggle
+accession: arifmpthesis/bioimlab-chromosome-data-set-for-classification
+authors:
+- E. Poletti
+- E. Grisan
+- A. Ruggeri
+publications:
+- title: Automatic classification of chromosomes in Q-band images
+  doi: 10.1109/IEMBS.2008.4649560
+  url: https://pubmed.ncbi.nlm.nih.gov/19163063/
+date_published: '2024-08-28'
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Homo sapiens
+  sample: Human metaphase chromosomes from 119 cells of normal and pathological subjects, Q-banded, source TesiImaging
+    srl (Milan)
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: 11256001
+  n_items: 5474
+  access: open
+  download_url: https://www.kaggle.com/api/v1/datasets/download/arifmpthesis/bioimlab-chromosome-data-set-for-classification
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  coverage: dense
+  format: Chromosome class (1-22, X, Y) as the Class_N folder and in the file name; single chromosomes were manually
+    segmented and classified by cytologists
+  source: manual
+ml:
+  tasks:
+  - classification
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: custom
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-28T02:15:21Z'
+  evidence_urls:
+  - https://www.kaggle.com/api/v1/datasets/view/arifmpthesis/bioimlab-chromosome-data-set-for-classification
+  - https://www.kaggle.com/api/v1/datasets/list/arifmpthesis/bioimlab-chromosome-data-set-for-classification
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22Automatic+classification+of+chromosomes+in+Q-band+images%22&format=json&resultType=core&pageSize=3
+  confidence: 0.55
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-28T06:30:00Z'
+notes: 'Third-party Kaggle copy (license field Other) of the BioImLab Q-band chromosome set; the page says published
+  work using it must cite Poletti, Grisan and Ruggeri (IEEE EMBS 2008), which is the only stated term, hence license
+  custom. The Europe PMC abstract of that paper (not open access, full text unread) gives 119 karyotypes and 5,474
+  chromosomes, 70 used for training and validation and 49 for testing; no split is in the files. Complete bundle
+  listing: Class_1..22 with 238 BMPs each, Class_X 193, Class_Y 45 (5,474). Q-band implies fluorescence microscopy,
+  but neither page states it, so modality is an inference. Classes follow the 24 chromosome types (22 autosomes,
+  X, Y) implied by 24 classes. Original BioImLab host not checked. Pixel size not stated. enricher: size_bytes is
+  the 11.3 MB bundle zip from a complete listing.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'archive.zip (Kaggle bundle, 5,474 members, 11.3 MB)
+
+      Class_1/ ... Class_22/   238 files each  1.5-2.4 MB  .bmp   "<cell> <class><a|b>.bmp" (two homologues per
+      cell)
+
+      Class_X/                 193 files       1.61 MB    .bmp
+
+      Class_Y/                  45 files       0.20 MB    .bmp'
+    n_files: 5474
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: Class_*/*.bmp
+    format: other
+    axes: yx
+    shape:
+    - 106
+    - 32
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 194
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One segmented chromosome per 8-bit greyscale BMP on a black (0) background; size varies with
+      the chromosome (106x32 for a class-1, 31x21 for a Y). Class label = folder Class_<1-22|X|Y> and the number
+      after the cell id in the file name; no separate label file.
+  notes: 'Listing: tools/listing.py --expand-zips on the Kaggle bundle (signed storage.googleapis.com redirect):
+    11,256,001 B, 5,474 members, complete; 22 x 238 + 193 X + 45 Y. Sampled two members by range (BMP is not read
+    by sample.py; decoded with PIL in a separate step): Class_1/"1 1a.bmp" 106x32 uint8 L, 0-194, median 0; Class_Y/"10
+    24.bmp" 31x21, 0-253 (values from two files only). Background 0 suggests the crops are masked by the original
+    segmentation. Voxel size not found; checked: BMP headers (no resolution), Kaggle record, EMBS 2008 abstract
+    (paper not open access). No usable sample link: www.kaggle.com is not on the TensorSwitch allowlist, and BMP
+    is not a TensorSwitch input format.'
