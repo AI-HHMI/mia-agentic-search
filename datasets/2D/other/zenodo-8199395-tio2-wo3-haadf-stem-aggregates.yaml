@@ -1,10 +1,13 @@
 schema_version: '1.2'
 id: zenodo-8199395-tio2-wo3-haadf-stem-aggregates
-title: Supplemental data for characterization of mixing in nanoparticle hetero-aggregates using convolutional neural networks
+title: Supplemental data for characterization of mixing in nanoparticle hetero-aggregates using convolutional
+  neural networks
 short_name: TiO2/WO3 nanoparticle aggregates (HAADF-STEM)
-description: 'HAADF-STEM images of TiO2 and WO3 nanoparticle hetero-aggregates from double flame spray pyrolysis with per-image JSON annotations of aggregates
-  and particles: a 35,000-image training/validation/test collection (24,000 / 5,500 / 5,500 per the record), 15 experimental test images with JSON annotations,
-  four unannotated experimental measurement series, and the trained detection network with its training notebooks.'
+description: 'HAADF-STEM images of TiO2 and WO3 nanoparticle hetero-aggregates from double flame spray
+  pyrolysis with per-image JSON annotations of aggregates and particles: a 35,000-image training/validation/test
+  collection (24,000 / 5,500 / 5,500 per the record), 15 experimental test images with JSON annotations,
+  four unannotated experimental measurement series, and the trained detection network with its training
+  notebooks.'
 landing_url: https://zenodo.org/records/8199395
 doi: 10.5281/zenodo.8199395
 repository: Zenodo
@@ -34,12 +37,13 @@ imaging:
   voxel_size_nm: null
   channels: 1
   organism: []
-  sample: TiO2 and WO3 nanoparticle hetero-aggregates made by double flame spray pyrolysis, imaged by HAADF-STEM
+  sample: TiO2 and WO3 nanoparticle hetero-aggregates made by double flame spray pyrolysis, imaged by
+    HAADF-STEM
   labels_stains: []
 data:
   formats:
   - tiff
-  size_bytes: 6752601000
+  size_bytes: 6752861866
   n_items: 35015
   access: open
   download_url: null
@@ -50,8 +54,10 @@ annotations:
   - instance-segmentation
   - classification
   coverage: dense
-  format: per-image JSON files (aggregate and particle annotations) next to HAADF TIFFs in training_data/ and experiment_test_data/
-  source: unknown
+  format: 'training_data: per-image JSON from the image simulation (particle polygons, bboxes, particle_type,
+    simulation parameters) plus COCO files per split; experiment_test_data: COCO polygons (VIA export),
+    categories Ti and W'
+  source: mixed
 ml:
   tasks:
   - detection
@@ -77,10 +83,125 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-28T04:53:09Z'
-notes: 'Zip listings (peek_archive): training_data.zip = 35,000 HAADF .tif + 35,005 .json; experiment_test_data.zip = 15 HAADF .tif + 16 .json (the record says 13
-  manually annotated experimental images); experiment_measurement.zip = 377 tif in four sample folders, unannotated; particle_detection.zip = trained network
-  and logs. The record mentions evaluation on simulated and experimental test images, so the large training collection is probably simulated, but the paper
-  full text (Nano Select, 10.1002/nano.202300128) was not accessible (publisher 403, not in Europe PMC) and this is unconfirmed. Pixel size, microscope and
-  how annotations were made are not stated on the Zenodo page; modality set to other (HAADF-STEM is not a listed value). Enumerate the zips separately for
-  downloading; download_url left null (several zips). Size and n_items counts include all zips and all training/test files.'
+  last_checked: '2026-10-28T06:56:02Z'
+notes: 'Zips: training_data.zip = 35,000 HAADF .tif (train 24,000 / val 5,500 / test 5,500) + per-image
+  JSON + COCO; experiment_test_data.zip = 15 experimental .tif + 15 VIA-COCO JSON + one COCO file; experiment_measurement.zip
+  = 377 unannotated tif; particle_detection.zip = trained MMDetection model. enricher: the training images
+  are simulated (their JSON stores the simulation: Poisson and scan noise, beam current, dose, focus,
+  pixel_size), so annotations.source is mixed: simulation ground truth for training_data, manual VIA polygons
+  for the 15 experimental test images. Paper full text not accessible (publisher 403, not in Europe PMC).
+  Modality other (HAADF-STEM). Pixel size varies per simulated image; unknown for the experiment images.'
+technical:
+  method: sample
+  inspected_at: '2026-10-28T06:56:02Z'
+  inspected_urls:
+  - https://zenodo.org/api/records/8199395
+  - https://zenodo.org/records/8199395/files/training_data.zip
+  - https://zenodo.org/records/8199395/files/experiment_test_data.zip
+  bytes_downloaded: 654099
+  size_source: file-listing
+  layout:
+    tree: "./  7 files, 6,752,861,866 bytes\n  training_data.zip (5.6 GB)\n    training_data/HAADF/{train,val,test}/_<n>_.tif\
+      \   24,000 / 5,500 / 5,500  (512x512)\n    training_data/json/{train,val,test}/_<n>_.json   simulation\
+      \ parameters + particle polygons\n    training_data/json/{train,val,test}/COCO/annotation_COCO[_large].json\n\
+      \  experiment_test_data.zip (1.9 MB)\n    experiment_test_data/HAADF/_<hhmmss>_.tif        15 experimental\
+      \ images (512x512)\n    experiment_test_data/json/<hhmmss>_coco.json     15 VIA exports (2048x2048\
+      \ coordinates)\n    experiment_test_data/json/COCO/annotation_COCO.json   1,562 polygons on the\
+      \ 512 px grid\n  experiment_measurement.zip (29 MB)   _sample_<id>_/*.tif, 377 unannotated images\n\
+      \  particle_detection.zip (1.1 GB)      MMDetection config + checkpoint (.pth)\n  particle_detection_*.ipynb\
+      \ (3)"
+    n_files: 7
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/8199395/files/training_data.zip::training_data/HAADF/train/_0_.tif
+    - https://zenodo.org/records/8199395/files/training_data.zip::training_data/json/train/_0_.json
+    size_bytes: 168873
+    description: One simulated training image (512x512) and its JSON with 46 particle polygons.
+  arrays:
+  - role: raw
+    path_pattern: training_data.zip/training_data/HAADF/*/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: lzw
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Simulated HAADF-STEM; grey stored as RGB (the 3 samples are identical in the sampled
+      file).
+  - role: label
+    path_pattern: training_data.zip/training_data/json/*/_*_.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: polygons
+    classes:
+    - id: 1
+      name: TiO2 (particle_type 1, rho 4230)
+    - id: 2
+      name: WO3 (particle_type 2, rho 6850)
+    alignment: same-grid
+    alignment_notes: _<n>_.json pairs with HAADF/<split>/_<n>_.tif; polygons and bboxes are in pixels
+      of the 512 px image (n_pix 512). Class names inferred from the densities (4230 TiO2, 6850 WO3 kg/m3).
+  - role: raw
+    path_pattern: experiment_test_data.zip/experiment_test_data/HAADF/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Experimental HAADF-STEM, grey stored as RGB.
+  - role: label
+    path_pattern: experiment_test_data.zip/experiment_test_data/json/COCO/annotation_COCO.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    encoding: polygons
+    classes:
+    - id: 0
+      name: Ti
+    - id: 1
+      name: W
+    alignment: same-grid
+    alignment_notes: COCO with 15 images (file_name _<hhmmss>_.tif, 512x512) and 1,562 polygons. The per-image
+      <hhmmss>_coco.json VIA exports use 2048x2048 coordinates (scaled 4x).
+  notes: 'Listing: Zenodo API + 4 zip directories, 7 files, 6,752,861,866 bytes (exact; 70,416 members).
+    Sampled training _0_.tif and experiment _144539_.tif (both 512x512x3 uint8 [0, 255], identical samples,
+    LZW for the training file) and read 3 JSONs. The class names TiO2 / WO3 for particle_type 1 / 2 are
+    inferred from the stated densities, not documented. Voxel size not set: simulated images each state
+    pixel_size (0.657 in _0_.json, unit not given, image_size 336 for 512 px) and it varies with the aggregate;
+    the experimental images have no calibration in the TIFF tags; Zenodo description and notebooks list
+    names only; the paper was not accessible.'
