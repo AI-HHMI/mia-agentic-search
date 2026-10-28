@@ -1,0 +1,128 @@
+schema_version: '1.2'
+id: kaggle-haashaatif-fuse-my-cells-part-01
+title: Fuse My Cells-Part-01
+short_name: Fuse My Cells multiview light-sheet pairs (part 1)
+description: Paired 3D light-sheet volumes from the France-BioImaging Fuse My Cells challenge (a Kaggle re-upload,
+  part 1 of 2). For each image, a single-angle view and the fused multiview volume (nucleus or membrane channel)
+  as TIFF. Part 1 holds 210 image pairs (420 TIFFs, about 148 GB) for training single-view to fused-view prediction.
+landing_url: https://www.kaggle.com/datasets/haashaatif/fuse-my-cells-part-01
+doi: null
+repository: Kaggle
+accession: haashaatif/fuse-my-cells-part-01
+authors:
+- Haasha Bin Atif
+publications: []
+date_published: '2025-01-26'
+imaging:
+  modality:
+  - light-sheet
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 195
+    y: 195
+    z: 1000
+  channels: 1
+  organism: []
+  sample: Multiview light-sheet (SPIM) acquisitions of biological samples from France-BioImaging sites; nucleus
+    and membrane channels, sample types not listed on the Kaggle page
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 50014512872
+  n_items: 21
+  access: open
+  download_url: https://www.kaggle.com/api/v1/datasets/download/haashaatif/fuse-my-cells-part-01
+  download_method: http
+annotations:
+  present: true
+  types:
+  - restoration-pairs
+  coverage: dense
+  format: 'Paired volumes per image index: image_N_{nucleus,membrane}_angle.tif (input single view) and image_N_{nucleus,membrane}_fused.tif
+    (target fused multiview), same shape; the ten image_A-B folders are identical copies of the same 21 pairs'
+  source: automatic
+ml:
+  tasks:
+  - reconstruction
+  splits_provided: false
+  benchmark: Fuse My Cells challenge (France-BioImaging, ISBI 2025)
+  baseline_code_url: null
+license:
+  spdx: CC-BY-SA-4.0
+  url: https://creativecommons.org/licenses/by-sa/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-28T02:15:21Z'
+  evidence_urls:
+  - https://www.kaggle.com/api/v1/datasets/view/haashaatif/fuse-my-cells-part-01
+  - https://www.kaggle.com/api/v1/datasets/list/haashaatif/fuse-my-cells-part-01
+  - https://www.kaggle.com/api/v1/datasets/view/haashaatif/fuse-my-cells-part-02
+  - https://arxiv.org/html/2503.16075v1
+  confidence: 0.55
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-28T06:15:00Z'
+notes: 'Third-party Kaggle re-upload of the Fuse My Cells challenge data (fusemycells.grand-challenge.org returned
+  403, so the original host, license and the challenge data paper were not read). Kaggle API record (CC BY-SA 4.0,
+  148 GB) and file listing (420 TIFFs in ten folders; the angle/fused pair is the input/target). Part 2 (haashaatif/fuse-my-cells-part-02)
+  is the same size and lists CC BY-NC-SA 4.0, so the license is inconsistent between parts and the original terms
+  should be checked. The fused volumes are produced by multiview fusion, so source automatic. Sample types and microscope
+  are not stated on the page. enricher: the ten folders are byte-identical copies (same 42 names, sizes and CRC32),
+  so 21 unique pairs (n_items was 210); voxel size 195x195x1000 nm from the TIFF ImageJ/physical_size header tags
+  (was null); size_bytes is the bundle zip.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: 'archive.zip (Kaggle bundle, 420 members, 50.0 GB compressed, 148 GB uncompressed)
+
+      image_0-20/      42 files  14.80 GB  image_{0..20}_{nucleus|membrane}_{angle|fused}.tif (21 pairs: 12 nucleus,
+      9 membrane)
+
+      image_21-40/     42 files  14.80 GB  identical copy of image_0-20/ (same names, sizes, CRC32)
+
+      image_41-60/ ... image_181-200/      8 more identical copies'
+    n_files: 420
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: image_*/image_*_angle.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 222
+    - 731
+    - 860
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Single-view light-sheet volume. BigTIFF written by tifffile with an ImageJ header (images=slices=222,
+      hyperstack, unit um), 128x128 tiles, uncompressed. File sizes vary (305-360 MB), so z or xy differ per image.
+  - role: target
+    path_pattern: image_*/image_*_fused.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 222
+    - 731
+    - 860
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: image_N_<channel>_angle.tif pairs with image_N_<channel>_fused.tif in the same
+      folder (same header shape and identical byte size in every pair).'
+  notes: 'Listing: tools/listing.py --expand-zips on the Kaggle bundle (signed storage.googleapis.com redirect):
+    50,014,512,872 B, 420 members, complete. Zip central directory CRC32s: all 42 file names have one CRC across
+    the ten folders, so the bundle holds 21 unique pairs ten times. Headers read by decompressing the first 400
+    KB of image_0 nucleus angle/fused and image_15 membrane angle/fused: BigTIFF, 860 x 731 px, 222 slices, uint16,
+    no compression, ImageJ description with physical_size_x/y 0.195 um, z 1.0 um, unit um, channel nucleus/membrane.
+    Value ranges not sampled (deflated 300 MB members). Voxel size from those headers; the challenge database page
+    returned 403, so no document confirms it. No usable sample link: www.kaggle.com is not on the TensorSwitch allowlist.'
