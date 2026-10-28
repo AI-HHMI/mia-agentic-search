@@ -1,0 +1,137 @@
+schema_version: '1.2'
+id: kaggle-cenciarinigabriel-microalgae-20x-yolo
+title: Microalgae_Microscope_20x_FOV18
+short_name: Microalgae counting boxes (brightfield, 20x)
+description: 460 bright-field microscope images of microalgae populations at several dilutions (20x, 1280 x 960
+  and 1440 x 1080 px PNG, two phone cameras and two focus levels), manually labelled with a single class, microalga,
+  in YOLO format. The images are split 70/20/10 into train, validation and test folders (321, 92 and 47 images)
+  for automatic counting.
+landing_url: https://www.kaggle.com/datasets/cenciarinigabriel/microalgae-microscope-20x-fov18
+doi: 10.34740/KAGGLE/DSV/15568191
+repository: Kaggle
+accession: cenciarinigabriel/microalgae-microscope-20x-fov18
+authors:
+- Angel Gabriel Cenciarini
+publications: []
+date_published: '2026-04-07'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism: []
+  sample: Microalgae cultures at various dilution factors, species not stated; compound microscope at 20x with phone
+    cameras
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: 385896336
+  n_items: 460
+  access: open
+  download_url: https://www.kaggle.com/api/v1/datasets/download/cenciarinigabriel/microalgae-microscope-20x-fov18
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  - counts
+  coverage: dense
+  format: 'YOLO text files in labels/{train,val,test}/ (one line per box: class 0, x_center, y_center, width, height
+    normalised to 0-1), same stem as the PNG in images/; made with Label Studio; dataset.yaml lists nc 1'
+  source: manual
+ml:
+  tasks:
+  - detection
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-NC-ND-4.0
+  url: https://creativecommons.org/licenses/by-nc-nd/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-28T02:15:21Z'
+  evidence_urls:
+  - https://www.kaggle.com/api/v1/datasets/view/cenciarinigabriel/microalgae-microscope-20x-fov18
+  - https://www.kaggle.com/api/v1/datasets/list/cenciarinigabriel/microalgae-microscope-20x-fov18
+  - https://www.kaggle.com/api/v1/datasets/download/cenciarinigabriel/microalgae-microscope-20x-fov18?fileName=dataset/dataset.yaml
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-28T05:15:00Z'
+notes: 'Kaggle API record (CC BY-NC-ND 4.0, version 1, 408 MB; description in Spanish: thesis dataset for automated
+  microalgae counting, labelled by the author in Label Studio with guidance from algae researchers) and file listing
+  (images/ and labels/ with train 321, val 92, test 47 PNGs and matching .txt files; dataset.yaml with nc 1, class
+  Microalga, whose paths point to the author''s Google Drive). No publication; the thesis is not linked. Pixel size,
+  species and sample volume not stated. enricher: label files read (YOLO boxes, 5 columns); size_bytes is the bundle
+  zip from a complete listing (was 408 MB from the page). dataset.yaml paths name a "Dataset_to_train_denoised"
+  folder, so the PNGs may be denoised.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'archive.zip (Kaggle bundle, 921 members, 385.9 MB)
+
+      dataset/dataset.yaml                    YOLO config (nc 1)
+
+      dataset/images/train/          321 files  279.5 MB  .png
+
+      dataset/images/val/             92 files   78.3 MB  .png
+
+      dataset/images/test/            47 files   45.1 MB  .png
+
+      dataset/labels/train/          321 files    3.3 MB  .txt (YOLO)
+
+      dataset/labels/val/             92 files    0.9 MB  .txt
+
+      dataset/labels/test/            47 files    0.5 MB  .txt'
+    n_files: 921
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: dataset/images/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 960
+    - 1280
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 254
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB phone-camera PNGs, 960x1280 (train sample) or 1080x1440 (three test files probed); samples
+      differ.
+  - role: label
+    path_pattern: dataset/labels/*/*.txt
+    format: other
+    axes: null
+    shape:
+    - 111
+    - 5
+    shape_varies: true
+    dtype: float32
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: Microalga
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: images/<split>/<stem>.png pairs with labels/<split>/<stem>.txt. YOLO rows: class
+      x_center y_center width height, normalised to image size (111 boxes in the file read).'
+  notes: 'Listing: tools/listing.py --expand-zips on the Kaggle bundle (signed storage.googleapis.com redirect):
+    385,896,336 B, 921 members, complete. Probed train/00cb3f11-...112903.png (960x1280x3 uint8) and three test
+    PNGs (1080x1440x3). Sampled the train PNG (312 KB): 0-254, median 5, p99 177 (one sample, mostly dark). Read
+    its label file (111 YOLO rows, class 0) and dataset.yaml (nc 1, Microalga; Google Drive paths in a Dataset_to_train_denoised
+    folder). Voxel size not found; checked: PNG headers, Kaggle record (20x, FOV 18, phone cameras), dataset.yaml;
+    no paper or thesis linked. No usable sample link: www.kaggle.com is not on the TensorSwitch allowlist and its
+    bundle redirect is a signed URL that expires, so sample is null.'
