@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: kaggle-remylivecellimaging-ecoli-mother-machine-yolo-boxes
 title: Ecoli cells in microchannels - crops + YOLO labels
 short_name: E. coli mother-machine cell boxes (fluorescence)
-description: 7,083 fluorescence crops (including augmented copies) of E. coli MG1655 cells in mother-machine microchannels, 64 x 256
-  px at 0.11 um per pixel, with YOLO-style grid labels (8 x 32 grid, 4 anchors, object probability, centroid, height and width)
-  for training a cell detection model. One NumPy file holds images and labels.
+description: 7,083 fluorescence crops (including augmented copies) of E. coli MG1655 cells in mother-machine microchannels,
+  64 x 256 px at 0.11 um per pixel, with YOLO-style grid labels (8 x 32 grid, 4 anchors, object probability, centroid,
+  height and width) for training a cell detection model. One NumPy file holds images and labels.
 landing_url: https://www.kaggle.com/datasets/remylivecellimaging/ecoli-cells-in-microchannels-crops-yolo-labels
 doi: null
 repository: Kaggle
@@ -27,7 +27,8 @@ imaging:
   channels: 1
   organism:
   - Escherichia coli
-  sample: E. coli MG1655 expressing cytosolic mKate2 in mother-machine microchannels, 100x 1.49 NA objective, EM-CCD camera
+  sample: E. coli MG1655 expressing cytosolic mKate2 in mother-machine microchannels, 100x 1.49 NA objective, EM-CCD
+    camera
   labels_stains:
   - mKate2
 data:
@@ -43,8 +44,9 @@ annotations:
   types:
   - bounding-box
   coverage: dense
-  format: 'Single NumPy file: X uint16 (frames, height, width) and Y_true float32 (7083, 8, 32, 20): 8 x 32 YOLO grid, 4 anchors x
-    5 values (object probability, x centroid, y centroid, height, width), no class probability'
+  format: 'One file of two consecutive Python pickles (not NumPy .npy format): X uint16 (7083, 64, 256) crops and
+    Y_true float32 (7083, 8, 32, 20): 8 x 32 YOLO grid, 4 anchors x 5 values (object probability, x centroid, y
+    centroid, height, width), no class probability'
   source: manual
 ml:
   tasks:
@@ -67,10 +69,63 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-28T04:35:00Z'
-notes: 'Kaggle API record (MIT, 378 MB, one .npy file, 7,083 samples including augmentation) and the open-access paper (Ripandelli
-  et al. 2024, J Phys Chem B), whose data statement links this set as the cell detection training data (a YOLO-style detector
-  for cells inside channel crops; Nikon Ti-2, 1.49 NA 100x, mKate2). Array shapes and the 64 x 256 crop size come from the Kaggle
-  description and file name; the .npy was not opened. Labels come from manual bounding boxes per the paper (not inspected in
-  the file). Augmented copies mean the number of independent crops is lower and no split is given. The same owner has the
-  mask set and the tracking set.'
+  last_checked: '2026-10-28T05:55:00Z'
+notes: 'Kaggle API record (MIT, 378 MB, one .npy file, 7,083 samples including augmentation) and the open-access
+  paper (Ripandelli et al. 2024, J Phys Chem B), whose data statement links this set as the cell detection training
+  data (a YOLO-style detector for cells inside channel crops; Nikon Ti-2, 1.49 NA 100x, mKate2). Labels come from
+  manual bounding boxes per the paper (not inspected in the file). Augmented copies mean the number of independent
+  crops is lower and no split is given. The same owner has the mask set and the tracking set. enricher: the .npy
+  is two pickles (read statically, never unpickled); array shapes and dtypes confirmed from the pickle headers.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "archive.zip (Kaggle bundle, 97.8 MB compressed)\n  Ecoli_cells_in_channel_110nmPixel_64x256_YOLO_label_8x32_4anchors_7083_samples.npy\
+      \   377.6 MB  (pickled X, then pickled Y_true)"
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: Ecoli_cells_in_channel_*.npy
+    format: other
+    axes: null
+    shape:
+    - 7083
+    - 64
+    - 256
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 35672
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'First pickle: numpy.ndarray (7083, 64, 256) uint16, crops stacked on axis 0; which image axis
+      is y or x is not documented (file name says 64x256).'
+  - role: label
+    path_pattern: Ecoli_cells_in_channel_*.npy
+    format: other
+    axes: null
+    shape:
+    - 7083
+    - 8
+    - 32
+    - 20
+    shape_varies: false
+    dtype: float32
+    compression: none
+    encoding: boxes-table
+    classes: null
+    alignment: scaled
+    alignment_notes: 'Second pickle: Y_true (7083, 8, 32, 20) float32, one YOLO target grid per crop (8x32 cells
+      = 64x256 / 8; per cell 4 anchors x [objectness, x, y, h, w] per the Kaggle description). Boxes must be decoded
+      from the grid.'
+  notes: 'Listing: peek_archive on the Kaggle bundle (signed storage.googleapis.com redirect): 1 member, 377,646,843
+    B uncompressed (= size_bytes), 97,810,424 B compressed. The .npy is not NumPy format but two concatenated pickles
+    (protocol 4); per CLAUDE.md they were never unpickled. pickletools read the headers: X ndarray (7083, 64, 256)
+    u2, then Y ndarray (7083, 8, 32, 20) f4 at byte 232,095,909 (streamed the whole 97.8 MB member to reach it).
+    Raw bytes of the first 100 crops decoded with numpy.frombuffer: 0-35672, median 295, 20 % zeros (one sample).
+    Voxel size 110 nm from the Kaggle page and file name (record, kept). No sample unit: the data need unpickling,
+    and www.kaggle.com is not on the TensorSwitch allowlist.'
