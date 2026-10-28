@@ -31,7 +31,8 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 555748984
+  - png
+  size_bytes: 555750328
   n_items: 229
   access: open
   download_url: https://zenodo.org/records/5931544/files/Supplementary_data_ja-2021-12466d.zip
@@ -41,7 +42,7 @@ annotations:
   types:
   - points
   coverage: partial
-  format: 'Per-image CSV of manually labelled atom (X, Y) pixel coordinates for 24 ground-truth images, with labelled TIFF/PNG overlays; SAC-CNN-predicted positions, likelihood maps (CSV) and segmentation PNGs for all images'
+  format: Per-image CSV of manually labelled atom (X, Y) pixel coordinates for 24 ground-truth images, with labelled TIFF/PNG overlays; SAC-CNN-predicted positions, likelihood maps (CSV) and segmentation PNGs for all images
   source: mixed
 ml:
   tasks:
@@ -66,5 +67,54 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-28T01:30:00Z'
-notes: 'Zip (555.7 MB) listed with peek_archive: 229 original images in 09_all_original_images_tif (226 false-colour PNG copies), 24 manually labelled ground-truth images with 24 CSV coordinate files (02_groundtruth_atomic_positions_manual), 10 of them also with SAC-CNN labels and segmentation. Manual labels cover only the 24-image ground-truth set; remaining images carry model (SAC-CNN) predictions only, hence source mixed and coverage partial. Pixel size 0.0293 nm is the ImageJ calibration read from the TIFF headers (probe.py), not stated on the record or in the abstract. The paper is not open access (JACS); only the abstract was read, so microscope and acquisition details beyond HAADF-STEM (file names indicate 15 nm HAADF) were not verified. The ground-truth TIFFs are float32 and the originals uint32. Related but different from the already catalogued STEM atom-locating benchmark (mdf-e73h-3w6n).'
+  last_checked: '2026-10-28T01:20:00Z'
+notes: 'Zip lists 229 original TIFFs (09_all_original_images_tif), 226 false-colour PNG copies, 24 manually labelled ground-truth images with 24 CSV coordinate files (21 Pt + 3 Fe); other images carry SAC-CNN predictions only, hence source mixed and coverage partial. Pixel size 0.0293 nm is the ImageJ calibration in the TIFF headers; Readme.txt says ''see .tif for pixel size'', and 512 px x 0.0293 nm = 15 nm matches the ''15nm'' file names. Paper not open access (JACS); only the abstract was read. enricher: formats + png (copies, overlays, segmentations); size from full listing. Related to but different from the STEM atom-locating benchmark mdf-e73h-3w6n.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  2 files 555.8 MB (Readme.txt, Supplementary_data_ja-2021-12466d.zip)\nSupplementary_data_ja-2021-12466d.zip/  1213 members, 661.7 MB uncompressed\n  01_groundtruth_labeled_images_manual/         24 .tif (float32 copies of GT images), 10 .png overlays\n  02_groundtruth_atomic_positions_manual/Fe-Catalyst/   3 .csv\n  02_groundtruth_atomic_positions_manual/Pt-Catalyst/  21 .csv (NNN_Results.csv: index, X, Y)\n  03_groundtruth_labeled_images_SAC-CNN/        10 .png, Readme.txt\n  04_groundtruth_atomic_positions_SAC-CNN/      10 .csv\n  05_groundtruth_likelihoods_tables_SAC-CNN/    10 .csv (+ pred_map_to_table/ 10 .csv)\n  06_goundtruth_labeled_images_all-models/      6 folders (CV / DL / TEMImageNet x Pt / Fe), .png\n  07_groundtruth_segmentation/                  10 .png\n  08_all_original_images/                       226 .png (false colour)\n  09_all_original_images_tif/                   229 .tif (226 Pt 512x512 uint32, 3 Fe 341x341 float32)\n  10_all_labeled_images_SAC-CNN/\
+      \                218 .png, 1 .txt\n  11_all_atomic_positions_SAC-CNN/              167 .csv (Filename, x, y)\n  12_all_segmentation/                          215 .png"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5931544/files/Supplementary_data_ja-2021-12466d.zip::09_all_original_images_tif/021_HAADF_15nm_Sample_PtNC_21Oct20.tif
+    - https://zenodo.org/records/5931544/files/Supplementary_data_ja-2021-12466d.zip::02_groundtruth_atomic_positions_manual/Pt-Catalyst/021_Results.csv
+    size_bytes: 1049546
+    description: one Pt HAADF-STEM image (512x512 uint32) and its manually labelled atom positions (34 points)
+  arrays:
+  - role: raw
+    path_pattern: 09_all_original_images_tif/*_HAADF_15nm_*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: null
+    dtype: uint32
+    compression: none
+    value_range:
+    - 172467
+    - 1514965
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: 02_groundtruth_atomic_positions_manual/Pt-Catalyst/*_Results.csv
+    format: csv
+    axes: null
+    shape:
+    - 34
+    - 3
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: points-table
+    classes:
+    - id: null
+      name: Pt single atom
+    alignment: same-grid
+    alignment_notes: NNN_Results.csv holds (X, Y) pixel coordinates on the 512x512 image NNN_HAADF_15nm_Sample_PtNC_<date>.tif; the exact image is the one named in 01_groundtruth_labeled_images_manual/ (e.g. 021 -> 021_HAADF_15nm_Sample_PtNC_21Oct20.tif). The 09 folder repeats NNN prefixes across dates, so pair via the 01 folder names. Coordinates are within 0..511 (pixels, not nm).
+  notes: 'Listing (tools/listing.py --expand-zips): 2 files, 555,750,328 B, complete; zip 1213 members. Probed 01/021 .tif (float32 512x512, ImageJ, 0.0293 nm/px, min/max 172467/1514965 = same image as the 09 uint32 copy), 09/002, 09/003 (uint32 512x512, uncompressed, 0.0293 nm/px) and 3 Fe tifs (float32 341x341, header also 0.0293 nm/px; rebinned, so that calibration is unverified). Sampled 09/021_..._PtNC_21Oct20.tif: uint32, value range [172467, 1514965] (one sample; raw detector counts, normalization not stated). Manual label CSVs: header '' ,X,Y'', 34 / 38 / 69 rows for 021 / 025 / 053. Manual Pt ground truth covers 21 images (+3 Fe); SAC-CNN predicted positions for 167 images are in 11_all_atomic_positions_SAC-CNN/ (model output, not ground truth). Inorganic sample: no organism. Data are 2D, so z stays null.'
