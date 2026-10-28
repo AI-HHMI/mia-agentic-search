@@ -1,0 +1,132 @@
+schema_version: '1.2'
+id: zenodo-20352173-protlocnet-hpa-opencell-single-cell
+title: 'ProtLocNet Dataset: Processed Single-Cell Protein Localization Images from HPA and OpenCell'
+short_name: HPA/OpenCell single-cell protein localization
+description: Single-cell crops from the Human Protein Atlas (HPA) and OpenCell, each sample stored as three channels (protein fluorescence,
+  nucleus image and a cell segmentation mask). Released for morphology-aware protein localization representation learning, protein identity
+  prediction, subcellular localization inference and localization-pattern-based protein retrieval.
+landing_url: https://zenodo.org/records/20352173
+doi: 10.5281/zenodo.20352173
+repository: Zenodo
+accession: '20352173'
+authors:
+- Teng Wang
+publications: []
+date_published: '2026-05-23'
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: Single-cell crops of cultured human cells from the HPA and OpenCell image collections
+  labels_stains:
+  - protein of interest
+  - nucleus
+data:
+  formats:
+  - png
+  size_bytes: 21046166530
+  n_items: null
+  access: open
+  download_url: https://zenodo.org/api/records/20352173/files/ProtLocNetData.tar.gz/content
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  - classification
+  coverage: dense
+  format: Cell segmentation mask stored as the 3rd channel of each RGB PNG crop (binary 0/255); per-gene folders (Ensembl gene IDs);
+    subcellulars.txt (gene -> HPA subcellular location) and gen_pairs.csv (image pairs)
+  source: unknown
+ml:
+  tasks:
+  - self-supervised
+  - classification
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-28T04:27:13Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/20352173
+  - https://zenodo.org/api/records/20352173/files/ProtLocNetData.tar.gz/content
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-28T05:20:00Z'
+notes: 'Single 21 GB ProtLocNetData.tar.gz (gzip tar, no random member access). Enricher streamed its first 150 MB: HPACustom/ with
+  subcellulars.txt, gen_pairs.csv and test/<Ensembl gene ID>/<uuid>.png; train split and OpenCell part lie further in the archive and
+  were not listed, so file count and layout beyond that are unverified. Channels per Zenodo description: protein, nucleus, mask. No
+  paper linked; Europe PMC/Crossref found none by title, so resolution and annotation provenance are unknown. enricher: annotations
+  verified from sampled PNGs (3rd channel binary mask) and subcellulars.txt; coverage dense (every crop carries a mask).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "ProtLocNetData.tar.gz (21.0 GB; first 150 MB streamed)\nHPACustom/\n  subcellulars.txt   (Ensembl,Subcellular location)\n\
+      \  gen_pairs.csv      (Pair_ID,Image_A_Path,Image_B_Path,Width,Height,Complexity_A,Complexity_B)\n  test/\n    ENSG00000003249/\
+      \  <uuid>.png x21\n    ENSG00000004534/  <uuid>.png x21\n    ... (28 gene folders, 1,373 PNGs in the first 150 MB)\n  (train split,\
+      \ OpenCell part: not reached)"
+    n_files: 1
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: '**/*.png'
+    format: png
+    axes: yxc
+    shape:
+    - 448
+    - 326
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Channels per Zenodo description: c0 = protein fluorescence, c1 = nucleus, c2 = cell segmentation mask (c2 observed
+      binary 0/255 in 4 samples; c0/c1 have 131-256 grey levels).'
+  - role: label
+    path_pattern: '**/*.png'
+    format: png
+    axes: yxc
+    shape:
+    - 448
+    - 326
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: cell
+    alignment: same-grid
+    alignment_notes: 'Label is channel c2 of the same PNG as the raw channels, so pixel-aligned by construction. Image-level classes:
+      subcellular location per gene folder from HPACustom/subcellulars.txt.'
+  notes: 'Archive is gzip tar: no listing without reading it end to end, and no member URLs, so technical.sample is null and TensorSwitch
+    can only take the whole archive. Streamed 150 MB + 6 MB (header text) of the archive head (enricher scratch script, Python tarfile
+    + Pillow). 4 sampled PNGs: RGB uint8, shapes 448x326 to 744x980 (varies per crop), value_range [0,255] from these samples only.
+    layout covers only the first 150 MB. size_bytes is the exact Zenodo API file size of the compressed archive (page-stated, as the archive contents were not fully listed). voxel size not found; checked:
+    PNG (no calibration), Zenodo API record (description, no notes/related ids), subcellulars.txt and gen_pairs.csv heads, paper search
+    (none). Crops come from HPA and OpenCell, which image at different pixel sizes, and may be resized; no source states the crop pixel
+    size.'
