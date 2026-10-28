@@ -1,0 +1,182 @@
+schema_version: '1.2'
+id: zenodo-15059361-human-zygote-embryo-timelapse
+title: 'Labeling Human Embryo Time-Lapse Videos: A Dataset Refinement Approach'
+short_name: Human zygote structure detection (time-lapse)
+description: Time-lapse microscopy images of human embryos at the zygote stage, refined from an earlier multi-focal dataset,
+  with bounding-box labels for pronuclei, cytoplasmic granules, polar bodies and vacuoles, and a zygote / non-zygote classification
+  set. Provided in center-layer, three-layer (RGB) and focus-stacked variants with train/val/test splits.
+landing_url: https://zenodo.org/records/15059361
+doi: 10.5281/zenodo.15059361
+repository: Zenodo
+accession: '15059361'
+authors:
+- Kewin Lima da Silva
+- Elys Karine Carvalho
+- Larissa Tavarez Mota
+- Carmelo Bastos-Filho
+- Gabriel Alves de Lima
+- Mariana Aragão Matos Donato
+publications: []
+date_published: '2025-03-20'
+imaging:
+  modality:
+  - other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: null
+  organism:
+  - Homo sapiens
+  sample: Human embryos at the zygote stage (fertilization to first cleavage), frames from clinical time-lapse incubator videos
+  labels_stains: []
+data:
+  formats:
+  - jpeg
+  size_bytes: 1857062921
+  n_items: 20667
+  access: open
+  download_url: https://zenodo.org/records/15059361/files/dataset.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - bounding-box
+  - classification
+  coverage: dense
+  format: Text label files per image (class indices 0 pronucleus, 1 cytoplasmic granules, 2 polar body, 3 vacuole) under labels/zygote_artefacts_detection/{train,val,test};
+    zygote vs non-zygote labels under labels/zygote_non_zygote_classification
+  source: unknown
+ml:
+  tasks:
+  - detection
+  - classification
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-09T10:15:17Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/15059361
+  - https://zenodo.org/records/15059361/files/dataset.zip
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-09T13:05:00Z'
+notes: 'No license is stated in the Zenodo record or metadata (access is open), so spdx is unknown; the upstream dataset this
+  one continues (10.5281/zenodo.6390797, now record 7912264) is CC-BY-NC-SA-4.0, which does not by itself license this derived
+  release. Record description: 8,668 detection images (6,501 train, 1,657 val, 510 test) with pronucleus/granule/polar-body/vacuole
+  boxes, and 11,999 classification images; each image appears in three variants (center layer, three layers as RGB, focus-stacked).
+  No paper was found, so publications is empty. Modality, pixel size and annotation source are not stated. enricher: n_items
+  20,667 = 8,668 detection + 11,999 classification frames per variant, counted from the zip listing (was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "dataset.zip  1,857,062,921 B, 82,668 members\n  dataset/images/zygote_artefacts_detection/{center_layer,three_layers,full_flatted}/\n\
+      \    train/ 6,501 .jpg   val/ 1,657 .jpg   test/ 510 .jpg   (per variant)\n  dataset/images/zygote_non_zygote_classification/{center_layer,three_layers,full_flatted}/\n\
+      \    train/ 8,562 .jpeg  val/ 1,809 .jpeg  test/ 1,628 .jpeg  (per variant)\n  dataset/labels/zygote_artefacts_detection/{train,val,test}/\
+      \  8,668 .txt (39-195 B each)\n  dataset/labels/zygote_non_zygote_classification/{train,val,test}/  11,999 .txt (37\
+      \ B each)\n"
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: dataset.zip::dataset/images/*/three_layers/*/*.jp*g
+    format: jpeg
+    axes: yxs
+    shape:
+    - 301
+    - 315
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 253
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Three focal planes (F+15, F0, F-15) stored as the R, G, B samples (Zenodo description); samples differ
+      in the sample read. Frame size varies (~300 px; 301x315 and 310x295 seen).
+  - role: raw
+    path_pattern: dataset.zip::dataset/images/*/center_layer/*/*.jp*g
+    format: jpeg
+    axes: yxs
+    shape:
+    - 310
+    - 295
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 2
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: F0 focal plane only; greyscale stored as RGB (samples_identical true in the sample), so s is not colour.
+  - role: raw
+    path_pattern: dataset.zip::dataset/images/*/full_flatted/*/*.jp*g
+    format: jpeg
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Focus-stacked image of all seven planes (Zenodo description); not probed.
+  - role: label
+    path_pattern: dataset.zip::dataset/labels/zygote_artefacts_detection/*/*.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: pronucleus
+    - id: 1
+      name: cytoplasmic granules
+    - id: 2
+      name: polar body
+    - id: 3
+      name: vacuole
+    alignment: same-grid
+    alignment_notes: labels/<task>/<split>/<stem>.txt pairs with images/<task>/<variant>/<split>/<stem>.jpg in each variant
+      (same stems in the listing). Text boxes per the Zenodo description; files are multiples of 39 bytes (one line per box),
+      content not read.
+  - role: label
+    path_pattern: dataset.zip::dataset/labels/zygote_non_zygote_classification/*/*.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: other
+    classes:
+    - id: 0
+      name: zygote
+    - id: 1
+      name: non zygote
+    alignment: not-applicable
+    alignment_notes: One 37-byte text file per classification image (same stem, .jpeg images); content not read.
+  notes: 'Complete Zenodo listing with the zip index: {"n_files": 1, "total_bytes": 1857062921, "size_source": "file-listing",
+    "zip_members": 82668}. Sampled two frames via sample.py (26 KB + 23 KB): three_layers D2011.03.15_S0065_..._RUN10.jpg
+    [301,315,3] uint8 [0,253], samples differ; center_layer D2011.04.16_S0107_..._RUN1.jpg [310,295,3] uint8 [2,255], samples
+    identical. Value ranges from one frame each. Label .txt files could not be read: Zenodo range requests timed out or dropped
+    repeatedly (proxy errors) in this run. Sample unit not set: probe.py --download-check on the zip members timed out (the
+    zip itself is usable, 1,857,062,921 B, range requests); sample.py read two image members, so <zip>::<member> specs should
+    work once checked. Voxel size not found: Zenodo record, upstream record 7912264 description, JPEG headers; no paper.'
