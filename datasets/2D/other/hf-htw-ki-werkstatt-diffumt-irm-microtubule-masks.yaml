@@ -1,0 +1,153 @@
+schema_version: '1.2'
+id: hf-htw-ki-werkstatt-diffumt-irm-microtubule-masks
+title: 'DiffuMT: mask-conditioned diffusion dataset of in-vitro IRM microtubule microscopy'
+short_name: In vitro microtubule IRM binary masks (test split)
+description: 200 test items of interference reflection microscopy (IRM) recordings of in vitro microtubules, each
+  a 256x256 triplet of a real image, a manually annotated pixel-precise binary microtubule mask, and a mask-conditioned
+  synthetic image. Released as one Parquet test split; the 2,961-item train split and 1,336 unlabelled real patches
+  are announced but not yet published.
+landing_url: https://huggingface.co/datasets/HTW-KI-Werkstatt/DiffuMT
+doi: null
+repository: HuggingFace
+accession: HTW-KI-Werkstatt/DiffuMT
+authors:
+- Mario Koddenbrock
+- Felix Rapp
+- Simone Reber
+- Erik Rodner
+publications:
+- title: Diagnosing Diversity Collapse and Validating Mask-Conditioned Diffusion for Labeled Microtubule Microscopy
+  doi: 10.48550/arXiv.2610.09957
+  url: https://arxiv.org/abs/2610.09957
+date_published: null
+imaging:
+  modality:
+  - other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: In vitro reconstituted microtubules imaged by interference reflection microscopy (IRM) in two laboratories
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: 59783925
+  n_items: 200
+  access: open
+  download_url: https://huggingface.co/datasets/HTW-KI-Werkstatt/DiffuMT/resolve/main/data/test-00000-of-00001.parquet
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: Parquet columns id, image (real), mask (binary), synthetic; 256x256 px each
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-28T15:30:00Z'
+  evidence_urls:
+  - https://huggingface.co/datasets/HTW-KI-Werkstatt/DiffuMT
+  - https://huggingface.co/datasets/HTW-KI-Werkstatt/DiffuMT/raw/main/README.md
+  - https://huggingface.co/api/datasets/HTW-KI-Werkstatt/DiffuMT
+  - https://arxiv.org/html/2610.09957
+  - https://datasets-server.huggingface.co/info?dataset=HTW-KI-Werkstatt/DiffuMT
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-28T16:15:00Z'
+notes: 'Only the 200-item test split is on the hub; the card says train (2,961) and unlabelled (1,336) splits are
+  planned. Masks: 309 512x512 crops from 75 recordings manually annotated per the paper; released items are 256x256
+  views. Pixel size, microscopes and tubulin source (organism) not stated on the card or in the paper. Related to
+  the SynthMT and IRM-in-vitro-microtubules HF datasets by the same group; real images likely share recordings with
+  them. enricher: formats png (PNG bytes inside one Parquet file, was other); download_url the direct parquet (was
+  landing page); size from Hub tree (was card value); annotations verified from decoded mask PNGs.'
+technical:
+  method: sample
+  inspected_at: '2026-10-28T16:15:00Z'
+  inspected_urls:
+  - https://huggingface.co/api/datasets/HTW-KI-Werkstatt/DiffuMT/tree/main?recursive=true
+  - https://datasets-server.huggingface.co/info?dataset=HTW-KI-Werkstatt/DiffuMT
+  - https://huggingface.co/datasets/HTW-KI-Werkstatt/DiffuMT/raw/main/README.md
+  - https://huggingface.co/datasets/HTW-KI-Werkstatt/DiffuMT/resolve/main/data/test-00000-of-00001.parquet
+  bytes_downloaded: 10300002
+  size_source: file-listing
+  layout:
+    tree: "DiffuMT/  3 files, 59,783,925 B (Hub API tree)\n  README.md  .gitattributes\n  data/test-00000-of-00001.parquet\
+      \  59,779,908 B\nparquet columns: id (string), image (Image, real), mask (Image, binary), synthetic (Image)\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/HTW-KI-Werkstatt/DiffuMT/resolve/main/data/test-00000-of-00001.parquet
+    size_bytes: 59779908
+    description: The single parquet file (all 200 triplets); there is no smaller file unit.
+  arrays:
+  - role: raw
+    path_pattern: data/*.parquet
+    format: other
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    normalization: unknown
+    value_range:
+    - 0
+    - 240
+    alignment: not-applicable
+    alignment_notes: 'Column "image": real IRM patch as PNG bytes inside parquet (IHDR 256x256, 8-bit, colour type
+      2 RGB); the three samples are not identical in the decoded patches.'
+  - role: label
+    path_pattern: data/*.parquet
+    format: other
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    encoding: binary
+    classes:
+    - id: 1
+      name: microtubule
+    alignment: same-grid
+    alignment_notes: 'Column "mask": grey 8-bit PNG per row, values {0,1}; same 256x256 grid and same row (id diffumt_NNNNN)
+      as the real image and the synthetic image.'
+  - role: other
+    path_pattern: data/*.parquet
+    format: other
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: 'Column "synthetic": mask-conditioned diffusion output for the same mask (RGB PNG).'
+  notes: 'Hub API tree: 3 files, 59,783,925 B, complete (= size_bytes). Parquet is not a schema format and TensorSwitch
+    cannot read it, so arrays use format other. Two range reads of the parquet (0-300 kB, 24.0-34.0 MB; 10.3 MB)
+    were scanned for embedded PNGs and decoded with zlib+numpy (no pyarrow): column order image (RGB 256x256x3 uint8,
+    observed [0,233]-[0,240] in 5 patches), mask (200 grey 256x256 uint8 PNGs, values {0,1}, foreground about 2%
+    in samples; one mask all 0), synthetic (RGB). value_range from these samples only. Voxel size not found; checked:
+    dataset card, datasets-server info, arXiv HTML full text (says only "two laboratories with different microscope
+    systems"). Download: the parquet is a direct Hub URL (passes --download-check, range requests, xet CDN redirect).'
