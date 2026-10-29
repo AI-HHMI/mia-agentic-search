@@ -1,0 +1,198 @@
+schema_version: '1.2'
+id: gigadb-100883-multistage-malaria-cell-crops
+title: Supporting data for "Multi-Stage Malaria Parasites Recognition by Deep Learning"
+short_name: Malaria and Babesia blood-cell crops (brightfield)
+description: Cropped single-cell brightfield images of Giemsa-stained blood smears with class labels, packaged as
+  three classification tasks with train/test folders - multi-stage P. vivax (RBC, leukocyte, ring, trophozoite,
+  schizont, gametocyte), parasitized vs uninfected cells, and Babesia vs red blood cells.
+landing_url: https://doi.org/10.5524/100883
+doi: 10.5524/100883
+repository: other
+accession: null
+authors:
+- Li S
+- Du Z
+- Meng X
+- Zhang Y
+publications:
+- title: Multi-stage malaria parasite recognition by deep learning
+  doi: 10.1093/gigascience/giab040
+  url: https://doi.org/10.1093/gigascience/giab040
+date_published: '2021-04-21'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  - Plasmodium vivax
+  - Plasmodium falciparum
+  - Babesia
+  sample: Giemsa-stained thin blood smears at 1,000x, cropped to single cells (red blood cells, leukocytes,
+    infected cells)
+  labels_stains:
+  - Giemsa
+data:
+  formats:
+  - jpeg
+  - png
+  size_bytes: 354484758
+  n_items: 31333
+  access: open
+  download_url: https://s3.ap-northeast-1.wasabisys.com/gigadb-datasets/live/pub/10.5524/100001_101000/100883/
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  coverage: dense
+  format: one class per folder (train/<class>/, test/<class>/) and a per-task metadata CSV with image id, train/test split, annotation and file location
+  source: mixed
+ml:
+  tasks:
+  - classification
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/senli2018/DTGCN_2021
+license:
+  spdx: CC0-1.0
+  url: https://creativecommons.org/publicdomain/zero/1.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-29T09:00:00Z'
+  evidence_urls:
+  - https://doi.org/10.5524/100883
+  - https://gigadb.org/api/dataset/?doi=100883
+  - https://s3.ap-northeast-1.wasabisys.com/gigadb-datasets/live/pub/10.5524/100001_101000/100883/readme_100883.txt
+  - https://s3.ap-northeast-1.wasabisys.com/gigadb-datasets/live/pub/10.5524/100001_101000/100883/Multi-stage_Malaria_Recognition_file_metadata.csv
+  - https://s3.ap-northeast-1.wasabisys.com/gigadb-datasets/live/pub/10.5524/100001_101000/100883/Large-scale_Malaria_Recognition_file_metadata.csv
+  - https://s3.ap-northeast-1.wasabisys.com/gigadb-datasets/live/pub/10.5524/100001_101000/100883/Babesia_Parasite_Recognition_file_metadata.csv
+  - https://doi.org/10.1093/gigascience/giab040
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8210472/fullTextXML
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-29T10:05:00Z'
+notes: 'Hosted on GigaDB (repository other). Differs from bbbc041-malaria-pvivax-blood-smears (raw BBBC041 slides with boxes):
+  this is a cell-crop classification packaging. Multi-stage part (7,897 CSV rows) is cropped from BBBC041 (5,000 RBCs
+  sampled; 104 self-captured leukocytes in test). Binary part (21,236 rows, 13,780 test) is from the NLM P. falciparum
+  thin-smear cell set. Babesia part (2,200 rows) was collected by the authors; the paper does not say who labelled it.
+  Repackaged benchmark. Organisms: P. vivax = 1_multistage_malaria_classification/ and 2_Unseen_Malaria_classification/train/; P. falciparum = 2_Unseen_Malaria_classification/test/; Babesia = 3_babesia_classification/ (host species not stated); Homo sapiens = host blood cells of the malaria sets. Pixel sizes: CSV "Pixel_Size" um columns are per-image extents (Babesia: "-"), no pixel size stated.
+  enricher: formats jpeg, png (was tiff): .tif files are JPEG or PNG streams. enricher: size from S3 file listing (was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      100883/   31,340 files, 354.5 MB (S3 listing, exact sizes)
+        readme_100883.txt, 100883.md5, 100883all.md5
+        Multi-stage_Malaria_Recognition_file_metadata.csv     7,897 rows
+        Large-scale_Malaria_Recognition_file_metadata.csv    21,236 rows
+        Babesia_Parasite_Recognition_file_metadata.csv        2,200 rows
+        DTGCN_2021-main.zip   130.5 MB, code repo copy (no images)
+        1_multistage_malaria_classification/
+          train/{gametocyte 44, leukocyte 107, red_blood_cell 5000, ring 253, schizont 79, trophozoite 1373}/*.tif
+          test/{gametocyte, leukocyte, red_blood_cell, ring, schizont, trophozoite}/*.tif   100 each
+          difficult/*.tif   441 (unused, no split)
+        2_Unseen_Malaria_classification/
+          train/{Parasitized 2149, Uninfected 5307}/*.tif   (BBBC041 crops)
+          test/{Parasitized 6890, Uninfected 6890}/*.tif    (NLM cell images)
+        3_babesia_classification/
+          train/{RBCell 600, babesia_ours 600}/*.tif
+          test/{RBCell 500, babesia_ours 500}/*.tif
+    n_files: 31340
+    listing_complete: true
+  sample:
+    urls:
+    - https://s3.ap-northeast-1.wasabisys.com/gigadb-datasets/live/pub/10.5524/100001_101000/100883/1_multistage_malaria_classification/test/ring/a1011_28.tif
+    size_bytes: 3013
+    description: One ring-stage crop (127x117 RGB); its class is the folder name, so there is no separate label file.
+  arrays:
+  - role: raw
+    path_pattern: '{1_multistage_malaria_classification,2_Unseen_Malaria_classification/train,3_babesia_classification}/*.tif'
+    format: jpeg
+    axes: yxs
+    shape:
+    - 127
+    - 117
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    lossy: true
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Files are named .tif but are baseline JPEG streams (magic bytes FFD8). Exception: the leukocyte
+      folders mix JPEG and PNG (2 of 3 checked per folder were PNG). One cell per image, sizes vary
+      (probed 127x117, 148x130, 218x259). Class label = parent folder name; split = train/test folder; difficult/ has no
+      class. The per-task metadata CSV lists the same class and split per file.'
+  - role: raw
+    path_pattern: 2_Unseen_Malaria_classification/test/*.tif
+    format: png
+    axes: yxs
+    shape:
+    - 142
+    - 139
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    value_range:
+    - 0
+    - 236
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Files are named .tif but are RGB PNGs (magic bytes 89 50 4E 47; all 12 checked). NLM thin-smear
+      single-cell crops with a black (0) background outside the cell (33% zeros in the sample). Class label = folder
+      (Parasitized / Uninfected).'
+  - role: label
+    path_pattern: '*_file_metadata.csv'
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes:
+    - id: red_blood_cell
+      name: red blood cell (multi-stage task)
+    - id: leukocyte
+      name: leukocyte
+    - id: ring
+      name: ring-stage P. vivax
+    - id: trophozoite
+      name: trophozoite
+    - id: schizont
+      name: schizont
+    - id: gametocyte
+      name: gametocyte
+    - id: Parasitized
+      name: parasitized cell (large-scale task)
+    - id: Uninfected
+      name: uninfected cell (large-scale task)
+    - id: babesia_ours
+      name: Babesia-infected cell
+    - id: RB Cell
+      name: red blood cell (Babesia task)
+    alignment: not-applicable
+    alignment_notes: 'Per-file class table, one CSV per task (columns ImageId, File_Name, Train/Test, Pixel_Number_X/Y,
+      Pixel_Size_X/Y(um), Annotation, File location); rows 7,897 / 21,236 / 2,200 with 11 / 10 / 10 columns. Joins to
+      images by File location. Annotation repeats the folder name (difficult rows have split "-").'
+  notes: 'Listing: tools/listing.py on the S3 prefix, 31,340 files, 354,484,758 B, complete with exact sizes (includes the
+    130.5 MB code zip). Probed 6 files; read the 8-byte magic of 64 .tif files across all 18 image folders: JPEG
+    everywhere except 2_Unseen_Malaria_classification/test (PNG) and the leukocyte folders (mixed). Sampled one JPEG
+    (uint8 [0, 255], mean 147) and one PNG (uint8 [0, 236], mean 116); value ranges from one sample each. CSVs read in
+    full for row and class counts. Voxel size not found; checked: file headers (none), GigaDB API and readme, CSVs
+    (Pixel_Size um columns are per-image extents, e.g. 129 px = 15.28 um; Babesia "-"), paper full text (1,000x only),
+    DTGCN code zip listing. Subsets come from different sources, so no shared pixel size. Download: per-file S3 objects
+    only (no data archive; DTGCN_2021-main.zip is code); host s3.ap-northeast-1.wasabisys.com is not on the TensorSwitch
+    allowlist. TensorSwitch would also need to read JPEG/PNG content despite the .tif extension.'
