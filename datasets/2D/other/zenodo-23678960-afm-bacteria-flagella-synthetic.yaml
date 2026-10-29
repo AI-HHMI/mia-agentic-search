@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zenodo-23678960-afm-bacteria-flagella-synthetic
 title: Simultaneous segmentation of bacteria and flagella in large-area AFM images using synthetic data
 short_name: Bacteria and flagella AFM synthetic training set
-description: Code, weights and data accompanying a manuscript on segmenting bacterial cell bodies and flagella
-  in 512 x 512 atomic force microscopy (AFM) height fields. Includes 2,520 synthetic (SimuScan) AFM training
-  images with flagellum targets, hand-annotated cell-body and flagella masks for a few experimental fields,
-  and model predictions for 243 experimental fields.
+description: Code, weights and data accompanying a manuscript on segmenting bacterial cell bodies and flagella in
+  512 x 512 atomic force microscopy (AFM) height fields. Includes 2,520 synthetic (SimuScan) AFM training images
+  with flagellum targets, hand-annotated cell-body and flagella masks for a few experimental fields, and model predictions
+  for 243 experimental fields.
 landing_url: https://zenodo.org/records/23678960
 doi: 10.5281/zenodo.23678960
 repository: Zenodo
@@ -30,12 +30,13 @@ imaging:
   voxel_size_nm: null
   channels: 1
   organism: []
-  sample: bacteria and flagella on unpatterned, moderately patterned and densely patterned substrates (AFM height fields)
+  sample: bacteria and flagella on unpatterned, moderately patterned and densely patterned substrates (AFM height
+    fields)
   labels_stains: []
 data:
   formats:
   - other
-  size_bytes: 1324800000
+  size_bytes: 1326821841
   n_items: 2520
   access: open
   download_url: https://zenodo.org/records/23678960/files/flagella_afm_segmentation.zip
@@ -43,10 +44,12 @@ data:
 annotations:
   present: true
   types:
+  - skeleton
   - semantic-segmentation
   - instance-segmentation
   coverage: sparse
-  format: PNG masks (hand-annotated flagella for 3 fields, cell bodies semantic and instance for 3 fields) and flagellum targets for the 2,520 synthetic training images (.npy)
+  format: 'PNG: flagellum centre-line targets (256x256, 0/255) for the 2,520 synthetic .npy images; hand-annotated
+    flagella (3 fields) and cell-body semantic + instance masks (3 fields), 512x512'
   source: mixed
 ml:
   tasks:
@@ -63,18 +66,119 @@ provenance:
   evidence_urls:
   - https://zenodo.org/records/23678959
   - https://zenodo.org/records/23678960/files/flagella_afm_segmentation.zip
+  - https://zenodo.org/api/records/23678960
+  - https://zenodo.org/api/records/23678960/files/README.md/content
   confidence: 0.55
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-29T12:10:00Z'
-notes: 'AFM (atomic force microscopy) height maps, not optical or electron micrographs; modality recorded as
-  other. The raw experimental AFM height data are NOT included (README: "AFM height data are not included").
-  What is usable for training: 2,520 synthetic images (120 per recipe and substrate condition, height in
-  micrometres as .npy) with flagellum targets, plus 6 hand-annotated masks (3 fields flagella, 3 fields
-  cell bodies). Predictions and display images for 243 experimental fields are model outputs, not
-  ground truth. Zip listing: 6,481 files, 1,324.8 MB uncompressed (3,581 png, 2,553 npy, code and weights);
-  the Zenodo page states 5.3 GB total, which does not match the 1.3 GB archive. formats is other because
-  the data arrays are .npy. Pixel size not stated on the record or README. No related paper cited on the record
-  (manuscript with the same title), so none was read. Checked: Zenodo record, zip listing, README.'
+  last_checked: '2026-10-29T12:20:00Z'
+notes: 'AFM height maps, modality other. Experimental AFM height data are NOT included (README). Usable for training:
+  2,520 synthetic SimuScan images (256x256 float32 .npy, height in um) with flagellum centre-line targets (PNG);
+  the 9 hand-annotated masks belong to experimental fields whose heights are not shipped. formats is other because
+  the images are .npy (PNG holds only targets, masks and display renders). Pixel size not stated. enricher: image
+  size 256x256 from probe (description says 512x512: true only for annotations/predictions). enricher: annotation
+  type skeleton added (datasets.json: target is the one-pixel centre line). enricher: size 1,326,821,841 B from
+  Zenodo file listing (the Zenodo page 5.3 GB was wrong). annotations.source mixed: sample/*_target.png synthetic
+  (automatic), annotations/ manual.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                       2 files   1.3 GB  .zip 1, .md 1\nflagella_afm_segmentation.zip/flagella_afm_segmentation/\n\
+      \  ./                                     4 files  837 KB  README.md, SHA256SUMS, requirements*.txt\n  annotations/bacteria/\
+      \                  6 files   42 KB  .png\n  annotations/flagella/                  3 files   23 KB  .png\n\
+      \  code/afmseg/ (+models, synthesis, training)  22 files  .py\n  display/                             243\
+      \ files  129 MB  .png\n  predictions/bacteria|flagella/       486 files  3.3 MB  .png\n  predictions/stardist/\
+      \                486 files  2.9 MB  .json 243, .png 243\n  recipes/                               6 files\
+      \   38 KB  .json\n  recipes/acquisition_noise/             2 files  346 KB  .csv, .npz\n  recipes/datasets/<recipe>/examples/\
+      \   ~5-13 files each  .png, .npy\n  recipes/datasets/<recipe>/sample/{dense,moderate,unpatterned}/  240 files\
+      \ each (120 .npy + 120 .png), ~31.6 MB\n  recipes/datasets/<recipe>/simuscan/    9 files  .yaml\n  recipes/eps_textures/\
+      \                 EPS texture images (.png) + textures.json\n  results/                               2 files\
+      \  metrics.json, field_measurements.csv\n  weights/                              model weights\n  (7 recipes:\
+      \ curve_families, curve_mix, hexagonal_lattice_tilt, hexagonal_lattice_tilt_widened_moderate, native_eps,\
+      \ original, ...; 6,481 zip members)"
+    n_files: 6482
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/23678960/files/flagella_afm_segmentation.zip::flagella_afm_segmentation/recipes/datasets/curve_mix/sample/unpatterned/036_height_um.npy
+    - https://zenodo.org/records/23678960/files/flagella_afm_segmentation.zip::flagella_afm_segmentation/recipes/datasets/curve_mix/sample/unpatterned/036_target.png
+    size_bytes: 262726
+    description: one synthetic 256x256 float32 height field (.npy, um) and its flagellum centre-line target PNG
+  arrays:
+  - role: raw
+    path_pattern: flagella_afm_segmentation.zip/flagella_afm_segmentation/recipes/datasets/*/sample/*/*_height_um.npy
+    format: other
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - -0.0272
+    - 1.3269
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: NumPy .npy (no pickle), height in micrometres (README, datasets.json). Rendered at 1024x1024
+      and reduced to 256x256 by area averaging (datasets.json).
+  - role: label
+    path_pattern: flagella_afm_segmentation.zip/flagella_afm_segmentation/recipes/datasets/*/sample/*/*_target.png
+    format: png
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: flagellum centre line (outside cell bodies)
+    alignment: same-grid
+    alignment_notes: 'Pairs by stem: NNN_height_um.npy <-> NNN_target.png in the same sample/<condition>/ folder.
+      Target is the one-pixel flagellum centre line, reduced from 1024 to 256 by any-pooling (datasets.json). Some
+      targets are empty (scenes without flagella).'
+  - role: label
+    path_pattern: flagella_afm_segmentation.zip/flagella_afm_segmentation/annotations/*/*.png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: false
+    dtype: unknown
+    compression: deflate
+    value_range:
+    - 0
+    - 29
+    normalization: none
+    encoding: other
+    classes:
+    - id: null
+      name: flagella (binary, *_flagella.png)
+    - id: null
+      name: bacterial cell body (semantic *_bacteria_semantic.png, uint8; instance IDs *_bacteria_instances.png,
+        uint16)
+    alignment: unknown
+    alignment_notes: Hand annotations of 6 experimental 512x512 fields (<condition>_<window>_<index>); the matching
+      AFM height fields are not in the dataset, so these masks have no raw image. value_range from dense_win24_62_bacteria_instances.png
+      (29 instances).
+  notes: 'Listed with tools/listing.py (Zenodo API, zip expanded): 2 files, 1,326,821,841 B, 6,481 zip members.
+    Probed 1 .npy (not readable by probe), 1 target PNG and all 9 annotation PNGs. sample.py does not read .npy,
+    so a scratch script (numpy np.load allow_pickle=False, PIL) read 2 .npy + 3 target PNGs by range (525,280 B):
+    .npy 256x256 float32, ranges [-0.027, 1.327] and [-0.016, 1.270] um; targets {0} or {0,255}. sample.py read
+    1 instance PNG (2,966 B): uint16, IDs 0-29. Value ranges are from single samples. normalization none: README
+    says heights are in micrometres. Voxel size not found; checked: README, datasets.json, composition.json, training.json,
+    a SimuScan yaml (only pixel counts and nm heights), Zenodo API (no related identifiers), Europe PMC title search
+    (no paper). Organism not stated anywhere (bacteria only).'
