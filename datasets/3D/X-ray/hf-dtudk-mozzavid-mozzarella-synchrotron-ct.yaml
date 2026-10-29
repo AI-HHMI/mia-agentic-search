@@ -3,14 +3,21 @@ id: hf-dtudk-mozzavid-mozzarella-synchrotron-ct
 title: 'MozzaVID: Mozzarella Volumetric Image Dataset'
 short_name: Mozzarella microstructure classes (synchrotron CT)
 description: 'Volumetric classification dataset of synchrotron X-ray tomography scans of mozzarella cheese
-  microstructure: 591 scans (about 1.3 mm wide, cropped to 1601x1601x2156 voxels) of 149 samples from 25 cheese
-  types, released as three downscaled sets of 192x192x192 volumes (Small 591, Base 4,728, Large 37,824).
-  Labels are the 25 cheese types (coarse) and the 149 samples (fine).'
+  microstructure: 591 scans (about 1.3 mm wide, cropped to 1601x1601x2156 voxels) of 149 samples from
+  25 cheese types, released as three downscaled sets of 192x192x192 volumes (Small 591, Base 4,728, Large
+  37,824). Labels are the 25 cheese types (coarse) and the 149 samples (fine).'
 landing_url: https://huggingface.co/datasets/dtudk/MozzaVID_Small
 doi: null
 repository: HuggingFace
 accession: null
-authors: []
+authors:
+- Pawel Tomasz Pieta
+- Peter Winkel Rasmussen
+- Anders Bjorholm Dahl
+- Jeppe Revall Frisvad
+- Siavash Arjomand Bigdeli
+- Carsten Gundlach
+- Anders Nymark Christensen
 publications:
 - title: 'MozzaVID: Mozzarella Volumetric Image Dataset'
   doi: 10.48550/arXiv.2412.04880
@@ -20,19 +27,16 @@ imaging:
   modality:
   - X-ray
   dimensionality: 3D
-  voxel_size_nm:
-    x: 550
-    y: 550
-    z: null
+  voxel_size_nm: null
   channels: 1
   organism: []
-  sample: 1 cm cubes of 25 mozzarella cheese types (six per type), frozen and thawed, imaged by local tomography
-    at the DanMAX beamline of MAX IV (20 keV, 2,601 projections, 0.55 um pixel size)
+  sample: 1 cm cubes of 25 mozzarella cheese types (six per type), frozen and thawed, imaged by local
+    tomography at the DanMAX beamline of MAX IV (20 keV, 2,601 projections, 0.55 um pixel size)
   labels_stains: []
 data:
   formats:
-  - tiff
-  size_bytes: null
+  - other
+  size_bytes: 8367571892
   n_items: 591
   access: open
   download_url: null
@@ -42,14 +46,16 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: Volume-level class labels (25 coarse cheese types, 149 fine-grained samples) encoded in the dataset
-    structure
+  format: Per-volume JSON next to each .npy in the WebDataset shards (label_cheese 0-24, label_sample
+    0-148, split_coarse, split_fine) plus index.json mapping each volume to its shard and original path
+    cheese_<n>/<sample>/<i>.npy
   source: manual
 ml:
   tasks:
   - classification
   splits_provided: true
-  benchmark: Volumetric classification benchmark (coarse split by sample about 67/16/16, fine split by volume 70/20/10)
+  benchmark: Volumetric classification benchmark (coarse split by sample about 67/16/16, fine split by
+    volume 70/20/10)
   baseline_code_url: https://github.com/PaPieta/MozzaVID
 license:
   spdx: CC-BY-SA-4.0
@@ -62,18 +68,82 @@ provenance:
   - https://github.com/PaPieta/MozzaVID
   - https://arxiv.org/html/2412.04880
   - https://papieta.github.io/MozzaVID/
+  - https://huggingface.co/api/datasets/dtudk/MozzaVID_Small/tree/main
+  - https://huggingface.co/datasets/dtudk/MozzaVID_Small/resolve/main/README.md
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-29T03:25:00Z'
-notes: 'Author list and publication date not read from a fetched page (the HF card names only the first author
-  Pieta et al.), so left empty. Full data: raw scans on the DTU archive (archive.compute.dtu.dk/files/public/projects/MozzaVID/,
-  returned 503 or an empty listing from this environment, so its file listing was not seen) as ~5.1 GB uint8
-  TIFFs (2156x1601x1601) per scan in 25 class folders, plus three Hugging Face WebDataset sets (dtudk/MozzaVID_Small
-  8.37 GB, _Base, _Large; Large needs >300 GB). Small/Base/Large have effective voxel sizes of roughly 8x/4x/2x
-  the raw 0.55 um pixel size, which the paper does not state; voxel size given is the raw pixel size from the
-  paper, z not stated. License CC-BY-SA-4.0 is from the Hugging Face dataset card; the README and paper state none
-  for the data (CC BY 4.0 on the arXiv page applies to the article). X-ray synchrotron CT with class labels only
-  (no masks). File-level annotation structure not verified because the archive listing was unavailable.'
+  annotations_verified: true
+  last_checked: '2026-10-29T02:57:39Z'
+notes: 'Small split (HF dtudk/MozzaVID_Small, 591 volumes): WebDataset tar shards of float16 192^3 .npy
+  volumes. Base (4,728) and Large (37,824) splits and raw ~5.1 GB uint8 TIFF scans on the DTU archive
+  are separate downloads, not covered by size_bytes. enricher: voxel_size_nm set to null (was 550x550
+  nm): 0.55 um is the raw scan pixel size; the paper says Small volumes are a central 1536-px cube downscaled
+  8-fold, and no source states the resulting voxel size. enricher: formats tiff -> other (.npy in tar;
+  TIFF only on the DTU archive); authors from the HF card citation; annotations verified from index.json
+  and per-volume JSON. License CC-BY-SA-4.0 is from the HF dataset card (code repo is MIT). X-ray synchrotron
+  CT with class labels only (no masks).'
+technical:
+  method: sample
+  inspected_at: '2026-10-29T02:57:39Z'
+  inspected_urls:
+  - https://huggingface.co/api/datasets/dtudk/MozzaVID_Small/tree/main
+  - https://huggingface.co/datasets/dtudk/MozzaVID_Small/resolve/main/index.json
+  - https://huggingface.co/datasets/dtudk/MozzaVID_Small/resolve/main/shard_0000.tar
+  bytes_downloaded: 14253357
+  size_source: file-listing
+  layout:
+    tree: "dtudk/MozzaVID_Small (HF, 35 files, 8.4 GB)\n  README.md\n  index.json                 591\
+      \ entries: orig_path, shard, image, label_cheese, label_sample, split_coarse, split_fine\n  shard_0000.tar\
+      \ ... shard_0030.tar   269,004,800 B each\n  shard_0031.tar             28,323,840 B\n  per shard\
+      \ (WebDataset): imageNNNN.npy (float16 192x192x192) + imageNNNN.json (labels, splits)\n"
+    n_files: 35
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/dtudk/MozzaVID_Small/resolve/main/shard_0000.tar
+    size_bytes: 269004800
+    description: 'One WebDataset shard: about 19 volumes (.npy) with their label JSON files'
+  arrays:
+  - role: raw
+    path_pattern: shard_*.tar
+    format: other
+    axes: null
+    shape:
+    - 192
+    - 192
+    - 192
+    shape_varies: false
+    dtype: float16
+    compression: none
+    value_range:
+    - 0.0
+    - 1.0
+    normalization: rescaled
+    alignment: not-applicable
+    alignment_notes: NumPy .npy members (imageNNNN.npy) inside uncompressed tar shards; axis order not
+      stated.
+  - role: label
+    path_pattern: shard_*.tar
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'Volume-level class labels: imageNNNN.json next to imageNNNN.npy in the same shard
+      (label_cheese 25 types, label_sample 149 samples, coarse/fine split); index.json repeats them for
+      all 591 volumes.'
+  notes: 'Listing: HF tree API, 35 files, 8,367,571,892 B (complete, = size_bytes). Sample: image0000.npy
+    read by range from shard_0000.tar (14,155,904 B): float16, shape (192,192,192), min 0.0, max 1.0,
+    mean 0.593, std 0.135 (one volume only); rescaled to [0,1] per the observed range. Loaded with allow_pickle=False.
+    Voxel size not found for these files: paper states 0.55 um raw pixel size and an 8-fold downscale
+    for Small, but no effective voxel size; checked HF card, project page, GitHub README, arXiv full text.
+    DTU raw archive did not respond (timeout). Direct link check: shard_0000.tar usable (206, range requests,
+    host allowed); no single archive, so download_url stays null and the 32 shard URLs come from the HF
+    tree API.'
