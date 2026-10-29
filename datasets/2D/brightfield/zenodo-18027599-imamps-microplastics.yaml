@@ -1,11 +1,12 @@
 schema_version: '1.2'
 id: zenodo-18027599-imamps-microplastics
-title: 'ImaMPs: Extensive image dataset of microplastics in freshwater from tourist areas in the State of Mexico, Mexico.'
+title: 'ImaMPs: Extensive image dataset of microplastics in freshwater from tourist areas in the State
+  of Mexico, Mexico.'
 short_name: Freshwater microplastics classification (stereo)
-description: 6,000 RGB TIFF images of cellulose filter membranes from freshwater samples (three tourist sites
-  in the State of Mexico), taken with a Velab VE-S5C stereoscopic optical microscope at 0.7x-4.5x zoom. 3,000 images
-  contain microplastics (CLASE_1) and 3,000 do not (CLASE_0); image-level labels are also in a CSV file.
-  Images are 2040x1528 (4,262) or 1016x760 px (1,738).
+description: 6,000 RGB TIFF images of cellulose filter membranes from freshwater samples (three tourist
+  sites in the State of Mexico), taken with a Velab VE-S5C stereoscopic optical microscope at 0.7x-4.5x
+  zoom. 3,000 images contain microplastics (CLASE_1) and 3,000 do not (CLASE_0); image-level labels are
+  also in a CSV file. Images are 2040x1528 (4,262) or 1016x760 px (1,738).
 landing_url: https://zenodo.org/records/18027599
 doi: 10.5281/zenodo.18027599
 repository: Zenodo
@@ -35,7 +36,7 @@ data:
   size_bytes: 29583595619
   n_items: 6000
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/18027599
   download_method: http
 annotations:
   present: true
@@ -64,9 +65,69 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-29T14:05:00Z'
-notes: 'Zenodo record has CLASE_0.zip (14.5 GB, 3,000 .tif), CLASE_1.zip (15.1 GB, 3,000 .tif; both listed with
-  peek_archive), DATA_ImaMPs.csv and a microscope spec PDF. Size is the sum of the four files. No publication
-  is cited on the record; how labels were assigned (annotator, method) is not stated, so annotations.source
+  last_checked: '2026-10-29T14:45:00Z'
+notes: 'Zenodo record has CLASE_0.zip (14.5 GB, 3,000 .tif), CLASE_1.zip (15.1 GB, 3,000 .tif; both listed
+  with peek_archive), DATA_ImaMPs.csv and a microscope spec PDF. Size is the sum of the four files. No
+  publication is cited on the record; how labels were assigned (annotator, method) is not stated, so annotations.source
   is unknown. Pixel size not stated on the record. Imaging is stereomicroscope RGB, so modality brightfield
-  is the closest enum. No train/val/test split is provided.'
+  is the closest enum. No train/val/test split is provided. enricher: download_url = record page (two
+  class zips, no single archive).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                 4 files   29.6 GB  .zip 2, .csv 1, .pdf 1\n  CLASE_0.zip\
+      \   14,475,467,956 B    DATA_ImaMPs.csv   362,186 B\n  CLASE_1.zip   15,107,538,911 B    Technical_Specifications_VE-S5C_ENG.pdf\
+      \   226,566 B\nCLASE_0.zip/CLASE_0/                3000 files  .tif  (N_MP<n>.tif, no microplastics)\n\
+      CLASE_1.zip/CLASE_1/                3000 files 22.6 GB  .tif  (MP<n>.tif, microplastics)"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/18027599/files/CLASE_1.zip::CLASE_1/MP1664.tif
+    - https://zenodo.org/records/18027599/files/CLASE_0.zip::CLASE_0/N_MP2040.tif
+    - https://zenodo.org/records/18027599/files/DATA_ImaMPs.csv
+    size_bytes: 19083498
+    description: One image per class and the label table (uncompressed member sizes)
+  arrays:
+  - role: raw
+    path_pattern: CLASE_*.zip/CLASE_*/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 1528
+    - 2040
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 13
+    - 254
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB stereomicroscope images; 2040x1528 or 1016x760 per DATA_ImaMPs.csv Size column.
+      Member stored deflated in the zip; 9,360,656 B = uncompressed 1528x2040x3.
+  - role: label
+    path_pattern: DATA_ImaMPs.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes:
+    - id: Class_0
+      name: N_Microplastics (no microplastics)
+    - id: Class_1
+      name: Microplastics
+    alignment: not-applicable
+    alignment_notes: 'Image-level labels: rows ''IDE,Name,Site,Date,Label_Class,Size'' after two title
+      lines; Name (e.g. N_MP1) matches <Name>.tif in CLASE_0/ or CLASE_1/. The folder also gives the class.'
+  notes: 'Listing: tools/listing.py on Zenodo 18027599 with --expand-zips: 4 files, 29,583,595,619 B (file-listing,
+    complete), 6,000 TIFF members. Members are deflated, so probe.py could not read headers; sampled CLASE_1/MP1664.tif
+    (5,356,675 B compressed): 1528x2040x3 uint8 RGB, 13-254 (one sample). Read the head of DATA_ImaMPs.csv
+    by range. Voxel size not found; checked: TIFF header via sample (no calibration), Zenodo description,
+    CSV (pixel dimensions only); the microscope spec PDF was not read. Download:
+    CLASE_1.zip, its member and the CSV pass --download-check.'
