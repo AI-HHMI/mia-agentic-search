@@ -1,10 +1,11 @@
 schema_version: '1.2'
 id: zenodo-5807876-kernet-keratin-networks-3d
-title: KerNet, 3D fluorescence and segmentation datasets of keratin networks from MDCK, HaCaT, and RPE cells
+title: KerNet, 3D fluorescence and segmentation datasets of keratin networks from MDCK, HaCaT, and RPE
+  cells
 short_name: Keratin filament networks 3D (Airyscan confocal)
 description: 30 datasets of high-resolution 3D Airyscan fluorescence stacks of fluorescence-tagged keratin
-  intermediate filaments in MDCK, HaCaT and RPE epithelial cells, with numerical 3D network models (nodes and
-  segments of filament bundles) derived from the stacks, provided in exchange formats for 3D software.
+  intermediate filaments in MDCK, HaCaT and RPE epithelial cells, with numerical 3D network models (nodes
+  and segments of filament bundles) derived from the stacks, provided in exchange formats for 3D software.
 landing_url: https://zenodo.org/records/5807876
 doi: 10.5281/zenodo.5807876
 repository: Zenodo
@@ -20,10 +21,7 @@ imaging:
   modality:
   - confocal
   dimensionality: 3D
-  voxel_size_nm:
-    x: 44
-    y: 44
-    z: 170
+  voxel_size_nm: null
   channels: 1
   organism:
   - Canis lupus familiaris
@@ -33,18 +31,19 @@ imaging:
   - fluorescence-tagged keratin
 data:
   formats:
-  - other
+  - tiff
   size_bytes: 853084003
   n_items: 30
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/5807876
   download_method: http
 annotations:
   present: true
   types:
   - skeleton
   coverage: dense
-  format: numerical 3D network models (nodes and segments as polygonal chains) from TSOAX/KerNet segmentation, in exchange formats for 3D software
+  format: 'per cell (ex_NNN/): network models as CSV (nodes XYZ, adjacency list, segment lists), GML graph,
+    OBJ/FBX/3ds Max meshes, MATLAB .mat and .dat property files, TSOAX snakes .txt'
   source: automatic
 ml:
   tasks:
@@ -65,11 +64,63 @@ provenance:
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-29T13:05:00Z'
-notes: 'Three RAR archives (RPE.rar 202 MB, HACAT.rar 484 MB, MDCK.rar 167 MB); archive contents could not be listed,
-  so file formats and image counts rest on the record text (30 datasets: raw Airyscan 3D stacks plus numerical
-  network data). The record cites no paper; the eLife article is linked by matching description. Paper: voxel
-  size xy 0.044-0.065 um, z 0.17-0.2 um (record values here are the lower bounds, varying per stack). Network
-  models come from automated TSOAX segmentation checked by visual inspection, not manual labels. Checked: Zenodo
-  record, paper full text (Europe PMC).'
+  annotations_verified: true
+  last_checked: '2026-10-29T14:20:00Z'
+notes: 'Three RAR5 archives (RPE.rar 202 MB, HACAT.rar 484 MB, MDCK.rar 167 MB); headers listed by the
+  enricher: 30 cells (ex_001-ex_045 across MDCK/, HACAT/, RPE/), each with ex_N_raw.tif plus network files,
+  and a ''data file documentation.pdf'' per archive. The record cites no paper; the eLife article is linked
+  by matching description. Voxel size varies per stack (paper Methods: xy 0.044-0.065 um, z 0.17-0.2 um),
+  so voxel_size_nm is null (enricher; was the lower bounds 44x44x170). Network models come from automated
+  TSOAX segmentation checked by visual inspection, not manual labels. organisms: Canis lupus familiaris
+  = MDCK/; Homo sapiens = HACAT/, RPE/. enricher: formats tiff (raw stacks), annotations_verified true
+  (network files listed). Checked: Zenodo record, paper full text (Europe PMC).'
+technical:
+  method: metadata-only
+  size_source: file-listing
+  layout:
+    tree: "./                                  3 files   853.1 MB  .rar (RAR5, compressed)\nMDCK.rar/MDCK/ex_NNN/\
+      \     (x10 dirs)   181 files   561.4 MB unpacked\nHACAT.rar/HACAT/ex_NNN/   (x10 dirs)   181 files\
+      \   1.68 GB unpacked\nRPE.rar/RPE/ex_NNN/       (x10 dirs)   180 files   658.1 MB unpacked\n  per\
+      \ cell ex_N: ex_N_raw.tif, ex_N_snakes.txt, ex_N_graph.gml, ex_N_new_NODES_XYZ.csv,\n    ex_N_new_ADJL_Nodes.csv,\
+      \ ex_N_new_all_segments_nodes.csv, ex_N_new_segments_list.csv,\n    ex_N_all_segments.obj/.dat,\
+      \ ex_N_all_segments_nodes(_int).mat, ex_N_Area_Volume_data.mat,\n    ex_N_class_segment_properties.dat,\
+      \ ex_N_properties_of_vertices.dat, ex_N.fbx, ex_N.max,\n    ex_N_2_UNREAL.dat, ex_N_all_segments_thickness_15000.ms\n\
+      \  plus 'data file documentation.pdf' (MDCK.rar)"
+    n_files: 3
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: '*.rar/*/ex_*/ex_*_raw.tif'
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'One Airyscan z-stack per cell (6.4-12.9 MB unpacked in MDCK); not opened: inside
+      RAR-compressed archives.'
+  - role: label
+    path_pattern: '*.rar/*/ex_*/ex_*_new_NODES_XYZ.csv'
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: graph
+    classes: null
+    alignment: unknown
+    alignment_notes: 'Pairing rule: ex_N/ex_N_raw.tif with the ex_N_* network files in the same folder.
+      Node coordinates with ex_N_new_ADJL_Nodes.csv (adjacency) and ex_N_new_segments_list.csv / ex_N_new_all_segments_nodes.csv
+      (segments); also ex_N_graph.gml. Units/coordinate frame not read (documentation PDF is inside the
+      RAR).'
+  notes: 'Listing: tools/listing.py on Zenodo 5807876: 3 files, 853,084,003 B (file-listing, complete).
+    Archive members listed with a scratch script reading RAR5 block headers by ranged GETs (no data read):
+    MDCK 181 files / 561,380,489 B unpacked, HACAT 181 / 1,681,145,975 B, RPE 180 / 658,140,779 B; members
+    use RAR compression (method 3), so no file could be probed or sampled with the allowed tools (no unrar).
+    Download: the three .rar files are direct Zenodo links, but TensorSwitch cannot pull members out of
+    RAR, so no sample unit; download_url is the record page. Voxel size: varies per stack (paper Methods),
+    set to null.'
