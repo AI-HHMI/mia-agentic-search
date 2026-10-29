@@ -48,7 +48,7 @@ annotations:
   - semantic-segmentation
   coverage: dense
   format: 8-bit .raw label volumes (oil, brine, rock = phases 1, 2, 3) per sample
-  source: mixed
+  source: automatic
 ml:
   tasks:
   - segmentation
@@ -71,12 +71,95 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-29T17:28:06Z'
+  last_checked: '2026-10-29T18:18:48Z'
 notes: 'License ODC-BY 1.0 is the Digital Rocks Portal metadata field. Archive (3.7 GB zip, 38 members,
   listed with peek_archive): per sample (Sample1 weakly water-wet, Sample2 and Sample3 mixed-wet) a raw
   .raw volume (~1.19 GB each, headerless binary; the dtype is not stated on the page) and a segmented
   .raw (~0.59 GB), with histogram CSVs and preview images. Segmentation: Trainable WEKA Segmentation with
   fast-random-forest and mean/variance texture filters, trained on manually annotated pixels of each phase
-  (paper Methods; scanner ZEISS Xradia VersaXRM-500, 2 um voxels), hence annotation source mixed. Format
-  is headerless .raw, which is not in the format enum (other). No train/test split. The portal page redirects
-  to a tombstone; the TACC archive directory and metadata JSON were used.'
+  (paper Methods; scanner ZEISS Xradia VersaXRM-500, 2 um voxels), so the labels are classifier output.
+  Format is headerless .raw, which is not in the format enum (other). No train/test split. Portal page
+  is a tombstone; TACC archive used. enricher: annotations.source automatic (was mixed); dtype uint16
+  and shape from metadata.'
+technical:
+  method: sample
+  inspected_at: '2026-10-29T18:18:48Z'
+  inspected_urls:
+  - https://web.corral.tacc.utexas.edu/digitalporousmedia/archive/DRP-151/DRP-151_archive.zip
+  - 'https://web.corral.tacc.utexas.edu/digitalporousmedia/archive/DRP-151/DRP-151_archive.zip::DRP-151/Sample
+    1: Weakly water-wet/Sample1_Original/Sample1_raw.raw'
+  - 'https://web.corral.tacc.utexas.edu/digitalporousmedia/archive/DRP-151/DRP-151_archive.zip::DRP-151/Sample
+    1: Weakly water-wet/Sample1_Original/Sample1_Segmented/Sample1_segmented_8bit.raw'
+  bytes_downloaded: 26000000
+  size_source: file-listing
+  layout:
+    tree: "DRP-151_archive.zip  (3.7 GB, 38 members)\n  manifest-sha512.txt, DRP-151_metadata.json\n \
+      \ DRP-151/Sample 1: Weakly water-wet/Sample1_Original/\n    Sample1_raw.raw            1.19 GB \
+      \ headerless uint16 LE, 976x1014x601\n    Sample1_raw.raw.{gif,jpg,histogram.jpg,histogram.csv}\
+      \   previews (gif 354 MB)\n    Sample1_Segmented/Sample1_segmented_8bit.raw   0.59 GB  headerless\
+      \ uint8, 976x1014x601\n    Sample1_Segmented/*.{gif,jpg,histogram.*}\n  DRP-151/Sample 2: Mixed-wet/Sample2_Original/\
+      \   Sample2_raw.raw, Sample2_Segmented/Sample2_segmented.raw (+ previews)\n  DRP-151/Sample 3: Mixed-wet/Sample3_Original/\
+      \   Sample3_raw.raw, Sample3_Segmented/Sample3_segmented.raw (+ previews)"
+    n_files: 38
+    listing_complete: true
+  sample:
+    urls:
+    - 'https://web.corral.tacc.utexas.edu/digitalporousmedia/archive/DRP-151/DRP-151_archive.zip::DRP-151/Sample
+      1: Weakly water-wet/Sample1_Original/Sample1_raw.raw'
+    - 'https://web.corral.tacc.utexas.edu/digitalporousmedia/archive/DRP-151/DRP-151_archive.zip::DRP-151/Sample
+      1: Weakly water-wet/Sample1_Original/Sample1_Segmented/Sample1_segmented_8bit.raw'
+    size_bytes: 1784364192
+    description: 'Sample 1: raw uint16 volume and its 3-phase segmentation (headerless .raw, 976x1014x601)'
+  arrays:
+  - role: raw
+    path_pattern: DRP-151/*/*_Original/*_raw.raw
+    format: other
+    axes: zyx
+    shape:
+    - 601
+    - 1014
+    - 976
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 37782
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Headerless raw: metadata width 976, height 1014, numberOfImages 601, 16_bit_unsigned,
+      little_endian, offset 0, gap 0 (file size 1,189,576,128 = 976*1014*601*2). Grey levels: black oil,
+      dark grey brine, light grey rock (metadata).'
+  - role: label
+    path_pattern: DRP-151/*/*_Original/*_Segmented/*.raw
+    format: other
+    axes: zyx
+    shape:
+    - 601
+    - 1014
+    - 976
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 3
+    normalization: none
+    encoding: semantic-ids
+    classes:
+    - id: 1
+      name: oil
+    - id: 2
+      name: brine
+    - id: 3
+      name: rock
+    alignment: same-grid
+    alignment_notes: Headerless 8-bit, same 976x1014x601 per metadata; pairs with <Sample>_raw.raw in
+      the parent folder. Phases 1/2/3 = oil/brine/rock (metadata); 0 also occurs (28% of the first 20
+      slices), likely outside the core, not described.
+  notes: 'Listing: tools/listing.py of the archive (38 members, exact sizes, 3,661,000,215 bytes). Members
+    are deflated; a scratch script streamed the first 4 slices of Sample1_raw.raw (min 0, max 37782, p1-p99
+    0-33541) and the first 20 slices of Sample1_segmented_8bit.raw (values 0: 5.32M, 1: 0.90M, 2: 1.84M,
+    3: 11.73M). Value ranges are from those slices only. The .raw format is not in the enum (other); TensorSwitch
+    needs shape/dtype/byte order from this record or the metadata. Voxel size 2 um: metadata voxelX/Y/Z
+    2.0 micrometer and paper Methods.'
