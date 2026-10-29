@@ -3,10 +3,9 @@ id: zenodo-19228943-fiberdefect-ct-woven-composites
 title: FiberDefect-CT dataset for "An efficient segmentation framework for yarns and defects in woven composites
   based on structure-aware and generative augmentation" (Composites Communications)
 short_name: Woven composite yarns and pores (micro-CT)
-description: Micro-CT slice images of nine woven composite materials, 100 image slices and 100 matching label
-  slices per sample (900 + 900 files, in two section directions, xy and xz), with pixel-wise annotations
-  of warp yarns, weft yarns and pores. Stored as one NIfTI (.nii.gz) file per slice in image/ and label/
-  folders.
+description: Micro-CT slice images of nine woven composite materials, 100 image slices and 100 matching label slices
+  per sample (900 + 900 files, in two section directions, xy and xz), with pixel-wise annotations of warp yarns,
+  weft yarns and pores. Stored as one NIfTI (.nii.gz) file per slice in image/ and label/ folders.
 landing_url: https://zenodo.org/records/19228943
 doi: 10.5281/zenodo.19228943
 repository: Zenodo
@@ -70,11 +69,70 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-29T14:35:00Z'
-notes: 'License on the Zenodo page is the custom "Academic Non-Commercial Research License" (commercial use
-  prohibited without written permission; cite the paper). Zenodo API metadata lists no license, the license
-  text is shown on the record page. FiberDefect-CT.zip listed with peek_archive: 1800 .nii.gz members =
-  image/sample1..9 and label/sample1..9, each 100 slices (named sampleN_xy_slice_K and sampleN_xz_slice_K,
-  so two section directions). Voxel/pixel size and scanner not stated on the Zenodo page or the GitHub
-  README. The paper (Composites Communications) is not open access and was not read; label classes are
-  taken from the record description. How labels were made is not stated, so annotations.source is unknown.'
+  last_checked: '2026-10-29T14:50:00Z'
+notes: 'License on the Zenodo page is the custom "Academic Non-Commercial Research License" (commercial use prohibited
+  without written permission; cite the paper). Zenodo API metadata lists no license, the license text is shown on
+  the record page. FiberDefect-CT.zip listed with peek_archive: 1800 .nii.gz members = image/sample1..9 and label/sample1..9,
+  each 100 slices (named sampleN_xy_slice_K and sampleN_xz_slice_K, so two section directions). Voxel/pixel size
+  and scanner not stated on the Zenodo page or the GitHub README. The paper (Composites Communications) is not open
+  access and was not read; label classes are taken from the record description. How labels were made is not stated,
+  so annotations.source is unknown. enricher: sampled labels hold values 0-3 (background + 3 classes); NIfTI headers
+  carry the default 1.0 spacing, no calibration.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "FiberDefect-CT.zip (397.6 MB)\n  FiberDefect-CT/\n    image/sample1..sample9/   900 files  382.5 MB \
+      \ .nii.gz\n      sampleN_xy_slice_K.nii.gz (50 per sample), sampleN_xz_slice_K.nii.gz (50 per sample)\n  \
+      \  label/sample1..sample9/   900 files   15.2 MB  .nii.gz (same names)"
+    n_files: 1800
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/19228943/files/FiberDefect-CT.zip::FiberDefect-CT/image/sample1/sample1_xy_slice_1.nii.gz
+    - https://zenodo.org/records/19228943/files/FiberDefect-CT.zip::FiberDefect-CT/label/sample1/sample1_xy_slice_1.nii.gz
+    size_bytes: 387703
+    description: one xy slice of sample 1 and its label slice
+  arrays:
+  - role: raw
+    path_pattern: FiberDefect-CT.zip::FiberDefect-CT/image/sample*/*.nii.gz
+    format: nifti
+    axes: yx
+    shape:
+    - 474
+    - 1967
+    shape_varies: true
+    dtype: uint8
+    compression: gzip
+    value_range:
+    - 0
+    - 237
+    normalization: unknown
+    alignment: not-applicable
+  - role: label
+    path_pattern: FiberDefect-CT.zip::FiberDefect-CT/label/sample*/*.nii.gz
+    format: nifti
+    axes: yx
+    shape:
+    - 474
+    - 1967
+    shape_varies: true
+    dtype: uint8
+    compression: gzip
+    value_range:
+    - 0
+    - 3
+    encoding: semantic-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Pair by identical path under image/ and label/ (FiberDefect-CT/image/sampleN/sampleN_<xy|xz>_slice_K.nii.gz
+      <-> FiberDefect-CT/label/sampleN/...); sampled pair has identical shapes. Docs name the classes (warp yarn,
+      weft yarn, pore/void) but not which of label values 1-3 is which; 0 is presumably background (not stated).
+  notes: 'Listing (tools/listing.py, Zenodo API + zip central directory): 1 zip, 397,640,606 bytes, 1,800 .nii.gz
+    members, 100 image + 100 label slices per sample (50 xy + 50 xz). Probe: sample1_xy_slice_1 image and label
+    474x1967 (yx) uint8 gzip; sample1_xz_slice_1 image 469x2027, so shapes vary between section directions/samples.
+    Sample (one pair): image min 0 max 237 mean 156, 127 unique values; label values {0: 367148, 1: 150670, 2: 414120,
+    3: 420}. value_range from that one pair; normalization not documented. Voxel size not found; checked: NIfTI
+    headers (default 1.0 zooms, uncalibrated), Zenodo API record (description, no notes), zip listing (no README),
+    GitHub README, paper (Elsevier, not open access; Europe PMC has no full text). Annotation source and label ID
+    mapping not stated anywhere reachable. Not converted yet: the miao layout covers 3D only.'
