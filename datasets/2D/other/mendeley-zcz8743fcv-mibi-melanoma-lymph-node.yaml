@@ -29,7 +29,7 @@ imaging:
     x: 500
     y: 500
     z: null
-  channels: null
+  channels: 25
   organism:
   - Homo sapiens
   sample: lymph node metastases of melanoma patients (tissue sections)
@@ -37,7 +37,7 @@ imaging:
 data:
   formats:
   - other
-  size_bytes: 186100000
+  size_bytes: 166672993
   n_items: 16
   access: open
   download_url: https://data.mendeley.com/public-api/zip/zcz8743fcv/download/2
@@ -48,7 +48,8 @@ annotations:
   - instance-segmentation
   - classification
   coverage: dense
-  format: per-image NPZ cell masks (cells/), per-cell integer cell-type labels (cells2labels/), label names in labels_strings.txt
+  format: per-image NPZ cell masks (cells/), per-cell integer cell-type labels (cells2labels/), label
+    names in labels_strings.txt
   source: mixed
 ml:
   tasks:
@@ -74,11 +75,133 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-29T12:30:00Z'
-notes: 'Zip listing (166.7 MB compressed): 48 NPZ files plus channels.txt and labels_strings.txt, i.e. 16 images
-  (data/images), 16 cell masks (cells/) and 16 per-cell label files (cells2labels/), matching the 16 labeled
-  images in the paper (its 33 unlabeled images are not in the download). Labels: FlowSOM, pixel clustering,
-  gating and manual correction (116,808 cells, 14 cell types, per the paper). Pixel size 0.5 um is the paper''s
-  stated resolution for this dataset, not stated on the record. Modality is MIBI (multiplexed ion beam imaging),
-  recorded as other. NPZ internals were not opened. Checked: dataset page and API, zip listing, paper, CellSighter
-  README.'
+  last_checked: '2026-10-29T14:00:00Z'
+notes: 'Zip listing (166.7 MB compressed): 48 NPZ files plus channels.txt and labels_strings.txt, i.e.
+  16 images (data/images), 16 cell masks (cells/) and 16 per-cell label files (cells2labels/), matching
+  the 16 labeled images in the paper (its 33 unlabeled images are not in the download). Labels: FlowSOM,
+  pixel clustering, gating and manual correction (116,808 cells, 14 cell types, per the paper). Pixel
+  size 0.5 um is the paper''s stated resolution for this dataset, not stated on the record. Modality is
+  MIBI (multiplexed ion beam imaging), recorded as other. NPZ internals were not opened. Checked: dataset
+  page and API, zip listing, paper, CellSighter README. enricher: channels 25 (image array and channels.txt);
+  size 166,672,993 B = the zip (was the uncompressed 186.1 MB).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                                       1 files  166.7 MB  .zip (download/2)\n\
+      zip contents (Multiplexed Images of Melanoma Lymph Node Metastases/):\n  channels.txt, labels_strings.txt\
+      \                       2 files  .txt\n  data/images/                                          16\
+      \ files  .npz  (7.6-13 MB each)\n  cells/                                                16 files\
+      \  .npz\n  cells2labels/                                         16 files  .npz\n  (image ids 1-16;\
+      \ 50 members, 186.1 MB uncompressed)"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.mendeley.com/public-api/zip/zcz8743fcv/download/2::Multiplexed Images of Melanoma Lymph
+      Node Metastases/data/images/1.npz
+    - https://data.mendeley.com/public-api/zip/zcz8743fcv/download/2::Multiplexed Images of Melanoma Lymph
+      Node Metastases/cells/1.npz
+    - https://data.mendeley.com/public-api/zip/zcz8743fcv/download/2::Multiplexed Images of Melanoma Lymph
+      Node Metastases/cells2labels/1.npz
+    size_bytes: 6095264
+    description: 'Image 1: 25-channel MIBI array, its cell segmentation and per-cell type labels (compressed
+      member sizes)'
+  arrays:
+  - role: raw
+    path_pattern: '*.zip/*/data/images/*.npz'
+    format: other
+    axes: yxc
+    shape:
+    - 2048
+    - 2048
+    - 25
+    shape_varies: null
+    dtype: float64
+    compression: deflate
+    value_range:
+    - 0.0
+    - 81.0
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: NumPy .npz (key 'data', no pickle), channels last; channel order in channels.txt
+      (CD4, CD8, CD20, ... DC-SIGN, 25 markers). Values are integer-valued ion counts stored as float64
+      (inferred).
+  - role: label
+    path_pattern: '*.zip/*/cells/*.npz'
+    format: other
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: null
+    dtype: int64
+    compression: deflate
+    value_range:
+    - 0
+    - 4332
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1..N
+      name: cell
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: data/images/<n>.npz pairs with cells/<n>.npz and cells2labels/<n>.npz
+      (same n, 1-16). Cell segmentation, one ID per cell (4,333 values incl. 0 in image 1).'
+  - role: label
+    path_pattern: '*.zip/*/cells2labels/*.npz'
+    format: other
+    axes: null
+    shape:
+    - 4333
+    shape_varies: true
+    dtype: float64
+    compression: deflate
+    value_range:
+    - -1.0
+    - 14.0
+    encoding: other
+    classes:
+    - id: -1
+      name: unlabelled / background
+    - id: 0
+      name: B cell
+    - id: 1
+      name: CD4 T cell
+    - id: 2
+      name: CD4 Treg
+    - id: 3
+      name: CD8 T cell
+    - id: 4
+      name: DCs
+    - id: 5
+      name: Germinal Center B cell
+    - id: 6
+      name: Hevs
+    - id: 7
+      name: Immune
+    - id: 8
+      name: MAC
+    - id: 9
+      name: Memory CD4 T Cells
+    - id: 10
+      name: NK cell
+    - id: 11
+      name: Neutrophil
+    - id: 12
+      name: Stroma
+    - id: 13
+      name: Tumor
+    - id: 14
+      name: Vessels
+    alignment: not-applicable
+    alignment_notes: Per-cell type vector indexed by cell ID in cells/<n>.npz (length = max ID + 1); names
+      from labels_strings.txt. -1 marks index 0 and unlabelled cells (inferred).
+  notes: 'Listing: tools/listing.py on the zip (166,672,993 B, file-listing); peek_archive: 50 members
+    (48 .npz + 2 .txt), 186.1 MB uncompressed. Read channels.txt and labels_strings.txt; sampled image
+    1 (6.1 MB of members via ranged GET; np.load allow_pickle=False): image 2048x2048x25 float64 0-81,
+    cells int64 0-4332, cells2labels float64 -1..14 (values from one sample). Voxel size 500 nm kept:
+    CellSighter paper Results, ''Melanoma LN data, which was acquired at a resolution of 0.5 um/pixel''.
+    Note 2048 px x 0.5 um = 1.02 mm, while the Mendeley page says 0.8x0.8 mm fields; unresolved. Download:
+    the zip (redirects to an S3 cache URL) and its members pass --download-check.'
