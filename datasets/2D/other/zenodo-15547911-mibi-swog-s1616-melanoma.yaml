@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zenodo-15547911-mibi-swog-s1616-melanoma
 title: Multiplexed ion beam imaging data from biopsies from patients enrolled in SWOG S1616
 short_name: Melanoma biopsy MIBI cell segments and types
-description: Multiplexed ion beam imaging (MIBI) regions of interest from melanoma biopsies of patients enrolled
-  in the SWOG S1616 trial. Each ROI folder holds a multichannel expression image, a cell segmentation label image,
-  per-segment cell types, per-cell expression measurements and tumor, endothelial and tissue-outline masks;
-  a combined segment table is provided separately.
+description: Multiplexed ion beam imaging (MIBI) regions of interest from melanoma biopsies of patients
+  enrolled in the SWOG S1616 trial. Each ROI folder holds a multichannel expression image, a cell segmentation
+  label image, per-segment cell types, per-cell expression measurements and tumor, endothelial and tissue-outline
+  masks; a combined segment table is provided separately.
 landing_url: https://zenodo.org/records/15547911
 doi: null
 repository: Zenodo
@@ -19,7 +19,7 @@ imaging:
   - other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 33
   organism:
   - Homo sapiens
   sample: melanoma biopsies (tissue sections) from SWOG S1616 patients
@@ -27,7 +27,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 3333249000
+  size_bytes: 3333249332
   n_items: 202
   access: open
   download_url: https://zenodo.org/records/15547911/files/MIBI_dataset.zip
@@ -38,7 +38,8 @@ annotations:
   - instance-segmentation
   - classification
   coverage: dense
-  format: per-ROI segments.tif (cell label image), types.csv (segment id to cell type, many 'Unknown'), tumor_mask.tif, endothelial_mask.tif, tissue_outline.tif, expression_measurements.tsv; plus all_segments.tsv
+  format: per-ROI segments.tif (cell label image), types.csv (segment id to cell type, many 'Unknown'),
+    tumor_mask.tif, endothelial_mask.tif, tissue_outline.tif, expression_measurements.tsv; plus all_segments.tsv
   source: automatic
 ml:
   tasks:
@@ -61,11 +62,155 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-29T12:50:00Z'
-notes: 'Zip listing: 1,414 files, 15.8 GB uncompressed (808 .tif, 202 .tiff expression images, 202 .tsv, 202 .csv),
-  i.e. 202 ROI folders (e.g. PT0242_BASELINE_MIBI_ROI1). types.csv lists segment id and type (CD8 T cell, T cell,
-  Tumor, Unknown, ...). How segments and types were produced (algorithmic vs manual) is not stated on the record,
-  so source is automatic as the safer reading. The Zenodo record has no description beyond one sentence and no
-  linked paper; press coverage (April 2026) describes a UCLA spatial analysis of S1616 biopsies, but its
-  citation was not found. Pixel size, channel count and image dimensions not stated; expression images not
-  opened. Modality MIBI recorded as other. size_bytes = zip 3,210,188,184 + all_segments.tsv 123,061,148.'
+  last_checked: '2026-10-29T14:10:00Z'
+notes: 'Zip listing: 1,414 files, 15.8 GB uncompressed (808 .tif, 202 .tiff expression images, 202 .tsv,
+  202 .csv), i.e. 202 ROI folders (e.g. PT0242_BASELINE_MIBI_ROI1). types.csv lists segment id and type
+  (CD8 T cell, T cell, Tumor, Unknown, ...). How segments and types were produced (algorithmic vs manual)
+  is not stated on the record, so source is automatic as the safer reading. The Zenodo record has no description
+  beyond one sentence and no linked paper; press coverage (April 2026) describes a UCLA spatial analysis
+  of S1616 biopsies, but its citation was not found. Pixel size not stated. enricher: expression.tiff
+  opened: 33 pages x 2048x2048 float32, one per marker (33 markers in expression_measurements.tsv), so
+  channels 33. Modality MIBI recorded as other. size_bytes = zip + all_segments.tsv (Zenodo listing, 3,333,249,332
+  B).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                               2 files   3.3 GB  .zip 1 (MIBI_dataset.zip),\
+      \ .tsv 1 (all_segments.tsv)\nzip contents (202 ROI folders PT<id>_<BASELINE|ONTX>[n]_MIBI_ROI<n>/,\
+      \ 7 files each):\n  PT#_BASELINE#_MIBI_ROI#/   (x15 dirs)   105 files   1.1 GB\n  PT#_BASELINE_MIBI_ROI#/\
+      \    (x92 dirs)   644 files   7.3 GB\n  PT#_ONTX#_MIBI_ROI#/       (x48 dirs)   336 files   3.8\
+      \ GB\n  PT#_ONTX_MIBI_ROI#/        (x47 dirs)   329 files   3.6 GB\n  each: expression.tiff, segments.tif,\
+      \ tumor_mask.tif, endothelial_mask.tif, tissue_outline.tif,\n        types.csv, expression_measurements.tsv"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/15547911/files/MIBI_dataset.zip::PT0542_ONTX2_MIBI_ROI2/expression.tiff
+    - https://zenodo.org/records/15547911/files/MIBI_dataset.zip::PT0542_ONTX2_MIBI_ROI2/segments.tif
+    - https://zenodo.org/records/15547911/files/MIBI_dataset.zip::PT0542_ONTX2_MIBI_ROI2/types.csv
+    size_bytes: 13003884
+    description: 'One ROI: 33-marker expression image, cell segmentation and per-segment cell types'
+  arrays:
+  - role: raw
+    path_pattern: MIBI_dataset.zip/*/expression.tiff
+    format: tiff
+    axes: cyx
+    shape:
+    - 33
+    - 2048
+    - 2048
+    shape_varies: null
+    dtype: float32
+    compression: deflate
+    value_range:
+    - 0.0
+    - 227.0
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Plain multi-page TIFF, 33 pages; page axis = marker channel (33 markers listed in
+      the ROI''s expression_measurements.tsv: Beta-tubulin, CD11b ... dsDNA; page order not documented).'
+  - role: label
+    path_pattern: MIBI_dataset.zip/*/segments.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: null
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 4595
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1..N
+      name: cell
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: all files of one ROI share its folder; same grid as expression.tiff
+      (2048x2048). One ID per cell (4,596 values incl. 0 in the sample ROI); IDs are the ''segment'' column
+      of types.csv.'
+  - role: label
+    path_pattern: MIBI_dataset.zip/*/tumor_mask.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: null
+    dtype: float32
+    compression: none
+    value_range:
+    - 0.0
+    - 255.0
+    encoding: binary
+    classes:
+    - id: 255
+      name: tumor mask
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: all files of one ROI share its folder; same grid as expression.tiff
+      (2048x2048). Single-page float32 mask, 0/255 in the sample ROI.'
+  - role: label
+    path_pattern: MIBI_dataset.zip/*/endothelial_mask.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: null
+    dtype: float32
+    compression: none
+    value_range:
+    - 0.0
+    - 255.0
+    encoding: binary
+    classes:
+    - id: 255
+      name: endothelial mask
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: all files of one ROI share its folder; same grid as expression.tiff
+      (2048x2048). Single-page float32 mask, 0/255 in the sample ROI.'
+  - role: label
+    path_pattern: MIBI_dataset.zip/*/tissue_outline.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: null
+    dtype: float32
+    compression: none
+    value_range:
+    - 0.0
+    - 255.0
+    encoding: binary
+    classes:
+    - id: 255
+      name: tissue outline
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: all files of one ROI share its folder; same grid as expression.tiff
+      (2048x2048). Single-page float32 mask, 0/255 in the sample ROI.'
+  - role: label
+    path_pattern: MIBI_dataset.zip/*/types.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'Table ''segment,type'': cell type per segment ID in segments.tif (e.g. Tumor, Macrophage,
+      Fibroblast, CD8 T cell, Treg, Conflicted, Unknown; 1,365 of 4,595 Unknown in the sample ROI).'
+  notes: 'Listing: tools/listing.py on Zenodo 15547911 with --expand-zips: 2 files, 3,333,249,332 B (file-listing,
+    complete), 1,414 zip members = 202 ROI folders x 7 files. Probed segments/tumor/endothelial/tissue
+    masks of ROI PT0542_ONTX2_MIBI_ROI2; sampled its expression.tiff (12.7 MB compressed: 33x2048x2048
+    float32, 0-227), segments.tif (uint16 0-4595), tumor_mask and endothelial_mask (float32 0/255); read
+    types.csv and the marker column of expression_measurements.tsv. Values from one ROI. Expression axes
+    cyx inferred from the 33 pages = 33 markers. Voxel size not found; checked: TIFF headers (no calibration),
+    Zenodo API (one-line description, no related identifiers, no paper). Download: the zip and members
+    pass --download-check.'
