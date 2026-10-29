@@ -45,7 +45,7 @@ annotations:
   - semantic-segmentation
   coverage: dense
   format: .raw segmented volumes per subset (oil, brine, rock phases)
-  source: unknown
+  source: automatic
 ml:
   tasks:
   - segmentation
@@ -68,11 +68,103 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-29T17:35:55Z'
+  last_checked: '2026-10-29T18:33:56Z'
 notes: 'License ODC-BY 1.0 is the Digital Rocks Portal metadata field. Archive (0.73 GB zip, 38 members,
   listed with peek_archive): per subset an Original .raw (SSa 264 MB, SSb 42 MB), a Filtered .raw and
   a Segmented .raw (SSa 132 MB, SSb 21 MB), plus histograms and previews. In the grayscale image black,
-  dark grey and light grey are oil, brine and rock (metadata). How the segmentation was made and its label
-  values are not stated; the related paper is not open access (Europe PMC search only), so annotation
-  source is unknown. Headerless .raw is not in the format enum (other). The portal page redirects to a
-  tombstone; the TACC archive directory and metadata JSON were used.'
+  dark grey and light grey are oil, brine and rock (metadata). Segmentation: seeded watershed on the filtered
+  image, 1/2/3 = oil/brine/rock (metadata). Headerless .raw is not in the format enum (other). Portal
+  page is a tombstone; TACC archive used. enricher: annotations.source automatic (was unknown).'
+technical:
+  method: sample
+  inspected_at: '2026-10-29T18:33:56Z'
+  inspected_urls:
+  - https://web.corral.tacc.utexas.edu/digitalporousmedia/archive/DRP-125/DRP-125_archive.zip
+  - https://web.corral.tacc.utexas.edu/digitalporousmedia/archive/DRP-125/DRP-125_archive.zip::DRP-125/Trapped
+    oil in a Ketton limestone sample - Subset SSb/Ketton_rock_trapped_oil_Original_SSb/Ketton_rock_trapped_oil_Original_SSb.raw
+  - https://web.corral.tacc.utexas.edu/digitalporousmedia/archive/DRP-125/DRP-125_archive.zip::DRP-125/Trapped
+    oil in a Ketton limestone sample - Subset SSb/Ketton_rock_trapped_oil_Original_SSb/Ketton_rock_trapped_oil_Segmented_SSb/Ketton_rock_trapped_oil_Segmented_SSb.raw
+  bytes_downloaded: 8700000
+  size_source: file-listing
+  layout:
+    tree: "DRP-125_archive.zip  (725.6 MB, 38 members incl. .gif/.jpg previews and histogram CSVs)\n \
+      \ manifest-sha512.txt, DRP-125_metadata.json\n  DRP-125/Trapped oil in a Ketton limestone sample\
+      \ - Subset SS{a,b}/Ketton_rock_trapped_oil_Original_SS{a,b}/\n    Ketton_rock_trapped_oil_Original_SSx.raw\
+      \                                  SSa 263.5 MB (630x410x510 uint16), SSb 41.9 MB (365x255x225)\n\
+      \    Ketton_rock_trapped_oil_Filtered_SSx/Ketton_rock_trapped_oil_Filtered_SSx.raw    same size,\
+      \ uint16 (NLM filtered)\n    Ketton_rock_trapped_oil_Segmented_SSx/Ketton_rock_trapped_oil_Segmented_SSx.raw\
+      \  SSa 131.7 MB, SSb 20.9 MB, uint8"
+    n_files: 38
+    listing_complete: true
+  sample:
+    urls:
+    - https://web.corral.tacc.utexas.edu/digitalporousmedia/archive/DRP-125/DRP-125_archive.zip::DRP-125/Trapped
+      oil in a Ketton limestone sample - Subset SSb/Ketton_rock_trapped_oil_Original_SSb/Ketton_rock_trapped_oil_Original_SSb.raw
+    - https://web.corral.tacc.utexas.edu/digitalporousmedia/archive/DRP-125/DRP-125_archive.zip::DRP-125/Trapped
+      oil in a Ketton limestone sample - Subset SSb/Ketton_rock_trapped_oil_Original_SSb/Ketton_rock_trapped_oil_Segmented_SSb/Ketton_rock_trapped_oil_Segmented_SSb.raw
+    size_bytes: 62825625
+    description: 'subset SSb: original uint16 volume (365x255x225) and its 3-phase segmentation'
+  arrays:
+  - role: raw
+    path_pattern: DRP-125/*/*_Original_SS?/*_Original_SS?.raw
+    format: other
+    axes: zyx
+    shape:
+    - 510
+    - 410
+    - 630
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 13328
+    - 52419
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Headerless raw, little-endian, offset 0 (metadata). SSa 630x410x510 (x, y, z), SSb
+      365x255x225; the SSb metadata says 255 images but the file size (41,883,750 = 365*255*225*2) gives
+      225.
+  - role: other
+    path_pattern: DRP-125/*/*/*_Filtered_SS?/*.raw
+    format: other
+    axes: zyx
+    shape:
+    - 510
+    - 410
+    - 630
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: Non-local means filtered version of the original (metadata), same dimensions.
+  - role: label
+    path_pattern: DRP-125/*/*/*_Segmented_SS?/*.raw
+    format: other
+    axes: zyx
+    shape:
+    - 510
+    - 410
+    - 630
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 1
+    - 3
+    normalization: none
+    encoding: semantic-ids
+    classes:
+    - id: 1
+      name: oil
+    - id: 2
+      name: brine
+    - id: 3
+      name: rock
+    alignment: same-grid
+    alignment_notes: 'Headerless 8-bit, same dimensions as the original subset (metadata, file sizes).
+      Seeded watershed of the filtered image. SSb full volume: {1: 1,374,854, 2: 2,297,552, 3: 17,269,469}.'
+  notes: 'Listing: tools/listing.py of the archive (38 members, exact sizes, 725,619,621 bytes). Deflated
+    members streamed with a scratch script: SSb original slices 0-39 (min 13328, max 52419, p1-p99 23317-37298)
+    and the whole SSb segmentation. Shapes, dtypes and byte order from DRP-125_metadata.json, checked
+    against file sizes. Voxel size 2 um (metadata voxelX 2.0 micrometer).'
