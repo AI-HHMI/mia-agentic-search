@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: figshare-28544009-rat-uterus-diestrus-pta-microct
 title: Diestrus datasets (rat uterus PTA micro-CT with muscle masks)
 short_name: Rat uterus micro-CT muscle masks (diestrus)
-description: Downsampled (40 um/voxel) PTA-stained micro-CT volumes of the uteri of two female rats (AWB003 and AWB012) in the diestrus stage of the oestrous cycle, each with a manual segmentation mask of the muscle layers (myometrium), as NIfTI archives, with TOML configuration files for the downsampled and full-resolution (10 um) datasets.
+description: Downsampled (40 um/voxel) PTA-stained micro-CT volumes of the uteri of two female rats (AWB003 and AWB012) in
+  the diestrus stage of the oestrous cycle, each with a manual segmentation mask of the muscle layers (myometrium), as NIfTI
+  archives, with TOML configuration files for the downsampled and full-resolution (10 um) datasets.
 landing_url: https://auckland.figshare.com/articles/dataset/Diestrus_datasets/28544009
 doi: 10.17608/k6.auckland.28544009.v1
 repository: Figshare
@@ -31,14 +33,14 @@ data:
   size_bytes: 13620746
   n_items: 2
   access: open
-  download_url: null
+  download_url: https://auckland.figshare.com/articles/dataset/Diestrus_datasets/28544009
   download_method: http
 annotations:
   present: true
   types:
   - semantic-segmentation
   coverage: dense
-  format: 'one nii.gz muscle-layer mask per rat (AWB003, AWB012), same grid as the downsampled image'
+  format: one nii.gz muscle-layer mask per rat (AWB003, AWB012), same grid as the downsampled image
   source: unknown
 ml:
   tasks:
@@ -55,10 +57,86 @@ provenance:
   evidence_urls:
   - https://api.figshare.com/v2/articles/28544009
   - https://ndownloader.figshare.com/files/52819325
-  confidence: 0.6
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-29T20:05:00Z'
-notes: 'Figshare item with two rats (AWB003, AWB012): per rat a downsampled image nii.gz (factor 4, 613 x 613 px slices at 40 um per the TOML; full-resolution scans were not uploaded, only their TOML config at 10 um) and a muscle-layer segmentation nii.gz (file listing only; mask labels, size and annotator are not described). Differs from the other uterine sets (estrus, diestrus, proestrus, metestrus, AWA015) by animal and cycle stage. Companion paper (Roesler et al., J Anat) covers AWA015 only, so none is cited here.'
+  last_checked: '2026-10-29T19:34:39Z'
+notes: 'Figshare item with two rats (AWB003, AWB012): per rat a downsampled image nii.gz (factor 4, 613 x 613 px slices at
+  40 um per the TOML; full-resolution scans were not uploaded, only their TOML config at 10 um (AWB003''s full-resolution
+  TOML also says 613 px at 40)) and a muscle-layer segmentation nii.gz. Differs from the other uterine sets (estrus, diestrus,
+  proestrus, metestrus, AWA015) by animal and cycle stage. Companion paper (Roesler et al., J Anat) covers AWA015 only, so
+  none is cited here. enricher: masks read (binary 0/255, same grid as the image); annotator and method not stated (source
+  unknown).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'AWB003_PTA_1_Rec_Trans.nii.gz  5,188,615 B
+
+      AWB003_PTA_1_Rec_Trans.toml  651 B
+
+      AWB003_PTA_1_Rec_Trans_downsampled.toml  1,561 B
+
+      AWB003_PTA_1_Rec_Trans_muscle_segmentation.nii.gz  695,663 B
+
+      AWB012_PTA_1_Rec_Trans.nii.gz  6,789,342 B
+
+      AWB012_PTA_1_Rec_Trans.toml  634 B
+
+      AWB012_PTA_1_Rec_Trans_downsampled.toml  1,537 B
+
+      AWB012_PTA_1_Rec_Trans_muscle_segmentation.nii.gz  942,743 B'
+    n_files: 8
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/52819328
+    - https://ndownloader.figshare.com/files/52819322
+    size_bytes: 5884278
+    description: 'rat AWB003: downsampled image and its muscle mask (smallest pair)'
+  arrays:
+  - role: raw
+    path_pattern: '*_PTA_1_Rec_Trans.nii.gz'
+    format: nifti
+    axes: zyx
+    shape: &id001
+    - 491
+    - 613
+    - 613
+    shape_varies: true
+    dtype: uint8
+    compression: gzip
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: one 4x-downsampled micro-CT volume per rat (AWB003 491x613x613, AWB012 724x613x613; nibabel order reversed
+      to z,y,x). NIfTI pixdim says 1 mm (default); the _downsampled.toml states resolution=40 (um).
+  - role: label
+    path_pattern: '*_PTA_1_Rec_Trans_muscle_segmentation.nii.gz'
+    format: nifti
+    axes: zyx
+    shape: *id001
+    shape_varies: true
+    dtype: uint16
+    compression: gzip
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 255
+      name: muscle layers (myometrium)
+    alignment: same-grid
+    alignment_notes: 'pairs by rat ID: <ID>_PTA_1_Rec_Trans.nii.gz <-> <ID>_PTA_1_Rec_Trans_muscle_segmentation.nii.gz; shapes
+      match for both rats. Values {0, 255}.'
+  notes: 'Listing: Figshare API (tools/listing.py), 8 files, all with exact sizes. All 8 files were downloaded (small) and
+    read with nibabel / as text, then deleted. value_range over both images. Voxel size 40 um confirmed by each <ID>_PTA_1_Rec_Trans_downsampled.toml
+    (resolution=40.000000 or 40.000720; thickness scaling_factor = 0.040 # in mm); NIfTI headers carry the 1 mm default. Full-resolution
+    scans are not in the item (only their TOML). Download: every file is direct (probe --download-check usable, range requests);
+    no single archive, so download_url is the landing page. The planner matches sample files by URL name and extension, and
+    Figshare ndownloader/files/<id> URLs have neither, so the sample is not matched to its arrays.'
