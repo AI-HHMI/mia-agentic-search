@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: hf-emulated-inc-polnet-simulated-cryoet-crowded-cytoplasm
 title: Simulated crowded-cytoplasm cryo-ET tomograms (polnet, 10 A)
 short_name: Simulated crowded-cytoplasm cryo-ET (polnet)
-description: 48 simulated cryo-electron tomograms of crowded cytoplasm at 10 A per voxel (400 x 400 x 60-100 voxels), generated with polnet and IMOD. Each folder has the 8-bit MRC reconstruction, the noise-free float32 density, a label volume, and objects.csv with the position and orientation of every placed complex, membrane protein and filament subunit (16 cytosolic complexes from wwPDB templates, membranes, microtubules and actin).
+description: 48 simulated cryo-electron tomograms of crowded cytoplasm at 10 A per voxel (400 x 400 x 60-100 voxels), generated
+  with polnet and IMOD. Each folder has the 8-bit MRC reconstruction, the noise-free float32 density, a label volume, and
+  objects.csv with the position and orientation of every placed complex, membrane protein and filament subunit (16 cytosolic
+  complexes from wwPDB templates, membranes, microtubules and actin).
 landing_url: https://huggingface.co/datasets/Emulated-Inc/sci-cryoet-picking-simulated-crossgenerator
 doi: null
 repository: HuggingFace
@@ -26,7 +29,7 @@ imaging:
 data:
   formats:
   - mrc
-  size_bytes: 2753106301
+  size_bytes: 2753109946
   n_items: 48
   access: open
   download_url: https://huggingface.co/datasets/Emulated-Inc/sci-cryoet-picking-simulated-crossgenerator/resolve/main/train.tar.gz
@@ -37,7 +40,7 @@ annotations:
   - semantic-segmentation
   - points
   coverage: dense
-  format: 'per-tomogram label volume plus objects.csv (position in angstrom and orientation of every placed particle)'
+  format: per-tomogram label volume plus objects.csv (position in angstrom and orientation of every placed particle)
   source: automatic
 ml:
   tasks:
@@ -56,10 +59,169 @@ provenance:
   - https://huggingface.co/datasets/Emulated-Inc/sci-cryoet-picking-simulated-crossgenerator
   - https://huggingface.co/datasets/Emulated-Inc/sci-cryoet-picking-simulated-crossgenerator/raw/main/README.md
   - https://huggingface.co/api/datasets/Emulated-Inc/sci-cryoet-picking-simulated-crossgenerator/tree/main
-  confidence: 0.55
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-10-29T19:30:00Z'
-notes: 'Synthetic data, not real micrographs; ground truth is exact by construction (source automatic). One 2.75 GB train.tar.gz; its contents are taken from the dataset card and were not listed (peek_archive handles zips only), hence annotations_verified false. Voxel size 10 A = 1 nm is from the card. The card has no paper; the simulator is polnet (Apache-2.0, commit 73e613c) and the particle templates come from wwPDB entries (CC0). Number of tomograms (48) and sizes are from the card. Different from the real-data Biohub POPSICLE set and from zenodo-23745625 (a different PolNet release).'
+  annotations_verified: true
+  last_checked: '2026-10-29T18:54:38Z'
+notes: 'Synthetic data, not real micrographs; ground truth is exact by construction (source automatic). One 2.75 GB train.tar.gz.
+  Voxel size 10 A = 1 nm is from the card. The card has no paper; the simulator is polnet (Apache-2.0, commit 73e613c) and
+  the particle templates come from wwPDB entries (CC0). Number of tomograms (48) and sizes are from the card. Different from
+  the real-data Biohub POPSICLE set and from zenodo-23745625 (a different PolNet release). enricher: archive streamed (t000-t004
+  read): labels.mrc + objects.csv seen, annotations_verified true; voxel size 10 A confirmed by MRC headers; size from HF
+  listing (was the tar.gz alone).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "train.tar.gz   2,753,106,301 B  (repo also: README.md, .gitattributes)\n  complexes.csv            16 complexes:\
+      \ name, PDB id, target\n  simulation/              polnet inputs: in_10A/*.pms, in_flms/{actin,mt}.flms,\n         \
+      \                  in_mbs/*.mbs, in_tem/default.tem, pns/*.pns, scene.yaml\n  structures/<PDB>.cif.gz  16 wwPDB mmCIF\
+      \ models\n  templates/<pdb>.mrc      density templates (float32, 10 A)\n  train/labels.csv         label value -> kind,\
+      \ name (28 classes)\n  train/t000 ... t047/     48 tomograms (per card; t000-t004 read)\n    tomogram.mrc          \
+      \ reconstruction, int8\n    density.mrc            noise-free density, float32\n    labels.mrc             label volume,\
+      \ int8\n    objects.csv            kind, name, x, y, z (A), q1-q4"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/Emulated-Inc/sci-cryoet-picking-simulated-crossgenerator/resolve/main/train.tar.gz
+    size_bytes: 2753106301
+    description: 'the whole train.tar.gz: the only file holding data; members of a .tar.gz cannot be fetched on their own'
+  arrays:
+  - role: raw
+    path_pattern: train/t*/tomogram.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 60
+    - 400
+    - 400
+    shape_varies: true
+    dtype: int8
+    compression: none
+    value_range:
+    - -127
+    - 127
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: '8-bit reconstruction (MRC mode 0). z is 60, 70, 80, 90 and 100 in t000-t004 (card: 60-100), y and x
+      are 400. Mean 0.0, std 25.4 in each of t000-t003.'
+  - role: target
+    path_pattern: train/t*/density.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 60
+    - 400
+    - 400
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range:
+    - 0.0
+    - 1.0816
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: noise-free simulated density that was imaged (card); same shape and 10 A voxel as tomogram.mrc in the
+      same folder.
+  - role: label
+    path_pattern: train/t*/labels.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 60
+    - 400
+    - 400
+    shape_varies: true
+    dtype: int8
+    compression: none
+    value_range:
+    - 0
+    - 27
+    normalization: none
+    encoding: semantic-ids
+    classes:
+    - id: 1
+      name: membrane
+    - id: 2
+      name: microtubule
+    - id: 3
+      name: actin
+    - id: 4
+      name: ribosome_80s
+    - id: 5
+      name: tric
+    - id: 6
+      name: proteasome_20s
+    - id: 7
+      name: rubisco
+    - id: 8
+      name: p97
+    - id: 9
+      name: clpb
+    - id: 10
+      name: groel
+    - id: 11
+      name: hsp90_sba1
+    - id: 12
+      name: cand1_cul1_roc1
+    - id: 13
+      name: sse1_hsp70
+    - id: 14
+      name: ssb1_atpase
+    - id: 15
+      name: get3
+    - id: 16
+      name: hsp70_atpase
+    - id: 17
+      name: cinnamoyl_esterase
+    - id: 18
+      name: fatty_acid_synthase
+    - id: 19
+      name: proteasome_26s
+    - id: 20
+      name: 4PE5
+    - id: 21
+      name: 5GJV
+    - id: 22
+      name: 5IDE
+    - id: 23
+      name: 5KXI
+    - id: 24
+      name: 5TJ6
+    - id: 25
+      name: 5TQQ
+    - id: 26
+      name: 5VAI
+    - id: 27
+      name: 5WEK
+    - id: 28
+      name: 6RD4
+    alignment: same-grid
+    alignment_notes: pairs with tomogram.mrc in the same train/tNNN/ folder; same shape and 10 A voxel. Values map to train/labels.csv
+      (value, kind, name); 0 is not listed there (background). 28 distinct values in t000 (0-27), 29 in t004 (0-28).
+  - role: label
+    path_pattern: train/t*/objects.csv
+    format: csv
+    axes: null
+    shape:
+    - 3812
+    - 9
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: points-table
+    normalization: unknown
+    alignment: unknown
+    alignment_notes: 'one row per placed particle or filament subunit: kind, name, x, y, z (in A, per card), quaternion q1-q4;
+      3,812 rows in t000, 4,542-5,981 in t001-t004. Divide by 10 A for voxels; scene.yaml sets voi_offset [4, 4, 4], so whether
+      positions are relative to the tomogram origin was not checked.'
+  notes: 'Listing: HF tree API, 3 files, 2,753,109,946 B exact (train.tar.gz 2,753,106,301 B). The archive is gzip, so no
+    range reads: the first 300.9 MB of the stream (and 3 x 30.4 MB for the archive head; 392,167,424 B in all) were decompressed
+    in memory and the MRC headers and data of t000-t004 parsed; nothing was written to disk. value_range is from those five
+    tomograms. MRC headers: cell/grid = 10.0 A on x, y and z for every file read. The other 43 folders (t005-t047) were not
+    reached; their count (48) and z range are from the card. Download: train.tar.gz is direct (probe --download-check usable,
+    range requests, HF CDN redirect), but TensorSwitch can only pull single members out of zips, so this record needs the
+    whole archive.'
