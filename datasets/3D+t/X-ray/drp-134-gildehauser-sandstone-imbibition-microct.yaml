@@ -69,12 +69,115 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-29T17:31:42Z'
+  last_checked: '2026-10-29T18:26:48Z'
 notes: 'License ODC-BY 1.0 is the Digital Rocks Portal metadata field. Archive (1.6 GB zip, 11 members,
   listed with peek_archive): s5_37_dry_reg_4.4um_16bu_893x897x570.raw (913 MB), s5_37_dry_seg_4.4um_16bu_893x897x566.raw
   (907 MB; note 566 vs 570 slices, so the label grid is not identical to the dry scan) and s5_37_pib_00-39.zip
-  (658 MB; the 40 imbibition scans per the metadata; this nested zip could not be listed remotely, so
-  its inner file formats and the exact label values are unconfirmed). Dry-scan segmentation: non-local-means
+  (658 MB; 40 segmented imbibition volumes, listed by the enricher). Dry-scan segmentation: non-local-means
   filtering followed by watershed segmentation (metadata), hence annotation source automatic. Papers are
-  not open access (only Crossref read). Headerless .raw is not in the format enum (other). The portal
-  page redirects to a tombstone; the TACC archive directory and metadata JSON were used.'
+  not open access (only Crossref read). Headerless .raw is not in the format enum (other). Portal page
+  is a tombstone; TACC archive used. enricher: the time series is labels only (no grey-scale scans of
+  the flow).'
+technical:
+  method: sample
+  inspected_at: '2026-10-29T18:26:48Z'
+  inspected_urls:
+  - https://web.corral.tacc.utexas.edu/digitalporousmedia/archive/DRP-134/DRP-134_archive.zip
+  - https://web.corral.tacc.utexas.edu/digitalporousmedia/archive/DRP-134/DRP-134_archive.zip::DRP-134/Gildehauser
+    Sample S5/dry scan/s5_37_dry_reg_4.4um_16bu_893x897x570.raw
+  - https://web.corral.tacc.utexas.edu/digitalporousmedia/archive/DRP-134/DRP-134_archive.zip::DRP-134/Gildehauser
+    Sample S5/dry scan segmented/s5_37_dry_seg_4.4um_16bu_893x897x566.raw
+  - https://web.corral.tacc.utexas.edu/digitalporousmedia/archive/DRP-134/DRP-134_archive.zip::DRP-134/Gildehauser
+    Sample S5/imbibition experiment/s5_37_pib_00-39.zip
+  bytes_downloaded: 38000000
+  size_source: file-listing
+  layout:
+    tree: "DRP-134_archive.zip  (1.6 GB, 11 members incl. previews)\n  manifest-sha512.txt, DRP-134_metadata.json\n\
+      \  DRP-134/Gildehauser Sample S5/\n    dry scan/s5_37_dry_reg_4.4um_16bu_893x897x570.raw       \
+      \     913 MB  headerless uint16 LE (+ .gif/.jpg previews)\n    dry scan segmented/s5_37_dry_seg_4.4um_16bu_893x897x566.raw\
+      \  907 MB  headerless uint16 LE, values 0/1\n    imbibition experiment/s5_37_pib_00-39.zip     \
+      \               658 MB  zip of 40 x s5_37_pib_NN_final_4.4um_16bu_893x897x566.raw (907 MB each,\
+      \ ~16.5 MB deflated)"
+    n_files: 11
+    listing_complete: true
+  sample:
+    urls:
+    - https://web.corral.tacc.utexas.edu/digitalporousmedia/archive/DRP-134/DRP-134_archive.zip::DRP-134/Gildehauser
+      Sample S5/dry scan/s5_37_dry_reg_4.4um_16bu_893x897x570.raw
+    - https://web.corral.tacc.utexas.edu/digitalporousmedia/archive/DRP-134/DRP-134_archive.zip::DRP-134/Gildehauser
+      Sample S5/dry scan segmented/s5_37_dry_seg_4.4um_16bu_893x897x566.raw
+    size_bytes: 1819919712
+    description: dry scan (uint16, 893x897x570) and its grain/pore segmentation (893x897x566)
+  arrays:
+  - role: raw
+    path_pattern: DRP-134/*/dry scan/*.raw
+    format: other
+    axes: zyx
+    shape:
+    - 570
+    - 897
+    - 893
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 11590
+    - 65443
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Headerless raw; metadata width 893, height 897, numberOfImages 570, 16_bit_unsigned,
+      little_endian (file size = 893*897*570*2 exactly). Synchrotron dry scan, registered (reg in name).
+  - role: label
+    path_pattern: DRP-134/*/dry scan segmented/*.raw
+    format: other
+    axes: zyx
+    shape:
+    - 566
+    - 897
+    - 893
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 1
+    normalization: none
+    encoding: binary
+    classes: null
+    alignment: cropped
+    alignment_notes: 'Grain vs pore (metadata: NLM filter then watershed); values {0,1} in the first 30
+      slices, which phase is 1 not stated. 566 slices vs 570 in the dry scan, same x/y: 4 slices dropped,
+      which ones not stated.'
+  - role: label
+    path_pattern: DRP-134/*/imbibition experiment/s5_37_pib_00-39.zip
+    format: other
+    axes: zyx
+    shape:
+    - 566
+    - 897
+    - 893
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 3
+    normalization: none
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: rock
+    - id: 1
+      name: oil
+    - id: 2
+      name: water
+    alignment: cropped
+    alignment_notes: 'Zip of 40 time points (40 s apart) s5_37_pib_NN_final_*.raw, each 893x897x566 uint16
+      LE. Metadata: rock=0, oil=1, water=2; pib_00 also has value 3 (54% of voxels, likely outside the
+      core, undocumented): {0: 146.1M, 1: 48.3M, 2: 14.1M, 3: 244.9M}. Same grid as the dry segmentation
+      (566 slices).'
+  notes: 'Listing: tools/listing.py of the archive (11 members, exact sizes, 1,618,259,465 bytes); the
+    inner zip listed with a scratch script (40 members). Sampled by streaming (deflated members): dry
+    scan slices 0-3 (min 11590, max 65443, p1-p99 18676-28439), dry segmentation slices 0-29, and all
+    of pib_00 (16.5 MB deflated). Headerless .raw (other); shape, dtype and byte order from DRP-134_metadata.json
+    and the file names. Voxel size 4.4 um from metadata and file names.'
