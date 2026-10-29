@@ -24,7 +24,7 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: 1
+  channels: 3
   organism: []
   sample: Airborne pollen grains concentrated in glycerine on a glass plate, imaged with a low-cost digital
     transmitted-light microscope at 5-60 focus depths
@@ -32,7 +32,7 @@ imaging:
 data:
   formats:
   - jpeg
-  size_bytes: 1581527204
+  size_bytes: 1961600806
   n_items: 9170
   access: open
   download_url: https://zenodo.org/records/3572653/files/data.zip
@@ -66,12 +66,87 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-29T13:15:00Z'
+  last_checked: '2026-10-29T14:35:00Z'
 notes: 'data.zip (1.58 GB, 14,170 members) holds 9,170 JPEG depth layers, 4,998 .txt label files, 2 .names
   files and fold lists; weights.zip (380 MB) holds two pre-trained weight files. The paper reports 1,077
   samples / 9,170 layers / 9,059 pollen annotations over 15+ types, with 46% of layers empty; train/validation
-  from one day, test from another. Camera is a 3264x2448 IMX179 module; pixel size and magnification
-  are not stated in the paper text read, so voxel size is null. Label file contents were not opened
-  (only listed), so the exact class encoding is unverified. Images are not from a standard research
-  microscope; they are brightfield-like transmitted light. Checked: Zenodo page and API record, zip
-  listing, EWSN paper PDF.'
+  from one day, test from another. Camera is a 3264x2448 IMX179 module; pixel size and magnification are
+  not stated in the paper text read, so voxel size is null. Images are not from a standard research microscope;
+  they are brightfield-like transmitted light. Checked: Zenodo page and API record, zip listing, EWSN
+  paper PDF. enricher: channels 3 (RGB JPEG, channels differ; was 1); label files read: YOLO ''class cx
+  cy w h'', classes.names = pollen, maybe. enricher: size = both files (was data.zip only).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './                                                   2 files   2.0 GB  .zip
+
+      data.zip/data/pollen_20190523/                     12 files  474.9 KB  fold{0-4}_{train,test}.txt,
+      test.txt, classes.names
+
+      data.zip/data/pollen_20190523/labels/            1986 files  152.4 KB  .txt
+
+      data.zip/data/pollen_20190523/layers/            3769 files  625.0 MB  .jpg
+
+      data.zip/data/pollen_20190526/                     12 files  680.5 KB  fold{0-4}_{train,test}.txt,
+      test.txt, classes.names
+
+      data.zip/data/pollen_20190526/labels/            2990 files  225.9 KB  .txt
+
+      data.zip/data/pollen_20190526/layers/            5401 files  965.3 MB  .jpg
+
+      weights.zip/weights/                                3 files  408.9 MB  pollen_20190526.pth, darknet53.conv.74,
+      README.md'
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/3572653/files/data.zip::data/pollen_20190523/layers/093945-00.jpg
+    - https://zenodo.org/records/3572653/files/data.zip::data/pollen_20190523/labels/093945-00.txt
+    size_bytes: 165125
+    description: One depth layer of one sample and its YOLO box file
+  arrays:
+  - role: raw
+    path_pattern: data.zip/data/pollen_*/layers/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1200
+    - 1600
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 193
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Names <sample id>-<layer index>.jpg: each sample is a stack of focus layers stored
+      as separate RGB JPEGs.'
+  - role: label
+    path_pattern: data.zip/data/pollen_*/labels/*.txt
+    format: csv
+    axes: null
+    shape:
+    - 1
+    - 5
+    shape_varies: true
+    dtype: float32
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: pollen
+    - id: 1
+      name: maybe
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: layers/<id>-<n>.jpg pairs with labels/<id>-<n>.txt; layers without
+      pollen have no label file (1,986 of 3,769 and 2,990 of 5,401). YOLO rows ''class cx cy w h'', normalized
+      to [0,1]; class names from classes.names. Splits: fold<k>_train/test.txt list layer paths.'
+  notes: 'Listing: tools/listing.py on Zenodo 3572653 with --expand-zips: 2 files, 1,961,600,806 B (file-listing,
+    complete), 14,173 members. Probed and sampled layers/093945-00.jpg (165,084 B): 1200x1600x3 uint8,
+    0-193, samples not identical (one sample). Read classes.names, labels/093945-00.txt (1 box), fold0_train.txt,
+    test.txt, weights/README.md. size_bytes = listing total incl. weights.zip (408.9 MB of model weights);
+    data.zip alone is 1,581,527,204 B. Voxel size not found; checked: JPEG headers (no calibration), Zenodo
+    record, EWSN paper (harvester), README in weights.zip. Download: data.zip and its members pass --download-check.'
