@@ -3,9 +3,9 @@ id: zenodo-10360344-spacetomo-yeast-lamella-segmentation
 title: SPACEtomo training dataset for Yeast lamella map segmentation using nnU-Netv2
 short_name: Yeast cryo-FIB lamella map segmentation (cryo-EM)
 description: 60 medium-magnification TEM montage pieces (2.283 nm/pixel) of cryo-FIB-milled yeast lamellae, each with a 17-class
-  label image (background, cell, cell wall, nucleus, vacuole, mitochondria, lipid droplets, vesicles, membranes, ice, crack
-  and other classes), in nnU-Net layout (imagesTr/labelsTr). 50 images are starved Saccharomyces cerevisiae and 10 are Baker's
-  yeast under exponential growth.
+  label image (background, white, black, crack, coating, cell, cell wall, nucleus, vacuole, mitochondria, lipid droplets,
+  vesicles, multivesicles, membranes, dynabeads, ice, crystalline ice) in nnU-Net layout (imagesTr/labelsTr). 50 images are
+  starved Saccharomyces cerevisiae and 10 are Baker's yeast under exponential growth.
 landing_url: https://zenodo.org/records/10360344
 doi: 10.5281/zenodo.10360344
 repository: Zenodo
@@ -28,11 +28,11 @@ imaging:
     x: 2.283
     y: 2.283
     z: null
-  channels: null
+  channels: 1
   organism:
   - Saccharomyces cerevisiae
-  sample: Cryo-FIB-milled lamellae of starved S. cerevisiae (50 images) and Baker's yeast in exponential growth (10 images), imaged
-    as medium-magnification montage map pieces
+  sample: Cryo-FIB-milled lamellae of starved S. cerevisiae (50 images) and Baker's yeast in exponential growth (10 images),
+    imaged as medium-magnification montage map pieces
   labels_stains: []
 data:
   formats:
@@ -40,14 +40,14 @@ data:
   size_bytes: 807748574
   n_items: 60
   access: open
-  download_url: https://zenodo.org/api/records/10360344/files/SPACEtomo_lamella_segmentation.zip/content
+  download_url: https://zenodo.org/records/10360344/files/SPACEtomo_lamella_segmentation.zip
   download_method: http
 annotations:
   present: true
   types:
   - semantic-segmentation
   coverage: dense
-  format: PNG label images with integer class IDs 0-16 in labelsTr, class names in dataset.json (nnU-Net layout)
+  format: PNG label images (uint8) with class IDs 0-16 in labelsTr/<name>.png, class names in dataset.json (nnU-Net layout)
   source: mixed
 ml:
   tasks:
@@ -70,10 +70,99 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-30T06:35:00Z'
-notes: 'Zip listed with peek_archive: dataset.json, 60 imagesTr and 60 labelsTr PNGs. dataset.json gives 17 labels (background, cell,
-  cellwall, nucleus, vacuole, mitos, lipiddroplets, vesicles, membranes, ice, crack, ...). Pixel size from the Zenodo description.
-  Preprint Methods (read on bioRxiv; paper.py could not fetch it): first 10 pieces manually segmented into 17 categories, then
-  human-in-the-loop correction up to 50 images, plus 10 Baker''s yeast images, so source is mixed. Modality is TEM montage maps
-  of cryo-FIB lamellae (recorded as cryo-EM); microscope not stated. Nat Methods version not open access, not read. Zenodo
-  10360315 (lamella detection labels, cited in the preprint) not examined.'
+  last_checked: '2026-10-30T08:00:00Z'
+notes: 'Zip listed with peek_archive: dataset.json, 60 imagesTr and 60 labelsTr PNGs. dataset.json gives 17 labels. Pixel
+  size from the Zenodo description. Preprint Methods (read on bioRxiv; paper.py could not fetch it): first 10 pieces manually
+  segmented into 17 categories, then human-in-the-loop correction up to 50 images, plus 10 Baker''s yeast images, so source
+  is mixed. Modality is TEM montage maps of cryo-FIB lamellae (recorded as cryo-EM); microscope not stated. Nat Methods version
+  not open access, not read. Zenodo 10360315 (lamella detection labels, cited in the preprint) not examined. enricher: class
+  list corrected from dataset.json (white, black, coating, multivesicles, dynabeads, cryst were missing); channels 1 from
+  the PNG headers.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                   1 file   807.7 MB  .zip\nSPACEtomo_lamella_segmentation.zip/\n  dataset.json\
+      \                      404 B   channel and label names\n  imagesTr/                      60 files  800.3 MB  <map>_0000.png\n\
+      \  labelsTr/                      60 files    7.5 MB  <map>.png\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/10360344/files/SPACEtomo_lamella_segmentation.zip::imagesTr/20191211_EA001_6_lamellamap_003-6_0000.png
+    - https://zenodo.org/records/10360344/files/SPACEtomo_lamella_segmentation.zip::labelsTr/20191211_EA001_6_lamellamap_003-6.png
+    size_bytes: 10464296
+    description: One lamella map piece and its 17-class label image.
+  arrays:
+  - role: raw
+    path_pattern: SPACEtomo_lamella_segmentation.zip/imagesTr/*_0000.png
+    format: png
+    axes: yx
+    shape:
+    - 3710
+    - 3838
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Greyscale PNG (mode L), one channel (dataset.json channel 0 = map). Two of two probed images are 3710x3838.
+  - role: label
+    path_pattern: SPACEtomo_lamella_segmentation.zip/labelsTr/*.png
+    format: png
+    axes: yx
+    shape:
+    - 3710
+    - 3838
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 15
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: white
+    - id: 2
+      name: black
+    - id: 3
+      name: crack
+    - id: 4
+      name: coating
+    - id: 5
+      name: cell
+    - id: 6
+      name: cellwall
+    - id: 7
+      name: nucleus
+    - id: 8
+      name: vacuole
+    - id: 9
+      name: mitos
+    - id: 10
+      name: lipiddroplets
+    - id: 11
+      name: vesicles
+    - id: 12
+      name: multivesicles
+    - id: 13
+      name: membranes
+    - id: 14
+      name: dynabeads
+    - id: 15
+      name: ice
+    - id: 16
+      name: cryst
+    alignment: same-grid
+    alignment_notes: 'nnU-Net pairing: labelsTr/<name>.png belongs to imagesTr/<name>_0000.png; identical shape in the sample.'
+  notes: 'Listing: tools/listing.py --expand-zips on Zenodo 10360344 (1 file, 807,748,574 B exact; 121 members). Sampled 20191211_EA001_6_lamellamap_003-6
+    (10.4 MB raw, 98 KB label); value_range from that one sample: raw 0-255 (p50 42, saturated at both ends, normalization
+    not documented, so unknown); label uses 15 of 17 class ids (no 14 dynabeads, 16 cryst). Probed one more raw PNG header
+    (same shape). Voxel size 2.283 nm from the Zenodo description; PNG headers carry no calibration. Zip and its members pass
+    the TensorSwitch download check (range requests).'
