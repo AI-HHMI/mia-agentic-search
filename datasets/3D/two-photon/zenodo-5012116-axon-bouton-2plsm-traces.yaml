@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: zenodo-5012116-axon-bouton-2plsm-traces
 title: 'Data from: Computer assisted detection of axonal bouton structural plasticity in in vivo time-lapse images'
 short_name: Mouse cortex axon traces (two-photon)
-description: In vivo two-photon (2PLSM) image stack of GFP-labeled cortical axons in mouse barrel cortex, with manual SWC traces of four axon segments (NCTracer) and correlative FIB-SEM 3D reconstructions of the same segments (boutons, PSDs, centerlines) used to validate bouton detection.
+description: In vivo two-photon (2PLSM) image stack of GFP-labeled cortical axons in mouse barrel cortex, with manual SWC traces of
+  four axon segments (NCTracer) and correlative FIB-SEM 3D reconstructions of the same segments (boutons, PSDs, centerlines) used to
+  validate bouton detection.
 landing_url: https://zenodo.org/records/5012116
 doi: 10.5061/dryad.3q50t
 repository: Zenodo
@@ -23,13 +25,12 @@ date_published: '2018-10-23'
 imaging:
   modality:
   - two-photon
-  - FIB-SEM
   dimensionality: 3D
   voxel_size_nm:
     x: 260
     y: 260
     z: 800
-  channels: null
+  channels: 1
   organism:
   - Mus musculus
   sample: Barrel cortex of mice with GFP-labeled neurons, imaged in vivo; correlative EM of the same region
@@ -38,17 +39,17 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 667800000
+  size_bytes: 667754465
   n_items: 1
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/5012116/files/2PLSM_image_stack.tif
   download_method: http
 annotations:
   present: true
   types:
   - skeleton
   coverage: sparse
-  format: SWC axon traces (Optimized_traces.zip, 4 files); EM reconstructions as a Blender file
+  format: SWC axon traces (Optimized_traces.zip, 4 files); EM reconstructions as a Blender file (meshes, no EM images)
   source: manual
 ml:
   tasks:
@@ -65,10 +66,65 @@ provenance:
   evidence_urls:
   - https://zenodo.org/records/5012116
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5675596/fullTextXML
+  - https://zenodo.org/api/records/5012116
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-30T07:56:57Z'
-notes: Single 2PLSM stack (638.7 MB TIFF) plus 4 manual axon traces, so annotation coverage is sparse and the set is small. Voxel size from the Zenodo page (0.26 x 0.26 x 0.80 um); the paper states 0.13 x 0.26 x 0.8 um acquired, binned 2x in x. Time point count not stated. Trace SWC files listed with peek_archive; paper Methods and Data availability read via Europe PMC.
+  last_checked: '2026-10-30T09:05:00Z'
+notes: 'Single 2PLSM stack (638.7 MB TIFF) plus 4 manual axon traces, so annotation coverage is sparse and the set is small. Voxel size
+  from the Zenodo page (0.26 x 0.26 x 0.80 um); the paper states 0.13 x 0.26 x 0.8 um acquired, binned 2x in x. Paper Methods and Data
+  availability read via Europe PMC. enricher: FIB-SEM dropped from modality (the deposit holds no EM images, only a Blender mesh file);
+  channels 1, size from the Zenodo file listing, download_url set to the TIFF (the image volume; traces are a separate 64 KB zip).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "./                         3 files  667,754,465 B\n  2PLSM_image_stack.tif    638,662,546 B  (uint16, packbits, 1024x1024\
+      \ pages)\n  EM_reconstruction.blend   29,028,240 B  (Blender meshes)\n  Optimized_traces.zip          63,679 B\n    Axon1.swc\
+      \ Axon2.swc Axon3.swc Axon4.swc   (170 KB uncompressed)"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/5012116/files/2PLSM_image_stack.tif
+    - https://zenodo.org/records/5012116/files/Optimized_traces.zip::Axon1.swc
+    size_bytes: 638695136
+    description: 'The whole dataset is one volume: the 2PLSM stack and the trace of axon 1 (Axon1.swc, 32,590 B in the zip).'
+  arrays:
+  - role: raw
+    path_pattern: 2PLSM_image_stack.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 312
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint16
+    compression: packbits
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Plain multi-page TIFF (312 pages, 1024x1024). Pages are z: Zenodo describes the file as an "Image volume" with
+      "Voxel dimensions 0.26 x 0.26 x 0.80 micrometers"; one time point.'
+  - role: label
+    path_pattern: Optimized_traces.zip/*.swc
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: graph
+    alignment: unknown
+    alignment_notes: SWC traces (id, type, x, y, z, radius, parent) of 4 axon segments in the stack; Axon1.swc has 977 nodes with x
+      about 400, y about 704, z about 254, within the stack extent in voxels, but no source states the coordinate unit.
+  notes: 'listing.py (Zenodo, --expand-zips): 3 files, 667,754,465 B, complete, exact sizes; zip: 4 SWC. probe.py on the TIFF: uint16
+    packbits 1024x1024 pages, plain layout, 1 sample per pixel, no calibration. Page count: walked the IFD chain by range requests (312
+    pages). sample.py refused the 639 MB TIFF (> max file size), so no value range; normalization unknown. Axon1.swc read with peek_archive
+    (977 lines). EM_reconstruction.blend not inspected (Blender meshes, not images). The TIFF and the zip member pass --download-check
+    (zenodo.org, ranges). Voxel size kept from the Zenodo file description; paper Methods: acquired 0.13 um in x, binned 2x in x to
+    isometric xy.'
+  inspected_at: '2026-10-30T09:05:00Z'
