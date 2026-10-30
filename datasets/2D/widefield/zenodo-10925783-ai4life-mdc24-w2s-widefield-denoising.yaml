@@ -2,8 +2,8 @@ schema_version: '1.2'
 id: zenodo-10925783-ai4life-mdc24-w2s-widefield-denoising
 title: 'AI4Life-MDC24 Challenge data: W2S Dataset'
 short_name: W2S noisy widefield images (denoising)
-description: A subset of 120 three-channel widefield fluorescence images (one multi-channel TIFF, noisy images only) from the
-  W2S dataset, released as the W2S leaderboard data of the AI4Life Microscopy Denoising Challenge 2024, in which methods
+description: A subset of 120 three-channel widefield fluorescence images (one multi-channel TIFF, noisy images only) from
+  the W2S dataset, released as the W2S leaderboard data of the AI4Life Microscopy Denoising Challenge 2024, in which methods
   were trained using only noisy images.
 landing_url: https://zenodo.org/records/10925783
 doi: 10.5281/zenodo.10925783
@@ -27,8 +27,10 @@ imaging:
   dimensionality: 2D
   voxel_size_nm: null
   channels: 3
-  organism: []
-  sample: null
+  organism:
+  - Homo sapiens
+  sample: Human cells imaged by widefield fluorescence on a Nikon SIM setup (Eclipse T1) at 488, 561 and 640 nm (W2S paper);
+    cell type not named
   labels_stains: []
 data:
   formats:
@@ -36,7 +38,7 @@ data:
   size_bytes: 188807950
   n_items: 120
   access: open
-  download_url: https://zenodo.org/api/records/10925783/files/noisy.tiff/content
+  download_url: https://zenodo.org/records/10925783/files/noisy.tiff
   download_method: http
 annotations:
   present: false
@@ -62,16 +64,57 @@ provenance:
   - https://arxiv.org/abs/2003.05961
   - https://github.com/IVRL/w2s
   - https://ai4life.eurobioimaging.eu/denoising-challenge/
-  confidence: 0.6
+  - https://arxiv.org/pdf/2003.05961
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-10-30T07:10:00Z'
-notes: 'Single noisy.tiff (189 MB) with 120 three-channel images, per the Zenodo description; the TIFF itself was not opened,
-  so image size and axes are unverified. Training signal: the AI4Life denoising challenge page says unsupervised training
-  uses only noisy images, and lists W2S among its datasets. The full original W2S (360 sets, noise-free and SIM references,
-  https://datasets.epfl.ch/w2s/W2S_raw.zip per the GitHub README) is not this record. Pixel size, sample/cell type, wavelengths
-  and microscope are not stated on the Zenodo page, arXiv abstract, GitHub README or challenge page; the paper full text was
-  not available through paper.py and the ECCV PDF was not read. The challenge pages on grand-challenge.org returned 403.
-  Challenge page states no license; CC-BY-4.0 is from Zenodo.'
+  last_checked: '2026-10-30T08:10:00Z'
+notes: 'Single noisy.tiff (188,807,950 B): an ImageJ hyperstack of 120 images x 3 channels x 512x512, int16 (header; the Zenodo
+  description says 120 three-channel images, so the ImageJ slice axis is the image index). Training signal: the AI4Life denoising
+  challenge page says unsupervised training uses only noisy images, and lists W2S among its datasets. The full original W2S
+  (360 sets, noise-free and SIM references, https://datasets.epfl.ch/w2s/W2S_raw.zip) is not this record. enricher: organism
+  and sample from the W2S paper (arXiv PDF): widefield images of human cells, Nikon SIM setup (Eclipse T1), channels 488/561/640
+  nm; pixel size not stated in the paper (setup details are in its supplement, not read). Challenge page states no license;
+  CC-BY-4.0 is from Zenodo.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './    1 file   188.8 MB  noisy.tiff
+
+      '
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/10925783/files/noisy.tiff
+    size_bytes: 188807950
+    description: The whole dataset is one 189 MB TIFF.
+  arrays:
+  - role: raw
+    path_pattern: noisy.tiff
+    format: tiff
+    axes: zcyx
+    shape:
+    - 120
+    - 3
+    - 512
+    - 512
+    shape_varies: false
+    dtype: int16
+    compression: none
+    value_range:
+    - 92
+    - 1739
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: ImageJ hyperstack (images=360, channels=3, slices=120). The header calls the first axis z, but per the
+      Zenodo description it indexes 120 separate fields of view, not a z-stack. Channels are 488/561/640 nm.
+  notes: 'Listing: tools/listing.py on Zenodo 10925783 (1 file, 188,807,950 B exact). Probe: ImageJ TIFF, 360 pages 512x512
+    int16 uncompressed, no calibration. Whole file sampled with tools/sample.py (188.8 MB): values 92-1739 (p50 132, p99 410).
+    normalization none inferred: the W2S paper says the images are raw, linear with respect to illuminance, and the values
+    sit far below the int16 limit. Voxel size not found; checked: TIFF header (ImageJ, no unit or spacing), Zenodo description,
+    W2S paper (arXiv PDF; setup details deferred to its supplement), GitHub README per the harvester. Noisy images only: no
+    clean or SIM targets in this deposit.'
