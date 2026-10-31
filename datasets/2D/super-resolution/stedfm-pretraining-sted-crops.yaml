@@ -1,0 +1,142 @@
+schema_version: '1.2'
+id: stedfm-pretraining-sted-crops
+title: STED-FM pre-training dataset of ~1 million super-resolution STED image crops
+short_name: STED-FM pre-training STED image crops
+description: Unlabelled set of 37,387 STED images from an Abberior Expert Line microscope, split into
+  976,022 crops of 224 x 224 pixels, released to pre-train the STED-FM masked-autoencoder foundation model.
+  It covers more than 20 fluorescently labelled proteins in several cell types, live and fixed cells and
+  tissue slices. The protein of interest is known for 238,683 crops (24 proteins).
+landing_url: https://flclab.github.io/stedfm/
+doi: null
+repository: LabWebsite
+accession: null
+authors: []
+publications:
+- title: A Self-Supervised Foundation Model for Robust and Generalizable Representation Learning in STED
+    Microscopy
+  doi: 10.1101/2025.06.06.656993
+  url: https://doi.org/10.1101/2025.06.06.656993
+date_published: null
+imaging:
+  modality:
+  - super-resolution
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: Fluorescently labelled proteins (more than 20) in hippocampal and cortical neurons, HEK, NG108
+    and Caco2 cells, and tissue slices; live and fixed.
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 19009399914
+  n_items: 976022
+  access: open
+  download_url: https://s3.valeria.science/flclab-foundation-models/data/STED-FM-dataset-crops.zip
+  download_method: http
+annotations:
+  present: false
+  types: []
+  coverage: unknown
+  format: null
+  source: unknown
+ml:
+  tasks:
+  - self-supervised
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/FLClab/STED-FM
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-10-31T19:19:04Z'
+  evidence_urls:
+  - https://flclab.github.io/stedfm/
+  - https://github.com/FLClab/STED-FM
+  - https://s3.valeria.science/flclab-foundation-models/data/STED-FM-dataset-crops.zip
+  - https://api.biorxiv.org/details/biorxiv/10.1101/2025.06.06.656993
+  - https://www.biorxiv.org/content/biorxiv/early/2026/01/08/2025.06.06.656993.source.xml
+  - https://s3.valeria.science/flclab-foundation-models/data/STED-FM-dataset-crops-tiff-raw.zip
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: false
+  last_checked: '2026-10-31T20:10:00Z'
+notes: 'Released explicitly for self-supervised pre-training (no labels). No license for the dataset on
+  the project page, GitHub README/repo, Zenodo code record (CC-BY-4.0, software) or the paper (preprint
+  text CC-BY-NC-ND); license left unknown. enricher: formats other -> tiff. The download_url zip holds
+  one tar of 976k npz crops (image.npy uint8 + pickled metadata.npy); the project page also offers the
+  same crops as uint16 TIFF (STED-FM-dataset-crops-tiff-raw.zip) and npz with raw counts, plus uncropped
+  full images in TIFF, each as one tar in one zip. enricher: channels 1 (single-channel 224x224 crops,
+  sampled). Voxel size left null: one sampled image says 0.02 um (TIFF XResolution, OME PhysicalSizeX
+  in its metadata), but the paper states no pixel size and the 37,387 source images come from many experiments.
+  Organisms not mapped to files: paper Methods name rat (Sprague-Dawley) hippocampal neurons, HEK, NG108,
+  Caco2 and tissue slices.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  (project page, s3.valeria.science/flclab-foundation-models/data/)\n  STED-FM-dataset-crops.zip\
+      \              19.0 GB  -> STED-FM-dataset-crops.tar (51.0 GB, deflate)\n      <image uuid>-<y>-<x>\
+      \                 976,022 npz crops, 51,589 B each: image.npy (uint8 224x224) + metadata.npy (pickled\
+      \ dict)\n  STED-FM-dataset-crops-tiff-raw.zip     22.0 GB  -> .tar (98.9 GB): <image uuid>-<y>-<x>.tif\
+      \ (uint16 224x224, 100,688 B)\n  STED-FM-dataset-crops-raw.zip          22.8 GB  -> .tar (99.9 GB):\
+      \ npz crops, raw counts\n  STED-FM-dataset-full-images-tiff-raw.zip 20.7 GB -> .tar (102.1 GB):\
+      \ 37,387 full images, TIFF\n  STED-FM-subset-dataset-crops{,-raw,-tiff-raw}.zip  protein-labelled\
+      \ subset (not listed)"
+    n_files: 1
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: STED-FM-dataset-crops.tar/*
+    format: other
+    axes: yx
+    shape:
+    - 224
+    - 224
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Each tar member is an uncompressed npz (zip) with image.npy (uint8, shape (224,
+      224), read with allow_pickle=False) and metadata.npy (object dtype = pickle, not loaded). Names
+      <image uuid>-<y offset>-<x offset>. Crops of the first two members: [0,255] and [0,91].'
+  - role: raw
+    path_pattern: STED-FM-dataset-crops-tiff-raw.tar/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 224
+    - 224
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 114
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: Same crops as uint16 single-page ImageJ TIFF (photometric minisblack, 1 sample),
+      same member names plus .tif. Page states original pixel count values.
+  notes: 'Inspected by streaming the first 2 MB (compressed) of the single deflated tar inside STED-FM-dataset-crops.zip
+    and STED-FM-dataset-crops-tiff-raw.zip and reading the first 12 tar headers and 2 members of each;
+    no full archive downloaded. value_range from two crops of one image only. npz crops: uint8 0-255,
+    so already rescaled per image by the authors (paper: 0.001/0.999 quantile normalisation for training),
+    but the stored mapping is not documented -> normalization unknown. TIFF crops: raw photon counts per
+    project page -> none. size_bytes = the download_url zip (19,009,399,914 B, exact listing); the TIFF
+    version is 22,000,033,737 B. shape_varies false: paper says all crops are 224 x 224. Voxel size: one
+    sampled image has PhysicalSizeX/Y 0.02 um in its metadata and TIFF XResolution 50 px/um; not set because
+    the paper and page state no pixel size for the 37,387 images (checked: TIFF header, npz metadata,
+    project page, GitHub README, paper Methods/STED imaging/Data availability). No direct per-file link:
+    every version is one tar inside one zip, and TensorSwitch cannot read members of a tar inside a zip;
+    host s3.valeria.science is also not on its allowlist. sample: null for that reason. No annotations
+    (self-supervised set).'
