@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: hf-einarolafsson-toxoplasma-pv-segmentation
 title: Toxoplasma PV segmentation dataset
 short_name: Toxoplasma PV image/mask pairs (fluorescence)
-description: 556 curated microscopy image and mask pairs (single-channel uint16 TIFFs, up to about 2000 x 2000 px) prepared with the spaCR toolkit and used to train the cpsam-r6 segmentation model (PV rounds 5 and 6). fields.csv assigns each field to train (437), validation (108) or test (11) and lists its object count; split.csv adds the experimental domain.
+description: 556 curated microscopy image and mask pairs (single-channel uint16 TIFFs, up to about 2000
+  x 2000 px) prepared with the spaCR toolkit and used to train the cpsam-r6 segmentation model (PV rounds
+  5 and 6). fields.csv assigns each field to train (437), validation (108) or test (11) and lists its
+  object count; split.csv adds the experimental domain.
 landing_url: https://huggingface.co/datasets/einarolafsson/toxoplasma-pv-segmentation-dataset
 doi: null
 repository: HuggingFace
@@ -16,25 +19,28 @@ imaging:
   - fluorescence-other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism:
-  - Toxoplasma
+  - Toxoplasma gondii
   sample: null
-  labels_stains: []
+  labels_stains:
+  - DsRed
+  - anti-Toxoplasma stain
 data:
   formats:
   - tiff
-  size_bytes: 1901645559
+  size_bytes: 1914516882
   n_items: 556
   access: open
-  download_url: null
+  download_url: https://huggingface.co/datasets/einarolafsson/toxoplasma-pv-segmentation-dataset
   download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
   coverage: unknown
-  format: 'single-channel uint16 deflate-compressed TIFF masks in masks/, same file names as images/; per-field object counts in fields.csv'
+  format: single-channel uint16 TIFF instance-label masks in masks/ (0 = background, 1..N = one id per
+    PV), same file names as images/; per-field object counts in fields.csv
   source: unknown
 ml:
   tasks:
@@ -52,10 +58,94 @@ provenance:
   - https://huggingface.co/datasets/einarolafsson/toxoplasma-pv-segmentation-dataset
   - https://huggingface.co/api/datasets/einarolafsson/toxoplasma-pv-segmentation-dataset
   - https://huggingface.co/datasets/einarolafsson/toxoplasma-pv-segmentation-dataset/resolve/main/README.md
-  confidence: 0.6
+  - https://huggingface.co/einarolafsson/toxoplasma-pv-segmentation-cpsam-r6
+  - https://huggingface.co/einarolafsson/toxoplasma-pv-segmentation-cpsam-r6/resolve/main/README.md
+  - https://huggingface.co/einarolafsson/toxoplasma-pv-segmentation-cpsam-r6/resolve/main/cards/page3.png
+  - https://huggingface.co/datasets/einarolafsson/toxoplasma-pv-segmentation-dataset/resolve/main/fields.csv
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-01T08:21:49Z'
-notes: 'Sources checked: HF dataset page, HF API file listing (556 images/*.tif + 556 masks/*.tif, fields.csv, folds.csv, split.csv), README, and range-request headers of one image/mask pair (both 1994x1994 uint16 yx, deflate). No paper, DOI or description of the imaging setup was found on the dataset card or file listing, so modality (fluorescence, inferred from file names such as dsred/cellmask and the card tag microscopy), staining, acquisition microscope, pixel size, organism detail and the meaning of PV were not stated and are left blank/generic; organism is the genus only as named on the card (file names mention HeLa/MEF host cells and RH). Mask semantics (instance labels) are inferred from uint16 masks and per-field object counts in fields.csv, not confirmed by the card; many fields have 0 objects. Splits per fields.csv: train 437 fields (15,550 objects), validation 108 (8,959), test 11 (683). Dataset was created 2026-09-19 on Hugging Face.'
+  last_checked: '2026-11-01T10:05:00Z'
+notes: 'Toxoplasma gondii parasitophorous vacuoles (PVs) in fluorescence images of infected host cells,
+  parasite marked by DsRed or an anti-Toxoplasma stain (model card of einarolafsson/toxoplasma-pv-segmentation-cpsam-r6,
+  trained on these 556 fields). Sources: 449 lab PV-screen fields (RH, me49, 4hMEFRNF213, mtocScreen,
+  plate1-7) and 107 published-figure crops (images/lit__PMC*); host cells (HeLa, MEF per file names) not
+  stated. Splits per fields.csv: train 437, validation 108, test 11. enricher: organism Toxoplasma gondii
+  from model card (was genus only); stains, channels 1 from model card and headers; size from full HF
+  listing; masks confirmed instance ids. Annotation source (manual or model-assisted) not stated on the
+  card. Mixed sources incl. figure crops, so no single pixel size exists; figure crops may carry their
+  source papers'' terms.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './          5 files   177.4 KB  README.md, fields.csv, split.csv, folds.csv, .gitattributes
+
+      images/   556 files     1.9 GB  .tif  (e.g. RH__abTg__HELAtubulin_20230923_114209__plate1_A03_008.tif,
+      lit__PMC12674569__tmpimvapk8__p-000__p22.tif)
+
+      masks/    556 files    24.6 MB  .tif  (same file names as images/)
+
+      '
+    n_files: 1117
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/einarolafsson/toxoplasma-pv-segmentation-dataset/resolve/main/images/lit__PMC12674569__tmpimvapk8__p-000__p22.tif
+    - https://huggingface.co/datasets/einarolafsson/toxoplasma-pv-segmentation-dataset/resolve/main/masks/lit__PMC12674569__tmpimvapk8__p-000__p22.tif
+    size_bytes: 87406
+    description: 'Smallest image/mask pair: one published-figure crop (207 x 208 px, 2 PVs).'
+  arrays:
+  - role: raw
+    path_pattern: images/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1998
+    - 1998
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 28798
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Single-page, single-channel uint16 TIFFs (tiff_layout shaped, axes yx). Lab fields
+      about 2000 x 2000 px (1998, 2000 seen), deflate; figure crops (lit__*) smaller (207 x 208 to 1771
+      x 1771) and uncompressed.
+  - role: label
+    path_pattern: masks/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1998
+    - 1998
+    shape_varies: true
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 11
+    normalization: none
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    - id: null
+      name: parasitophorous vacuole (one id per instance)
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: masks/<stem>.tif labels images/<stem>.tif (same file name); shapes
+      identical in both sampled pairs. Mask ids 1..N, N matching n_objects in fields.csv (11 for plate1_A03_6_1).
+      Many fields have 0 objects.'
+  notes: 'Listing: HF API, 1117 files, 1,914,516,882 B exact (complete). Probed 4 images and 2 masks (uint16
+    yx, single page, no calibration in headers). Sampled 2 pairs: lit__PMC12674569 crop (raw 0-182, mask
+    {0,1,2}) and 4hMEFRNF213 plate1_A03_6_1 (raw 0-28798, p50 28; mask 0-11, 11 ids = fields.csv n_objects
+    11). value_range from these samples only; normalization unknown (figure crops are re-encoded published
+    images). Voxel size not found; checked: TIFF headers (no resolution tags), dataset card, fields/split/folds.csv,
+    model card and its training-facts pages, spaCR README; no paper. Fields come from 4 lab screens plus
+    published-figure crops, so they cannot share one pixel size. Download: no single archive; every file
+    is a direct HF resolve URL (images/<stem>.tif, masks/<stem>.tif), download-check usable with range
+    requests.'
