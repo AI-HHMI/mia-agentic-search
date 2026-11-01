@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: sbf-sem-h446-tumorsphere-nuclei
 title: SBF-SEM volume of an H446 tumorsphere with manually segmented nuclei
 short_name: H446 tumorsphere nuclei segmentation (SBF-SEM)
-description: A serial block-face SEM volume (100x1005x1003 px, 90 nm isotropic voxels) of a tumorsphere formed by the
-  H446 cell line, in which all cell nuclei were manually segmented. The volume is split evenly into a training half and a
-  test half, each with a TIFF image stack and a TIFF label stack.
+description: A serial block-face SEM volume (118x1003x1005 px, 90 nm isotropic voxels) of a tumorsphere formed by the H446
+  cell line, in which all cell nuclei were manually segmented. The volume is split evenly into a training half and a test
+  half, each with a TIFF image stack and a TIFF label stack.
 landing_url: https://huggingface.co/datasets/Fgdfgfthgr/SBF-SEM_H446_Turmoursphere
 doi: null
 repository: HuggingFace
@@ -21,16 +21,17 @@ imaging:
     y: 90
     z: 90
   channels: 1
-  organism: []
+  organism:
+  - Homo sapiens
   sample: Tumorsphere formation from the H446 cell line
   labels_stains: []
 data:
   formats:
   - tiff
-  size_bytes: 240981738
+  size_bytes: 241987981
   n_items: 4
   access: open
-  download_url: null
+  download_url: https://huggingface.co/datasets/Fgdfgfthgr/SBF-SEM_H446_Turmoursphere
   download_method: http
 annotations:
   present: true
@@ -47,20 +48,89 @@ ml:
   baseline_code_url: null
 license:
   spdx: MIT
-  url: null
+  url: https://huggingface.co/datasets/Fgdfgfthgr/SBF-SEM_H446_Turmoursphere/resolve/main/README.md
 provenance:
   discovered_by: harvest-websearch
   discovered_at: '2026-11-01T03:15:31Z'
   evidence_urls:
   - https://huggingface.co/datasets/Fgdfgfthgr/SBF-SEM_H446_Turmoursphere
   - https://huggingface.co/api/datasets/Fgdfgfthgr/SBF-SEM_H446_Turmoursphere/tree/main
+  - https://huggingface.co/api/datasets/Fgdfgfthgr/SBF-SEM_H446_Turmoursphere
+  - https://api.cellosaurus.org/cell-line/CVCL_1562?format=txt
+  - https://huggingface.co/datasets/Fgdfgfthgr/SBF-SEM_H446_Turmoursphere/resolve/main/README.md
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-01T03:15:31Z'
-notes: Checked the dataset card (README) and the repository file listing (train/ and test/ each hold one image TIFF and
-  one label TIFF; total size is the sum of the four files). No paper, authors, organism, staining or acquisition date is
-  stated on the card, so organism is left empty and authors/publications are empty. Instance vs semantic nature of the
-  labels is taken from the card's "Instance Segmentation" tag. Train is the left half and test the right half of the volume.
+  last_checked: '2026-11-01T03:58:00Z'
+notes: 'Dataset card (README) and file listing: train/ and test/ each hold one image TIFF and one label TIFF. No paper, authors
+  or acquisition date stated. Instance labels per the card''s "Instance Segmentation" tag. Train = left half, test = right
+  half of the volume. enricher: organism Homo sapiens from Cellosaurus CVCL_1562 (NCI-H446, small cell lung cancer line) (was
+  empty). enricher: size 241987981 B from the HF file listing (was 240981738). enricher: files have 118 z-slices, not the
+  100 the card states; description updated. enricher: download_url set to the dataset page (four direct files, no archive).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './                2 files    3.3 KB  .gitattributes, README.md
+
+      test/             2 files  121.0 MB  .tif (Ts-4c_normalised_right_split.tif, Labels_Ts-4c_normalised_right_split.tif)
+
+      train/            2 files  121.0 MB  .tif (Ts-4c_normalised_left_split.tif, Labels_Ts-4c_normalised_left_split.tif)'
+    n_files: 6
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/Fgdfgfthgr/SBF-SEM_H446_Turmoursphere/resolve/main/train/Ts-4c_normalised_left_split.tif
+    - https://huggingface.co/datasets/Fgdfgfthgr/SBF-SEM_H446_Turmoursphere/resolve/main/train/Labels_Ts-4c_normalised_left_split.tif
+    size_bytes: 121032310
+    description: 'training half: raw z-stack 118x1003x503 uint16 plus its instance label stack on the same grid'
+  arrays:
+  - role: raw
+    path_pattern: '*/Ts-4c_normalised_*_split.tif'
+    format: tiff
+    axes: zyx
+    shape:
+    - 118
+    - 1003
+    - 503
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 63559
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '*/Labels_Ts-4c_normalised_*_split.tif'
+    format: tiff
+    axes: zyx
+    shape:
+    - 118
+    - 1003
+    - 503
+    shape_varies: true
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 70
+    normalization: none
+    encoding: instance-ids
+    classes:
+    - id: null
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: 'Pairing: <split>/Ts-4c_normalised_<side>_split.tif with <split>/Labels_Ts-4c_normalised_<side>_split.tif
+      (train = left, test = right). Shapes match exactly (train 118x1003x503, test 118x1003x502); background 0, one ID per
+      nucleus.'
+  notes: 'Listed via the HF tree API (6 files, 241987981 B, complete). Probed all four TIFFs: plain multi-page, one sample
+    per pixel; raw uint16 uncompressed, labels uint8 LZW; 118 pages each (card says 100). Axes zyx: the card describes the
+    file as an imaged volume (slices x height x width); pages are z. ImageDescription (IMOD/MIB history): converted to MRC,
+    binned 2x2x2, then CLAHE in MIB, hence normalization contrast-stretched; its BoundingBox (45.18 x 90.18 x 10.53 um over
+    503 x 1003 x 118 px) gives ~90 nm per axis, matching the card''s 90x90x90 nm. Sampled train raw (119.2 MB): 0-63559, mean
+    30413, std 17227; train labels (1.8 MB): 24 values incl. 0, 0.865 background; IDs 29, 39 and 42 cover 1-2 voxels each
+    (likely stray voxels). Value ranges are from this one sample.'
