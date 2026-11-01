@@ -36,7 +36,7 @@ data:
   size_bytes: 208905044623
   n_items: 52
   access: open
-  download_url: null
+  download_url: https://ssbd.riken.jp/data/ssbd-000236/
   download_method: http
 annotations:
   present: true
@@ -44,7 +44,8 @@ annotations:
   - instance-segmentation
   - restoration-pairs
   coverage: dense
-  format: One TIFF per z-plane and time point in per-embryo zips (Membrane_segmentation/NN.zip, img_tTTT_zZZZ.tif)
+  format: Per-plane uint8 TIFFs (img_tTTT_zZZZ.tif) in per-embryo zips Membrane_segmentation/<NN>.zip; pixel value = cell
+    ID (0 = background)
   source: mixed
 ml:
   tasks:
@@ -64,14 +65,131 @@ provenance:
   - https://ssbd.riken.jp/data/ssbd-000236/
   - https://ssbd.riken.jp/data/ssbd-000236/zip-manifest.txt
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10070942/fullTextXML
+  - https://ssbd.riken.jp/data/ssbd-000236/dataset.json
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5477254/fullTextXML
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-01T19:10:00Z'
-notes: 'Zips (208, 4 folders x 52 embryos): Membrane_image, Restored_membrane_image, Membrane_segmentation, Nucleus_image;
-  embryo 19 listing: 11520 TIFF planes each. Masks come from the BCOMS2 algorithm seeded by manually curated nuclei (paper),
-  not hand-drawn; label quality is the algorithm''s. Raw and restored membrane images form restoration pairs. Voxel size not
-  found: paper states only 0.5 um z-sections and 30 s intervals, no x/y pixel size. Size from dataset.json zips (repository
-  trees 286.7 GB).'
+  last_checked: '2026-11-01T20:00:00Z'
+notes: 'Zips (208, 4 folders x 52 embryos): Membrane_image, Restored_membrane_image, Membrane_segmentation, Nucleus_image.
+  Masks come from BCOMS2 seeded by manually curated nuclei (paper), not hand-drawn. Raw and CARE-restored membrane images
+  form restoration pairs. Voxel size not found (z 0.5 um only). Size from dataset.json zips (repository trees 286.7 GB). Label
+  conflict: SSBD page says membrane GFP; Azuma 2023 text says nucleus GFP and membrane mCherry; record keeps the SSBD wording.
+  enricher: download_url set to the SSBD folder (208 direct zips, list in zip-manifest.txt).'
+technical:
+  method: sample
+  inspected_at: '2026-11-01T20:00:00Z'
+  inspected_urls:
+  - https://ssbd.riken.jp/data/ssbd-000236/zip/Membrane_image/19.zip::img_t000_z030.tif
+  - https://ssbd.riken.jp/data/ssbd-000236/zip/Restored_membrane_image/19.zip::img_t000_z030.tif
+  - https://ssbd.riken.jp/data/ssbd-000236/zip/Membrane_segmentation/19.zip::img_t000_z030.tif
+  - https://ssbd.riken.jp/data/ssbd-000236/zip/Membrane_image/19.zip::img_t200_z030.tif
+  - https://ssbd.riken.jp/data/ssbd-000236/zip/Membrane_segmentation/19.zip::img_t200_z030.tif
+  - https://ssbd.riken.jp/data/ssbd-000236/zip/Nucleus_image/0019.zip::0019/0019_t039_z001.tif
+  bytes_downloaded: 424370
+  size_source: page-stated
+  layout:
+    tree: "ssbd-000236/  (dataset.json: 208 zips, 208.9 GB; plus an unzipped repos/ tree of 2.39 M files, 286.7 GB)\n  zip/Membrane_image/<NN>.zip\
+      \             52 zips, e.g. 19.zip 940.5 MB: 11,520 x img_tTTT_zZZZ.tif (t000-239, z000-047)\n  zip/Restored_membrane_image/<NN>.zip\
+      \    52 zips, e.g. 19.zip 2.65 GB: 11,520 x img_tTTT_zZZZ.tif (float32)\n  zip/Membrane_segmentation/<NN>.zip      52\
+      \ zips, e.g. 19.zip 11.1 MB: 11,520 x img_tTTT_zZZZ.tif (uint8 cell IDs)\n  zip/Nucleus_image/<00NN>.zip           \
+      \ 52 zips, e.g. 0019.zip 323.1 MB: 0019/0019_tTTT_zZZZ.tif (t001-218, z001-048)\n  zip-manifest.txt, dataset.json"
+    n_files: 208
+    listing_complete: false
+  sample:
+    urls:
+    - https://ssbd.riken.jp/data/ssbd-000236/zip/Membrane_image/19.zip::img_t000_z030.tif
+    - https://ssbd.riken.jp/data/ssbd-000236/zip/Restored_membrane_image/19.zip::img_t000_z030.tif
+    - https://ssbd.riken.jp/data/ssbd-000236/zip/Membrane_segmentation/19.zip::img_t000_z030.tif
+    size_bytes: null
+    description: 'One z-plane (t000, z030) of embryo 19: raw membrane, CARE-restored membrane and the segmentation plane,
+      as zip members.'
+  arrays:
+  - role: raw
+    path_pattern: Membrane_image/*.zip/img_t[0-9][0-9][0-9]_z[0-9][0-9][0-9].tif
+    format: tiff
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint16
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 83
+    - 3700
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 'One single-page TIFF per (t, z) plane; a volume = all img_tTTT_z*.tif of one t (48 planes in embryo
+      19), a time series = t000-t239. Plane count differs per embryo (paper: number of focal planes differed).'
+  - role: target
+    path_pattern: Restored_membrane_image/*.zip/img_t[0-9][0-9][0-9]_z[0-9][0-9][0-9].tif
+    format: tiff
+    axes: yxc
+    shape:
+    - 256
+    - 256
+    - 1
+    shape_varies: false
+    dtype: float32
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - -30.11
+    - 103211.15
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: CARE-restored version of the raw plane with the same file name in the same embryo zip (tifffile reads
+      a trailing length-1 axis). Model output, not an acquired high-SNR image.
+  - role: label
+    path_pattern: Membrane_segmentation/*.zip/img_t[0-9][0-9][0-9]_z[0-9][0-9][0-9].tif
+    format: tiff
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 96
+    normalization: none
+    encoding: instance-ids
+    n_ids_observed: 31
+    alignment: same-grid
+    alignment_notes: 'Pairs with the raw plane of the same file name in the same embryo number. Sample: t000 has IDs {0 +
+      2 cells}; t200 z030 has 31 IDs between 52 and 96, so IDs are per cell and not consecutive (lineage mapping not documented
+      in the files).'
+  - role: other
+    path_pattern: Nucleus_image/*.zip/*/*_t[0-9][0-9][0-9]_z[0-9][0-9][0-9].tif
+    format: tiff
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 17
+    normalization: unknown
+    alignment: unknown
+    alignment_notes: 'Nucleus channel, 1-based numbering (embryo 19: t001-218, z001-048) vs 0-based t000-239 for membranes;
+      the frame correspondence is not documented. uint8 with max 17 in the sampled plane.'
+  notes: 'Listing: 4 zips of embryo 19 read (peek_archive / listing.py, 45,024 members, 3.92 GB); other 204 zips from zip-manifest.txt,
+    sizes from dataset.json only, so listing_complete false. value_range from single planes. Compression inside the TIFFs
+    not probed (probe.py failed on ssbd zip members). Voxel size not found; checked: TIFF tags of sampled planes (none), SSBD
+    project page (no scale), Azuma 2023 full text (0.5 um sections, 30 s), Azuma & Onami 2017 BMC Bioinformatics Methods (256x256
+    px, 2x binning, 60x WI, z 0.5 um; no XY pixel size). Downloads: 208 direct zips on ssbd.riken.jp (range requests work;
+    host not on the TensorSwitch allowlist); no single archive.'
