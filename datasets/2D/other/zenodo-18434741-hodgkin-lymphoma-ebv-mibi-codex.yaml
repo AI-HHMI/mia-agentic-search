@@ -1,10 +1,11 @@
 schema_version: '1.2'
 id: zenodo-18434741-hodgkin-lymphoma-ebv-mibi-codex
-title: Data for Epstein-Barr Virus Orchestrates Spatial Reorganization and Immunomodulation within the classical Hodgkin Lymphoma Tumor Microenvironment
+title: Data for Epstein-Barr Virus Orchestrates Spatial Reorganization and Immunomodulation within the classical Hodgkin Lymphoma
+  Tumor Microenvironment
 short_name: Hodgkin lymphoma MIBI cell segmentation
-description: Multiplexed ion beam imaging (MIBI) of classic Hodgkin lymphoma tissue sections (EBV-positive and
-  EBV-negative), with one TIFF per marker, cell segmentation masks (deepcell) and a table of annotated
-  cell phenotypes. The same record also holds CODEX, GeoMx and CosMx archives from the same study.
+description: Multiplexed ion beam imaging (MIBI) of classic Hodgkin lymphoma tissue sections (EBV-positive and EBV-negative),
+  with one TIFF per marker, cell segmentation masks (deepcell) and a table of annotated cell phenotypes. The same record also
+  holds CODEX, GeoMx and CosMx archives from the same study.
 landing_url: https://zenodo.org/records/18434741
 doi: 10.5281/zenodo.18434741
 repository: Zenodo
@@ -16,7 +17,8 @@ authors:
 - Bokai Zhu
 - Sizun Jiang
 publications:
-- title: Epstein-Barr Virus Orchestrates Spatial Reorganization and Immunomodulation within the Classic Hodgkin Lymphoma Tumor Microenvironment
+- title: Epstein-Barr Virus Orchestrates Spatial Reorganization and Immunomodulation within the Classic Hodgkin Lymphoma Tumor
+    Microenvironment
   doi: 10.1101/2024.03.05.583586
   url: https://doi.org/10.1101/2024.03.05.583586
 date_published: '2026-02-01'
@@ -36,7 +38,8 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 22000000000
+  - ome-tiff
+  size_bytes: 22012071854
   n_items: null
   access: open
   download_url: null
@@ -47,8 +50,8 @@ annotations:
   - instance-segmentation
   - classification
   coverage: dense
-  format: per-tile Segmentation.tiff and deepcell segmentationMask_boundary.tif label images; hodgkin_DFCI_noID.csv
-    (annotated cells); df_topic_noID.csv; CODEX archive also holds GeoJSON cell annotations (per the record description)
+  format: 'MIBI: per-tile Segmentation.tiff and deepcell segmentationMap.tif / segmentationMask_boundary.tif; GeoMx: per-ROI
+    MESMER_mask.tiff; CODEX: per-sample GeoJSON cell annotations; cell tables hodgkin_DFCI_noID.csv, df_topic_noID.csv'
   source: automatic
 ml:
   tasks:
@@ -73,11 +76,118 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-01T18:10:00Z'
-notes: 'Four 7z archives (MIBI 8.6 GB, CODEX 5.3 GB, GeoMx 6.0 GB, CosMx 2.1 GB). Only MIBI_data.7z was listed
-  (range read of the 7z header): 1,665 entries, mostly one .tiff per marker plus Segmentation.tiff per patient tile,
-  88 .tif deepcell masks, .mat, .png, and two CSVs (hodgkin_DFCI_noID.csv, df_topic_noID.csv). CODEX, GeoMx and
-  CosMx were not listed, so their formats are unverified (CosMx is a Seurat object). Masks come from deepcell-tf;
-  phenotypes from FlowSOM clustering plus manual cluster annotation, hence source automatic. No split. Voxel size is
-  derived: paper Methods give 400x400 um at 512x512 px (0.78125 um); the folder name mpp1.75 is a model setting.
-  Modality MIBI recorded as other. n_items, channels not verified. Paper full text is the bioRxiv preprint.'
+  last_checked: '2026-11-01T17:53:41Z'
+notes: 'Four 7z archives (MIBI 8.6 GB, CODEX 5.3 GB, GeoMx 6.0 GB, CosMx 2.1 GB Seurat .rds). Masks from deepcell-tf (MIBI)
+  / MESMER (GeoMx); phenotypes from FlowSOM clustering plus manual cluster annotation, hence source automatic. No split. Voxel
+  size is derived for MIBI only: paper Methods give image area 400x400 um at 512x512 px (0.78125 um); CODEX and GeoMx pixel
+  sizes are not stated. Modality MIBI recorded as other (also CODEX and GeoMx fluorescence images). Paper full text is the
+  bioRxiv preprint. enricher: size 22,012,071,854 B from Zenodo file listing (was 22.0 GB page-stated); formats +ome-tiff
+  (CODEX *.ome.tiff in 7z header); annotations.format from 7z headers of all four archives.'
+technical:
+  method: metadata-only
+  size_source: file-listing
+  layout:
+    tree: "MIBI_data.7z (8.57 GB, 1,542 files)\n  MIBI_data/hodgkin_DFCI_noID.csv, df_topic_noID.csv\n  MIBI_data/cHL-DFCI/<tile>/[<sub-tile>/]\
+      \   44 tiles: 34 marker .tiff + Segmentation.tiff each\n  MIBI_data/cHL-DFCI_segmentation/<tile>/[<sub>/]H3_memSUM_noCD163_deepcell060_AutoHist_mpp1.75/\n\
+      \      segmentationMap.tif, segmentationMask_boundary.tif, segmentationParams.mat, segmentation_overlay.png  (44 sets)\n\
+      CODEX_data.7z (5.35 GB, 58 files)\n  CODEX_data/CODEX_image/Rochester_<n>_<pos|neg>.ome.tiff + .geojson   (27 pairs)\n\
+      \  CODEX_data/Adjacent_FINAL.csv, Functional_data_FINAL.csv, PLA_data_recount_FINAL.csv, MarkerList_081825.txt\nGeoMx_data.7z\
+      \ (6.00 GB, 1,267 files)\n  GeoMx_data/*.csv (counts tables)\n  GeoMx_data/DFCI/DFCI_HTMA528_L21/*.tiff (72 ROI images),\
+      \ DFCI_GeoMx_protein.csv\n  GeoMx_data/DFCI/DFCI_HTMA528_L21_segmentation/<ROI>/   9 tiffs: CD3, CD4, CD45RO, SYTO13,\
+      \ nuclear, membrane,\n      MESMER_mask, seg_outline, seg_overlay\n  GeoMx_data/Rochester/Rochester_TMA1_L2/*.tiff (54),\
+      \ Rochester_TMA1_L2_segmentation/<ROI>/ (488 files)\nCosMx_data.7z (2.09 GB, 1 file)\n  cHL.CosMx1k.seuratobject.rds"
+    n_files: 2868
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: MIBI_data/cHL-DFCI/**/*.tiff
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: one single-marker TIFF per channel per tile; the glob also matches the Segmentation.tiff in each tile
+      folder
+  - role: label
+    path_pattern: MIBI_data/cHL-DFCI_segmentation/**/segmentationMap.tif
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    encoding: unknown
+    classes: null
+    alignment: unknown
+    alignment_notes: pairs with MIBI_data/cHL-DFCI/<same tile path>/ (tile folder name matches); deepcell-tf output; same
+      grid not verified
+  - role: raw
+    path_pattern: CODEX_data/CODEX_image/*.ome.tiff
+    format: ome-tiff
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: CODEX_data/CODEX_image/*.geojson
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    encoding: unknown
+    classes: null
+    alignment: unknown
+    alignment_notes: 'QuPath GeoJSON cell annotations, same stem as the .ome.tiff (Zenodo description: annotation of each
+      cell); not opened, geometry type unknown'
+  - role: raw
+    path_pattern: GeoMx_data/*/*_L[0-9]*/*.tiff
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: one multichannel ROI image per file (channel layout not read)
+  - role: label
+    path_pattern: GeoMx_data/*/*_segmentation/*/MESMER_mask.tiff
+    format: tiff
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    encoding: unknown
+    classes: null
+    alignment: unknown
+    alignment_notes: per ROI folder named like the ROI image stem; MESMER (deepcell) mask
+  notes: 'All four files are 7z archives (LZMA2, solid: MIBI 8 blocks, GeoMx 5, CODEX 2). Their member lists were read from
+    the 7z end headers with range requests (~26 KB total, script using requests + lzma); members cannot be range-read or extracted
+    without downloading whole solid blocks (GBs), so no TIFF header was probed and no sample taken: shapes, dtypes, axes,
+    compression and label encodings are unknown. TensorSwitch fetches zip members only, not 7z members, so there is no usable
+    sample unit; a test needs one whole archive (smallest with images+labels: CODEX_data.7z, 5.35 GB). data.download_url stays
+    null: the dataset is four archives, direct links https://zenodo.org/api/records/18434741/files/<name>.7z/content (download-check
+    usable, range requests). Size 22,012,071,854 B is the exact Zenodo listing of all four files (compressed). Voxel size
+    781.25 nm applies to MIBI only (paper: 400x400 um, 512x512 px; MIBI tiles are stitched from several FOVs); CODEX and GeoMx
+    pixel sizes not found (checked: paper preprint full text, Zenodo record/API, GitHub README; archive member names only).
+    Code repo README points to the earlier version, Zenodo 16897608 (same concept record).'
