@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: dataversenl-xrtjma-shrec2021-cryoet-simulated
 title: 'SHREC Cryo-ET 2021 Dataset: Classification in Cryo-Electron Tomograms'
 short_name: SHREC 2021 simulated cryo-ET particles
-description: Ten simulated cryo-electron tomograms (512x512x512 voxels at 1 nm/voxel) of cell-like volumes containing
-  up to about 1,500 particles from 13 protein classes plus vesicles and gold fiducials, with particle locations, class
-  masks, occupancy volumes, noise-free ground-truth volumes and projections. Built as a benchmark for localization
-  and classification of macromolecules in tomograms.
+description: Ten simulated cryo-electron tomograms (512x512x512 voxels at 1 nm/voxel) of cell-like volumes
+  containing up to about 1,500 particles from 13 protein classes plus vesicles and gold fiducials, with
+  particle locations, class masks, occupancy volumes, noise-free ground-truth volumes and projections.
+  Built as a benchmark for localization and classification of macromolecules in tomograms.
 landing_url: https://www2.projects.science.uu.nl/shrec/cryo-et/
 doi: 10.34894/XRTJMA
 repository: other
@@ -32,15 +32,16 @@ imaging:
     z: 1
   channels: null
   organism: []
-  sample: Simulated cell-like volumes with 12-13 protein complexes (PDB structures), vesicles and gold fiducials; no real specimen
+  sample: Simulated cell-like volumes with 12-13 protein complexes (PDB structures), vesicles and gold
+    fiducials; no real specimen
   labels_stains: []
 data:
   formats:
-  - other
+  - mrc
   size_bytes: 31639304203
   n_items: 10
   access: open
-  download_url: null
+  download_url: https://dataverse.nl/api/access/datafile/309088
   download_method: http
 annotations:
   present: true
@@ -49,9 +50,10 @@ annotations:
   - classification
   - semantic-segmentation
   coverage: dense
-  format: 'Per tomogram: particle location text file (PDB id and X, Y, Z centre), class mask volume (voxel value = class id),
-    occupancy volume (voxel value = particle id), ground-truth volume and tilt projections. One test tomogram has ground
-    truth released in a separate difference archive.'
+  format: 'Per tomogram (full_dataset zip): class_mask.mrc (voxel value = class id 0-15: background, 13
+    PDB complexes, vesicles 14, fiducials 15), occupancy_mask.mrc (voxel value = particle id, matching
+    the rows of particle_locations.txt), particle_locations.txt (7 space-separated columns: class, X,
+    Y, Z, rotation_Z1, rotation_X, rotation_Z2), noise-free grandmodel.mrc, projections and tilt angles.'
   source: automatic
 ml:
   tasks:
@@ -72,15 +74,166 @@ provenance:
   - https://dataverse.nl/api/datasets/:persistentId/?persistentId=doi:10.34894/XRTJMA
   - https://arxiv.org/abs/2203.10035
   - https://arxiv.org/pdf/2203.10035
-  confidence: 0.75
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-11-02T01:40:00Z'
-notes: 'Simulated data, not real specimens. File listing came from the DataverseNL API (five zips: contest 7.8 GB, diff 73 MB, full
-  7.9 GB, full without mirroring 9.0 GB, original ground truth 6.8 GB); zip contents could not be listed because the server does not
-  support range requests, so file formats are unverified (listed as other) and annotation files are taken from the track page
-  description. size_bytes is the sum of all five zips, which overlap (the full, contest and diff archives repackage the same tomograms), so it overstates the unique data. The track page notes class 4V94 was generated incorrectly (two mirrored copies) and was removed from
-  evaluation. One tomogram is the contest test tomogram. Related to, but distinct from, the SHREC 2019 simulated dataset in
-  the catalog and TomoTwin.'
+  annotations_verified: true
+  last_checked: '2026-11-02T01:56:56Z'
+notes: 'Simulated data, not real specimens. size_bytes is the exact sum of all five Dataverse zips, which
+  overlap (contest, diff and full repackage the same tomograms; full_dataset alone is 7.9 GB and has all
+  10 tomograms with ground truth). Class 4V94 was generated incorrectly (mirrored) and removed from evaluation
+  (track page). Model 9 is the contest test tomogram. Related to, but distinct from, SHREC 2019 and TomoTwin
+  in the catalog.
+
+  enricher: formats mrc (was other); annotation files confirmed from zip listings and readme; download_url
+  = full_dataset zip (was null); voxel size 1 nm confirmed by readme ("binned from 5.0A to 10.0A"); MRC
+  headers carry no calibration.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Dataverse doi:10.34894/XRTJMA, 5 zips (31,639,304,203 B), 278 files\nshrec21_full_dataset.zip\
+      \ (datafile/309088; 7,897,018,167 B; 88 files)\n  readme.txt, misc/class_conversion_table.txt, misc/eval.py,\
+      \ misc/example_*.py\n  misc/particles/<PDB>_10.00A_solvent-4.530V_real.mrc   13 particle densities\n\
+      \  model_<0-9>/reconstruction.mrc          512x512x512 float32 (WBP, 1 nm)\n  model_<0-9>/grandmodel.mrc\
+      \              512x512x512 float32 (noise-free model)\n  model_<0-9>/class_mask.mrc            \
+      \  512x512x512 float32 (class ids 0-15)\n  model_<0-9>/occupancy_mask.mrc          512x512x512 float32\
+      \ (particle ids)\n  model_<0-9>/particle_locations.txt      class X Y Z rotZ1 rotX rotZ2\n  model_<0-9>/projections_unbinned.mrc\
+      \    1024x1024x61 float32 tilt series\n  model_<0-9>/alignment_simulated.txt     tilt angles\nshrec21_contest_dataset.zip\
+      \ (datafile/309090; 7,823,307,210 B; 83 files): same without model_9 ground truth\nshrec21_diff_dataset.zip\
+      \ (datafile/309091; 73,174,362 B; 6 files): model_9 ground truth, eval.py, readme\nshrec21_full_dataset_no_mirroring.zip\
+      \ (datafile/374630; 9,016,507,329 B; 71 files)\n  model_<0-9>/: reconstruction 512x512x512; grandmodel,\
+      \ class_mask, occupancy_mask 512x512x180\nshrec21_original_groundtruth.zip (datafile/309089; 6,829,297,135\
+      \ B; 30 files)\n  model_<0-9>/grandmodel.mrc 1024x1024x360 float32 (unbinned, 0.5 nm), projections.mrc,\
+      \ noisefree_projections.mrc"
+    n_files: 278
+    listing_complete: true
+  sample:
+    urls:
+    - https://dataverse.nl/api/access/datafile/309088::model_0/reconstruction.mrc
+    - https://dataverse.nl/api/access/datafile/309088::model_0/class_mask.mrc
+    - https://dataverse.nl/api/access/datafile/309088::model_0/occupancy_mask.mrc
+    - https://dataverse.nl/api/access/datafile/309088::model_0/particle_locations.txt
+    size_bytes: 1610675008
+    description: 'Tomogram 0 from the full_dataset zip: reconstruction, class mask, occupancy mask (537
+      MB each uncompressed; masks deflate to ~2.7 MB, reconstruction to 499 MB) and particle table (59
+      KB).'
+  arrays:
+  - role: raw
+    path_pattern: shrec21_full_dataset.zip::model_[0-9]/reconstruction.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 512
+    - 512
+    - 512
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - -0.691
+    - 0.726
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Weighted back-projection of the grandmodel from 61 tilts (+60 to -60 deg), binned
+      from 5 A to 10 A (readme).
+  - role: label
+    path_pattern: shrec21_full_dataset.zip::model_[0-9]/class_mask.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 512
+    - 512
+    - 512
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - 0
+    - 15
+    normalization: unknown
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: 4V94
+    - id: 2
+      name: 4CR2
+    - id: 3
+      name: 1QVR
+    - id: 4
+      name: 1BXN
+    - id: 5
+      name: 3CF3
+    - id: 6
+      name: 1U6G
+    - id: 7
+      name: 3D2F
+    - id: 8
+      name: 2CG9
+    - id: 9
+      name: 3H84
+    - id: 10
+      name: 3GL1
+    - id: 11
+      name: 3QM1
+    - id: 12
+      name: 1S3X
+    - id: 13
+      name: 5MRC
+    - id: 14
+      name: vesicles
+    - id: 15
+      name: fiducials
+    alignment: same-grid
+    alignment_notes: Same 512x512x512 shape as reconstruction.mrc in the full_dataset zip; files pair
+      by folder model_N. Class ids are integers stored as float32; ids 0-15 in list order (readme).
+  - role: label
+    path_pattern: shrec21_full_dataset.zip::model_[0-9]/occupancy_mask.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 512
+    - 512
+    - 512
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - 0
+    - 1401
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same 512x512x512 shape as reconstruction.mrc in the full_dataset zip; files pair
+      by folder model_N. Particle id N is row N of particle_locations.txt (readme); integers stored as
+      float32.
+  - role: label
+    path_pattern: shrec21_full_dataset.zip::model_[0-9]/particle_locations.txt
+    format: csv
+    axes: null
+    shape:
+    - 1401
+    - 7
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: points-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Space-separated, no header: class (PDB id, vesicle, fiducial), X, Y, Z (slice),
+      rotation_Z1, rotation_X, rotation_Z2, in grandmodel voxel coordinates (readme). Shape is for model_0.'
+  notes: 'Listing: zip central directories of all five Dataverse files read with Range GETs (complete;
+    size = exact sum). Members are deflate-compressed MRC (mode 2 float32, no extended header). MRC headers
+    carry no usable calibration (cella 0 or 1 A/px defaults); 1 nm voxel from readme. Sample: class_mask
+    and occupancy_mask of model_0 decoded in full (16 integer values 0-15; 1402 ids 0-1401); reconstruction
+    value_range from the first 25 of 512 slices only; grandmodel.mrc (noise-free model, 512^3 float32,
+    header range 0-29.56, same shape as reconstruction) is left out of arrays: miao has no slot for it.
+    Organism: none, the volumes are simulated (PDB structures). Normalization not documented. The no-mirroring
+    zip has masks/grandmodel on a 512x512x180 grid vs 512^3 reconstruction (offset not documented), so
+    the arrays describe the full_dataset zip only.'
