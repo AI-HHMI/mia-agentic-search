@@ -27,7 +27,7 @@ imaging:
 data:
   formats:
   - jpeg
-  size_bytes: 49353638000
+  size_bytes: 49354480538
   n_items: 7400
   access: open
   download_url: https://zenodo.org/api/records/19994554/files/imgs.zip/content
@@ -58,10 +58,90 @@ provenance:
   - https://zenodo.org/api/records/19994554/files/imgs.zip/content
   - https://zenodo.org/api/records/19994554/files/control-imgs.zip/content
   - https://zenodo.org/api/records/19994554/files/img-metadata.csv/content
+  - https://zenodo.org/records/19994554/files/imgs.zip
+  - https://zenodo.org/records/19994554/files/control-imgs.zip
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-03T08:55:00Z'
-notes: 'Read readme.md, the img-metadata.csv header and both zip listings (imgs.zip 7,400 JPG, 47.8 GB; control-imgs.zip 297 JPG). Pixel side length is stated as 0.182 to 0.187 um (hemocytometer calibration); 185 nm is the midpoint. The plasma species is not named in the text, so organism is empty. Labels are the plasma type of each slide (image-level), not drawn on the images. Linked thesis and software record were not opened, so publications is empty. Size = imgs.zip + control-imgs.zip.'
+  last_checked: '2026-11-03T09:35:00Z'
+notes: 'Read readme.md, the img-metadata.csv header and both zip listings (imgs.zip 7,400 JPG, 47.8 GB; control-imgs.zip 297 JPG). Pixel side length is stated as 0.182 to 0.187 um (hemocytometer calibration); 185 nm is the midpoint. The plasma species is not named in the text, so organism is empty. Labels are the plasma type of each slide (image-level), not drawn on the images. Linked thesis and software record were not opened, so publications is empty. enricher: size 49,354,480,538 B from the complete listing of all 8 Zenodo files (was the two zips only, rounded).'
+technical:
+  method: sample
+  inspected_at: '2026-11-03T09:35:00Z'
+  size_source: file-listing
+  layout:
+    tree: |
+      ./  8 files, 49,354,480,538 B (Zenodo API file list; zips expanded with listing.py)
+        imgs.zip  47.8 GB
+          imgs/                        7400 files  47.9 GB  0000.JPG ... 7399.JPG
+        control-imgs.zip  1.6 GB
+          control-imgs/hemocytometer.JPG
+          control-imgs/NC1CT_03-06/{A,B}_{10,64}/    148 files  IMG_NNNN.JPG
+          control-imgs/RECT_03-05-26/{A,B}_{10,64}/  148 files  IMG_NNNN.JPG
+        img-metadata.csv  331,646 B   (7400 rows: plasma type per image)
+        exp-metadata.csv  4,123 B
+        readme.md / readme.html / readme.pdf
+        photo-types-diagram.png
+    n_files: 7705
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/19994554/files/imgs.zip::imgs/0000.JPG
+    - https://zenodo.org/api/records/19994554/files/img-metadata.csv/content
+    size_bytes: 7930729
+    description: One exploratory image (imgs/0000.JPG, AC3, 4000x6000 RGB) plus the label table img-metadata.csv that gives its plasma type.
+  arrays:
+  - role: raw
+    path_pattern: imgs/*.JPG
+    format: jpeg
+    axes: yxs
+    shape:
+    - 4000
+    - 6000
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 13
+    - 184
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: Colour (RGB, samples differ) photographs from a Canon EOS Rebel T7i on the microscope (EXIF).
+      The readme states the files were not modified after capture.
+  - role: label
+    path_pattern: img-metadata.csv
+    format: csv
+    axes: null
+    shape:
+    - 7400
+    - 8
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes:
+    - id: NC1
+      name: normal pooled plasma
+    - id: AC3
+      name: prolonged clotting time pooled plasma
+    - id: F08D
+      name: factor VIII deficient pooled plasma
+    - id: F09D
+      name: factor IX deficient pooled plasma
+    - id: F11D
+      name: factor XI deficient pooled plasma
+    alignment: not-applicable
+    alignment_notes: 'Image-level class table: one row per image, joined to the raw files by img_name (0000.JPG
+      ... 7399.JPG); columns experiment, exp_type (class), slide_type, img_type (endpoint_10 exploratory / endpoint_64
+      grid), img_number, img_name, img_xpos, img_ypos. 1480 rows per class, 50 experiments.'
+  notes: 'listing.py over all 8 Zenodo files with --expand-zips: {"source": "zip + single-file", "n_files": 8, "total_bytes":
+    49354480538, "complete": true, "size_source": "file-listing", "zip_members": 7697}. probe.py on imgs/0000.JPG
+    (7,599,083 B): JPEG 4000x6000x3 uint8. sample.py on it: [13, 184], mean 129, std 34, samples not identical (from
+    one sample). normalization none because the readme states photo files were not otherwise modified after capture.
+    img-metadata.csv read in full (7400 rows, 1480 per class). Pixel size: the readme states 0.182 to 0.187 um per
+    pixel side (hemocytometer calibration) and a field of about 0.737 x 1.106 mm; the record''s 185 nm is a value within
+    that stated range, not a single stated value. Control images (control-imgs.zip) have no class rows in img-metadata.csv.
+    Direct downloads: imgs.zip and img-metadata.csv (both range-capable).'
