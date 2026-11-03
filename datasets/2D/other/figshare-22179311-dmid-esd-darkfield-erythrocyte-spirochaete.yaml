@@ -1,18 +1,19 @@
 schema_version: '1.2'
 id: figshare-22179311-dmid-esd-darkfield-erythrocyte-spirochaete
-title: 'DMID-ESD: A Benchmark Darkfield Microscopy Image Dataset for Erythrocytes and Spirochaete Detection and Classification'
+title: 'DMID-ESD: A Benchmark Darkfield Microscopy Image Dataset for Erythrocytes and Spirochaete Detection and
+  Classification'
 short_name: Erythrocyte and spirochaete detection (darkfield)
-description: >-
-  11,794 darkfield microscopy images containing two object types, erythrocytes and spirochaete, each with
-  categorical (class) and localization labels. Released as a benchmark for object detection, image
-  classification and feature extraction.
+description: 11,794 darkfield microscopy images containing two object types, erythrocytes and spirochaete, each
+  with categorical (class) and localization labels. Released as a benchmark for object detection, image classification
+  and feature extraction.
 landing_url: https://figshare.com/articles/dataset/DMID-ESD_zip/22179311
 doi: 10.6084/m9.figshare.22179311.v2
 repository: Figshare
 accession: null
 authors: []
 publications:
-- title: 'DMID-ESD: A Benchmark Darkfield Microscopy Image Dataset for Erythrocytes and Spirochaete Detection and Classification'
+- title: 'DMID-ESD: A Benchmark Darkfield Microscopy Image Dataset for Erythrocytes and Spirochaete Detection and
+    Classification'
   doi: 10.1016/j.bspc.2025.108595
   url: https://doi.org/10.1016/j.bspc.2025.108595
 date_published: '2023-04-13'
@@ -27,22 +28,24 @@ imaging:
   labels_stains: []
 data:
   formats:
-  - other
+  - png
   size_bytes: 345550307
-  n_items: 11794
+  n_items: 7284
   access: open
   download_url: https://ndownloader.figshare.com/files/40122634
   download_method: http
 annotations:
   present: true
   types:
-  - bounding-box
+  - semantic-segmentation
   - classification
-  coverage: unknown
-  format: null
+  coverage: partial
+  format: PNG masks (masks/NNN.png, same stem as original images/NNN.png); class labels as folder names of cropped
+    sub-images
   source: unknown
 ml:
   tasks:
+  - segmentation
   - detection
   - classification
   splits_provided: false
@@ -59,19 +62,93 @@ provenance:
   - https://api.figshare.com/v2/articles/22179311
   - https://researchwith.stevens.edu/en/publications/dmid-esd-a-benchmark-darkfield-microscopy-image-dataset-for-eryth/
   - https://api.crossref.org/works/10.1016/j.bspc.2025.108595
-  confidence: 0.55
+  confidence: 0.6
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-11-03T22:26:00Z'
-notes: >-
-  Single 345.6 MB DMID-ESD.rar on Figshare (v2). The Figshare API gives CC BY 4.0; the paper's abstract
-  page only says "freely available for non-commercial use", so the license terms are inconsistent between
-  sources. The RAR cannot be listed remotely (peek_archive handles zip only), so image format, annotation
-  file format (class + localization, probably boxes), splits and image resolution are unverified. The paper
-  (Biomed. Signal Process. Control, 10.1016/j.bspc.2025.108595) is not open access and its full text was not
-  readable (Europe PMC/Crossref abstract only; ScienceDirect returned 403). Magnification, microscope,
-  species and darkfield-vs-other modality enum could not be taken from the paper; modality is 'other'
-  because the schema has no darkfield value. Annotation types are inferred from "categorical and
-  localization information" in the abstract.
+  annotations_verified: true
+  last_checked: '2026-11-03T23:00:00Z'
+notes: 'Single 345.6 MB DMID-ESD.rar on Figshare (v2). Figshare API: CC BY 4.0; the paper abstract says "freely
+  available for non-commercial use" (license inconsistent between sources). Paper (10.1016/j.bspc.2025.108595) not
+  open access; voxel size, species, microscope unknown. Modality ''other'' = darkfield light microscopy (no enum
+  value). enricher: RAR5 index read: 366 original RGB images, 274 masks (92 originals have none), 2865 erythrocyte
+  + 4053 spirochaete crops, readme.docx; formats other->png; n_items 11794 (paper) -> 7284 images in the archive;
+  types bounding-box -> semantic-segmentation (no box files in the archive; masks give localization), coverage partial;
+  annotations_verified true.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "DMID-ESD.rar (RAR5, 345,550,307 B; 349,211,459 B unpacked)\n└── DMID-ESD/\n    ├── readme.docx      \
+      \               (14 KB)\n    ├── original images/   366 × NNN.png (001–366, 177.6 MB)\n    ├── masks/    \
+      \         274 × NNN.png (3.4 MB)\n    └── sub-images/\n        ├── erythrocytes/  2865 × ero_<n>.png (43.5\
+      \ MB)\n        └── spirochaete/   4053 × spi_<n>.png (124.6 MB)"
+    n_files: 7559
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: DMID-ESD/original images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1188
+    - 1805
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: DMID-ESD/masks/*.png
+    format: png
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: png
+    value_range: null
+    normalization: unknown
+    encoding: unknown
+    classes: null
+    alignment: unknown
+    alignment_notes: 'masks/NNN.png pairs with original images/NNN.png by file name (274 of 366 originals have a
+      mask). Not decoded: masks are RAR-compressed (method 3).'
+  - role: label
+    path_pattern: DMID-ESD/sub-images/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 106
+    - 98
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: png
+    value_range:
+    - 8
+    - 255
+    normalization: unknown
+    encoding: other
+    classes:
+    - id: erythrocytes
+      name: erythrocytes
+    - id: spirochaete
+      name: spirochaete
+    alignment: unknown
+    alignment_notes: Cropped RGB object patches; class = folder name (ero_*/spi_*). No mapping from crops back to
+      original-image coordinates found. Sampled ero_10 106x98x3, spi_1035 42x97x3.
+  notes: 'Listing from the RAR5 quick-open index (end of archive, 669 KB range request): 7559 files, complete. 3418
+    members are stored uncompressed, 4141 RAR-compressed (all masks, 365/366 originals, readme.docx); compressed
+    members can''t be read by range request and no RAR decoder is allowed, so the masks and readme.docx were not
+    decoded (mask encoding/shape unknown). Sampled stored members original images/061.png (RGB uint8 1188x1805,
+    channels differ), ero_10.png, spi_1035.png; value ranges from these single samples. Raw shape from one image;
+    other originals may differ. Size: Figshare API file size (archive); unpacked 349,211,459 B. Voxel size not found;
+    checked: PNG headers of sampled files, Figshare API description, Stevens/Crossref abstract, Europe PMC (paper
+    not OA, no preprint found); readme.docx unreadable (compressed). Download: whole RAR is a direct link (usable);
+    RAR members aren''t fetchable by TensorSwitch (zip only), so no sample unit. Organism unknown (not stated).'
