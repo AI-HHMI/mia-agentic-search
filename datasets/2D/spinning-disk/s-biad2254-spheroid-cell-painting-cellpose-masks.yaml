@@ -1,0 +1,196 @@
+schema_version: '1.2'
+id: s-biad2254-spheroid-cell-painting-cellpose-masks
+title: High-content morphological profiling by Cell Painting in 3D spheroids
+short_name: Colorectal spheroid Cell Painting (confocal)
+description: Spinning-disk confocal images of HCT-116 and HT-29 colorectal cancer spheroids treated with 52 clinically
+  relevant drugs, stained with an adapted five-channel Cell Painting panel, cleared and imaged in 12 optical sections
+  (5 µm apart) per well as 16-bit OME-TIFF. The deposit includes per-slice nucleus and whole-cell segmentation masks
+  (.npy) produced by retrained Cellpose cyto2 models, plus CellProfiler feature tables.
+landing_url: https://www.ebi.ac.uk/biostudies/bioimages/studies/S-BIAD2254
+doi: 10.6019/S-BIAD2254
+repository: BioImageArchive
+accession: S-BIAD2254
+authors:
+- Christa Ringers
+- David Holmberg
+- Anders Larsson
+- Bomi Jung
+- Malin Jarvius
+- Anna Luchniak
+- Dan Rosén
+- Martin Johansson
+- Polina Georgiev
+- Brinton Seashore-Ludlow
+- Torkild Visnes
+- Åsmund Flobak
+- Jordi Carreras-Puigvert
+- Ola Spjuth
+publications:
+- title: High-content morphological profiling by Cell Painting in 3D spheroids
+  doi: 10.1038/s41467-026-78596-5
+  url: https://doi.org/10.1038/s41467-026-78596-5
+date_published: '2026-01-09'
+imaging:
+  modality:
+  - spinning-disk
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 227
+    y: 227
+    z: null
+  channels: 5
+  organism:
+  - Homo sapiens
+  sample: HCT-116 and HT-29 colorectal cancer cell-line spheroids grown in 384-well ultra-low-attachment plates,
+    drug-treated for 48 h, fixed, cleared and Cell Painting stained; 12 optical sections per well at 5 µm spacing,
+    each stored as a separate 2D file
+  labels_stains:
+  - Hoechst
+  - PHA
+  - WGA
+  - SYTO
+data:
+  formats:
+  - ome-tiff
+  size_bytes: 384455072477
+  n_items: 25856
+  access: open
+  download_url: https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/254/S-BIAD2254/
+  download_method: ftp
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: 'Per-plane boolean NumPy .npy masks (1024x1024, bool) under results/<plate>/segmentation/: cell_segmented_<well>_<z>.npy
+    (whole cell, from PHAandWGA) and nuclei_segmented_<well>_<z>.npy (from HOECHST); listed in spher_colo52-Annotations.json'
+  source: automatic
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/pharmbio/colopaint3D
+license:
+  spdx: CC0-1.0
+  url: null
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-11-04T12:38:50Z'
+  evidence_urls:
+  - https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD2254
+  - https://www.ebi.ac.uk/biostudies/bioimages/studies/S-BIAD2254
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13686983/fullTextXML
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-11-04T13:20:00Z'
+notes: 'Masks are Cellpose cyto2 (retrained) outputs run in CellProfiler, not manual; only in-focus cells were segmented
+  (BIA annotation criteria). The paper''s expert reference set (cellposeGUI, 8,492 nuclei / 6,429 cells) is not
+  a separate file in the deposit. Voxel size 0.227 µm/pixel in-plane (BioStudies + paper); planes are 5 µm apart
+  and stored as separate 2D files, so z is null. enricher: masks are boolean foreground, not instance IDs (npy header
+  |b1; touching cells merge), so types instance-segmentation -> semantic-segmentation. enricher: size 384,455,072,477
+  B from the complete BioStudies files API listing (185,533 files; was null). enricher: n_items = 25,856 well-planes
+  (5 channel OME-TIFFs + 1 cell + 1 nuclei mask each; was null). enricher: OME header PhysicalSizeX/Y 0.225312 µm
+  vs documented 0.227 µm; kept the documented value.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "S-BIAD2254/Files/                                  185,533 files  384.46 GB (BioStudies files API)\n\
+      \  spher-colo52/                                    129,280 OME-TIFF  302.81 GB\n    PB000137_spher-colo52_HCT116_L1/\
+      \                22,960  53.78 GB\n    PB000138_spher-colo52_HCT116_L1/                22,960  53.78 GB\n\
+      \    PB000139_spher-colo52_HCT116-HT29_L2/           21,120  49.47 GB\n    PB000140_spher-colo52_HCT116-HT29_L2/\
+      \           21,120  49.47 GB\n    PB000141_spher-colo52_HT29_L1/                  20,320  47.59 GB\n    PB000142_spher-colo52_HT29_L1/\
+      \                  20,800  48.72 GB\n      Well-<well>-z<0-15>-<CONC|HOECHST|MITO|PHAandWGA|SYTO>.ome.tiff\
+      \  ~2.34 MB each\n  results/                                          51,730 files  70.85 GB\n    PB0001{37..42}/featICF_{cells,cytoplasm,nuclei}.parquet\
+      \   18 files, 1.1-1.4 GB each\n    PB0001{37..42}/segmentation/                    51,712 .npy  (8,128-9,184\
+      \ per plate)\n      cell_segmented_<well>_<z>.npy, nuclei_segmented_<well>_<z>.npy  1,048,704 B each\n  detection_example_dataset/\
+      \                        4,480 OME-TIFF  10.21 GB\n    Well-<B02..>-z<0-55>-<HOECHST|SYTO>.ome.tiff  (spheroid-detection\
+      \ z-scan demo, no masks)\n  processed_profiles/exp1_main..exp5_edu/           34 parquet/csv  0.53 GB\n  feature_extraction/\
+      \                               3 files (2 Cellpose models CP_*, .cppipe)\n  image_acquisition/          \
+      \                      6 files (.ga3, .bin, .xml, filter_settings.tsv)\n"
+    n_files: 185533
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/254/S-BIAD2254/Files/results/PB000137/segmentation/cell_segmented_B02_5.npy
+    size_bytes: 3390372
+    description: 'One plane (plate PB000137, well B02, z5): its whole-cell mask (listed URL) and its raw image spher-colo52/PB000137_spher-colo52_HCT116_L1/Well-B02-z5-PHAandWGA.ome.tiff,
+      which downloaded with curl but failed every probe --download-check on ftp.ebi.ac.uk connection resets, so
+      it is not listed'
+  arrays:
+  - role: raw
+    path_pattern: spher-colo52/*/Well-*-z*-*.ome.tiff
+    format: ome-tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 99
+    - 2204
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 'One single-channel 2D plane per file (OME: SizeC=1, SizeZ=1, series axes YX). 5 channels (CONC,
+      HOECHST, MITO, PHAandWGA, SYTO) x 16 planes (z0-z15) per well; the paper and BIA say 12 optical sections 5
+      µm apart, the files have 16 indices. Channel and plane are in the file name.'
+  - role: label
+    path_pattern: results/*/segmentation/cell_segmented_*.npy
+    format: other
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: bool
+    compression: none
+    value_range:
+    - 0
+    - 1
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: cell
+    alignment: same-grid
+    alignment_notes: 'Pairing: results/<plate>/segmentation/cell_segmented_<well>_<z>.npy <-> spher-colo52/<plate>_*/Well-<well>-z<z>-PHAandWGA.ome.tiff
+      (source_image in the BIA annotation table). Same 1024x1024 grid; in the sample, mean raw intensity is 1686
+      inside the mask vs 325 outside. Plain .npy (no pickle). Filled foreground; touching cells merge (4 components
+      in the sampled plane).'
+  - role: label
+    path_pattern: results/*/segmentation/nuclei_segmented_*.npy
+    format: other
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: bool
+    compression: none
+    value_range: null
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: 'Pairing: nuclei_segmented_<well>_<z>.npy <-> Well-<well>-z<z>-HOECHST.ome.tiff (BIA source_image).
+      Header read for nuclei_segmented_E19_2.npy (PB000138): |b1, (1024, 1024); not sampled.'
+  notes: 'Listing: BioStudies files API (www.ebi.ac.uk/biostudies/api/v1/files/S-BIAD2254, 186 pages), 185,533 files
+    with exact sizes, matching /info (files: 185533); tools/listing.py has no BioStudies handler and ftp.ebi.ac.uk
+    resets most connections from this sandbox. Sampled one PHAandWGA plane (2,341,668 B) and its cell mask (1,048,704
+    B); value_range is from that one plane. normalization none: the paper calls the deposit raw 16-bit OME-TIFF.
+    Raw files are uncompressed, OME PhysicalSize 0.225312 µm (docs: 0.227 µm). No README was found in the listing
+    (the paper mentions one). Each file is a direct https link on ftp.ebi.ac.uk; there is no single archive (download_url
+    stays the folder; Globus link on the BIA page). The stacks could be read as 3D (16 planes per well and channel,
+    5 µm step), but the masks are per plane, so the record stays 2D.'
