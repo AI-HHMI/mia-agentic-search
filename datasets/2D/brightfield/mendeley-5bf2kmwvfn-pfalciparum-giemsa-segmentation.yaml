@@ -34,19 +34,20 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: null
+  size_bytes: 1769549146
   n_items: 883
   access: open
-  download_url: https://prod-dcd-datasets-cache-zipfiles.s3.eu-west-1.amazonaws.com/5bf2kmwvfn-1.zip
+  download_url: https://data.mendeley.com/datasets/5bf2kmwvfn/1
   download_method: http
 annotations:
   present: true
   types:
   - semantic-segmentation
   - classification
-  - bounding-box
+  - points
   coverage: partial
-  format: ground-truth segmentation images (PNG) and life-stage labels with locations (Excel)
+  format: binary ground-truth PNG per image (<name>_GT.png, 0/255) and LifeStages.xlsx (imageName, stage, center_x, center_y;
+    3663 rows)
   source: manual
 ml:
   tasks:
@@ -66,17 +67,122 @@ provenance:
   - https://data.mendeley.com/datasets/5bf2kmwvfn/1
   - https://datasetninja.com/malaria-segmentation
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7585298/fullTextXML
-  confidence: 0.75
+  - https://data.mendeley.com/public-api/datasets/5bf2kmwvfn?version=1
+  - https://data.mendeley.com/public-api/datasets/5bf2kmwvfn/files?folder_id=root&version=1
+  - https://data.mendeley.com/public-files/datasets/5bf2kmwvfn/files/bf805109-99fc-45ae-a8bd-f8159694f319/file_downloaded
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-11-04T20:33:08Z'
-notes: 'Hosted on Mendeley Data (repository set to other). Read the Mendeley landing page (CC BY 4.0; PNG originals, PNG ground-truth
-  images, Excel life-stage labels) and the open-access paper (Methods, Data availability). Counts disagree: the Mendeley page
-  and Dataset Ninja say 883 images (page says 17 patients), the paper says 837 images from 16 patients after dropping one
-  patient; n_items uses the repository figure. Each paper image is a 4 x 4 composite of 1382 x 1030 px tiles that were separated.
-  Pixel size and microscope are not stated (the paper only gives an average red blood cell diameter of about 124 px). Ground
-  truth is a binary segmentation of manually selected dark-stained blobs (parasites, WBC, debris), not every cell, hence partial
-  coverage. The zip could not be listed (Mendeley API unreachable, S3 server reports no file size), so file names and sizes
-  are unverified; the S3 zip URL is from the Dataset Ninja page. No train/test split is provided.'
+  annotations_verified: true
+  last_checked: '2026-11-04T20:55:00Z'
+notes: 'Hosted on Mendeley Data. CC BY 4.0 (Mendeley API data_licence). Counts: Mendeley/readme 883 images from 17 patients
+  ("Trip" prefixes), the paper 837 from 16 after dropping one. Ground truth: binary masks of manually selected dark-stained
+  blobs (parasites, WBC, debris), hence partial coverage. Pixel size not stated (paper: mean RBC diameter 124 px). organisms:
+  Homo sapiens and Plasmodium falciparum are in every image (parasites in human blood), not separate folders. enricher: annotation
+  type bounding-box -> points (xlsx gives center_x/center_y per object, no boxes). enricher: download_url was the Mendeley
+  S3 cache zip, now HTTP 403; set to the landing page (no single archive), files are direct per-file links. enricher: size
+  1,769,549,146 B from the Mendeley file API (was null).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: 'Giemsa stained images/   883 files  1,766,921,202 B  .png  (''Trip 017 Day 1 19-10-05 Image 14 add_10.png'')
+
+      Ground truth images/     883 files      2,511,702 B  .png  (''... add_10_GT.png'')
+
+      LifeStages.xlsx                         115,722 B
+
+      readme.txt                                  520 B
+
+      '
+    n_files: 1768
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.mendeley.com/public-files/datasets/5bf2kmwvfn/files/98642bf9-84d3-4375-9606-8cb4adfd5cc2/file_downloaded
+    - https://data.mendeley.com/public-files/datasets/5bf2kmwvfn/files/66a18ae9-98ad-4df2-bff4-463f650e31e7/file_downloaded
+    size_bytes: 1523928
+    description: 'Smallest pair: ''Trip 029 Day 1 22-11-05 Image 10 add_13.png'' and its _GT.png mask.'
+  arrays:
+  - role: raw
+    path_pattern: Giemsa stained images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1030
+    - 1382
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 17
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB colour brightfield image (Giemsa); channels differ (samples_identical false).
+  - role: label
+    path_pattern: Ground truth images/*_GT.png
+    format: png
+    axes: yx
+    shape:
+    - 1030
+    - 1382
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: dark-stained blob (parasite, WBC or debris)
+    alignment: same-grid
+    alignment_notes: 'Pairing: ''Giemsa stained images/<name>.png'' <-> ''Ground truth images/<name>_GT.png'' (all 883 pair
+      up; same 1030x1382 grid).'
+  - role: label
+    path_pattern: LifeStages.xlsx
+    format: other
+    axes: null
+    shape:
+    - 3663
+    - 4
+    shape_varies: false
+    dtype: unknown
+    compression: other
+    encoding: points-table
+    classes:
+    - id: R
+      name: R
+    - id: LR-ET
+      name: LR-ET
+    - id: MT
+      name: MT
+    - id: LT
+      name: LT
+    - id: Esch
+      name: Esch
+    - id: Lsch
+      name: Lsch
+    - id: Seg
+      name: Seg
+    - id: Gam
+      name: Gam
+    - id: WBC
+      name: WBC
+    - id: DEBRIS
+      name: DEBRIS
+    alignment: same-grid
+    alignment_notes: 'Excel table: imageName (raw PNG file name), stage code, center_x, center_y in raw pixel coordinates;
+      covers all 883 images. Codes as written in the file (counts: Esch 714, DEBRIS 691, R 542, Lsch 447, LT 368, MT 333,
+      LR-ET 307, Seg 208, WBC 51, Gam 2).'
+  notes: 'Listing: Mendeley public API (root + 2 folders), exact per-file sizes, 1768 files; listing.py cannot list Mendeley,
+    so size_source page-stated. Probed and sampled the smallest raw/GT pair (1,523,928 B): raw RGB uint8 1030x1382, 17-255;
+    GT gray uint8 {0,255}, 0.4% foreground. LifeStages.xlsx read (115,722 B): 3663 rows, 10 stage codes. Value ranges from
+    one sample. Voxel size not found; checked: PNG headers (no calibration), Mendeley API/description, readme.txt, Abbas &
+    Dijkstra 2020 full text (only RBC diameter 124 px), Lemieux 2009 PNAS (no open full text). No direct archive: the S3 cache
+    zip returns HTTP 403; per-file links (public-files/.../file_downloaded) are direct and range-capable.'
