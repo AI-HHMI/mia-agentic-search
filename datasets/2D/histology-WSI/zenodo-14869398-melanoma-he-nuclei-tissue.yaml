@@ -1,0 +1,188 @@
+schema_version: '1.2'
+id: zenodo-14869398-melanoma-he-nuclei-tissue
+title: Melanoma Histopathology Dataset with Tissue and Nuclei Annotations
+short_name: Melanoma H&E nuclei and tissue (histology)
+description: 205 H&E-stained primary and metastatic melanoma ROIs (1024x1024 px, 40x, 0.23 um/px) with GeoJSON annotations
+  of nuclei (ten classes, HoVer-Net pre-labelled then corrected in QuPath) and tissue (six classes), reviewed by a dermatopathologist.
+  Released for training nuclei and tissue segmentation models; 5120x5120 px context ROIs are also provided.
+landing_url: https://zenodo.org/records/14869398
+doi: 10.5281/zenodo.14869398
+repository: Zenodo
+accession: null
+authors:
+- Mark Schuiveling
+- Willeke Blokx
+- Gerben Breimer
+publications:
+- title: A novel dataset for nuclei and tissue segmentation in melanoma with baseline nuclei segmentation and tissue segmentation
+    benchmarks
+  doi: 10.1093/gigascience/giaf011
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC11837757/
+date_published: '2025-02-14'
+imaging:
+  modality:
+  - histology-WSI
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 230
+    y: 230
+    z: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: Primary (103) and metastatic (102) melanoma specimens from routine diagnostic slides, Hamamatsu scanner, 40x
+  labels_stains:
+  - H&E
+data:
+  formats:
+  - tiff
+  size_bytes: 14786299425
+  n_items: 205
+  access: open
+  download_url: https://zenodo.org/records/14869398
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - semantic-segmentation
+  - classification
+  coverage: dense
+  format: GeoJSON (QuPath polygons with classification names; one nuclei file and one tissue file per ROI)
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  - classification
+  splits_provided: false
+  benchmark: PUMA challenge (grand-challenge.org); hidden test sets
+  baseline_code_url: null
+license:
+  spdx: CC0-1.0
+  url: https://creativecommons.org/publicdomain/zero/1.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-11-04T02:15:04Z'
+  evidence_urls:
+  - https://zenodo.org/records/14869398
+  - https://zenodo.org/api/records/14869398
+  - https://zenodo.org/api/records/14869398/versions/latest
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11837757/fullTextXML
+  confidence: 0.85
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-11-04T03:40:00Z'
+notes: 'Size confirmed by Zenodo file listing (4 zips, 14,786,299,425 B). Record is v4; v5 (zenodo 15050523, 2025-03-19) re-adds
+  metastatic_roi_103. Paper (GigaScience giaf011, PUMA dataset): 0.23 um/px at 40x; 103 primary + 103 metastatic public training
+  ROIs, 104 ROIs held back for the PUMA challenge test sets. Nuclei: HoVer-Net (PanNuke) pre-segmentation, manually corrected
+  in QuPath and reviewed by a dermatopathologist; tissue: manual. Hence source mixed: nuclei = proofread, tissue = manual.
+  enricher: added paper, size_bytes from listing (was null), download_url = landing page (four zips, no single archive).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './  4 zips, 14.8 GB
+
+      01_training_dataset_tif_ROIs.zip/01_training_dataset_tif_ROIs/  205 .tif, 859.9 MB (training_set_{primary,metastatic}_roi_NNN.tif)
+
+      01_training_dataset_tif_context_ROIs.zip/01_training_dataset_tif_context_ROIs/  205 .tif, 21.5 GB (..._roi_NNN_context.tif)
+
+      01_training_dataset_geojson_nuclei.zip/  205 .geojson, 269.4 MB (..._roi_NNN_nuclei.geojson, no folder)
+
+      01_training_dataset_geojson_tissue.zip/01_training_dataset_geojson_tissue/  205 .geojson, 76.3 MB (..._roi_NNN_tissue.geojson)'
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/14869398/files/01_training_dataset_tif_ROIs.zip::01_training_dataset_tif_ROIs/training_set_metastatic_roi_001.tif
+    - https://zenodo.org/records/14869398/files/01_training_dataset_geojson_nuclei.zip::training_set_metastatic_roi_001_nuclei.geojson
+    - https://zenodo.org/records/14869398/files/01_training_dataset_geojson_tissue.zip::01_training_dataset_geojson_tissue/training_set_metastatic_roi_001_tissue.geojson
+    size_bytes: 6033992
+    description: one 1024x1024 ROI (metastatic_roi_001) with its nuclei and tissue GeoJSON
+  arrays:
+  - role: raw
+    path_pattern: 01_training_dataset_tif_ROIs.zip/01_training_dataset_tif_ROIs/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 1024
+    - 1024
+    - 4
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 10
+    - 255
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: plain single-page TIFF, photometric RGB with 4 samples per pixel (extra 4th sample, likely alpha; not
+      confirmed)
+  - role: label
+    path_pattern: 01_training_dataset_geojson_nuclei.zip/*_nuclei.geojson
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: polygons
+    classes:
+    - id: null
+      name: nuclei_tumor
+    - id: null
+      name: nuclei_lymphocyte
+    - id: null
+      name: nuclei_apoptosis
+    - id: null
+      name: stroma
+    - id: null
+      name: vascular endothelium
+    - id: null
+      name: histiocyte
+    - id: null
+      name: melanophage
+    - id: null
+      name: plasma cell
+    - id: null
+      name: neutrophil
+    - id: null
+      name: epithelium
+    alignment: same-grid
+    alignment_notes: 'QuPath GeoJSON Polygon features in ROI pixel coordinates (sample coords within 0-1023); pair by stem:
+      <roi>.tif <-> <roi>_nuclei.geojson'
+  - role: label
+    path_pattern: 01_training_dataset_geojson_tissue.zip/01_training_dataset_geojson_tissue/*_tissue.geojson
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: polygons
+    classes:
+    - id: null
+      name: tissue_tumor
+    - id: null
+      name: tissue_necrosis
+    - id: null
+      name: stroma
+    - id: null
+      name: epidermis
+    - id: null
+      name: blood vessel
+    - id: null
+      name: background
+    alignment: same-grid
+    alignment_notes: 'pair by stem: <roi>.tif <-> <roi>_tissue.geojson'
+  notes: 'Listing: Zenodo API + zip central directories, 820 members, complete. Probed 2 ROI TIFF headers (1024x1024x4 uint8,
+    uncompressed, plain). Sampled metastatic_roi_001.tif: range [10,255] (one sample); normalization none = 8-bit scanner
+    RGB (inferred). GeoJSON read with peek_archive: nuclei roi_001 has 65+ Polygon features (classes seen: nuclei_tumor, nuclei_lymphocyte,
+    nuclei_apoptosis; first 200 KB only); tissue roi_001 has 2 features (tissue_tumor, tissue_necrosis). Class names beyond
+    those observed are from the Zenodo description and are written there without the nuclei_/tissue_ prefix; exact property
+    strings for unobserved classes not verified. Voxel size 230 nm from Zenodo description and paper; z null (2D). Context-ROI
+    header not probed (deflated member, range read failed). The 205 context ROIs (*_context.tif, 5120x5120 centred on each
+    ROI per paper, ~104.9 MB each, unannotated) are not listed as an array.'
