@@ -1,17 +1,24 @@
 schema_version: '1.2'
 id: figshare-32024349-embryo-image-captions-ivf
-title: Expert-Annotated Embryo Image Dataset with Natural Language Descriptions for evidence-based patient communication
-  in IVF
+title: Expert-Annotated Embryo Image Dataset with Natural Language Descriptions for evidence-based patient
+  communication in IVF
 short_name: Embryo images with expert text descriptions
-description: 1,100 time-lapse microscopy images of human embryos, each paired with an embryologist-written natural-language
-  description of developmental stage and morphological features. Captions come in a gold set (expert-written) and
-  a larger silver set, as JSONL. Intended for fine-tuning vision-language models for evidence-based patient communication
-  in IVF.
+description: 1,100 time-lapse microscopy images of human embryos, each paired with an embryologist-written
+  natural-language description of developmental stage and morphological features. Captions come in a gold
+  set (expert-written) and a larger silver set, as JSONL. Intended for fine-tuning vision-language models
+  for evidence-based patient communication in IVF.
 landing_url: https://figshare.com/articles/dataset/32024349
 doi: 10.6084/m9.figshare.32024349.v1
 repository: Figshare
 accession: '32024349'
-authors: []
+authors:
+- Nicklas Neu
+- Thomas Ebner
+- Jasmin Primus
+- Raphael Zefferer
+- Bernhard Schenkenfelder
+- Mathias Brunbauer
+- Florian Kromp
 publications: []
 date_published: '2026-04-15'
 imaging:
@@ -37,8 +44,8 @@ annotations:
   types:
   - other
   coverage: dense
-  format: caption_gold.jsonl (29.9 KB, expert-written) and caption_silver.jsonl (276.8 KB), natural-language descriptions
-    keyed to the image file names
+  format: caption_gold.jsonl (29.9 KB, expert-written) and caption_silver.jsonl (276.8 KB), natural-language
+    descriptions keyed to the image file names
   source: manual
 ml:
   tasks:
@@ -60,13 +67,96 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-04T14:31:37Z'
-notes: 'peek_archive on images.zip: 1,100 JPEGs under images_2/, names like AA83-7_WELL7_RUN005.jpeg. That naming
-  matches the EmbryoScope time-lapse dataset already in the catalog (zenodo-6390798-human-embryo-time-lapse-phases,
-  "embryo images previously published" per the figshare description), so the images overlap with that record; what
-  is new here are the expert natural-language captions (gold and silver JSONL). Annotation type is "other" because
-  captions are not in the enum, and the ML task is "other" (vision-language fine-tuning). figshare API gives CC
-  BY 4.0 and the three files; size_bytes is their sum. No authors are listed on the figshare record and no published
-  paper DOI is given (an arXiv preprint, 2604.16528, was seen only in search results and was not read), so authors
-  and publications are empty. Magnification, pixel size and the number of distinct embryos are not stated on the
-  record.'
+  last_checked: '2026-11-04T16:10:00Z'
+notes: 'peek_archive on images.zip: 1,100 JPEGs under images_2/, names like AA83-7_WELL7_RUN005.jpeg.
+  That naming matches the EmbryoScope time-lapse dataset already in the catalog (zenodo-6390798-human-embryo-time-lapse-phases,
+  "embryo images previously published" per the figshare description), so the images overlap with that
+  record; what is new here are the expert natural-language captions (gold and silver JSONL). Annotation
+  type is "other" because captions are not in the enum, and the ML task is "other" (vision-language fine-tuning).
+  figshare API gives CC BY 4.0 and the three files; size_bytes is their sum. No published paper DOI is
+  given (an arXiv preprint, 2604.16528, was seen only in search results and was not read), so publications
+  is empty. Magnification, pixel size and the number of distinct embryos are not stated on the record.
+  enricher: authors from figshare API (was empty).'
+technical:
+  method: header
+  inspected_at: '2026-11-04T16:10:00Z'
+  inspected_urls:
+  - https://api.figshare.com/v2/articles/32024349
+  - https://ndownloader.figshare.com/files/63759519
+  - https://ndownloader.figshare.com/files/63759525
+  - https://ndownloader.figshare.com/files/63759522
+  bytes_downloaded: 364348
+  size_source: file-listing
+  layout:
+    tree: "32024349/  3 files, 32,301,695 B (figshare API)\n  images.zip                  31,994,984 B\n\
+      \    images_2/                 1100 .jpeg, e.g. AA83-7_WELL7_RUN005.jpeg\n  caption_gold.jsonl \
+      \         29,872 B   100 lines  {\"filename\", \"caption\"}\n  caption_silver.jsonl        276,839\
+      \ B  1000 lines {\"filename\", \"caption\"}\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/63759519::images_2/AG274-2_WELL2_RUN330.jpeg
+    - https://ndownloader.figshare.com/files/63759525
+    size_bytes: null
+    description: One embryo image named in caption_gold.jsonl plus the gold caption file (100 captions
+      keyed by file name).
+  arrays:
+  - role: raw
+    path_pattern: images_2/*.jpeg
+    format: jpeg
+    axes: yx
+    shape:
+    - 500
+    - 500
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    lossy: true
+    chunks: null
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Single-channel 500 x 500 JPEG frames (2 probed). File names <slide>_WELL<n>_RUN<frame>.jpeg.
+  - role: label
+    path_pattern: caption_gold.jsonl
+    format: json
+    axes: null
+    shape:
+    - 100
+    - 2
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: none
+    encoding: other
+    alignment: not-applicable
+    alignment_notes: JSON Lines, one {"filename", "caption"} object per image; filename matches a JPEG
+      in images_2/. Expert-written (gold).
+  - role: label
+    path_pattern: caption_silver.jsonl
+    format: json
+    axes: null
+    shape:
+    - 1000
+    - 2
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    lossy: false
+    chunks: null
+    value_range: null
+    normalization: none
+    encoding: other
+    alignment: not-applicable
+    alignment_notes: JSON Lines, same keys as the gold file, for the other 1000 images (silver set).
+  notes: 'Listing: figshare API, 3 files with exact sizes (32,301,695 B), images.zip central directory:
+    1100 .jpeg under images_2/. Probes: 2 JPEG members, 500 x 500 single channel uint8. Captions: gold
+    100 lines, silver 1000 lines (line counts of the downloaded JSONL files), 100 + 1000 = 1100 images.
+    Not sampled: tools/sample.py does not read zip members whose URL lacks a .zip name (figshare ndownloader
+    ids), so no pixel value range. Voxel size not found; checked: JPEG headers, figshare API description,
+    the caption files; the arXiv preprint 2604.16528 was not read. Captions are free text, not arrays;
+    2D data are not convertible by the miao layout yet.'
