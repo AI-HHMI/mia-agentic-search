@@ -3,8 +3,8 @@ id: warwick-beta-cell-lipsym-pancreas-ihc
 title: Warwick Beta Cell dataset - insulin-stained mouse pancreas with expert beta-cell markings
 short_name: Mouse pancreas beta cells (brightfield IHC)
 description: 20 brightfield images (1024x768, 40x) of mouse pancreatic sections stained with hematoxylin and DAB-insulin,
-  released with the LIPSyM beta-cell detection paper. Beta-cell centres were marked independently by three experts; the
-  archive also holds a union ground-truth mask per image and the LIPSyM detector output for comparison.
+  released with the LIPSyM beta-cell detection paper. Beta-cell centres were marked independently by three experts; the archive
+  also holds a union ground-truth mask per image and the LIPSyM detector output for comparison.
 landing_url: https://warwick.ac.uk/fac/cross_fac/tia/software/lipsym
 doi: null
 repository: LabWebsite
@@ -25,7 +25,7 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Mus musculus
   sample: Pancreatic tissue sections from transgenic plns-c-MycERTAM mice, insulin immunohistochemistry
@@ -36,7 +36,7 @@ data:
   formats:
   - jpeg
   - png
-  size_bytes: 6400000
+  size_bytes: 6373269
   n_items: 20
   access: open
   download_url: https://warwick.ac.uk/fac/cross_fac/tia/software/lipsym/warwick_beta_cell_dataset.zip
@@ -69,12 +69,95 @@ verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-11-04T09:10:00Z'
-notes: 'Landing page, zip listing (peek_archive) and paper full text (Europe PMC PMC3312708) checked. The archive holds 20 JPEG
-  images, manual_annotation/ folders for experts luxian, yifang and sylvie plus m_unionGT, and result_LIPSyM/ detector outputs
-  (not ground truth). The README is inconsistent about image count ("25", "45"); the zip and the paper both give 20. No dataset
-  license is stated: the page only says the LIPSyM software is free for non-commercial use and must not be distributed without
-  permission of the author, and does not say whether that covers the data. The paper states 40x and 1024x768 pixels but no pixel
-  size, and the page, README and paper give no voxel size. Markings are cell centres drawn as images; the paper stresses they are
-  subjective, which is why a fused ground truth is provided. The paper also uses a second 10-image H&E lymphocyte set, which is
-  not in this archive.'
+  last_checked: '2026-11-04T09:20:00Z'
+notes: 'Landing page, zip listing (peek_archive) and paper full text (Europe PMC PMC3312708) checked. The archive holds 20
+  JPEG images, manual_annotation/ folders for experts luxian, yifang and sylvie plus m_unionGT, and result_LIPSyM/ detector
+  outputs (not ground truth). The README is inconsistent about image count ("25", "45"); the zip and the paper both give 20.
+  No dataset license is stated: the page only says the LIPSyM software is free for non-commercial use and must not be distributed
+  without permission of the author, and does not say whether that covers the data. The paper states 40x and 1024x768 pixels
+  but no pixel size, and the page, README and paper give no voxel size. Markings are cell centres drawn as images; the paper
+  stresses they are subjective, which is why a fused ground truth is provided. enricher: channels 3 (RGB JPEG, probed; was
+  null); size 6,373,269 B from zip listing. 2 of 20 images (IMG_0040, IMG_0044) are smaller than their 768x1024 markings.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "warwick_beta_cell_dataset.zip (6,373,269 B, 122 members)\n  warwick_beta_cell_dataset/\n    README.txt.txt, List_Of_Better_Images.txt\n\
+      \    images/IMG_00NN.jpg                                20 files  6.3 MB  RGB JPEG\n    manual_annotation/m_luxian/IMG_00NN_luxian.png\
+      \     20 files  expert markings\n    manual_annotation/m_sylvie/IMG_00NN_sylvie.png     20 files  expert markings\n\
+      \    manual_annotation/m_yifang/IMG_00NN_yifang.png     20 files  expert markings\n    manual_annotation/m_unionGT/IMG_00NN_unionGT.png\
+      \   20 files  union ground truth\n    result_LIPSyM/IMG_00NN_result.png                  20 files  detector output (not\
+      \ GT)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://warwick.ac.uk/fac/cross_fac/tia/software/lipsym/warwick_beta_cell_dataset.zip::warwick_beta_cell_dataset/images/IMG_0073.jpg
+    - https://warwick.ac.uk/fac/cross_fac/tia/software/lipsym/warwick_beta_cell_dataset.zip::warwick_beta_cell_dataset/manual_annotation/m_unionGT/IMG_0073_unionGT.png
+    size_bytes: 374608
+    description: One 768x1024 RGB image and its union ground-truth marking image (zip members); the whole zip is 6.4 MB.
+  arrays:
+  - role: raw
+    path_pattern: warwick_beta_cell_dataset/images/IMG_*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 768
+    - 1024
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 24
+    - 227
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB brightfield (hematoxylin + DAB-insulin), samples not identical. 18 of 20 images are 768x1024; IMG_0040
+      is 730x991 and IMG_0044 690x1017.
+  - role: label
+    path_pattern: warwick_beta_cell_dataset/manual_annotation/m_unionGT/IMG_*_unionGT.png
+    format: png
+    axes: yx
+    shape:
+    - 768
+    - 1024
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 255
+      name: beta cell centre (marked dot)
+    alignment: same-grid
+    alignment_notes: images/IMG_00NN.jpg pairs with manual_annotation/m_unionGT/IMG_00NN_unionGT.png (and m_luxian/_luxian,
+      m_sylvie/_sylvie, m_yifang/_yifang per expert). Markings are small 255-valued dots at cell centres (186 px in IMG_0073).
+      All 20 union PNGs are 768x1024, so for IMG_0040 (730x991) and IMG_0044 (690x1017) the grid does not match the image
+      and the offset/scaling is undocumented.
+  - role: label
+    path_pattern: warwick_beta_cell_dataset/manual_annotation/m_[lsy]*/IMG_*.png
+    format: png
+    axes: yx
+    shape:
+    - 768
+    - 1024
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    encoding: unknown
+    classes: null
+    alignment: same-grid
+    alignment_notes: Per-expert markings (luxian, sylvie, yifang), probed 768x1024 gray uint8 (one luxian file); values not
+      sampled, so encoding left unknown. Same pairing and size caveat as the union markings.
+  notes: 'Listed the one zip (central directory, exact sizes, 122 members, complete). Probed all 20 images (JPEG RGB uint8)
+    and the union GT PNGs (gray uint8 768x1024), plus one m_luxian PNG. Sampled IMG_0073.jpg (371,240 B downloaded): 768x1024x3
+    uint8, 24..227, mean 140, std 38 (one sample). IMG_0073_unionGT.png: values {0: 786246, 255: 186}, binary dot markings
+    at cell centres. result_LIPSyM/ is the paper''s detector output, not ground truth. README says 25 / 45 images; the zip
+    holds 20 (List_Of_Better_Images.txt lists the same 20 IDs). voxel size not found; checked: JPEG/PNG headers (no calibration),
+    landing page, README, List_Of_Better_Images.txt, paper full text (states 40x and 1024x768 only); no code repo or upstream
+    source linked. Download: zip is direct with range requests, but warwick.ac.uk is not on TensorSwitch''s fetch allowlist.
+    License: none found on the page, README or paper (page footer links only general Warwick site terms).'
