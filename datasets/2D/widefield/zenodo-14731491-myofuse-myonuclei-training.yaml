@@ -1,0 +1,161 @@
+schema_version: '1.2'
+id: zenodo-14731491-myofuse-myonuclei-training
+title: MyoFuse training images - Hoechst/MyHC fluorescence of C2C12 and human myotubes with nuclei masks
+  and in-myotube labels
+short_name: Myotube nuclei masks (C2C12 and human, widefield)
+description: 20 normalized 1000x1000 px widefield fluorescence image patches (10 mouse C2C12, 10 human
+  primary myotube cultures) with MyHC and Hoechst staining, paired with 20 mask TIFFs and a labels file
+  used to train the MyoFuse classifier that decides whether each nucleus lies inside a myotube (fusion
+  index).
+landing_url: https://zenodo.org/records/14731491
+doi: 10.5281/zenodo.14731491
+repository: Zenodo
+accession: null
+authors:
+- Benjamin Lair
+- Remy Flores-Flores
+publications:
+- title: MyoFuse is a fully AI-based workflow for automated quantification of skeletal muscle cell fusion
+    in vitro
+  doi: 10.1038/s41598-026-40047-y
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC13003016/
+date_published: '2025-02-13'
+imaging:
+  modality:
+  - widefield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Mus musculus
+  - Homo sapiens
+  sample: C2C12 mouse myoblast-derived myotubes and human primary skeletal muscle cell myotubes (rectus
+    abdominis), immunostained for myosin heavy chain (MF-20) and nuclei
+  labels_stains:
+  - MF-20 myosin heavy chain / Alexa Fluor 514
+  - Hoechst 33342
+data:
+  formats:
+  - tiff
+  size_bytes: 39828874
+  n_items: 20
+  access: open
+  download_url: https://zenodo.org/records/14731491/files/Training%20Images%20MyoFuse%20v1.0.0.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - classification
+  coverage: dense
+  format: 'Masks/: int64 TIFF nucleus instance IDs (one per image, same name); labels: Svetlana napari
+    label file (zip container, not opened)'
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  - classification
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: https://github.com/BenLair/MyoFuse
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-11-04T08:34:58Z'
+  evidence_urls:
+  - https://zenodo.org/records/14731491
+  - https://constantinpape.github.io/torch-em/torch_em/data/datasets/light_microscopy/myofuse.html
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13003016/fullTextXML
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-11-04T10:50:00Z'
+notes: 'Zip listing (peek_archive): Images/ 20 TIFFs (H_*, 10 human; M_*, 10 mouse), Masks/ 20 TIFFs with
+  matching names, and a 62.9 MB extensionless "labels" entry. Paper (open access, full text read): the
+  classifier was trained on 10 patches (1000x1000 px) per cell type, annotated with the Svetlana napari
+  plugin from the MyHC channel only; nuclei masks come from a Cellpose model trained on 5 images with
+  human-in-the-loop. Source is therefore mixed (manual classification labels, Cellpose-derived nuclei
+  masks). Pixel size not stated in the paper or on Zenodo. The paper also states the test images and code
+  are on GitHub (MIT). enricher: channels 1 (was 2): each image TIFF holds one float32 channel (MyHC per
+  the paper''s annotation note, inferred). organisms: Homo sapiens = Images/H_*, Masks/H_*; Mus musculus
+  = Images/M_*, Masks/M_*.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Training Images MyoFuse v1.0.0.zip  39,828,874 B (deflated)\n  Training Images MyoFuse v1.0.0/\n\
+      \    labels        62.9 MB  Svetlana label file (zip container)\n    Images/       20 .tif  80.0\
+      \ MB  H_*.tif (10 human), M_*.tif (10 mouse)\n    Masks/        20 .tif  160.0 MB same names as\
+      \ Images/"
+    n_files: 41
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/14731491/files/Training%20Images%20MyoFuse%20v1.0.0.zip::Training Images
+      MyoFuse v1.0.0/Images/H_11.tif
+    - https://zenodo.org/records/14731491/files/Training%20Images%20MyoFuse%20v1.0.0.zip::Training Images
+      MyoFuse v1.0.0/Masks/H_11.tif
+    size_bytes: 12000544
+    description: 'One human patch (H_11): 1000x1000 float32 image and its int64 nucleus instance mask.'
+  arrays:
+  - role: raw
+    path_pattern: '*/Images/*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 1000
+    - 1000
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - 0.0
+    - 1.0
+    normalization: rescaled
+    alignment: not-applicable
+    alignment_notes: 'Single-channel float32 patch, values 0-1 (paper: "max to one" normalization of the
+      training images).'
+  - role: label
+    path_pattern: '*/Masks/*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 1000
+    - 1000
+    shape_varies: false
+    dtype: int64
+    compression: none
+    value_range:
+    - 0
+    - 523
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing: Masks/<name>.tif belongs to Images/<name>.tif (identical names, identical
+      shape). Nucleus instance IDs, 0 = background (paper: Cellpose 2.0 human-in-the-loop nuclei model).'
+  - role: label
+    path_pattern: '*/labels'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    encoding: unknown
+    classes: null
+    alignment: unknown
+    alignment_notes: In-myotube / out-of-myotube nucleus classes from the Svetlana napari plugin (paper).
+      The file starts with a zip header and is not a known array format; not opened (possible pickled
+      content).
+  notes: 'Listing: Zenodo API + zip central directory, 1 zip with 41 members. Probed Images/H_11.tif and
+    Masks/H_11.tif headers; sampled the H_11 and M_4 pairs (tools/sample.py). H_11: raw float32 in [0,
+    1]; mask int64 0-361, 368 IDs. M_4: raw float32 0-1 (mean 0.16), mask 0-523, 524 IDs. Value ranges
+    are from one sample each. The 62.9 MB "labels" member is a zip container of unknown type; not opened,
+    per the untrusted-data rule. Voxel size not found; checked: TIFF headers (no calibration), Zenodo
+    record, paper full text (Methods give the Zeiss Cell Observer, 10x/0.3 and ORCA-R2, but no pixel size).
+    The GitHub repo BenLair/MyoFuse could not be read from this session.'
