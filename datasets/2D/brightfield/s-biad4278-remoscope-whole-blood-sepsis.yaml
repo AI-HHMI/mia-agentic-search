@@ -1,12 +1,8 @@
 schema_version: '1.2'
 id: s-biad4278-remoscope-whole-blood-sepsis
-title: Remoscope Label-free whole-blood images of sepsis positive, non-infectious
-  critically ill, and healthy human samples.
+title: Remoscope Label-free whole-blood images of sepsis positive, non-infectious critically ill, and healthy human samples.
 short_name: Label-free blood images, sepsis (brightfield)
-description: About 2.8 TB of label-free near-UV brightfield whole-blood image frames
-  (up to 20,000 per dataset) from 137 Remoscope datasets of healthy donors, non-infectious
-  critically ill and sepsis-positive patients, with patient-level Sepsis-3 class labels
-  and instance segmentation masks (fine-tuned Cellpose-SAM).
+description: About 2.8 TB of label-free near-UV brightfield whole-blood image frames (up to 20,000 per dataset) from 137 Remoscope datasets of healthy donors, non-infectious critically ill and sepsis-positive patients, with patient-level Sepsis-3 class labels and instance segmentation masks (fine-tuned Cellpose-SAM).
 landing_url: https://www.ebi.ac.uk/biostudies/bioimages/studies/S-BIAD4278
 doi: 10.6019/S-BIAD4278
 repository: BioImageArchive
@@ -17,8 +13,7 @@ authors:
 - Ilakkiyan Jeyakumar
 - Charles R. Langelier
 publications:
-- title: Rapid Sepsis Diagnosis in Critically Ill Adults with Remoscope Label-Free
-    Whole-Blood Imaging
+- title: Rapid Sepsis Diagnosis in Critically Ill Adults with Remoscope Label-Free Whole-Blood Imaging
   doi: 10.64898/2026.10.08.26364716
   url: https://doi.org/10.64898/2026.10.08.26364716
 date_published: '2026-10-30'
@@ -36,10 +31,10 @@ imaging:
 data:
   formats:
   - zarr
-  size_bytes: null
-  n_items: null
+  size_bytes: 2445434807862
+  n_items: 136
   access: open
-  download_url: null
+  download_url: https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/278/S-BIAD4278
   download_method: http
 annotations:
   present: true
@@ -47,8 +42,7 @@ annotations:
   - classification
   - instance-segmentation
   coverage: dense
-  format: Patient-level class labels (file list annotation_filelist.json); instance
-    segmentation zarr v3
+  format: Patient-level class labels (file list annotation_filelist.json); instance segmentation zarr v3
   source: mixed
 ml:
   tasks:
@@ -66,18 +60,69 @@ provenance:
   evidence_urls:
   - https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD4278
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22Rapid+Sepsis+Diagnosis+in+Critically+Ill+Adults+with+Remoscope+Label-Free+Whole-Blood+Imaging%22&format=json&resultType=core&pageSize=3
-  confidence: 0.7
+  - https://www.ebi.ac.uk/biostudies/api/v1/files/S-BIAD4278?start=0&length=600
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-11-05T08:02:59Z'
-notes: 'From the BioStudies record: 88 healthy, 20 non-infectious critically ill,
-  22 sepsis-positive and 7 indeterminate datasets; each dataset is a ZipStore zarr
-  v2 image stack plus a zarr v3 instance segmentation. Classification labels are patient-level
-  (Sepsis-3 adjudication by two physicians; healthy by questionnaire), not per image.
-  Segmentation masks are model-generated (fine-tuned Cellpose-SAM), not manual. Paper
-  is a preprint without open full text (abstract only read via Europe PMC), so pixel
-  size and exact size were not found; ~2.8 TB stated on the page. File listing not
-  inspected (548 files per BioStudies info), so annotations_verified is false. Indeterminate-status
-  samples are excluded from the authors training.'
+  annotations_verified: true
+  last_checked: '2026-11-05T09:20:00Z'
+notes: 'From BioStudies: 88 healthy, 20 non-infectious ICU, 22 sepsis, 7 indeterminate datasets. Class labels are patient/experiment-level (Sepsis-3 by two physicians; healthy self-reported); masks are automatic (fine-tuned Cellpose-SAM), so source is mixed. Indeterminate samples were excluded from the authors training. enricher: size 2.45 TB and 136 image stacks from the BioStudies file list (548 files; was null); annotations_verified from the listing (136 *_masks.zarr.zip). Pixel size not stated in the study record; papers not readable this run.'
+technical:
+  method: metadata-only
+  size_source: file-listing
+  layout:
+    tree: "S-BIAD4278/Files/remoscope_ICU_healthy/   548 files, 2.45 TB\n  annotation/\n    class_labels_by_experiment.csv   per experiment: class_label, model p_*, pred_argmax\n    class_labels_by_sample.csv       per patient\n  metadata/\n    experiments_clinical_metadata.csv, cohort_summary.csv\n  data/<NNNN>/   136 folders, 0001-0136\n    <NNNN>_images.zarr.zip         zarr v2 zip store, H x W x N uint8 (6.9-15.9 GB)\n    <NNNN>_masks.zarr.zip          zarr v3 zip store, H x W x N uint16 labels (0.43-1.2 GB)\n    <NNNN>_regionprops.parquet     per-cell region properties (0.41-1.4 GB)\n    <NNNN>_image_metadata.csv      per-image telemetry (2.5-5.7 MB)\n"
+    n_files: 548
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: remoscope_ICU_healthy/data/*/*_images.zarr.zip
+    format: zarr
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: uint8
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'One zarr v2 ZipStore per experiment; BioStudies file description: "H x W x N images, uint8" (N = up to 20,000 frames at 30 fps). Axes left null: the N axis is a stack of independent 2D frames, and the zarr metadata could not be read this run.'
+  - role: label
+    path_pattern: remoscope_ICU_healthy/data/*/*_masks.zarr.zip
+    format: zarr
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: uint16
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: unknown
+    alignment_notes: 'Pairing: <NNNN>_masks.zarr.zip <-> <NNNN>_images.zarr.zip in the same folder. Study description: "unique segmentations have increasing integer values in the segmentation frame"; file description says H x W x N uint16, i.e. presumably the image grid, but shapes were not read.'
+  - role: label
+    path_pattern: remoscope_ICU_healthy/annotation/class_labels_by_experiment.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes:
+    - id: null
+      name: Healthy
+    - id: null
+      name: ICU control
+    - id: null
+      name: Sepsis
+    - id: null
+      name: Indeterminate
+    alignment: not-applicable
+    alignment_notes: One class_label per experiment_id (= data/<NNNN>), plus model probabilities; class names from the BioStudies file table class_label column.
+  notes: 'Listing: BioStudies files API (548 files, exact sizes, total 2,445,434,807,862 B); tools/listing.py on the study page only saw the page itself, and ftp.ebi.ac.uk reset every connection from this run (probe.py and curl, 6+ tries), so no header was read: shapes, chunking and compression of the zarr zip stores are still open, and no sample or download link could be checked. No single archive: files are per experiment (folder URL from the BioStudies info API). Voxel size not found; checked: BioStudies REMBI image acquisition (no pixel size), Remoscope paper PMID 40631413 (not open access, abstract only), sepsis preprint 10.64898/2026.10.08.26364716 (Europe PMC 503, medRxiv 403), zarr attributes (unreachable).'
