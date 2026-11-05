@@ -1,0 +1,146 @@
+schema_version: '1.2'
+id: huggingface-wniu-piscis-rna-fish-spots
+title: Piscis RNA FISH spot detection training and test dataset
+short_name: RNA FISH spot detection, manual spots (widefield)
+description: 598 single-molecule RNA FISH / HCR RNA FISH widefield fluorescence images (358 experimental from human fibroblasts, melanoma, lung adenocarcinoma and macrophages, plus 240 synthetic images
+  from the deepBlink datasets) with per-spot coordinates annotated manually in NimbusImage and refined to subpixel accuracy by Gaussian fitting. Split into 418 training, 89 validation and 91 test images
+  (256x256 crops). Released with the Piscis spot-detection method.
+landing_url: https://huggingface.co/datasets/wniu/Piscis
+doi: null
+repository: HuggingFace
+accession: null
+authors:
+- Zhehao Niu
+- Anthony O'Farrell
+- Jiayi Li
+- Sam Reffsin
+- Naveen Jain
+- Ian Dardani
+- Yogesh Goyal
+- Arjun Raj
+publications:
+- title: 'Piscis: a novel loss estimator of the F1 score enables accurate spot detection in fluorescence microscopy images via deep learning'
+  doi: 10.1101/2024.01.31.578123
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC10862914
+date_published: null
+imaging:
+  modality:
+  - widefield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Homo sapiens
+  sample: Fixed human cells (fibroblasts, melanoma, lung adenocarcinoma, macrophages) labelled by RNA FISH or HCR RNA FISH; plus synthetic spot images
+  labels_stains:
+  - RNA FISH probes
+data:
+  formats:
+  - tiff
+  size_bytes: 1291310879
+  n_items: 598
+  access: open
+  download_url: https://huggingface.co/datasets/wniu/Piscis
+  download_method: http
+annotations:
+  present: true
+  types:
+  - points
+  coverage: dense
+  format: Per-image CSV spot coordinates (y/N.csv) next to N.tif images; also NimbusImage JSON and packaged .npz
+  source: manual
+ml:
+  tasks:
+  - detection
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: MIT
+  url: https://huggingface.co/datasets/wniu/Piscis
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-11-04T23:34:11Z'
+  evidence_urls:
+  - https://huggingface.co/datasets/wniu/Piscis
+  - https://huggingface.co/api/datasets/wniu/Piscis
+  - https://pmc.ncbi.nlm.nih.gov/articles/PMC10862914
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10862914/fullTextXML
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-11-05T00:40:00Z'
+notes: 'License MIT from the Hugging Face dataset card metadata (paper is CC BY-NC-ND 4.0). Pixel size not stated in the paper (60x/1.4NA Nikon Ti-E), dataset card, TIFF headers or the Piscis code README.
+  HF repo holds snapshots 20230616/20230709/20230905 (.npz, .nc, NimbusImage .json) and 20251212 (598 .tif + 598 .csv in <subset>/<split>/x|y/); this record describes 20251212. Synthetic subset (240 images
+  from deepBlink Particle/Microtubule/Receptor/Vesicle) is mixed in; deepBlink is a separate catalog entry. enricher: channels 1 (single-channel TIFFs, was null); size 1.29 GB from the full HF listing,
+  all snapshots (was null); 20251212 alone is 76 MB.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "huggingface.co/datasets/wniu/Piscis/   1272 files, 1.29 GB\n  README.md            license: mit\n  20230616/            17 .npz (per-dataset, with_dapi/, combined/)\n  20230709/            22\
+      \ .npz (per channel, with_dapi/, combined/)\n  20230905/            23 .npz, 6 .nc raw images, 6 NimbusImage .json\n  20251212/            1196 files, 76 MB\n    <dataset>_<channel>/   9 experimental\
+      \ subsets (A3_GFP1_A594, untreated014_CY5, ...)\n    {microtubule,particle,receptor,vesicle}_subset/   synthetic (deepBlink)\n      {train,val,test}/x/NN.tif   image crop (yx)\n      {train,val,test}/y/NN.csv\
+      \   spot coordinates, 2 columns"
+    n_files: 1272
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/wniu/Piscis/resolve/main/20251212/A3_GFP1_A594/train/x/00.tif
+    - https://huggingface.co/datasets/wniu/Piscis/resolve/main/20251212/A3_GFP1_A594/train/y/00.csv
+    size_bytes: 136881
+    description: Experimental crop A3_GFP1_A594/train/x/00.tif (256x256 uint16) and its 110 spot coordinates.
+  arrays:
+  - role: raw
+    path_pattern: 20251212/[0-9ACWu]*/*/x/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 629
+    - 9950
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 358 experimental RNA FISH crops, one channel each; edge tiles are smaller (seen 254x256, 256x154).
+  - role: raw
+    path_pattern: 20251212/*_subset/*/x/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range:
+    - 0.0
+    - 0.8478
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 240 synthetic deepBlink images; dtype varies by subset (particle float32 in [0, 1], microtubule uint8).
+  - role: label
+    path_pattern: 20251212/*/*/y/*.csv
+    format: csv
+    axes: null
+    shape:
+    - 110
+    - 2
+    shape_varies: true
+    dtype: float64
+    compression: none
+    encoding: points-table
+    alignment: same-grid
+    alignment_notes: 'y/NN.csv pairs with x/NN.tif in the same split folder (Piscis data.py: y_path = split/y/<x stem>.csv). No header; one spot per row, two subpixel pixel coordinates in the crop grid
+      (np.savetxt of tiled coords); column order not documented, likely row, column.'
+  notes: 'Listed all 1272 HF files (complete, exact sizes, 1,291,310,879 bytes; 20251212 = 76,145,591 bytes). Probed experimental TIFFs (256x256, 254x256, 256x154 uint16, uncompressed, no calibration) and
+    synthetic ones (particle 256x256 float32, microtubule 256x256 uint8). Sampled A3_GFP1_A594/train/x/00.tif (uint16 [629, 9950], 131 KB) and particle_subset/train/x/00.tif (float32 [0, 0.848]); value
+    ranges from one sample each. Experimental normalization none inferred (uint16 in camera range, unclipped). Label CSV read: 111 lines, 2 float columns. Counts match the paper: 358 experimental + 240
+    synthetic. Voxel size not found; checked: TIFF headers, HF API and card, README, paper full text (Methods), Piscis GitHub README and data.py. Download: per-file HF resolve links, no single archive.
+    2D data, so not covered by the miao layout yet.'
