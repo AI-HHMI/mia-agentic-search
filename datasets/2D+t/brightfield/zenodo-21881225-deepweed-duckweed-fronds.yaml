@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-21881225-deepweed-duckweed-fronds
 title: Deepweed - Dataset
 short_name: Duckweed (Wolffia) fronds time-lapse (brightfield)
-description: Time-lapse RGB images of Wolffia australiana duckweed fronds grown in 12-well Petri dishes (1664 frames,
-  1600x1200 JPEG) and in PDMS microfluidic chips (PNG frames and an AVI video), captured with a USB digital microscope,
-  plus an independent test set of 10 Petri-dish frames with 324 manually annotated frond instance masks.
+description: Time-lapse RGB images of Wolffia australiana duckweed fronds grown in 12-well Petri dishes (1664 frames, 1600x1200
+  JPEG) and in PDMS microfluidic chips (PNG frames and an AVI video), captured with a USB digital microscope, plus an independent
+  test set of 10 Petri-dish frames with 324 manually annotated frond instance masks.
 landing_url: https://zenodo.org/records/21881225
 doi: 10.5281/zenodo.21881225
 repository: Zenodo
@@ -29,15 +29,15 @@ imaging:
   channels: 3
   organism:
   - Wolffia australiana
-  sample: Wolffia australiana DWC304 fronds in hydroponic medium, in 12-well plate Petri dishes and PDMS microfluidic
-    chips, imaged at 20-min intervals over 110 h with an LED digital microscope (USB2-MICRO-250X)
+  sample: Wolffia australiana DWC304 fronds in hydroponic medium, in 12-well plate Petri dishes and PDMS microfluidic chips,
+    imaged at 20-min intervals over 110 h with an LED digital microscope (USB2-MICRO-250X)
   labels_stains: []
 data:
   formats:
   - jpeg
   - png
-  size_bytes: 3300000000
-  n_items: 1674
+  size_bytes: 3301722123
+  n_items: 1779
   access: open
   download_url: null
   download_method: http
@@ -46,7 +46,8 @@ annotations:
   types:
   - instance-segmentation
   coverage: sparse
-  format: PNG label masks, one integer id per frond, 0 = background (masks/ folder of independent_test_set.zip)
+  format: PNG instance label masks (uint16, one integer id per frond, 0 = background), masks/ in independent_test_set.zip,
+    same stem as images/*.jpeg
   source: manual
 ml:
   tasks:
@@ -65,18 +66,109 @@ provenance:
   - https://zenodo.org/records/18843917
   - https://zenodo.org/api/records/21881225
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13713196/fullTextXML
-  confidence: 0.6
+  - https://zenodo.org/records/21881225/files/independent_test_set.zip
+  confidence: 0.65
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-06T09:55:00Z'
-notes: 'Weak fit, kept at low confidence: images come from a USB digital microscope (RGB, brightfield-like, not a
-  research microscope) and only a small part is annotated. Zenodo version v2 (concept DOI 10.5281/zenodo.18843917)
-  has three zips (3.3 GB total): petri_dish.zip (1664 JPEG frames, 1600x1200, plus one mp4, unlabelled), microfluidics.zip
-  (132 PNG frames, 9 CSV, 1 pkl, 1 AVI of 307 MB), independent_test_set.zip (10 JPEG frames + 10 PNG instance masks, 324
-  fronds, with annotate.py and README). The only masks in the record are the 10 test masks; the 80 Petri-dish and 60
-  microfluidic training annotations described in the paper were not seen in any file listing (microfluidics.zip listing
-  was only partly read). The unlabelled time-lapse frames may serve for tracking or self-supervised use. Pixel size
-  not stated on the Zenodo page or in the paper Methods (Table S1 hardware specs not read). n_items = 1664 + 10 frames
-  (microfluidic frames not counted).'
+  last_checked: '2026-11-06T10:40:00Z'
+notes: 'Weak fit: RGB images from a USB digital microscope (USB2-MICRO-250X), brightfield-like. Zenodo v2 (concept DOI 10.5281/zenodo.18843917):
+  petri_dish.zip (1664 JPEG frames 1600x1200 at 5-min intervals, log.txt, mp4; unlabelled), microfluidics.zip (115 PNG frames,
+  an AVI, tracking CSVs/pkl and plot PNGs in output/; no masks), independent_test_set.zip (10 JPEG frames copied from petri_dish.zip
+  + 10 PNG instance masks, 324 fronds, drawn blind in napari). The 80 petri / 60 microfluidic training annotations in the
+  paper are not in this record. enricher: full listing read; n_items = 1664 petri + 115 microfluidic unique frames (was 1674);
+  size 3,301,722,123 B from the listing (was 3.3e9 stated). Pixel size not stated (Zenodo, README, paper, GitHub README; Table
+  S1 not read).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Zenodo 21881225 (v2): 3 zips, 3,301,722,123 B, 1831 members\npetri_dish.zip (3.15 GB)/petri_dish/  1664 .jpeg (YYYY_MM_DD_HH_MM_SS),\
+      \ log.txt, petri_dish_timelapse.mp4\nmicrofluidics.zip (130 MB)/microfluidics/  115 new_img_<n>.png, duckweed_25_0504_multiple.avi\n\
+      \  output/  9 csv (tracks, lineage), tracking_checkpoint.pkl, 17 plot png\nindependent_test_set.zip (18.6 MB)/  README.md,\
+      \ annotate.py\n  images/  10 .jpeg (copies of petri_dish frames)\n  masks/   10 .png instance masks, same stem"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/21881225/files/independent_test_set.zip::images/2024_02_25_17_45_01.jpeg
+    - https://zenodo.org/records/21881225/files/independent_test_set.zip::masks/2024_02_25_17_45_01.png
+    size_bytes: 1910343
+    description: One independent-test-set frame (2024_02_25_17_45_01.jpeg) and its instance mask (34 fronds).
+  arrays:
+  - role: raw
+    path_pattern: images/*.jpeg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1200
+    - 1600
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: independent_test_set.zip; RGB colour. Copies of frames in petri_dish.zip.
+  - role: label
+    path_pattern: masks/*.png
+    format: png
+    axes: yx
+    shape:
+    - 1200
+    - 1600
+    shape_varies: false
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 38
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    alignment: same-grid
+    alignment_notes: 'masks/<stem>.png pairs with images/<stem>.jpeg (same 1200x1600 grid, raw has a trailing RGB axis). Ids
+      are per-frond, not contiguous (sample: 34 ids, max 38); README: one integer id per frond, 0 = background.'
+  - role: raw
+    path_pattern: petri_dish/*.jpeg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1200
+    - 1600
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: petri_dish.zip, unlabelled time-lapse (1664 frames, 5-min spacing per file names); shape from Zenodo
+      description and the test-set copies, not probed here.
+  - role: raw
+    path_pattern: microfluidics/new_img_*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1024
+    - 251
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: microfluidics.zip, 115 unlabelled chip frames; one probed (new_img_0.png).
+  notes: 'Complete listing of the 3 zips (Zenodo API + zip directories). Probe: test mask PNG gray uint16 1200x1600 deflate;
+    test JPEG 1200x1600x3 uint8; microfluidics/new_img_0.png RGB 1024x251x3 uint8. Sample (one pair, 1.9 MB): raw 0..255 (full
+    range, mean 101), mask 0..38 with 35 unique values (34 fronds + background, matching the README table). value_range is
+    from that one sample. Only the 10 test masks are labels. No single archive holds the whole dataset (3 zips), so data.download_url
+    stays null; direct files: https://zenodo.org/records/21881225/files/<name>.zip. Voxel size not found; checked: PNG/JPEG
+    headers, Zenodo API description, test-set README, petri log.txt (timestamps only), paper full text (only 512x512 input
+    size and 50-pixel tracking radius), GitHub README (pixel thresholds only); supplementary Table S1 not available as text.'
