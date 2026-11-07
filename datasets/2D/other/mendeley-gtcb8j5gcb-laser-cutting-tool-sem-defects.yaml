@@ -23,7 +23,7 @@ imaging:
   voxel_size_nm: null
   channels: null
   organism: []
-  sample: Laser-processed carbide cutting tool surfaces (SEM microstructure images at various laser parameters)
+  sample: Laser-processed tungsten carbide (WC) cutting tool surfaces, backscatter SEM (Hitachi TM3030) at x1000
   labels_stains: []
 data:
   formats:
@@ -38,7 +38,7 @@ annotations:
   present: true
   types:
   - other
-  coverage: unknown
+  coverage: partial
   format: SEM Labeling Session.mat (MATLAB ground-truth labeling session categorising surface defect types)
   source: manual
 ml:
@@ -57,16 +57,105 @@ provenance:
   - https://data.mendeley.com/public-api/datasets/gtcb8j5gcb
   - https://data.mendeley.com/public-files/datasets/gtcb8j5gcb/files/9e5362cf-d49c-4f22-8df8-dcba2bf5dd31/file_downloaded
   - https://api.crossref.org/works/10.1016/j.procir.2022.05.198
+  - https://repository.lboro.ac.uk/articles/conference_contribution/Surface_defect_detection_and_prediction_in_carbide_cutting_tools_treated_by_lasers/19952339
+  - https://ndownloader.figshare.com/files/35504378
   confidence: 0.55
 verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-11-07T07:57:18Z'
-notes: 'Image zip listing (peek_archive): 78 files (about 50 TIFF, rest JPEG), file names encode laser parameters (e.g. L0.030_F100_V500_D0.02).
-  Labels come as one MATLAB file, SEM Labeling Session.mat (96 kB); it was not opened, so whether labels are boxes or masks
-  and the exact defect classes are unverified. The page and the paper abstract (via search) mention defect types such as porosity,
-  splatter, cracks, balling, voids; an AlexNet R-CNN detector was trained on these labels. Paper full text is paywalled (Europe
-  PMC and Crossref have no full text; publisher page returned 403), so SEM instrument, magnification and pixel size are not
-  stated on the dataset page and could not be checked in the Methods. Only 78 images, a small dataset. SEM is not a schema
-  modality value, so modality is other.'
+  last_checked: '2026-11-07T09:25:00Z'
+notes: 'Images: 49 TIFF (16-bit) + 29 JPEG (8-bit) in one zip; names encode laser parameters (e.g. L0.030_F100_V500_D0.02).
+  Labels: one MATLAB v5 labeling session, SEM Labeling Session.mat (96,812 B), not readable with the allowed tools, so label
+  geometry is unverified. enricher: paper full text (Loughborough repository PDF) read: Hitachi TM3030 backscatter SEM at
+  x1000, field of view 225 x 175 um; 7 defect classes (porosity, splatter, cracks, balling, spherical pores, voids, dissociation)
+  + background, labelled in MATLAB for an AlexNet R-CNN; the paper labelled 324 SEM images (1303 defects), this deposit holds
+  78 example images, so coverage is partial (was unknown). SEM is not a schema modality value, so modality is other.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Image DataSet R-CNN training sample/Image DataSet R-CNN training sample.zip (381.3 MB, 78 files, 409.1 MB uncompressed)\n\
+      \  Image DataSet R-CNN training sample/Image DataSet R-CNN training - Copy/\n    L<p>_F<f>_V<v>_D<d>.tif    49  (16-bit,\
+      \ ~8 MB each)\n    L<p>_F<f>_V<v>_D<d>.jpg    12\n    L<p>_F<f>_V<v>_D<d>.jpeg   17\nSEM Labeling Session.mat (96.8\
+      \ KB, MATLAB v5 labeling session: ground truth)\nDetection network_R-CNN training and result.xlsx (51 KB)\nPredictive\
+      \ network_BPNN training and result.xlsx (291 KB)"
+    n_files: 81
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.mendeley.com/public-files/datasets/gtcb8j5gcb/files/9e5362cf-d49c-4f22-8df8-dcba2bf5dd31/file_downloaded::Image
+      DataSet R-CNN training sample/Image DataSet R-CNN training - Copy/L0.149_F40_V500_D0.02.jpg
+    - https://data.mendeley.com/public-files/datasets/gtcb8j5gcb/files/25c6b83e-a39a-48e5-81ed-40134e6efd7c/file_downloaded
+    size_bytes: 655135
+    description: smallest image L0.149_F40_V500_D0.02.jpg (zip member) and the labeling session .mat that holds every label
+  arrays:
+  - role: raw
+    path_pattern: '*/*/*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 1536
+    - 2048
+    shape_varies: false
+    dtype: uint16
+    compression: lzw
+    value_range:
+    - 9037
+    - 32709
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: single-page greyscale TIFF (photometric minisblack, 1 sample); header resolution 96 dpi (a default, not
+      a calibration)
+  - role: raw
+    path_pattern: '*/*/*.{jpg,jpeg}'
+    format: jpeg
+    axes: yx
+    shape:
+    - 1536
+    - 2048
+    shape_varies: null
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 1
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: greyscale JPEG (mode L); 29 files, one sampled
+  - role: label
+    path_pattern: SEM Labeling Session.mat
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    encoding: unknown
+    classes:
+    - id: null
+      name: porosity
+    - id: null
+      name: splatter
+    - id: null
+      name: cracks
+    - id: null
+      name: balling
+    - id: null
+      name: spherical pores
+    - id: null
+      name: voids
+    - id: null
+      name: dissociation
+    alignment: unknown
+    alignment_notes: 'One MATLAB v5 MAT-file (header: "MATLAB 5.0 MAT-file, Platform: PCWIN64, Created on: Thu Jun 10 07:17:19
+      2021") for all images; a MATLAB labeling session that references images by path. Class names from the paper (section
+      2.4), not read from the file.'
+  notes: 'Listing: Mendeley files API (4 files, 381,785,356 B, exact) and the image zip''s central directory (78 members).
+    Sampled (8.0 MB): L0.030_F100_V500_D0.02.tif 1536x2048 uint16 LZW [9037,32709]; L0.149_F40_V500_D0.02.jpg 1536x2048 uint8
+    [1,255]; value_range from one sample each. The labels'' .mat (MATLAB v5, MCOS objects of a labeling session) is not readable
+    with tifffile/h5py/numpy, so label geometry (boxes vs ROIs), counts and pairing are unverified. Voxel size not set: the
+    TIFF header says 96 dpi (default). The paper gives x1000 and a 225 x 175 um field of view but no pixel size; 225 um/2048
+    px and 175 um/1536 px would give unequal values (110 and 114 nm), so no value is derived. Checked: TIFF/JPEG headers,
+    Mendeley API, paper full text.'
