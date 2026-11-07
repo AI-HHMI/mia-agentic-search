@@ -47,29 +47,30 @@ imaging:
 data:
   formats:
   - other
-  size_bytes: null
-  n_items: 4
+  size_bytes: 68378457
+  n_items: 1
   access: open
-  download_url: https://github.com/neurodata/xbrain/tree/master/data
-  download_method: other
+  download_url: https://raw.githubusercontent.com/neurodata/xbrain/master/code/celldetect/data/traindata-celldetect-V1.mat
+  download_method: http
 annotations:
   present: true
   types:
-  - semantic-segmentation
+  - instance-segmentation
   - points
   coverage: sparse
-  format: MATLAB .mat arrays and ITK-SNAP .nii files in data/groundtruth/ (cell and vessel labels for
-    V0-V2; cell centroids for V3)
+  format: 'MATLAB v5 .mat (code/celldetect/data/traindata-celldetect-V1.mat): M = cell instance-ID map
+    of V1, Centroids_gt = 3x321 manual cell centroids (x,y,z); vessel and V0/V2/V3 annotations were in
+    groundtruth.zip, now a dead Dropbox link'
   source: manual
 ml:
   tasks:
   - segmentation
   - detection
-  splits_provided: true
+  splits_provided: false
   benchmark: null
   baseline_code_url: null
 license:
-  spdx: custom
+  spdx: ODC-By-1.0
   url: https://docs.neurodata.io/xbrain
 provenance:
   discovered_by: harvest-websearch
@@ -79,18 +80,117 @@ provenance:
   - https://github.com/neurodata/xbrain/tree/master/data
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5659258/fullTextXML
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22Quantifying+mesoscale+neuroanatomy+using+X-ray+microtomography%22&format=json&resultType=core&pageSize=3
+  - https://github.com/neurodata/xbrain/blob/master/data/groundtruth/README.md
+  - https://raw.githubusercontent.com/neurodata/xbrain/master/code/celldetect/data/traindata-celldetect-V1.mat
+  - https://bossdb-open-data.s3.amazonaws.com/neurodata/dyer/dyer16/image/info
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-07T22:16:31Z'
-notes: 'License: docs.neurodata.io/xbrain states data is released under the Open Data Commons Attribution
-  License (ODC-BY 1.0); no SPDX id in the schema list, so custom. Voxel size 0.65 um from paper Methods
-  (10x objective; 2560x2560 reconstructed slices); analysed volume 1400x2480x1547 voxels, but the full
-  raw volume is not confirmed to be in the repo (README says the full validation/groundtruth zip is not
-  in the repo due to size; getdata notebooks fetch via ndio). Annotated volumes per README: V1 300x300x100
-  (only one with dense cells+vessels), V0 inside V1 with two annotators, V2 small cell-detection test
-  set, V3 held-out test with centroids only; n_items=4 counts these. Size not stated on any page read.
-  File formats MAT (version not checked) and .nii; formats set to other because MAT is not in the enum.
-  Download method not a direct archive; files listed on GitHub tree page (sizes not shown).'
+  last_checked: '2026-11-07T23:05:00Z'
+notes: 'License: docs.neurodata.io/xbrain: Open Data Commons Attribution License (ODC-BY 1.0); repo code
+  is Apache-2.0. Voxel size 0.65 um isotropic (paper Methods; groundtruth README; BossDB coord frame).
+  Annotated subvolumes per README: V1 300x300x100 (dense cells+vessels), V0 inside V1 (two annotators),
+  V2 small test set, V3 held-out test (centroids). enricher: the ground-truth/validation zips (dl.dropboxusercontent.com/u/1260288/...)
+  return 404; the only annotated data still online is V1 raw + cell instance map + centroids in the repo
+  MAT file, so n_items 4->1, types semantic-segmentation->instance-segmentation, splits_provided true->false,
+  download_url = that MAT file. license custom->ODC-By-1.0 (same statement, SPDX id). Full unlabelled
+  raw volume (2560x2560x2015 uint8) is on BossDB dyer/dyer16 (precomputed).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'neurodata/xbrain (GitHub, 254 files, 431.6 MB incl. code)
+
+      code/celldetect/data/traindata-celldetect-V1.mat   68,378,457 B  (IM raw V1 + M cell IDs + centroids)
+
+      code/celldetect/data/test_cube_probs_rfr.mat       10,921,774 B  (probability maps, not labels)
+
+      code/segment-vessels/data/ilastik_vesselprob_V1.mat 16,275,811 B (ilastik vessel probabilities)
+
+      results/testdata-celldetect-V1.mat                 68,165,027 B  (V1 results)
+
+      data/README.md, data/groundtruth/README.md, data/validation/README.md (docs only)
+
+      data/groundtruth/*.ipynb, data/getdata/ (download notebooks; no image files)
+
+      library/ilastik_classifiers/*.ilp (classifiers)'
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://raw.githubusercontent.com/neurodata/xbrain/master/code/celldetect/data/traindata-celldetect-V1.mat
+    size_bytes: 68378457
+    description: 'V1: raw (IM), cell instance map (M) and manual centroids (Centroids_gt) in one MATLAB
+      v5 file'
+  arrays:
+  - role: raw
+    path_pattern: code/celldetect/data/traindata-celldetect-V1.mat
+    format: other
+    axes: zxy
+    shape:
+    - 100
+    - 300
+    - 300
+    shape_varies: false
+    dtype: float64
+    compression: none
+    value_range:
+    - -150.36
+    - 95.46
+    normalization: standardized
+    alignment: not-applicable
+    alignment_notes: 'MAT variable IM (MATLAB v5, column-major; scipy.io.loadmat gives (y,x,z) = (300,300,100)).
+      Mean 0.0, std 19.2: zero-mean but not unit variance; the README describes the original V1 image
+      as 8-bit.'
+  - role: label
+    path_pattern: code/celldetect/data/traindata-celldetect-V1.mat
+    format: other
+    axes: zxy
+    shape:
+    - 100
+    - 300
+    - 300
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 321
+    normalization: none
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    - id: null
+      name: cell body (one id per cell, 1-321)
+    alignment: same-grid
+    alignment_notes: MAT variable M, same file and shape as IM. 321 ids = the 321 columns of Centroids_gt;
+      centroid i (x,y,z, 1-based) lies in id i at M[y,x,z] for the first 5 checked, which fixes dim0=y,
+      dim1=x. 5.0% of voxels labelled.
+  - role: label
+    path_pattern: code/celldetect/data/traindata-celldetect-V1.mat
+    format: other
+    axes: null
+    shape:
+    - 3
+    - 321
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 5
+    - 297
+    encoding: points-table
+    alignment: same-grid
+    alignment_notes: 'MAT variable Centroids_gt: rows x,y,z (README), 1-based voxel coordinates in V1.
+      Centroids_xb (3x302) in the same file are xbrain detections, not ground truth.'
+  notes: 'Sample: downloaded the 68.4 MB MAT file once, read with scipy.io.loadmat (no pickles), deleted;
+    value ranges from this one file. Dataset size = this file (the only annotated data still downloadable);
+    groundtruth.zip and validation.zip on dl.dropboxusercontent.com/u/1260288 return HTTP 404, so V0/V2/V3
+    and vessel labels (Vmap0) are not obtainable. data/ in the repo holds only READMEs and notebooks.
+    Full raw volume (unlabelled): BossDB dyer/dyer16 image channel, precomputed at https://bossdb-open-data.s3.amazonaws.com/neurodata/dyer/dyer16/image/
+    (uint8, zyx 2015x2560x2560, 650 nm isotropic, raw encoding, 6 levels); BossDB XBrainGTech5/Proj4 has
+    cells_Pub/vessels_Pub channels (xbrain outputs, not manual). MAT is not a TensorSwitch input format,
+    so the record is not convertible as is.'
