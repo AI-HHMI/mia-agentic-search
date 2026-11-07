@@ -45,8 +45,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: Tile-level class (Non-Tumor 536, Viable Tumor 345, Necrotic Tumor 263) in ML_Features_1144.csv (filename, classification,
-    65 features)
+  format: 'ML_Features_1144.csv: 1,144 rows x 69 columns (row index, image.name, 66 features, classification). classification
+    values: Non-Tumor 536, Viable 292, Non-Viable-Tumor 263, "viable: non-viable" 53'
   source: manual
 ml:
   tasks:
@@ -63,15 +63,70 @@ provenance:
   evidence_urls:
   - https://www.cancerimagingarchive.net/collection/osteosarcoma-tumor-assessment/
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1089%2Fcmb.2017.0153%22&format=json&resultType=core&pageSize=3
+  - https://www.cancerimagingarchive.net/wp-content/uploads/ML_Features_1144.csv
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-11-07T08:34:27Z'
+  annotations_verified: true
+  last_checked: '2026-11-07T10:50:00Z'
 notes: 'All figures from the TCIA collection page: 4 patients, 1,144 tiles, class counts 536/345/263, Training_Set_1 (11 folders,
   547 images) and Training_Set_2 (12 folders, 597 images), image package about 197 MB via Aspera, CSV direct. The page calls
   the images both Whole Slide Image data and tiles; no SVS is mentioned, so formats is jpeg. The Aspera package was not opened,
   so file names and folder layout are unchecked. Scanner not stated; 10x magnification, pixel size not stated. Paper full
   text is not open access (Europe PMC gives the abstract only), so Methods were not read. Only 4 patients, so patient-level
-  generalisation is limited. Annotated by one of two pathologists per tile.'
+  generalisation is limited. enricher: CSV read: labels are Non-Tumor 536, Viable 292, Non-Viable-Tumor 263 and a mixed "viable:
+  non-viable" 53 (the page counts 345 viable = 292 + 53); image.name is e.g. "Case 3 A10-10547-25283", no extension.'
+technical:
+  method: header
+  size_source: page-stated
+  layout:
+    tree: "Whole Slide Image JPG: IBM Aspera Faspex package (196 MB, 1,144 tiles)\n  Training_Set_1/ (11 folders, 547 images),\
+      \ Training_Set_2/ (12 folders, 597 images)  (page text)\nML_Features_1144.csv (880,995 B, direct HTTPS)"
+    n_files: null
+    listing_complete: false
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: Training_Set_*/*/*.jpg
+    format: jpeg
+    axes: null
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: unknown
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: H&E tiles, 1024 x 1024 at 10x per the TCIA page; files not seen (Aspera only), so path_pattern follows
+      the page folder names, not a listing.
+  - role: label
+    path_pattern: ML_Features_1144.csv
+    format: csv
+    axes: null
+    shape:
+    - 1145
+    - 69
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: other
+    classes:
+    - id: Non-Tumor
+      name: non-tumor (536)
+    - id: Viable
+      name: viable tumor (292)
+    - id: Non-Viable-Tumor
+      name: necrotic tumor (263)
+    - id: 'viable: non-viable'
+      name: mixed viable and necrotic (53)
+    alignment: unknown
+    alignment_notes: one row per tile, keyed by image.name (no extension); last column classification. Shape counts the header
+      row. Mapping image.name to the Aspera file names not checked.
+  notes: 'Tiles not inspected: TCIA offers them only as an Aspera Faspex package (no HTTP listing or direct links). Read the
+    direct CSV in full (880,995 B): 1,144 data rows, 69 columns; class counts above. Voxel size not found; checked: TCIA page
+    (10x, 1024 x 1024, no pixel size), CSV (no scale), paper (10.1089/cmb.2017.0153, not open access in Europe PMC). No direct
+    download for the tiles; the CSV host www.cancerimagingarchive.net is not on TensorSwitch''s allowlist.'
