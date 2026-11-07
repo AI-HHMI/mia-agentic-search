@@ -1,0 +1,140 @@
+schema_version: '1.2'
+id: chammi-75-multichannel-pretraining
+title: CHAMMI-75 - 2.8M multi-channel microscopy images from 75 studies for channel-adaptive pre-training
+short_name: CHAMMI-75 multi-channel cell images
+description: About 2.8 million multi-channel fields of view (up to seven channels each) pooled from 75 public cell microscopy
+  studies, released for channel-adaptive self-supervised pre-training, together with evaluation benchmarks (HPAv23, IDR-0017,
+  JUMP-CP, CellPHIE, RBC-MC, CHAMMI) and a 22-column metadata table.
+landing_url: https://registry.opendata.aws/chammi/
+doi: null
+repository: other
+accession: null
+authors: []
+publications:
+- title: CHAMMI-75
+  doi: null
+  url: https://arxiv.org/abs/2512.20833
+date_published: null
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: null
+  organism: []
+  sample: Cell images from 75 studies, 16 organisms and 223 cell lines
+  labels_stains: []
+data:
+  formats:
+  - png
+  - ome-tiff
+  size_bytes: null
+  n_items: 2792462
+  access: open
+  download_url: https://chammi-data.s3.us-west-2.amazonaws.com/CHAMMI-75/
+  download_method: s3
+annotations:
+  present: true
+  types:
+  - classification
+  coverage: partial
+  format: metadata CSV (reagent ids as weak labels, Cellpose cell centres) and benchmark label files (e.g. .pkl, OME-TIFF
+    crops)
+  source: mixed
+ml:
+  tasks:
+  - self-supervised
+  - classification
+  splits_provided: true
+  benchmark: CHAMMI-75 evaluation benchmarks
+  baseline_code_url: https://github.com/CaicedoLab/CHAMMI-75
+license:
+  spdx: CC-BY-4.0
+  url: https://registry.opendata.aws/chammi/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-11-07T05:14:27Z'
+  evidence_urls:
+  - https://registry.opendata.aws/chammi/
+  - https://github.com/CaicedoLab/CHAMMI-75
+  - https://arxiv.org/html/2512.20833v1
+  - https://chammi-data.s3.us-west-2.amazonaws.com/?list-type=2&delimiter=/&prefix=CHAMMI-75/
+  - https://chammi-data.s3.us-west-2.amazonaws.com/CHAMMI-75/CHAMMI-75_train_metadata.csv
+  - https://github.com/CaicedoLab/CHAMMI-75/tree/main/aws-tutorials
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-11-07T07:25:00Z'
+notes: 'Licence CC BY 4.0 per the AWS registry page; the paper says ~97% of source datasets carry Creative Commons licences
+  and the ethics statement limits use to non-commercial research, so per-source terms apply (paper Table A7, not read). S3
+  listing shows train PNGs per channel (train/hpa0018/*-ch0.png), a 45 GB guidance zip, train/small metadata CSVs (3.0 GB
+  / 0.6 GB), and test benchmarks (OME-TIFF crops under test/CHAMMI, pkl for CellPHIE); total size not computed. Pixel size
+  not reported in the paper text read (first 100k of 230k chars) or the registry page. Organism left empty: 16 organisms across
+  sources. Paper tool could not fetch full text (arXiv DOI), so the arXiv HTML was read directly. Formats list png only for
+  the pre-training images; test sets also use OME-TIFF and pickle. enricher: formats + ome-tiff (rbc-mc test crops); annotations
+  verified from metadata CSV header and test label files in the S3 listing.'
+technical:
+  method: header
+  size_source: unknown
+  layout:
+    tree: "CHAMMI-75/\n  CHAMMI-75_guidance.zip (44.97 GB; 7.7M .safetensors members)\n  CHAMMI-75_small_metadata.csv (628\
+      \ MB)\n  CHAMMI-75_train_metadata.csv (3.00 GB, 23 columns)\n  CHAMMI-75_train/<study>/<image>-ch<k>.png   (75 study\
+      \ folders: hpa0018, hpa0023, idr0001..idr0145, jump0001, nidr0001..nidr0032, wtc0001)\n  CHAMMI-75_test/\n    CELLPHIE/CELLPHIE.pkl\n\
+      \    CHAMMI/{Allen,CP,HPA}/crops/*.png + combined_metadata.csv\n    HPAv23/<n>/*_cell_image.png\n    Jump-CP/<plate>/<well>/<site>/*.png\n\
+      \    idr0017/plate_*/*.png + idr0017_meta.csv\n    rbc-mc/{Canadian,Swiss}/.../*.ome.tif"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://chammi-data.s3.us-west-2.amazonaws.com/CHAMMI-75/CHAMMI-75_train/hpa0018/00070df0-bbc3-11e8-b2bc-ac1f6b6435d0-ch0.png
+    - https://chammi-data.s3.us-west-2.amazonaws.com/CHAMMI-75/CHAMMI-75_train/hpa0018/00070df0-bbc3-11e8-b2bc-ac1f6b6435d0-ch1.png
+    - https://chammi-data.s3.us-west-2.amazonaws.com/CHAMMI-75/CHAMMI-75_train/hpa0018/00070df0-bbc3-11e8-b2bc-ac1f6b6435d0-ch2.png
+    - https://chammi-data.s3.us-west-2.amazonaws.com/CHAMMI-75/CHAMMI-75_train/hpa0018/00070df0-bbc3-11e8-b2bc-ac1f6b6435d0-ch3.png
+    size_bytes: 520866
+    description: 'one 4-channel HPA field of view from the training set: four single-channel 512x512 uint8 PNGs (ch0 to ch3).
+      Its weak labels are rows in CHAMMI-75_train_metadata.csv (too large for a sample unit)'
+  arrays:
+  - role: raw
+    path_pattern: CHAMMI-75_train/*/*-ch[0-9].png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range: null
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: One PNG per channel; channels of one field of view share the stem and differ in the -ch<k> suffix. The
+      metadata CSV storage.path column maps each file to its study, channel and labels.
+  - role: label
+    path_pattern: CHAMMI-75_train_metadata.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: Per-channel-file metadata table (23 columns incl. experiment.reagent, experiment.control, biology.organism,
+      biology.cell_line, imaging.channel_type, microscopy.type, microscopy.magnification, geometry.width/height, storage.path);
+      rows join to images by storage.path. Weak labels only; benchmark labels live under CHAMMI-75_test/.
+  notes: 'S3 delimiter listings of CHAMMI-75/, CHAMMI-75_train/ (75 study folders) and CHAMMI-75_test/ (6 benchmarks); a full
+    listing was not attempted (paper: ~42M channel files). Probed one training PNG: 512x512 grey uint8, deflate. sample.py
+    could not read PNGs in this environment (PIL import error), so no value range was observed. Paper A.1: channels split
+    into separate files, rescaled to 8 bit with intensities normalized to 0-255 after clipping at the 0.1/99.9 percentiles
+    (contrast-stretched), stored as lossless PNG, no spatial rescaling. Pixel size differs per source study and is not in
+    the metadata CSV (it has microscopy.magnification only); voxel size not found; checked: PNG header, metadata CSV header,
+    AWS registry page, GitHub README + aws-tutorials, arXiv full text. Organism left empty: 16 organisms per the paper, only
+    per row in biology.organism (3 GB CSV, not read in full). Size not known: README says to have ~5 TB free for the whole
+    bucket; the listed top-level files alone are 48.6 GB; shapes vary, so no estimate. No single archive for the images: per-file
+    S3 objects; host chammi-data.s3.us-west-2.amazonaws.com is not on the TensorSwitch allowlist. guidance.zip members are
+    .safetensors (not opened). Training images carry no masks: the set is for self-supervised pre-training.'
