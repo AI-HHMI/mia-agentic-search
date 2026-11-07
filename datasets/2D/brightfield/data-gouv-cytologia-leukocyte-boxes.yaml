@@ -11,14 +11,18 @@ repository: other
 accession: null
 authors:
 - French-Speaking Cellular Hematology Group (GFHC)
-publications: []
+publications:
+- title: 'Multicentric data challenge for artificial intelligence-based classification of leukocytes: results from the CytologIA
+    consortium'
+  doi: 10.1038/s41698-026-01484-0
+  url: https://doi.org/10.1038/s41698-026-01484-0
 date_published: '2025-06-03'
 imaging:
   modality:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Homo sapiens
   sample: Blood leukocytes (normal and haemopathy patients) on smears, from 19 centres, 2022-2024
@@ -57,15 +61,122 @@ provenance:
   - https://www.data.gouv.fr/datasets/cytologia/informations
   - https://oos.eu-west-2.outscale.com/hdh-cytolog/cytologia_images.zip
   - https://oos.eu-west-2.outscale.com/hdh-cytolog/cytologia_labels.csv
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13433935/fullTextXML
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-07T07:35:03Z'
-notes: 'Zip listing (peek_archive): 69,168 JPEGs in dataset_cytologia/. Labels CSV (read in full): 75,437 box rows, 23 classes
-  (largest PNN 9,762; smallest SS 1,019), so some images hold several cells. Labels made by experts before the challenge.
-  Licence: data.gouv.fr API says Licence Ouverte 2.0 (Etalab 2.0); the description also cites CC BY 3.0. Not stated on the
-  page, API record or any paper (no paper found): pixel size, microscope/camera, staining, image dimensions, official train/test
-  split. No related paper was found, so none is listed. The page lists a DOI in its citation text but "no DOI" in its information
-  section.'
+  last_checked: '2026-11-07T08:20:00Z'
+notes: 'Zip: 69,168 JPEGs in dataset_cytologia/. Labels CSV: 75,437 box rows, 23 classes, every image listed (some hold several
+  cells). Labels by each centre''s morphologist, reviewed by four experts (paper). Licence: data.gouv.fr API says Licence
+  Ouverte 2.0 (Etalab 2.0); the description also cites CC BY 3.0. Paper: 67/33 train/test split used in the challenge, not
+  marked in the released CSV. enricher: paper added (CytologIA consortium, npj Precision Oncology 2026, found via Europe PMC);
+  channels 3 from JPEG headers (was null). Pixel size not stated anywhere (paper: "370 x 368 pixels, corresponding to an area
+  of 13 x 13 centimetres", not a pixel size).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                     2 files   1.4 GB  .zip 1, .csv 1\ncytologia_labels.csv                 \
+      \  2.6 MB\ncytologia_images.zip                   1.4 GB\n  dataset_cytologia/                   69168 files  .jpg (flat,\
+      \ names like faa8e525-0.jpg)"
+    n_files: 69169
+    listing_complete: true
+  sample:
+    urls:
+    - https://oos.eu-west-2.outscale.com/hdh-cytolog/cytologia_images.zip::dataset_cytologia/faa8e525-0.jpg
+    - https://oos.eu-west-2.outscale.com/hdh-cytolog/cytologia_labels.csv
+    size_bytes: 2621243
+    description: one 366x360 RGB JPEG from the zip plus the labels CSV (one table for all images; rows with NAME faa8e525-0.jpg
+      hold its boxes)
+  arrays:
+  - role: raw
+    path_pattern: cytologia_images.zip/dataset_cytologia/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 366
+    - 360
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 11
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: cytologia_labels.csv
+    format: csv
+    axes: null
+    shape:
+    - 75437
+    - 6
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: boxes-table
+    classes:
+    - id: B
+      name: undifferentiated blast cells
+    - id: BA
+      name: basophils
+    - id: EO
+      name: eosinophils
+    - id: Er
+      name: erythroblasts
+    - id: LAM3
+      name: acute promyelocytic leukemia blasts
+    - id: LF
+      name: follicular lymphoma cells
+    - id: LGL
+      name: large granular lymphocytes
+    - id: LH_lyAct
+      name: reactive lymphocytes
+    - id: LLC
+      name: chronic lymphocytic leukemia cells
+    - id: LM
+      name: mantle cell lymphoma cells
+    - id: LY
+      name: lymphocytes
+    - id: LZMG
+      name: nodal marginal zone lymphoma cells
+    - id: LyB
+      name: lymphoblasts
+    - id: Lysee
+      name: smudge cells
+    - id: M
+      name: myelocytes
+    - id: MBL
+      name: myeloblasts
+    - id: MM
+      name: metamyelocytes
+    - id: MO
+      name: monocytes
+    - id: MoB
+      name: monoblasts
+    - id: PM
+      name: promyelocytes
+    - id: PNN
+      name: neutrophils
+    - id: SS
+      name: Sezary syndrome cells
+    - id: Thromb
+      name: giant platelets
+    alignment: same-grid
+    alignment_notes: columns NAME,x1,y1,x2,y2,class; NAME is the JPEG file name in dataset_cytologia/, x1,y1,x2,y2 a box in
+      that image's pixel coordinates (max x2 718, y2 812, within the larger images). One row per cell, so one image can have
+      several rows.
+  notes: 'Listing (tools/listing.py, zip central directory + CSV): 2 files, 69,168 zip members, 1,404,152,742 bytes, complete.
+    Probed 3 JPEGs: 366x360x3, 608x608x3, 363x360x3 uint8 RGB, so image size varies (paper: generally 370x368). value_range
+    [11, 255] is from one sample image. Labels CSV read in full: 75,437 rows, 6 columns, 23 classes, 69,168 distinct image
+    names (all zip images). Class names from the paper''s confusion-matrix legend. Voxel size not found; checked: JPEG headers
+    (no calibration), data.gouv.fr API record and page, the paper (Europe PMC full text: Methods, Data availability), the
+    winning team''s GitHub README (MPWARE-TEAM/Cytologia). Images come from automated microscopes at 20 centres at x500 magnification
+    (paper), so pixel size likely differs by centre. Download: both files are direct, range-capable links on oos.eu-west-2.outscale.com,
+    which is not on TensorSwitch''s fetch allowlist yet.'
