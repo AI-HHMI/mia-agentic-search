@@ -1,0 +1,142 @@
+schema_version: '1.2'
+id: hf-fgdfgfthgr-sbf-sem-sars-cov-2-vero-mitochondria
+title: SBF-SEM volume of a SARS-CoV-2-infected Vero cell with manual mitochondria segmentation
+short_name: Infected Vero cell mitochondria (SBF-SEM)
+description: A single serial block-face SEM volume (281x1126x1125 px) of a Vero cell 6 h after SARS-CoV-2 infection, with
+  all mitochondria manually segmented, split into a train half and a test half.
+landing_url: https://huggingface.co/datasets/Fgdfgfthgr/SBF-SEM_SARS-Cov-2_infected_cell
+doi: null
+repository: HuggingFace
+accession: null
+authors: []
+publications: []
+date_published: '2024-07-21'
+imaging:
+  modality:
+  - SBF-SEM
+  dimensionality: 3D
+  voxel_size_nm:
+    x: 18
+    y: 18
+    z: 18
+  channels: 1
+  organism:
+  - Chlorocebus sabaeus
+  sample: Vero cells 6 h post infection with SARS-CoV-2
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 302840780
+  n_items: 2
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  - organelle
+  coverage: dense
+  format: Multi-page uint8 TIFF label stacks (Labels_<raw name>.tif, values 0/1) on the same grid as the raw stacks, one pair
+    in train/ and one in test/
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: MIT
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-11-07T06:28:00Z'
+  evidence_urls:
+  - https://huggingface.co/datasets/Fgdfgfthgr/SBF-SEM_SARS-Cov-2_infected_cell
+  - https://huggingface.co/api/datasets/Fgdfgfthgr/SBF-SEM_SARS-Cov-2_infected_cell
+  - https://huggingface.co/datasets/Fgdfgfthgr/SBF-SEM_SARS-Cov-2_infected_cell/raw/main/README.md
+  - https://huggingface.co/datasets/Fgdfgfthgr/SBF-SEM_SARS-Cov-2_infected_cell/resolve/main/train/Jan13b_ROI02_right_split.tif
+  - https://huggingface.co/datasets/Fgdfgfthgr/SBF-SEM_SARS-Cov-2_infected_cell/resolve/main/train/Labels_Jan13b_ROI02_right_split.tif
+  confidence: 0.75
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-11-07T07:10:00Z'
+notes: 'HF dataset card and API: MIT license in card metadata, no paper or citation linked, so none is listed. Files: train/
+  and test/ each hold one raw stack (~148 MB) plus Labels_*.tif (~3 MB); the volume (281 slices) is split in half along x
+  (234 slices x 1125 x 563 px per half per the TIFF header). Voxel size is not stated on the card; ~18 nm isotropic is derived
+  from the MIB ''BoundingBox'' in the TIFF header (x 10.116 um/563 px, y 20.232 um/1125 px, z 4.194 um/234 slices, all ~18
+  nm), so treat it as inferred. Organism is inferred from the Vero cell line (the card does not name the species). Label values
+  and the page axis (z) are not documented; ''organelle'' = mitochondria. Microscope model not stated. enricher: size 302840780
+  B from the HF file listing (was the harvester sum); axes zyx from the MIB header (Chop [y,x,z]: z1:z2 1:234).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './  .gitattributes, README.md
+
+      test/  Jan13b_ROI02_left_split.tif (148.4 MB), Labels_Jan13b_ROI02_left_split.tif (3.1 MB)
+
+      train/  Jan13b_ROI02_right_split.tif (148.4 MB), Labels_Jan13b_ROI02_right_split.tif (2.9 MB)'
+    n_files: 6
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/Fgdfgfthgr/SBF-SEM_SARS-Cov-2_infected_cell/resolve/main/train/Jan13b_ROI02_right_split.tif
+    - https://huggingface.co/datasets/Fgdfgfthgr/SBF-SEM_SARS-Cov-2_infected_cell/resolve/main/train/Labels_Jan13b_ROI02_right_split.tif
+    size_bytes: 151328680
+    description: 'train half: raw stack 234x1125x563 uint8 plus its binary mitochondria label stack on the same grid'
+  arrays:
+  - role: raw
+    path_pattern: '*/Jan13b_ROI02_*_split.tif'
+    format: tiff
+    axes: zyx
+    shape:
+    - 234
+    - 1125
+    - 563
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: '*/Labels_Jan13b_ROI02_*_split.tif'
+    format: tiff
+    axes: zyx
+    shape:
+    - 234
+    - 1125
+    - 563
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 1
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: mitochondria
+    alignment: same-grid
+    alignment_notes: Label file = "Labels_" + raw file name in the same folder (train/, test/); shapes identical (234x1125x563).
+      The two halves are the left (test) and right (train) x-halves of one volume (MIB Chop x 1:563 / 564:1126).
+  notes: 'Listed via the HF tree API (6 files, 302840780 B, complete). Probed both train TIFFs: plain multi-page TIFF, 234
+    pages of 1125x563, uint8; raw uncompressed, labels LZW. Header ImageDescription (MIB): "BoundingBox 9.738 19.854 -0.450
+    19.782 0.407 4.601 ... MIB Chop: [y1:y2,x1:x2,:,z1:z2,t]: 1:1125,564:1126,:,1:234,1", so pages are z (axes zyx). Sampled
+    the train pair: raw 0-255 (mean 131, p1 0, p99.9 255; full range used and saturated at both ends, so contrast-stretched
+    is inferred), labels {0: 18325437, 1: 200782} (1.1% foreground, binary; class 1 = mitochondria per the card). Value ranges
+    are from one sample. Voxel size 18 nm isotropic is the record value derived from the MIB BoundingBox (um extents / pixel
+    counts, ~17.9-18.0 nm per axis); no page states it (checked: TIFF headers, HF card, HF API, sibling H446 card which states
+    90 nm for its own data, web search for a paper or code repo: none found). No single archive: files are per-file HF resolve
+    URLs (direct, range requests). README says 281x1126x1125 px; the files hold 234 z slices per half.'
