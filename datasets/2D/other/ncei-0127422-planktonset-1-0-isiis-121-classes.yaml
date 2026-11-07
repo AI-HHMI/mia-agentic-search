@@ -29,7 +29,7 @@ imaging:
 data:
   formats:
   - jpeg
-  size_bytes: null
+  size_bytes: 591251687
   n_items: 30023
   access: open
   download_url: https://www.ncei.noaa.gov/data/oceans/archive/arc0075/0127422/2.3/data/0-data/
@@ -39,7 +39,8 @@ annotations:
   types:
   - classification
   coverage: dense
-  format: train/<class>/*.jpg folders (120 class folders listed); test/*.jpg plus solution.csv with one-hot test labels
+  format: train/<class>/*.jpg (121 class folders) and FINAL_Plankton_Segments_12082014/<class>/*.jpg (121 class folders, the
+    original labelled segments); test/*.jpg plus solution.csv (one-hot over the 121 class columns)
   source: manual
 ml:
   tasks:
@@ -48,8 +49,8 @@ ml:
   benchmark: 2015 National Data Science Bowl (Kaggle)
   baseline_code_url: https://github.com/Planktos/PlanktonSet-1.0
 license:
-  spdx: unknown
-  url: null
+  spdx: custom
+  url: https://www.ncei.noaa.gov/metadata/geoportal/rest/metadata/item/gov.noaa.nodc:0127422/xml
 provenance:
   discovered_by: harvest-websearch
   discovered_at: '2026-11-07T08:20:18Z'
@@ -57,14 +58,72 @@ provenance:
   - https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.nodc:0127422
   - https://www.ncei.noaa.gov/data/oceans/archive/arc0075/0127422/
   - https://www.ncei.noaa.gov/data/oceans/archive/arc0075/0127422/2.3/data/0-data/train/
+  - https://www.ncei.noaa.gov/metadata/geoportal/rest/metadata/item/gov.noaa.nodc:0127422/xml
+  - https://www.ncei.noaa.gov/data/oceans/archive/arc0075/0127422/0127422.2.3.xml
+  - https://www.ncei.noaa.gov/data/oceans/archive/arc0075/0127422/2.3/data/1-data/Technical_Doc_0127422.pdf
   confidence: 0.65
 verification:
   url_ok: true
-  license_found: false
+  license_found: true
   annotations_verified: true
-  last_checked: '2026-11-07T08:20:18Z'
-notes: 'Read: NCEI metadata, archive listing (v2.3: train/, test/, solution.csv 33.9 MB) and the technical doc. Split 50/50
-  train/test; 100,000 distorted "poison" copies were added to the test set. Counted 30,023 train JPGs in 120 class folders
-  (metadata says 121 classes). Test images not counted. Not stated anywhere read: pixel size, archive size, annotators, licence
-  (NCEI says public access, citation required, no warranty) and no paper is listed. ISIIS-2 shadowgraph imaging is not a schema
-  modality, so modality is other.'
+  last_checked: '2026-11-07T10:25:00Z'
+notes: 'Read: NCEI ISO metadata, archive listing (v2.3 data/0-data: FINAL_Plankton_Segments_12082014/, train/, test/, solution.csv
+  33.9 MB, main.R, solution.R) and the Technical Doc. Split 50/50 train/test; 100,000 distorted ''poison'' copies were added
+  to the test set and ignored in scoring. Harvester counted 30,023 train JPGs; the train and FINAL_Plankton_Segments folders
+  each have 121 class folders. No paper listed. ISIIS-2 shadowgraph imaging is not a schema modality, so modality is other.
+  enricher: license custom (was unknown): NCEI ISO metadata, accessLevel public; ''Cite as: Cowen ... https://doi.org/10.7289/v5d21vjd'';
+  no warranty/liability disclaimers. enricher: size 591,251,687 B from the NCEI v2.3 manifest (was null).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "0127422/2.3/   (manifest 0127422.2.3.xml: 221,359 entries, 591,251,687 B)\n  NODC-Readme.txt, about/ (NCEI metadata)\n\
+      \  data/0-data/\n    FINAL_Plankton_Segments_12082014/<class>/*.jpg   121 class folders (original labelled segments)\n\
+      \    train/<class>/*.jpg                               121 class folders (competition train half)\n    test/*.jpg  \
+      \                                      test half + 100,000 poison images, renamed\n    solution.csv (33.9 MB), main.R,\
+      \ solution.R, Plankton-Relationships.pdf, Technical Doc_0127422.docx\n  data/1-data/Technical_Doc_0127422.pdf, Plankton-Relationships.pdf"
+    n_files: null
+    listing_complete: false
+  sample:
+    urls:
+    - https://www.ncei.noaa.gov/data/oceans/archive/arc0075/0127422/2.3/data/0-data/train/amphipods/4661.jpg
+    size_bytes: 2590
+    description: one train image (class folder amphipods); its label is the folder name
+  arrays:
+  - role: raw
+    path_pattern: data/0-data/train/*/*.jpg
+    format: jpeg
+    axes: yx
+    shape:
+    - 95
+    - 55
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 46
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: greyscale (mode L) segment crops on a white background (median 255); class = parent folder name. Metadata
+      scrubbed (Technical Doc step 1).
+  - role: label
+    path_pattern: data/0-data/solution.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: other
+    classes: null
+    alignment: unknown
+    alignment_notes: 'test labels: header image,<121 class names>; one row per test image (one-hot), keyed by the renamed
+      test file name. Poison rows are ignored in scoring (Technical Doc); how they are marked in the csv was not checked.'
+  notes: 'Listing: listing.py over the accession stopped at 130,319 files (HTTP index, sizes rounded), so the size is the
+    stated byte_count of the v2.3 manifest header (includes directory entries). Sampled train/amphipods/4661.jpg (2,590 B):
+    95x55 uint8 [46,255], mean 231; value_range from one sample. Read solution.csv header by range request. Voxel size not
+    found; checked: JPEG (metadata scrubbed per Technical Doc), NCEI ISO metadata, Technical Doc, PlanktonSet-1.0 GitHub README;
+    no paper listed. Downloads: per-file HTTPS URLs on www.ncei.noaa.gov support ranges but the host is not on TensorSwitch''s
+    allowlist; the accession ''download'' link is an HTML app, not an archive, so data.download_url stays the folder.'
