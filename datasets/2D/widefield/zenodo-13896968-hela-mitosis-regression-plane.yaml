@@ -2,12 +2,12 @@ schema_version: '1.2'
 id: zenodo-13896968-hela-mitosis-regression-plane
 title: Deep regression plane training dataset for Morpho-Proteomic-Atlas-of-Mitosis
 short_name: HeLa mitotic cell crops and masks (widefield)
-description: 11,797 single-cell crops (224 x 224 px, padded with zeros) of live HeLa Kyoto cells expressing GFP-alpha-tubulin
-  and H2B-mCherry, imaged by time-lapse widefield microscopy at 40x and 60x in five measurements, each with a matching
-  label mask tif per crop and a FeatureMatrix.xlsx plus trSet_attributes.xml. Mitotic cells were placed by experts on a
-  360-degree regression plane of mitosis (interphase, prophase to telophase), the training data for a mitotic-stage
-  regression and classification network. Version 1 is the raw training dataset; a newer version holds the split and
-  augmented set used in the article.
+description: 11,797 single-cell crops (224 x 224 px at 40x, 299 x 299 px at 60x, padded with zeros) of live HeLa Kyoto cells
+  expressing GFP-alpha-tubulin and H2B-mCherry, imaged by time-lapse widefield microscopy at 40x and 60x in five measurements,
+  each with a matching label tif per crop (the cell's x, y position on the regression plane) and a FeatureMatrix.xlsx plus
+  trSet_attributes.xml. Mitotic cells were placed by experts on a 360-degree regression plane of mitosis (interphase, prophase
+  to telophase), the training data for a mitotic-stage regression and classification network. Version 1 is the raw training
+  dataset; a newer version holds the split and augmented set used in the article.
 landing_url: https://zenodo.org/records/13896968
 doi: 10.5281/zenodo.13896968
 repository: Zenodo
@@ -29,7 +29,7 @@ imaging:
   - widefield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 2
   organism:
   - Homo sapiens
   sample: Live HeLa Kyoto cells stably expressing GFP-alpha-tubulin and H2B-mCherry, single-cell crops of mitotic cells
@@ -39,7 +39,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 2534000000
+  size_bytes: 2416730546
   n_items: 11797
   access: open
   download_url: https://zenodo.org/records/13896968/files/RegressionPlaneTrainingDataset.zip
@@ -47,16 +47,17 @@ data:
 annotations:
   present: true
   types:
-  - instance-segmentation
   - classification
+  - other
   coverage: dense
-  format: One label mask tif per cell crop in Labels/ (next to Images/); mitotic phase positions on the regression plane in
-    FeatureMatrix.xlsx and trSet_attributes.xml per measurement
-  source: mixed
+  format: 'One label tif per crop in Labels/ (same file name as in Images/): a 1x2 uint16 array, the expert-placed position
+    on a 10000x10000 px regression plane (cells on a ~4500 px radius circle around 5000,5000); FeatureMatrix.xlsx and trSet_attributes.xml
+    per measurement'
+  source: manual
 ml:
   tasks:
   - classification
-  - segmentation
+  - other
   splits_provided: false
   benchmark: null
   baseline_code_url: https://github.com/biomag-lab/DVP2
@@ -68,17 +69,85 @@ provenance:
   discovered_at: '2026-11-08T16:14:06Z'
   evidence_urls:
   - https://zenodo.org/records/13896968
+  - https://zenodo.org/api/records/13896968
   - https://zenodo.org/records/13896968/files/RegressionPlaneTrainingDataset.zip
   - https://api.biorxiv.org/details/biorxiv/10.1101/2025.04.09.647158
-  confidence: 0.7
+  - https://www.biorxiv.org/content/biorxiv/early/2025/04/10/2025.04.09.647158.source.xml
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-08T17:10:00Z'
-notes: Zip listed with peek_archive (23,594 tif = 11,797 Images + 11,797 Labels, 5 FeatureMatrix.xlsx, 5 trSet_attributes.xml).
-  Pixel size not stated on the Zenodo page, in the zip's xml or in the preprint Methods (checked). The preprint says cells
-  were segmented with nucleAIzer and annotated by experts in Advanced Cell Classifier; the exact columns of the xlsx
-  and which annotation lives in which file were not read, so the Labels/ masks are inferred to be the segmentations.
-  Image count 11,797 is the Images/ folder count; size is 2.42 GB compressed zip (4.7 GB uncompressed). The page lists
-  a newer version (v2, split and augmented) that is not catalogued here.
+  last_checked: '2026-11-08T17:20:00Z'
+notes: 'enricher: Labels/ tifs are 1x2 uint16 regression-plane coordinates, not masks (probe+sample); removed instance-segmentation,
+  types classification+other (regression), ml.tasks segmentation->other. Preprint: expert placement on the RP, so source manual;
+  NucleAIzer masks are not shipped. Images: 2 channels (GFP-tubulin, H2B-mCherry) in a 3-sample RGB tif, third sample empty;
+  40x crops 224 px, 60x 299 px (cropSize in trSet_attributes.xml). Size from exact file listing (was 2.534e9). Pixel size:
+  not stated for the Operetta 40x/60x training images (Zenodo, xml, preprint Methods checked); 40x and 60x crops would differ
+  anyway. v2 (split+augmented) not catalogued.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "RegressionPlaneTrainingDataset.zip   2.4 GB, 23,604 members\n  ACC_210617-HelaKyoto-40x-live-frame-2__...-Measurement1/\
+      \  FeatureMatrix.xlsx, trSet_attributes.xml\n    Images/  5127 .tif  1.5 GB\n    Labels/  5127 .tif  1.0 MB\n  ACC_210617-HelaKyoto-40x-live__...-Measurement1/\n\
+      \    Images/  1741 .tif  524.7 MB\n    Labels/  1741 .tif\n  ACC_210819-HK-live-frame-60X__...-Measurement1/\n    Images/\
+      \   278 .tif  149.2 MB\n    Labels/   278 .tif\n  ACC_210912-HK-60x-live__...-Measurement4/\n    Images/  3677 .tif\
+      \  2.0 GB\n    Labels/  3677 .tif\n  ACC_211008-HK-live-60X__...-Measurement1/\n    Images/   974 .tif  522.9 MB\n \
+      \   Labels/   974 .tif\n"
+    n_files: 23604
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/13896968/files/RegressionPlaneTrainingDataset.zip::ACC_210819-HK-live-frame-60X__2021-08-19T16_53_11-Measurement1/Images/p1_wA1_t10_m10_c0_z1_l1_o0__2022_1_17_40_id47_objID45.tif
+    - https://zenodo.org/records/13896968/files/RegressionPlaneTrainingDataset.zip::ACC_210819-HK-live-frame-60X__2021-08-19T16_53_11-Measurement1/Labels/p1_wA1_t10_m10_c0_z1_l1_o0__2022_1_17_40_id47_objID45.tif
+    size_bytes: 537018
+    description: One 60x crop (299x299, 2 channels in RGB tif) and its regression-plane label
+  arrays:
+  - role: raw
+    path_pattern: RegressionPlaneTrainingDataset.zip::*/Images/*.tif
+    format: tiff
+    axes: yxc
+    shape:
+    - 299
+    - 299
+    - 3
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 981
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Photometric RGB, but the samples are channels: sample 0 and 1 hold the two fluorescence channels, sample
+      2 is all zero (2 crops checked); which sample is GFP and which mCherry is not documented. 40x crops are 224x224, 60x
+      crops 299x299; zero padding.'
+  - role: label
+    path_pattern: RegressionPlaneTrainingDataset.zip::*/Labels/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1
+    - 2
+    shape_varies: false
+    dtype: uint16
+    compression: packbits
+    value_range:
+    - 1506
+    - 2285
+    normalization: none
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'Per-crop regression target, not a spatial label: two coordinates on the 10000x10000 regression plane
+      (preprint Methods; Zenodo: cells on a ~4500 radius circle around 5000,5000, interphase at 270 deg, 40 mitotic sections
+      of 8.25 deg). Pairing: same file name in Images/ and Labels/ of the same measurement folder. Coordinate order (x,y)
+      not documented.'
+  notes: 'Listing: tools/listing.py on the one zip (exact sizes, complete). Probed 2 Images + 2 Labels members (60x) and 1
+    Images member (40x); sampled one 60x pair (value range from that one sample) and read 2 Images + 1 Label member directly
+    (445 KB). Samples: 60x raw [0,981], 40x raw channels up to 8231; labels (1506,2285) and (2908,957), both ~4450-4550 from
+    (5000,5000). Images are MIPs of two focal planes with CIDRE illumination correction (preprint Methods), so normalization
+    unknown. Voxel size not found; checked: TIFF headers (no calibration), Zenodo API record, trSet_attributes.xml, preprint
+    full text (only the confocal 63x 0.09x0.09x2 um is stated, not the Operetta training images), DVP2 README (lists this record as DRP raw data; no pixel size). Direct
+    download: the Zenodo zip (range requests ok); sample uses zip members.'
