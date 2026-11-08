@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-10912386-ai4life-mdc24-jump-denoising
 title: 'AI4Life-MDC24 Challenge data: JUMP Cell Painting Datasets'
 short_name: JUMP Cell Painting noisy images (denoising)
-description: A subset of 517 four-channel Cell Painting images (one multi-channel TIFF, noisy images only, Gaussian noise
-  added to simulate detector noise) from the JUMP cpg0016 dataset, released as the JUMP leaderboard data of the AI4Life Microscopy
-  Denoising Challenge 2024.
+description: A subset of 517 four-channel Cell Painting images (one multi-channel TIFF, noisy images only, Gaussian noise added to simulate
+  detector noise) from the JUMP cpg0016 dataset, released as the JUMP leaderboard data of the AI4Life Microscopy Denoising Challenge
+  2024.
 landing_url: https://zenodo.org/records/10912386
 doi: 10.5281/zenodo.10912386
 repository: Zenodo
@@ -24,8 +24,7 @@ imaging:
   channels: 4
   organism:
   - Homo sapiens
-  sample: U2OS cells stained for Cell Painting (JUMP cpg0016, per the JUMP paper); this subset is 517 fields of view with
-    four channels
+  sample: U2OS cells stained for Cell Painting (JUMP cpg0016, per the JUMP paper); this subset is 517 fields of view with four channels
   labels_stains: []
 data:
   formats:
@@ -59,15 +58,57 @@ provenance:
   - https://zenodo.org/records/10912386/files/noisy.tiff
   - https://api.biorxiv.org/details/biorxiv/10.1101/2023.03.23.534023
   - https://www.biorxiv.org/content/biorxiv/early/2026/11/03/2023.03.23.534023.source.xml
+  - https://ai4life-mdc24.grand-challenge.org/data-description/
   confidence: 0.65
 verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-11-08T22:43:50Z'
-notes: 'Single noisy.tiff (2,412,483,494 B): float32 ImageJ hyperstack, header probe shows 517 x 4 x 540 x 540 (zcyx; first
-  axis indexes 517 fields of view per the Zenodo description). Noisy images only: no clean targets in this deposit; the sibling
-  AI4Life-MDC24 W2S record in the catalog is the same challenge format. Training signal: AI4Life MDC24 was an unsupervised/self-supervised
-  denoising challenge (challenge page not fetched this run; inferred from the sibling record). Voxel size not stated on the
-  Zenodo record, TIFF header or JUMP paper Methods (checked via tools/paper.py full text). Cell type U2OS and five-channel
-  Cell Painting description from the JUMP paper; this subset has four channels, which are not named on the Zenodo page.'
+  last_checked: '2026-11-08T23:10:00Z'
+notes: 'Single noisy.tiff (2,412,483,494 B): float32 ImageJ hyperstack 517 x 4 x 540 x 540 (header axes zcyx; per the Zenodo description
+  the first axis indexes 517 images, not z). Noisy images only, no clean targets. Training signal: the AI4Life-MDC24 data description
+  page says the challenge is unsupervised denoising and that Gaussian and Poisson noise were applied to this JUMP subset. Voxel size
+  not stated (Zenodo, TIFF header, challenge page, JUMP paper, JUMP datasets README). Cell type U2OS from the JUMP paper; the four channels
+  are not named. enricher: training signal confirmed from challenge page (was inferred).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './    1 file   2.4 GB  noisy.tiff
+
+      '
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/10912386/files/noisy.tiff
+    size_bytes: 2412483494
+    description: The whole dataset is one 2.4 GB ImageJ TIFF (range requests work); there is no smaller file.
+  arrays:
+  - role: raw
+    path_pattern: noisy.tiff
+    format: tiff
+    axes: zcyx
+    shape:
+    - 517
+    - 4
+    - 540
+    - 540
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - -1.19
+    - 17.67
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ hyperstack (images=2068, channels=4, slices=517). The header calls the first axis z, but per the Zenodo
+      description it indexes 517 separate images (fields of view), not a z-stack. Channel names not stated.
+  notes: 'Listing: tools/listing.py on Zenodo 10912386 (1 file, 2,412,483,494 B exact). Probe: ImageJ TIFF, 2068 pages 540x540 float32
+    uncompressed, no calibration. tools/sample.py failed on this file (ValueError parsing the ImageJ TIFF), so 8 pages (images 0 and
+    258, all 4 channels) were read by range with tifffile (~12 MB): values -1.19 to 17.67, per-page mean 0.19-1.19, std 0.58-1.63. value_range
+    is from those pages only. Negative values show the data were rescaled/offset before or after noise was added; the method is not
+    documented, so normalization unknown. Voxel size not found; checked: TIFF header (no unit or spacing), Zenodo record and API, AI4Life-MDC24
+    welcome and data-description pages, JUMP paper full text (tools/paper.py), jump-cellpainting/datasets README. Upstream JUMP sources
+    differ in microscope and pixel size, and the source plate/site of these 540x540 images is not stated, so no upstream value can be
+    assigned.'
