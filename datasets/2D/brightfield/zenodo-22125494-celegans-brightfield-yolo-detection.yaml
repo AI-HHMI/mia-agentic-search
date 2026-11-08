@@ -2,9 +2,10 @@ schema_version: '1.2'
 id: zenodo-22125494-celegans-brightfield-yolo-detection
 title: 'C. elegans bright-field detection dataset: 12,372 annotated images with four object classes'
 short_name: C. elegans bright-field detection (YOLO)
-description: '12,372 bright-field JPEG images of Caenorhabditis elegans from a single industrial imaging platform, annotated
-  with YOLO bounding boxes (348,264 instances) for four classes: elegans (adult and larval worms), bubbles, rings and mildew.
-  An 80/20 split (9,840 / 2,463) is given in a separate reproduction package.'
+description: '12,372 bright-field JPEG images of Caenorhabditis elegans from a single industrial imaging
+  platform, annotated with YOLO bounding boxes (348,264 instances) for four classes: elegans (adult and
+  larval worms), bubbles, rings and mildew. An 80/20 split (9,840 / 2,463) is given in a separate reproduction
+  package.'
 landing_url: https://zenodo.org/records/22125494
 doi: 10.5281/zenodo.22125494
 repository: Zenodo
@@ -36,7 +37,8 @@ annotations:
   types:
   - bounding-box
   coverage: dense
-  format: YOLO txt per image (class cx cy w h, normalised); 69 files use the labelling tool's polygon format
+  format: YOLO txt per image (class cx cy w h, normalised); 68 files contain one polygon-format line,
+    1 a stray token
   source: unknown
 ml:
   tasks:
@@ -53,15 +55,73 @@ provenance:
   evidence_urls:
   - https://zenodo.org/api/records/22125494
   - https://zenodo.org/api/records/24050153
-  confidence: 0.65
+  - https://zenodo.org/api/records/24050153/files/elegans_code.tar.gz/content
+  - https://zenodo.org/api/records/24050153/files/elegans_labels.tar.gz/content
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-11-08T15:25:39Z'
-notes: Images are whole-plate photographs from an industrial imaging platform; the microscope or camera optics and pixel size
-  are not stated on the record or the reproduction package, so voxel size is null and modality brightfield follows the record
-  title only. Split lists (80/20) are in reproduction package 10.5281/zenodo.24050153, not in this record, so splits_provided
-  reflects that. The accompanying manuscript (YOLO11n four-scale detector) has no DOI on either record and was not read. Files
-  are .rar archives (images-7G.rar, labels.rar), which peek_archive cannot list; counts come from the record text. Annotator
-  and procedure are not stated, so source is unknown.
+  annotations_verified: true
+  last_checked: '2026-11-08T17:00:00Z'
+notes: 'Images are plate photographs from an industrial imaging platform; optics and pixel size are not
+  stated on the record or in the reproduction package README, so voxel size is null and modality follows
+  the record title. The 80/20 split lists (9,840 / 2,463) are in reproduction package 10.5281/zenodo.24050153.
+  The manuscript has no DOI and was not read. Annotator and procedure not stated, so source is unknown.
+  enricher: class ids 0 elegans, 1 bubbles, 2 rings, 3 mildew (reproduction README and dataset.yaml);
+  annotations_verified true (12,372 label files read from elegans_labels.tar.gz). enricher: the .rar archives
+  are RAR5 with compressed entries; single files cannot be pulled remotely.'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: 'images-7G.rar   6.37 GB  12,372 .jpg, flat (e.g. 000115.jpg)
+
+      labels.rar      6.7 MB   12,372 .txt, flat, named after the image (e.g. 00010.txt)'
+    n_files: 2
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: images-7G.rar/*.jpg
+    format: jpeg
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: jpeg
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Record text: 2592x1944 or 2448x2048 px, a few at 3840x2160 and 1280x800. Pixels
+      not read (RAR5 compressed entries).'
+  - role: label
+    path_pattern: labels.rar/*.txt
+    format: other
+    axes: null
+    shape:
+    - 39
+    - 5
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: elegans
+    - id: 1
+      name: bubbles
+    - id: 2
+      name: rings
+    - id: 3
+      name: mildew
+    alignment: same-grid
+    alignment_notes: One space-separated YOLO txt per image with the same stem (images-7G.rar/<stem>.jpg
+      <-> labels.rar/<stem>.txt); class cx cy w h normalised to the image size.
+  notes: 'Listing (Zenodo API): 2 files, 6,375,783,616 bytes. RAR5 headers read with range requests (first
+    2 MB of each archive): entries 000115.jpg ... (about 0.5 MB compressed, 0.61 MB unpacked each) and
+    00010.txt ..., compression method 3 (not stored), not solid, so TensorSwitch cannot fetch members
+    and the images were not sampled. Labels read from the reproduction package copy (elegans_labels.tar.gz,
+    labels/train 9,897 + labels/val 2,475 = 12,372 files): 350,178 lines with 5 columns, 68 with 9 (polygon),
+    1 stray token; classes 0: 257,441, 1: 6,951, 2: 15,510, 3: 70,344. Label shape [39,5] is train/0001.txt.
+    Voxel size not found; checked: record description, reproduction README (dataset section), dataset.yaml;
+    no paper DOI. No direct download of single files: both archives are RAR (download_url stays empty;
+    the whole archive must be fetched and unpacked).'
