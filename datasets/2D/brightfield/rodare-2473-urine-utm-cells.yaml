@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: rodare-2473-urine-utm-cells
 title: Clinical urine microscopy for urinary tract infections
 short_name: Urinary cell segmentation, UTI (brightfield)
-description: 300 brightfield images (1392x1040) of unstained, untreated urine from patients with symptomatic
-  UTI, with a binary foreground mask and a seven-class mask (rods, RBC/WBC, yeast, miscellaneous, single
-  epithelial cells, small and large epithelial-cell sheets) covering 3,562 annotated objects.
+description: 300 brightfield images (1392x1040) of unstained, untreated urine from patients with symptomatic UTI,
+  with a binary foreground mask and a seven-class mask (rods, RBC/WBC, yeast, miscellaneous, single epithelial cells,
+  small and large epithelial-cell sheets) covering 3,562 annotated objects.
 landing_url: https://rodare.hzdr.de/record/2473
 doi: 10.14278/rodare.2473
 repository: other
@@ -26,11 +26,10 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Homo sapiens
-  sample: unstained, untreated voided urine from patients with symptomatic urinary tract infection (enriched
-    samples)
+  sample: unstained, untreated voided urine from patients with symptomatic urinary tract infection (enriched samples)
   labels_stains: []
 data:
   formats:
@@ -38,7 +37,7 @@ data:
   size_bytes: 2270524202
   n_items: 300
   access: open
-  download_url: https://rodare.hzdr.de/api/files/a3629327-4904-41fa-98af-360340110dda/ds1.zip
+  download_url: https://rodare.hzdr.de/record/2473/files/ds1.zip?download=1
   download_method: http
 annotations:
   present: true
@@ -46,14 +45,15 @@ annotations:
   - semantic-segmentation
   - classification
   coverage: dense
-  format: 'Folders img, bin_mask (0/1) and mult_mask (0 background; 1 rod, 2 RBC/WBC, 3 yeast, 4 miscellaneous,
-    5 single EPC, 6 small EPC sheet, 7 large EPC sheet), 300 .tif each, files numbered incrementally'
+  format: 'Folders img (RGB uint16), bin_mask (uint8, 0 background / 255 foreground) and mult_mask (uint8 class
+    IDs: 0 background; 1 rod, 2 RBC/WBC, 3 yeast, 4 miscellaneous, 5 single EPC, 6 small EPC sheet, 7 large EPC
+    sheet), one .tif per image, same file name in each folder, under train/, validation/ and test/'
   source: manual
 ml:
   tasks:
   - segmentation
   - classification
-  splits_provided: false
+  splits_provided: true
   benchmark: null
   baseline_code_url: null
 license:
@@ -67,16 +67,118 @@ provenance:
   - https://rodare.hzdr.de/record/2473
   - https://www.hzdr.de/publications/Publ-37531
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10834944/fullTextXML
-  confidence: 0.8
+  - https://github.com/casus/UMOD
+  confidence: 0.85
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-11-09T22:40:00Z'
-notes: 'Olympus BX41F, 20x/0.4 objective with 0.5x C-mount adapter, Infinity 3S-1UR colour camera, images
-  1392x1040 .tif. Pixel size not stated on the Rodare record, HZDR page or paper (Sci Data 2024); not
-  derivable without the sensor pitch. Binary masks were first made with ilastik then refined manually;
-  class labels assigned by two microscopists. Rodare lists three versions (concept DOI 10.14278/rodare.2472;
-  latest record 2563); this record describes version 1 (record 2473, ds1.zip, 2.27 GB). Archive contents
-  not listed with peek_archive (timed out); the structure comes from the record description. No train/test
-  split in the record.'
+  annotations_verified: true
+  last_checked: '2026-11-09T23:20:00Z'
+notes: 'Olympus BX41F, 20x/0.4 objective, 0.5x C-mount adapter, Infinity 3S-1UR colour camera. Pixel size not stated
+  (Rodare record, HZDR page, paper, UMOD code repo, TIFF headers). Binary masks made with ilastik then refined manually;
+  class labels by two microscopists. Rodare lists three versions (concept DOI 10.14278/rodare.2472; latest record
+  2563); this is version 1 (record 2473, ds1.zip). enricher: splits_provided true (zip has train/validation/test,
+  100 images each; paper: equal random split). enricher: bin_mask stores 0/255, not 0/1 (sampled). enricher: channels
+  3 (RGB TIFF header). enricher: download_url switched to the /record/2473/files/ link (range requests; the /api/files/
+  link ignores ranges).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "ds1.zip (2.27 GB; 3.48 GB uncompressed, 913 members)\n  ds1/train/img/cls/0001-0100.tif        100 files\
+      \  868.6 MB\n  ds1/train/bin_mask/cls/*.tif           100 files  144.9 MB\n  ds1/train/mult_mask/cls/*.tif\
+      \          100 files  144.8 MB\n  ds1/validation/{img,bin_mask,mult_mask}/cls/*.tif  100 files each (same\
+      \ sizes)\n  ds1/test/{img,bin_mask,mult_mask}/cls/*.tif        100 files each (same sizes)\n  (+13 .DS_Store\
+      \ files)\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://rodare.hzdr.de/record/2473/files/ds1.zip?download=1::ds1/train/img/cls/0001.tif
+    - https://rodare.hzdr.de/record/2473/files/ds1.zip?download=1::ds1/train/bin_mask/cls/0001.tif
+    - https://rodare.hzdr.de/record/2473/files/ds1.zip?download=1::ds1/train/mult_mask/cls/0001.tif
+    size_bytes: 11583352
+    description: One RGB brightfield image with its binary and multi-class masks (train/0001)
+  arrays:
+  - role: raw
+    path_pattern: ds1.zip::ds1/*/img/cls/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 1040
+    - 1392
+    - 3
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 4935
+    - 65421
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB colour (photometric 2, 3 samples per pixel, samples not identical), stored as 16-bit colour
+      per the record description.
+  - role: label
+    path_pattern: ds1.zip::ds1/*/bin_mask/cls/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1040
+    - 1392
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: foreground (informative cells)
+    alignment: same-grid
+    alignment_notes: Pairs with img by split folder and file name (ds1/<split>/img/cls/NNNN.tif <-> ds1/<split>/bin_mask/cls/NNNN.tif);
+      same 1040x1392 grid. Values 0/255.
+  - role: label
+    path_pattern: ds1.zip::ds1/*/mult_mask/cls/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1040
+    - 1392
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 6
+    normalization: unknown
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: rod
+    - id: 2
+      name: RBC/WBC
+    - id: 3
+      name: yeast
+    - id: 4
+      name: miscellaneous
+    - id: 5
+      name: single EPC
+    - id: 6
+      name: small EPC sheet
+    - id: 7
+      name: large EPC sheet
+    alignment: same-grid
+    alignment_notes: Same pairing rule as bin_mask (mult_mask folder). Its non-zero pixels equal the bin_mask foreground
+      exactly in the sample (45,962 px).
+  notes: 'Listing: exact central directory of ds1.zip (913 members, 900 TIFF + 13 .DS_Store). Probed and sampled
+    train/0001 (img, bin_mask, mult_mask): value ranges are from this one sample. Raw mean 36624, p1-p99 33353-39598.
+    mult_mask sample values {0,1,2,4,5,6}; class names from the record description and the UMOD CLASS_MAP (scripts/create_multiclass_masks.py).
+    Voxel size not found; checked: TIFF headers (no calibration), Rodare API records 2473 and 2563, landing page,
+    paper full text (Europe PMC), UMOD GitHub repo (README, configs, scripts). Download: /record/2473/files/ds1.zip?download=1
+    supports range requests and zip members; host rodare.hzdr.de is not on the TensorSwitch allowlist yet.'
