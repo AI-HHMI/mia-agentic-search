@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: gigadb-100862-mouse-embryo-head-microct
 title: X-ray microtomography atlas of mouse cranial development (7 PTA-stained embryo heads with nasal capsule masks)
 short_name: Mouse embryo head nasal capsule masks (micro-CT)
-description: Seven reconstructed 3D laboratory micro-CT scans of phosphotungstic-acid-stained C57BL/6NCrl mouse embryo
-  heads (E12.5 to E18.5), with manually segmented binary masks of cartilage of the nasal capsule (and mesenchymal
-  condensations for E12.5 and E13.5). Released with the GigaScience data paper by Matula et al.
+description: Seven reconstructed 3D laboratory micro-CT scans of phosphotungstic-acid-stained C57BL/6NCrl mouse embryo heads
+  (E12.5 to E18.5), with manually segmented binary masks of cartilage of the nasal capsule (and mesenchymal condensations
+  for E12.5 and E13.5). Released with the GigaScience data paper by Matula et al.
 landing_url: http://gigadb.org/dataset/100862
 doi: 10.5524/100862
 repository: other
@@ -25,11 +25,8 @@ imaging:
   modality:
   - X-ray
   dimensionality: 3D
-  voxel_size_nm:
-    x: 2600
-    y: 2600
-    z: 2600
-  channels: null
+  voxel_size_nm: null
+  channels: 1
   organism:
   - Mus musculus
   sample: PTA-stained C57BL/6NCrl embryo heads, E12.5 to E18.5, scanned on a GE phoenix lab micro-CT
@@ -38,17 +35,18 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: null
+  size_bytes: 7633214407
   n_items: 7
   access: open
-  download_url: null
+  download_url: https://s3.ap-northeast-1.wasabisys.com/gigadb-datasets/live/pub/10.5524/100001_101000/100862/
   download_method: http
 annotations:
   present: true
   types:
   - semantic-segmentation
   coverage: partial
-  format: Binary 8-bit TIFF mask stacks (mask_<sample>.tif), one Images and one Masks folder per sample
+  format: Binary 8-bit TIFF masks, one file per slice (Masks/mask_<sample>_NNNN.tif) in <sample>_Masks.tar.gz, paired with
+    Images/<sample>_NNNN.tif in <sample>_Images.tar.gz
   source: manual
 ml:
   tasks:
@@ -65,16 +63,84 @@ provenance:
   evidence_urls:
   - https://api.datacite.org/dois/10.5524/100862
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7936920/fullTextXML
-  confidence: 0.6
+  - https://gigadb.org/api/file/?doi=100862
+  - https://s3.ap-northeast-1.wasabisys.com/gigadb-datasets/live/pub/10.5524/100001_101000/100862/readme_100862.txt
+  - https://s3.ap-northeast-1.wasabisys.com/gigadb-datasets/live/pub/10.5524/100001_101000/100862/E145/E145_info.txt
+  - https://s3.ap-northeast-1.wasabisys.com/gigadb-datasets/live/pub/10.5524/100001_101000/100862/E125/E125_info.txt
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-11-09T13:50:00Z'
-notes: 'Voxel sizes differ per embryo (2.6, 3.0, 5.0, 6.0, 6.0, 5.8, 5.5 um, paper Table 1); voxel_size_nm shows the smallest (E12.5)
-  only because the schema takes one value. Dataset size (about 1 GB), CC0 licence and landing URL come from the DataCite
-  record. gigadb.org renders client-side, so the file listing could not be read; formats, folder layout and masks come
-  from the paper Data Availability section (annotations_verified false). Masks cover nasal capsule cartilage (all
-  stages) and mesenchymal condensations (E12.5, E13.5), not whole heads; only every third slice was segmented manually, the
-  rest interpolated. .stl models are also included. Micro-CT of whole embryos at 2.6 to 6 um, so only borderline microscopy.
-  Not stated: exact file sizes, train/test split.'
+  annotations_verified: true
+  last_checked: '2026-11-09T14:40:00Z'
+notes: 'Voxel sizes differ per embryo (isotropic, GigaDB file API and <sample>_info.txt): E12.5 2.6, E13.5 3.0, E14.5 5.0,
+  E15.5 6.0, E16.5 6.0, E17.5 5.8, E18.5 5.5 um, so voxel_size_nm is null. CC0 per readme_100862.txt. Files: per-sample Images/Masks
+  tar.gz on GigaDB Wasabi S3 plus .stl surface models and info.txt. Masks: 0 background, 1 = nasal capsule cartilage (all
+  stages) plus mesenchymal condensations (E12.5, E13.5) in one class; every third slice segmented manually in Avizo, the rest
+  linearly interpolated (paper). Not whole-head labels. No train/test split. enricher: voxel size set to null (was 2600 nm,
+  the E12.5 value only); size 7.6 GB from complete S3 listing (was null); channels 1 from TIFF headers; annotations verified
+  from E14.5 masks.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "gigadb-datasets/live/pub/10.5524/100001_101000/100862/ (Wasabi S3): 37 files, 7,633,214,407 B\n  100862.md5, readme_100862.txt\n\
+      \  E125/ E135/ E145/ E155/ E165/ E175/ E185/   (7 samples, 5 files each)\n    E<n>_Images.tar.gz   0.54-1.46 GB  ->\
+      \ Images/E<n>_NNNN.tif (one 2D slice per file)\n    E<n>_Masks.tar.gz    2-8 MB        -> Masks/mask_E<n>_NNNN.tif\n\
+      \    E<n>.stl, mask_E<n>.stl   surface models (~50 / ~25 MB)\n    E<n>_info.txt         voxel size in mm"
+    n_files: 37
+    listing_complete: true
+  sample:
+    urls:
+    - https://s3.ap-northeast-1.wasabisys.com/gigadb-datasets/live/pub/10.5524/100001_101000/100862/E145/E145_Images.tar.gz
+    - https://s3.ap-northeast-1.wasabisys.com/gigadb-datasets/live/pub/10.5524/100001_101000/100862/E145/E145_Masks.tar.gz
+    size_bytes: 546113123
+    description: 'E14.5 embryo: image slice stack and its mask stack (gzip tars of per-slice TIFFs), 5 um voxels'
+  arrays:
+  - role: raw
+    path_pattern: E*/E*_Images.tar.gz
+    format: tiff
+    axes: yx
+    shape:
+    - 1110
+    - 1117
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 178
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Each tar holds Images/E<n>_NNNN.tif, one plain single-page 2D TIFF per z slice (slice index NNNN), no
+      resolution tags; the slices of one sample form its volume. Shape from E14.5; other samples not inspected.
+  - role: label
+    path_pattern: E*/E*_Masks.tar.gz
+    format: tiff
+    axes: yx
+    shape:
+    - 1110
+    - 1117
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 1
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: nasal capsule cartilage / mesenchymal condensations
+    alignment: same-grid
+    alignment_notes: 'Pairing: Masks/mask_E<n>_NNNN.tif <-> Images/E<n>_NNNN.tif (same sample and slice index), same 1110x1117
+      grid. E14.5 mask tar has 1020 slices, 224 of 400 decoded contain foreground.'
+  notes: 'Listing: tools/listing.py on the S3 prefix (complete, exact sizes); GigaDB file API (gigadb.org/api/file/?doi=100862)
+    gives the same files with per-file voxel size. The archives are gzip tars (no index, no member access), so I read E14.5_Masks.tar.gz
+    fully (1,964,013 B, 1020 slices, 400 decoded: uint8, values {0,1}) and the first 8 MB of E145_Images.tar.gz (15 slices,
+    5 decoded: 1110x1117 uint8, uncompressed, min 0, max 116-178). Value ranges are from these samples only. Images slice
+    count not confirmed (stream not read to the end). Not converted automatically: TensorSwitch reads zip members but not
+    tar.gz, and s3.ap-northeast-1.wasabisys.com is not on its fetch allowlist. Voxel size differs per sample (see notes),
+    so voxel_size_nm stays null.'
