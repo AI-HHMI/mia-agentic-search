@@ -65,16 +65,78 @@ provenance:
   - https://data.4tu.nl/v2/articles/60cdce27-5bd5-44ec-9d8f-53f2ef6b9d58
   - https://data.4tu.nl/file/60cdce27-5bd5-44ec-9d8f-53f2ef6b9d58/884eb9fc-0111-48b3-93b7-68368a764753
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13232557/fullTextXML
-  confidence: 0.6
+  - https://data.4tu.nl/v2/articles/60cdce27-5bd5-44ec-9d8f-53f2ef6b9d58/files
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-11-10T22:50:00Z'
+  annotations_verified: true
+  last_checked: '2026-11-10T23:05:00Z'
 notes: 'The 972 MB zip "data - YOLO training and testing.zip" also holds trained .weights (941 MB), scripts and
-  Prism files; the images and boxes are inside nested obj.zip/val.zip (not opened), so image counts come
-  from the paper Methods (700 images / 688 boxes for 1 class; 40 images / 1,645 boxes for 2 classes), and
-  the nested-zip contents and jpg format are taken from the paper, not verified in the listing. Pixel size 0.25 um
-  and 512x512 are from the paper Methods. Organism left empty: synthetic cells, no organism stated. The
-  rest of the 4TU deposit (large confocal screening series, FACS, qPCR) was not assessed. The 1-class
-  and 2-class sets overlap in imaging setup but are different annotation sets.'
+  Prism files; images and boxes are in nested obj.zip/val.zip. Pixel size 0.25 um and 512x512 are from the paper
+  Methods. Organism left empty: synthetic cells, no organism stated. The rest of the 4TU deposit (large confocal
+  screening series, FACS, qPCR) was not assessed. The 1-class and 2-class sets are different annotation sets.
+  enricher: nested zips opened; 700 + 40 jpg and box counts (688; 1,645) confirmed, annotations_verified set
+  true (was false); class names from obj.names (1-class: MinD; 2-class: lumen, membrane).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "data - YOLO training and testing.zip  972,238,571 B, 58 members (1,045 MB uncompressed)\n  Fig3 - FigS4/\n\
+      \    MinD 1 class/20240108_MinD_1class_training data and results/\n      obj.zip  66.5 MB  (obj/: 560 jpg\
+      \ + 560 txt)\n      val.zip  16.8 MB  (val/: 140 jpg + 140 txt)\n      obj.data, obj.names (MinD), yolov3/4/7-tiny.cfg,\
+      \ generate_train.py, generate_test.py\n      trained weights_*/  *.weights (941 MB in all)\n    MinCDE 2 classes/20241107_MinCDE_2classes_training\
+      \ data and results/\n      obj.zip  15.9 MB  (obj/: 32 jpg + 32 txt)\n      val.zip   4.0 MB  (val/: 8 jpg\
+      \ + 8 txt)\n      obj.data, obj.names (lumen, membrane), yolov7-tiny.cfg, loss-80.png\n    *.prism, *.docx\
+      \ (results)\n"
+    n_files: 58
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.4tu.nl/file/60cdce27-5bd5-44ec-9d8f-53f2ef6b9d58/884eb9fc-0111-48b3-93b7-68368a764753::data - YOLO training and testing/Fig3 - FigS4/MinCDE 2 classes/20241107_MinCDE_2classes_training data and results/val.zip
+    size_bytes: 3998154
+    description: 2-class validation set, a nested zip with 8 jpg images and their 8 YOLO .txt box files (382 boxes)
+  arrays:
+  - role: raw
+    path_pattern: data - YOLO training and testing/Fig3 - FigS4/*/*/{obj,val}.zip::{obj,val}/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: data - YOLO training and testing/Fig3 - FigS4/*/*/{obj,val}.zip::{obj,val}/*.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: boxes-table
+    classes:
+    - id: 0
+      name: MinD (1-class set) / lumen (2-class set)
+    - id: 1
+      name: membrane (2-class set only)
+    alignment: same-grid
+    alignment_notes: One YOLO .txt per jpg with the same stem in the same folder; lines are <class> <x_center>
+      <y_center> <width> <height>, normalized to [0,1]. Empty .txt = no box (274 of 560 in 1-class obj, 78 of
+      140 in 1-class val).
+  notes: 'Listing: peek_archive of the one 4TU file (58 members, exact sizes); the nested obj.zip/val.zip (deflated)
+    were downloaded (103.6 MB) and opened locally, then deleted. All 740 jpg are 512x512 RGB uint8; one sample image
+    per set had R and G in 0-255 and B near 0 (max 4-47, JPEG noise), so the two confocal channels look stored
+    as R/G, but which channel is which is not stated (value_range from one image). Box counts: 1-class 565 + 123
+    = 688, 2-class 690+225 class 0 and 573+157 class 1 = 1,645, matching the paper. TensorSwitch cannot read
+    members of a nested zip, so the sample is the whole 4 MB val.zip member. data.4tu.nl is not on the
+    TensorSwitch fetch allowlist. Not convertible yet: 2D, and no organism (synthetic cells).'
