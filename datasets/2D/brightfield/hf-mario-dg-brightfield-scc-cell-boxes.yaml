@@ -1,0 +1,122 @@
+schema_version: '1.2'
+id: hf-mario-dg-brightfield-scc-cell-boxes
+title: Brightfield Microscopy SCC Dataset (filtered, no well edge)
+short_name: Brightfield cell detection crops (SCC, filtered)
+description: 24,285 brightfield microscopy image crops (512 x 512 px) sliced from 4K images, with one bounding box class for
+  cells, split into train (20,558), validation (2,527) and test (about 1,200) and filtered to crops with no microtiter-plate
+  well edge visible. The card says it was used to train unconditional diffusion models and cell detection models.
+landing_url: https://huggingface.co/datasets/mario-dg/brightfield-microscopy-scc-filtered
+doi: null
+repository: HuggingFace
+accession: null
+authors: []
+publications: []
+date_published: null
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: null
+  organism: []
+  sample: cells in brightfield images of a microtiter plate (cell type, species and microscope not stated)
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: 5795218862
+  n_items: 24285
+  access: open
+  download_url: https://huggingface.co/datasets/mario-dg/brightfield-microscopy-scc-filtered
+  download_method: git-lfs
+annotations:
+  present: true
+  types:
+  - bounding-box
+  coverage: unknown
+  format: per image, a list of normalised [x, y, w, h] boxes and integer categories in the objects column (all examples seen
+    are category 0)
+  source: unknown
+ml:
+  tasks:
+  - detection
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-11T18:18:32Z'
+  evidence_urls:
+  - https://huggingface.co/datasets/mario-dg/brightfield-microscopy-scc-filtered
+  - https://huggingface.co/api/datasets/mario-dg/brightfield-microscopy-scc-filtered
+  - https://huggingface.co/datasets/mario-dg/brightfield-microscopy-scc-filtered/raw/main/README.md
+  - https://datasets-server.huggingface.co/first-rows?dataset=mario-dg/brightfield-microscopy-scc-filtered&config=default&split=train
+  confidence: 0.5
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-11T18:55:13Z'
+notes: 'The card gives no license, authors, paper, cell type, species, microscope or pixel size, so those fields are null/unknown;
+  searched the card, the Hub API record and the first rows only (no linked paper found). Parquet files (13 files, 5.80 GB)
+  hold the images as embedded bytes; formats stays other (Parquet is not in the enum). Split sizes from the card metadata:
+  20,558 train, 2,527 validation and 1,200 test (the prose says 1,199). First rows: 512 x 512 crops, one normalised box, category
+  0; a second class was not seen in the rows read. Who annotated the boxes and how is not stated. enricher: embedded images
+  are PNG (512x512, 8-bit RGBA per IHDR); size_bytes from the HF file listing (15 files).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "huggingface.co/datasets/mario-dg/brightfield-microscopy-scc-filtered (rev ed50feea)\n  README.md, .gitattributes\n\
+      \  data/train-0000[0-9]-of-00010.parquet  10 files  4.90 GB\n  data/validation-0000[0-1]-of-00002.parquet  2 files \
+      \ 0.60 GB\n  data/test-00000-of-00001.parquet  1 file  287 MB\n  columns: image (PNG bytes), label (split id), width,\
+      \ height, objects {bbox, categories}, well_edge\n"
+    n_files: 15
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/mario-dg/brightfield-microscopy-scc-filtered/resolve/main/data/test-00000-of-00001.parquet
+    size_bytes: 286674405
+    description: The test split (1,200 crops with boxes in the same Parquet file); the smallest file
+  arrays:
+  - role: raw
+    path_pattern: data/*.parquet
+    format: other
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 4
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Parquet image column holding PNG bytes; PNG IHDR of 4 embedded images: 512x512, bit depth 8, colour
+      type 6 (RGBA). Card/datasets-server: width = height = 512 for every row read.'
+  - role: label
+    path_pattern: data/*.parquet
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: float64
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    encoding: boxes-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'objects column in the same Parquet row as the image: bbox = list of 4 floats normalised to [0,1] (e.g.
+      [0.244, 0.667, 0.098, 0.100]), categories = int list (only 0 seen). Whether x,y is the box corner or centre is not stated.'
+  notes: 'Listing: tools/listing.py on the HF dataset: 15 files, 5,795,218,862 bytes, complete, exact. Parquet is not readable
+    by probe.py/sample.py and pyarrow isn''t an allowed tool, so the first 1 MB of the test Parquet was range-read twice and
+    the embedded PNG headers were parsed: 512x512, 8-bit RGBA. The pixel values couldn''t be decoded (the pages are compressed),
+    so there''s no value range. Pixel size not found; checked: card README, Hub API cardData, datasets-server first rows,
+    the author''s other datasets (none cite a paper). No license on the card or in the API (scc_real by the same author is
+    apache-2.0, but that is a different dataset). Download: per-file resolve/main URLs (usable, range requests); there is
+    no single archive.'
