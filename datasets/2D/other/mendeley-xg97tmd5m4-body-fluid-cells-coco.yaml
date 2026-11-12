@@ -3,8 +3,8 @@ id: mendeley-xg97tmd5m4-body-fluid-cells-coco
 title: 'CSV, COCO, TXT: Body fluid cells'
 short_name: Body fluid cell detection, 14 classes (microscopy)
 description: Roboflow-style object detection dataset of body fluid cells (12,966 annotated cells in 14 classes, e.g. lymphocytes,
-  neutrophils, signet-ring cells, mitotic cells) with train/validation/test splits and bounding-box annotations in COCO
-  JSON, CSV and YOLO TXT formats. Training data were augmented.
+  neutrophils, signet-ring cells, mitotic cells) with train/validation/test splits and bounding-box annotations in COCO JSON,
+  CSV and YOLO TXT formats. Training data were augmented.
 landing_url: https://data.mendeley.com/datasets/xg97tmd5m4/1
 doi: 10.17632/xg97tmd5m4.1
 repository: other
@@ -26,7 +26,7 @@ data:
   formats:
   - jpeg
   size_bytes: 1079578073
-  n_items: 28206
+  n_items: 9402
   access: open
   download_url: null
   download_method: http
@@ -36,7 +36,8 @@ annotations:
   - bounding-box
   - classification
   coverage: dense
-  format: COCO JSON (_annotations.coco.json per split), CSV (_annotations.csv per split) and YOLO TXT label files (one per image), plus data.yaml
+  format: COCO JSON (_annotations.coco.json per split), CSV (_annotations.csv per split) and YOLO TXT label files (one per
+    image), plus data.yaml
   source: unknown
 ml:
   tasks:
@@ -54,16 +55,104 @@ provenance:
   evidence_urls:
   - https://data.mendeley.com/datasets/xg97tmd5m4/1
   - https://data.mendeley.com/public-api/datasets/xg97tmd5m4
-  confidence: 0.55
+  - https://data.mendeley.com/public-api/datasets/xg97tmd5m4/files?folder_id=e915d247-edb0-44c7-a000-21c53aa92271&version=1
+  confidence: 0.5
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-12T05:30:00Z'
-notes: 'The Mendeley public API lists 37,618 files totalling 1.08 GB: 28,206 JPG images, 9,405 TXT (YOLO labels and Roboflow READMEs),
-  3 COCO JSON files (_annotations.coco.json, one per split), 3 CSV files and data.yaml. The 28,206 JPGs exceed the 12,966
-  cells quoted on the page because the training split is augmented (page and Roboflow export), so n_items is the JPG
-  count and includes augmented copies. The page does not state the stain, microscope, magnification, pixel size, how
-  the cells were annotated, or give a related paper; no paper was found, so modality is other and annotation source is
-  unknown. Class names were not read from data.yaml. No direct archive link; files are individually listed on Mendeley
-  (the page offers Download All).'
+  last_checked: '2026-11-12T05:45:00Z'
+notes: 'The Mendeley public API lists 37,618 files totalling 1.08 GB: 28,206 JPG images, 9,405 TXT (YOLO labels and Roboflow
+  READMEs), 3 COCO JSON files (_annotations.coco.json, one per split), 3 CSV files and data.yaml. The 28,206 JPGs exceed the
+  12,966 cells quoted on the page because the training split is augmented (page and Roboflow export). The page does not state
+  the stain, microscope, magnification, pixel size, how the cells were annotated, or give a related paper; no paper was found,
+  so modality is other and annotation source is unknown. Class names were not read from data.yaml. No direct archive link;
+  files are individually listed on Mendeley (the page offers Download All). enricher: the 28,206 JPGs are 9,402 unique images
+  (sha256) stored 3 times, once per export folder (COCO, CSV, YOLO); n_items 9,402 (was 28,206), training images include augmented
+  copies. On 2026-11-12 no file could be downloaded (API status SETUP, links return a 404 JSON).'
+technical:
+  method: metadata-only
+  size_source: page-stated
+  layout:
+    tree: 'Mendeley Data xg97tmd5m4 v1 (public API file list: 37,618 files, 1,079,578,073 B; folder names not exposed by the
+      API)
+
+      COCO export:  train 8,660 .jpg + _annotations.coco.json (52.9 MB) | valid 495 .jpg + json (3.2 MB) | test 247 .jpg +
+      json (1.5 MB)
+
+      CSV export:   train 8,660 .jpg + _annotations.csv | valid 495 .jpg + csv | test 247 .jpg + csv
+
+      YOLO export:  images: train 8,660 / valid 495 / test 247 .jpg; labels: 8,660 / 495 / 247 .txt; data.yaml
+
+      3 x README.roboflow.txt
+
+      The same 9,402 JPGs (identical sha256) appear in all three exports; JPG size 9.3-81 KB (median 30.8 KB).
+
+      '
+    n_files: 37618
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: '*.jpg'
+    format: jpeg
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: jpeg
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Roboflow export names (IMG_<n>_jpg.rf.<hash>.jpg); one copy per export folder.
+  - role: label
+    path_pattern: _annotations.coco.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: boxes-table
+    classes: null
+    alignment: unknown
+    alignment_notes: One COCO JSON per split, matched to the JPGs in the same folder by file name (Roboflow export); not opened,
+      the files could not be downloaded.
+  - role: label
+    path_pattern: _annotations.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: boxes-table
+    classes: null
+    alignment: unknown
+    alignment_notes: One CSV per split (same boxes as the COCO export, per the record title); not opened.
+  - role: label
+    path_pattern: '*.txt'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: boxes-table
+    classes: null
+    alignment: unknown
+    alignment_notes: YOLO TXT, one per image with the same stem (8,660 / 495 / 247); the pattern also matches the 3 README.roboflow.txt
+      files.
+  notes: 'Metadata-only: on 2026-11-12 every file of this dataset failed to download. The public API lists all 37,618 files
+    with status SETUP and download_url values that return HTTP 200 with a JSON {"code":404} body (data.yaml, a COCO JSON,
+    a JPG tried); the page''s Download All (/public-api/zip/xg97tmd5m4/download/1, from the page''s bundle.js) returns the
+    same. A COMPLETED Mendeley dataset (cgwcpz34mr) still downloads, so this looks dataset-specific. Size and file counts
+    are from the API file list (exact sizes, but not from tools/listing.py, so page-stated). Not read: shapes, dtypes, class
+    names (data.yaml), box format. Voxel size not found; checked: API record and description, landing page; no paper, files
+    not readable.'
