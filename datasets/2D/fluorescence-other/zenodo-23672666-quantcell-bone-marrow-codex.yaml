@@ -36,10 +36,10 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 2673000000
+  size_bytes: 2672910778
   n_items: 1
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/23672666
   download_method: http
 annotations:
   present: true
@@ -47,7 +47,7 @@ annotations:
   - points
   - classification
   coverage: dense
-  format: CSV tables (per-cell centroid in um, marker calls, cell_type) plus JSON marker combinations
+  format: 'CSV tables (one row per cell: section, centroid x/y in um, 25 marker calls and measurements, cell_type) plus JSON marker combinations'
   source: automatic
 ml:
   tasks:
@@ -72,5 +72,105 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-12T13:27:47Z'
-notes: 'The image is one 45-channel QPTIFF whole-slide scan (raw_image.zip, 1.8 GB) holding six tissue sections, not many separate images. Labels are per-cell tables, not mask images: cell types come from rule-based binary marker calls (StarDist nuclei segmentation in QuPath 0.3.0) and from the QuantCell LightGBM model at 5% FDR, so they are algorithmic and not manual ground truth; cells matching no combination are labelled Other. Paper is a bioRxiv preprint (not open access in Europe PMC): only the abstract was read; the pixel size, channel count and file contents come from the Zenodo record and zip listings. File size is the sum of the listed files. Download URLs are Zenodo file links (quantcell.zip, qupath_exports.zip, raw_image.zip).'
+  last_checked: '2026-11-12T14:10:00Z'
+notes: 'The image is one 45-channel QPTIFF whole-slide scan (raw_image.zip, 1.8 GB) holding six tissue sections, not many separate images. Labels are per-cell tables, not mask images: cell types come from rule-based binary marker calls (StarDist nuclei segmentation in QuPath 0.3.0) and from the QuantCell LightGBM model at 5% FDR, so they are algorithmic and not manual ground truth; cells matching no combination are labelled Other. Paper is a bioRxiv preprint (not open access in Europe PMC): only the abstract was read; the pixel size, channel count and file contents come from the Zenodo record and zip listings. enricher: size 2,672,910,778 B from the Zenodo file listing (was 2.673e9 approx); QPTIFF header confirms 0.3774 um/px (README).'
+technical:
+  method: header
+  size_source: file-listing
+  layout:
+    tree: "./\n  MD5SUMS.txt\n  README.md\n  raw_image.zip (1.84 GB)\n    raw_image/QuantCell_bone_marrow_PhenoCycler.qptiff (1.93 GB, 45-channel BigTIFF pyramid)\n  quantcell.zip (363 MB)\n    quantcell/codex_quantcell_QuantCellPaper.csv (674 MB)\n    quantcell/codex_rule_based_QuantCellPaper.csv (673 MB)\n    quantcell/marker_combinations.json\n  qupath_exports.zip (472 MB)\n    qupath_exports/full_panel/<marker>.csv (25 files, ~61-68 MB each)\n    qupath_exports/full_panel_rebuild_validation.json"
+    n_files: 5
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/23672666/files/raw_image.zip/content::raw_image/QuantCell_bone_marrow_PhenoCycler.qptiff
+    - https://zenodo.org/api/records/23672666/files/quantcell.zip/content::quantcell/codex_quantcell_QuantCellPaper.csv
+    size_bytes: 2603991547
+    description: The whole raw image (one QPTIFF, all six sections) plus the QuantCell per-cell table; there is no smaller self-contained unit.
+  arrays:
+  - role: raw
+    path_pattern: raw_image/*.qptiff
+    format: tiff
+    axes: cyx
+    shape:
+    - 45
+    - 11147
+    - 30264
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Full-resolution level: 45 pages (one per channel, README: 45 channels) of 30264 x 11147 px, tiled 512x512, followed by reduced-resolution pages. 25 markers + DAPI are used in the paper (Supplementary Table 1); the other channels were not used.'
+  - role: label
+    path_pattern: quantcell/codex_quantcell_QuantCellPaper.csv
+    format: csv
+    axes: null
+    shape:
+    - 245719
+    - 549
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: points-table
+    classes:
+    - id: Arterial ECs
+      name: Arterial ECs
+    - id: B Cells
+      name: B Cells
+    - id: Capillary ECs
+      name: Capillary ECs
+    - id: CD4 T Cells
+      name: CD4 T Cells
+    - id: CD8 T Cells
+      name: CD8 T Cells
+    - id: cDC
+      name: cDC
+    - id: CFU-E
+      name: CFU-E
+    - id: CLP
+      name: CLP
+    - id: CMP
+      name: CMP
+    - id: Double Negative T Cells
+      name: Double Negative T Cells
+    - id: Other BM ECs
+      name: Other BM ECs
+    - id: Erythroblasts
+      name: Erythroblasts
+    - id: Erythrocytes
+      name: Erythrocytes
+    - id: GMP
+      name: GMP
+    - id: KLS
+      name: KLS
+    - id: MEP
+      name: MEP
+    - id: MkP
+      name: MkP
+    - id: Monocytes
+      name: Monocytes
+    - id: Neutrophils
+      name: Neutrophils
+    - id: Lepr+ Perivascular Cells
+      name: Lepr+ Perivascular Cells
+    - id: Megakaryocytes
+      name: Megakaryocytes
+    - id: Other
+      name: Other
+    alignment: scaled
+    alignment_notes: 'One row per cell: Parent = section (Y1-Y3, O1-O3), x/y = centroid in um on the whole-slide image; pixel = um / 0.3774. cell_type after QuantCell (LightGBM, 5% FDR); 549 columns. Row count 245,719 from the README.'
+  - role: label
+    path_pattern: quantcell/codex_rule_based_QuantCellPaper.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: points-table
+    classes: null
+    alignment: scaled
+    alignment_notes: Same 245,719 cells and columns, cell_type from binary marker rules only (Other = no or several matching combinations). Not opened; structure from the README.
+  notes: 'Listing: Zenodo API, 5 files, 2,672,910,778 B (complete). Zip members listed with peek_archive.py. Raw header: the QPTIFF member is deflated inside raw_image.zip, so probe.py could not read it; a scratch script inflated the first 113 MB (109 MB downloaded) to read IFD0: BigTIFF, 30264x11147, 8-bit, LZW, 512x512 tiles, XResolution 26497 px/cm = 0.3774 um/px, matching the README. Channel count 45 is from the README (only IFD0 was read). value_range not measured (no sample decoded). Labels: first 15 MB of codex_quantcell_QuantCellPaper.csv inflated to read the header (549 columns: Image, marker_string, Parent, ROI, x, y, shape and per-marker measurements, binary calls, cell_type). Classes: 21 cell types from marker_combinations.json plus Other. Labels are per-cell centroids and classes, not masks; cell outlines are not shipped. Download: no single archive; three direct Zenodo zips (raw_image.zip, quantcell.zip, qupath_exports.zip), all usable with range requests.'
