@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: zenodo-4980572-vtt-coffee-grinds-instance-masks
 title: 'VTT-Coffee: A small dataset for instance segmentation and iterative learning'
 short_name: Coffee grind particle masks (microscope images)
-description: 57 microscope images (BMP) of coffee grind particles with COCO-style JSON instance segmentation annotations
-  (particle contours), split into a 50-image training set, a 2-image bootstrapping set and a 3-image test set (252 annotated
-  instances in the test set per the associated paper).
+description: '57 microscope images (BMP, 1388 x 1036 RGB) of coffee grind particles: a 2-image bootstrapping set and a 3-image
+  test set with COCO-style JSON instance polygons (73 and 252 instances), plus 50 un-annotated training images for iterative
+  self-training.'
 landing_url: https://zenodo.org/records/4980572
 doi: 10.5281/zenodo.4980572
 repository: Zenodo
@@ -24,7 +24,7 @@ imaging:
   - other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism: []
   sample: coffee grind particles imaged under a microscope (non-biological material)
   labels_stains: []
@@ -40,8 +40,8 @@ annotations:
   present: true
   types:
   - instance-segmentation
-  coverage: dense
-  format: COCO-style JSON files (trainval.json, testval.json, and trainval_sampled_N.json subsets with N random annotations)
+  coverage: partial
+  format: COCO JSON polygons (test_set/testval.json, bootstrapping_set/trainval.json, trainval_sampled_N.json subsets)
   source: manual
 ml:
   tasks:
@@ -59,18 +59,91 @@ provenance:
   - https://zenodo.org/api/records/4980572
   - https://zenodo.org/api/records/4980572/files/VTT-Coffee.zip/content
   - https://arxiv.org/pdf/2202.09110
-  confidence: 0.6
+  confidence: 0.55
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-12T05:05:00Z'
-notes: 'Zip listing (peek_archive): 57 BMP images, 9 JSON files and info.csv; info.csv describes the bootstrapping set (2 images,
-  7 sampled annotation files plus trainval.json with all annotations), the training set (50 images + the 2 bootstrapping
-  images) and the test set (3 images, testval.json). Formats: the BMP images are not in the schema format list, so
-  formats is other (annotations are JSON, not a format that fits next to a known one). Modality is other because
-  the illumination type, magnification and pixel size are not stated on the Zenodo page or in the
-  arXiv text I read, so voxel size is null. The images show coffee grinds, not biological material; included because
-  they are microscope images with instance masks usable for one-class instance segmentation. No dedicated dataset paper;
-  the arXiv paper (Iterative Learning for Instance Segmentation) uses it, DOI not looked up. Only 3 test images.
-  Small dataset (57 images).'
+  last_checked: '2026-11-12T05:30:00Z'
+notes: 'Zip (peek_archive): 57 BMP images, 9 JSON files, info.csv (bootstrapping set: 2 images + trainval.json and 7 sampled
+  subsets; training set: 50 images + the 2 bootstrapping ones; test set: 3 images + testval.json). BMP is not a schema format,
+  so formats is other. Modality other: illumination, magnification and pixel size are not stated on Zenodo or in the arXiv
+  paper. Coffee grinds, not biological material; kept as microscope images with instance masks. The arXiv paper uses the data;
+  no dataset paper. enricher: only 5 of 57 images are annotated (2 bootstrapping + 3 test, 325 instances); the 50 training
+  images are unlabeled (paper Sec. 2, no training JSON in the zip); coverage partial (was dense). Channels 3 (RGB BMP).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "zenodo 4980572: VTT-Coffee.zip (163.9 MB; 67 members, 247.0 MB uncompressed)\nVTT-Coffee.zip/\n  info.csv     \
+      \               split description\n  bootstrapping_set/          2 .BMP + trainval.json (all 73 annotations) + 7 trainval_sampled_<N>.json\
+      \ (N = 1,3,6,12,18,24,30)\n  test_set/                   3 .BMP + testval.json (252 annotations)\n  training_set/  \
+      \             52 .BMP (50 + the 2 bootstrapping images), no annotations\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/4980572/files/VTT-Coffee.zip/content::test_set/cIM000350.BMP
+    - https://zenodo.org/api/records/4980572/files/VTT-Coffee.zip/content::test_set/testval.json
+    size_bytes: 5032668
+    description: One test image (cIM000350.BMP, unconnected grains) and the test-set COCO JSON that annotates it and the other
+      two test images
+  arrays:
+  - role: raw
+    path_pattern: '*/*.BMP'
+    format: other
+    axes: yxs
+    shape:
+    - 1036
+    - 1388
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 24-bit uncompressed Windows BMP (BI_RGB), RGB colour (channels differ); no pixel calibration in the header
+      (pixels per metre = 0).
+  - role: label
+    path_pattern: '{test_set/testval.json,bootstrapping_set/trainval.json}'
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: polygons
+    classes:
+    - id: 0
+      name: coffee
+    alignment: same-grid
+    alignment_notes: 'COCO JSON (images, annotations, categories); polygons in pixel coordinates of the 1388 x 1036 BMPs,
+      matched by images[].file_name to the BMP in the same folder. testval.json: 3 images, 252 instances; trainval.json: 2
+      images, 73 instances.'
+  - role: other
+    path_pattern: bootstrapping_set/trainval_sampled_*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: polygons
+    classes:
+    - id: 0
+      name: coffee
+    alignment: same-grid
+    alignment_notes: Random subsets of trainval.json with N annotations (same seed), for the paper's few-annotation experiments.
+  notes: 'Inspected with a range-request script (BMP isn''t read by probe.py/sample.py): BMP headers of 4 members, one full
+    test BMP (value range [0, 255], p1/p99 1/150, from this one sample) and 3 JSON files fully parsed; 2.2 MB read. Only the
+    bootstrapping (2) and test (3) images are annotated; training_set/ is unlabeled by design (iterative self-training). Voxel
+    size not found; checked: BMP headers (no calibration), Zenodo API record (description only), info.csv, arXiv 2202.09110
+    full text (no magnification or pixel size). BMP is not a schema format, so formats stays other; data.size_bytes is the
+    zip (exact listing).'
