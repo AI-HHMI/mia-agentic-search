@@ -18,7 +18,7 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Homo sapiens
   sample: H&E-stained tissue from multiple hospitals, patients, disease states and organs
@@ -37,7 +37,7 @@ annotations:
   types:
   - instance-segmentation
   coverage: dense
-  format: XML (one file per image, nuclear boundary polygons)
+  format: XML (one file per image, nuclear boundary polygons in image pixel coordinates)
   source: manual
 ml:
   tasks:
@@ -47,7 +47,7 @@ ml:
   baseline_code_url: null
 license:
   spdx: CC-BY-4.0
-  url: null
+  url: https://creativecommons.org/licenses/by/4.0/
 provenance:
   discovered_by: harvest-websearch
   discovered_at: '2026-10-09T21:16:07Z'
@@ -56,10 +56,72 @@ provenance:
   - https://zenodo.org/api/records/1473148
   - https://zenodo.org/api/records/1473148/files/MoNuSeg_Training_Data.zip/content
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1109%2FTMI.2017.2677499%22&format=json&resultType=core&pageSize=3
-  confidence: 0.7
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T21:16:07Z'
-notes: 'Zenodo archive (62 files: 30 .tif images + 30 .xml annotation files, plus .DS_Store) listed with peek_archive. License CC-BY-4.0 is as stated on the Zenodo record; the official MoNuSeg challenge page (monuseg.grand-challenge.org, 403 to our fetcher, not read) is reported by a web search snippet to use CC BY-NC-SA 4.0, so the terms may be more restrictive - check before reuse. Pixel size, magnification, organism and per-organ details not stated on the Zenodo record; the paper full text is not open access (only the abstract was read), so voxel size is null. Organism Homo sapiens is inferred from the human patient/hospital tissue described in the abstract. This is the training set only; the test set is distributed separately by the challenge.'
+  last_checked: '2026-11-13T10:12:00Z'
+notes: 'Zenodo archive (62 files: 30 .tif images in "Tissue images/" + 30 .xml annotations in "Annotations/", plus
+  .DS_Store) listed with peek_archive; size_bytes is the one zip (Zenodo file API). License CC-BY-4.0 is as stated on
+  the Zenodo record; the official MoNuSeg challenge page (monuseg.grand-challenge.org, 403 to our fetcher) is reported
+  to use CC-BY-NC-SA-4.0, so terms may be more restrictive - check before reuse. enricher: images are Aperio pyramidal
+  TIFFs, full-res page 0 = 1000x1000 RGB uint8 LZW (40x). Pixel size (Aperio MPP, stated per file) varies by slide:
+  0.2520, 0.2468, 0.2520, 0.2468, 0.2520, 0.2485 um in 6 sampled images (all AppMag=40, ~247-252 nm); no single value
+  covers all slides, so imaging.voxel_size_nm left null (each Aperio TIFF carries its own MPP). Organism Homo sapiens
+  from TCGA patient tissue. Training set only; the test set is distributed separately by the challenge.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      MoNuSeg Training Data/                       (142 MB zip, 62 files, 294.6 MB uncompressed)
+        Tissue images/
+          TCGA-*.tif                               (30 images, Aperio pyramidal TIFF, page0 1000x1000x3 uint8 LZW)
+        Annotations/
+          TCGA-*.xml                               (30 files, nuclear boundary polygons, same basename as image)
+    n_files: 62
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/1473148/files/MoNuSeg_Training_Data.zip/content::MoNuSeg Training Data/Tissue images/TCGA-G9-6348-01Z-00-DX1.tif
+    - https://zenodo.org/api/records/1473148/files/MoNuSeg_Training_Data.zip/content::MoNuSeg Training Data/Annotations/TCGA-G9-6348-01Z-00-DX1.xml
+    size_bytes: 10178610
+    description: TCGA-G9-6348-01Z-00-DX1 H&E image (1000x1000x3 RGB, MPP 0.2520 um) + its XML nuclear-boundary polygons
+  arrays:
+  - role: raw
+    path_pattern: MoNuSeg Training Data/Tissue images/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 1000
+    - 1000
+    - 3
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 13.0
+    - 255.0
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: Aperio pyramidal TIFF; tifffile series[0] = full-res page 0 (1000x1000 RGB); pages 1-3 are
+      thumbnail/pyramid and should be ignored by the converter. True-colour H&E (RGB channels not identical).
+      value_range from one sampled image; normalization none inferred (raw brightfield RGB).
+  - role: label
+    path_pattern: MoNuSeg Training Data/Annotations/*.xml
+    format: other
+    axes: null
+    shape: null
+    dtype: unknown
+    compression: none
+    encoding: polygons
+    classes:
+    - id: null
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: one XML per image (same TCGA basename); Aperio/ImageScope <Region><Vertex X= Y=> boundary polygons,
+      one region per nucleus, in the 1000x1000 image pixel coordinate space. format 'other' = XML (not in the enum).
+  notes: 'Listed the one zip with peek_archive (30 tif + 30 xml). Probed/sampled 6 TIFFs (30.6 MB): all Aperio pyramidal,
+    page0 1000x1000x3 uint8 LZW, AppMag=40, per-file MPP 0.2468-0.2520 um. Sampled image TCGA-G9-6348 range [13,255],
+    RGB (channels differ). download-check: zip + both member specs TensorSwitch-usable. Not download-ready: voxel size
+    varies per slide (null; see record notes). Labels are XML polygons - a converter must rasterise them to instance masks.'
