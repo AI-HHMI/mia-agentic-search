@@ -39,7 +39,7 @@ annotations:
   types:
   - restoration-pairs
   coverage: dense
-  format: matched low/high SNR TIFF image pairs (same file names in low/ and high/ folders)
+  format: matched low/high SNR TIFF image pairs (same file name in low/ and high/ folders)
   source: unknown
 ml:
   tasks:
@@ -56,14 +56,72 @@ provenance:
   evidence_urls:
   - https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD1400
   - https://zenodo.org/api/records/5750173
-  confidence: 0.8
+  - https://zenodo.org/records/5750174/files/Denoising_Dataset.zip
+  confidence: 0.85
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-10T06:45:00Z'
+  last_checked: '2026-11-13T10:18:00Z'
 notes: 'The BioStudies record lists only low_fl_v3.json / high_fl_v3.json; the files come from the linked Zenodo deposit
-  (concept DOI 10.5281/zenodo.5750173), whose zip listing (peek_archive) shows 50 TIFFs in Training/ and Test/ folders with
-  low/ and high/ subfolders (25 pairs). Pixel size (634 nm), 16-bit 1024x1024 and microscope details are from the Zenodo
-  description; no paper exists for this dataset, so none was read. Pair counts (20 train / 5 test) come from the Zenodo
-  description; I only saw the first 40 zip paths. Authors beyond the submitter were not listed. annotations.source is unknown because the targets are the high-SNR acquisitions, not labels.'
+  (concept DOI 10.5281/zenodo.5750173), whose zip (peek_archive) holds 50 TIFFs in Denoising_Dataset/{Training,Test}/{low,high}/
+  (25 matched pairs; 20 train + 5 test). no paper exists for this dataset. annotations.source unknown (restoration targets
+  are high-SNR acquisitions, not labels). enricher: sampled a Training low/high pair (Position 5): both 1024x1024 uint16
+  single-page; low range [0, 18464] mean 619 (noisy), high range [1929, 65535] mean 6590 (target). Pixel size 634 nm
+  confirmed from the TIFF resolution tag (XResolution 1.5779 px/um, ImageJ unit=um) - matches the Zenodo description.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      Denoising_Dataset/                           (85.3 MB zip, 50 files, 104.9 MB uncompressed)
+        Training/
+          low/  <name>.tif    (20 noisy inputs, 1024x1024 uint16)
+          high/ <name>.tif    (20 high-SNR targets, same file names)
+        Test/
+          low/  <name>.tif    (5 noisy inputs)
+          high/ <name>.tif    (5 high-SNR targets)
+    n_files: 50
+    listing_complete: true
+  sample:
+    urls:
+    - 'https://zenodo.org/records/5750174/files/Denoising_Dataset.zip::Denoising_Dataset/Training/low/cell migration high and low - Position 5_XY1562737772_Z0_T0_.tif'
+    - 'https://zenodo.org/records/5750174/files/Denoising_Dataset.zip::Denoising_Dataset/Training/high/cell migration high and low - Position 5_XY1562737772_Z0_T0_.tif'
+    size_bytes: 3427433
+    description: Training Position 5 low (noisy) + high (target) pair, both 1024x1024 uint16, same grid
+  arrays:
+  - role: raw
+    path_pattern: Denoising_Dataset/*/low/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0.0
+    - 18464.0
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: low-SNR (noisy) input images; single-page TIFF. value_range from one sampled image.
+  - role: target
+    path_pattern: Denoising_Dataset/*/high/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    dtype: uint16
+    compression: none
+    value_range:
+    - 1929.0
+    - 65535.0
+    normalization: none
+    alignment: same-grid
+    alignment_notes: high-SNR restoration target; high/<name>.tif pairs 1:1 with low/<name>.tif (identical file name),
+      same 1024x1024 grid. One sampled high image saturates at 65535 (detector range), normalization none.
+  notes: 'Listed the one Zenodo zip (peek_archive, 50 tif). Sampled the Training Position 5 low+high pair (3.4 MB):
+    both 1024x1024 uint16; low [0,18464] mean 619, high [1929,65535] mean 6590. Voxel 634 nm from the TIFF XResolution
+    tag (1.5779 px/um, ImageJ unit=um). download-check: zip + both member specs TensorSwitch-usable. 2D, so not covered
+    by the current (3D-only) miao layout; otherwise fully described.'
