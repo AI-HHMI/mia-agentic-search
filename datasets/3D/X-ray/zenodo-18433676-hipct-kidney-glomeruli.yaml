@@ -31,7 +31,7 @@ imaging:
   - X-ray
   dimensionality: 3D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism:
   - Homo sapiens
   sample: four intact human kidneys from three donors, ethanol-prepared, scanned by hierarchical phase-contrast tomography
@@ -40,7 +40,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 12378341529
+  size_bytes: 9377758985
   n_items: 40
   access: open
   download_url: null
@@ -48,9 +48,10 @@ data:
 annotations:
   present: true
   types:
-  - instance-segmentation
+  - semantic-segmentation
   coverage: dense
-  format: one 512^3 TIFF label volume per cube (highres_training_labels.zip, complete_label_<n>.tif); label values not inspected
+  format: one 512^3 int8 TIFF label volume per cube (complete_label_<n>.tif in highres_training_labels.zip), binary
+    0=background / 1=glomerulus; pairs 1:1 with complete_cube_<n>.tif
   source: manual
 ml:
   tasks:
@@ -66,16 +67,81 @@ provenance:
   discovered_at: '2026-10-09T19:50:00Z'
   evidence_urls:
   - https://zenodo.org/api/records/18433676
+  - https://zenodo.org/api/records/18433676/files/highres_training_16bit_cubes.zip/content
   - https://zenodo.org/api/records/18433676/files/highres_training_labels.zip/content
+  - https://zenodo.org/api/records/18433676/files/Manual_annotated_high_resolution_data_spreadsheet.xlsx/content
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12880754/fullTextXML
-  confidence: 0.8
+  confidence: 0.85
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-10-09T19:55:00Z'
-notes: 'Zenodo files: highres_training_16bit_cubes.zip (9.36 GB, 40 TIFF cubes of 269 MB each, listed with peek_archive),
-  highres_training_labels.zip (16.6 MB compressed, 40 label TIFFs of 134 MB uncompressed), a spreadsheet of cube details,
-  plus nnunet_models.zip, predictions.zip and cortex_masks.zip. The paper states cubes range from 2.58 to 5.2 um/voxel
-  (binned by 2), so a single voxel size is not given; the per-cube values are in the spreadsheet, which was not
-  opened. Label values/classes were not inspected (paper annotates glomeruli). size_bytes is the sum of all six files in the Zenodo API listing. Zenodo publication date was not read, so date_published is null.'
+  last_checked: '2026-11-13T09:55:00Z'
+notes: 'Zenodo record has six files; the usable training data is two archives: highres_training_16bit_cubes.zip (9.36
+  GB, 40 raw cubes) and highres_training_labels.zip (16.6 MB, 40 label volumes); size_bytes is the sum of those two.
+  Derived files (nnunet_models.zip 2.33 GB, predictions.zip 0.48 GB, cortex_masks.zip 0.19 GB) are excluded. enricher:
+  labels are binary {0,1} semantic masks of glomeruli (was instance-segmentation); inspected cube/label 0, 10, 20, 39,
+  all int8 {0,1}. enricher: voxel size varies by donor (isotropic HiP-CT, from Manual_annotated_..._spreadsheet.xlsx
+  "Sample" column): cubes 0-19 = 5 um (S-20-28), cubes 20-35 = 5.2 um (LADAF 2021-17 left+right kidney), cubes 36-39 =
+  2.58 um (LADAF-2020-27 left kidney); imaging.voxel_size_nm left null because no single value covers all cubes - split
+  per donor for conversion (5000/5200/2580 nm isotropic). Zenodo publication date not read, so date_published null.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      zenodo record 18433676/
+        highres_training_16bit_cubes.zip        (9.36 GB)
+          highres_training_16bit_cubes/complete_cube_0..39.tif   (40 x 269 MB, 512^3 uint16)
+        highres_training_labels.zip             (16.6 MB)
+          highres_training_16bit_labels/complete_label_0..39.tif (40 x 134 MB, 512^3 int8)
+        Manual_annotated_high_resolution_data_spreadsheet.xlsx  (per-cube donor, location, slices)
+        nnunet_models.zip, predictions.zip, cortex_masks.zip    (derived, excluded)
+    n_files: 83
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/18433676/files/highres_training_16bit_cubes.zip/content::highres_training_16bit_cubes/complete_cube_0.tif
+    - https://zenodo.org/api/records/18433676/files/highres_training_labels.zip/content::highres_training_16bit_labels/complete_label_0.tif
+    size_bytes: 226575838
+    description: cube/label 0 (5 um S-20-28); raw 512^3 uint16 + binary label 512^3 int8, same grid
+  arrays:
+  - role: raw
+    path_pattern: highres_training_16bit_cubes/complete_cube_*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 512
+    - 512
+    - 512
+    dtype: uint16
+    compression: none
+    value_range:
+    - 1161.0
+    - 59546.0
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: plain multi-page TIFF z-stack (512 pages of 512x512); value_range and normalization from the
+      single sampled cube 0 (mean ~6704), raw HiP-CT intensities in detector range - inferred none. TIFFs are stored
+      uncompressed inside deflate zips.
+  - role: label
+    path_pattern: highres_training_16bit_labels/complete_label_*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 512
+    - 512
+    - 512
+    dtype: int8
+    compression: none
+    encoding: binary
+    classes:
+    - id: 1
+      name: glomerulus
+    alignment: same-grid
+    alignment_notes: complete_label_<n>.tif pairs 1:1 with complete_cube_<n>.tif, same 512^3 grid. Values {0,1}
+      confirmed in cubes 0, 10, 20, 39.
+  notes: 'Inspected: both zips listed with peek_archive (40 tif each); download-check confirms both archives and their
+    members are TensorSwitch-usable zip members (range requests OK). Sampled cube/label 0 (226 MB) and label 10/20/39
+    (1.3 MB): raw uint16 512^3 range [1161, 59546]; labels int8 512^3 binary {0,1}. Not download-ready: imaging.voxel_size_nm
+    has no single value (varies 2580/5000/5200 nm by donor; see record notes) - needs per-donor split before conversion.'
