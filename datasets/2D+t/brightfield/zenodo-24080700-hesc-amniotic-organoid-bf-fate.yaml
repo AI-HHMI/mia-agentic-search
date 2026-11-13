@@ -2,11 +2,10 @@ schema_version: '1.2'
 id: zenodo-24080700-hesc-amniotic-organoid-bf-fate
 title: V3Cell - hESC amniotic-sac organoid brightfield time-lapse data (v1)
 short_name: hESC amniotic-sac organoid fate (brightfield)
-description: Brightfield time-lapse sequences of human embryonic stem cell-derived amniotic-sac
-  organoids (8-bit grayscale PNG crops of single organoids, one frame every 15 min over 48 h,
-  193 frames per sequence), each labelled with one developmental fate (cavity formation, cavity
-  collapse or non-cavity). 266 sequences with a train/test split file, plus 6,125 256x256
-  frames with integer class labels used to train a static model.
+description: Brightfield time-lapse sequences of human embryonic stem cell-derived amniotic-sac organoids (8-bit
+  grayscale PNG crops of single organoids, one frame every 15 min over 48 h, 193 frames per sequence), each labelled
+  with one developmental fate (cavity formation, cavity collapse or non-cavity). 266 sequences with a train/test
+  split file, plus 6,125 256x256 frames with integer class labels used to train a static model.
 landing_url: https://zenodo.org/records/24080700
 doi: 10.5281/zenodo.24080700
 repository: Zenodo
@@ -23,28 +22,28 @@ imaging:
   - brightfield
   dimensionality: 2D+t
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism:
   - Homo sapiens
-  sample: hESC-derived amniotic-sac organoids (single-organoid crops), EHDPP (10 uM)-treated
-    and DMSO vehicle-control
+  sample: hESC-derived amniotic-sac organoids (single-organoid crops), EHDPP (10 uM)-treated and DMSO vehicle-control
   labels_stains: []
 data:
   formats:
   - png
-  size_bytes: 1988094000
+  size_bytes: 1988109271
   n_items: 266
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/24080700
   download_method: http
 annotations:
   present: true
   types:
   - classification
   coverage: dense
-  format: per-sequence fate class given by the folder name sequences/<fate>/<sequence_id>/ in the tar and by splits.csv
-    (sequence_id, fate_class, split, source, n_frames); integer class labels (0 cavity formation, 1 cavity collapse,
-    2 non-cavity) in dataset.json inside amniotic_stage1_frames256.zip
+  format: 'per-sequence fate class = folder name sequences/<fate>/<sequence_id>/ in the tar and column fate_class
+    in splits.csv (266 rows: sequence_id, fate_class, split, source, n_frames); per-frame integer labels (0 cavity
+    formation, 1 cavity collapse, 2 non-cavity) in dataset.json inside amniotic_stage1_frames256.zip ({"labels":
+    [[file, class], ...]}, 6,125 entries)'
   source: unknown
 ml:
   tasks:
@@ -63,18 +62,135 @@ provenance:
   - https://zenodo.org/api/records/24080700
   - https://zenodo.org/api/records/24080700/files/amniotic_stage1_frames256.zip/content
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22V3Cell%3A+A+Vision-Guided+Virtual+3D+Cell+Framework+for+Phenotypic+Modeling+and+Perturbation+Prediction%22&format=json&resultType=core&pageSize=3
+  - https://github.com/Laineyoulu/V3Cell
   confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-13T04:55:00Z'
-notes: 'Files: amniotic_sequences_full.tar (780.6 MB; 266 sequences = 31 cavity formation / 114 cavity
-  collapse / 121 non-cavity, 193 frames each), amniotic_stage1_frames256.zip (1.21 GB; 6,125 PNG frames
-  256x256 plus dataset.json, listed with peek_archive), splits.csv (train 230 / test 36) and MD5SUMS.txt.
-  Labels are sequence-level developmental fate classes, not pixel annotations; the record does not
-  say how the fate was assigned (annotation source left unknown), and condition (EHDPP vs DMSO) is not
-  recorded per sequence. n_items counts sequences. Paper is a bioRxiv preprint that Europe PMC lists
-  without open full text, so only the abstract was read (pixel size not stated on the record or abstract;
-  microscope: DeltaVision Elite, 10x objective per the Zenodo description). Published 2026-11-09
-  (v1), so it may still change.'
+  last_checked: '2026-11-13T06:20:00Z'
+notes: 'Files: amniotic_sequences_full.tar (780.6 MB; 266 sequences = 31 cavity formation / 114 cavity collapse
+  / 121 non-cavity, 193 frames each), amniotic_stage1_frames256.zip (1.21 GB; 6,125 PNG frames 256x256 plus dataset.json,
+  listed with peek_archive), splits.csv (train 230 / test 36) and MD5SUMS.txt. Labels are sequence-level developmental
+  fate classes, not pixel annotations; the record does not say how the fate was assigned (annotation source left
+  unknown), and condition (EHDPP vs DMSO) is not recorded per sequence. n_items counts sequences. Paper is a bioRxiv
+  preprint that Europe PMC lists without open full text, so only the abstract was read (pixel size not stated on
+  the record or abstract; microscope: DeltaVision Elite, 10x objective per the Zenodo description). Published 2026-11-09
+  (v1), so it may still change. enricher: channels 1 (grey PNGs; the 256x256 frames are grey stored as RGB); size_bytes
+  from complete Zenodo file listing (was page-stated 1988094000).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                    4 files   2.0 GB\n  MD5SUMS.txt                         189 B\n\
+      \  splits.csv                          14.9 KB  (266 sequences + header)\n  amniotic_sequences_full.tar  \
+      \       780.6 MB\n  amniotic_stage1_frames256.zip       1.2 GB\ntar contents (from the docs and the first\
+      \ tar headers; not listed in full):\namniotic_sequences_full.tar/\n  sequences/cavity_formation/<sequence_id>/<sequence_id>_tNNN.png\
+      \   31 sequences x 193 frames\n  sequences/cavity_collapse/<sequence_id>/...                       114 sequences\n\
+      \  sequences/non_cavity/<sequence_id>/...                            121 sequences\nzip contents:\namniotic_stage1_frames256.zip/\n\
+      \  dataset.json                                      183.8 KB\n  00000/ .. 00006/  (7 dirs)       6125 files\
+      \       1.2 GB  .png (img00000000.png ...)"
+    n_files: 4
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/24080700/files/amniotic_stage1_frames256.zip::00000/img00000000.png
+    - https://zenodo.org/records/24080700/files/amniotic_stage1_frames256.zip::dataset.json
+    size_bytes: 380755
+    description: One 256x256 static-model frame (class 0) and dataset.json with its integer class label
+  arrays:
+  - role: raw
+    path_pattern: amniotic_sequences_full.tar/sequences/*/*/*_t[0-9][0-9][0-9].png
+    format: png
+    axes: yx
+    shape:
+    - 150
+    - 144
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Full-rate time-lapse: 266 sequences x 193 frames (t000-t192, 15 min apart), one PNG per frame,
+      grey (mode L). Sampled frame heldout_cavity_formation_01_t002.png is 150x144 (single-organoid crop); crop
+      size of other sequences not checked. Time axis = the _tNNN frame index across files of one sequence folder.'
+  - role: raw
+    path_pattern: amniotic_stage1_frames256.zip/0000[0-6]/img*.png
+    format: png
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: '6,125 static-model frames, 256x256 (resampled from the crops for the R3GAN model, per the
+      docs). Stored as RGB but the 3 samples are identical (tools/sample.py samples_identical: true): grey stored
+      as RGB, axis s.'
+  - role: label
+    path_pattern: amniotic_stage1_frames256.zip/dataset.json
+    format: json
+    axes: null
+    shape:
+    - 6125
+    - 2
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range:
+    - 0
+    - 2
+    encoding: other
+    classes:
+    - id: 0
+      name: cavity formation
+    - id: 1
+      name: cavity collapse
+    - id: 2
+      name: non-cavity
+    alignment: not-applicable
+    alignment_notes: 'Image-level class labels: {"labels": [[<dir>/<file>.png, class], ...]}, one entry per zip
+      frame (6,125; counts 700 / 2,650 / 2,775 for classes 0/1/2). Pairing rule: the entry whose path equals the
+      PNG member path.'
+  - role: label
+    path_pattern: splits.csv
+    format: csv
+    axes: null
+    shape:
+    - 266
+    - 5
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: other
+    classes:
+    - id: cavity_formation
+      name: cavity formation
+    - id: cavity_collapse
+      name: cavity collapse
+    - id: non_cavity
+      name: non-cavity
+    alignment: not-applicable
+    alignment_notes: 'Sequence-level fate labels and train/test split: columns sequence_id, fate_class, split, source,
+      n_frames (all 193). Pairing rule: sequence_id = folder sequences/<fate_class>/<sequence_id>/ in the tar.'
+  notes: 'Listing: tools/listing.py on the Zenodo record with --expand-zips: 4 files, 1,988,109,271 B (file-listing,
+    complete; zip 6,126 members). The tar is not expanded by the listing; its layout is from the Zenodo description
+    and the first 4 KB of tar headers. Sampled (values from one file each): zip frame 00000/img00000000.png 256x256x3
+    uint8, 0-255, mean 95.7, samples identical; tar frame heldout_cavity_formation_01_t002.png 150x144 uint8 grey,
+    0-255. Normalization unknown (8-bit export; full range used). Labels are image/sequence-level classes, no pixel
+    annotations. Voxel size not found; checked: PNG headers (no pHYs), Zenodo API description (DeltaVision Elite,
+    10x, no pixel size), MD5SUMS/splits.csv, Europe PMC (preprint, abstract only, no open full text), bioRxiv full
+    text (HTTP 429), GitHub README and configs/default.yaml. The 256x256 frames are resampled crops, so they have
+    no single physical pixel size anyway. Download: no single archive; direct files are the 4 Zenodo /files/ URLs
+    (all pass --download-check, range requests ok). Tar members cannot be addressed as <url>::<member> (zip only),
+    so the sample uses the zip.'
