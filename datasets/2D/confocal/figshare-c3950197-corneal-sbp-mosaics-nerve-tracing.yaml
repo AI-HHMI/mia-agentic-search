@@ -39,7 +39,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 12072000000
+  size_bytes: 12072097852
   n_items: 322
   access: open
   download_url: https://figshare.com/collections/SBP_Mosaic_Dataset/3950197
@@ -69,17 +69,81 @@ provenance:
   - https://api.figshare.com/v2/articles/5705968
   - https://api.figshare.com/v2/articles/5548315
   - https://api.figshare.com/v2/articles/5686975
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5914299/fullTextXML
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-14T21:20:00Z'
+  last_checked: '2026-11-14T21:55:00Z'
 notes: 'Collection of 5 figshare items: wide-field mosaics (5548315, 322 TIFF, 1.77 GB), manual tracings (5705968,
-  182 .ndf, 27 MB), raw images (5686975, two ZIPs, 10.3 GB), mosaic key and clinical data (small); the collection
-  total of about 12.07 GB is the sum of the three image/tracing items. All three are CC BY 4.0 on their figshare
-  records. Pixel size is not stated in the paper or records (raw frames are 384x384 px covering 400x400 um per the
-  paper, which would imply about 1 um/px, but the mosaics are resampled), so voxel_size_nm is null. Only 182 of the
-  322 mosaics have manual tracings; the paper also reports automatic mCNFL/wCNFL nerve density values. Raw ZIP
-  contents were not listed. The tracings are NeuronJ .ndf files rather than masks; they need conversion to
-  skeleton or mask images.'
+  182 .ndf, 27 MB), raw images (5686975, two ZIPs, 10.3 GB, 83,444 single 384x384 TIFF frames), mosaic key and
+  clinical data (xlsx). All CC BY 4.0 on their figshare records. Pixel size is not stated in the paper or records
+  (raw frames 384x384 px, field of view 400x400 um, but no stated pixel size; mosaics are resampled), so
+  voxel_size_nm is null. Only 182 of the 322 mosaics have manual tracings. The tracings are NeuronJ .ndf text files
+  (polylines in mosaic pixel coordinates), not masks; they need rasterizing to skeleton or mask images.
+  enricher: size_bytes 12,072,097,852 from the complete figshare file listing (was 12.07e9 rounded).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |
+      5548315/ (Wide field SBP mosaics)          322 files   1.77 GB  .tif  e.g. 4OD_m1.tif, 4OD_m8.tif
+      5705968/ (Manual nerve tracing files)      182 files   27 MB    .ndf  e.g. 4OD_m8.ndf, 4OS_m1.ndf
+      5686975/ (Raw nerve plexus images)           2 files  10.3 GB   .zip
+        DiabetesAllSubjectsNervesOnlyPart1.zip   36,274 .tif  <subject>/{OD,OS}/P<subject>(<n>)<nn>.tif, <subject>/Non-overlapping/{OD,OS}/
+        DiabetesAllSubjectsNervesOnlyPart2.zip   47,170 .tif  <subject>/{OD,OS}/
+      5547985/KeytoDataset.xlsx                  mosaic key (area, mCNFL, clinical data)
+      22300579/KeytoDatasetNeuropathy.xlsx       clinical neuropathy data
+    n_files: 508
+    listing_complete: true
+  sample:
+    urls:
+    - https://ndownloader.figshare.com/files/9613594
+    - https://ndownloader.figshare.com/files/10004407
+    size_bytes: 515473
+    description: Mosaic 4OD_m8.tif (475x1051 uint8) and its manual NeuronJ tracing 4OD_m8.ndf (25 tracings)
+  arrays:
+  - role: raw
+    path_pattern: '*_m[0-9]*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 475
+    - 1051
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Depth-corrected wide-field mosaics, one per file, named <subject><eye>_m<n>.tif; size varies
+      per mosaic (4OD_m1.tif is 11.9 MB, 4OD_m8.tif 0.5 MB). Single-page plain grey TIFF.
+  - role: label
+    path_pattern: '*_m[0-9]*.ndf'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'NeuronJ data file (text, version 1.4.2): tracings of nerve centerlines as polyline segments
+      of integer x,y pixel coordinates of the mosaic with the same stem (4OD_m8.ndf -> 4OD_m8.tif; figshare:
+      "corresponding to the subbasal nerve plexus mosaics of the same name"). 4OD_m8.ndf: 25 tracings, 1036
+      points, x 224-1023, y 6-426, inside the 1051x475 mosaic. All tracings typed Default (no classes used).
+      182 of 322 mosaics have one; rasterize to get a skeleton mask.'
+  notes: 'Listing: figshare API for all 5 collection items, 508 files, 12,072,097,852 B exact; zips expanded
+    (83,444 TIFF members, no README; raw single-depth frames, unlabelled, not listed as an array). Probed mosaic 4OD_m8.tif (uint8 475x1051, uncompressed, no calibration)
+    and zip member 10/OD/P10(10)00.tif (uint8 384x384, packbits). Sampled 4OD_m8.tif: range 0-255, mean 105,
+    p1 0, p99 202, 14% zeros (mosaic background outside the imaged area); value_range is from this one sample.
+    Read 4OD_m8.ndf as text (NeuronJ format, not readable by sample.py). Voxel size not found; checked: TIFF
+    headers, figshare descriptions of all 5 items, paper full text (Europe PMC XML: 384x384 px frames and 400x400
+    um field of view stated, no pixel size). No single archive for the whole collection: files are direct
+    figshare ndownloader links (in the listing), the raw frames in two zips.'
