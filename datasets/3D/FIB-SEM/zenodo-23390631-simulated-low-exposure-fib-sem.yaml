@@ -2,9 +2,8 @@ schema_version: '1.2'
 id: zenodo-23390631-simulated-low-exposure-fib-sem
 title: Simulated low-exposure mouse brain data
 short_name: Mouse brain low-exposure denoising pairs (FIB-SEM)
-description: Simulated low-exposure FIB-SEM volumes of mouse brain at eight SNR levels
-  (0.58 to 18.64), each paired with a shared high-SNR reference volume, for training
-  and evaluating volumetric denoising.
+description: Simulated low-exposure FIB-SEM volumes of mouse brain at eight SNR levels (0.58 to 18.64), each paired
+  with a shared high-SNR reference volume, for training and evaluating volumetric denoising.
 landing_url: https://zenodo.org/records/23390631
 doi: 10.5281/zenodo.23390631
 repository: Zenodo
@@ -22,7 +21,7 @@ imaging:
     x: 10
     y: 10
     z: 50
-  channels: null
+  channels: 1
   organism:
   - Mus musculus
   sample: mouse brain
@@ -30,7 +29,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 3979000000
+  size_bytes: 3979766282
   n_items: 9
   access: open
   download_url: null
@@ -56,16 +55,79 @@ provenance:
   discovered_at: '2026-11-14T09:51:45Z'
   evidence_urls:
   - https://zenodo.org/api/records/23390631
-  confidence: 0.7
+  - https://zenodo.org/records/23390631
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-14T09:51:45Z'
-notes: Checked the Zenodo record page/API metadata and file listing (9 float32 TIFFs,
-  442 MB each; sizes sum to ~3.98 GB). The description is one sentence; no paper or
-  related identifiers are given and a Europe PMC title search did not find a matching
-  paper, so organism/sample are inferred from the title ("mouse brain") and voxel
-  size (10x10x50 nm) from the file names. Staining, microscope, and how the low-exposure
-  noise was simulated are not stated. Data is simulated noise on a high-SNR reference,
-  not real low-exposure acquisitions. TIFF axes/shape not inspected.
+  last_checked: '2026-11-14T11:05:00Z'
+notes: 'Checked the Zenodo record page/API metadata and file listing (9 float32 TIFFs, 442 MB each; sizes sum to
+  ~3.98 GB). The description is one sentence; no paper or related identifiers are given and a Europe PMC title search
+  did not find a matching paper, so organism/sample are inferred from the title ("mouse brain") and voxel size (10x10x50
+  nm) from the file names. Staining, microscope, and how the low-exposure noise was simulated are not stated. Data
+  is simulated noise on a high-SNR reference, not real low-exposure acquisitions. enricher: channels 1 and exact
+  size from headers/listing; axes zyx 166x698x954.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 'zenodo record 23390631 (9 files, 4.0 GB, flat)
+
+      MPG_level0[1-8]_dx10nm_dy10nm_dz50nm_snr<0.58..18.64>_float32.tif   8 x 442 MB (noisy inputs)
+
+      Reference_dx10nm_dy10nm_dz50nm_gt_float32.tif   442 MB (high-SNR reference)'
+    n_files: 9
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/23390631/files/MPG_level01_dx10nm_dy10nm_dz50nm_snr0.58_float32.tif
+    - https://zenodo.org/records/23390631/files/Reference_dx10nm_dy10nm_dz50nm_gt_float32.tif
+    size_bytes: 884379988
+    description: Lowest-SNR noisy volume (level01, SNR 0.58) and the shared reference volume, 166x698x954 float32
+      each.
+  arrays:
+  - role: raw
+    path_pattern: MPG_level0[1-8]_dx10nm_dy10nm_dz50nm_snr*_float32.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 166
+    - 698
+    - 954
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - -2.29
+    - 1274.65
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 8 noisy volumes, one per simulated SNR level (level01 snr0.58 ... level08 snr18.64); all share
+      the one Reference volume.
+  - role: target
+    path_pattern: Reference_dx10nm_dy10nm_dz50nm_gt_float32.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 166
+    - 698
+    - 954
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - 65.0
+    - 178.0
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: every MPG_level0N volume pairs with the single Reference volume; identical shape
+      (166x698x954) and voxel size in the file names, and per-page means match (page 0: 127.54 vs 127.49; page 83:
+      142.34 vs 142.32), so same grid.'
+  notes: 'Listing: Zenodo API, 9 files, 3,979,766,282 bytes (exact). Headers (tools/probe.py): plain contiguous
+    float32 TIFFs, uncompressed, 166 pages of 698x954, no axis tags; axes zyx from the file names (dx/dy/dz given,
+    3D volume), voxel size 10x10x50 nm also only from file names. Values from pages 0 and 83 of level01 and Reference
+    only (tools/sample.py failed on these TIFFs, read by range with a scratch script, 10.8 MB): Reference is integer-valued
+    (65..178) stored as float32, i.e. 8-bit-range data; level01 is non-integer with negative values (simulated noise).
+    Noise simulation method, microscope and staining are not documented. Each file is one whole volume; no single
+    archive, data.download_url left null (direct per-file links in sample.urls).'
