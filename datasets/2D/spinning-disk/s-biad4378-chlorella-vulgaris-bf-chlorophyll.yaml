@@ -2,11 +2,11 @@ schema_version: '1.2'
 id: s-biad4378-chlorella-vulgaris-bf-chlorophyll
 title: 'Chlorella vulgaris phenotyping across environmental conditions: raw images, segmentations, and single-cell features'
 short_name: Chlorella cell segmentation (spinning disk)
-description: Label-free spinning-disk confocal images (brightfield and Cy5 chlorophyll autofluorescence) of 96
-  UV-mutagenized Chlorella vulgaris isolates and one wild-type plate, grown across three temperatures and two growth
-  stages (seven experiments). Each experiment is a Zarr v3 store holding raw and processed intensity images (9 fields
-  of view x 96 wells, 1024x1024, uint16) plus per-channel Cellpose label, mask and intensity images, and a JSONL file
-  with cell outlines and 20 single-cell features per channel.
+description: Label-free spinning-disk confocal images (brightfield and Cy5 chlorophyll autofluorescence) of 96 UV-mutagenized
+  Chlorella vulgaris isolates and one wild-type plate, grown across three temperatures and two growth stages (seven experiments).
+  Each experiment is a Zarr v3 store holding raw and processed intensity images (9 fields of view x 96 wells, 1024x1024, uint16)
+  plus per-channel Cellpose label, mask and intensity images, and a JSONL file with cell outlines and 20 single-cell features
+  per channel.
 landing_url: https://www.ebi.ac.uk/biostudies/BioImages/studies/S-BIAD4378
 doi: 10.6019/S-BIAD4378
 repository: BioImageArchive
@@ -27,23 +27,24 @@ imaging:
   channels: 2
   organism:
   - Chlorella vulgaris
-  sample: Liquid cultures of UV-mutagenized and wild-type Chlorella vulgaris in glass-bottom 96-well plates, unstained
-    (chlorophyll autofluorescence)
+  sample: Liquid cultures of UV-mutagenized and wild-type Chlorella vulgaris in glass-bottom 96-well plates, unstained (chlorophyll
+    autofluorescence)
   labels_stains: []
 data:
   formats:
   - zarr
-  size_bytes: null
-  n_items: null
+  size_bytes: 128612477847
+  n_items: 6048
   access: open
-  download_url: null
+  download_url: https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/378/S-BIAD4378/Files/
   download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
   coverage: dense
-  format: Cellpose label images and binary masks stored in each Zarr store under segmentation/ (per channel, same shape as the images); cell outlines in JSONL
+  format: Cellpose label_image and mask_image arrays (int64 instance IDs, per channel, same shape as the images) under segmentation/
+    in each Zarr store; cell outlines in JSONL
   source: automatic
 ml:
   tasks:
@@ -62,16 +63,155 @@ provenance:
   - https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BIAD4378/info
   - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/378/S-BIAD4378/Files/
   - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/378/S-BIAD4378/Files/zarrs/experiment_batches_20251209_091846_235_features.zarr.zip
-  confidence: 0.6
+  - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/378/S-BIAD4378/Files/file_list.tsv
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-14T14:30:00Z'
-notes: 'Labels are Cellpose outputs (flow threshold 0.4, cell probability 0), not manual annotation, so source is
-  automatic. Pixel size 0.216 um (216 nm) from the study description. Seven Zarr v3 zip archives (~112.7 GB in total,
-  from the HTTP index, sizes rounded) and seven JSONL files (~14.2 GB); total ~126.9 GB, so size_bytes is left null
-  rather than an estimate. Each experiment array is (9 fields of view, 96 wells, 1024, 1024) uint16 per the study component
-  description; segmentation groups label_image / mask_image / intensity_image confirmed for BF and CY5 in one archive
-  with peek_archive. No paper is linked on the entry (Publication section empty), so no paper checked. Landing page
-  and file listing read in full; per-archive download links not yet checked.'
+  last_checked: '2026-11-14T15:30:00Z'
+notes: 'Labels are Cellpose outputs (flow threshold 0.4, cell probability 0), not manual, so source is automatic. Pixel size
+  0.216 um (216 nm) from the study Image acquisition section. Seven Zarr v3 zip archives and seven JSONL files. No paper is
+  linked on the entry. enricher: size_bytes 128612477847 from a complete listing (was null). enricher: n_items 6048 = 7 experiments
+  x 9 fields of view x 96 wells per channel (was null). enricher: download_url set to the Files/ folder; the 14 files are
+  separate direct downloads. enricher: annotations.format: mask_image holds instance IDs, not binary masks (sampled).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Files/                                                         16 files  128.6 GB\n  file_list.json, file_list.tsv\
+      \                                  2 files   15.8 KB\n  zarrs/experiment_batches_<date>_<time>_<n>_features.zarr.zip\
+      \   7 files  114.4 GB (15.9-16.5 GB each)\n    <experiment>.zarr/  (Zarr v3, 8585 members per zip)\n      raw_intensities/{BF,CY5}/c/<fov>/<well>/0/0\
+      \                  uint16\n      processed_intensities/{BF,CY5}/c/...                         float32\n      segmentation/label_image/{BF,CY5}/c/...\
+      \                      int64\n      segmentation/mask_image/{BF,CY5}/c/...                       int64\n      segmentation/intensity_image/{BF,CY5}/c/...\
+      \                  float32\n  jsonls/experiment_batches_<date>_<time>_<n>_features.jsonl     7 files   14.2 GB (1.3-3.4\
+      \ GB each)\n"
+    n_files: 16
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/378/S-BIAD4378/Files/zarrs/experiment_batches_20260112_161051_665_features.zarr.zip
+    size_bytes: 15940638635
+    description: 'The smallest experiment archive (16 C, late stationary): one Zarr v3 store with raw, processed and segmentation
+      arrays for 9 FOVs x 96 wells, both channels. No smaller self-contained unit; single chunks can be pulled as zip members.'
+  arrays:
+  - role: raw
+    path_pattern: zarrs/*.zarr.zip/*.zarr/raw_intensities/{BF,CY5}
+    format: zarr
+    axes: null
+    shape:
+    - 9
+    - 96
+    - 1024
+    - 1024
+    shape_varies: false
+    compression: zstd
+    dtype: uint16
+    value_range:
+    - 0
+    - 37804
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: Axes are (field of view, well, y, x) per the study description; fov and well have no tczyx letter, so
+      axes is null. BF and CY5 are separate arrays (two channels). Chunks 1x1x1024x1024.
+  - role: other
+    path_pattern: zarrs/*.zarr.zip/*.zarr/processed_intensities/{BF,CY5}
+    format: zarr
+    axes: null
+    shape:
+    - 9
+    - 96
+    - 1024
+    - 1024
+    shape_varies: false
+    compression: zstd
+    dtype: float32
+    value_range:
+    - 0.0
+    - 1.0
+    normalization: contrast-stretched
+    alignment: same-grid
+    alignment_notes: Background-subtracted and rescaled to the 0.3-99.7th percentile range (study Image analysis section);
+      same shape as raw.
+  - role: label
+    path_pattern: zarrs/*.zarr.zip/*.zarr/segmentation/label_image/{BF,CY5}
+    format: zarr
+    axes: null
+    shape:
+    - 9
+    - 96
+    - 1024
+    - 1024
+    shape_varies: false
+    compression: zstd
+    dtype: int64
+    value_range:
+    - 0
+    - 749
+    encoding: instance-ids
+    classes:
+    - id: null
+      name: cell
+    alignment: same-grid
+    alignment_notes: Cellpose instance labels per channel, segmented independently in BF and CY5; same (9, 96, 1024, 1024)
+      grid and chunking as raw_intensities, pair by group path and chunk index.
+  - role: label
+    path_pattern: zarrs/*.zarr.zip/*.zarr/segmentation/mask_image/{BF,CY5}
+    format: zarr
+    axes: null
+    shape:
+    - 9
+    - 96
+    - 1024
+    - 1024
+    shape_varies: false
+    compression: zstd
+    dtype: int64
+    value_range:
+    - 0
+    - 94
+    encoding: instance-ids
+    classes:
+    - id: null
+      name: cell
+    alignment: same-grid
+    alignment_notes: 'Not binary despite the name: the sampled chunk holds 93 IDs vs 88 in label_image for the same FOV; how
+      it differs from label_image is not documented.'
+  - role: other
+    path_pattern: zarrs/*.zarr.zip/*.zarr/segmentation/intensity_image/{BF,CY5}
+    format: zarr
+    axes: null
+    shape:
+    - 9
+    - 96
+    - 1024
+    - 1024
+    shape_varies: false
+    compression: zstd
+    dtype: float32
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: Per-cell intensity image from the pipeline; header only, not sampled.
+  - role: label
+    path_pattern: jsonls/*.jsonl
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: polygons
+    classes:
+    - id: null
+      name: cell
+    alignment: same-grid
+    alignment_notes: 'JSONL: one record per field of view and channel (1,728 per experiment) with batch_index, image_index,
+      channel, cell_outlines and 20 cell_properties (file_list.tsv); not read.'
+  notes: 'Inspection: complete listing of all 16 files with exact sizes (listing.py, single files + zip central directories,
+    60,165 zip members). Zarr v3 headers read from the 20260112_161051_665 archive; 9 zstd chunks (8.45 MB) decoded from that
+    archive by zip range reads with a short script. value_range is from 2-3 chunks only (raw BF fov 0 / well 0 and fov 4 /
+    well 50). The study text says all arrays are uint16, but the headers say processed_intensities and intensity_image are
+    float32 and label_image / mask_image int64; header values used. axes: null because axis 0 is field of view and axis 1
+    is well (study description), neither t, c, z, y nor x. download_url is the folder: the dataset is 14 direct files (7 zarr.zip
+    + 7 jsonl, all usable by --download-check). Voxel size: x/y 216 nm from the study Image acquisition section; 2D, so z
+    null. Not converted: 2D is not covered by the miao layout yet.'
