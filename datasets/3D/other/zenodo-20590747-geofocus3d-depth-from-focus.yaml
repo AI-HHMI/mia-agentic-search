@@ -2,7 +2,9 @@ schema_version: '1.2'
 id: zenodo-20590747-geofocus3d-depth-from-focus
 title: Deep-learning-supported depth-from-focus-microscope - GeoFocus3D dataset
 short_name: GeoFocus3D depth-from-focus stacks (geological)
-description: Depth-from-focus dataset of 14 geological samples. Each sample has a focal stack of roughly 65 PNG images (904 stack images in total), an all-in-focus RGB image and a ground-truth depth map (npy and png). Described by an SPIE Space Telescopes and Instrumentation 2026 proceedings paper on a deep-learning-supported depth-from-focus microscope.
+description: Depth-from-focus dataset of 14 geological samples. Each sample has a focal stack of roughly 65 PNG images (904
+  stack images in total), an all-in-focus RGB image and a ground-truth depth map (npy and png). Described by an SPIE Space
+  Telescopes and Instrumentation 2026 proceedings paper on a deep-learning-supported depth-from-focus microscope.
 landing_url: https://zenodo.org/records/20590747
 doi: 10.5281/zenodo.20590747
 repository: Zenodo
@@ -21,7 +23,7 @@ imaging:
   - other
   dimensionality: 3D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism: []
   sample: Geological samples (focal stacks, RGB)
   labels_stains: []
@@ -57,10 +59,124 @@ provenance:
   - https://zenodo.org/api/records/20590747
   - https://zenodo.org/records/20590747/files/GeoFocus3D.zip
   - https://api.crossref.org/works/10.1117/12.3111774
-  confidence: 0.55
+  confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-14T09:30:55Z'
-notes: 'Zenodo page and API record read (one file, GeoFocus3D.zip, 4.0 GB). peek_archive lists Depth (14 npy), Depth_png (14), RGB (14) and Focalstacks (904 PNG images, 14 samples). The paper (SPIE proceedings, 10.1117/12.3111774) is not open access and Europe PMC/Crossref give no abstract, so the optics, magnification, pixel size and how the ground-truth depth was produced are not known; none are stated on the Zenodo page either. The task is depth estimation from focal stacks (annotation type and task are therefore other). Modality is other because the instrument is a depth-from-focus optical microscope on rock samples, not a listed modality. n_items counts the 14 samples. Borderline for "microscopy training data": the labels are depth maps, not segmentation.'
+  last_checked: '2026-11-14T10:25:00Z'
+notes: 'Zenodo page and API record read (one file, GeoFocus3D.zip, 4.0 GB). peek_archive lists Depth (14 npy), Depth_png (14),
+  RGB (14) and Focalstacks (904 PNG images, 14 samples). The paper (SPIE proceedings, 10.1117/12.3111774) is not open access
+  and Europe PMC/Crossref give no abstract, so the optics, magnification, pixel size and how the ground-truth depth was produced
+  are not known; none are stated on the Zenodo page either. The task is depth estimation from focal stacks (annotation type
+  and task are therefore other). Modality is other because the instrument is a depth-from-focus optical microscope on rock
+  samples, not a listed modality. n_items counts the 14 samples. Borderline for "microscopy training data": the labels are
+  depth maps, not segmentation. enricher: channels 1 (focal-stack PNGs are grey stored as RGB, sampled); size confirmed from
+  file listing (unchanged).'
+technical:
+  method: sample
+  inspected_at: '2026-11-14T10:25:00Z'
+  inspected_urls:
+  - https://zenodo.org/records/20590747/files/GeoFocus3D.zip
+  bytes_downloaded: 8075745
+  size_source: file-listing
+  layout:
+    tree: "GeoFocus3D.zip/GeoFocus3D/\n  Depth/                 14 files  120.1 MB  .npy (float64 depth maps)\n  Depth_png/\
+      \             14 files    1.5 MB  .png (RGBA depth visualisation)\n  Focalstacks/Sample_NN/ (x14 dirs) 904 files 5.7\
+      \ GB .PNG (M0.4.PNG ... M9.4.PNG)\n  RGB/                   14 files   31.4 MB  .png (all-in-focus colour)"
+    n_files: 946
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/20590747/files/GeoFocus3D.zip::GeoFocus3D/Focalstacks/Sample_01/M0.4.PNG
+    - https://zenodo.org/records/20590747/files/GeoFocus3D.zip::GeoFocus3D/RGB/Sample_01.png
+    - https://zenodo.org/records/20590747/files/GeoFocus3D.zip::GeoFocus3D/Depth/Sample_01.npy
+    size_bytes: 16942072
+    description: 'Sample_01: one focal-stack slice (of 77), its all-in-focus RGB image and its depth map. The full Sample_01
+      focal stack is ~77 PNGs (~0.5 GB).'
+  arrays:
+  - role: raw
+    path_pattern: GeoFocus3D.zip::GeoFocus3D/Focalstacks/Sample_*/M*.PNG
+    format: png
+    axes: yxs
+    shape:
+    - 3030
+    - 3408
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    value_range:
+    - 6
+    - 204
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One PNG per focus position; file name M<position> (0.4 to 9.4 in 0.1 steps, unit not stated). 47-91 planes
+      per sample. Grey stored as RGB (3 identical samples in the sampled slice). Shapes vary slightly (3030x3408 in Sample_01,
+      3031x3409 in Sample_05).
+  - role: other
+    path_pattern: GeoFocus3D.zip::GeoFocus3D/RGB/Sample_*.png
+    format: png
+    axes: yxs
+    shape:
+    - 984
+    - 1107
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    value_range:
+    - 10
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: All-in-focus colour image per sample, ~3.08x smaller than the focal-stack slices (984x1107 vs 3030x3408);
+      height varies (769 rows in Sample_05).
+  - role: label
+    path_pattern: GeoFocus3D.zip::GeoFocus3D/Depth/Sample_*.npy
+    format: other
+    axes: yx
+    shape:
+    - 984
+    - 1107
+    shape_varies: true
+    dtype: float64
+    compression: none
+    lossy: false
+    value_range:
+    - 0.0
+    - 8.942
+    normalization: unknown
+    encoding: other
+    alignment: unknown
+    alignment_notes: 'NumPy .npy depth map (float64, NaN where no depth: 15,846 px in Sample_01). Same grid as RGB/Sample_NN.png
+      (984x1107); relation to the 3030x3408 focal-stack slices (resampling/crop) is not documented. Depth unit not stated;
+      values span the focus-position range in the file names. Pairing: same Sample_NN across folders.'
+  - role: other
+    path_pattern: GeoFocus3D.zip::GeoFocus3D/Depth_png/Sample_*.png
+    format: png
+    axes: yxs
+    shape:
+    - 480
+    - 542
+    - 4
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    value_range:
+    - 1
+    - 255
+    normalization: unknown
+    encoding: other
+    alignment: unknown
+    alignment_notes: RGBA rendering of the depth map at about half the RGB size (480x542); a visualisation, not the numeric
+      label.
+  notes: 'Sampled one focal-stack slice, RGB image, depth .npy and depth PNG of Sample_01 (value ranges are from one sample).
+    Depth .npy read with numpy allow_pickle=False. No README or metadata in the archive. Voxel size not found; checked: PNG
+    headers (no pHYs calibration reported), Zenodo API record (description is one sentence), archive contents (no docs), paper
+    (SPIE proceedings, not open access; Europe PMC/Crossref have no abstract), web search for a preprint or code repo (none
+    found). Focus step and depth units are also undocumented. TensorSwitch has no .npy reader, so the depth label is format
+    other.'
