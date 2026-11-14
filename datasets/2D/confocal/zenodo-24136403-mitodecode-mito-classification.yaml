@@ -2,8 +2,9 @@ schema_version: '1.2'
 id: zenodo-24136403-mitodecode-mito-classification
 title: MitoDecode train, validation and test data (mitochondrial phenotype classification)
 short_name: Mitochondria drug phenotypes (confocal, SIM)
-description: Fluorescence microscopy images of mitochondria in SH-SY5Y and COS-7 cells under different perturbations and drug treatments (confocal and structured-illumination microscopy), organised by condition
-  with train/validation image-list files giving a class index per image; pre-trained model weights are also in the record.
+description: Fluorescence microscopy images of mitochondria in SH-SY5Y and COS-7 cells under different perturbations and drug
+  treatments (confocal and structured-illumination microscopy), organised by condition with train/validation image-list files
+  giving a class index per image; pre-trained model weights are also in the record.
 landing_url: https://zenodo.org/records/24136403
 doi: 10.5281/zenodo.24136403
 repository: Zenodo
@@ -29,7 +30,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 4020527088
+  size_bytes: 5314467539
   n_items: null
   access: open
   download_url: null
@@ -38,8 +39,10 @@ annotations:
   present: true
   types:
   - classification
-  coverage: dense
-  format: Plain-text image lists (path<TAB>class index) such as Confocal/Confocal_train_2_30img.txt; condition is also the folder name
+  - instance-segmentation
+  coverage: partial
+  format: Plain-text image lists (path<TAB>class index), e.g. SHSY5Y/Train.txt, SIM/SIM_train.txt, Confocal/Confocal_train_2_30img.txt;
+    COS7 subsets also have uint16 TIFF instance masks in *_mask*/ folders
   source: unknown
 ml:
   tasks:
@@ -59,14 +62,170 @@ provenance:
   - https://zenodo.org/api/records/24136403/files/SHSY5Y.zip/content
   - https://zenodo.org/api/records/24136403/files/SIM.zip/content
   - https://zenodo.org/api/records/24136403/files/COS7.zip/content
+  - https://zenodo.org/records/24136403
   confidence: 0.55
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-14T14:50:44Z'
-notes: 'Record published 2026-11-11; description is one line and no paper or DOI is linked (searched the web for MitoDecode; nothing found), so voxel size, microscope settings, class definitions and annotation
-  procedure are not stated. Zip listings (peek_archive): SHSY5Y.zip 2499 tif; Confocal.zip 259 tif; SIM.zip 259 tif plus 84 .cxd raw and 346 fairSIM-reconstructed tif; COS7.zip 942 tif; trained_models.zip
-  (1.3 GB, weights) not counted in size. Label lists map each image path (author local Windows path) to an integer class index (e.g. 0 control, 4 heat shock repeat) but the index-to-condition table was
-  not found, so class meaning is inferred from folder names only. SIM.zip appears to contain the same 259 images as Confocal.zip. Modality COS-7 images not confirmed as confocal. Size is the sum of the
-  four image zips.'
+  last_checked: '2026-11-14T15:57:28Z'
+notes: 'No paper or docs linked; class definitions and annotation procedure not stated. Label lists map each image path (author
+  Windows path) to a class index; index-to-condition table not found, class meaning only from folder names. SIM.zip also holds
+  an identical copy of Confocal/. trained_models.zip = 5 .pt weights. organisms: Homo sapiens = SHSY5Y.zip; Chlorocebus sabaeus
+  = COS7.zip, Confocal.zip (author paths .../COS7/Confocal/); SIM.zip cell line not stated. modality: Confocal.zip confocal;
+  SIM.zip structured illumination (fairSIM); COS7/SHSY5Y acquisition not stated. voxel size differs by subset (null): Confocal
+  100 nm (settings note in zip); fairSIM 53.75 nm, COS7 Cold/RT 107.521 nm, COS7 masks 65 nm (TIFF headers). enricher: size_bytes
+  from Zenodo file listing incl. weights (was 4.02 GB, image zips only); COS7 instance masks added as label array.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |-
+      ./  5 zips  5.3 GB (SHSY5Y 1.29 GB, Confocal 57 MB, SIM 1.63 GB, COS7 1.05 GB, trained_models 1.29 GB)
+      COS7.zip/COS7/
+        Cold/RT/{RT_1hour,RT_1hour_2}/                 42 .tif      22 MB   raw 512x512
+        Cold/RT/RT_1hour_mask_{1,2}/                   42 .tif, 2 .csv      masks
+        Control/Control_ML_individual cell/           107 .tif     241 MB   raw 2x912x948
+        Control/Control_ML_individual cell_mask_all/  107 .tif, 2 .csv      masks
+        FCCP/5uM/ML_individual cell/                  104 .tif     252 MB
+        FCCP/5uM/ML_individual cell_masks/            104 .tif, 1 .csv      masks
+        H2O2/100_Indiv/                               121 .tif     192 MB
+        Heat/38/38_1h_Indiv/ + 38_1h_Indiv_masks/      61 + 61 .tif         raw + masks
+        Heat/42/42_1h_Indiv/                          193 .tif     537 MB
+        *.txt (class lists, 8)
+      Confocal.zip/Confocal/                          259 .tif     180 MB   600x600, 13 .txt
+        Control/{.,Well,big_img}, FCCP/repeat{1,2}, H2O2/repeat{1,2}, Heat_shock/repeat{1,2}
+        Confocal_train_2_30img.txt, Confocal_val_img.txt, *_test*.txt
+      SHSY5Y.zip/SHSY5Y/                             2499 .tif    1.84 GB  per-cell crops, 3 samples
+        Control/, FCCP_concentration/<c>/, H2O2_concentration/<c>/, NAC/*/,
+        PFFs/{24,48}hours/*/, Rotenone_concentration/<c>/, thapsigargin/*/, tunicamycin/<c>/
+        plots/ (png/tif figures), Train.txt, Test.txt, per-condition .txt lists, 6 .xlsx
+      SIM.zip/SIM/
+        Control_new/       84 .cxd + 84 .cxd-fairSIM.tif   756 MB
+        FCCP/, H2O2/, Heatshock/  262 .cxd-fairSIM.tif     1.09 GB  1024x1024 float32
+        SIM_train*.txt, SIM_test*.txt, per-condition .txt lists
+      SIM.zip/Confocal/   same 259 tif + txt as Confocal.zip
+      trained_models.zip/trained_models/  5 .pt (model weights, not data)
+      (+65 Thumbs.db / OS files)
+    n_files: 5
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/24136403/files/COS7.zip::COS7/Control/Control_ML_individual cell/treated_10_1.tif
+    - https://zenodo.org/records/24136403/files/COS7.zip::COS7/Control/Control_ML_individual cell_mask_all/treated_10_1.tif
+    size_bytes: 5188364
+    description: One COS-7 control cell image (2x912x948 uint16) and its 912x948 instance mask, members of COS7.zip (range
+      requests). The class label of the image (0 = control) comes from COS7/Control/unseen_control.txt / the folder name.
+  arrays:
+  - role: raw
+    path_pattern: COS7.zip/COS7/{Control/Control_ML_individual cell,FCCP/5uM/ML_individual cell,H2O2/100_Indiv,Heat/38/38_1h_Indiv,Heat/42/42_1h_Indiv,Cold/RT/RT_1hour,Cold/RT/RT_1hour_2}/*.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 2
+    - 912
+    - 948
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 119
+    - 15474
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: COS-7 cell images. ImageJ header calls the 2 planes slices (z); undocumented whether they are z or channels.
+      Cold/RT images are single-plane 512x512 (header 107.521 nm/px).
+  - role: label
+    path_pattern: COS7.zip/COS7/{Control/Control_ML_individual cell_mask_all,FCCP/5uM/ML_individual cell_masks,Heat/38/38_1h_Indiv_masks,Cold/RT/RT_1hour_mask_1,Cold/RT/RT_1hour_mask_2}/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 912
+    - 948
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 293
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing: same file name in the sibling *_mask* / *_masks folder (e.g. Control_ML_individual cell/treated_10_1.tif
+      -> Control_ML_individual cell_mask_all/treated_10_1.tif). Mask matches the image y,x (2D vs 2-plane raw). 293 IDs in
+      one 912x948 mask: likely per-mitochondrion count masks from ImageJ Analyze Particles (a setting.txt with median filter
+      / threshold / Analyze Particles parameters sits next to the Heat/38 images); not documented. Summary*.csv files beside
+      the masks.'
+  - role: raw
+    path_pattern: Confocal.zip/Confocal/**/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 600
+    - 600
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'COS-7 confocal images (author paths .../COS7/Confocal/...), plain single-page TIFF. Settings note in
+      each folder: mCherry excitation, 632-28 emission, 100 nm pixels. Identical copy under SIM.zip/Confocal/.'
+  - role: raw
+    path_pattern: SHSY5Y.zip/SHSY5Y/**/*.tif
+    format: tiff
+    axes: syx
+    shape:
+    - 3
+    - 367
+    - 331
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 105
+    - 12264
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: SH-SY5Y per-cell crops (treated_<n>_cell_<m>.tif), photometric RGB with 3 planar samples (tifffile axes
+      SYX); meaning of the 3 samples not documented. plots/ holds figures, not data.
+  - role: raw
+    path_pattern: SIM.zip/SIM/*/*.cxd-fairSIM.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - 0.0
+    - 255.0
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: fairSIM reconstructions (header 53.75 nm/px); the raw SIM frames (.cxd, 84 files, Control_new only) are
+      not converted. Cell line not stated.
+  - role: label
+    path_pattern: '*.zip/*/*.txt'
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes: null
+    alignment: not-applicable
+    alignment_notes: 'Image-level class lists: tab-separated "<author Windows path>\t<class index>" (e.g. SHSY5Y/Train.txt,
+      SIM/SIM_train.txt, Confocal/Confocal_train_2_30img.txt). Map to files by the path tail after the zip folder name; SHSY5Y
+      paths use other folder names (e.g. .../SH/H2O2/correct/Indiv/1mM/...). Index-to-condition table not provided.'
+  notes: 'Listing: Zenodo API + zip central directories (range requests), 5 zips, 4575 members, exact. Probed headers of 6
+    TIFFs; sampled COS7 Control treated_10_1 image+mask, one SHSY5Y crop and one fairSIM image (value ranges are from these
+    single files). Annotations: image-level class lists (.txt, tab-separated path + class index) for all subsets; per-cell
+    instance masks only for COS7 (Control, FCCP 5uM, Heat 38, Cold RT; not H2O2 or Heat 42). Encoding of masks inferred from
+    293 IDs in one mask; mask provenance undocumented (ImageJ macro settings beside Heat/38 suggest automatic thresholding).
+    COS7 raw ImageJ files have 2 planes labelled slices; whether z or channels is undocumented. SHSY5Y crops are RGB-tagged
+    with 3 samples of unstated meaning. Raw SIM .cxd frames not described. Voxel size not settled: subsets differ (100 / 53.75
+    / 107.521 / 65 nm) and no paper; checked headers, Zenodo API, in-zip notes, web (no paper found by harvester). No single
+    archive: data.download_url stays null; direct files are the 4 image zips at https://zenodo.org/records/24136403/files/<name>.zip
+    (range requests OK).'
