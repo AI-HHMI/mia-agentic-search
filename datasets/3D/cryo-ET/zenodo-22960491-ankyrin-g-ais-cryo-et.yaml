@@ -28,9 +28,10 @@ imaging:
     x: 1.3
     y: 1.3
     z: null
-  channels: null
-  organism: []
-  sample: Axon initial segment (AnkyrinG-associated complex), gold-labelled
+  channels: 1
+  organism:
+  - Rattus norvegicus
+  sample: Primary rat hippocampal neurons cultured on cryo-EM grids; axon initial segment (AnkyrinG-associated complex), immunogold-labelled
   labels_stains: []
 data:
   formats:
@@ -39,15 +40,15 @@ data:
   size_bytes: 1886350142
   n_items: 64
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/22960491
   download_method: http
 annotations:
   present: true
   types:
   - points
-  coverage: unknown
-  format: IMOD .xyz gold particle coordinate files, one per tomogram
-  source: unknown
+  coverage: partial
+  format: IMOD .xyz gold particle coordinates (x y z in tomogram voxels, whitespace-separated), one per tomogram
+  source: automatic
 ml:
   tasks:
   - detection
@@ -64,10 +65,72 @@ provenance:
   - https://zenodo.org/api/records/22960491
   - https://zenodo.org/records/22960491
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22Double+Periodicity+of+the+AnkyrinG-Associated+Complex+in+the+Axon+Initial+Segment%22&format=json&resultType=core&pageSize=3
-  confidence: 0.6
+  - https://www.biorxiv.org/content/10.64898/2026.04.25.720723v1.full
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-16T22:55:00Z'
-notes: 'Zenodo file list: 16 .mrc tomograms (1.27 GB, 1.3 nm pixel size per record description), 16 .xyz IMOD gold particle coordinate files, 48 .tif 2D micrographs (619 MB; pixel size in file name, 4335 = 4.3 Å, 5434 = 5.4 Å). Paper is not open access (only the abstract was read), so organism, sample preparation, annotation procedure (picking by hand or automatic) and the exact publication date are not confirmed; the Zenodo record gives only the year 2026. Voxel size: the record description gives 1.3 nm pixel size for the tomograms; z spacing is not stated, so z is null. Annotations are gold particle point positions (immunogold labels), not segmentation. The paper is the source for how the data were used (3D/2D cluster analysis).'
+  last_checked: '2026-11-17T00:20:00Z'
+notes: 'Zenodo: 16 .mrc tomograms with 16 .xyz IMOD gold coordinate files (TS_12_rec.mrc pairs with "TS_12_rec (copy 1).xyz"), plus 48 unlabelled 2D cryo-EM micrographs (.tif, pixel size in file name, 4335 = 4.3 Å, 5434 = 5.4 Å). enricher: organism Rattus norvegicus and annotation source automatic from the bioRxiv preprint Methods ("Primary rat hippocampus neurons"; "Gold-labelling was picked by using IMOD findbeads3d") (were empty/unknown). Coverage: only immunogold particles are marked, no other structures. Voxel size: Zenodo gives 1.3 nm for the tomograms; the MRC headers say 2.68 nm isotropic and the preprint gives a 3.4 Å acquisition pixel without binning. Kept the Zenodo value; z not stated, so null. The 2D .tif micrographs are 2D data inside a 3D record.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./   80 files  1.9 GB  (Zenodo 22960491, flat)\n  TS_<n>[_<k>]_rec.mrc          16 tomograms (59-103 MB each)\n  TS_<n>[_<k>]_rec.xyz          16 IMOD gold coordinate files (one is \"TS_12_rec (copy 1).xyz\")\n  IGtomo<NN>_px{4335,5434}.tif  48 2D micrographs (3.5-14 MB each)"
+    n_files: 80
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/22960491/files/TS_3_2_rec.mrc?download=1
+    - https://zenodo.org/records/22960491/files/TS_3_2_rec.xyz?download=1
+    size_bytes: 58986865
+    description: one tomogram (160x720x512 int8) and its gold particle coordinates (93 points)
+  arrays:
+  - role: raw
+    path_pattern: TS_*_rec.mrc
+    format: mrc
+    axes: zyx
+    shape:
+    - 160
+    - 720
+    - 512
+    shape_varies: true
+    dtype: int8
+    compression: none
+    value_range:
+    - -128
+    - 127
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: z depth varies (160-280 slices); y x 720 x 512 in the three probed files. MRC mode 0 read as int8; sample p1-p99 = 11-48.
+  - role: label
+    path_pattern: TS_*_rec*.xyz
+    format: other
+    axes: null
+    shape:
+    - 93
+    - 3
+    shape_varies: true
+    dtype: float32
+    compression: none
+    encoding: points-table
+    classes:
+    - id: null
+      name: immunogold particle
+    alignment: same-grid
+    alignment_notes: 'columns x y z in voxel coordinates of the tomogram with the same stem (sample: x 6-357, y 37-633, z 26-131 inside 512x720x160). Pairing: TS_<n>_rec.mrc <-> TS_<n>_rec.xyz; TS_12_rec.mrc <-> "TS_12_rec (copy 1).xyz".'
+  - role: raw
+    path_pattern: IGtomo*_px*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 3838
+    - 3710
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 2D micrographs without labels; px4335 files 3838x3710 (ImageJ calibration 0.434 nm), px5434 files 1918x1852 or larger (0.335 nm stored in the probed px5434 file, which conflicts with the 5.4 Å file name).
+  notes: 'Listing (Zenodo API): 80 files, 1886350142 bytes, complete. Probed TS_3_2, TS_24, TS_8 .mrc (int8, zyx, 160/280/198 x 720 x 512, header voxel 26.8 Å isotropic) and IGtomo08_px5434 / IGtomo11_px4335 .tif. Sampled TS_3_2_rec.mrc (58983424 bytes; value range from this one sample) and TS_3_2_rec.xyz (93 rows x 3 columns, read as text; dtype is the text values, not a stored type). No single archive: download_url is the landing page; each file is direct at https://zenodo.org/records/22960491/files/<name>?download=1. Voxel size conflict: Zenodo 1.3 nm vs MRC header 2.68 nm vs preprint acquisition pixel 3.4 Å (binning not stated); z not stated anywhere except the header.'
