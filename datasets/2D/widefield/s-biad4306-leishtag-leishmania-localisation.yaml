@@ -23,8 +23,8 @@ imaging:
   - phase-contrast
   dimensionality: 2D
   voxel_size_nm:
-    x: 103.2
-    y: 103.2
+    x: 103.1746
+    y: 103.1746
     z: null
   channels: 3
   organism:
@@ -38,7 +38,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: null
+  size_bytes: 1132126954246
   n_items: 44843
   access: open
   download_url: https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/306/S-BIAD4306/Files/
@@ -70,14 +70,85 @@ provenance:
   - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/306/S-BIAD4306/Files/Files_masks.tsv
   - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/306/S-BIAD4306/Files/LmxM.19.1240/N/01/AM/02/LmxM.19.1240_N_01_AM_02_image.tif
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1016%2Fj.pt.2024.06.003%22&format=json&resultType=core&pageSize=3
-  confidence: 0.8
+  - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/306/S-BIAD4306/Files/Files.json
+  - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/306/S-BIAD4306/Files/LmxM.13.1250/N/01/AM/01/LmxM.13.1250_N_01_AM_01_image.tif
+  confidence: 0.82
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-16T19:30:00Z'
-notes: 'Sibling of TrypTag (s-biad1866), different organism. Files.tsv: 44,843 images + 44,843 masks, 2,666
+  last_checked: '2026-11-16T20:20:00Z'
+notes: 'Sibling of TrypTag (s-biad1866), different organism. Files.json: 44,843 images + 44,843 masks, 2,666
   genes. Image: 3x2048x2048 uint16; mask: 2048x2048 uint16. Masks are Cellpose predictions; only 100 images
-  per stage were hand-outlined for fine-tuning (not separately listed), so source is automatic. Pixel size
-  103.2 nm is derived from stated camera pixel 6.5 um / 63x; file calibration (0.0103 um) looks 10x off.
-  Total size not computed. Paper not open access (abstract only).'
+  per stage were hand-outlined for fine-tuning (not separately listed), so source is automatic. Channels
+  (study component): 1 phase contrast, 2 mNeonGreen, 3 Hoechst DNA. Paper not open access (abstract only).
+  enricher: voxel size 103.1746 nm from the OME-XML PhysicalSizeX/Y (0.1031746 um) of the image files (was
+  103.2, derived from camera specs). enricher: size_bytes from Files.json per-file sizes (was null).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "S-BIAD4306/Files/   89,686 files in Files.json (1.13 TB)\nFiles.json, Files.tsv           image list\
+      \ with gene, terminus, stage, plate, well, date\nFiles_masks.json, Files_masks.tsv   mask -> source_image\
+      \ map\nLeishTag/                       empty folder skeleton (no files)\n<gene>/                       \
+      \  2,666 gene folders (LmxM.NN.NNNN)\n  <N|C>/<nn>/<AM|PRO>/<nn>/\n    <gene>_<N|C>_<nn>_<AM|PRO>_<nn>_image.tif\
+      \  44,843  OME-TIFF cyx 3x2048x2048 uint16\n    <gene>_<N|C>_<nn>_<AM|PRO>_<nn>_masks.tif  44,843 \
+      \ OME-TIFF yx 2048x2048 uint16 instance mask\n"
+    n_files: 89686
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/306/S-BIAD4306/Files/LmxM.13.1250/N/01/AM/01/LmxM.13.1250_N_01_AM_01_image.tif
+    - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/306/S-BIAD4306/Files/LmxM.13.1250/N/01/AM/01/LmxM.13.1250_N_01_AM_01_masks.tif
+    size_bytes: 10688358
+    description: One amastigote field of LmxM.13.1250 (N-terminal tag, image 1) with its Cellpose cell mask
+  arrays:
+  - role: raw
+    path_pattern: '*/[NC]/*/*/*/*_image.tif'
+    format: ome-tiff
+    axes: cyx
+    shape:
+    - 3
+    - 2048
+    - 2048
+    shape_varies: false
+    dtype: uint16
+    compression: lzw
+    value_range:
+    - 98
+    - 896
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: OME-XML DimensionOrder XYCZT, SizeC 3; channels Phase Contrast, F YFP Fluorescence
+      (mNeonGreen), F A4 Fluorescence (Hoechst). Compression varies per file (LZW in the sampled file, none
+      in two others probed).
+  - role: label
+    path_pattern: '*/[NC]/*/*/*/*_masks.tif'
+    format: ome-tiff
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: false
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 61
+    normalization: none
+    encoding: instance-ids
+    classes:
+    - id: null
+      name: cell (one ID per cell, 0 = background)
+    alignment: same-grid
+    alignment_notes: One mask per image, same folder and stem with _masks.tif for _image.tif (Files_masks.json
+      source_image attribute); 2048x2048 equals the image's y, x. Cell bodies only, flagellum excluded for
+      promastigotes (study Annotation Overview).
+  notes: 'Size: sum of per-file sizes in the repository file list Files.json (images 1,131,046,060,930 B
+    + masks 1,080,893,316 B; the four index files, ~65 MB, are not included). The LeishTag/ folder on the
+    FTP repeats the gene folder tree but its leaf folders are empty. value_range is from one sample (uint16,
+    max 896: 12-bit-range camera data, normalization none inferred). The sampled image is a Micro-Manager
+    OME-TIFF whose OME-XML references companion files (e.g. Axa_DA3_1_MMStack_Default.ome.tif) that are not
+    in the study; tifffile warns but reads the 3 pages of the file itself. probe.py reports 0.0103 nm
+    for some files (from the TIFF resolution tags); their OME-XML states 0.1031746 um like the others.
+    No single archive: files are individual downloads over HTTPS (ftp.ebi.ac.uk).'
