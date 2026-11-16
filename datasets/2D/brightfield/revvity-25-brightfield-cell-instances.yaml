@@ -1,0 +1,141 @@
+schema_version: '1.2'
+id: revvity-25-brightfield-cell-instances
+title: Revvity-25 Full Cell Segmentation Dataset
+short_name: Revvity-25 cancer cell instances (brightfield)
+description: 110 brightfield images (1080 x 1080 px) of cancer cells with 2937 manually labeled, expert-validated
+  cell instances annotated as polygons (about 60 points per cell, up to 400) that capture cell borders
+  and overlaps. Released with the IAUNet paper as a benchmark for modal and amodal instance segmentation,
+  with train and validation annotation files in COCO format.
+landing_url: https://huggingface.co/datasets/YaroslavPrytula/Revvity-25
+doi: null
+repository: HuggingFace
+accession: null
+authors:
+- Yaroslav Prytula
+- Illia Tsiporenko
+- Ali Zeynalli
+- Dmytro Fishman
+publications:
+- title: 'IAUNet: Instance-Aware U-Net'
+  doi: null
+  url: https://arxiv.org/abs/2508.01928
+date_published: null
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: null
+  organism: []
+  sample: Cancer cells (cell lines not named on the dataset page or in the paper)
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: 172044958
+  n_items: 110
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: COCO JSON polygons (annotations/train.json, annotations/valid.json), one category "cell"
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: Revvity-25 (IAUNet, CVPRW 2025)
+  baseline_code_url: https://github.com/SlavkoPrytula/IAUNet
+license:
+  spdx: CC-BY-NC-4.0
+  url: https://creativecommons.org/licenses/by-nc/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-11-16T11:20:51Z'
+  evidence_urls:
+  - https://huggingface.co/datasets/YaroslavPrytula/Revvity-25/raw/main/README.md
+  - https://huggingface.co/api/datasets/YaroslavPrytula/Revvity-25
+  - https://huggingface.co/datasets/YaroslavPrytula/Revvity-25/raw/main/annotations/train.json
+  - https://huggingface.co/datasets/YaroslavPrytula/Revvity-25/raw/main/annotations/valid.json
+  - https://arxiv.org/pdf/2508.01928v1
+  - https://slavkoprytula.github.io/IAUNet
+  - https://huggingface.co/datasets/YaroslavPrytula/Revvity-25/resolve/main/LICENSE.txt
+  confidence: 0.8
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-11-16T12:10:00Z'
+notes: 'Splits: the paper says Revvity-25 is divided equally into 55 train and 55 test images; the Hugging
+  Face files are annotations/train.json (55 images, 1491 annotations) and annotations/valid.json (55 images,
+  1446 annotations), so the "valid" file serves as the test split. Pixel size, microscope, magnification,
+  cell lines and bit depth are not stated on the dataset page, README, project page or paper text. Paper
+  DOI not looked up (arXiv 2508.01928; Europe PMC has no entry). Image files are PNG per the HF file listing.
+  The dataset is also offered at https://bcv.cs.ut.ee/datasets/. enricher: size 172,044,958 B from the
+  full HF file listing (was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: './                 4 files   30.5 KB  .gitattributes, LICENSE.txt, README.md, dataset_infos.json
+
+      annotations/       2 files   10.6 MB  train.json, valid.json (COCO)
+
+      images/          110 files  161.4 MB  R01C02F01.png .. (.png, 1080x1080 RGB)'
+    n_files: 116
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/YaroslavPrytula/Revvity-25/resolve/main/images/R01C03F01.png
+    - https://huggingface.co/datasets/YaroslavPrytula/Revvity-25/resolve/main/annotations/train.json
+    size_bytes: 6741924
+    description: one 1080x1080 RGB PNG (first image of the train split) and the train COCO JSON holding
+      its polygons (55 images, 1491 cells)
+  arrays:
+  - role: raw
+    path_pattern: images/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1080
+    - 1080
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 32
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB PNG (color type 2); the three samples are not identical in the sample. All 110
+      images listed in the two JSONs are 1080x1080.
+  - role: label
+    path_pattern: annotations/*.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    encoding: polygons
+    classes:
+    - id: 1
+      name: cell
+    alignment: same-grid
+    alignment_notes: 'COCO JSON: images[].file_name names the PNG in images/ (width/height 1080 match);
+      annotations[] carry polygon segmentation, bbox and area per cell instance; overlapping instances
+      are separate polygons. train.json 55 images / 1491 annotations, valid.json 55 images / 1446 (the
+      paper''s test split); 152 annotations have more than one polygon part; iscrowd always 0.'
+  notes: 'Listing (HF tree API) complete: 116 files, 172,044,958 B. Probed R01C02F01.png: 1080x1080x3
+    uint8 RGB, deflate. Sampled R01C02F01.png (1,478,869 B): min 32, max 255, mean 135.9, std 6.4, p1-p99
+    117-152 (value_range from this one image). Both COCO JSONs read in full (10.6 MB). Voxel size not
+    found; checked: PNG header (no calibration), HF README and dataset_infos.json, LICENSE.txt, bcv.cs.ut.ee/datasets
+    page, IAUNet paper full text (arXiv 2508.01928v1: only ''1080 x 1080 brightfield images''); the IAUNet
+    GitHub repo could not be read from this session. Organism not stated (only ''cancer cells''). No single
+    archive: data.download_url stays null; direct files are the HF resolve URLs of images/*.png and annotations/*.json.
+    Not convertible by TensorSwitch: 2D record (miao layout covers 3D only) and vector JSON labels.'
