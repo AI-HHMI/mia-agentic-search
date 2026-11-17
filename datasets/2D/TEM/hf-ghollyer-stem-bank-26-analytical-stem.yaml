@@ -31,7 +31,7 @@ imaging:
 data:
   formats:
   - other
-  size_bytes: null
+  size_bytes: 904455594501
   n_items: 37921
   access: open
   download_url: https://huggingface.co/buckets/ghollyer/STEM-Bank-26
@@ -41,7 +41,7 @@ annotations:
   types:
   - classification
   - other
-  coverage: unknown
+  coverage: partial
   format: SQLite metadata databases in _archive_inventory/ (sessions, trajectories, acquisition metadata);
     element labels inferred from sample/file names
   source: automatic
@@ -62,16 +62,102 @@ provenance:
   - https://arxiv.org/html/2610.36086v1
   - https://github.com/ghollyer/STEM-Bank-26
   - https://huggingface.co/buckets/ghollyer/STEM-Bank-26
+  - https://huggingface.co/api/buckets/ghollyer/STEM-Bank-26
+  - https://huggingface.co/buckets/ghollyer/STEM-Bank-26/resolve/_archive_inventory/README.md
+  - https://huggingface.co/buckets/ghollyer/STEM-Bank-26/resolve/_archive_inventory/histogram_datasets/session_elements.csv
   confidence: 0.5
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-11-17T17:45:49Z'
-notes: 'Borderline training signal: no manual pixel-level annotations. The paper calls it a ''usable training
-  corpus'' built around microscope-control trajectories (from metadata changes between sequential images)
-  plus element labels inferred from file names (F1 93.3% on 100 audited samples). Raw files are Gatan
-  .dm3/.dm4, so formats=[other]. HF bucket page: 904 GB, 93,536 files (paper: 929 GB). CC BY 4.0 comes
-  from the arXiv page; the GitHub README and bucket page state no license. Pixel size not reported in
-  the paper page (may be in .dm headers, not read). Authors not listed on the pages read. Includes EDS/EELS
-  spectrum images as well as 2D images.'
+  annotations_verified: true
+  last_checked: '2026-11-17T19:20:00Z'
+notes: 'Borderline training signal: no pixel-level annotations; labels are element names inferred from
+  sample/file names (paper: F1 93.3% on 100 audited samples) and microscope-control trajectories in SQLite
+  DBs. Images are Gatan DM3/DM4 (no enum value), so formats=[other]; 3,012 TIFF and 3,591 JPEG exports
+  also exist. CC BY 4.0 from the arXiv page. enricher: size 904,455,594,501 B from the HF bucket API (listing
+  of all 93,536 files sums to it; was null). enricher: coverage partial (session_elements.csv: 975 of
+  1,499 sessions have elements; was unknown). enricher: voxel size left null: per-image calibration varies
+  with magnification (DM4 headers: 0.96 nm and 0.229 nm/px; README: magnification 80x to 1.2e8x). Includes
+  EDS/EELS spectrum images.'
+technical:
+  method: header
+  size_source: page-stated
+  layout:
+    tree: "STEM-Bank-26/                         93,536 files  904.46 GB (bucket API)\n  data/       \
+      \                        93,358 files  898.41 GB\n    <1,202 session folders, e.g. Lab-class04232024/SFO@LSAT/>\n\
+      \      STEM (N)/*.dm4                  STEM images (DM4, ~4.8 MB at 1024x1024)\n      SI data (N)/ADF\
+      \ Image*.dm4      survey / ADF images of a spectrum image\n      SI data (N)/EDS|EELS Spectrum Image*.dm4\
+      \   spectrum images (x, y, energy)\n      *.dmw                           DigitalMicrograph workspaces\
+      \ (10,931)\n      *.tif / *.jpg                   exported images (3,012 tif, 3,591 jpg)\n  _archive_inventory/\
+      \                 147 files  5.67 GB\n    README.md, paper_data_breakdown.json, recompute.py\n \
+      \   histogram_datasets/  session_elements.csv, element_presence_by_session.csv, *.csv, *.sqlite\n\
+      \    metric_csvs/         *.csv, manifest.json\n    rebuild_20261103/    stem_bank_26_metadata.sqlite\
+      \ (3.5 GB), sessions/trajectories *.sqlite\n  sample_data/CuPd50 core she/        30 files  377\
+      \ MB (STEM (62), STEM (63), SI data (133-135))\nby extension: .dm4 72,398 (862.1 GB), .dm3 3,010\
+      \ (15.5 GB), .dmw 10,931, .tif 3,012 (4.5 GB),\n  .jpg 3,591, .sqlite 10 (4.7 GB), .dat 223, .csv\
+      \ 88, .txt 82, .gz 14, other 177"
+    n_files: 93536
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/buckets/ghollyer/STEM-Bank-26/resolve/sample_data/CuPd50%20core%20she/STEM%20(62)/800%20H2_0896.dm4
+    size_bytes: 4803194
+    description: one 1024x1024 ADF STEM image (DM4) from the authors' sample_data folder; labels are per
+      session (session_elements.csv), not per image
+  arrays:
+  - role: raw
+    path_pattern: data/**/*.dm4
+    format: other
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: true
+    dtype: uint32
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Gatan DM4; image is ImageList[1] (ImageList[0] is an RGBA thumbnail). Paper: 90.8%
+      1024x1024, 6.1% 512x512, 0.97% 2048x2048. Glob also matches spectrum images (next array) and DM3
+      files exist too (data/**/*.dm3).'
+  - role: other
+    path_pattern: data/**/*Spectrum Image*.dm4
+    format: other
+    axes: cyx
+    shape:
+    - 2048
+    - 48
+    - 50
+    shape_varies: true
+    dtype: uint32
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'EDS/EELS spectrum images; c = energy channel (EDS sample: 2048 channels x 0.01 keV,
+      0.229 nm/px). Paired with ADF Image*.dm4 in the same SI data (N) folder.'
+  - role: label
+    path_pattern: _archive_inventory/histogram_datasets/session_elements.csv
+    format: csv
+    axes: null
+    shape:
+    - 1499
+    - 6
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes: null
+    alignment: unknown
+    alignment_notes: one row per session (refined_session_key = acquisition date / sample folder), elements
+      as a list; maps to images by session folder, not per image. Image-level metadata and trajectories
+      are in _archive_inventory/rebuild_20261103/*.sqlite (3.5 GB, not opened).
+  notes: 'Listing: HF bucket tree API (recursive, 94 pages), 93,536 files, exact sizes summing to the
+    bucket API size 904,455,594,501 B; tools/listing.py does not read HF buckets, so size_source is page-stated
+    (bucket API). Headers: DM4 tags parsed with a requests-only range reader (608,890 + 623,308 B read):
+    STEM image 1024x1024 uint32 (DataType 11), 0.9616 nm/px, 200 kV, indicated mag 200,000x, signal ADF;
+    EDS SI 50x48x2048 uint32, 0.2287 nm/px, 0.01 keV/channel. A TIFF export probed: 1024x1024 uint8 palette,
+    single page. No pixel data sampled, so value_range is null. Voxel size: per image, varies with magnification;
+    not set at record level (checked DM4 headers, bucket README, record notes on paper). Download: resolve/
+    URLs are direct (range requests OK, host allowed); no single archive, so download_url stays the bucket
+    page. TensorSwitch cannot read DM3/DM4; conversion needs a DM reader.'
