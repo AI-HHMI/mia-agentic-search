@@ -1,0 +1,110 @@
+schema_version: '1.2'
+id: zenodo-1205024-histmnist-bone-marrow-biopsy-patches
+title: Histopathology data of bone marrow biopsies (HistBMP or HistMNIST)
+short_name: Bone marrow biopsy H&E patches (HistMNIST)
+description: 10,800 grayscale 28 x 28 patches cut from H&E-stained 40x bone marrow biopsy images of 16
+  patients (lymphoma, leukemia, anemia cases), split by patient into 6,800 training, 2,000 validation
+  and 2,000 test patches; first used to train variational auto-encoders, so it is released for unsupervised
+  learning.
+landing_url: https://zenodo.org/records/1205024
+doi: 10.5281/zenodo.1205024
+repository: Zenodo
+accession: '1205024'
+authors:
+- Jakub Tomczak
+publications: []
+date_published: '2018-03-21'
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism:
+  - Homo sapiens
+  sample: Bone marrow biopsies of 16 patients with different cancers (e.g. lymphoma, leukemia) or anemia;
+    H&E, 40x, original images 336 x 448 pixels converted to grayscale and cut into 28 x 28 patches
+  labels_stains:
+  - H&E
+data:
+  formats:
+  - other
+  size_bytes: 59075164
+  n_items: 10800
+  access: open
+  download_url: https://zenodo.org/api/records/1205024/files/histopathology.pkl.tar.gz/content
+  download_method: http
+annotations:
+  present: false
+  types: []
+  coverage: unknown
+  format: null
+  source: unknown
+ml:
+  tasks:
+  - self-supervised
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-SA-4.0
+  url: https://creativecommons.org/licenses/by-sa/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-11-17T18:17:33Z'
+  evidence_urls:
+  - https://zenodo.org/records/1205024
+  - https://zenodo.org/api/records/1205024
+  - https://arxiv.org/pdf/1611.09630
+  confidence: 0.5
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: false
+  last_checked: '2026-11-17T19:05:00Z'
+notes: 'Single file histopathology.pkl.tar.gz (59 MB): one Python-2 pickle (protocol 0) of a dict {training,
+  validation, test}, each a list of 28x28 float64 NumPy arrays; the record keeps formats=[other] (pickle).
+  No class labels; keywords say ''unsupervised learning'', first use was training VAEs (Tomczak & Welling
+  2016, arXiv 1611.09630). Borderline against the training-signal criterion. Source images from enjoypath.com,
+  whose own terms were not checked, so CC BY-SA 4.0 on Zenodo may not cover them. Homo sapiens inferred
+  from patient biopsies. enricher: download_url set to the direct Zenodo file (was the record page). enricher:
+  voxel size not found (Zenodo record, arXiv paper: only ''40x'', 336x448 source images).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "histopathology.pkl.tar.gz            59.1 MB\n  histopathology.pkl                  154.3 MB\
+      \ (pickle protocol 0: dict training / validation / test -> lists of 28x28 float64 arrays)"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/1205024/files/histopathology.pkl.tar.gz/content
+    size_bytes: 59075164
+    description: the whole dataset is one 59 MB tar.gz holding one pickle
+  arrays:
+  - role: raw
+    path_pattern: histopathology.pkl
+    format: other
+    axes: yx
+    shape:
+    - 28
+    - 28
+    shape_varies: false
+    dtype: float64
+    compression: none
+    value_range:
+    - 0.0678
+    - 1.0
+    normalization: rescaled
+    alignment: not-applicable
+    alignment_notes: one 28x28 grayscale patch per list element; splits are the dict keys (training 6,800,
+      test 2,000, validation per docs 2,000), split by patient
+  notes: 'Listing: tools/listing.py, 1 file, 59,075,164 B (complete). The tar holds one member, histopathology.pkl
+    (154,302,934 B). The pickle was NOT unpickled: its protocol-0 opcode stream was read statically (keys,
+    numpy _reconstruct shapes (1,(28,28)), dtype f8 little-endian, raw byte strings decoded with escape_decode
+    + np.frombuffer). Counted 6,800 arrays under training and 2,000 under test (validation segment not
+    parsed by the regex; docs say 2,000). Value range from 1,990 test + 6,779 training patches: [0.0678,
+    1.0], float64, so rescaled to [0,1]. No labels. Pixel size not stated (Zenodo description, arXiv 1611.09630
+    Data preparation: HE, 40x, 336x448 images). TensorSwitch cannot read pickles; converting needs a safe
+    pickle-free extraction (e.g. the static parse above).'
