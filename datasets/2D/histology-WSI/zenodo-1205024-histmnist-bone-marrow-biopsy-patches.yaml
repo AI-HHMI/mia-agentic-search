@@ -32,7 +32,7 @@ data:
   size_bytes: 59075164
   n_items: 10800
   access: open
-  download_url: https://zenodo.org/records/1205024
+  download_url: https://zenodo.org/api/records/1205024/files/histopathology.pkl.tar.gz/content
   download_method: http
 annotations:
   present: false
@@ -55,18 +55,56 @@ provenance:
   evidence_urls:
   - https://zenodo.org/records/1205024
   - https://zenodo.org/api/records/1205024
+  - https://arxiv.org/pdf/1611.09630
   confidence: 0.5
 verification:
   url_ok: true
   license_found: true
   annotations_verified: false
-  last_checked: '2026-11-17T18:17:33Z'
-notes: 'Single file histopathology.pkl.tar.gz (59 MB), a pickled array archive that tar.gz cannot be listed
-  remotely, so format and counts come from the Zenodo description: 6,800 train, 2,000 validation and 2,000
-  test patches split by patient (10 / 3 / 3 patients). No class labels are described; the keywords say
-  ''unsupervised learning'' and the only stated use is training deep generative models (VAEs, Tomczak
-  and Welling 2016). Borderline against the training-signal criterion (unlabelled, explicitly for unsupervised
-  learning). The source images came from the website enjoypath.com (patients 272-299 listed), whose own
-  terms were not checked, so the CC BY-SA 4.0 on Zenodo may not cover them. Pixel size not stated. No
-  paper describes the dataset itself (the VAE paper arXiv 1611.09630 is the first use), so publications
-  is empty; the ''Homo sapiens'' organism is inferred from patient biopsies.'
+  last_checked: '2026-11-17T19:05:00Z'
+notes: 'Single file histopathology.pkl.tar.gz (59 MB): one Python-2 pickle (protocol 0) of a dict {training,
+  validation, test}, each a list of 28x28 float64 NumPy arrays; the record keeps formats=[other] (pickle).
+  No class labels; keywords say ''unsupervised learning'', first use was training VAEs (Tomczak & Welling
+  2016, arXiv 1611.09630). Borderline against the training-signal criterion. Source images from enjoypath.com,
+  whose own terms were not checked, so CC BY-SA 4.0 on Zenodo may not cover them. Homo sapiens inferred
+  from patient biopsies. enricher: download_url set to the direct Zenodo file (was the record page). enricher:
+  voxel size not found (Zenodo record, arXiv paper: only ''40x'', 336x448 source images).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "histopathology.pkl.tar.gz            59.1 MB\n  histopathology.pkl                  154.3 MB\
+      \ (pickle protocol 0: dict training / validation / test -> lists of 28x28 float64 arrays)"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/1205024/files/histopathology.pkl.tar.gz/content
+    size_bytes: 59075164
+    description: the whole dataset is one 59 MB tar.gz holding one pickle
+  arrays:
+  - role: raw
+    path_pattern: histopathology.pkl
+    format: other
+    axes: yx
+    shape:
+    - 28
+    - 28
+    shape_varies: false
+    dtype: float64
+    compression: none
+    value_range:
+    - 0.0678
+    - 1.0
+    normalization: rescaled
+    alignment: not-applicable
+    alignment_notes: one 28x28 grayscale patch per list element; splits are the dict keys (training 6,800,
+      test 2,000, validation per docs 2,000), split by patient
+  notes: 'Listing: tools/listing.py, 1 file, 59,075,164 B (complete). The tar holds one member, histopathology.pkl
+    (154,302,934 B). The pickle was NOT unpickled: its protocol-0 opcode stream was read statically (keys,
+    numpy _reconstruct shapes (1,(28,28)), dtype f8 little-endian, raw byte strings decoded with escape_decode
+    + np.frombuffer). Counted 6,800 arrays under training and 2,000 under test (validation segment not
+    parsed by the regex; docs say 2,000). Value range from 1,990 test + 6,779 training patches: [0.0678,
+    1.0], float64, so rescaled to [0,1]. No labels. Pixel size not stated (Zenodo description, arXiv 1611.09630
+    Data preparation: HE, 40x, 336x448 images). TensorSwitch cannot read pickles; converting needs a safe
+    pickle-free extraction (e.g. the static parse above).'
