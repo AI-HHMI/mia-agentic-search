@@ -1,12 +1,11 @@
 schema_version: '1.2'
 id: neurodata-bhatla15-celegans-pharynx-sstem
-title: 'Anterior pharynx of C. elegans worm 1: ssTEM image volume with neuron tracing segmentation (Bhatla
-  et al. 2015, Open NeuroData)'
+title: 'Anterior pharynx of C. elegans worm 1: ssTEM image volume with neuron tracing segmentation (Bhatla et al.
+  2015, Open NeuroData)'
 short_name: C. elegans pharynx neuron tracing (ssTEM)
-description: Serial-section TEM volume (1,199 sections, 2 x 2 x 50 nm) of the anterior pharynx of an adult
-  C. elegans hermaphrodite, with a uint64 segmentation layer of manually traced neurons and selected cell
-  types, hosted on Open NeuroData as neuroglancer precomputed. Data accompany Bhatla et al. 2015, Current
-  Biology.
+description: Serial-section TEM volume (1,199 sections, 2 x 2 x 50 nm) of the anterior pharynx of an adult C. elegans
+  hermaphrodite, with a uint64 segmentation layer of manually traced neurons and selected cell types, hosted on
+  Open NeuroData as neuroglancer precomputed. Data accompany Bhatla et al. 2015, Current Biology.
 landing_url: https://neurodata.io/data/bhatla15
 doi: null
 repository: other
@@ -16,8 +15,7 @@ authors:
 - Rita Droste
 - H. Robert Horvitz
 publications:
-- title: Distinct Neural Circuits Control Rhythm Inhibition and Spitting by the Myogenic Pharynx of C.
-    elegans
+- title: Distinct Neural Circuits Control Rhythm Inhibition and Spitting by the Myogenic Pharynx of C. elegans
   doi: 10.1016/j.cub.2015.06.052
   url: https://doi.org/10.1016/j.cub.2015.06.052
 date_published: null
@@ -37,7 +35,7 @@ imaging:
 data:
   formats:
   - precomputed
-  size_bytes: null
+  size_bytes: 42156121067
   n_items: 1
   access: open
   download_url: https://s3.amazonaws.com/open-neurodata/bhatla/ritaN2/
@@ -47,9 +45,9 @@ annotations:
   types:
   - instance-segmentation
   - synapse
-  coverage: unknown
-  format: neuroglancer precomputed segmentation layer (uint64, compressed_segmentation, 2x2x50 nm, same
-    grid as image) at bhatla/ritaN2/annotation
+  coverage: partial
+  format: neuroglancer precomputed segmentation layer (uint64, compressed_segmentation, 2x2x50 nm, same grid as
+    image) at bhatla/ritaN2/annotation
   source: manual
 ml:
   tasks:
@@ -68,15 +66,89 @@ provenance:
   - https://s3.amazonaws.com/open-neurodata/bhatla/ritaN2/image/info
   - https://s3.amazonaws.com/open-neurodata/bhatla/ritaN2/annotation/info
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1016%2Fj.cub.2015.06.052%22&format=json&resultType=core&pageSize=3
-  confidence: 0.7
+  - https://open-neurodata.s3.amazonaws.com/bhatla/ritaN2/image/provenance
+  - https://pmc.ncbi.nlm.nih.gov/articles/PMC4546535/
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-11-17T17:21:14Z'
-notes: 'Image layer 13101 x 14378 x 1199 voxels uint8 (info file); annotation layer same size, uint64.
-  Page says worm #1 has volumetric tracing of all neurons and selected cell types plus synapses identified
-  from I2 neurons; the landing page details only worm #1 (volumes for three worms are mentioned, only
-  ritaN2 was checked). Paper not open access (abstract only read), so annotation coverage, label classes
-  and synapse encoding are not confirmed. Total size not stated on the page. License ODC-By v1.0 as stated
-  on the landing page.'
+  annotations_verified: true
+  last_checked: '2026-11-17T18:05:00Z'
+notes: 'Image layer 13101 x 14378 x 1199 voxels uint8; annotation layer same grid, uint64. Page: volumes for three
+  worms, tracing of all neurons and selected cell types plus I2 synapses; only worm #1 (ritaN2) is hosted on S3.
+  License ODC-By v1.0 as stated on the landing page. enricher: size 42.2 GB from complete S3 listing (was null).
+  enricher: voxel 2x2x50 nm confirmed by info files and BossDB provenance (voxel_unit nanometers). enricher: annotations_verified
+  true (label chunks sampled). enricher: coverage partial: labels in all 75 z-slabs but in 2,777 of 56,550 chunks
+  (pharynx region only; selected cell types). enricher: no separate synapse layer on S3; synapses may be ids inside
+  the annotation layer (unconfirmed, paper supplement not readable).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: 's3://open-neurodata/bhatla/   133654 files, 42.2 GB (complete S3 listing)
+
+      ritaN2/image/                 2 files   2.2 KB   info, provenance
+
+      ritaN2/image/<x>_<y>_50/ (x8) 77100 files  42.1 GB   raw chunks 512x512x16, 8 levels (2..256 nm xy)
+
+      ritaN2/annotation/            2 files   1.2 KB   info, provenance
+
+      ritaN2/annotation/2_2_50/    56550 files  25.3 MB   compressed_segmentation chunks 512x512x16
+
+      '
+    n_files: 133654
+    listing_complete: true
+  sample:
+    urls:
+    - https://open-neurodata.s3.amazonaws.com/bhatla/ritaN2/image
+    - https://open-neurodata.s3.amazonaws.com/bhatla/ritaN2/annotation
+    size_bytes: null
+    description: Precomputed layer roots (read remotely). One labelled 512x512x16 chunk, e.g. 2_2_50/7680-8192_8192-8704_64-80,
+      is 3.6 MB (image, brotli) / 52 KB (annotation).
+  arrays:
+  - role: raw
+    path_pattern: ritaN2/image
+    format: precomputed
+    axes: zyx
+    shape:
+    - 1199
+    - 14378
+    - 13101
+    shape_varies: false
+    dtype: uint8
+    compression: other
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: ritaN2/annotation
+    format: precomputed
+    axes: zyx
+    shape:
+    - 1199
+    - 14378
+    - 13101
+    shape_varies: false
+    dtype: uint64
+    compression: compressed-segmentation
+    value_range:
+    - 0
+    - 34
+    normalization: unknown
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: Same size, resolution (2x2x50 nm) and voxel_offset 0 as the image mip 0 (info files); one label
+      chunk per image chunk key. Ids are traced cells (neurons and selected cell types per the page); no id-to-name
+      map is published.
+  notes: 'Complete S3 listing of open-neurodata/bhatla/ (133,654 objects, 42,156,121,067 B exact; only ritaN2 =
+    worm #1 exists). Probed both info files (image raw encoding, 8 anisotropic levels; annotation compressed_segmentation
+    8x8x8 blocks, 1 level). Chunks are served with Content-Encoding: br (brotli), hence compression other for the
+    image. Sampled with a requests-only script (precomputed is not read by sample.py): image chunk 6144-6656_7168-7680_592-608
+    (2.6 MB) uint8 0-255 mean 96 (its label chunk is empty); image chunk 7680-8192_8192-8704_64-80 (3.6 MB) uint8
+    0-255 mean 142, p1 39 p99 218; its label chunk (52 KB) has 10 ids (0..34), 91% labelled. Ranges from these chunks
+    only. encoding instance-ids from the page (tracing of all neurons, per-cell objects) and the sample (small integer
+    ids, one per object); class names per id not published. normalization unknown: no docs on contrast processing.'
