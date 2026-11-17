@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: hf-nuclick-ihc-lymphocyte-instances
 title: NuClick IHC lymphocyte instance segmentation patches (CD3/CD8 immunohistochemistry, Hugging Face mirror)
 short_name: IHC lymphocyte instance masks (NuClick)
-description: 871 RGB patches (256x256 px; 671 train, 200 validation) of CD3/CD8 immunohistochemistry-stained breast, colon
-  and prostate tissue, taken from the LYON19 challenge ROIs, with per-nucleus instance masks generated with the NuClick click-guided
-  tool. Released with the NuClick paper as the IHC lymphocyte dataset. Mirrored on Hugging Face as parquet; the original
-  release is ihc_nuclick.zip on the Warwick TIA Centre site.
+description: 871 RGB patches (256x256 px; 671 train, 200 validation) of CD3/CD8 immunohistochemistry-stained breast, colon and prostate
+  tissue, taken from the LYON19 challenge ROIs, with per-nucleus instance masks generated with the NuClick click-guided tool. Released
+  with the NuClick paper as the IHC lymphocyte dataset. Mirrored on Hugging Face as parquet; the original release is ihc_nuclick.zip
+  on the Warwick TIA Centre site.
 landing_url: https://huggingface.co/datasets/MedOtter/NuClick-IHC
 doi: null
 repository: HuggingFace
@@ -28,28 +28,30 @@ imaging:
     x: 240
     y: 240
     z: null
-  channels: null
+  channels: 3
   organism:
   - Homo sapiens
-  sample: IHC-stained (CD3 or CD8 antibody) tissue sections of breast, colon and prostate, scanned with a Pannoramic 250 Flash
-    II (3DHistech); ROIs from the LYON19 cohort
+  sample: IHC-stained (CD3 or CD8 antibody) tissue sections of breast, colon and prostate, scanned with a Pannoramic 250 Flash II (3DHistech);
+    ROIs from the LYON19 cohort
   labels_stains:
   - CD3
   - CD8
 data:
   formats:
-  - other
-  size_bytes: null
+  - png
+  - tiff
+  size_bytes: 458872711
   n_items: 871
   access: open
-  download_url: null
+  download_url: https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick/ihc_nuclick.zip
   download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
   coverage: dense
-  format: uint8 PNG instance-label masks stored in parquet (0 = background, 1..N = instance id); original release has ASAP XML
+  format: 'original ihc_nuclick.zip: uint32 .npy instance maps (0 = background, 1..N = instance id) per PNG patch, plus ASAP XML polygons;
+    Hugging Face mirror: uint8 PNG instance masks in parquet'
   source: mixed
 ml:
   tasks:
@@ -69,17 +71,82 @@ provenance:
   - https://zenodo.org/api/records/3385420
   - https://arxiv.org/pdf/2005.14511
   - https://arxiv.org/abs/2005.14511
-  confidence: 0.6
+  - https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick/ihc_nuclick.zip
+  - https://huggingface.co/api/datasets/MedOtter/NuClick-IHC/tree/main?recursive=true
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-11-17T14:18:47Z'
-notes: 'Terms: the Hugging Face card says the LYON19 source images are CC BY 4.0 with a citation requirement for the NuClick
-  annotations; the Warwick page states no license and only asks that the NuClick paper be cited, so the spdx is custom. Pixel
-  size 0.24 um/px is the scan resolution of the LYON19 WSIs stated on the LYON19 Zenodo record (3385420); patches are
-  256x256 crops whose extraction scale was not stated, so treat as approximate. Masks were produced with the NuClick tool
-  from non-expert clicks and refined for training (not fully manual); the paper says LYON19 released no ground-truth masks.
-  The card and paper full text (non-open-access journal version; the arXiv preprint was read) do not give the nucleus count.
-  File listing seen only through the card (parquet train/validation splits; raw ASAP XML not included). Original zip size
-  not stated on the Warwick page.'
+  annotations_verified: true
+  last_checked: '2026-11-17T15:05:00Z'
+notes: 'Terms: the HF card says the LYON19 source images are CC BY 4.0 (Zenodo 3385420) with a citation requirement for the NuClick
+  annotations; the Warwick page states no license and only asks that the NuClick paper be cited, so spdx is custom. Pixel size 0.24
+  um/px is the LYON19 WSI resolution (Zenodo 3385420: ROIs saved at full resolution); the 256x256 patches are crops of those ROIs, no
+  rescaling stated. Masks were made with the NuClick tool from non-expert clicks (paper Sec. IV), so source is mixed (click-guided automatic).
+  enricher: download_url = original ihc_nuclick.zip (direct, range requests; was null); size from its full listing (HF mirror parquet:
+  94,014,276 B); formats png+tiff from the zip listing (was other); channels 3 from PNG header; annotations verified from listing and
+  sample.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "ihc_nuclick.zip (458.9 MB, original release; direct download_url)\n  IHC_nuclick/IHC/images/Train/        671 .png   69.7\
+      \ MB\n  IHC_nuclick/IHC/images/Validation/   200 .png   23.5 MB\n  IHC_nuclick/IHC/masks/Train/         671 .npy  176.0 MB\n \
+      \ IHC_nuclick/IHC/masks/Validation/    200 .npy   52.5 MB\n  IHC_nuclick/IHC_xml_asap/Train/      671 .tif + 671 .xml  368.0 MB\n\
+      \  IHC_nuclick/IHC_xml_asap/Validation/ 200 .tif + 200 .xml  109.8 MB\nHugging Face mirror (MedOtter/NuClick-IHC, 94.0 MB)\n \
+      \ data/train-00000-of-00001.parquet       70.3 MB\n  data/validation-00000-of-00001.parquet  23.7 MB\n  README.md, .gitattributes"
+    n_files: 3484
+    listing_complete: true
+  sample:
+    urls:
+    - https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick/ihc_nuclick.zip::IHC_nuclick/IHC/images/Train/ROI_101_1.png
+    - https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick/ihc_nuclick.zip::IHC_nuclick/IHC/masks/Train/ROI_101_1.npy
+    size_bytes: 364480
+    description: one 256x256 RGB IHC patch (ROI_101_1) and its uint32 instance map (8 nuclei)
+  arrays:
+  - role: raw
+    path_pattern: IHC_nuclick/IHC/images/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 40
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB brightfield IHC (CD3/CD8, DAB); samples differ, so true colour
+  - role: label
+    path_pattern: IHC_nuclick/IHC/masks/*/*.npy
+    format: other
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint32
+    compression: none
+    value_range:
+    - 0
+    - 8
+    normalization: unknown
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    - id: null
+      name: lymphocyte nucleus (1..N, one id per instance)
+    alignment: same-grid
+    alignment_notes: 'pairing: images/<split>/<ROI>.png <-> masks/<split>/<ROI>.npy (same stem, same split); shapes match (256x256)'
+  notes: 'Listing: tools/listing.py on ihc_nuclick.zip (3484 members, exact sizes) and the HF tree API. Labels are NumPy .npy (no schema
+    format; format other), read with np.load(allow_pickle=False): uint32 256x256, ROI_100_1 all zero, ROI_101_1 ids 0..8 (9 unique).
+    value_range from one sample each (PNG ROI_100_1: 40..255, mean 228). HF card: ~30% of train and 25% of validation patches have no
+    nuclei; max 69 instances per patch. IHC_xml_asap/ holds ASAP XML polygons plus a 3-page plain RGB TIFF per ROI (pages 256x256x3,
+    page meaning not documented), not listed as arrays. HF parquet files are direct (huggingface.co, usable) but parquet is not a TensorSwitch
+    format; warwick.ac.uk serves the zip with range requests but is not on the TensorSwitch fetch allowlist. 2D record, so not convertible
+    by the 3D-only miao pipeline.'
