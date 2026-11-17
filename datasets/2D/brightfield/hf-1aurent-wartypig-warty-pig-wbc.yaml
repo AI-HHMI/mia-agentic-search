@@ -1,0 +1,143 @@
+schema_version: '1.2'
+id: hf-1aurent-wartypig-warty-pig-wbc
+title: Juvenile Visayan warty pig white blood cell classification images (thin blood smears, Hugging Face mirror)
+short_name: Warty pig white blood cell classes (brightfield)
+description: Smartphone images of thin peripheral blood smears from juvenile Visayan warty pigs (100x oil immersion)
+  for classifying five white blood cell types (neutrophil, lymphocyte, monocyte, eosinophil, basophil). The Hugging
+  Face mirror has three splits, cropped single-cell images (1.41k), augmented images (1.46k) and original full images
+  (285). Mirror of the IEEE DataPort dataset by Alipo-on et al.
+landing_url: https://huggingface.co/datasets/1aurent/WartyPig
+doi: 10.21227/3qsb-d447
+repository: HuggingFace
+accession: null
+authors:
+- Jacqueline Rose Alipo-on
+- Francesca Isabelle Escobar
+- Jemima Loise Novia
+- Myles Joshua Tan
+- Monica Marie Atienza
+- Sonny Mana-ay
+- Nouar AlDahoul
+- Evan Yu
+publications: []
+date_published: '2022-02-25'
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: null
+  organism:
+  - Sus cebifrons
+  sample: Peripheral thin blood smears of juvenile Visayan warty pigs (Bacolod City, Philippines, June to November
+    2021), imaged with a smartphone through a 100x oil immersion lens
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: 1293107206
+  n_items: 3156
+  access: open
+  download_url: https://huggingface.co/datasets/1aurent/WartyPig/tree/main/data
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  coverage: dense
+  format: class label per image in parquet (five WBC classes)
+  source: manual
+ml:
+  tasks:
+  - classification
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://huggingface.co/datasets/1aurent/WartyPig
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-11-17T14:18:47Z'
+  evidence_urls:
+  - https://huggingface.co/datasets/1aurent/WartyPig
+  - https://ieee-dataport.org/documents/dataset-machine-learning-based-classification-white-blood-cells-juvenile-visayan-warty
+  - https://huggingface.co/datasets/1aurent/WartyPig/resolve/main/README.md
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: false
+  last_checked: '2026-11-17T15:55:14Z'
+notes: 'Counts disagree across sources: the card text says 3,457 JPEG images, the viewer shows 3,156 rows (cropped
+  1.41k + augmented 1.46k + original 285), and IEEE DataPort lists 3,539 (667 raw, 1,464 augmented, 1,408 cropped);
+  n_items uses the mirror''s rows. Augmented images are derived by Keras preprocessing layers. Labels were manually
+  classified and verified by a licensed medical technologist (per IEEE DataPort). On IEEE DataPort the files are
+  on a Google Drive link and need a subscription login; the Hugging Face parquet mirror is open. The landing pages
+  cite no paper, so none is listed. Image sizes vary (600 to 5,280 px wide), staining not stated, pixel size not
+  stated. Per-class counts on the IEEE page for cropped images: lymphocyte 905, neutrophil 319, monocyte 82, eosinophil
+  82, basophil 20. Organism is the sample species: Sus cebifrons. enricher: the 285 "original" rows carry no label
+  (gen_script.py: no_label=True); labels only on cropped + augmented.'
+technical:
+  method: metadata-only
+  size_source: file-listing
+  layout:
+    tree: "./      .gitattributes, README.md, gen_script.py      6.9 KB\ndata/   augmented-00000-of-00001.parquet\
+      \   39.1 MB  (1,464 rows, labelled)\n        cropped-00000-of-00001.parquet     68.3 MB  (1,407 rows, labelled)\n\
+      \        original-0000[0-2]-of-00003.parquet  1.19 GB (285 rows, no label)\n"
+    n_files: 8
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/1aurent/WartyPig/resolve/main/data/cropped-00000-of-00001.parquet
+    size_bytes: 68345970
+    description: cropped split, 1,407 labelled single-cell RGB images with their class labels in one parquet file
+  arrays:
+  - role: raw
+    path_pattern: data/*.parquet
+    format: other
+    axes: yxs
+    shape: null
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    lossy: true
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Images are the parquet "image" column (Hugging Face Image feature, mode RGB); the card says
+      the source images are JPEG.
+  - role: label
+    path_pattern: data/{cropped,augmented}-*.parquet
+    format: other
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    encoding: other
+    classes:
+    - id: 0
+      name: Basophil
+    - id: 1
+      name: Eosinophil
+    - id: 2
+      name: Lymphocyte
+    - id: 3
+      name: Monocyte
+    - id: 4
+      name: Neutrophil
+    alignment: not-applicable
+    alignment_notes: One class label per image, in the "label" column (ClassLabel 0-4) of the same parquet row as
+      its image. The "original" split has no label column values (gen_script.py yields image only).
+  notes: 'Listing from the Hugging Face tree API (complete, exact sizes: 8 files, 1,293,107,206 bytes). Parquet
+    is not readable by probe.py/sample.py and pyarrow is not on the enricher allowlist, so nothing was sampled;
+    features come from the README dataset_info (image mode RGB; label ClassLabel with 5 names; splits cropped 1,407
+    / augmented 1,464 / original 285) and gen_script.py (read, not run). datasets-server first-rows shows cropped
+    images of 722x422 px; sizes vary per the record. Label ids 0-4 are the README ClassLabel order. Direct links:
+    all parquet files under resolve/main/data/ pass --download-check (range requests, host allowed); no single archive,
+    so download_url is the data/ folder. Voxel size not found; checked: README, gen_script.py, IEEE DataPort page
+    (per the harvester), no paper cited. Converting needs a parquet reader (images are embedded bytes).'
+  inspected_at: '2026-11-17T15:55:14Z'
