@@ -65,7 +65,7 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-17T11:46:52Z'
+  last_checked: '2026-11-17T12:58:00Z'
 notes: 'Fully synthetic (generated in MATLAB), so no real microscope; fluorescence-other is the closest
   modality enum. Sibling of the PhagoSight sets zenodo-1221162 and zenodo-1221032 (different shapes/noise):
   this one has a single large irregular neutrophil with Poisson noise (L1-L5). Five zips of 98 per-frame
@@ -73,4 +73,79 @@ notes: 'Fully synthetic (generated in MATLAB), so no real microscope; fluorescen
   are MATLAB .mat, no enum value, hence other. Description gives 11 slices of 275x275 px per frame; pixel/voxel
   size and organism not stated on the record, paper Methods or file listing (paper full text read via
   Europe PMC). Record contains no track table, only label volumes; the paper text describes the six-neutrophil
-  sets, so the single-cell set parameters come from the Zenodo description only.'
+  sets, so the single-cell set parameters come from the Zenodo description only. enricher: technical block
+  from sampled MAT files; labels binary {0,1}.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  12 files  2.5 GB  (.gif 6, .zip 6)\n  syntheticData_L.gif, syntheticData_L1..L5.gif   (illustration\
+      \ movies)\n  syntheticData_L_mat_La.zip  117 KB   ground truth\n    syntheticData_L_mat_La/T00001.mat\
+      \ .. T00098.mat   (98 files, 361 KB)\n  syntheticData_L1_mat_Re.zip .. syntheticData_L5_mat_Re.zip\
+      \  (83 MB, ~606-609 MB each)\n    syntheticData_L#_mat_Re/T00001.mat .. T00098.mat  (5 x 98 = 490\
+      \ files, 2.5 GB)"
+    n_files: 12
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/1221164/files/syntheticData_L1_mat_Re.zip/content::syntheticData_L1_mat_Re/T00001.mat
+    - https://zenodo.org/api/records/1221164/files/syntheticData_L_mat_La.zip/content::syntheticData_L_mat_La/T00001.mat
+    size_bytes: 693769
+    description: Time frame 1 of the lowest-noise set (L1) and its ground-truth label volume (MAT v5,
+      690,118 + 3,651 B as zip members).
+  arrays:
+  - role: raw
+    path_pattern: syntheticData_L[1-5]_mat_Re.zip::syntheticData_L[1-5]_mat_Re/T*.mat
+    format: other
+    axes: zxy
+    shape:
+    - 11
+    - 275
+    - 275
+    shape_varies: false
+    dtype: float64
+    compression: deflate
+    value_range:
+    - 0.0
+    - 24.891588160256198
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: MATLAB 5.0 MAT-file (MACI64, 2013), one variable dataR, class double, dims 275x275x11
+      = rows x cols x slices (11 z-slices of 275x275 px per the description). MATLAB stores column-major,
+      so slowest to fastest is z, x (cols), y (rows); scipy.io.loadmat returns it as (275, 275, 11) =
+      y, x, z. Elements are zlib-compressed (miCOMPRESSED). One file per time frame (T00001..T00098) per
+      noise level L1-L5.
+  - role: label
+    path_pattern: syntheticData_L_mat_La.zip::syntheticData_L_mat_La/T*.mat
+    format: other
+    axes: zxy
+    shape:
+    - 11
+    - 275
+    - 275
+    shape_varies: false
+    dtype: float64
+    compression: deflate
+    value_range:
+    - 0.0
+    - 1.0
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 1
+      name: neutrophil
+    alignment: same-grid
+    alignment_notes: 'One variable dataL, MATLAB class double (stored as uint8 data inside the file),
+      dims 275x275x11, values {0,1} (T00001: 0.58% foreground; T00050: 0.81%). Pairing: syntheticData_L_mat_La/TNNNNN.mat
+      labels frame TNNNNN of every noise set syntheticData_L#_mat_Re (description: one ground truth for
+      all five sets). Same dims as the raw frames. One cell per frame, so binary mask = the one instance.'
+  notes: 'Sampled T00001.mat of L1 (683,407 B read) and T00001/T00050.mat of the ground truth (20,398
+    B) with a small stdlib+requests MAT v5 reader (tools/sample.py cannot open MAT files); value range
+    is from one sample frame. Raw intensities are synthetic (Gaussian-shaped cell plus Poisson noise,
+    per the description), so normalization unknown. Voxel size not found; checked: MAT headers (no calibration
+    fields, only the array), Zenodo API record and description, paper full text (Europe PMC PMC3758287:
+    describes the synthetic sets only as 98 time points x 11 slices of 275x275 px, no physical size),
+    phagosight.org and github.com/phagosight (HTTP 403 from this environment). Data are fully synthetic,
+    so a physical voxel size may not exist. download_url stays the record page: the dataset is 6 separate
+    zips (direct links in the listing, files[].links.self of the Zenodo API, e.g. .../files/syntheticData_L1_mat_Re.zip/content).
+    Format MATLAB .mat has no enum value, so conversion needs a MAT reader.'
