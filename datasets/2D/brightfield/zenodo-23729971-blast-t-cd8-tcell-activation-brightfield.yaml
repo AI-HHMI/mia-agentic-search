@@ -64,13 +64,61 @@ verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-17T18:12:46Z'
+  last_checked: '2026-11-17T19:55:00Z'
 notes: 'Three zips (Cohort A 252 TIFFs, B 1,592, C 156; 2,000 total, 14.5 GB compressed) listed with peek_archive:
   only .tif files in folders D0_0S, D1_05S / D1_0_5S / D1_1S, D3_1S, D6_1S, D8_1S, D8_1Splus. The meaning
   of the folder suffixes (e.g. 0S, 05S, 1S, 1Splus) is not documented on the record; file names carry
   NS (non-stimulated) vs S (stimulated). The only labels are these culture-day / condition folders (experimental
   conditions, not human annotation); no masks or contours are in the archives although the title mentions
-  minimal annotation and mask morphometry. Each TIFF is about 8.4 MB, so roughly 2048 x 2048 16-bit, but
-  size, pixel size and objective were not stated and no header was read. The BLAST-T manuscript was not
-  found in Europe PMC (not published yet or under a different title), so publications is empty. Organism
-  is not stated on the record (CD8+ T cells; species unknown).'
+  minimal annotation and mask morphometry. The BLAST-T manuscript was not found in Europe PMC (not published
+  yet or under a different title), so publications is empty. Organism is not stated on the record (CD8+
+  T cells; species unknown). enricher: TIFF headers read: 2048x2048 uint16, uncompressed, Hamamatsu C11440-22C,
+  calibration ''Pixels'' (factor 1), so voxel size still null.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "BLAST-T__Dataset_Cohort_A.zip   1.81 GB  252 tif\n  D0_0S/ 31   D1_05S/ 61   D8_1S/ 86   D8_1Splus/\
+      \ 74      (names T_Velia__D0__-_N.tif, T-Velia_6D__1S_-_N.tif, ...)\nBLAST-T__Dataset_Cohort_B.zip\
+      \  11.57 GB  1,592 tif\n  D0_0S/ 229  D1_1S/ 286  D3_1S/ 379  D6_1S/ 342  D8_1S/ 356   (names T_D0_0S_-_N.tif,\
+      \ D3_1S_-_N.tif; D6_1S/ files are named D5_1S_-_N.tif)\nBLAST-T__Dataset_Cohort_C.zip   1.14 GB\
+      \  156 tif\n  D0_0S/ 35   D1_0_5S/ 72   D8_1S/ 49                     (names T_CD8__NS_N.tif, T_CD8__S_N.tif)\n\
+      every tif 8,389,289 B (2048x2048 uint16, uncompressed); each zip has a top folder BLAST-T__Dataset_Cohort_<X>/"
+    n_files: 2000
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/23729971/files/BLAST-T__Dataset_Cohort_C.zip/content::BLAST-T__Dataset_Cohort_C/D0_0S/T_CD8__NS_00001.tif
+    size_bytes: 8389289
+    description: one 2048x2048 bright-field field of view (Cohort C, day 0, non-stimulated); the class
+      label is the folder name
+  arrays:
+  - role: raw
+    path_pattern: BLAST-T__Dataset_Cohort_*/*/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 11576
+    - 59028
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: single-page plain TIFF. Labels are the parent folder (culture day D0/D1/D3/D6/D8
+      and stimulation suffix 0S, 05S/0_5S, 1S, 1Splus) and, in cohort C, NS/S in the file name; no label
+      files.
+  notes: 'Listing: peek_archive.py on all three Zenodo zips: 252 + 1,592 + 156 = 2,000 TIFFs, every one
+    8,389,289 B (16,777.6 MB unpacked in total). Size 14,514,041,615 B is the sum of the three file sizes
+    in the Zenodo API (tools/listing.py timed out twice on these URLs, so page-stated). probe.py could
+    not read the deflated members; two members were read with requests + zipfile + tifffile (7.36 MB +
+    7.54 MB compressed): 2048x2048 uint16, 1 page, uncompressed, photometric minisblack, not ImageJ/OME.
+    ImageDescription: Hamamatsu C11440-22C (ORCA-Flash4.0), 16-bit, binning 1, exposure 0.001 s, CALIBRATION
+    units = Pixels, factor 1. Values: C/D0_0S/T_CD8__NS_00001 [13302, 48960], B/D3_1S/D3_1S_-_00001 [11576,
+    59028] (two samples); normalization none is inferred (raw camera counts within the 16-bit range, no
+    clipping). Voxel size not found; checked: TIFF headers (uncalibrated), Zenodo record/API description
+    (microscope and camera only, no objective or pixel size), Europe PMC (paper not found). No code files
+    in the record despite the description.'
