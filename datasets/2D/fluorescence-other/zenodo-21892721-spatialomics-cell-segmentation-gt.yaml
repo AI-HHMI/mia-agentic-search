@@ -3,8 +3,8 @@ id: zenodo-21892721-spatialomics-cell-segmentation-gt
 title: Multiplexed spatial-omics images (Lunaphore COMET, MIBI) with pathologist whole-cell segmentation ground truth
 short_name: Multiplex tissue cell masks (COMET, MIBI)
 description: 9 high-plex tissue images (3 Lunaphore COMET breast carcinoma, 3 MIBIscope breast carcinoma FOVs, 3 MIBIscope
-  melanoma) each paired with a manually drawn whole-cell ground-truth label image (about 6,206 cells in total), released
-  with a benchmark of cell segmentation methods and Cellpose fine-tuning.
+  melanoma) each paired with a manually drawn whole-cell ground-truth label image (about 6,206 cells in total), released with
+  a benchmark of cell segmentation methods and Cellpose fine-tuning.
 landing_url: https://zenodo.org/records/21892721
 doi: 10.5281/zenodo.21892721
 repository: Zenodo
@@ -43,7 +43,7 @@ imaging:
 data:
   formats:
   - tiff
-  size_bytes: 529000000
+  size_bytes: 528996782
   n_items: 9
   access: open
   download_url: https://zenodo.org/records/21892721
@@ -70,15 +70,146 @@ provenance:
   evidence_urls:
   - https://zenodo.org/records/21892721
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13743493/fullTextXML
+  - https://zenodo.org/api/records/21892721
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-17T09:10:00Z'
-notes: 'Small: only 9 image/label pairs (just under the ~10 image guideline), about 1,000 cells each. The pixel size is
-  derived from the paper statement that annotated images measure 400 um x 400 um at 1024 x 1024 pixels (0.3906 um/pixel);
-  not stated directly per file. MIBI is ion-beam mass imaging rather than optical microscopy (modality listed as other);
-  the Lunaphore images are multiplex immunofluorescence. Raw files are multi-channel; one MIBI file is 335.6 MB, others
-  6-46 MB; channel counts not stated on the record page. Zenodo file listing, paper Methods and data availability read
-  via Europe PMC. Size is the sum of the listed files (529.0 MB incl. notebooks).'
+  last_checked: '2026-11-17T09:20:00Z'
+notes: 'Small: only 9 image/label pairs (just under the ~10 image guideline), about 1,000 cells each. Pixel size 390.625 nm:
+  paper says annotated images are 400 x 400 um at 1024 x 1024 px; the TIFF headers (Lunaphore, MIBI FOV1, labels) store the
+  same calibration. MIBI is ion-beam mass imaging (modality other = MIBI-*.tif*); Lunaphore-*.tif are multiplex immunofluorescence.
+  enricher: size 528,996,782 B from the Zenodo file listing (was 529 MB stated, incl. notebooks/xlsx). enricher: coverage:
+  MIBI-Breast Cancer raw FOVs are 2048 x 2048 px, their labels 1024 x 1024 (one 400 um annotated region per FOV, crop offset
+  not documented); Lunaphore and MIBI-Melanoma labels cover the whole image. enricher: channels differ per platform (22 /
+  29 / 20), so imaging.channels stays null.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  (flat, 22 files, 529.0 MB)\n  Lunaphore-Breast Cancer_NS22.tif, _NS58.tif, _NS93.tif        3 x 46.2 MB  raw,\
+      \ 22 ch\n  Lunaphore-Breast Cancer_NS-22_GTLabelImage.tif (NS-58, NS-93)  3 x 2.1 MB   labels\n  MIBI-Breast Cancer_FOV1.tif\
+      \                                    335.6 MB     raw, 20 ch, 2048 px\n  MIBI-Breast Cancer_FOV3.tiff, _FOV8.tiff  \
+      \                     8.7 / 7.7 MB raw, 20 ch, 2048 px (deflate)\n  MIBI-Breast Cancer_FOV1_GTLabelImage.tif (FOV3,\
+      \ FOV8)          3 x 2.1 MB   labels\n  MIBI-Melanoma_MM-01.tiff, _MM-02.tiff, _MM-03.tiff             6.1-6.7 MB  \
+      \ raw (deflate)\n  MIBI-Melanoma_MM-01_GTLabelImage.tif (MM-02, MM-03)            3 x 2.1 MB   labels\n  AllData.xlsx,\
+      \ 1_Fig3_Fig5.ipynb, 2_Fig6.ipynb, Pairwised_nemenyi_tests_on_point_metrics.Rmd   analysis files"
+    n_files: 22
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/21892721/files/MIBI-Melanoma_MM-01.tiff/content
+    - https://zenodo.org/api/records/21892721/files/MIBI-Melanoma_MM-01_GTLabelImage.tif/content
+    size_bytes: 8846100
+    description: One MIBI-Melanoma image (29-channel float32 TIFF, 1024 x 1024) and its whole-cell instance label image.
+  arrays:
+  - role: raw
+    path_pattern: Lunaphore-Breast Cancer_NS[0-9][0-9].tif
+    format: tiff
+    axes: cyx
+    shape:
+    - 22
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ hyperstack, 22 channels (21 markers + DAPI per paper); HORIZON background subtraction applied
+      (paper).
+  - role: raw
+    path_pattern: MIBI-Melanoma_MM-0[0-9].tiff
+    format: tiff
+    axes: cyx
+    shape:
+    - 29
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: float32
+    compression: deflate
+    value_range:
+    - 0.0
+    - 64.0
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: 'Plain multi-page TIFF, one page per MIBI channel (paper: multiplex MIBI tiff files); 29 pages in MM-01.'
+  - role: raw
+    path_pattern: MIBI-Breast Cancer_FOV1.tif
+    format: tiff
+    axes: cyx
+    shape:
+    - 20
+    - 2048
+    - 2048
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ hyperstack, 20 channels.
+  - role: raw
+    path_pattern: MIBI-Breast Cancer_FOV[0-9].tiff
+    format: tiff
+    axes: cyx
+    shape:
+    - 20
+    - 2048
+    - 2048
+    shape_varies: false
+    dtype: float32
+    compression: deflate
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'FOV3, FOV8: plain multi-page TIFF, 20 pages = channels (as FOV1).'
+  - role: label
+    path_pattern: '{Lunaphore-Breast Cancer_NS-,MIBI-Melanoma_MM-}[0-9][0-9]_GTLabelImage.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 710
+    normalization: none
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Whole-cell masks drawn by pathologists in the Cellpose GUI (paper); same 1024 x 1024 grid and 390.625
+      nm calibration as the raw Lunaphore / MIBI-Melanoma images, label = raw yx. Pairing: raw ''<platform>_<id>.tif[f]''
+      <-> ''<platform>_<id>_GTLabelImage.tif''; Lunaphore labels add a hyphen (NS22 <-> NS-22).'
+  - role: label
+    path_pattern: MIBI-Breast Cancer_FOV[0-9]_GTLabelImage.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range: null
+    normalization: none
+    encoding: instance-ids
+    classes: null
+    alignment: cropped
+    alignment_notes: 'Raw FOVs are 2048 x 2048 px at 390.625 nm (header), labels 1024 x 1024 = the 400 x 400 um annotated
+      region the paper describes; the crop offset is not stated in the record, files or paper. Pairing: raw ''<platform>_<id>.tif[f]''
+      <-> ''<platform>_<id>_GTLabelImage.tif''; Lunaphore labels add a hyphen (NS22 <-> NS-22).'
+  notes: 'Listing: Zenodo API, 22 files, exact sizes. Probed headers of Lunaphore NS22 + label, MIBI-Melanoma MM-01 + label,
+    MIBI-Breast FOV1 and FOV3. Sampled MIBI-Melanoma MM-01 raw + label (8.8 MB): raw float32 [0, 64] with 83% zeros (integer
+    ion counts; normalization ''none'' inferred from the Zenodo description ''raw images''); label 711 distinct IDs incl.
+    0, [0, 710]. Value ranges are from this one sample. Lunaphore ImageJ header min/max 182-35426 (not sampled). The paper''s
+    denoising (Noise2Noise) and CLAHE were applied for benchmarking, not to these files (description: raw images). No direct
+    whole-dataset archive: Zenodo''s files-archive returns HTTP 403, so data.download_url stays the record page; every file
+    has a direct /api/records/21892721/files/<name>/content link. Not convertible yet: 2D (miao layout covers 3D only); voxel
+    z n/a for 2D.'
