@@ -1,14 +1,11 @@
 schema_version: '1.2'
 id: s-biad4192-prism-edx-pancreas-em
-title: Ultrastructure segmentation in electron microscopy based on energy-dispersive
-  X-ray imaging
+title: Ultrastructure segmentation in electron microscopy based on energy-dispersive X-ray imaging
 short_name: Pancreas EM organelle masks from EDX (STEM)
-description: Large STEM/HAADF electron microscopy mosaics of human pancreas islet
-  tissue with simultaneously acquired EDX data, plus ground-truth (EDX-derived) structure
-  maps and masks for glucagon granules, nuclei, insulin granules, telolysosomes and
-  zymogen granules, and PRISM/ResNet50 predictions; one digitized 1966 guinea pig
-  pancreas TEM micrograph is included. Released for training EM segmentation models
-  (PRISM).
+description: Large STEM/HAADF electron microscopy mosaics of human pancreas islet tissue with simultaneously
+  acquired EDX data, plus ground-truth (EDX-derived) structure maps and masks for glucagon granules, nuclei,
+  insulin granules, telolysosomes and zymogen granules, and PRISM/ResNet50 predictions; one digitized
+  1966 guinea pig pancreas TEM micrograph is included. Released for training EM segmentation models (PRISM).
 landing_url: https://www.ebi.ac.uk/biostudies/BioImages/studies/S-BIAD4192
 doi: 10.6019/S-BIAD4192
 repository: BioImageArchive
@@ -28,16 +25,13 @@ imaging:
   - TEM
   - ssSEM
   dimensionality: 2D
-  voxel_size_nm:
-    x: 2.5
-    y: 2.5
-    z: null
+  voxel_size_nm: null
   channels: null
   organism:
   - Homo sapiens
   - Cavia porcellus
-  sample: Human pancreas tissue with an islet of Langerhans (nPOD donor, no diabetes)
-    and a digitized 1966 guinea pig pancreas TEM micrograph
+  sample: Human pancreas tissue with an islet of Langerhans (nPOD donor, no diabetes) and a digitized
+    1966 guinea pig pancreas TEM micrograph
   labels_stains:
   - EDX elemental maps (hyperspectral)
 data:
@@ -56,9 +50,10 @@ annotations:
   - semantic-segmentation
   - organelle
   coverage: dense
-  format: single-channel TIFF masks and structure maps per class (GT, PRISM, ResNet50)
-    per figure region
-  source: automatic
+  format: 'single-channel uint8 TIFFs per class: binary masks (0/255) and EDX-derived structure maps (GT,
+    Fig 2/3), PRISM/ResNet50 predictions; expert masks for Fig 4/5 only as channels of Figure4_5_Multichannel
+    (OME-TIFF/OME-Zarr)'
+  source: mixed
 ml:
   tasks:
   - segmentation
@@ -77,16 +72,127 @@ provenance:
   - https://www.ebi.ac.uk/biostudies/files/S-BIAD4192/Tian_2026/Segmentation_Fig2_3.json
   - https://github.com/changmin319/PRISM-Prediction-of-Intracellular-Structures-in-Micrographs
   - https://www.ebi.ac.uk/biostudies/BioImages/studies/S-BIAD4192
+  - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/192/S-BIAD4192/Files/Tian_2026/Filelist_Tian2026.json
+  - https://raw.githubusercontent.com/changmin319/PRISM-Prediction-of-Intracellular-Structures-in-Micrographs/main/README.md
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-18T03:11:21Z'
-notes: Only 5 large multichannel mosaics, so borderline on size. Linked paper (doi
-  10.1016/j.crmeth.2026.101669) is not in Europe PMC and doi.org returned 404, so
-  its Methods were not read and it is not listed in publications. Pixel size 2.5 nm
-  is the Supra55 STEM value on the dataset page; Talos images are 4 nm, the 1966 micrograph
-  unknown. Masks include EDX-derived GT plus PRISM/ResNet50 predictions; only GT are
-  training labels. Split is made by the code (README), not provided. License from
-  the BioStudies record; README states none.
+  last_checked: '2026-11-18T04:20:00Z'
+notes: '5 multichannel mosaics plus split per-channel TIFFs. Paper doi 10.1016/j.crmeth.2026.101669 not
+  resolvable (doi.org/Crossref 404, not in Europe PMC). Only GT (EDX-derived, automatic) and Expert 1/2
+  (manual, Fig 4/5 only) masks are training labels; PRISM/ResNet50 are predictions. Split is made by the
+  code, not provided. License from the BioStudies record. organisms: Cavia porcellus = Figure6B_* and
+  Segmentation_Figure_6B/; Homo sapiens = all other files. enricher: voxel size 2.5 nm removed (was x/y
+  2.5): parts differ (acquisition 2.5 nm Supra55 / 4 nm Talos per page; files store 8 nm, Fig 6B 1.545
+  nm). annotations.source automatic -> mixed (GT EDX-derived for Fig 2/3; Expert masks manual for Fig
+  4/5).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "Files/Tian_2026/                                     ~46.6 GB\n  Figure2_Multichannel.ome.tif\
+      \ + .ome.zarr.zip        c26 x 3104 x 11424 (EM Talos + GT/PRISM/ResNet50 masks, maps)\n  Figure3_Multichannel.ome.tif\
+      \ + .ome.zarr.zip        c26 x 3104 x 11424\n  Figure4_5_Multichannel.ome.tif + .ome.zarr.zip  \
+      \    c21 x 34816 x 34816 (EM Supra55 + Expert 1/2 masks + PRISM)\n  Figure6A_Multichannel.ome.tif\
+      \ + .ome.zarr.zip       c11 x 12288 x 12288 (EM Supra55 + PRISM)\n  Figure6B_Multichannel.ome.tif\
+      \ + .ome.zarr.zip       c5 x 6000 x 5342 (digitized 1966 guinea pig TEM + PRISM)\n  Filelist_*.json/tsv,\
+      \ Segmentation_Fig*.json/tsv     BioStudies file lists\n  Segmentation maps/\n    Segmentation_Figure_2/\
+      \   26 .tif  (one channel each: EM, 5x Mask GT/PRISM/ResNet50, 5x Structure Map GT/PRISM)\n    Segmentation_Figure_3/\
+      \   26 .tif\n    Segmentation_Figure_6A/  11 .tif  (EM Supra55 + PRISM only)\n    Segmentation_Figure_6B/\
+      \   5 .tif  (EM Digitized + PRISM only)\nS-BIAD4192.json, S-BIAD4192.tsv"
+    n_files: 90
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/192/S-BIAD4192/Files/Tian_2026/Segmentation%20maps/Segmentation_Figure_2/Figure2_Multichannel.ome_0%20-%20EM%20(Talos%20F200i).tif
+    - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/192/S-BIAD4192/Files/Tian_2026/Segmentation%20maps/Segmentation_Figure_2/Figure2_Multichannel.ome_1%20-%20Glucagon%20Mask%20(GT).tif
+    - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/192/S-BIAD4192/Files/Tian_2026/Segmentation%20maps/Segmentation_Figure_2/Figure2_Multichannel.ome_1%20-%20Glucagon%20Structure%20Map%20(GT).tif
+    - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/192/S-BIAD4192/Files/Tian_2026/Segmentation%20maps/Segmentation_Figure_2/Figure2_Multichannel.ome_2%20-%20Nuclei%20Mask%20(GT).tif
+    - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/192/S-BIAD4192/Files/Tian_2026/Segmentation%20maps/Segmentation_Figure_2/Figure2_Multichannel.ome_2%20-%20Nuclei%20Structure%20Map%20(GT).tif
+    - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/192/S-BIAD4192/Files/Tian_2026/Segmentation%20maps/Segmentation_Figure_2/Figure2_Multichannel.ome_3%20-%20Insulin%20Mask%20(GT).tif
+    - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/192/S-BIAD4192/Files/Tian_2026/Segmentation%20maps/Segmentation_Figure_2/Figure2_Multichannel.ome_3%20-%20Insulin%20Structure%20Map%20(GT).tif
+    - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/192/S-BIAD4192/Files/Tian_2026/Segmentation%20maps/Segmentation_Figure_2/Figure2_Multichannel.ome_4%20-%20Telolysosome%20Mask%20(GT).tif
+    - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/192/S-BIAD4192/Files/Tian_2026/Segmentation%20maps/Segmentation_Figure_2/Figure2_Multichannel.ome_4%20-%20Telolysosome%20Structure%20Map%20(GT).tif
+    - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/192/S-BIAD4192/Files/Tian_2026/Segmentation%20maps/Segmentation_Figure_2/Figure2_Multichannel.ome_5%20-%20Zymogen%20Mask%20(GT).tif
+    - https://ftp.ebi.ac.uk/pub/databases/biostudies/S-BIAD/192/S-BIAD4192/Files/Tian_2026/Segmentation%20maps/Segmentation_Figure_2/Figure2_Multichannel.ome_5%20-%20Zymogen%20Structure%20Map%20(GT).tif
+    size_bytes: 390064048
+    description: 'Figure 2 region: EM (Talos F200i) plus the five GT masks and five GT structure maps,
+      each a single-channel 3104 x 11424 uint8 TIFF'
+  arrays:
+  - role: raw
+    path_pattern: Files/Tian_2026/Segmentation maps/Segmentation_Figure_*/*EM (*).tif
+    format: tiff
+    axes: yx
+    shape:
+    - 3104
+    - 11424
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'One EM file per figure region: Fig 2/3 Talos F200i HAADF, Fig 6A Supra55, Fig 6B
+      digitized 1966 TEM.'
+  - role: label
+    path_pattern: Files/Tian_2026/Segmentation maps/Segmentation_Figure_[23]/*Mask (GT).tif
+    format: tiff
+    axes: yx
+    shape:
+    - 3104
+    - 11424
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes: &id001
+    - id: 1
+      name: glucagon granules
+    - id: 2
+      name: nuclei
+    - id: 3
+      name: insulin granules
+    - id: 4
+      name: telolysosomes
+    - id: 5
+      name: zymogen granules
+    alignment: same-grid
+    alignment_notes: One binary mask (0/255) per class; file prefix 1-5 is the class (1 Glucagon, 2 Nuclei,
+      3 Insulin, 4 Telolysosome, 5 Zymogen). Pairs with the EM file of the same Segmentation_Figure_N
+      folder; identical shape.
+  - role: label
+    path_pattern: Files/Tian_2026/Segmentation maps/Segmentation_Figure_[23]/*Structure Map (GT).tif
+    format: tiff
+    axes: yx
+    shape:
+    - 3104
+    - 11424
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    encoding: other
+    classes: *id001
+    alignment: same-grid
+    alignment_notes: EDX-derived continuous structure map per class (255 distinct values in the sample,
+      92% zeros), not IDs; same class prefixes and pairing as the masks.
+  notes: 'Listing: ftp.ebi.ac.uk http index, 90 files (78 data + 12 metadata), sizes rounded by the index
+    (size_source estimated); the BioStudies file lists state exact sizes: 78 data files = 46,639,771,695
+    B, matching size_bytes. Sampled (one sample): Fig 2 EM 3104x11424 uint8, 0-255, mean 185, 2.9% zeros
+    (saturated at both ends; normalization unknown); Glucagon Mask (GT) values {0,255}; Glucagon Structure
+    Map (GT) 0-255, 255 values. Multichannel OME-TIFF/OME-Zarr (cyx, uint8, zarr v2 zstd) hold the same
+    channels; Figure4_5 (34816^2, 21 c) adds Expert 1/Expert 2 masks that exist only there. PRISM/ResNet50
+    prediction files are model outputs, not described as arrays. Voxel size not set (differs per part):
+    page states acquisition 2.5 nm (Supra55) and 4 nm (Talos); OME-TIFF and OME-Zarr scale say 8 nm for
+    Fig 2/3/4_5/6A and 1.545 nm for Fig 6B. Checked: headers, zarr .zattrs, BioStudies API, GitHub README;
+    paper (doi 10.1016/j.crmeth.2026.101669) not resolvable yet. No single archive: files are direct ftp.ebi.ac.uk
+    https links.'
