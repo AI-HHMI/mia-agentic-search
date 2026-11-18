@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: rodare-3000-helacytonuc-nuclei-cytoplasm
 title: 'HeLaCytoNuc: fluorescence microscopy dataset with segmentation masks for cell nuclei and cytoplasm'
 short_name: HeLa nuclei and cytoplasm masks (fluorescence)
-description: 2,676 preprocessed 8-bit RGB fluorescence images of fixed HeLa cells (DAPI nuclei, phalloidin actin/cytoplasm) with nuclei and cytoplasm instance masks, split 70:20:10 into train/validation/test. Masks were generated with CellProfiler; the test subset was annotated manually. Raw 16-bit images are a separate archive.
+description: 2,676 preprocessed 8-bit RGB fluorescence images of fixed HeLa cells (DAPI nuclei, phalloidin
+  actin/cytoplasm) with nuclei and cytoplasm instance masks, split 70:20:10 into train/validation/test.
+  Masks were generated with CellProfiler; the test subset was annotated manually. Raw 16-bit images are
+  a separate archive.
 landing_url: https://rodare.hzdr.de/record/3000
 doi: 10.14278/rodare.3000
 repository: other
@@ -20,7 +23,7 @@ imaging:
   - fluorescence-other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 2
   organism:
   - Homo sapiens
   sample: Fixed HeLa cells (ATCC CCL-2)
@@ -33,7 +36,7 @@ data:
   size_bytes: 9250214070
   n_items: 2676
   access: open
-  download_url: null
+  download_url: https://rodare.hzdr.de/record/3000
   download_method: http
 annotations:
   present: true
@@ -58,10 +61,99 @@ provenance:
   - https://hzdr.de/publications/Publ-39181
   - https://rodare.hzdr.de/api/records/3000
   - https://rodare.hzdr.de/record/3000
-  confidence: 0.7
+  - https://rodare.hzdr.de/api/records/3001
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-11-18T09:13:58Z'
-notes: 'Sources checked: HZDR publication page and RODARE API record (file list, license). No paper for the dataset itself found via Europe PMC/Crossref title search (the page cites Rämö et al. 2014, BMC Genomics, as the source of the original images, no DOI given). Zip contents could not be listed (server reports no size), so the TIFF format and folder layout come from the dataset page description. Pixel size not stated on the page. Train/validation masks are CellProfiler-generated; only the test subset was manually annotated. DOI 10.14278/rodare.3000 is the concept record; the version record is 10.14278/rodare.3001. Total size is the sum of the listed archives, including the 8.6 GB raw-image archive.'
+  annotations_verified: true
+  last_checked: '2026-11-18T10:30:00Z'
+notes: 'Sources checked: HZDR publication page and RODARE API record (file list, license). No paper for
+  the dataset itself found via Europe PMC/Crossref title search (the page cites Rämö et al. 2014, BMC
+  Genomics, as the source of the original images, no DOI given). Pixel size not stated on the page. Train/validation
+  masks are CellProfiler-generated; only the test subset was manually annotated. DOI 10.14278/rodare.3000
+  is the concept record; the version record is 10.14278/rodare.3001. Total size is the sum of the listed
+  archives, including the 8.6 GB raw-image archive. enricher: downloaded HeLaCytoNuc_test.zip and confirmed
+  layout and masks; channels 2 (R cytoplasm, B nuclei; G empty).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "rodare.hzdr.de/record/3001   5 zips, 9.25 GB\n  HeLaCytoNuc_train.zip       434.9 MB\n  HeLaCytoNuc_validation.zip\
+      \  139.9 MB\n  HeLaCytoNuc_test.zip         76.2 MB (804 TIFFs, 485 MB unzipped)\n    images/<n>.tif\
+      \            268 RGB 520x696 uint8\n    nuclei_masks/<n>.tif      268 instance masks uint8\n   \
+      \ cytoplasm_masks/<n>.tif   268 instance masks uint8\n  HeLaCytoNuc_test_cellprofiler_masks.zip\
+      \  3.7 MB\n    nuclei_masks/, cytoplasm_masks/  (CellProfiler masks for test)\n  HeLaCytoNuc_raw_images.zip\
+      \  8.6 GB  (16-bit 1040x1392 originals)"
+    n_files: 5
+    listing_complete: false
+  sample:
+    urls:
+    - https://rodare.hzdr.de/api/files/fae71336-c6d2-45b2-ae65-416c8f57b5a0/HeLaCytoNuc_test.zip
+    size_bytes: 76153291
+    description: The smallest archive with images and both mask sets (268 test images); the server has
+      no range requests, so single members cannot be fetched.
+  arrays:
+  - role: raw
+    path_pattern: images/*.tif
+    format: tiff
+    axes: yxc
+    shape:
+    - 520
+    - 696
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 252
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Plain RGB TIFF (photometric 2, 3 samples). Samples are fluorescence channels per
+      the record: R = cytoplasm (phalloidin), B = nuclei, G unused (all 0 in the sample), hence c not
+      s. Preprocessed 2x smaller than the 1040x1392 16-bit originals.'
+  - role: label
+    path_pattern: nuclei_masks/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 520
+    - 696
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    encoding: instance-ids
+    classes:
+    - id: null
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: <split>.zip nuclei_masks/<n>.tif pairs with images/<n>.tif (all 268 test stems in
+      all 3 folders). 0 = background; sample 2547.tif has IDs 1-76.
+  - role: label
+    path_pattern: cytoplasm_masks/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 520
+    - 696
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    encoding: instance-ids
+    classes:
+    - id: null
+      name: cytoplasm
+    alignment: same-grid
+    alignment_notes: cytoplasm_masks/<n>.tif pairs with images/<n>.tif; sample 2547.tif has IDs 1-85.
+      Test-split masks are manual; HeLaCytoNuc_test_cellprofiler_masks.zip holds the CellProfiler versions
+      with the same folder names.
+  notes: 'Sizes of the 5 zips from the RODARE API record (listing.py cannot list RODARE; the server sends
+    no ranges, so zips were not listed remotely). Downloaded HeLaCytoNuc_test.zip (76,153,291 B) to a
+    temp dir and read it with zipfile + tifffile: 804 members in images/, nuclei_masks/, cytoplasm_masks/
+    (268 each, same stems). images/2547.tif: 520x696x3 uint8, no compression, per-channel max R 242 /
+    G 0 / B 252; masks uint8 with 77 and 86 values (instance IDs). Value range from one sample. Train/validation
+    zips and the raw 16-bit archive not opened. Voxel size not found; checked: TIFF tags (XResolution
+    1/1, no unit), RODARE API record, HZDR publication page, Raemoe et al. 2014 Methods (ImageXpress,
+    10x/0.45 objective, no pixel size). Download: per-split zips on rodare.hzdr.de, which is not on the
+    TensorSwitch allowlist and has no range requests; no single archive, so data.download_url is the record page.'
