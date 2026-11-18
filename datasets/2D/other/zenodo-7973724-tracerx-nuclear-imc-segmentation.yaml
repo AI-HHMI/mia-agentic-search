@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: zenodo-7973724-tracerx-nuclear-imc-segmentation
 title: TRACERx Nuclear IMC Segmentation Dataset (NISD) - expert-labelled nuclei in imaging mass cytometry tiles
 short_name: TRACERx IMC nuclei segmentation (lung tissue)
-description: 'Training dataset of 116 imaging mass cytometry (IMC) image tiles with about 42,000 expert-labelled nuclei from
-  lung cancer (several histologies), normal lung and other tissues. Provided as contrast-adjusted PNG tiles, 16-bit PNG
-  versions, instance label masks and derived boundary / edge-weighted maps. Part of Zenodo record 7973724 (with model weights
-  and a PHLEX test dataset).'
+description: Training dataset of 116 imaging mass cytometry (IMC) image tiles with about 42,000 expert-labelled nuclei from
+  lung cancer (several histologies), normal lung and other tissues. Provided as contrast-adjusted PNG tiles, 16-bit PNG versions,
+  instance label masks and derived boundary / edge-weighted maps. Part of Zenodo record 7973724 (with model weights and a
+  PHLEX test dataset).
 landing_url: https://zenodo.org/records/7973724
 doi: null
 repository: Zenodo
@@ -39,8 +39,11 @@ imaging:
   modality:
   - other
   dimensionality: 2D
-  voxel_size_nm: null
-  channels: null
+  voxel_size_nm:
+    x: 1000
+    y: 1000
+    z: null
+  channels: 1
   organism:
   - Homo sapiens
   sample: Human lung tumour (SCC, ADC, ASC), benign tumour-adjacent and normal lung, lymph node, tonsil and kidney tissue
@@ -58,8 +61,8 @@ annotations:
   types:
   - instance-segmentation
   coverage: dense
-  format: 'PNG label masks in com/, boundaries/ and edge_weighted_nuc/ folders next to images/ and 16bit/; tile metadata in
-    TRACERx_NISD_dataset_information.csv'
+  format: 'PNG masks next to images/: 16bit/ = instance ID masks (8- or 16-bit PNG); edge_weighted_nuc/ = binary nuclear material,
+    com/ = binary centres of mass, boundaries/ = binary boundaries between touching nuclei; tile metadata in TRACERx_NISD_dataset_information.csv'
   source: manual
 ml:
   tasks:
@@ -77,16 +80,149 @@ provenance:
   - https://zenodo.org/records/7973724
   - https://zenodo.org/api/records/7973724
   - https://pmc.ncbi.nlm.nih.gov/articles/PMC11180132/
+  - https://zenodo.org/records/7973724/files/TRACERx_NISD.zip
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-18T18:30:00Z'
+  last_checked: '2026-11-18T18:40:00Z'
 notes: 'IMC (imaging mass cytometry) is not in the modality enum, hence other. Zenodo API: license cc-by-4.0; the record has
-  three zips, and this record covers only TRACERx_NISD.zip (5.7 MB). peek_archive of that zip: 581 files = 116 each in images/,
-  16bit/, com/, boundaries/ and edge_weighted_nuc/ plus the info CSV. Paper (PMC, open access): two experts manually labelled
-  41,962 nuclei on 256x256 um tiles; a 16-tile (6,453 nuclei) test set was held out for benchmarking, but the Zenodo files
-  have no split. Pixel size and the DNA channels used are not stated on the Zenodo page, in the paper text read (first
-  100 kB) or in the info CSV, so voxel size is null. Raw 41-channel IMC data is available only on request (not part of this
-  record). Which folder holds which mask type is inferred from folder names.'
+  three zips, this record covers only TRACERx_NISD.zip (5.7 MB, 581 files). Paper: two experts manually labelled 41,962 nuclei;
+  a 16-tile test set was held out in the paper, but the Zenodo files have no split. Raw 41-channel IMC data only on request
+  (not part of this record). enricher: voxel size 1000x1000 nm from the paper (116 tiles of 256x256 um) and the PNG headers
+  (256x256 px) (was null). enricher: channels 1 from PNG headers (was null). enricher: 16bit/ holds the instance ID masks,
+  not 16-bit images (sampled); 108 of 116 are 8-bit PNGs whose IDs repeat across distant nuclei (wrap at 255), so relabel
+  by connected components before use. enricher: folder meanings now from the paper Methods (nuclear material, centre of mass,
+  boundaries).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "TRACERx_NISD.zip  (5,713,559 B, 581 members)\n  TRACERx_NISD/TRACERx_NISD_dataset_information.csv   imagename,\
+      \ tilename, histology, tissue type\n  TRACERx_NISD/images/<tile>.png              116  3.5 MB  contrast-adjusted IMC\
+      \ nuclear image\n  TRACERx_NISD/16bit/<tile>.png               116  972 KB  instance ID masks\n  TRACERx_NISD/edge_weighted_nuc/<tile>.png\
+      \   116  584 KB  binary nuclear material\n  TRACERx_NISD/com/<tile>.png                 116  241 KB  binary centres\
+      \ of mass\n  TRACERx_NISD/boundaries/<tile>.png          116  288 KB  binary boundaries\n  <tile> e.g. P1_TMA001_L_20190508-roi_16_0_6\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/7973724/files/TRACERx_NISD.zip::TRACERx_NISD/images/P1_TMA001_L_20190508-roi_16_0_6.png
+    - https://zenodo.org/records/7973724/files/TRACERx_NISD.zip::TRACERx_NISD/16bit/P1_TMA001_L_20190508-roi_16_0_6.png
+    - https://zenodo.org/records/7973724/files/TRACERx_NISD.zip::TRACERx_NISD/edge_weighted_nuc/P1_TMA001_L_20190508-roi_16_0_6.png
+    - https://zenodo.org/records/7973724/files/TRACERx_NISD.zip::TRACERx_NISD/com/P1_TMA001_L_20190508-roi_16_0_6.png
+    - https://zenodo.org/records/7973724/files/TRACERx_NISD.zip::TRACERx_NISD/boundaries/P1_TMA001_L_20190508-roi_16_0_6.png
+    size_bytes: 32261
+    description: 'One 256x256 tile: image plus its instance mask and three binary feature masks (zip members); the whole zip
+      is 5.7 MB.'
+  arrays:
+  - role: raw
+    path_pattern: TRACERx_NISD.zip::TRACERx_NISD/images/*.png
+    format: png
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: 'Paper: released as contrast-adjusted images; which IMC DNA channel(s) they show is not stated.'
+  - role: label
+    path_pattern: TRACERx_NISD.zip::TRACERx_NISD/16bit/*.png
+    format: png
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint16
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    - id: null
+      name: nucleus (one id per nucleus)
+    alignment: same-grid
+    alignment_notes: 'Pairs by identical file name across all five folders. 108 of 116 files are 8-bit grey PNGs (dtype uint8),
+      8 are 16-bit (uint16, up to 639 ids); dtype given as uint16 to hold both. In 8-bit files with 255 ids the same id covers
+      distant nuclei (wrapped): relabel connected components.'
+  - role: label
+    path_pattern: TRACERx_NISD.zip::TRACERx_NISD/edge_weighted_nuc/*.png
+    format: png
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: nuclear material
+    alignment: same-grid
+    alignment_notes: Same file names as images/; foreground is 86% of the instance mask foreground in the sample (edges trimmed).
+  - role: label
+    path_pattern: TRACERx_NISD.zip::TRACERx_NISD/com/*.png
+    format: png
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: nucleus centre of mass
+    alignment: same-grid
+    alignment_notes: Same file names as images/.
+  - role: label
+    path_pattern: TRACERx_NISD.zip::TRACERx_NISD/boundaries/*.png
+    format: png
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: boundary between touching nuclei
+    alignment: same-grid
+    alignment_notes: Same file names as images/.
+  notes: 'Zip central directory listed (581 members, exact sizes). Probed one file per folder (all 256x256 grey PNG, deflate).
+    Sampled tile P1_TMA001_L_20190508-roi_16_0_6: images 0..255, mean 17, 68% zeros (paper: contrast-adjusted); feature masks
+    {0,255}. Read all 116 16bit/ masks (972 KB): 108 8-bit (max 255 ids), 8 16-bit (343-639 ids); 28,171 distinct ids in total
+    vs 41,962 nuclei in the paper, and in 8-bit tiles with 255 ids some ids span >40 px (several nuclei), so ids wrap in those
+    files. value_range is from one sample. Folder meanings from the paper Methods (UNet++ trained on nuclear material, centre
+    of mass and boundaries; edges of the nuclear material mask negatively weighted). Voxel size: tile extent 256x256 um (paper)
+    over 256x256 px (headers).'
