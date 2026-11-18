@@ -1,0 +1,136 @@
+schema_version: '1.2'
+id: zenodo-1221032-phagosight-synthetic-neutrophils
+title: 'PhagoSight synthetic neutrophil migration data: 3D time-lapse fluorescence stacks with known tracks at increasing noise levels, regular shapes with Gaussian noise (Zenodo)'
+short_name: Synthetic neutrophil tracking stacks (3D+t)
+description: 'Synthetic 3D time-lapse data sets that reproduce migrating zebrafish neutrophils for validating segmentation and tracking: six artificial neutrophils (anisotropic Gaussian shapes, round when static and elongated when moving) follow designed trajectories over 98 time frames, each frame an 11-slice stack of 275 x 275 pixels. The gold-standard tracks are provided with per-frame ground-truth instance-label volumes (syntheticData0) and six further stacks (syntheticData1-6) with increasing white Gaussian noise, plus GIF previews. Part of the PhagoSight MATLAB package.'
+landing_url: https://zenodo.org/records/1221032
+doi: 10.5281/zenodo.1221032
+repository: Zenodo
+accession: '1221032'
+authors:
+- Reyes-Aldasoro, Constantino Carlos
+publications:
+- title: 'PhagoSight: an open-source MATLAB package for the analysis of fluorescent neutrophil and macrophage migration in a zebrafish model'
+  doi: 10.1371/journal.pone.0072636
+  url: null
+date_published: '2013-04-12'
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 3D+t
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: Simulated (MATLAB) fluorescent neutrophils; no biological sample
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: 3113478821
+  n_items: 7
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - tracking
+  - instance-segmentation
+  coverage: dense
+  format: 'groundTruth/T*.mat in syntheticData0_mat_Re.zip: per-frame 3D instance-label volumes (variable dataR, IDs 1-6 = the six cells, 0 = background, consistent across frames); ThreeDTracks.mat: X_coord, Y_coord, time (6 x 98) centroid trajectories. MATLAB v5 .mat'
+  source: automatic
+ml:
+  tasks:
+  - tracking
+  - detection
+  - segmentation
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://zenodo.org/records/1221032
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-10-16T12:21:20Z'
+  evidence_urls:
+  - https://zenodo.org/records/1221032
+  - https://zenodo.org/api/records/1221032
+  - https://zenodo.org/records/1221032/files/syntheticData1_mat_Re.zip
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3758287/fullTextXML
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-10-16T13:05:00Z'
+notes: 'Simulated data, not microscope images: Gaussian blobs with Gaussian noise generated in MATLAB; no organism or voxel size is stated on the Zenodo page, the paper or the GitHub README (synthetic, no physical scale). Data are MATLAB v5 .mat (and GIF previews), not a listed format, so formats is other. Gold standard is generated from designed trajectories, not manual. Companion record 1221164 (single large neutrophil, Poisson noise) is a different set. enricher: syntheticData0 is per-frame instance-label volumes, not noise-free intensity stacks; added instance-segmentation to annotations.types and segmentation to ml.tasks (from the sampled files).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                                   15 files   3.1 GB\n  ThreeDTracks.mat                                   6.2 KB  tracks (X_coord, Y_coord, time; 6 x 98)\n  syntheticData0.gif ... syntheticData6.gif          7 previews\n  syntheticData0_mat_Re.zip                          235 KB\n    groundTruth/T00001.mat ... T00098.mat            98 label volumes\n  syntheticData1_mat_Re.zip ... syntheticData6_mat_Re.zip   17 MB - 615 MB each\n    syntheticData<k>_mat_Re/T00001.mat ... T00098.mat       98 frames each (588 in all)"
+    n_files: 15
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/1221032/files/syntheticData1_mat_Re.zip::syntheticData1_mat_Re/T00001.mat
+    - https://zenodo.org/records/1221032/files/syntheticData0_mat_Re.zip::groundTruth/T00001.mat
+    - https://zenodo.org/records/1221032/files/ThreeDTracks.mat
+    size_bytes: 209501
+    description: frame 1 of noise level 1 (raw), its instance-label volume, and the track table
+  arrays:
+  - role: raw
+    path_pattern: syntheticData[1-6]_mat_Re.zip/syntheticData[1-6]_mat_Re/T*.mat
+    format: other
+    axes: zyx
+    shape:
+    - 11
+    - 275
+    - 275
+    shape_varies: false
+    dtype: float64
+    compression: other
+    value_range:
+    - 0.0
+    - 20.0
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: MATLAB v5 variable dataR, MATLAB dims [275, 275, 11]; one file per time frame (T00001-T00098), noise level 1-6 = syntheticData1-6. Axis names from the label centroids matching ThreeDTracks X_coord / Y_coord.
+  - role: label
+    path_pattern: syntheticData0_mat_Re.zip/groundTruth/T*.mat
+    format: other
+    axes: zyx
+    shape:
+    - 11
+    - 275
+    - 275
+    shape_varies: false
+    dtype: float64
+    compression: deflate
+    value_range:
+    - 0.0
+    - 6.0
+    normalization: none
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1-6
+      name: artificial neutrophil (one ID per cell, kept through time)
+    alignment: same-grid
+    alignment_notes: groundTruth/T<n>.mat labels frame T<n>.mat of every noise level (same 275 x 275 x 11 grid; labelled voxels have mean 11.1 vs background 0.04 in syntheticData1 frame 1). IDs persist across frames, so the label volumes double as tracks.
+  - role: label
+    path_pattern: ThreeDTracks.mat
+    format: other
+    axes: null
+    shape:
+    - 6
+    - 98
+    shape_varies: false
+    dtype: float64
+    compression: deflate
+    encoding: tracks-table
+    alignment: same-grid
+    alignment_notes: variables X_coord, Y_coord, time, each 6 cells x 98 frames, in pixels (1-based MATLAB indices; X matches the fastest label axis, Y the middle one).
+  notes: 'Inspected with a small MAT v5 reader (numpy + zlib): downloaded syntheticData0_mat_Re.zip (240,709 B), syntheticData1_mat_Re.zip (17,449,305 B), ThreeDTracks.mat (6,196 B), and read syntheticData6 frame 1 via range requests (~6.3 MB). Value ranges are from one frame each (noise 1: 0-20; noise 6: 0-40.4). groundTruth frames are zlib-compressed MAT elements; syntheticData1 compressed, syntheticData6 stored uncompressed. Each cell covers ~500 voxels on z slices 1-9. Formats are MATLAB .mat, which TensorSwitch does not read. voxel size not found (synthetic data, no physical scale); checked: MAT headers, Zenodo API record, paper full text (Europe PMC), phagosight GitHub README. No single archive: data.download_url stays null; direct files are the 15 Zenodo objects under https://zenodo.org/records/1221032/files/.'
