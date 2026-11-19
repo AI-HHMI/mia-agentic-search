@@ -1,0 +1,152 @@
+schema_version: '1.2'
+id: zenodo-24271283-flounder-retina-dapi-nuclei
+title: Dark flounder retinal wholemount DAPI nuclei segmentation (confocal fields with manual masks, pipeline
+  data)
+short_name: Flounder retina DAPI nuclei masks (confocal)
+description: 50 manually annotated 1024x1024 confocal fields (6,602 nuclei, binary instance masks drawn
+  in GIMP) of DAPI-stained retinal wholemounts of the dark flounder with a VLF-based train/validation/test
+  split, plus 1,049 unannotated fields and per-object measurement tables, released with a CPU-only YOLO26n-seg
+  / U-Net nucleus counting pipeline.
+landing_url: https://zenodo.org/records/24271283
+doi: 10.5281/zenodo.24271283
+repository: Zenodo
+accession: null
+authors:
+- Ivan Usatov
+- Igor Pushchin
+publications: []
+date_published: '2026-11-17'
+imaging:
+  modality:
+  - confocal
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 104
+    y: 104
+    z: null
+  channels: 1
+  organism:
+  - Pseudopleuronectes obscurus
+  sample: DAPI-stained retinal wholemounts (ganglion cell layer, average-intensity projections of confocal
+    stacks), Zeiss LSM 800, Plan-Apochromat 20x/0.8
+  labels_stains:
+  - DAPI
+data:
+  formats:
+  - tiff
+  - jpeg
+  size_bytes: 915559066
+  n_items: 1099
+  access: open
+  download_url: https://zenodo.org/records/24271283
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: Binary TIFF masks per field (data/train/masks) in which each nucleus is a separate 8-connected
+    component; splits.csv lists VLF, subset and nucleus count
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://zenodo.org/records/24271283
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-11-19T09:19:01Z'
+  evidence_urls:
+  - https://zenodo.org/records/24271283
+  - https://zenodo.org/api/records/24271283
+  - https://zenodo.org/api/records/24271283/files/README.md/content
+  confidence: 0.85
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-11-19T11:25:00Z'
+notes: 'Facts from the Zenodo record and its README, plus a listing of data_annotated_fields.zip (100
+  TIFFs = 50 images + 50 masks, and splits.csv). The README states 50 annotated fields / 6,602 nuclei
+  (split 32/11/7 by VLF; 4,135/1,301/1,166 nuclei) while the abstract mentions 43 training fields (5,436
+  nuclei); the README/file counts were used. The 1,049 unannotated application fields are JPEG; n_items
+  counts annotated (50) plus application (1,049) fields. Pixel size 0.104 um from the README. The accompanying
+  article (Usatov, Pushchin, Aleskerov) is only marked as submitted to Cytometry Part A and has no DOI,
+  so no publication is listed. Code is MIT but bundled YOLO weights are AGPL-3.0; data are CC BY 4.0.
+  enricher: size_bytes 915,559,066 from the complete Zenodo file listing (was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                   10 files  915.6 MB\n  README.md, MANIFEST.txt\n  data_annotated_fields.zip\
+      \          129,199,333 B\n    data/train/splits.csv            VLF, subset, nucleus count per field\n\
+      \    data/train/images/               50 files  101.6 MB  .tif (<VLF>_<field>.tif)\n    data/train/masks/\
+      \                50 files   58.1 MB  .tif (same names)\n  data_application_images.tar.001-.004 \
+      \  759,266,304 B (split tar, 1,049 unannotated JPEG fields; not expanded)\n  data_tables.zip   \
+      \                 data/tables/ 4 files 32.0 MB (.csv 3, .txt 1)\n  code.zip                    \
+      \       code/ 28 files (.py, .pt, .onnx)\n  paper_scripts.zip                  paper_scripts/ 54\
+      \ files (.py, .json, .npz)\n"
+    n_files: 10
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/24271283/files/data_annotated_fields.zip/content::data/train/images/VLF1_A03.tif
+    - https://zenodo.org/api/records/24271283/files/data_annotated_fields.zip/content::data/train/masks/VLF1_A03.tif
+    size_bytes: 3356116
+    description: 'Annotated field VLF1_A03: 8-bit confocal projection and its binary nucleus mask, read
+      as members of data_annotated_fields.zip.'
+  arrays:
+  - role: raw
+    path_pattern: data_annotated_fields.zip/data/train/images/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 89
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: data_annotated_fields.zip/data/train/masks/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: false
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: images/<VLF>_<field>.tif <-> masks/<VLF>_<field>.tif. Instances are
+      the 8-connected components (README: touching nuclei separated by a 3-4 px gap; any non-zero pixel
+      is nucleus).'
+  notes: 'Zenodo API listing: 10 files, 915,559,066 B exact (complete); zips expanded (187 members), the
+    split tar data_application_images.tar.001-.004 was not (the README calls it data_application_images.zip;
+    1,049 JPEG fields, 1024x1024, grey in three identical channels per README; not inspected, so no array
+    entry). Probed VLF1_A03 image and mask: 1024x1024 uint8 LZW, ImageJ TIFF, axes yx. Sampled the pair
+    (2,851,346 B): image [89, 255] with p99 = 255 (saturated top), mask {0, 255}, 17.5 % foreground; value
+    ranges from one sample. normalization unknown: average-intensity Z projections saved as 8-bit, scaling
+    not documented. Voxel size 104 nm from README ("1024 x 1024 pixels, 0.104 um per pixel"). No single
+    archive for the whole dataset, so data.download_url stays the landing page; the training data are
+    the one direct zip data_annotated_fields.zip (Zenodo API files[].links.self). Not convertible to the
+    miao layout yet: 2D data.'
