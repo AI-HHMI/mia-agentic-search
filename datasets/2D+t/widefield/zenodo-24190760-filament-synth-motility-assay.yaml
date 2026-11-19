@@ -1,0 +1,192 @@
+schema_version: '1.2'
+id: zenodo-24190760-filament-synth-motility-assay
+title: 'filament-synth 0.1: synthetic in vitro motility assay sequences with ground-truth filament annotation'
+short_name: Synthetic actin motility tracking (widefield)
+description: 72 synthetic epifluorescence sequences (30 frames of 512x512, 16-bit) of actin filaments
+  gliding over a myosin-coated surface, with persistent-ID filament centrelines, keypoints, binary masks
+  and centreline masks. Grid of 3 filament densities x 3 SNR levels, generated with PSF blur, photobleaching
+  and EMCCD noise, for training and evaluating filament segmentation and tracking.
+landing_url: https://zenodo.org/records/24190760
+doi: 10.5281/zenodo.24190760
+repository: Zenodo
+accession: null
+authors:
+- Illya Starodubtsev
+- Marina Abrosimova
+publications: []
+date_published: '2026-11-17'
+imaging:
+  modality:
+  - widefield
+  dimensionality: 2D+t
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: Synthetic images of fluorescently labelled actin filaments in an in vitro motility assay (simulated
+    EMCCD epifluorescence)
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 662459191
+  n_items: 72
+  access: open
+  download_url: https://zenodo.org/records/24190760
+  download_method: http
+annotations:
+  present: true
+  types:
+  - tracking
+  - semantic-segmentation
+  - skeleton
+  coverage: dense
+  format: 'Per sequence: tracks.csv (centreline polylines with track_id, FANT format v2), keypoints.csv,
+    annotation.json, mask.tif and centerline.tif (30x512x512 uint8)'
+  source: automatic
+ml:
+  tasks:
+  - segmentation
+  - tracking
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-11-19T09:19:01Z'
+  evidence_urls:
+  - https://zenodo.org/records/24190760
+  - https://zenodo.org/api/records/24190760
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-11-19T11:15:00Z'
+notes: Fully synthetic data (generator filament-synth 0.1.0, parameters calibrated on real recordings,
+  mostly from one day in 2017), so it is a training/benchmark set for filament segmentation and tracking
+  rather than real microscope data. Verified from the Zenodo record, its README (Russian with English
+  section) and a listing of S0001.zip (stack.tif, mask.tif, centerline.tif, tracks.csv, keypoints.csv,
+  annotation.json). Pixel size of the synthetic images is not stated; the README says 62 nm/pixel is confirmed
+  only for the ordinary source recordings and that dataset quantities are in pixels and frames, so voxel_size_nm
+  is null. Frame interval (about 0.3 s) is unconfirmed. No related paper or code is listed on the record.
+  72 zip archives of about 9 MB each plus index/metadata files; size_bytes is the total of all record
+  files. Splits are not provided.
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                         83 files  662.5 MB\n  S0001.zip ... S0072.zip   72 zips (~9 MB each)\n\
+      \    S####/stack.tif         30x512x512 uint16 (~15.7 MB unpacked)\n    S####/mask.tif         \
+      \ 30x512x512 uint8 binary\n    S####/centerline.tif    30x512x512 uint8 binary\n    S####/tracks.csv\
+      \        centreline polylines with track_id\n    S####/keypoints.csv     ends + midpoint per line\n\
+      \    S####/annotation.json   generator config + seed\n  README.md, index.csv, dataset.yaml, dataset.json,\
+      \ calibration.json\n  compare_stats.{pdf,png,csv}, examples.png, CONTENTS.csv, SHA256SUMS.txt\n"
+    n_files: 83
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/24190760/files/S0001.zip/content::S0001/stack.tif
+    - https://zenodo.org/api/records/24190760/files/S0001.zip/content::S0001/mask.tif
+    - https://zenodo.org/api/records/24190760/files/S0001.zip/content::S0001/centerline.tif
+    - https://zenodo.org/api/records/24190760/files/S0001.zip/content::S0001/tracks.csv
+    size_bytes: 16320344
+    description: 'Sequence S0001: raw stack.tif with its binary mask, centreline mask and tracks table,
+      read as members of S0001.zip.'
+  arrays:
+  - role: raw
+    path_pattern: S*.zip/S*/stack.tif
+    format: tiff
+    axes: tyx
+    shape:
+    - 30
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 74
+    - 922
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: S*.zip/S*/mask.tif
+    format: tiff
+    axes: tyx
+    shape:
+    - 30
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 1
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: actin filament
+    alignment: same-grid
+    alignment_notes: 'Annotated lines dilated to radius 2 px; overlapping filaments merged (not instance
+      labels). mask.tif and centerline.tif share stack.tif''s (frame, y, x) grid per the README; tracks.csv
+      holds pixel coordinates on the same grid. Pairing rule: files in the same S####/ folder.'
+  - role: label
+    path_pattern: S*.zip/S*/centerline.tif
+    format: tiff
+    axes: tyx
+    shape:
+    - 30
+    - 512
+    - 512
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 1
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: actin filament
+    alignment: same-grid
+    alignment_notes: '1 px centrelines. mask.tif and centerline.tif share stack.tif''s (frame, y, x) grid
+      per the README; tracks.csv holds pixel coordinates on the same grid. Pairing rule: files in the
+      same S####/ folder.'
+  - role: label
+    path_pattern: S*.zip/S*/tracks.csv
+    format: csv
+    axes: null
+    shape: null
+    shape_varies: null
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: tracks-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Columns track_id, frame, point_index, y, x, width (README); track_id persistent
+      within a sequence. mask.tif and centerline.tif share stack.tif''s (frame, y, x) grid per the README;
+      tracks.csv holds pixel coordinates on the same grid. Pairing rule: files in the same S####/ folder.'
+  notes: 'Zenodo API listing: 83 files, 662,459,191 B exact (complete); 20 of 72 zips expanded, each S####/
+    holds the same 6 files. Probed S0001 mask.tif / centerline.tif: 30 pages 512x512 uint8 deflate (tifffile
+    shaped layout, axes not in the file). stack.tif is uncompressed (15,733,710 B for 30x512x512 uint16).
+    Axes tyx from the README: "Arrays use the (frame, y, x) order". Sampled S0001 stack.tif (raw [74,
+    922], mean 171) and mask.tif ({0,1}, 1.2% foreground); value ranges from one sample. normalization
+    none: README says the generator quantises to uint16 with camera offset, no rescaling (inferred). tracks.csv
+    not read; shape unknown. No single archive: data.download_url stays the landing page; direct files
+    are the 72 Zenodo API zips (files[].links.self). voxel size not found; checked: Zenodo record, README
+    (data in pixels and frames; 62 nm/px confirmed only for real source recordings, ROI scale unverified),
+    dataset.yaml, calibration.json; no paper or code repo listed. organism stays empty: synthetic images;
+    the README names no actin source species.'
