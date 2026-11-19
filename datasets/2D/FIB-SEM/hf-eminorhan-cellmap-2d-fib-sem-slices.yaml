@@ -1,0 +1,133 @@
+schema_version: '1.2'
+id: hf-eminorhan-cellmap-2d-fib-sem-slices
+title: CellMap 2D (EM slices with segmentation masks, Hugging Face)
+short_name: CellMap 2D FIB-SEM slices with masks (HF)
+description: 366,464 2D slices (x, y and z axes) with paired segmentation masks, cut from 289 annotated 3D FIB-SEM volume
+  crops across 22 samples of the CellMap 2024 Segmentation Challenge (OpenOrganelle), stored as Parquet on the Hugging Face
+  Hub (about 79.9 GB). Rows carry image, label, crop name, axis and slice index.
+landing_url: https://huggingface.co/datasets/eminorhan/cellmap-2d
+doi: null
+repository: HuggingFace
+accession: null
+authors: []
+publications:
+- title: Whole-cell organelle segmentation in volume electron microscopy
+  doi: 10.1038/s41586-021-03977-3
+  url: https://doi.org/10.1038/s41586-021-03977-3
+date_published: null
+imaging:
+  modality:
+  - FIB-SEM
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: 2D slices derived from CellMap challenge FIB-SEM crops (e.g. jrc_hela-2/recon-1/crop28) from 22 cell and tissue
+    samples
+  labels_stains: []
+data:
+  formats:
+  - other
+  size_bytes: 79895588753
+  n_items: 366464
+  access: open
+  download_url: https://huggingface.co/datasets/eminorhan/cellmap-2d
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  - organelle
+  coverage: unknown
+  format: Per-row 2D mask (PNG, mode L, uint8) in the Parquet 'label' column; per the creation script it is the crop's CellMap
+    groundtruth 'all' label array (s0) cast to uint8; class-value mapping not documented on the card
+  source: manual
+ml:
+  tasks:
+  - segmentation
+  splits_provided: false
+  benchmark: CellMap 2024 Segmentation Challenge
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-11-19T09:19:01Z'
+  evidence_urls:
+  - https://huggingface.co/datasets/eminorhan/cellmap-2d
+  - https://huggingface.co/datasets/eminorhan/cellmap-2d/blob/main/README.md
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1038%2Fs41586-021-03977-3%22&format=json&resultType=core&pageSize=3
+  - https://huggingface.co/datasets/eminorhan/cellmap-2d/raw/main/README.md
+  - https://raw.githubusercontent.com/eminorhan/torchtitan-segmentation/master/helpers/create_slice_dataset_cellmap.py
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-11-19T10:40:00Z'
+notes: 'Derived re-export of OpenOrganelle / CellMap challenge crops (CC-BY-4.0 per card) by a third party, with all three
+  axes sliced, so the 366k slices are highly redundant. Card states 22 samples, 289 crops, train split only, Parquet, license
+  CC-BY-4.0, but not voxel size, class-value encoding or shard count; the Heinrich et al. Nature 2021 paper is not open access
+  (abstract only: up to 35 organelle classes, 4 nm and 8 nm voxels), so the voxel size of the particular crops is unverified.
+  Format is Parquet (not in the schema enum), hence other. Related OpenOrganelle crops are catalogued separately as 3D FIB-SEM
+  records. enricher: size 79,895,588,753 B from HF file listing (40 Parquet shards; was card dataset_size); annotations verified
+  from label column in preview rows; voxel size stays null (crops differ, not stored).'
+technical:
+  method: metadata-only
+  size_source: file-listing
+  layout:
+    tree: "HF dataset eminorhan/cellmap-2d (main)   42 files  79.9 GB\n  README.md, .gitattributes\n  data/   40 *.parquet\
+      \  79.9 GB  (train-000NN-of-00040.parquet, 1.91-2.11 GB each)\n    rows: image (PNG, L), label (PNG, L), crop_name,\
+      \ axis (x|y|z), slice; rows pre-shuffled across shards"
+    n_files: 42
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/eminorhan/cellmap-2d/resolve/main/data/train-00033-of-00040.parquet
+    size_bytes: 1914054953
+    description: Smallest Parquet shard (about 9,000 shuffled image/label rows); raw and label live in the same file
+  arrays:
+  - role: raw
+    path_pattern: data/train-*.parquet
+    format: other
+    axes: yx
+    shape:
+    - 400
+    - 400
+    shape_varies: true
+    dtype: uint8
+    compression: png
+    value_range: null
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: 'Parquet column ''image'': 2D slice (z, y or x) of the FIB-SEM crop (fibsem-uint8 at the scale nearest
+      the label s0 scale), percentile-normalised per slice (1st-99th, clipped) to uint8 per the creation script.'
+  - role: label
+    path_pattern: data/train-*.parquet
+    format: other
+    axes: yx
+    shape:
+    - 400
+    - 400
+    shape_varies: true
+    dtype: uint8
+    compression: png
+    value_range: null
+    normalization: none
+    encoding: unknown
+    classes: null
+    alignment: same-grid
+    alignment_notes: Parquet column 'label', same row as its image. The script resamples the raw crop (scipy zoom, linear)
+      to the label shape when they differ, so image and label share a grid. Pair rows of one crop by crop_name + axis + slice.
+  notes: 'Listing: HF API, 42 files, 79,895,588,753 B exact (card dataset_size 79,902,200,986 B is the decoded size). Format
+    is Parquet (not in the schema enum, hence other) with PNG-encoded image/label cells (card example: PngImageFile, mode
+    L). Nothing was read from the Parquet files themselves (no Parquet reader among the inspection tools); 3 rows checked
+    through the HF datasets-server rows API (187 KB; previews re-encoded as JPEG): crop jrc_hela-2/recon-1/crop28 z352 400x400,
+    jrc_mus-liver-zon-2/recon-1/crop366 y88 600x600, jrc_jurkat-1/recon-1/crop38 z133 400x400; image 0-255, label previews
+    0-61 (lossy, so value counts are approximate). Processing per create_slice_dataset_cellmap.py: 1-99 percentile stretch
+    to uint8, raw zoomed to label grid, label ''all'' cast to uint8. Label encoding and class names not documented (likely
+    CellMap class IDs, unverified). Voxel size not found; checked: dataset card, HF info API, creation script (reads OME-NGFF
+    scale but does not store it), paper (not open access; abstract: 4 nm and 8 nm data), so it varies per crop. Organisms
+    not set: rows of several samples (e.g. jrc_hela-2, jrc_mus-liver-zon-2) are shuffled into every shard. No single archive:
+    40 direct Parquet shard URLs (resolve/main/data/...), range requests supported.'
