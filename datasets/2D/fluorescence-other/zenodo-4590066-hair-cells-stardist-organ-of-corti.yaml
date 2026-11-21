@@ -1,11 +1,10 @@
 schema_version: '1.2'
 id: zenodo-4590066-hair-cells-stardist-organ-of-corti
-title: 'A deep learning approach to quantify auditory hair cells: StarDist 2D model
-  and training dataset'
+title: 'A deep learning approach to quantify auditory hair cells: StarDist 2D model and training dataset'
 short_name: Mouse cochlear hair cells instance masks
-description: 'StarDist 2D training dataset for counting hair cells in murine organ
-  of Corti explants: 68 cropped raw 2D images (TIFF) with matching ground-truth label
-  images (and Labkit .labeling files), plus a trained StarDist model.'
+description: 'StarDist 2D training dataset for counting hair cells in murine organ of Corti explants:
+  68 cropped raw 2D images (TIFF) with matching ground-truth label images (and Labkit .labeling files),
+  plus a trained StarDist model.'
 landing_url: https://zenodo.org/records/4590066
 doi: 10.5281/zenodo.4590066
 repository: Zenodo
@@ -25,8 +24,11 @@ imaging:
   modality:
   - fluorescence-other
   dimensionality: 2D
-  voxel_size_nm: null
-  channels: null
+  voxel_size_nm:
+    x: 549.2514
+    y: 549.2514
+    z: null
+  channels: 1
   organism:
   - Mus musculus
   sample: Cultured neonatal murine organ of Corti explants (cochlear hair cells)
@@ -37,14 +39,14 @@ data:
   size_bytes: 1910332
   n_items: 68
   access: open
-  download_url: https://zenodo.org/api/records/4590066/files/Training%20images.zip/content
+  download_url: https://zenodo.org/records/4590066/files/Training%20images.zip
   download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
   coverage: dense
-  format: Label TIFF images (groundTruth/) plus Labkit .labeling / .tif.labels files
+  format: Label TIFF images (int32, groundTruth/*.tif) plus Labkit .labeling / .tif.labels files
   source: unknown
 ml:
   tasks:
@@ -64,20 +66,79 @@ provenance:
   - https://zenodo.org/api/records/4590066
   - https://pubmed.ncbi.nlm.nih.gov/34343849/
   - https://github.com/DBM-MCF/hair-cell-counting
-  confidence: 0.6
+  confidence: 0.65
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-21T01:40:22Z'
-notes: 'Training images.zip (1.9 MB) listed with peek_archive: raw/ and groundTruth/
-  each hold 68 TIFFs (136 tif), plus 68 .labeling and 68 .tif.labels files in groundTruth/
-  (label files appear to be from Labkit/BigDataViewer, not confirmed). Hair cell labels
-  are assumed to be one instance per cell because the dataset trains StarDist; the
-  exact label encoding was not inspected. Microscope, staining/marker, pixel size,
-  channel count and annotation procedure are not stated on the Zenodo record, the
-  GitHub README or the PubMed abstract, and the article full text is not open access
-  (checked Europe PMC via tools/paper.py: abstract only), so modality is recorded
-  as fluorescence-other and voxel size as null. The record also contains StarDist2D_model_HC_counting.zip
-  (15.5 MB trained model), not counted in n_items. size_bytes is the training-images
-  zip only. Annotation source unknown because the Methods were not readable.'
+  last_checked: '2026-11-21T02:15:00Z'
+notes: 'Training images.zip (1.9 MB) listed with peek_archive: raw/ and groundTruth/ each hold 68 TIFFs
+  (136 tif), plus 68 .labeling and 68 .tif.labels files in groundTruth/ (label files appear to be from
+  Labkit/BigDataViewer, not confirmed). Microscope, staining/marker, pixel size, channel count and annotation
+  procedure are not stated on the Zenodo record, the GitHub README or the PubMed abstract, and the article
+  full text is not open access (checked Europe PMC via tools/paper.py: abstract only), so modality is
+  recorded as fluorescence-other. The record also contains StarDist2D_model_HC_counting.zip (15.5 MB trained
+  model), not counted in n_items. size_bytes is the training-images zip only. Annotation source unknown
+  because the Methods were not readable. enricher: voxel size 549.2514 nm from the ImageJ calibration
+  (0.5492514 micron/px) of the raw TIFFs, no doc states it (was null). enricher: channels 1 from TIFF
+  headers (was null); label encoding instance IDs from sample.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Training images.zip  1.9 MB  (training data, the dataset)\n  Training images/raw/         \
+      \ 68 .tif  (Crop<N>.tif, crop<N>_raw.tif)\n  Training images/groundTruth/  68 .tif  (Crop<N>.tif,\
+      \ crop<N>_label.tif) + 68 .labeling + 68 .tif.labels\nStarDist2D_model_HC_counting.zip  15.5 MB\
+      \  (trained model: saved_model.pb, variables/; not image data)\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/4590066/files/Training%20images.zip::Training images/raw/Crop35.tif
+    - https://zenodo.org/records/4590066/files/Training%20images.zip::Training images/groundTruth/Crop35.tif
+    size_bytes: 101502
+    description: 'One training pair: raw crop Crop35 (128x128 uint16) and its int32 instance label image'
+  arrays:
+  - role: raw
+    path_pattern: Training images/raw/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 128
+    - 128
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 153
+    - 1484
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: ImageJ TIFFs, single page, 1 sample per pixel, calibration 0.5492514 micron/px.
+  - role: label
+    path_pattern: Training images/groundTruth/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 128
+    - 128
+    shape_varies: false
+    dtype: int32
+    compression: none
+    value_range:
+    - 0
+    - 27
+    normalization: none
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing: raw/Crop<N>.tif <-> groundTruth/Crop<N>.tif (49 pairs) and raw/crop<N>_raw.tif
+      <-> groundTruth/crop<N>_label.tif (N=1-19); all 68 pair up. Same 128x128 shape. Label TIFFs (SCIFIO)
+      carry no calibration (scale 1.0); the .labeling/.tif.labels Labkit files are not separate arrays.'
+  notes: 'Listing: Zenodo API + zip index, 2 files, 19,306,494 B; the training zip (the dataset) is 1,910,332
+    B exact, 275 members (136 tif, 68 .labeling, 68 .tif.labels, 3 .DS_Store); the rest is the 15.5 MB
+    model zip. Probed 3 raw + 3 label TIFF headers; sampled Crop35 and crop4 pairs (raw uint16 153-1484
+    / 166-1178, 12-bit range, no clipping, normalization none inferred; labels 0-27, 27 consecutive IDs
+    of ~100 px each: instance IDs). value_range is from one sample. Voxel size only from the raw ImageJ
+    header (paper paywalled, Zenodo/GitHub silent). Annotation source unknown: the paper Methods are not
+    open access (Europe PMC abstract only, ScienceDirect 403).'
