@@ -34,17 +34,17 @@ imaging:
 data:
   formats:
   - jpeg
-  size_bytes: null
+  size_bytes: 2810905
   n_items: 61
   access: open
-  download_url: http://www.cs.bilkent.edu.tr/~gunduz/downloads/NucleusSegData/NucleusSegDataExtended
+  download_url: http://www.cs.bilkent.edu.tr/~gunduz/downloads/NucleusSegData/NucleusSegDataExtended.zip
   download_method: http
 annotations:
   present: true
   types:
   - instance-segmentation
   coverage: dense
-  format: One extensionless binary annotation file per image in the original zip (hepg2_ts_ann1, ~1.6 MB each); `.gold` files in the extended zip.
+  format: 'Plain-text label maps: a .gold file per image in the extended zip (first line "768 1024", then 768x1024 whitespace-separated integers, 0 = background, 1..N = nucleus ids); the original zip has the same per-image files without extension.'
   source: manual
 ml:
   tasks:
@@ -62,16 +62,80 @@ provenance:
   - http://www.cs.bilkent.edu.tr/~gunduz/downloads/NucleusSegData/
   - http://www.cs.bilkent.edu.tr/~gunduz/downloads/NucleusSegData/NucleusSegData.zip
   - http://www.cs.bilkent.edu.tr/~gunduz/downloads/NucleusSegData/NucleusSegDataExtended
+  - http://www.cs.bilkent.edu.tr/~gunduz/downloads/NucleusSegData/NucleusSegDataExtended.zip
+  - http://www.cs.bilkent.edu.tr/~gunduz/papers/2013_CGunduzDemir_TMI2.pdf
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22Object+oriented+segmentation+of+cell+nuclei+in+fluorescence+microscopy+images%22&format=json&resultType=core&pageSize=3
-  confidence: 0.6
+  confidence: 0.65
 verification:
   url_ok: true
   license_found: false
   annotations_verified: true
-  last_checked: '2026-11-21T10:05:00Z'
-notes: 'No license on the page, only "provided for research purposes only". Counts from the page: original 37 images (10 train,
-  27 test in Huh7/HepG2 test sets), extended 61 images (3329 nuclei); n_items = extended. peek_archive: original zip has 37 jpg
-  images plus 37 extensionless annotation files per image (~1.6 MB each); extended zip has 61 jpg plus 61 .gold files. Annotation
-  file encoding (instance vs semantic) not documented on page; both papers are paywalled (abstract only), so pixel size, microscope
-  model and annotation file format could not be confirmed. instance-segmentation inferred from the page ("nuclei were manually annotated").
-  Sources checked: landing page, zip listings, Europe PMC records of both papers (abstracts).'
+  last_checked: '2026-11-21T11:05:00Z'
+notes: 'No license on the page, only "provided for research purposes only". Original release 37 images (10 train, 27 test), extended 61 images (3329 nuclei; train 25, Huh7 test 11, HepG2 test 25); n_items = extended. Annotations: manual ("nuclei were annotated by our biologist collaborators", TMI 2013 paper, author PDF). enricher: label encoding instance-ids (sum of per-image max ids = 3329 = page count); annotation format corrected (plain-text label maps, not binary); download_url set to the direct .zip; size from listing of both zips. Voxel size left null: the paper states "pixel size of 3.4 um x 3.4 um" at 20x, but nuclei span ~36 px (median), which would make them ~120 um across, so the value is not a sample-plane pixel size.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: |-
+      ./                                                   2 files   2.8 MB  .zip (NucleusSegData.zip 1.2 MB, NucleusSegDataExtended.zip 1.6 MB)
+      zip contents (uncompressed):
+      NucleusSegData.zip/NucleusSegData/HepG2TestSet/           32 files  26.9 MB  .jpg 16, extensionless labels 16
+      NucleusSegData.zip/NucleusSegData/Huh7TestSet/            22 files  18.7 MB  .jpg 11, extensionless labels 11
+      NucleusSegData.zip/NucleusSegData/TrainingSet/            20 files  17.0 MB  .jpg 10, extensionless labels 10
+      NucleusSegDataExtended.zip/NucleusSegDataExtended/HepG2TestSet/  50 files  41.5 MB  .gold 25, .jpg 25
+      NucleusSegDataExtended.zip/NucleusSegDataExtended/Huh7TestSet/   22 files  18.7 MB  .gold 11, .jpg 11
+      NucleusSegDataExtended.zip/NucleusSegDataExtended/TrainingSet/   50 files  41.2 MB  .gold 25, .jpg 25
+      (+8 .DS_Store / __MACOSX files)
+      names: hepg2_tsN.jpg|.gold, huh7_tsN.jpg|.gold, trN.jpg|.gold
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - http://www.cs.bilkent.edu.tr/~gunduz/downloads/NucleusSegData/NucleusSegDataExtended.zip::NucleusSegDataExtended/TrainingSet/tr1.jpg
+    - http://www.cs.bilkent.edu.tr/~gunduz/downloads/NucleusSegData/NucleusSegDataExtended.zip::NucleusSegDataExtended/TrainingSet/tr1.gold
+    size_bytes: 1611421
+    description: Extended release, training image tr1 (768x1024 RGB JPEG) and its plain-text instance label map tr1.gold (zip members, uncompressed sizes).
+  arrays:
+  - role: raw
+    path_pattern: NucleusSegDataExtended.zip/NucleusSegDataExtended/*/*.jpg
+    format: jpeg
+    axes: yxs
+    shape: [768, 1024, 3]
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range: [0, 216]
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: All 61 extended-release JPEGs are 768x1024x3. Pseudo-coloured RGB (channels differ; blue strongest, channel means 2.2/6.7/14.8 in tr1) although the paper says images came from a monochrome AxioCam MRm camera.
+  - role: label
+    path_pattern: NucleusSegDataExtended.zip/NucleusSegDataExtended/*/*.gold
+    format: other
+    axes: yx
+    shape: [768, 1024]
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: [0, 27]
+    encoding: instance-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1..N
+      name: nucleus instance
+    alignment: same-grid
+    alignment_notes: >-
+      Pairing rule: same stem in the same folder (tr1.jpg <-> tr1.gold). Each .gold is ASCII text: first line "768 1024"
+      (rows cols), then 768*1024 whitespace-separated integers in row-major order; 0 = background, 1..N = nuclei
+      (ids consecutive; the 61 files hold 3329 ids in total, the page's nucleus count). All 61 parse to 768x1024,
+      matching their JPEGs. dtype unknown because values are text (max id observed 207, fits uint8/uint16).
+  notes: >-
+    Listed both zips with tools/listing.py (complete, exact sizes; 2,810,905 bytes). Sampled tr1.jpg (sample.py) and
+    parsed all 61 .gold files from the 1.6 MB extended zip (downloaded once, 1,603,307 bytes, deleted). value_range from
+    one sample each (tr1). The original 37-image zip (NucleusSegData.zip) uses extensionless label files of the same
+    size; not parsed, presumed same text format (page: the Huh7 test set is unchanged in the extended release).
+    Voxel size not set: TMI 2013 paper (author PDF) states "pixel size of 3.4 um x 3.4 um" with a 20x objective, which
+    is implausible for the sample plane (median nucleus ~36 px across); checked landing page, zip listing (no README),
+    file headers (JPEG, no calibration), TMI 2013 full text, Cytometry 2018 (abstract only, not OA). Direct links work
+    (range requests, zip members) but host www.cs.bilkent.edu.tr is not on TensorSwitch's allowlist. The .gold text
+    label format is not a format TensorSwitch reads.
