@@ -1,0 +1,148 @@
+schema_version: '1.2'
+id: warwick-nuclick-wbc-blood-smear-masks
+title: NuClick dataset - white blood cells in blood smear images with segmentation masks
+short_name: White blood cell masks in blood smears (NuClick)
+description: 1,470 blood smear images (1,220 train / 250 validation) with white blood cell segmentation masks as
+  PNG files, released with the NuClick interactive segmentation paper; the masks were produced with the NuClick
+  click-guided annotation framework.
+landing_url: https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick/
+doi: null
+repository: LabWebsite
+accession: null
+authors:
+- Navid Alemi Koohbanani
+- Mostafa Jahanifar
+- Neda Zamani Tajadin
+- Nasir Rajpoot
+publications:
+- title: 'NuClick: A Deep Learning Framework for Interactive Segmentation of Microscopic Images'
+  doi: 10.1016/j.media.2020.101771
+  url: https://doi.org/10.1016/j.media.2020.101771
+date_published: null
+imaging:
+  modality:
+  - brightfield
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism: []
+  sample: Blood smear images with white blood cells
+  labels_stains: []
+data:
+  formats:
+  - png
+  size_bytes: 473698565
+  n_items: 1470
+  access: open
+  download_url: https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick/hemato_data.zip
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: uint8 grayscale PNG masks Hemato_Data/{Train,Validation}/masks/img (<n>)_mask.png (0 background, 1..N
+    per object in the samples), paired with RGB PNG images img (<n>).png
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-01T12:20:39Z'
+  evidence_urls:
+  - https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick/
+  - https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick/hemato_data.zip
+  - https://arxiv.org/abs/2005.14511
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1016%2Fj.media.2020.101771%22&format=json&resultType=core&pageSize=3
+  - https://arxiv.org/pdf/2005.14511
+  confidence: 0.55
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-07T05:22:00Z'
+notes: 'Image counts from the zip listing: Train 1,220 images and 1,213 masks, Validation 250 images and 250 masks
+  (7 train images have no mask). No licence is stated on the dataset page, only a request to cite the NuClick paper,
+  so licence is unknown. The paper is not open access (abstract only), so the microscope, magnification, pixel size,
+  staining and source/species of the blood smears are not known; modality brightfield is inferred from "blood smear
+  images" and organism is left empty. Annotation source is mixed because the page says masks were produced with
+  the NuClick interactive framework. The IHC lymphocyte set is a separate record. enricher: one image and two masks
+  sampled; channels 3 (RGB PNG, was null); mask values are consecutive 0..N, so instance IDs are likely but not
+  documented.'
+technical:
+  method: sample
+  inspected_urls:
+  - https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick/hemato_data.zip
+  bytes_downloaded: 303991
+  size_source: file-listing
+  layout:
+    tree: "hemato_data.zip/Hemato_Data/\n  Train/images/img (<n>).png            1220   387.4 MB\n  Train/masks/img\
+      \ (<n>)_mask.png        1213     4.6 MB\n  Validation/images/img (<n>).png        250    80.0 MB\n  Validation/masks/img\
+      \ (<n>)_mask.png    250   935.5 KB\n"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick/hemato_data.zip::Hemato_Data/Train/images/img (66).png
+    - https://warwick.ac.uk/fac/cross_fac/tia/data/nuclick/hemato_data.zip::Hemato_Data/Train/masks/img (66)_mask.png
+    size_bytes: 303936
+    description: One 512x512 training image and its mask (zip members).
+  arrays:
+  - role: raw
+    path_pattern: Hemato_Data/{Train,Validation}/images/img (*).png
+    format: png
+    axes: yxs
+    shape:
+    - 512
+    - 512
+    - 3
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 29
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: null
+  - role: label
+    path_pattern: Hemato_Data/{Train,Validation}/masks/img (*)_mask.png
+    format: png
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: null
+    dtype: uint8
+    compression: deflate
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 6
+    encoding: unknown
+    classes: null
+    n_ids_observed: 7
+    alignment: same-grid
+    alignment_notes: img (<n>)_mask.png belongs to img (<n>).png; same 512x512 grid (the image has an extra RGB
+      axis). 7 train images have no mask.
+  notes: 'Zip central directory: 2,933 members, 473,698,565 B, complete. Probes: img (66).png uint8 RGB 512x512;
+    img (66)_mask.png uint8 grayscale 512x512. Samples: image 29..255, mean 217; mask img (66) values {0, 1, 2,
+    3, 4} (4 objects of 4,800-13,200 px); mask img (660) values 0..6. Consecutive values starting at 1 with a per-image
+    maximum suggest instance IDs, but neither the page nor the paper abstract says so, so encoding stays unknown.
+    Second pass 2026-10-07: re-listed (same) and re-sampled img (66) pair (same values); real globs set. arXiv 2005.14511
+    read: the WBC cell dataset in the paper is 2,689 synthetic images of touching WBCs built from 11,000 manually
+    segmented WBCs (peripheral blood scans, CELLNAMA LSO5 scanner, 100x oil objective) pasted on RBC canvases; it
+    is not stated whether this release (1,470 images) is that set. No pixel size, species or licence in the paper
+    or on the page, so voxel size, organism and licence stay open. Sample and download URLs work (range ok) but
+    warwick.ac.uk is not on the TensorSwitch allowlist.'
+  inspected_at: '2026-10-07T05:22:00Z'
