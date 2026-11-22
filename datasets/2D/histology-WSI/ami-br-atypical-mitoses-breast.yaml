@@ -1,0 +1,148 @@
+schema_version: '1.2'
+id: ami-br-atypical-mitoses-breast
+title: 'AMi-Br: Histologic Dataset of Normal and Atypical Mitotic Figures on Human Breast Cancer'
+short_name: Atypical vs normal mitoses in breast cancer (H&E)
+description: 3,720 mitotic figures from human breast cancer H&E slides, provided as 128x128 px PNG patches
+  centred on the original annotations (1,999 from the alternative TUPAC16 labels, 1,721 from MIDOG 2021).
+  Each was classified atypical or normal by three blinded experts with a majority vote (832 atypical,
+  2,888 normal); a CSV lists slide, coordinates and per-expert labels.
+landing_url: https://github.com/DeepMicroscopy/AMi-Br
+doi: null
+repository: GitHub
+accession: null
+authors:
+- Bertram CA
+- Weiss V
+- Donovan TA
+publications:
+- title: Histologic Dataset of Normal and Atypical Mitotic Figures on Human Breast Cancer (AMi-Br)
+  doi: 10.48550/arXiv.2501.04467
+  url: https://arxiv.org/abs/2501.04467
+date_published: null
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: Human breast cancer, H&E-stained tissue (223 tumor cases)
+  labels_stains:
+  - H&E
+data:
+  formats:
+  - png
+  size_bytes: 182845440
+  n_items: 3720
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - classification
+  coverage: dense
+  format: 'CSV (AMI-BR.csv: slide, dataset, uid, x, y, expert labels, majority_atypical)'
+  source: manual
+ml:
+  tasks:
+  - classification
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-11-22T14:15:22Z'
+  evidence_urls:
+  - https://arxiv.org/abs/2501.04467
+  - https://arxiv.org/html/2501.04467v2
+  - https://github.com/DeepMicroscopy/AMi-Br
+  - https://github.com/DeepMicroscopy/AMi-Br/tree/main/patches
+  - https://github.com/DeepMicroscopy/AMi-Br/tree/main/patches/atypical
+  - https://raw.githubusercontent.com/DeepMicroscopy/AMi-Br/main/README.md
+  - https://raw.githubusercontent.com/DeepMicroscopy/AMi-Br/main/AMI-BR.csv
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-11-22T15:05:00Z'
+notes: 'No dataset license found on the GitHub page (no LICENSE file at main) or in the paper; the CC
+  BY-NC-ND 4.0 shown on arXiv covers the article only. Pixel size, magnification and scanner are not stated
+  (paper says six scanners across three centers). Source patches derive from MIDOG 2021 (Zenodo 4643381)
+  and the alternative TUPAC16 labels; enricher read the README in full. Paper full text could not be retrieved
+  via tools/paper.py (arXiv DOI not indexed), so the arXiv HTML version was used. Patches are in patches/atypical
+  and patches/normal; patch/patient-level split notebooks exist but no split files were seen. enricher:
+  channels 3 (RGB PNG headers, was null); download_method http (raw.githubusercontent files); size estimated
+  from 3720 patches.'
+technical:
+  method: sample
+  size_source: estimated
+  layout:
+    tree: "AMi-Br/ (GitHub main, 3726 files)\n├── AMI-BR.csv                  3720 rows x 12 cols (348,367\
+      \ B)\n├── README.md\n├── dataset.py\n├── Classification_Experiment_PatchLevelSplit.ipynb\n├── Classification_Experiment_PatientLevelSplit.ipynb\n\
+      ├── images/subclassification.jpg\n└── patches/\n    ├── atypical/   832 png  (MIDOG21_<uid>.png,\
+      \ TUPAC16_<uid>.png)\n    └── normal/    2888 png"
+    n_files: 3726
+    listing_complete: true
+  sample:
+    urls:
+    - https://raw.githubusercontent.com/DeepMicroscopy/AMi-Br/main/patches/atypical/TUPAC16_10.png
+    - https://raw.githubusercontent.com/DeepMicroscopy/AMi-Br/main/AMI-BR.csv
+    size_bytes: 379018
+    description: one atypical patch (TUPAC16 uid 10) plus the label table (row dataset=TUPAC16, uid=10)
+  arrays:
+  - role: raw
+    path_pattern: patches/*/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 128
+    - 128
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 4
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 128x128 px RGB crops centred on the original MIDOG21 / TUPAC16 mitotic-figure annotations
+      (paper Sec. 2.1)
+  - role: label
+    path_pattern: AMI-BR.csv
+    format: csv
+    axes: null
+    shape:
+    - 3720
+    - 12
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes:
+    - id: 'False'
+      name: normal mitotic figure
+    - id: 'True'
+      name: atypical mitotic figure
+    alignment: not-applicable
+    alignment_notes: 'One row per patch: patch file = patches/{atypical|normal}/<dataset>_<uid>.png (checked:
+      MIDOG21 uid 7 -> atypical/MIDOG21_7.png, uid 6 -> normal/MIDOG21_6.png, TUPAC16 uid 10 -> atypical/TUPAC16_10.png).
+      Folder = majority_atypical. x,y are coordinates on the original slide (not in this repo). expert1/2_label
+      give 8 subclasses (NMF prometaphase/metaphase/anaphase-telophase/ring shape; AMF segregation/multipolar/bipolar
+      asymmetric/other).'
+  notes: 'Listing: git tree of DeepMicroscopy/AMi-Br main (blobless clone, names only; per-file sizes
+    not listed). value_range [4,255] from one sample patch (TUPAC16_10.png); 3 probed patches all 128x128x3
+    uint8 RGB PNG. size estimated (uncompressed): raw 3720 x 128x128x3 uint8 = 182,845,440 B (182.8 MB);
+    excludes AMI-BR.csv (348,367 B). Labels: class = folder (atypical/normal, majority of 3 experts) and
+    AMI-BR.csv (per-expert binary and 8-class subtype labels); no split files. voxel size not found; checked:
+    PNG headers (no calibration), README, dataset.py, arXiv full text (states 6 scanners, no pixel size),
+    BVM paper (not open access), MIDOG21 Zenodo record 4643381 (scanners named, no pixel size). Patches
+    come from different scanners, so one pixel size may not apply. No direct archive: files are served
+    individually from raw.githubusercontent.com; GitHub''s archive zip returned 403 to the download check.
+    License: no LICENSE file (404), README and paper give none.'
