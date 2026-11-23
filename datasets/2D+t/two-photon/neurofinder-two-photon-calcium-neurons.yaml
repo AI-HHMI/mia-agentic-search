@@ -1,0 +1,135 @@
+schema_version: '1.2'
+id: neurofinder-two-photon-calcium-neurons
+title: 'Neurofinder: two-photon calcium imaging benchmark with labeled neuron regions'
+short_name: Neurofinder two-photon neuron ROIs (calcium)
+description: 19 training and 9 test two-photon calcium imaging movies (TIFF frames) from four labs with ground-truth
+  neuron regions (pixel coordinate lists in regions.json) for the training sets; the Neurofinder cell-detection
+  benchmark.
+landing_url: https://github.com/codeneuro/neurofinder
+doi: null
+repository: GitHub
+accession: null
+authors:
+- CodeNeuro / Neurofinder organisers (data from the Hausser, Losonczy, Svoboda and Harvey labs)
+publications:
+- title: CaImAn an open source tool for scalable calcium imaging data analysis
+  doi: 10.7554/eLife.38173
+  url: https://doi.org/10.7554/eLife.38173
+date_published: null
+imaging:
+  modality:
+  - two-photon
+  dimensionality: 2D+t
+  voxel_size_nm: null
+  channels: null
+  organism:
+  - Mus musculus
+  sample: in vivo two-photon calcium imaging of neurons (genetically encoded indicators); fields of view from four
+    labs
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 42695982956
+  n_items: 19
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  coverage: dense
+  format: regions/regions.json per training movie (list of regions, each with a coordinates list of [x, y] pixels)
+  source: mixed
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: Neurofinder
+  baseline_code_url: https://github.com/codeneuro/neurofinder-datasets
+license:
+  spdx: unknown
+  url: null
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-10-08T07:39:49Z'
+  evidence_urls:
+  - https://github.com/codeneuro/neurofinder
+  - https://s3.amazonaws.com/neuro.datasets/challenges/neurofinder/neurofinder.00.00.zip
+  - https://s3.amazonaws.com/neuro.datasets/challenges/neurofinder/neurofinder.01.00.zip
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6342523/fullTextXML
+  - https://s3.amazonaws.com/neuro.datasets/challenges/neurofinder/neurofinder.02.00.zip
+  - https://s3.amazonaws.com/neuro.datasets/challenges/neurofinder/neurofinder.03.00.zip
+  - https://s3.amazonaws.com/neuro.datasets/challenges/neurofinder/neurofinder.04.00.zip
+  confidence: 0.6
+verification:
+  url_ok: true
+  license_found: false
+  annotations_verified: true
+  last_checked: '2026-10-08T08:30:00Z'
+notes: 'Each dataset is a zip at s3.amazonaws.com/neuro.datasets/challenges/neurofinder/neurofinder.NN.NN[.test].zip.
+  19 training zips with images (19,892,683,030 B; 01.02-01.04 are 0.4 MB zips with regions only), 9 test zips without
+  ground truth, plus neurofinder.all.test.zip. Per the CaImAn paper annotations were made manually or from a static
+  structural-indicator image (source mixed). No license on the GitHub repos or in the zip README. enricher: modality
+  two-photon and organism Mus musculus from info.json ("method": "Two-photon raster", "animal": "Mouse"; 00.00,
+  01.00, 02.00, 03.00, 04.00); size is all 32 zips on S3 (was training zips only). Pixel size differs per lab (info.json
+  pixels-per-micron): Svoboda 00.xx/02.xx 1.15 (870 nm), Hausser 01.00 0.8 (1250 nm), Losonczy 03.00 1.7007 (588
+  nm), Harvey 04.00 0.8 (1250 nm); so voxel_size_nm stays null.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "challenges/neurofinder/ (S3 prefix; zips only, the unpacked .bin copies alongside are not listed)\n \
+      \ neurofinder.00.00 … 00.11.zip   12 files  0.79-1.11 GB  Svoboda lab\n  neurofinder.01.00 … 01.04.zip   \
+      \ 5 files  (01.02-01.04: 0.4 MB, regions only)  Hausser lab\n  neurofinder.02.00, 02.01.zip     2 files  1.8\
+      \ / 1.7 GB  Svoboda lab\n  neurofinder.03.00.zip, 04.00/04.01.zip  3 files  Losonczy / Harvey labs\n  neurofinder.<id>.test.zip\
+      \         9 files  (no regions)\n  neurofinder.all.test.zip          1 file   11.4 GB\ninside neurofinder.00.00.zip/neurofinder.00.00/\n\
+      \  images/image00000.tiff …       3024 files  1.59 GB  .tiff (one 512x512 frame each)\n  regions/regions.json,\
+      \ info.json, README.md, thumbnail.png, example.{py,m,js}\n"
+    n_files: 32
+    listing_complete: true
+  sample:
+    urls:
+    - https://s3.amazonaws.com/neuro.datasets/challenges/neurofinder/neurofinder.00.00.zip::neurofinder.00.00/images/image00000.tiff
+    - https://s3.amazonaws.com/neuro.datasets/challenges/neurofinder/neurofinder.00.00.zip::neurofinder.00.00/regions/regions.json
+    size_bytes: 774203
+    description: First frame of training movie 00.00 (512x512 uint16) and its neuron regions (JSON)
+  arrays:
+  - role: raw
+    path_pattern: neurofinder.*.zip/*/images/image*.tiff
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 3656
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One TIFF per frame; the frame index in the file name is the time axis (info.json dimensions
+      [x, y, t], e.g. 512x512x3024 for 00.00, 498x490x2250 for 03.00).
+  - role: label
+    path_pattern: neurofinder.*.zip/*/regions/regions.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: other
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'One regions.json per training movie: a list of neurons, each {id, coordinates: [[x, y], ...]}
+      pixel lists (instance masks as pixel coordinates) in the frame grid, shared by all frames.'
+  notes: 'S3 ListObjectsV2 of challenges/neurofinder/neurofinder.*: 32 zips, 42,695,982,956 bytes (exact). Zip index
+    of 00.00: 3,024 .tiff + 7 other files. Probe: image00000.tiff is a plain single-page 512x512 uint16 uncompressed
+    TIFF. Sample (one frame): 0-3656, mean 168, 12-bit hint; normalization unknown. regions.json read (pixel coordinate
+    lists). Movies differ in frame count and size (info.json), hence shape_varies. S3 answered about 1 in 5 range
+    requests with 404, so tools were retried. Pixel size per lab is in notes (info.json); none shared, so voxel_size_nm
+    null. License: none found (GitHub codeneuro/neurofinder README, no LICENSE file in codeneuro/neurofinder or
+    neurofinder-datasets, zip README). No single archive holds all data (download_url null).'
