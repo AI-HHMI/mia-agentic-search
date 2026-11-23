@@ -2,9 +2,9 @@ schema_version: '1.2'
 id: github-aooct-rpe-cell-detection
 title: AO-OCT images of retinal pigment epithelium cells with expert cell-centre markings
 short_name: Retinal RPE cell detection (AO-OCT)
-description: En face adaptive optics optical coherence tomography (AO-OCT) images of the RPE cell mosaic in healthy
-  human retinas (two imagers) and one sub-clinical drusen eye, each with expert-marked RPE cell centres, released
-  with the 2024 RPE detection paper.
+description: En face adaptive optics optical coherence tomography (AO-OCT) images of the RPE cell mosaic in healthy human
+  retinas (two imagers) and one sub-clinical drusen eye, each with expert-marked RPE cell centres, released with the 2024
+  RPE detection paper.
 landing_url: https://github.com/soltanianzadeh/AOOCT-RPE-cell-detection
 doi: null
 repository: GitHub
@@ -14,8 +14,8 @@ authors:
 - K. Kovalick
 - S. Aghayee
 publications:
-- title: Identifying retinal pigment epithelium cells in adaptive optics-optical coherence tomography images with
-    partial annotations and superhuman accuracy
+- title: Identifying retinal pigment epithelium cells in adaptive optics-optical coherence tomography images with partial
+    annotations and superhuman accuracy
   doi: 10.1364/BOE.538473
   url: https://pmc.ncbi.nlm.nih.gov/articles/PMC11640571
 date_published: null
@@ -23,30 +23,28 @@ imaging:
   modality:
   - other
   dimensionality: 2D
-  voxel_size_nm:
-    x: 1170
-    y: 1170
-    z: null
-  channels: null
+  voxel_size_nm: null
+  channels: 1
   organism:
   - Homo sapiens
-  sample: In vivo human RPE cell mosaic, en face AO-OCT; 11 healthy subjects (FDA imager, 136 ROIs), 1 subject with
-    sub-clinical drusen (2 images), 4 healthy subjects (Indiana University imager)
+  sample: In vivo human RPE cell mosaic, en face AO-OCT; 11 healthy subjects (FDA imager, 136 ROIs), 1 subject with sub-clinical
+    drusen (2 images), 4 healthy subjects (Indiana University imager)
   labels_stains: []
 data:
   formats:
   - tiff
   size_bytes: null
-  n_items: 142
+  n_items: 230
   access: open
   download_url: null
-  download_method: other
+  download_method: http
 annotations:
   present: true
   types:
   - points
   coverage: dense
-  format: Cell-centre (x, y) coordinates in MATLAB .mat files (variable cellXY), one per image, next to each .tif
+  format: Cell-centre (x, y) coordinates in MATLAB v5 .mat files (variable cellXY), <stem>_cellCenter.mat next to each labelled
+    .tif
   source: manual
 ml:
   tasks:
@@ -56,22 +54,129 @@ ml:
   baseline_code_url: https://github.com/soltanianzadeh/AOOCT-RPE-cell-detection
 license:
   spdx: MIT
-  url: null
+  url: https://github.com/soltanianzadeh/AOOCT-RPE-cell-detection/blob/main/LICENSE
 provenance:
   discovered_by: harvest-literature
   discovered_at: '2026-11-23T03:31:42Z'
   evidence_urls:
   - https://github.com/soltanianzadeh/AOOCT-RPE-cell-detection
   - https://pmc.ncbi.nlm.nih.gov/articles/PMC11640571
-  confidence: 0.65
+  - https://raw.githubusercontent.com/soltanianzadeh/AOOCT-RPE-cell-detection/main/README.md
+  - https://raw.githubusercontent.com/soltanianzadeh/AOOCT-RPE-cell-detection/main/LICENSE
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-23T03:31:42Z'
-notes: 'Data are in the GitHub repo dataset/ folder (FDA_ROI_Healthy, FDA_FullFOV_Healthy, FDA_FullFOV_Drusen, IU);
-  only first files per folder were visible, so n_items follows the paper (136 + 2 + 4). Pixel size from the paper:
-  1.17 um/px FDA healthy (2 deg FOV), 0.88 um/px drusen, 1 um/px IU; 1170 nm recorded for the main FDA set. MIT
-  licence is the repository''s, the images'' own terms are not separately stated. Authors are the first three of
-  the paper''s reference list (initials only); release date not stated (paper is BOE 15(12), 2024). AO-OCT recorded
-  as other.'
+  last_checked: '2026-11-23T05:00:00Z'
+notes: 'Data are in the GitHub repo dataset/ folder (FDA_ROI_Healthy 136 ROIs, FDA_FullFOV_Healthy 11 subjects x 8 averaging
+  levels N01-N90, FDA_FullFOV_Drusen 2, IU 4). MIT licence is the repository LICENSE; README offers "the dataset and model
+  source codes" and asks to cite the paper. Authors are the first three of the paper. AO-OCT recorded as other. enricher:
+  voxel size set to null (was 1170 x 1170): subsets differ, paper: FDA healthy 1.17 um/px, drusen subject 0.88 um/px, IU 1
+  um/px. enricher: n_items 230 (was 142): 230 TIFFs in the git tree; full-FOV healthy has a cellCenter file only for the 90-average
+  image, which per the paper labels all 8 registered averages.'
+technical:
+  method: sample
+  size_source: unknown
+  layout:
+    tree: "github.com/soltanianzadeh/AOOCT-RPE-cell-detection (branch main), dataset/ 383 files\ndataset/\n  FDA_ROI_Healthy/<subject>/\
+      \     11 subjects, 136 x (NN[_reselect].tif + NN[_reselect]_cellCenter.mat)\n  FDA_FullFOV_Healthy/<subject>/ 11 subjects\
+      \ x 8 RPE_regN{01,05,10,20,30,45,60,90}RegResults_orig_ref*.tif\n                                 + 1 *N90*_cellCenter.mat\
+      \ each (88 tif, 11 mat)\n  FDA_FullFOV_Drusen/6242/Loc1|Loc2/   Reslice of averaged_amplitude_volume_N340_*_rpe.tif\
+      \ + _cellCenter.mat\n  IU/S1..S4/                     rpe_crop.tif + rpe_crop_cellCenter.mat\nDconnNet/, networks/,\
+      \ losses/, optimizers/, utils/, train.py, solver.py, config.json (code), LICENSE (MIT), README.md"
+    n_files: 383
+    listing_complete: true
+  sample:
+    urls:
+    - https://raw.githubusercontent.com/soltanianzadeh/AOOCT-RPE-cell-detection/main/dataset/FDA_ROI_Healthy/0201/00.tif
+    - https://raw.githubusercontent.com/soltanianzadeh/AOOCT-RPE-cell-detection/main/dataset/FDA_ROI_Healthy/0201/00_cellCenter.mat
+    size_bytes: 76230
+    description: One FDA healthy ROI (134x138 float32) and its cell-centre .mat
+  arrays:
+  - role: raw
+    path_pattern: dataset/FDA_ROI_Healthy/*/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 134
+    - 138
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range:
+    - 35821.1
+    - 427433.1
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: FDA healthy ROIs (1.17 um/px per paper), ImageJ TIFF, single page; size varies per ROI.
+  - role: raw
+    path_pattern: dataset/FDA_FullFOV_Healthy/*/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 500
+    - 490
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'FDA healthy full 2x2 deg FOV, 8 averaging levels per subject registered to one reference (paper); probed
+      N01 and N90 of subject 0201: 500x490.'
+  - role: raw
+    path_pattern: dataset/FDA_FullFOV_Drusen/*/*/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 510
+    - 502
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Drusen subject 6242, 1.5x1.5 deg FOV, 0.88 um/px (paper); ImageJ TIFF.
+  - role: raw
+    path_pattern: dataset/IU/*/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 320
+    - 320
+    shape_varies: true
+    dtype: uint8
+    compression: packbits
+    value_range: null
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Indiana University imager, 1x1 deg, 1 um/px (paper); probed S1.
+  - role: label
+    path_pattern: dataset/**/*_cellCenter.mat
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    value_range: null
+    normalization: unknown
+    encoding: points-table
+    classes:
+    - id: null
+      name: RPE cell centre
+    alignment: same-grid
+    alignment_notes: 'Pairing: <stem>.tif -> <stem>_cellCenter.mat in the same folder; variable cellXY, column 1 = x, column
+      2 = y (README). Full-FOV healthy: one .mat per subject (N90 image) that applies to all 8 registered averages (paper).
+      MATLAB 5.0 MAT-file (header), contents not parsed.'
+  notes: 'Listing: blobless git clone (tree only), dataset/ = 230 .tif + 153 .mat. Probed 5 TIFF headers (FDA ROI 134x138
+    float32 ImageJ; FDA full FOV N01 and N90 500x490 float32; drusen 510x502 uint8 ImageJ; IU 320x320 uint8 packbits); none
+    carries a calibration. Sampled FDA_ROI_Healthy/0201/00.tif (74,163 B): float32 35821-427433, mean 77286 (one sample; linear
+    OCT amplitude, normalization unknown). The label .mat (2,067 B) is a MATLAB 5.0 MAT-file per its header; sample.py cannot
+    read .mat, so the cellXY array was not parsed. Size not set: estimate_size.py reports "array 4 (label): no shape" (the
+    .mat contents were not read); raw arrays alone estimate to 97,221,288 B uncompressed (136 x 134x138 + 88 x 500x490 float32,
+    2 x 510x502 + 4 x 320x320 uint8; ROI shapes vary). Voxel size not set: differs per subset (paper Methods: FDA healthy
+    1.17 um/pixel, drusen 0.88 um/pixel, IU 1 um/pixel); checked headers, README, paper. Downloads: each file is direct on
+    raw.githubusercontent.com (usable, range requests); the GitHub archive zip returned 403, so data.download_url stays null.'
