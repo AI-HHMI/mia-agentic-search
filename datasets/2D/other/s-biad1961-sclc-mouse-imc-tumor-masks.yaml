@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: s-biad1961-sclc-mouse-imc-tumor-masks
 title: Imaging Mass Cytometry Dataset of Small-Cell Lung Cancer tumors and tumor environments
 short_name: Mouse SCLC imaging mass cytometry tumor masks
-description: 221 imaging mass cytometry (IMC) regions of interest (37 metal-tagged antibody channels plus two DNA channels) from mouse small-cell lung cancer tumors (RP and RPM models) and control spleen/lymph node tissue on two frozen tissue microarrays, converted to OME-Zarr. Every lung ROI carries a manually drawn binary tumor-area mask stored as a label in the same zarr (labels/tumor); control tissues have none.
+description: 221 imaging mass cytometry (IMC) regions of interest (37 metal-tagged antibody channels plus two DNA
+  channels) from mouse small-cell lung cancer tumors (RP and RPM models) and control spleen/lymph node tissue on
+  two frozen tissue microarrays, converted to OME-Zarr. Every lung ROI carries a manually drawn binary tumor-area
+  mask stored as a label in the same zarr (labels/tumor); control tissues have none.
 landing_url: https://www.ebi.ac.uk/biostudies/BioImages/studies/S-BIAD1961
 doi: 10.6019/S-BIAD1961
 repository: BioImageArchive
@@ -41,7 +44,8 @@ imaging:
   channels: 37
   organism:
   - Mus musculus
-  sample: Frozen mouse SCLC tumors (RP and RPM genotypes, five treatment groups), tumor-normal border and tumor centre, plus spleen/lymph node controls; 1.5 mm cores on tissue microarrays
+  sample: Frozen mouse SCLC tumors (RP and RPM genotypes, five treatment groups), tumor-normal border and tumor
+    centre, plus spleen/lymph node controls; 1.5 mm cores on tissue microarrays
   labels_stains:
   - 37-marker metal-tagged antibody panel (e.g. NCAM, PD-L1, CD45, CD8, CD4, Ki-67)
   - Ir191/Ir193 DNA
@@ -58,7 +62,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: partial
-  format: Binary tumor-area mask (255 inside tumor, 0 outside) stored as OME-Zarr label labels/tumor in each lung ROI zarr
+  format: Binary tumor-area mask (255 inside tumor, 0 outside) stored as OME-Zarr label labels/tumor in each lung
+    ROI zarr
   source: manual
 ml:
   tasks:
@@ -78,10 +83,92 @@ provenance:
   - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/961/S-BIAD1961/Files/experimentA/RPM-TMA/RPM-TMA-1_ROI01_multichannel.zarr.zip
   - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/961/S-BIAD1961/Files/experimentA/idr0000-experimentA-IMCchannels.csv
   - https://pmc.ncbi.nlm.nih.gov/articles/PMC12418687/
+  - https://www.ebi.ac.uk/biostudies/api/v1/files/S-BIAD1961?start=0&length=1000
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-24T19:45:00Z'
-notes: 'IMC is not in the modality enum, so modality is other (imaging mass cytometry). Pixel size x = y = 1000 nm from the paper (IMC resolution fixed at 1 um in xy); the zarr scale metadata is unitless. License CC0 from the BioStudies record. Size 3.14 GB and 221 zarr.zip files (111 RPM-TMA, 110 RP-TMA) from the study file list. Example zarr shape (t,c,z,y,x) = (1,37,1,527,771) float32. labels/tumor seen in 3 of 5 sampled zips; the first ROI (spleen control per the assay table) has none, matching the stated coverage (lung ROIs only), so coverage is partial and the number of masked ROIs was not counted. The paper says the same data is also in IDR as idr0170 (IDR page not fetched). Instrument not named in the paper methods.'
+  last_checked: '2026-11-24T19:58:00Z'
+notes: 'IMC is not in the modality enum, so modality is other (imaging mass cytometry). Pixel size x = y = 1000
+  nm from the paper ("spatial resolution of IMC is fixed at 1 um2 in the xy-plane"); the zarr scale metadata is
+  unitless. License CC0 from the BioStudies record. Size 3.14 GB and 221 zarr.zip files (111 RPM-TMA, 110 RP-TMA)
+  from the study file list. Coverage: per the assay table 212 lung ROIs (120 lung_tumor, 92 lung_tumor_border) carry
+  the labels/tumor mask; the 9 control ROIs (8 spleen, 1 lymph node) have none. Masks drawn manually in Fiji on
+  normalized DNA/NCAM/PD-L1 RGB composites (paper). The paper says the same data is also in IDR as idr0170 (IDR
+  page not fetched). Instrument not named in the paper. enricher: coverage counted from the assay table (was not
+  counted).'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "Files/experimentA/                                   225 files   3.14 GB (BioStudies files API, exact\
+      \ sizes)\n  RPM-TMA/                                           111 files   *_ROI<NN>_multichannel.zarr.zip\n\
+      \  RP-TMA/                                            110 files   *_ROI<NN>_multichannel.zarr.zip\n    <zip>:\
+      \ experimentA_backup/<TMA>/<name>.zarr/     OME-Zarr 0.4 (zarr v2), ~206 members\n      0..4/            \
+      \                              image pyramid (t,c,z,y,x), 37 channels\n      labels/tumor/0..4/          \
+      \                   binary tumor mask (lung ROIs only)\n  idr0000-experimentA-assays.tsv, -IMCchannels.csv,\
+      \ -processed.tsv, empty.txt"
+    n_files: 225
+    listing_complete: true
+  sample:
+    urls:
+    - https://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/961/S-BIAD1961/Files/experimentA/RPM-TMA/RPM-TMA-1_ROI27_multichannel.zarr.zip
+    size_bytes: 3238715
+    description: 'Smallest lung-tumor ROI (RPM-TMA-1 ROI27): one zarr.zip holding the 37-channel image (1,37,1,261,237)
+      and its labels/tumor mask'
+  arrays:
+  - role: raw
+    path_pattern: experimentA/*-TMA/*_multichannel.zarr.zip
+    format: ome-zarr
+    axes: tczyx
+    shape:
+    - 1
+    - 37
+    - 1
+    - 261
+    - 237
+    shape_varies: true
+    dtype: float32
+    compression: blosc
+    value_range:
+    - 0.0
+    - 6216.79
+    normalization: none
+    alignment: not-applicable
+    alignment_notes: Zipped OME-Zarr v0.4 store; image at <zip>::experimentA_backup/<TMA>/<name>.zarr/0 (5-level
+      pyramid 0-4, chunks 1x1x1x1024x1024, blosc lz4). Channel names in omero metadata (e.g. Pr141_aSMA, Nd145_NCAM).
+      Scale metadata unitless (1.0 at level 0).
+  - role: label
+    path_pattern: experimentA/*-TMA/*_multichannel.zarr.zip
+    format: ome-zarr
+    axes: tczyx
+    shape:
+    - 1
+    - 1
+    - 1
+    - 261
+    - 237
+    shape_varies: true
+    dtype: uint8
+    compression: blosc
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: tumor
+    alignment: same-grid
+    alignment_notes: OME-Zarr image-label at <zip>::experimentA_backup/<TMA>/<name>.zarr/labels/tumor/0, same y/x
+      shape and scales as the image in the same zip (one mask per lung ROI). Classes from the image-label properties
+      (background 0, tumor 255).
+  notes: 'Sampled one whole zarr.zip (3,238,715 B; RPM-TMA-1_ROI27): raw float32 (1,37,1,261,237), min 0, max 6216.79,
+    mean 2.92, non-integer values in 14% of pixels; label uint8 {0: 7831, 255: 54026}. value_range from this one
+    sample. normalization none: the paper says the zarr files were extracted from the instrument .mcd files, discarding
+    background channels only. Headers of RP-TMA-3_ROI39 match the layout. Size: BioStudies files API lists all 225
+    files with exact sizes (sum 3,137,512,769 B); tools/listing.py could not read the EBI FTP/HTTP index (connection
+    refused/reset), so size_source is page-stated, not file-listing. download_url stays the folder: no single archive
+    exists; each ROI zarr.zip is a direct file (usable, range requests). 2D data: z voxel size not applicable.'
