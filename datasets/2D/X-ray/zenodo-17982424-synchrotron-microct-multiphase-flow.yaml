@@ -1,0 +1,159 @@
+schema_version: '1.2'
+id: zenodo-17982424-synchrotron-microct-multiphase-flow
+title: Synchrotron micro-CT of decane/brine drainage in Bentheimer sandstone with multiphase segmentation labels
+short_name: Sandstone multiphase flow segmentation (micro-CT)
+description: Grayscale 2D synchrotron micro-CT slices of water-wet and mixed-wet Bentheimer sandstone during decane
+  drainage, paired with segmented images (train and test), plus two 1536x1536x160 volumes for inference.
+landing_url: https://zenodo.org/records/17982424
+doi: 10.5281/zenodo.17982424
+repository: Zenodo
+accession: '17982424'
+authors:
+- Mathew, Eric Sonny
+- Camilleri, Michael
+- Zheng, Quan
+- NIU, YUFU
+- Brandstätter, Bianca
+- Tang, Kunning
+- Mostaghimi, Peyman
+- Armstrong, Ryan
+- Jackson, Samuel
+publications:
+- title: Deep learning assisted processing of synchrotron-based micro-CT imaging of fast, dynamic multiphase flow
+    in porous media (SCA2025-1030)
+  doi: null
+  url: https://jgmaas.com/SCA/2025/SCA_2025_1030.pdf
+date_published: '2025-12-19'
+imaging:
+  modality:
+  - X-ray
+  dimensionality: 2D
+  voxel_size_nm: null
+  channels: 1
+  organism: []
+  sample: Bentheimer sandstone, water-wet and mixed-wet, decane/brine drainage coreflooding
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  size_bytes: 981545012
+  n_items: 50
+  access: open
+  download_url: https://zenodo.org/records/17982424
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: 'Per-slice uint8 TIFF named like the gray slice with _seg; values {1, 2} (two classes: decane vs grain+brine,
+    mapping not stated for these files)'
+  source: automatic
+ml:
+  tasks:
+  - segmentation
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-literature
+  discovered_at: '2026-11-25T14:00:00Z'
+  evidence_urls:
+  - https://zenodo.org/records/17982424
+  - https://zenodo.org/api/records/17982424
+  - https://zenodo.org/records/17982424/files/MW_test_1_0_gray.tif?download=1
+  - https://jgmaas.com/SCA/2025/SCA_2025_1030.pdf
+  - https://zenodo.org/api/records/24521749
+  confidence: 0.65
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-11-25T14:50:00Z'
+notes: 'File listing (API): 48 gray/seg slice pairs (train and test, MW and WW) and two unlabeled 1536x1536x160
+  8-bit inference volumes (377 MB each); n_items = 48 pairs + 2 volumes = 50. Rock micro-CT (Bentheimer sandstone),
+  not biological, so organism is empty. enricher: annotations.source automatic (was unknown): the SCA2025-1030 paper
+  says the labels are Trainable WEKA random-forest output, trained on expert-selected patches. enricher: channels
+  1 from the TIFF headers (was null). Voxel size left null: the paper states "3.6µm resolution" but never says voxel
+  or pixel size.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  98 files, 981.5 MB\n  MW_train_*_gray.tif / MW_train_*_seg.tif\n  MW_test_*_gray.tif / MW_test_*_seg.tif\n\
+      \  WW_train_*_gray.tif / WW_train_*_seg.tif\n  WW_test_*_gray.tif / WW_test_*_seg.tif     (48 gray + 48 seg,\
+      \ 2,359,552 B each)\n  Inference_Mixed-wet_drainage_fb21.tif    377,514,010 B\n  Inference_Water-wet_drainage_fb30.tiff\
+      \   377,514,010 B\n"
+    n_files: 98
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/17982424/files/MW_test_1_0_gray.tif
+    - https://zenodo.org/records/17982424/files/MW_test_1_0_seg.tif
+    size_bytes: 4719104
+    description: One mixed-wet test slice (gray) and its WEKA segmentation (seg)
+  arrays:
+  - role: raw
+    path_pattern: '*_gray.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 1536
+    - 1536
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: rescaled
+    alignment: not-applicable
+    alignment_notes: 'Single-page 2D TIFF slices. The paper: the 16-bit reconstructions were normalized to 8 bit
+      and then cropped to 1536x1536x160.'
+  - role: label
+    path_pattern: '*_seg.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 1536
+    - 1536
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 1
+    - 2
+    normalization: unknown
+    encoding: semantic-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Pairing: same file name with _seg in place of _gray; same shape. Two values {1, 2}. Classes
+      are decane and grain+brine per the record description, but which value is which is not stated (the companion
+      record 24521749 uses 0 = decane and 1 = grain+brine for its own files).'
+  - role: raw
+    path_pattern: Inference_*
+    format: tiff
+    axes: null
+    shape:
+    - 160
+    - 1536
+    - 1536
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range: null
+    normalization: rescaled
+    alignment: not-applicable
+    alignment_notes: Unlabeled 160-page volumes used for inference. The page axis is z per the paper (1536x1536x160
+      voxels, slices), but the files do not state it, so axes stays null.
+  notes: 'Listing: Zenodo, 98 files, 981,545,012 B exact. Probed MW_test_1_0_gray/seg (uint8 1536x1536, uncompressed,
+    shaped TIFF yx) and Inference_Mixed-wet_drainage_fb21.tif (160 pages of 1536x1536 uint8, axes not stated). Sampled
+    two pairs (MW_test_1_0, MW_test_1_1_9_100): raw uint8 [0, 255] in MW_test_1_1_9_100 (p1 0, p50 157, p99.9 254;
+    zeros likely outside the core), label {1,2} in both. Value ranges are from those samples. normalization rescaled:
+    the paper says the 16-bit data were normalized to 8 bit. Voxel size: the SCA2025-1030 paper says "scans of 3.6µm
+    resolution" (23.5 keV, magnification 1.806) and never says voxel/pixel size, so it is left null. Also checked:
+    TIFF headers (no calibration), Zenodo descriptions of 17982424 and 24521749. Direct per-file Zenodo links; no
+    single archive.'
