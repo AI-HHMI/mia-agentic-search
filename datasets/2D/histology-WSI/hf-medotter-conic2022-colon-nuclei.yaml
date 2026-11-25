@@ -1,0 +1,177 @@
+schema_version: '1.2'
+id: hf-medotter-conic2022-colon-nuclei
+title: CoNIC 2022 (Colon Nuclei Identification and Counting), public training split
+short_name: CoNIC colon H&E nuclei, 6 classes (histology)
+description: 4,981 non-overlapping 256x256 H&E patches of colon tissue at 20x (~0.5 um/pixel) with 431,913 annotated nuclei
+  - instance maps, 6-class nucleus labels (neutrophil, epithelial, lymphocyte, plasma, eosinophil, connective) and per-class
+  counts for the central 224x224 region. Public training split of the CoNIC 2022 challenge, re-tiled from the Lizard dataset;
+  hosted as a Hugging Face mirror.
+landing_url: https://huggingface.co/datasets/MedOtter/CoNIC2022
+doi: null
+repository: HuggingFace
+accession: null
+authors: []
+publications:
+- title: 'CoNIC Challenge: Pushing the frontiers of nuclear detection, segmentation, classification and counting'
+  doi: 10.1016/j.media.2023.103047
+  url: https://doi.org/10.1016/j.media.2023.103047
+date_published: '2026-06-27'
+imaging:
+  modality:
+  - histology-WSI
+  dimensionality: 2D
+  voxel_size_nm:
+    x: 500
+    y: 500
+    z: null
+  channels: 3
+  organism:
+  - Homo sapiens
+  sample: colon tissue sections (H&E)
+  labels_stains:
+  - hematoxylin and eosin
+data:
+  formats:
+  - other
+  size_bytes: 699825302
+  n_items: 4981
+  access: open
+  download_url: https://huggingface.co/datasets/MedOtter/CoNIC2022
+  download_method: git-lfs
+annotations:
+  present: true
+  types:
+  - instance-segmentation
+  - classification
+  - counts
+  coverage: dense
+  format: 'Parquet columns: image (RGB uint8 256x256), inst_map (uint16 instance IDs, 0 = background), class_map (uint8: 1
+    neutrophil, 2 epithelial, 3 lymphocyte, 4 plasma, 5 eosinophil, 6 connective), count_* per class (central 224x224)'
+  source: proofread
+ml:
+  tasks:
+  - segmentation
+  - classification
+  splits_provided: false
+  benchmark: CoNIC 2022
+  baseline_code_url: null
+license:
+  spdx: CC-BY-NC-SA-4.0
+  url: https://huggingface.co/datasets/MedOtter/CoNIC2022/raw/main/README.md
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-11-25T05:17:23Z'
+  evidence_urls:
+  - https://huggingface.co/datasets/MedOtter/CoNIC2022
+  - https://huggingface.co/api/datasets/MedOtter/CoNIC2022
+  - https://huggingface.co/datasets/MedOtter/CoNIC2022/raw/main/README.md
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1016%2Fj.media.2023.103047%22&format=json&resultType=core&pageSize=3
+  - https://huggingface.co/api/datasets/MedOtter/CoNIC2022/tree/main/data
+  - https://datasets-server.huggingface.co/info?dataset=MedOtter/CoNIC2022
+  - https://arxiv.org/html/2111.14485v1
+  - https://arxiv.org/html/2108.11195v1
+  confidence: 0.85
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-11-25T06:52:00Z'
+notes: 'Third-party mirror (MedOtter) of the public CoNIC 2022 training split; the challenge test set is held out. Patches
+  are a re-tiled subset of Lizard (in the catalog as a Kaggle mirror): CRAG 2,304, DigestPath 1,799, GlaS 702, PanNuke 112,
+  CoNSeP 64; deduplicate by source image before co-benchmarking. Files are 4 Parquet shards with embedded PNGs; Parquet is
+  not in the format enum, hence other. Pixel size ~0.5 um from the card and the Lizard paper (20x, "~0.5 um/pixel"; approximate).
+  enricher: organism Homo sapiens from the Lizard paper (image regions from patients; was empty). enricher: annotations.source
+  proofread: Lizard paper, automatic/semi-automatic predictions refined with pathologist-in-the-loop (was unknown). enricher:
+  license.url = dataset card; CoNIC preprint also states CC BY-NC-SA.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "CoNIC2022/  6 files, 699,833,094 B (Hub API tree, exact)\n  README.md  .gitattributes\n  data/train-0000{0-3}-of-00004.parquet\
+      \   4 shards, 169,750,682 - 182,520,415 B\nparquet columns: image (Image), inst_map (Image), class_map (Image), patch_id\
+      \ (int32),\n  patch_info (string), source (string), count_{neutrophil,epithelial,lymphocyte,plasma,eosinophil,connective}\
+      \ (int32)\n4,981 rows (datasets-server /info: train split, num_examples 4981)\n"
+    n_files: 6
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/MedOtter/CoNIC2022/resolve/main/data/train-00002-of-00004.parquet
+    size_bytes: 169750682
+    description: Smallest Parquet shard (about a quarter of the 4,981 rows; each row holds an image, its instance map and
+      class map). There is no smaller file unit.
+  arrays:
+  - role: raw
+    path_pattern: data/train-*.parquet
+    format: other
+    axes: yxs
+    shape:
+    - 256
+    - 256
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    value_range:
+    - 17
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Column "image": PNG bytes inside Parquet; IHDR of the first embedded PNG in shard 0 = 256x256, 8-bit,
+      colour type 2 (RGB). Card: H&E patch, uint8.'
+  - role: label
+    path_pattern: data/train-*.parquet
+    format: other
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint16
+    compression: png
+    value_range:
+    - 0
+    - 145
+    encoding: instance-ids
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Column "inst_map", one per row, same 256x256 grid as "image" (sample: same spatial grid). Card: per-patch
+      unique nucleus ID, 0 = background; row 0 has 145 nuclei.'
+  - role: label
+    path_pattern: data/train-*.parquet
+    format: other
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: png
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: neutrophil
+    - id: 2
+      name: epithelial
+    - id: 3
+      name: lymphocyte
+    - id: 4
+      name: plasma
+    - id: 5
+      name: eosinophil
+    - id: 6
+      name: connective
+    alignment: same-grid
+    alignment_notes: 'Column "class_map", per-pixel nucleus class (card table). Pairing: image, inst_map and class_map are
+      columns of the same row. Per-class counts (count_*) are for the central 224x224 region only.'
+  notes: 'Hub API tree lists 6 files with exact sizes, 699,833,094 B = size_bytes (harvester had 699,825,302 B, the datasets-server
+    download_size). Data are 4 Parquet shards with embedded PNG images; Parquet is not a schema format and is not read by
+    TensorSwitch, so arrays use format other. pyarrow is not on the allowed list, so Parquet pages were not decoded: a 64
+    KB range read of shard 0 found the first embedded PNG (256x256, 8-bit RGB). Values come from one row (row 0, consep_1-0000)
+    as rendered by the HF datasets-server: image (JPEG rendition) uint8 RGB 17..255; inst_map (16-bit PNG) uint16 0..145,
+    146 values. class_map is rendered as lossy JPEG by the viewer (9 distinct values incl. artefacts), so its value range
+    was not recorded; class ids are from the card. Download: each shard is a direct Hub URL (passes --download-check, xet
+    CDN redirect, range requests); no single archive, so download_url stays the dataset page. Voxel size: ~0.5 um/pixel (card;
+    Lizard paper Sec. 3.1), lateral only, 2D data.'
+  inspected_at: '2026-11-25T06:52:00Z'
