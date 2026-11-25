@@ -2,9 +2,7 @@ schema_version: '1.2'
 id: zenodo-21298293-ciproseg-ecoli-phase-contrast
 title: 'CiproSeg: Annotated Phase-Contrast Time-Lapse Microscopy Data and Reproducibility Resources for Escherichia coli Under Ciprofloxacin and Silica-Particle Conditions'
 short_name: E. coli antibiotic segmentation (phase-contrast)
-description: 289 phase-contrast time-lapse microscopy frames of Escherichia coli with 289 corresponding manually prepared binary
-  foreground masks, from four conditions (control and ciprofloxacin-treated, each with and without silica particles). Also
-  includes per-sequence pixel calibration, component-level measurement tables and pretrained U-Net checkpoints (leave-one-series-out).
+description: 289 phase-contrast time-lapse microscopy frames of Escherichia coli with 289 corresponding manually prepared binary foreground masks, from four conditions (control and ciprofloxacin-treated, each with and without silica particles). Also includes per-sequence pixel calibration, component-level measurement tables and pretrained U-Net checkpoints (leave-one-series-out).
 landing_url: https://zenodo.org/records/21298293
 doi: 10.5281/zenodo.21298293
 repository: Zenodo
@@ -20,11 +18,8 @@ imaging:
   modality:
   - phase-contrast
   dimensionality: 2D+t
-  voxel_size_nm:
-    x: 107.9
-    y: 107.9
-    z: null
-  channels: null
+  voxel_size_nm: null
+  channels: 1
   organism:
   - Escherichia coli
   sample: E. coli cells imaged in time-lapse under four conditions (plain/crowded with silica particles, with and without ciprofloxacin)
@@ -61,10 +56,65 @@ provenance:
   - https://zenodo.org/api/records/21298293
   - https://zenodo.org/api/records/21298293/files/README.md/content
   - https://github.com/manazucd/CiproSeg
+  - https://zenodo.org/records/21298293/files/CiproSeg_v1.0.0.zip
   confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-25T17:10:00Z'
-notes: 'Zenodo date is ''2026/2027'' (date_published null). Peeked CiproSeg_v1.0.0.zip: dataset/images|masks/<condition>/NN.tif for 4 conditions (289 pairs per README), calibration_metadata.csv, component_tables/*.csv. Masks are binary foreground; touching cells not separated. Pixel size varies by sequence/frame (0.1079, 0.1064, 0.2046 then 0.1070, 0.2041 then 0.2040 um); voxel_size_nm is the first condition, see calibration_metadata.csv. No publication on the Zenodo record or GitHub repo, so no paper was read; microscope, strain, image size and annotation tool not stated. Models zip (1.36 GB, U-Net checkpoints) is separate; size_bytes is the data zip. No split files (authors use leave-one-condition-out). Code/checkpoints Apache-2.0.'
+  last_checked: '2026-11-25T18:05:00Z'
+notes: 'Zenodo date is ''2026/2027'' (date_published null). Masks are binary foreground; touching cells not separated. No publication on the Zenodo record or GitHub repo; microscope, strain and annotation tool not stated. Models zip (1.36 GB, U-Net checkpoints, Apache-2.0) is separate; size_bytes is the data zip. No split files (authors use leave-one-condition-out). enricher: voxel size set to null (was 107.9 nm, first series only): pixel size differs per subset, README + dataset/calibration_metadata.csv: controlnonsilica 0.1079 um; treatednonsilica 0.1064; controlsilica 00-39 0.2046, 40-84 0.1070; treatedsilica 00-49 0.2041, 50-99 0.2040. enricher: channels 1 (grey stored as RGB, samples identical). Frame size varies per series.'
+technical:
+  method: sample
+  size_source: page-stated
+  layout:
+    tree: "CiproSeg_v1.0.0/   (zip members use backslash separators)\n  CHANGELOG.md  CITATION.cff  LICENSE  README.md  zenodo.json\n  configs/config.yaml\n  component_tables/   3 CSV, 45.7 MB\n  dataset/\n    calibration_metadata.csv\n    images/\n      controlnonsilica/   50 tif (00-49)\n      controlsilica/      85 tif (00-84)\n      treatednonsilica/   54 tif (00-53)\n      treatedsilica/     100 tif (00-99)\n    masks/   same 4 folders and filenames as images/ (289 tif)"
+    n_files: 590
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/21298293/files/CiproSeg_v1.0.0.zip::CiproSeg_v1.0.0\dataset\images\controlsilica\00.tif
+    - https://zenodo.org/records/21298293/files/CiproSeg_v1.0.0.zip::CiproSeg_v1.0.0\dataset\masks\controlsilica\00.tif
+    size_bytes: 463058
+    description: one phase-contrast frame (controlsilica/00.tif, 446x512) and its binary mask
+  arrays:
+  - role: raw
+    path_pattern: CiproSeg_v1.0.0/dataset/images/*/*.tif
+    format: tiff
+    axes: yxs
+    shape:
+    - 446
+    - 512
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: lzw
+    value_range:
+    - 0
+    - 254
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'grey stored as RGB (3 identical samples, tools/sample.py samples_identical true). Frame sizes vary: 537x573 (controlnonsilica, treatednonsilica), 446x512 and 968x1292 (controlsilica), 668x448 (treatedsilica). Compression varies: lzw (silica series), none (nonsilica series).'
+  - role: label
+    path_pattern: CiproSeg_v1.0.0/dataset/masks/*/*.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 446
+    - 512
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 255
+    normalization: none
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: bacterial foreground (E. coli)
+    alignment: same-grid
+    alignment_notes: 'pairing: masks/<condition>/<NN>.tif belongs to images/<condition>/<NN>.tif (README: same filename and condition). Same y,x shape as the raw frame in every probed pair.'
+  notes: 'Listing from the zip central directory (peek_archive): 590 members, 384.3 MB uncompressed, 133,064,429 B zip (Zenodo API size, page-stated; the 1.36 GB models zip is not counted). value_range from one sample pair (controlsilica/00). The ImageJ-written frames (controlnonsilica, treatednonsilica) carry a stale ImageJ header (images=50 / 54, slices) but contain one page each (member size = 1 RGB frame), so axes are yxs, not zyxs. Each file is one time point; frame sizes differ within controlsilica (00-39 vs 40-84), so frames of a series are not stackable without resampling. Voxel size differs per subset (see notes); not set. ImageJ header calibration matches README (0.1079, 0.1064 um); LZW-written frames carry no calibration.'
