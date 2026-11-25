@@ -9,19 +9,28 @@ landing_url: https://zenodo.org/records/24348931
 doi: 10.5281/zenodo.24348931
 repository: Zenodo
 accession: '24348931'
-authors: []
+authors:
+- Wiesner, Theresa
+- Bilodeau, Anthony
+- Beaupré, Frédéric
+- Lavoie-Cardinal, Flavie
 publications:
 - title: A Self-Supervised Foundation Model for Robust and Generalizable Representation Learning in STED Microscopy
   doi: 10.1101/2025.06.06.656993
   url: https://www.biorxiv.org/content/10.1101/2025.06.06.656993
+- title: Activity-Dependent Remodeling of Synaptic Protein Organization Revealed by High Throughput Analysis of
+    STED Nanoscopy Images
+  doi: 10.3389/fncir.2020.00057
+  url: https://doi.org/10.3389/fncir.2020.00057
 date_published: '2026-11-18'
 imaging:
   modality:
   - super-resolution
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
-  organism: []
+  channels: 1
+  organism:
+  - Rattus norvegicus
   sample: Fixed cultured hippocampal neurons immunolabelled for PSD95, treated with activity-modulating solutions
   labels_stains:
   - PSD95
@@ -29,9 +38,9 @@ data:
   formats:
   - other
   size_bytes: 2197800960
-  n_items: 8726
+  n_items: 8707
   access: open
-  download_url: null
+  download_url: https://zenodo.org/records/24348931
   download_method: http
 annotations:
   present: true
@@ -59,15 +68,100 @@ provenance:
   - https://zenodo.org/api/records/24348931
   - https://zenodo.org/records/24348931/files/NAS_PSD95_test_v2.tar?download=1
   - https://www.biorxiv.org/content/biorxiv/early/2026/01/08/2025.06.06.656993.source.xml
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7594516/fullTextXML
+  - https://www.biorxiv.org/content/10.1101/2025.06.06.656993v2.full
   confidence: 0.6
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-25T13:30:00Z'
-notes: 'Three tars (train 1.52 GB, valid 0.30 GB, test 0.38 GB). Members read from the first 4 MB of the test tar
-  are named <condition>-PSD95-<i>, 251,881 bytes each, consistent with a 224x224 float32 image plus uint8 mask (loader
-  on the record page reads image, mask, metadata keys; inferred, not opened). n_items = total bytes / member size,
-  an estimate (~1513 test, 6034 train, 1179 valid). Classes are the loader defaults. Not stated on the record or
-  in the paper text (tools/paper.py): what the masks delineate, who made them, pixel size, species. Paper also releases
-  a separate ~1M-image unlabeled STED-FM set.'
+  last_checked: '2026-11-25T14:30:00Z'
+notes: 'Three tars (train/valid/test) of uncompressed .npz members <condition>-PSD95-<i>, each with image (224x224
+  float32), mask (224x224 uint8, 0/1) and a pickled metadata dict. Classes are the loader defaults (Block, 0MgGlyBic,
+  GluGly, 48hTTX). enricher: organism Rattus norvegicus from the upstream paper (Zenodo relation isVariantFormOf
+  10.3389/fncir.2020.00057: dissociated rat hippocampal neurons) (was empty). enricher: n_items 8707 = 1510 test
+  + 6021 train + 1176 valid, from tar sizes with uniform 251,881 B members (was 8726). enricher: channels 1 from
+  sampled arrays (was null). Mask meaning and annotation source not stated; voxel size null (upstream STED images
+  15 nm/px, not confirmed for the crops).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "NAS_PSD95_train_v2.tar  1.52 GB  ~6021 members\nNAS_PSD95_valid_v2.tar  0.30 GB  ~1176 members\nNAS_PSD95_test_v2.tar\
+      \   0.38 GB  ~1510 members\n  each member: <condition>-PSD95-<i> (.npz, 251,881 B): image.npy, mask.npy, metadata.npy\n"
+    n_files: 3
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/api/records/24348931/files/NAS_PSD95_valid_v2.tar/content
+    size_bytes: 296847360
+    description: Validation split tar (~1176 crops, image + mask in each .npz member), the smallest file. Raw and
+      label live in the same npz members inside a tar.
+  arrays:
+  - role: raw
+    path_pattern: NAS_PSD95_*_v2.tar
+    format: other
+    axes: null
+    shape:
+    - 224
+    - 224
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - 0.0
+    - 0.3674
+    normalization: rescaled
+    alignment: not-applicable
+    alignment_notes: Key image in each npz member of the tars (npz = uncompressed zip of .npy). 2D single-channel
+      crop; axis names not stated in the files or docs.
+  - role: label
+    path_pattern: NAS_PSD95_*_v2.tar
+    format: other
+    axes: null
+    shape:
+    - 224
+    - 224
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 1
+    normalization: unknown
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: Key mask in the same npz member as image, same shape. What the mask delineates (foreground
+      / PSD95 clusters) is not stated.
+  - role: label
+    path_pattern: NAS_PSD95_*_v2.tar
+    format: other
+    axes: null
+    shape: null
+    shape_varies: false
+    dtype: unknown
+    compression: none
+    value_range: null
+    normalization: unknown
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: Block
+    - id: 1
+      name: 0MgGlyBic
+    - id: 2
+      name: GluGly
+    - id: 3
+      name: 48hTTX
+    alignment: not-applicable
+    alignment_notes: 'Per-image condition class: the member name prefix and metadata["condition"] (pickled dict,
+      not opened). Ids are the index in the loader default classes list on the Zenodo page.'
+  notes: 'Listing: Zenodo, 3 files, 2,197,800,960 B exact. Sampled the first 1 MiB of the test tar (range request):
+    3 members, each npz with image (224,224) float32, value range [0, 0.367] in member 0 (one sample; values are
+    multiples of ~0.001626), mask (224,224) uint8 {0,1}. metadata.npy is a pickled object and was not loaded (np.load
+    allow_pickle=False). Member counts derived from tar sizes, assuming uniform member size (consistent with tar
+    10240-byte record padding for all three). Voxel size not found; checked: npz headers (none), Zenodo API description,
+    STED-FM preprint full text (no NAS pixel size), upstream paper Wiesner 2020 (STED pixel size 15 nm, but the
+    224x224 crops may be resampled; not confirmed). TensorSwitch cannot read npz members inside a tar; data stays
+    not convertible as is.'
