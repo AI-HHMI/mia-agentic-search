@@ -2,7 +2,10 @@ schema_version: '1.2'
 id: zenodo-6004986-imc-melanoma-chemokine-raw
 title: Multiplexed Imaging Mass Cytometry of Chemokine Milieus in Metastatic Melanoma - Raw Data
 short_name: Melanoma chemokine imaging mass cytometry
-description: Raw multiplexed imaging mass cytometry (IMC) data of metastatic melanoma tissue, with RNA plus protein and protein-only panels, an exhaustion-stain validation set and a 12-plex RNAscope validation set (HeLa and A431 cells). The archive holds multichannel TIFFs with spillover correction, ilastik-based cell masks and tumor masks, CellProfiler projects and outputs, and per-cell intensity tables.
+description: Raw multiplexed imaging mass cytometry (IMC) data of metastatic melanoma tissue, with RNA plus protein and protein-only
+  panels, an exhaustion-stain validation set and a 12-plex RNAscope validation set (HeLa and A431 cells). The archive holds
+  multichannel TIFFs with spillover correction, ilastik-based cell masks and tumor masks, CellProfiler projects and outputs,
+  and per-cell intensity tables.
 landing_url: https://zenodo.org/records/6004986
 doi: 10.5281/zenodo.6004986
 repository: Zenodo
@@ -15,7 +18,8 @@ authors:
 - Julia Martínez-Gómez
 - Mitchell Levesque
 publications:
-- title: Multiplexed imaging mass cytometry of the chemokine milieus in melanoma characterizes features of the response to immunotherapy
+- title: Multiplexed imaging mass cytometry of the chemokine milieus in melanoma characterizes features of the response to
+    immunotherapy
   doi: 10.1126/sciimmunol.abk1692
   url: https://doi.org/10.1126/sciimmunol.abk1692
 date_published: '2022-02-08'
@@ -27,13 +31,14 @@ imaging:
   channels: null
   organism:
   - Homo sapiens
-  sample: Metastatic melanoma tissue sections plus HeLa and A431 cell-line validation samples, imaged by multiplexed imaging mass cytometry
+  sample: Metastatic melanoma tissue sections plus HeLa and A431 cell-line validation samples, imaged by multiplexed imaging
+    mass cytometry
   labels_stains: []
 data:
   formats:
   - tiff
-  size_bytes: 17930600000
-  n_items: 432
+  size_bytes: 17930564179
+  n_items: 345
   access: open
   download_url: https://zenodo.org/records/6004986/files/full_data.zip
   download_method: http
@@ -41,8 +46,11 @@ annotations:
   present: true
   types:
   - instance-segmentation
+  - semantic-segmentation
   coverage: dense
-  format: Cell, nuclei and tumor mask TIFFs (ilastik probability based) with CellProfiler outputs and per-cell CSV tables
+  format: 'uint16 TIFF masks per image: cell instance masks (cpout/*_cellmask.tiff, final; tiffs/ has initial ones), nuclei
+    masks and tumor masks (tiffs/*_tumorMask_s2_Probabilities_mask.tiff); steinbock masks/ for the exhaustion stain; ilastik
+    probability maps and per-cell CSV tables'
   source: automatic
 ml:
   tasks:
@@ -60,10 +68,190 @@ provenance:
   - https://zenodo.org/records/6004986
   - https://zenodo.org/records/6004986/files/full_data.zip
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1126%2Fsciimmunol.abk1692%22&format=json&resultType=core&pageSize=3
-  confidence: 0.55
+  - https://zenodo.org/api/records/6004986
+  - https://zenodo.org/api/records/5994136
+  - https://www.biorxiv.org/content/biorxiv/early/2021/07/29/2021.07.29.454093.source.xml
+  - https://github.com/BodenmillerGroup/MelanomaIMC
+  confidence: 0.65
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-25T03:20:00Z'
-notes: Imaging mass cytometry is not in the modality enum, so modality is other. Masks are automatically generated (ilastik pixel probabilities plus CellProfiler), not manual, so this is raw data with derived masks rather than a curated ground-truth set. Archive listing via peek_archive reports 4133 files (432 TIFF, 226 CSV, 28 HDF5) and 17.9 GB compressed (73.6 GB uncompressed); n_items counts the TIFFs and may include both multichannel images and masks. Pixel size, channel counts and number of ROIs are not stated on the Zenodo page; the paper is not open access (Europe PMC gave only the abstract), so Methods were not read. Organism is inferred from the abstract (melanoma patient samples) and the HeLa/A431 lines named on the Zenodo page.
+  last_checked: '2026-11-25T03:50:00Z'
+notes: 'Imaging mass cytometry is not in the modality enum, so modality is other. Masks are automatic (ilastik pixel probabilities
+  + CellProfiler; preprint Methods), not manual. Pixel size is not stated on Zenodo, in the preprint Methods (Hyperion, 400
+  Hz ablation) or the GitHub README. Channels differ per panel (RNA 41, protein 47 per *_full.csv; exhaustion 37), so channels
+  is null. Organism: Homo sapiens for all sets (patient TMA; HeLa and A431 lines in 12plex_validation). enricher: n_items
+  345 = multichannel images in rna/cpout (166), protein/cpout (167) and exhaustion_stain/img (12), from the listing (was 432);
+  12plex_validation images not counted. enricher: size 17.9 GB = the one zip, from the file listing.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./                                                        1 files     17.9 GB  .zip\nzip contents:\nfull_data.zip/full_data/\n\
+      \  12plex_validation/HeLa/#_measurements/   (×3 dirs)        3 files      1.4 KB  .csv\n  12plex_validation/HeLa/#_measurements/Analysis/\
+      \ (×2 dirs)        3 files    909.9 KB  .ilp 2, .csv 1\n  12plex_validation/HeLa/#_measurements/Analysis/cp_scripts/\
+      \ (×2 dirs)        4 files      6.4 MB  .cpproj\n  12plex_validation/HeLa/#_measurements/Analysis/cpout/ (×3 dirs) \
+      \      52 files     47.8 MB  .tiff 37, .csv 15\n  12plex_validation/HeLa/#_measurements/Analysis/tiffs/ (×3 dirs)  \
+      \    200 files    771.0 MB  .tiff 114, .csv 58, .h5 28\n  12plex_validation/overexpression/20190305_measurements/  \
+      \                1 files       498 B  .csv\n  12plex_validation/overexpression/20190305_measurements/Analysis/     \
+      \             1 files      1.4 MB  .ilp\n  12plex_validation/overexpression/20190305_measurements/Analysis/cp_scripts/\
+      \                  2 files      3.7 MB  .cpproj\n  12plex_validation/overexpression/20190305_measurements/Analysis/cpout/\
+      \                 56 files    238.9 MB  .tiff 52, .csv 4\n  12plex_validation/overexpression/20190305_measurements/Analysis/tiffs/\
+      \                157 files    437.7 MB  .tiff 105, .csv 52\n  12plex_validation/overexpression/20190306_measurements/\
+      \                  1 files       498 B  .csv\n  12plex_validation/overexpression/20190306_measurements/Analysis/   \
+      \               1 files    869.0 KB  .ilp\n  12plex_validation/overexpression/20190306_measurements/Analysis/cp_scripts/\
+      \                  2 files      2.6 MB  .cpproj\n  12plex_validation/overexpression/20190306_measurements/Analysis/cpout/\
+      \                 12 files     39.6 MB  .tiff 8, .csv 4\n  12plex_validation/overexpression/20190306_measurements/Analysis/tiffs/\
+      \                138 files    416.7 MB  .tiff 90, .csv 48\n  12plex_validation/overexpression/20190306_measurements/spillover/\
+      \                  4 files     14.5 KB  .rmd 2, .r 1, .csv 1\n  12plex_validation/overexpression/20190306_measurements/spillover/20190306_TH_spillover_12channel/\
+      \                 15 files     92.0 MB  .txt 12, .jpeg 1, .schema 1, .mcd 1\n  exhaustion_stain/                   \
+      \                      2 files      1.7 KB  .csv 1, .steinbock_version 1\n  exhaustion_stain/img/                  \
+      \                  12 files    948.4 MB  .tiff\n  exhaustion_stain/intensities/                            12 files\
+      \     30.8 MB  .csv\n  exhaustion_stain/masks/                                  12 files     12.8 MB  .tiff\n  exhaustion_stain/raw/\
+      \                                     1 files      1.4 GB  .zip\n  exhaustion_stain/regionprops/                   \
+      \         12 files      4.3 MB  .csv\n  protein/config/                                           1 files      2.8 KB\
+      \  .csv\n  protein/cp_scripts/                                       3 files      4.0 MB  .cpproj\n  protein/cpout/\
+      \                                          339 files     19.9 GB  .tiff 334, .csv 5\n  protein/tiffs/              \
+      \                           1339 files     17.8 GB  .tiff 1003, .csv 336\n  rna/config/                            \
+      \                   1 files      1.9 KB  .csv\n  rna/cp_scripts/                                           4 files \
+      \     4.7 MB  .cpproj\n  rna/cpout/                                              337 files     16.4 GB  .tiff 332, .csv\
+      \ 5\n  rna/tiffs/                                             1330 files     15.0 GB  .tiff 997, .csv 333\n  (+75 version-control\
+      \ / OS metadata files not shown)"
+    n_files: 1
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/6004986/files/full_data.zip::full_data/exhaustion_stain/img/20210915_ZTMA256_exhaustion_stain_DS_20.tiff
+    - https://zenodo.org/records/6004986/files/full_data.zip::full_data/exhaustion_stain/masks/20210915_ZTMA256_exhaustion_stain_DS_20.tiff
+    size_bytes: 58346728
+    description: 'One exhaustion-stain TMA core: 37-channel float32 IMC stack (steinbock img/) and its cell instance mask'
+  arrays:
+  - role: raw
+    path_pattern: '*.zip/full_data/{rna,protein}/cpout/*_full_spillcor.tiff'
+    format: tiff
+    axes: cyx
+    shape:
+    - 41
+    - 894
+    - 1012
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 2725
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Spillover-corrected stack with all channels (Zenodo description). Pages are channels; channel/metal order
+      in tiffs/<stem>_full.csv (41 in the RNA panel, 47 in the protein panel). Image size varies per TMA core.
+  - role: raw
+    path_pattern: '*.zip/full_data/{rna,protein}/tiffs/*_ac_full.tiff'
+    format: tiff
+    axes: cyx
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: unknown
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Uncorrected stack with all acquired channels (Zenodo description), same grid as cpout/<stem>_full_spillcor.tiff;
+      not sampled (its header sits past the probe range of the deflated member).
+  - role: label
+    path_pattern: '*.zip/full_data/{rna,protein}/cpout/*_cellmask.tiff'
+    format: tiff
+    axes: yx
+    shape:
+    - 894
+    - 1012
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 5665
+    encoding: instance-ids
+    classes:
+    - id: null
+      name: cell
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: cpout/<stem>_ac_full_spillcor.tiff pairs with cpout/<stem>_ac_ilastik_s2_Probabilities_equalized_cellmask.tiff
+      (same <date>_ZTMA256.1_slide<n>_TH_s<n>_p<n>_r<n>_a<n> stem); same yx grid in the sample (894x1012). Final cell mask
+      (Zenodo description); 5665 cells in the sample.'
+  - role: label
+    path_pattern: '*.zip/full_data/{rna,protein}/tiffs/*_equalized_nucleimask.tiff'
+    format: tiff
+    axes: yx
+    shape:
+    - 925
+    - 1167
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    encoding: unknown
+    classes:
+    - id: null
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: Nuclei mask per image, same stem as tiffs/<stem>_ac_full.tiff; header probed only (925x1167).
+  - role: label
+    path_pattern: '*.zip/full_data/{rna,protein}/tiffs/*_tumorMask_s2_Probabilities_mask.tiff'
+    format: tiff
+    axes: yx
+    shape:
+    - 925
+    - 1167
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    encoding: unknown
+    classes:
+    - id: null
+      name: tumor region
+    alignment: same-grid
+    alignment_notes: 'Tumor-region mask per image (Zenodo: tumorMask = channel order, probabilities and mask used to define
+      tumor regions); header probed only.'
+  - role: raw
+    path_pattern: '*.zip/full_data/exhaustion_stain/img/*.tiff'
+    format: tiff
+    axes: cyx
+    shape:
+    - 37
+    - 592
+    - 657
+    shape_varies: true
+    dtype: float32
+    compression: none
+    value_range:
+    - 0.0
+    - 477.96
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: steinbock layout (Zenodo); channel order in exhaustion_stain/panel.csv (keep=1 rows).
+  - role: label
+    path_pattern: '*.zip/full_data/exhaustion_stain/masks/*.tiff'
+    format: tiff
+    axes: yx
+    shape:
+    - 592
+    - 657
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 2904
+    encoding: instance-ids
+    classes:
+    - id: null
+      name: cell
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: img/<name>.tiff pairs with masks/<name>.tiff; same yx grid in the sample (592x657); 2904
+      cells.'
+  notes: 'Value ranges are from one sample per set (rna/cpout p4_r25 pair, exhaustion DS_20 pair). TIFF compression none:
+    probed masks report none, and the sampled raw members are exactly header + C*Y*X*bytes in size. Raw axes cyx from the
+    docs (pages = channels; tifffile reports QYX for cpout, CYX for steinbock img). Not sampled: tiffs/*_full.tiff, nuclei
+    and tumor masks (encoding unknown), 12plex_validation (HeLa, A431; ilastik masks, h5 probabilities). Voxel size not found;
+    checked: TIFF headers (no calibration), Zenodo API (6004986, 5994136), panel/full CSVs, preprint full text Methods (Hyperion,
+    400 Hz; no pixel size), GitHub README; Science Immunology paper not open access. Direct download: the single Zenodo zip
+    (usable; members via zip::member).'
