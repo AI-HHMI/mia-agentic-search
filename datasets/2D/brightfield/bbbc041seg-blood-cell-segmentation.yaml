@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: bbbc041seg-blood-cell-segmentation
 title: 'BBBC041Seg: blood cell segmentation dataset'
 short_name: BBBC041Seg blood-smear cell masks (brightfield)
-description: 1,328 images of Giemsa-stained P. vivax thin blood smears (from BBBC041)
-  with pixel-level instance segmentation ground-truth masks for uninfected (RBC, leukocyte)
-  and infected cells (gametocyte, ring, trophozoite, schizont); ~93.5k labeled objects.
-  1,169 train / 159 test per Dataset Ninja.
+description: 1,328 images of Giemsa-stained P. vivax thin blood smears (from BBBC041), each with a pixel-level binary
+  cell segmentation mask covering uninfected (RBC, leukocyte) and infected cells (gametocyte, ring, trophozoite,
+  schizont); the released masks carry no per-class or per-instance IDs. ~93.5k objects and a 1,169 train / 159 test
+  split per Dataset Ninja.
 landing_url: https://github.com/Deponker/Blood-cell-segmentation-dataset
 doi: null
 repository: GitHub
@@ -21,8 +21,7 @@ authors:
 - M. Sohel Rahman
 - M.R.C. Mahdy
 publications:
-- title: 'Automatic segmentation of blood cells from microscopic slides: A comparative
-    analysis'
+- title: 'Automatic segmentation of blood cells from microscopic slides: A comparative analysis'
   doi: 10.1016/j.tice.2021.101653
   url: https://doi.org/10.1016/j.tice.2021.101653
 date_published: '2021-04-24'
@@ -31,7 +30,7 @@ imaging:
   - brightfield
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 3
   organism:
   - Homo sapiens
   - Plasmodium vivax
@@ -40,22 +39,24 @@ imaging:
 data:
   formats:
   - png
-  size_bytes: null
+  - jpeg
+  size_bytes: 2302833298
   n_items: 1328
   access: open
-  download_url: null
-  download_method: other
+  download_url: https://drive.usercontent.google.com/download?id=1nG-ra6BPAZSTsdYCvedzCo-JLD7jdH71&export=download&confirm=t
+  download_method: http
 annotations:
   present: true
   types:
-  - instance-segmentation
+  - semantic-segmentation
   coverage: dense
-  format: PNG masks
+  format: PNG binary foreground masks (0/255, grey stored as 3-channel RGB), one per image, same file stem as the
+    image
   source: unknown
 ml:
   tasks:
   - segmentation
-  splits_provided: true
+  splits_provided: false
   benchmark: BBBC041Seg
   baseline_code_url: https://github.com/Deponker/Blood-cell-segmentation
 license:
@@ -68,15 +69,99 @@ provenance:
   - https://github.com/Deponker/Blood-cell-segmentation-dataset
   - https://datasetninja.com/blood-cell-segmentation
   - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A%2210.1016%2Fj.tice.2021.101653%22&format=json&resultType=core&pageSize=3
-  confidence: 0.6
+  - https://drive.google.com/file/d/1nG-ra6BPAZSTsdYCvedzCo-JLD7jdH71/view
+  - https://drive.usercontent.google.com/download?id=1nG-ra6BPAZSTsdYCvedzCo-JLD7jdH71&export=download&confirm=t
+  - https://bbbc.broadinstitute.org/BBBC041
+  confidence: 0.7
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-11-25T09:18:10Z'
-notes: Data hosted on Google Drive linked from the GitHub README (not directly fetchable,
-  so file formats/layout were not listed; png inferred from README sample images and
-  Dataset Ninja). Paper is not open access (abstract only read); pixel size, microscope
-  and annotation procedure not found. Annotation source unknown. Dataset Ninja lists
-  1,169 train/159 test; split per Dataset Ninja only. Images come from BBBC041; differs
-  from existing BBBC041 detection record by providing instance masks.
+  annotations_verified: true
+  last_checked: '2026-11-25T10:20:00Z'
+notes: 'Images come from BBBC041 (whose page states CC BY-NC-SA 3.0 for its images); the GitHub README states MIT
+  for this repository. Differs from the BBBC041 detection record by providing masks. Paper not open access (abstract
+  only); pixel size, microscope and annotation procedure not found, so annotations.source unknown. enricher: masks
+  are binary foreground (0/255), no per-cell IDs or classes in the files, so types semantic-segmentation (was instance-segmentation,
+  from Dataset Ninja''s re-hosted version). enricher: splits_provided false (was true): the release zip has no train/test
+  folders; the 1,169/159 split is Dataset Ninja''s. enricher: formats png + jpeg (119 images are JPEG), channels
+  3 (RGB), size and direct link from the Google Drive zip. organisms: both in every image (P. vivax parasites within
+  human blood), not separable by folder.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "Final data.zip                         (2.30 GB, 2656 files, 2.31 GB uncompressed; Google Drive)\n  Final\
+      \ data/Final data/New folder/\n    Original/  <uuid>.png  (1209 RGB images)\n    Original/  <uuid>.jpg  (119\
+      \ RGB images)\n    Mask/      <uuid>.png  (1328 binary masks, same stem as the image)\n"
+    n_files: 2656
+    listing_complete: true
+  sample:
+    urls:
+    - https://drive.usercontent.google.com/download?id=1nG-ra6BPAZSTsdYCvedzCo-JLD7jdH71&export=download&confirm=t::Final
+      data/Final data/New folder/Original/010961af-b38c-49de-aca0-e3732d73d414.jpg
+    - https://drive.usercontent.google.com/download?id=1nG-ra6BPAZSTsdYCvedzCo-JLD7jdH71&export=download&confirm=t::Final
+      data/Final data/New folder/Mask/010961af-b38c-49de-aca0-e3732d73d414.png
+    size_bytes: 323118
+    description: one JPEG image (1383x1944 RGB) and its binary mask PNG, same grid
+  arrays:
+  - role: raw
+    path_pattern: Final data/Final data/New folder/Original/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1200
+    - 1600
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0.0
+    - 255.0
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: RGB brightfield (Giemsa) images; value_range from one sampled image. Shapes vary between files
+      (1200x1600 and 1383x1944 seen).
+  - role: raw
+    path_pattern: Final data/Final data/New folder/Original/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 1383
+    - 1944
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 25.0
+    - 170.0
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 119 of the 1328 images are JPEG; value_range from one sampled image.
+  - role: label
+    path_pattern: Final data/Final data/New folder/Mask/*.png
+    format: png
+    axes: yxs
+    shape:
+    - 1383
+    - 1944
+    - 3
+    shape_varies: true
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0.0
+    - 255.0
+    encoding: binary
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'Mask/<uuid>.png pairs with Original/<uuid>.png or .jpg (same stem); shapes match the image
+      in both sampled pairs. Masks are grey stored as RGB: all 3 samples identical in both sampled masks, values
+      {0,255}.'
+  notes: 'Listed the one Google Drive zip via range requests (peek_archive: 2656 members, 1328 masks + 1209 png
+    + 119 jpg images). Probed 4 members; sampled 2 masks, 1 jpg and 1 png image (1.6 MB). Masks binary 0/255 RGB-grey,
+    so no per-cell instance IDs or cell-type classes in the release. Voxel size not found; checked: PNG/JPEG headers
+    (no calibration), GitHub README, BBBC041 page, Dataset Ninja page, Europe PMC (paper not open access, no preprint
+    found on arXiv). Direct link: drive.usercontent.google.com download URL with confirm=t (range requests work)
+    is not on TensorSwitch''s host allowlist yet.'
