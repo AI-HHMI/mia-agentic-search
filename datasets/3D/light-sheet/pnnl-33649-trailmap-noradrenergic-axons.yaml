@@ -1,11 +1,10 @@
 schema_version: '1.2'
 id: pnnl-33649-trailmap-noradrenergic-axons
-title: Expert-annotated noradrenergic axon cubes from cleared mouse brain (SmartSPIM light-sheet), TrailMap
-  fine-tuning data
+title: Expert-annotated noradrenergic axon cubes from cleared mouse brain (SmartSPIM light-sheet), TrailMap fine-tuning data
 short_name: Mouse noradrenergic axons 3D labels (light-sheet)
 description: Light-sheet (LifeCanvas SmartSPIM) image cubes from cleared mouse brain with virally labeled locus coeruleus
-  noradrenergic axons and sparse expert axon annotations, released with the TrailMap fine-tuning study. Nine labeled
-  160-voxel cubes with padded 188-voxel source cubes; every 20th section annotated manually.
+  noradrenergic axons and sparse expert axon annotations, released with the TrailMap fine-tuning study. Nine labeled 160-voxel
+  cubes with padded 188-voxel source cubes; every 20th section annotated manually.
 landing_url: https://data.pnnl.gov/group/nodes/dataset/33649
 doi: 10.25584/2308772
 repository: other
@@ -24,8 +23,8 @@ authors:
 - Tianyi Mao
 - Bobbie-Jo M. Webb-Robertson
 publications:
-- title: 'Fine-tuning TrailMap: The utility of transfer learning to improve the performance of deep learning in axon
-    segmentation of light-sheet microscopy images'
+- title: 'Fine-tuning TrailMap: The utility of transfer learning to improve the performance of deep learning in axon segmentation
+    of light-sheet microscopy images'
   doi: 10.1371/journal.pone.0293856
   url: https://pmc.ncbi.nlm.nih.gov/articles/PMC10980229
 date_published: null
@@ -45,8 +44,8 @@ imaging:
   - GFP/tdTomato anti-RFP/anti-GFP immunolabeling (Alexa 594/647)
 data:
   formats:
-  - other
-  size_bytes: 746400000
+  - tiff
+  size_bytes: 746393600
   n_items: 9
   access: open
   download_url: https://g-83fdd0.1beed.03c0.data.globus.org/cartuids/35673_0c53b3d59f81fa6a68b0a33ffee87d5b.tar
@@ -56,7 +55,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: sparse
-  format: binary label images exported from TrakEM2 (AreaList), plus TrailMap edge labels
+  format: 'TIFF label volumes (160^3 uint8), TrailMap legend: 0 unlabeled, 1 background, 2 axon, 3 artifact, 4 axon edge (edges
+    added by TrailMap script)'
   source: manual
 ml:
   tasks:
@@ -66,7 +66,7 @@ ml:
   baseline_code_url: https://github.com/pnnl/brain_ohsu
 license:
   spdx: BSD-2-Clause
-  url: null
+  url: https://data.pnnl.gov/group/nodes/dataset/33649
 provenance:
   discovered_by: harvest-literature
   discovered_at: '2026-11-26T22:17:38Z'
@@ -74,14 +74,84 @@ provenance:
   - https://data.pnnl.gov/group/nodes/dataset/33649
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10980229/fullTextXML
   - https://doi.org/10.1371/journal.pone.0293856
-  confidence: 0.6
+  - https://raw.githubusercontent.com/AlbertPun/TRAILMAP/master/README.md
+  - https://raw.githubusercontent.com/pnnl/brain_ohsu/main/README.md
+  - https://g-83fdd0.1beed.03c0.data.globus.org/cartuids/35673_0c53b3d59f81fa6a68b0a33ffee87d5b.tar
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-11-26T22:17:38Z'
-notes: 'Voxel size from paper Methods (x/y sampling 1.866 um, z step 2 um). n_items=9 is the number of labeled cubes
-  stated in the paper; the tar (about 746 MB, served via Globus) could not be listed with peek_archive, so file
-  formats, the exact label file format and the file layout are unverified (formats set to other). Paper says labels are
-  sparse: every 20th section starting at slice 15 of each cube. License on the data page: Simplified BSD (Battelle,
-  2023). The archive also contains model weights, TF logs and result tables. Date published not stated on the page.'
+  annotations_verified: true
+  last_checked: '2026-11-26T23:10:00Z'
+notes: 'Voxel size from paper Methods (x/y 1.866 um, z step 2 um); TIFF headers agree. Paper: labels sparse, every 20th section
+  from slice 15 of each cube. License: Simplified BSD (Battelle 2023), stated on the data page and in README_data.md. The
+  tar also holds model weights, TF logs, inference results and xlsm result tables. Date published not stated on the page.
+  enricher: formats [tiff] from inspected files (was other); annotations verified from 2 sampled label cubes; size_bytes 746,393,600
+  from the tar Content-Length (was ~746.4 MB); label legend from TrailMap README.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "35673_0c53b3d59f81fa6a68b0a33ffee87d5b.tar (746,393,600 B, one file)\n└── 35673_0c53b3d59f81fa6a68b0a33ffee87d5b.tar/\n\
+      \    ├── README_data.md\n    ├── data.zip (79,901,663 B)\n    │   └── data/\n    │       ├── volumes/cube{1..9}_188.tif\
+      \ (9 x 13.3 MB)\n    │       └── labels/cube{1..9}_label.tif (9 x 4.1 MB)\n    ├── all_tf_files.zip (20.0 MB, TensorFlow\
+      \ logs)\n    ├── results_orignal_model.zip (94.0 MB)\n    ├── results_rotation_model.zip (93.5 MB)\n    ├── rotation_model.tar\
+      \ (458.6 MB, model weights)\n    ├── segment_total_results.xlsm\n    ├── segment_total_results_validation_final.xlsm\n\
+      \    └── .DS_Store / ._* macOS metadata files"
+    n_files: 19
+    listing_complete: true
+  sample: null
+  arrays:
+  - role: raw
+    path_pattern: data/volumes/cube*_188.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 188
+    - 188
+    - 188
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 12
+    - 31476
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: ImageJ hyperstack, 188 slices; header calibration 1.866 x 1.866 um, spacing 2 um
+  - role: label
+    path_pattern: data/labels/cube*_label.tif
+    format: tiff
+    axes: zyx
+    shape:
+    - 160
+    - 160
+    - 160
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 4
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: unlabeled
+    - id: 1
+      name: background
+    - id: 2
+      name: axon
+    - id: 3
+      name: artifact
+    - id: 4
+      name: axon edge
+    alignment: cropped
+    alignment_notes: 'cubeN_label.tif pairs with cubeN_188.tif. The label is the central 160^3 of the 188^3 input: 14-voxel
+      offset on every axis (brain_ohsu README: 188 px input predicts 160 px output, 14-pixel offset). Only slices 14, 34,
+      ..., 154 (0-based) carry labels; all others are 0.'
+  notes: 'Listed by walking the outer tar headers with byte-range GETs (58 requests; 19 entries, complete). data.zip (79.9
+    MB) was downloaded by byte range from inside the tar and opened locally: 9 volumes + 9 labels (plus __MACOSX entries).
+    Probed and measured cube1 and cube5 (raw + label); value ranges are from these two cubes. Raw normalization not documented.
+    Labels observed {0,1,2,4}; class 3 (artifact) is in the TrailMap legend but not seen in the sample. No sample.urls: the
+    data are only reachable inside the outer tar (TensorSwitch reads zip members, not tar members), and host g-83fdd0.1beed.03c0.data.globus.org
+    is not on the TensorSwitch allowlist. The rest of the tar is model weights, logs and results, not training data.'
