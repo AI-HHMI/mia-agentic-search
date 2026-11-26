@@ -1,0 +1,149 @@
+schema_version: '1.2'
+id: zenodo-14043236-subvfi-subcellular-timelapse
+title: Preprocessed simulated and real subcellular live-cell time-lapse data for SuB-VFI video frame interpolation
+short_name: Subcellular live-cell time-lapse (fluorescence)
+description: Preprocessed dataset for SuB-VFI, a temporal frame-interpolation method for live-cell subcellular imaging.
+  Contains a large simulated training set (ISBI Particle Tracking Challenge style MICROTUBULE, RECEPTOR and VESICLE
+  time series at SNR 7 and different densities, TIFF frames plus XML track files), a simulated test set, and a small
+  set of real fluorescence time-lapse frames (CCR5, EB1, lysosome) taken from earlier publications.
+landing_url: https://zenodo.org/records/14043236
+doi: 10.5281/zenodo.14043236
+repository: Zenodo
+accession: '14043236'
+authors:
+- Zhang, Zixian
+publications:
+- title: Subcellular behavior model enables highly precise temporal super-resolved live-cell imaging
+  doi: 10.21203/rs.3.rs-6612059/v1
+  url: https://doi.org/10.21203/rs.3.rs-6612059/v1
+date_published: '2024-11-06'
+imaging:
+  modality:
+  - fluorescence-other
+  dimensionality: 2D+t
+  voxel_size_nm: null
+  channels: null
+  organism: []
+  sample: null
+  labels_stains: []
+data:
+  formats:
+  - tiff
+  - ome-tiff
+  size_bytes: 7827232491
+  n_items: 36807
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - tracking
+  coverage: dense
+  format: 'Particle tracks as XML: ISBI 2012 Particle Tracking Challenge ground truth (<S> snr 7 density <d>.xml,
+    simulated sets) and TrackMate v7.12.2 exports (_Tracks.xml, real sets and simulated test)'
+  source: mixed
+ml:
+  tasks:
+  - other
+  - tracking
+  splits_provided: true
+  benchmark: null
+  baseline_code_url: https://github.com/sduzzx857/SuB-VFI
+license:
+  spdx: CC-BY-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+provenance:
+  discovered_by: harvest-repositories
+  discovered_at: '2026-11-26T00:57:39Z'
+  evidence_urls:
+  - https://zenodo.org/api/records/14043236
+  - https://zenodo.org/records/14043236
+  - https://github.com/sduzzx857/SuB-VFI
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=TITLE%3A%22Subcellular+behavior+model+enables+highly+precise+temporal+super-resolved+live-cell+imaging%22&format=json&resultType=core&pageSize=3
+  confidence: 0.55
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-11-26T02:20:00Z'
+notes: 'Training data are simulated (SIMULATED-train.zip, 7.7 GB, 36000 TIFF frames and 18 XML files; test and real
+  splits are in separate zips). The REAL.zip (207 TIFF, 6 XML) re-packages frames from published videos (CCR5 eLife
+  Video4, EB1 Movie2, lysosome Zenodo 10.5281/zenodo.10076346). Main use is training temporal frame interpolation
+  (listed as task other); XML files are particle tracks, and whether they are simulator ground truth or TrackMate
+  output was not stated. Pixel size, frame counts, and the simulation parameters are not stated on the Zenodo page,
+  GitHub README, or the paper abstract; the paper full text is not open access (Research Square preprint). enricher:
+  annotations.source mixed: simulator ground truth (TrackContestISBI2012 XML) for SIMULATED sets, TrackMate v7.12.2
+  output (_Tracks.xml) for REAL; n_items = 36,807 TIFF frames from zip listing (was null).'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "REAL.zip/REAL/{CCR5,EB1,LYSOSOME}/{train,test}/   207 .tif frames + 6 _Tracks.xml (43 MB uncompressed)\n\
+      \  CCR5/test 50 tif, CCR5/train 50, EB1/test 34, EB1/train 34, LYSOSOME/test 19, LYSOSOME/train 20\nSIMULATED-test.zip/test/{MICROTUBULE,RECEPTOR,VESICLE}/<S>\
+      \ snr 7 density {low,high}/\n  6 dirs x (100 .tif \"<S> snr 7 density <d> t000 z0.tif\" + \"<S> snr 7 density\
+      \ <d>.xml\" + _Tracks.xml)\nSIMULATED-train.zip/train/{MICROTUBULE,RECEPTOR,VESICLE}/<S> snr 7 density {low,high}\
+      \ {1,2,3}/\n  18 dirs x (2000 .tif \"<S> snr 7 density <d> t0000 z0.tif\" + \"<S> snr 7 density <d>.xml\"\
+      )\n"
+    n_files: 36843
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/14043236/files/REAL.zip::REAL/CCR5/test/frame0051.tif
+    - https://zenodo.org/records/14043236/files/REAL.zip::REAL/CCR5/test/_Tracks.xml
+    size_bytes: 422206
+    description: One real CCR5 test frame (496x496 uint8) and the TrackMate track file of that sequence (zip members
+      of REAL.zip, 12 MB).
+  arrays:
+  - role: raw
+    path_pattern: '*.zip/*/*/*/*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 512
+    - 512
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 2
+    - 98
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: One 2D frame per TIFF; time index in the file name (t000 / t0000 / frameNNNN). Simulated frames
+      are OME-TIFF 512x512, real CCR5 frames plain TIFF 496x496.
+  - role: label
+    path_pattern: SIMULATED-*.zip/*/*/*/* snr 7 density *.xml
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: tracks-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: 'ISBI 2012 particle-tracking ground truth: <particle><detection t x y z/> in pixel coordinates
+      of the frames in the same folder (one XML per sequence).'
+  - role: label
+    path_pattern: '*.zip/*/*/*/_Tracks.xml'
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    value_range: null
+    encoding: tracks-table
+    classes: null
+    alignment: same-grid
+    alignment_notes: TrackMate v7.12.2 export (Tracks/particle/detection t x y z, spaceUnits blank = pixels) for
+      the frames in the same folder; automatic tracking, present for REAL sets and SIMULATED-test.
+  notes: 'Listing: tools/listing.py on the 3 Zenodo zips (expand-zips): 36,843 members, 7,827,232,491 B compressed
+    total, exact. value_range [2,98] from one simulated test frame (MICROTUBULE density low t000); real CCR5 frame0051
+    range [0,224]. Voxel size not found; checked: OME-TIFF header (no physical size), Zenodo API record, GitHub
+    README, XML headers (spaceUnits blank), paper (Research Square preprint, full text not open). Organism not set:
+    simulated data have none; real sets come from CCR5 (eLife 76281), EB1 (Curr Biol 2000) and lysosome (Zenodo
+    10076346) publications, not read in this run. No single archive for the whole dataset: 3 direct zips at https://zenodo.org/records/14043236/files/{SIMULATED-train,SIMULATED-test,REAL}.zip
+    (range requests OK).'
