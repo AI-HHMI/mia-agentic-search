@@ -41,7 +41,7 @@ data:
   formats:
   - nd2
   - tiff
-  size_bytes: 36970168320
+  size_bytes: 35257460307
   n_items: 2253
   access: open
   download_url: https://zenodo.org/records/19326705/files/mmd_dataset.zip
@@ -51,8 +51,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: partial
-  format: 'masks as TIFF in hela_annotations/ (separate "nucleus" and "actin" file groups, about 453 each, only for the
-    untreated hela set); no mask format details read'
+  format: binary uint8 TIFF masks (0/255, 1024x1024, ImageJ) in hela_annotations/nucleus/ and hela_annotations/actin/,
+    one per untreated hela/ image (453 each)
   source: unknown
 ml:
   tasks:
@@ -70,13 +70,119 @@ provenance:
   evidence_urls:
   - https://zenodo.org/records/19326705
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13745575/fullTextXML
-  confidence: 0.7
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-26T12:35:00Z'
+  last_checked: '2026-11-26T13:10:00Z'
 notes: 'peek_archive of mmd_dataset.zip (3,183 members): 2,268 nd2 in hela/nocodazole/taxol/rac1_inhibitor/y27632/metadata, 906 tif in
   hela_annotations/ (nucleus, actin; apparently untreated hela only), 2 csv. Pixel size 0.109 um (60x oil) is from
-  the paper Methods. Z-stacks are on Harvard Dataverse (10.7910/DVN/8ONQQG), not in this record. Meaning of the actin masks
-  and the annotation procedure not confirmed. Dataset CC BY 4.0 per Zenodo; the article itself is CC BY-NC-ND.'
+  the paper (measured with a USAF target; Methods also state 0.108 um/pixel, ND2/TIFF headers 0.10833 um). Z-stacks are on Harvard Dataverse (10.7910/DVN/8ONQQG), not in this record. Meaning of the actin masks
+  and the annotation procedure not confirmed. Dataset CC BY 4.0 per Zenodo; the article itself is CC BY-NC-ND.
+  enricher: size 35,257,460,307 B from the Zenodo file listing (was 36,970,168,320); annotations.format from probed masks.
+  coverage: only the 453 untreated hela/ images have masks; nocodazole/taxol/rac1_inhibitor/y27632 (450 each) are
+  unlabelled apart from their treatment folder.'
+technical:
+  method: sample
+  inspected_at: '2026-11-26T13:10:00Z'
+  inspected_urls:
+  - https://zenodo.org/records/19326705
+  - https://zenodo.org/records/19326705/files/mmd_dataset.zip
+  bytes_downloaded: 16856435
+  size_source: file-listing
+  layout:
+    tree: |
+      mmd_dataset.zip (35.3 GB, 3183 members) / mmd_dataset/
+        hela/                      453 .nd2  (11.2 GB)  untreated control cells
+        hela_annotations/actin/    453 .tif  (475 MB)   *_Actin.tif
+        hela_annotations/nucleus/  453 .tif  (475 MB)   *_Nucleus.tif
+        metadata/                  22 .nd2 (blank/background images) + 2 .csv (1.4 GB)
+        nocodazole/                450 .nd2  (11.1 GB)
+        rac1_inhibitor/            450 .nd2  (11.1 GB)
+        taxol/                     450 .nd2  (11.1 GB)
+        y27632/                    450 .nd2  (11.1 GB)
+    n_files: 3183
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/19326705/files/mmd_dataset.zip::mmd_dataset/hela/sample1_x60_11channel001.nd2
+    - https://zenodo.org/records/19326705/files/mmd_dataset.zip::mmd_dataset/hela_annotations/nucleus/sample1_x60_11Channel001_Nucleus.tif
+    - https://zenodo.org/records/19326705/files/mmd_dataset.zip::mmd_dataset/hela_annotations/actin/sample1_x60_11Channel001_Actin.tif
+    size_bytes: 26739288
+    description: Untreated HeLa cell sample1_x60_11channel001, its 11-channel ND2 (24.6 MB) and the nucleus and actin
+      masks of the same cell (1 MB each).
+  arrays:
+  - role: raw
+    path_pattern: mmd_dataset/{hela,nocodazole,taxol,rac1_inhibitor,y27632}/*.nd2
+    format: nd2
+    axes: cyx
+    shape:
+    - 11
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: uint16
+    compression: unknown
+    lossy: false
+    chunks: null
+    value_range:
+    - 73
+    - 4095
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'ND2 channel order (from the file metadata): mmd_confocal_cy5, mmd_confocal_tritc, mmd_confocal_fitc,
+      mmd_wf_cy5, mmd_wf_tritc, mmd_wf_fitc, mmd_tirf_cy5, mmd_tirf_tritc, mmd_tirf_fitc, RICM, mmd_bf. ND2 pixel size
+      0.10833 um. Only hela/ has masks; the treatment folders are labelled by folder only.'
+  - role: label
+    path_pattern: mmd_dataset/hela_annotations/nucleus/*_Nucleus.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: 255
+      name: nucleus
+    alignment: same-grid
+    alignment_notes: 'Pairs by name, ignoring case and the suffix (hela/sample1_x60_11channel001.nd2 ↔ hela_annotations/nucleus/sample1_x60_11Channel001_Nucleus.tif);
+      same 1024x1024 grid as the ND2 planes, ImageJ calibration 0.10833 um. Rule checked on the listing''s examples only.'
+  - role: label
+    path_pattern: mmd_dataset/hela_annotations/actin/*_Actin.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1024
+    - 1024
+    shape_varies: null
+    dtype: uint8
+    compression: none
+    lossy: false
+    chunks: null
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    encoding: binary
+    classes:
+    - id: 255
+      name: 'cell footprint (folder actin/; paper: masks for nuclei and footprint)'
+    alignment: same-grid
+    alignment_notes: Same pairing rule as the nucleus masks (suffix _Actin). 13% foreground in the sample, consistent with a
+      whole-cell footprint mask.
+  notes: 'Value ranges from one sample each (raw ND2 per channel min/max: 77-4095, 73-2271, 74-775, 91-2316, 141-4095,
+    122-947, 73-1160, 87-749, 79-489, 1411-2744, 551-1345; 12-bit range, saturated at 4095 in two channels). Nucleus mask
+    2.6% foreground, actin mask 13%. ND2 read with the nd2 package in a scratch script. Annotation procedure: the paper
+    describes cell masks made by thresholding the confocal Cy5 channel in Fiji (Technical Validation) but does not say
+    how the released masks were made, so annotations.source stays unknown. Not convertible yet: 2D records are outside
+    the miao layout, and voxel z is n/a for 2D.'
