@@ -2,7 +2,11 @@ schema_version: '1.2'
 id: mendeley-dp5jgrkd6k-photoacoustic-vessel-orpam
 title: Photoacoustic vascular image dataset (OR-PAM microvessel segmentation, mouse)
 short_name: Mouse microvessel segmentation (OR-PAM)
-description: Optical-resolution photoacoustic microscopy (OR-PAM) images of mouse microvasculature (normal ear vessels and tumor vessels) released for microvessel segmentation. Per the Mendeley page the normal-vessel set has 69 images (48 for training/validation, 21 for testing); the tumor-vessel set is also included. The associated paper (WSA-MP-Net) describes ground-truth masks produced by a semi-automatic method (adaptive histogram equalization + k-means + Canny, then manual correction) on 256x256 maximum-amplitude-projection images.
+description: Optical-resolution photoacoustic microscopy (OR-PAM) images of mouse microvasculature (normal ear vessels
+  and tumor vessels) released for microvessel segmentation. Per the Mendeley page the normal-vessel set has 69 images
+  (48 for training/validation, 21 for testing); the tumor-vessel set is also included. The associated paper (WSA-MP-Net)
+  describes ground-truth masks produced by a semi-automatic method (adaptive histogram equalization + k-means +
+  Canny, then manual correction) on 256x256 maximum-amplitude-projection images.
 landing_url: https://data.mendeley.com/datasets/dp5jgrkd6k/2
 doi: 10.17632/dp5jgrkd6k.2
 repository: other
@@ -12,7 +16,8 @@ authors:
 - Jialing Yu
 - Chengbo Liu
 publications:
-- title: 'WSA-MP-Net: Weak-signal-attention and multi-scale perception network for microvascular extraction in optical-resolution photoacoustic microcopy'
+- title: 'WSA-MP-Net: Weak-signal-attention and multi-scale perception network for microvascular extraction in optical-resolution
+    photoacoustic microcopy'
   doi: 10.1016/j.pacs.2024.100600
   url: https://doi.org/10.1016/j.pacs.2024.100600
 date_published: '2024-03-18'
@@ -21,15 +26,17 @@ imaging:
   - other
   dimensionality: 2D
   voxel_size_nm: null
-  channels: null
+  channels: 1
   organism:
   - Mus musculus
-  sample: Mouse ear vasculature (normal) and subcutaneous Hep G2 hepatoma tumor vasculature, imaged in vivo with a lab-built OR-PAM (532 nm)
+  sample: Mouse ear vasculature (normal) and subcutaneous Hep G2 hepatoma tumor vasculature, imaged in vivo with
+    a lab-built OR-PAM (532 nm)
   labels_stains: []
 data:
   formats:
-  - other
-  size_bytes: null
+  - png
+  - hdf5
+  size_bytes: 2790769167
   n_items: 69
   access: open
   download_url: null
@@ -39,8 +46,8 @@ annotations:
   types:
   - semantic-segmentation
   coverage: dense
-  format: null
-  source: mixed
+  format: PNG binary masks (0/255), one per MAP image, in groundtruth/ folders parallel to image/
+  source: proofread
 ml:
   tasks:
   - segmentation
@@ -49,17 +56,91 @@ ml:
   baseline_code_url: null
 license:
   spdx: CC-BY-4.0
-  url: null
+  url: http://creativecommons.org/licenses/by/4.0
 provenance:
   discovered_by: harvest-websearch
   discovered_at: '2026-11-26T18:19:07Z'
   evidence_urls:
   - https://data.mendeley.com/datasets/dp5jgrkd6k/2
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10955652/fullTextXML
-  confidence: 0.55
+  - https://data.mendeley.com/public-api/datasets/dp5jgrkd6k/files?folder_id=root&version=2
+  confidence: 0.75
 verification:
   url_ok: true
   license_found: true
-  annotations_verified: false
-  last_checked: '2026-11-26T18:19:07Z'
-notes: 'Imaging modality is photoacoustic microscopy (OR-PAM), which has no schema enum value, so modality is other. The Mendeley page shows no file listing (only a "Download All" button), so file formats, size, pixel size and the exact annotation files could not be verified; formats is other as a placeholder. n_items 69 is the normal-vessel image count stated on the page (the tumor set count is not stated there). The paper reports 660 (normal) and 1168 (tumor) augmented 256x256 image pairs, so the Mendeley contents may differ from the paper. Pixel/voxel size not stated on the dataset page or in the paper Methods. The paper cites version 1 of the dataset (10.17632/dp5jgrkd6k.1); this record is version 2. Annotation source is mixed: semi-automatic then manual correction.'
+  annotations_verified: true
+  last_checked: '2026-11-26T19:20:00Z'
+notes: 'Imaging modality is photoacoustic microscopy (OR-PAM), no schema enum value, so modality is other. Labelled
+  data: ear_vessel_dataset.zip, 69 normal-vessel MAP images (train 48 in 6 patches, test 21 in 4 patches) with binary
+  masks; the tumor-vessel set is only in Raw data.zip as an unlabelled 3D MATLAB v7.3 (HDF5) volume, as is the 3D
+  normal-vessel volume. The paper reports 660/1168 augmented pairs; the Mendeley release holds the 69 un-augmented
+  pairs. enricher: formats png+hdf5 from file listing (was other); size from Mendeley file API (was null); annotations.source
+  proofread: paper says semi-automatic GT then fine manual modification (was mixed); channels 1 from PNG headers.
+  Pixel size not stated on the page, file API or paper. The paper cites dataset v1; this record is v2.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "ear_vessel_dataset.zip  (1,355,415 B, 138 PNG)\n  ear_vessel_data/train/image/patch_{1,2,3,4,5,7}/{1..8}.png\
+      \        48 MAP images\n  ear_vessel_data/train/groundtruth/patch_{1,2,3,4,5,7}/{1..8}.png  48 masks\n  ear_vessel_data/test/image/patch_{6,8,9,10}/<n>.png\
+      \               21 MAP images\n  ear_vessel_data/test/groundtruth/patch{6,8,9,10}/<n>.png          21 masks\
+      \ (no underscore)\nRaw data.zip  (2,789,413,752 B)\n  Raw data/3D normal vessel data.mat   1,490,861,644 B\
+      \ (MATLAB v7.3 / HDF5)\n  Raw data/3D tumor vessel data.mat    1,300,689,991 B (MATLAB v7.3 / HDF5)\n2 files\
+      \ (140 members), 2,790,769,167 B\n"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.mendeley.com/public-files/datasets/dp5jgrkd6k/files/2bd72dfc-b693-445a-9230-187e863143a4/file_downloaded::ear_vessel_data/train/image/patch_1/1.png
+    - https://data.mendeley.com/public-files/datasets/dp5jgrkd6k/files/2bd72dfc-b693-445a-9230-187e863143a4/file_downloaded::ear_vessel_data/train/groundtruth/patch_1/1.png
+    size_bytes: 6475
+    description: One normal-vessel MAP image and its mask (zip members of ear_vessel_dataset.zip; the whole zip
+      is 1.4 MB).
+  arrays:
+  - role: raw
+    path_pattern: ear_vessel_dataset.zip::ear_vessel_data/*/image/*/*.png
+    format: png
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Maximum amplitude projections of 3-5 depth slices of 256x256 sub-volumes (paper 2.5.1).
+  - role: label
+    path_pattern: ear_vessel_dataset.zip::ear_vessel_data/*/groundtruth/*/*.png
+    format: png
+    axes: yx
+    shape:
+    - 256
+    - 256
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 0
+    - 255
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 255
+      name: vessel
+    alignment: same-grid
+    alignment_notes: image/patch_K/N.png pairs with groundtruth/patch_K/N.png (train) or groundtruth/patchK/N.png
+      (test, no underscore); both 256x256 in the sampled pairs.
+  notes: 'Listed via the Mendeley public file API (2 files, exact sizes) and both zip central directories. Probed
+    train/image/patch_1/1.png and groundtruth/patch_1/1.png: PNG gray uint8 256x256 deflate. Sampled 2 pairs (23,894
+    B): raw 0..255, 90-97% zeros (one sample each; hint full range, normalization left unknown); masks {0,255}.
+    Raw data .mat headers read: "MATLAB 7.3 MAT-file ... HDF5 schema 1.00"; they are deflated inside a 2.8 GB zip,
+    so their HDF5 dataset names and shapes were not read (paper: normal 1568x625x200 px, tumor 990x1760x98 px).
+    They carry no labels and are not listed as arrays. No single archive for the whole dataset: two direct files
+    (ear_vessel_dataset.zip, Raw data.zip) via data.mendeley.com/public-files/... (S3 redirect, range requests OK).
+    voxel size not found; checked: PNG headers, Mendeley dataset API, zip listings (no README), paper full text
+    (Methods 2.4/2.5; OR-PAM system only by reference [26], 2013 system paper not for these scans).'
