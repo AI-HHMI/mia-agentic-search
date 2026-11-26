@@ -23,7 +23,7 @@ imaging:
     x: 1380
     y: 1380
     z: null
-  channels: null
+  channels: 1
   organism:
   - Homo sapiens
   sample: WM266.4 human melanoma cells, 10x objective, 24 h, one frame every 10 min; frames 1392x1040 px, single channel
@@ -34,7 +34,7 @@ data:
   size_bytes: 1775001605
   n_items: 4
   access: open
-  download_url: https://zenodo.org/api/records/24560656/files/CSHP_Tracking%20Protocol%20files.zip/content
+  download_url: https://zenodo.org/records/24560656/files/CSHP_Tracking%20Protocol%20files.zip
   download_method: http
 annotations:
   present: true
@@ -42,7 +42,7 @@ annotations:
   - instance-segmentation
   - tracking
   coverage: dense
-  format: Curated mask TIFF stacks (*-masks.tif), TrackMate XML sessions and CSV (spots, tracks, edges); Cellpose training TIFFs with *_masks.tif and *_seg.npy
+  format: Curated float32 mask TIFF stacks (*-masks.tif, instance IDs per frame), TrackMate XML sessions and CSV (spots, tracks, edges); Cellpose training TIFFs with uint16 *_masks.tif and *_seg.npy
   source: proofread
 ml:
   tasks:
@@ -61,12 +61,113 @@ provenance:
   - https://zenodo.org/api/records/24560656
   - https://zenodo.org/records/24560656/files/README.md
   - https://zenodo.org/api/records/24560656/files/CSHP_Tracking%20Protocol%20files.zip/content
+  - https://zenodo.org/records/24560656
   confidence: 0.75
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-26T13:55:38Z'
+  last_checked: '2026-11-26T15:15:00Z'
 notes: 'Single zip (1.8 GB, 121 files) listed with peek_archive: 16 TIFFs (movies and masks), 4 TrackMate XML sessions, CSV tables, 5 Cellpose .npy files, a 1.2 GB Cellpose model and PDF plots. README says
   each condition has a single repeat and the data demonstrates a protocol workflow (not for biological inference); Cellpose training set is 4 images with masks. Pixel size 1.38 um/px from README. Protocol
-  paper (Cold Spring Harb Protoc 2026) has no DOI on the record, so no paper was read.'
+  paper (Cold Spring Harb Protoc 2026) has no DOI on the record, so no paper was read. enricher: movie/mask axes tyx and dtypes from samples.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "./  2 files, 1.8 GB (README.md, CSHP_Tracking Protocol files.zip: 121 members, 5.6 GB uncompressed)\nCSHP_Tracking Protocol files.zip/CSHP_Tracking Protocol files/\n  Example-experiment/\n  \
+      \  Control/R1/        Well A2_13.tif (movie), Well A2_13-masks.tif, WellA2_13-masks.xml, Well A2_{spots,tracks,edges}.csv\n    Condition 1/R1/    Well_A4_01.tif, Well_A4_01-masks.tif, Well_A4_01-masks.xml,\
+      \ Well_A4_*.csv\n    Condition 2/R1/    Well A5_03.tif, Well A5_03-masks.tif, WellA5_03-masks.xml, Well A5_*.csv\n    Condition 3/R1/    Well A3_01.tif, Well A3_01-masks.tif, WellA3_01-masks.xml,\
+      \ Well A3_*.csv\n  Cellpose/\n    training_data/     4 x <timestamp>.tif + <timestamp>_masks.tif + <timestamp>_seg.npy (134.7 MB)\n    models/            cpsam_20260429_152355 (1.2 GB Cellpose model),\
+      \ *_train_losses.npy\n  Results CellTracksColab/   merged_*.csv.gz, filtered_and_smoothed_tracks.csv, Tracks/ QC/ track_parameters_plots/ Balanced_dataset/ (CSV, PDF)\n  (+9 .DS_Store files)"
+    n_files: 2
+    listing_complete: true
+  sample:
+    urls:
+    - https://zenodo.org/records/24560656/files/CSHP_Tracking%20Protocol%20files.zip::CSHP_Tracking Protocol files/Example-experiment/Condition 1/R1/Well_A4_01.tif
+    - https://zenodo.org/records/24560656/files/CSHP_Tracking%20Protocol%20files.zip::CSHP_Tracking Protocol files/Example-experiment/Condition 1/R1/Well_A4_01-masks.tif
+    size_bytes: 128776219
+    description: Condition 1 movie (145 x 1040 x 1392, uint8) and its curated mask stack, as members of the one zip (compressed sizes)
+  arrays:
+  - role: raw
+    path_pattern: CSHP_Tracking Protocol files.zip/*/Example-experiment/*/R1/Well*_[0-9][0-9].tif
+    format: tiff
+    axes: tyx
+    shape:
+    - 145
+    - 1040
+    - 1392
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 30
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: Four movies, one per condition; 145 frames at 10 min (README).
+  - role: label
+    path_pattern: CSHP_Tracking Protocol files.zip/*/Example-experiment/*/R1/Well*-masks.tif
+    format: tiff
+    axes: tyx
+    shape:
+    - 145
+    - 1040
+    - 1392
+    shape_varies: false
+    dtype: float32
+    compression: none
+    value_range:
+    - 0
+    - 34
+    normalization: none
+    encoding: instance-ids
+    alignment: same-grid
+    alignment_notes: 'Pairs by stem: <movie>-masks.tif labels <movie>.tif; shapes match. Label IDs stored as float32 integers; README calls them curated segmentation masks.'
+  - role: label
+    path_pattern: CSHP_Tracking Protocol files.zip/*/Example-experiment/*/R1/Well*_spots.csv
+    format: csv
+    axes: null
+    shape: null
+    dtype: unknown
+    compression: none
+    encoding: tracks-table
+    alignment: unknown
+    alignment_notes: TrackMate spot export (POSITION_X/Y in calibrated units, FRAME, TRACK_ID); with *_tracks.csv and *_edges.csv per well. Spots are detected on the curated masks (Label Image Detector).
+  - role: raw
+    path_pattern: CSHP_Tracking Protocol files.zip/*/Cellpose/training_data/*[0-9].tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1040
+    - 1392
+    shape_varies: false
+    dtype: uint8
+    compression: none
+    value_range:
+    - 33
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 4 Cellpose training frames.
+  - role: label
+    path_pattern: CSHP_Tracking Protocol files.zip/*/Cellpose/training_data/*_masks.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 1040
+    - 1392
+    shape_varies: false
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 112
+    normalization: none
+    encoding: instance-ids
+    alignment: same-grid
+    alignment_notes: <stem>_masks.tif labels <stem>.tif (corrected masks used for training per README); shapes match. _seg.npy files are Cellpose GUI state, not read (pickled).
+  notes: 'Listing: Zenodo API + zip central directory, 2 files / 121 zip members, 1,775,001,605 bytes (complete). Movie members are deflated, so headers were read by sampling. Samples: Condition 1 movie
+    Well_A4_01.tif (127.3 MB compressed member; 145x1040x1392 uint8, TYX per tifffile, range 30-255, p1 62, p50 87, p99 151) and its masks (1.5 MB compressed; float32, integer IDs 0-34 per frame); Cellpose
+    training pair 2026_03_07_00_40_21_85 (uint8 33-255; uint16 masks, 76 IDs, max 112). Value ranges are from these samples. Mask IDs per frame; track identity is in the TrackMate XML/CSV, not in the masks.
+    Out of TensorSwitch planner scope (2D+t). data.download_url is the one direct zip (range requests work).'
