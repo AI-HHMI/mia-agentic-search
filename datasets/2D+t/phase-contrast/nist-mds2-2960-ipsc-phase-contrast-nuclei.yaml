@@ -2,10 +2,10 @@ schema_version: '1.2'
 id: nist-mds2-2960-ipsc-phase-contrast-nuclei
 title: High-volume, label-free imaging for quantifying single-cell dynamics in iPSC colonies
 short_name: iPSC colony nuclei and mitosis (phase contrast)
-description: Phase-contrast time-lapse of human iPSC colonies (7 z-planes plus a GFP fluorescence image per field,
-  every 2 min for 20+ h) from the NIST WSDOM lab, with training sets for 2D U-Net nuclei segmentation (phase image,
-  GFP image, nuclei mask) and a 3D U-Net mitosis detector (phase and fluorescence stacks with four-class masks).
-  Accompanies Asmar et al., PLoS ONE 2024.
+description: Phase-contrast time-lapse of human iPSC colonies (7 z-planes plus a GFP fluorescence image per field, every 2
+  min for 20+ h) from the NIST WSDOM lab, with training sets for 2D U-Net nuclei segmentation (phase image, GFP image, nuclei
+  mask) and a 3D U-Net mitosis detector (phase and fluorescence stacks with four-class masks). Accompanies Asmar et al., PLoS
+  ONE 2024.
 landing_url: https://data.nist.gov/od/id/mds2-2960
 doi: 10.18434/mds2-2960
 repository: other
@@ -34,15 +34,15 @@ imaging:
   channels: 1
   organism:
   - Homo sapiens
-  sample: Human induced pluripotent stem cell colonies (LaminB-GFP or histone-GFP reporter lines for the reference
-    signal), imaged with Zernike phase contrast and GFP fluorescence on a Zeiss Axio Observer.Z1, 10x/0.3 NA objective,
-    Hamamatsu ORCA-Fusion BT camera, 2000x2000 px fields.
+  sample: Human induced pluripotent stem cell colonies (LaminB-GFP or histone-GFP reporter lines for the reference signal),
+    imaged with Zernike phase contrast and GFP fluorescence on a Zeiss Axio Observer.Z1, 10x/0.3 NA objective, Hamamatsu ORCA-Fusion
+    BT camera, 2000x2000 px fields.
   labels_stains:
   - GFP-LaminB1 or histone-GFP nuclear reporter
 data:
   formats:
   - tiff
-  size_bytes: 745824846825
+  size_bytes: 745824846649
   n_items: null
   access: open
   download_url: null
@@ -51,11 +51,13 @@ annotations:
   present: true
   types:
   - semantic-segmentation
+  - instance-segmentation
   coverage: dense
-  format: 'training_low/medium/high.zip: img_phase.tif, img_fg.tif (GFP) and img_segmented.tif (nuclei mask from
-    thresholded GFP); training_3DUNET.zip: 720 phase, fluorescence, fluorescence_segmented and phase_inferenced
-    TIFFs (four classes: background, nuclei, mitotic, daughter nuclei). The large exp*.zip archives hold the raw
-    time-lapse; Dataset_Information.xlsx describes each.'
+  format: 'TIFF masks on the raw grid. training_low/medium/high.zip: img_phase.tif (stitched phase, 15104x15104 uint8), img_fg.tif
+    and img_segmented.tif (binary {0,1}). exp*.zip and training_3DUNET.zip: per time point phase/, fluorescence/ (GFP, exposed
+    wells only), fluorescence_segmented/ (uint16 nuclei instance IDs from GFP), phase_inferenced/ (uint16 nuclei instance
+    IDs predicted from phase), mitosis_inferenced/ (uint8 classes 0-3 predicted by the 3D U-Net). Dataset_Information.xlsx
+    describes each set.'
   source: automatic
 ml:
   tasks:
@@ -76,17 +78,204 @@ provenance:
   - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10878516/fullTextXML
   - https://data.nist.gov/od/ds/mds2-2960/training_low.zip
   - https://data.nist.gov/od/ds/mds2-2960/training_3DUNET.zip
+  - https://data.nist.gov/od/ds/mds2-2960/Dataset_Information.xlsx
   confidence: 0.7
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-27T05:58:26Z'
-notes: 'Metadata from the NIST repository API record (version 1.1.0, license: NIST open license, https://www.nist.gov/open/license)
-  and the full text of the PLoS ONE paper (Europe PMC). Total size 745.8 GB is the sum of the 34 zip files plus
-  Dataset_Information.xlsx in the record; the training sets are small (low 151 MB, medium 160 MB, high 189 MB, 3D
-  U-Net 34.6 GB) and are the labelled part. Masks are automatic: nuclei are segmented from the GFP image with a
-  band-pass filter, threshold and watershed, with only a small amount of manual checking (paper), so they are silver
-  rather than hand-drawn labels. Pixel size 637 nm is derived from the paper statement that one pixel covers 0.406
-  um^2 (sqrt). Dimensionality is 2D+t for the raw experiments; the 2D U-Net training files are single images. Count
-  of images not given (Dataset_Information.xlsx not read). Different from nist-mds2-2753 (lipid nanoparticles).'
+  last_checked: '2026-11-27T07:45:00Z'
+notes: 'Metadata from the NIST repository API record (v1.1.0, NIST open license) and the PLoS ONE paper full text (Europe
+  PMC). Masks are automatic: nuclei segmented from the GFP image (band-pass, threshold, watershed), checked with a small amount
+  of manual annotation (paper); phase_inferenced and mitosis_inferenced are model predictions. Pixel size 637 nm is the square
+  root of the paper statement that one pixel covers 0.406 um^2 (square pixels assumed). enricher: files are stitched best-focus
+  2D images per time point (not z-stacks); image sizes vary per experiment (3798-3829 px, exp6 5653 px; Dataset_Information.xlsx).
+  enricher: size from the full file listing (745.8 GB); annotation types corrected from samples (instance IDs, img_fg is a
+  binary mask, not GFP). enricher: coverage: fluorescence and its masks exist only for GFP-exposed wells (16 of 29 exp zips).
+  Different from nist-mds2-2753.'
+technical:
+  method: sample
+  inspected_at: '2026-11-27T07:45:00Z'
+  inspected_urls:
+  - https://data.nist.gov/rmm/records?@id=ark:/88434/mds2-2960
+  - https://data.nist.gov/od/ds/mds2-2960/Dataset_Information.xlsx
+  - https://data.nist.gov/od/ds/mds2-2960/training_low.zip
+  - https://data.nist.gov/od/ds/mds2-2960/training_3DUNET.zip
+  - https://data.nist.gov/od/ds/mds2-2960/exp1.zip
+  bytes_downloaded: 223000000
+  size_source: file-listing
+  layout:
+    tree: "mds2-2960/ (35 files, 745.8 GB, 76993 zip members)\n  Dataset_Information.xlsx  exp7.zip.sha256\n  exp0.zip exp1.zip\
+      \ exp2-0..5.zip exp3-0..5.zip exp4-0..5.zip exp5-0..5.zip exp6-0..1.zip exp7.zip   (9.9-35.4 GB each)\n    exp*/phase/\
+      \                  image-0000.tif ... (one per time point, uint16)\n    exp*/phase_inferenced/       same names (uint16\
+      \ instance IDs)\n    exp*/mitosis_inferenced/     same names (uint8 classes 0-3)\n    exp*/fluorescence/           GFP-exposed\
+      \ wells only (uint16)\n    exp*/fluorescence_segmented/ (fluorescence-segmented in exp2-3) uint16 instance IDs\n  training_3DUNET.zip\
+      \ (34.6 GB): 3DUNET_training/{phase,fluorescence,fluorescence_segmented,phase_inferenced}/image-0000..0719.tif\n  training_low.zip\
+      \ / training_medium.zip / training_high.zip (151-189 MB): training_*/img_phase.tif, img_fg.tif, img_segmented.tif\n"
+    n_files: 35
+    listing_complete: true
+  sample:
+    urls:
+    - https://data.nist.gov/od/ds/mds2-2960/training_3DUNET.zip::3DUNET_training/phase/image-0000.tif
+    - https://data.nist.gov/od/ds/mds2-2960/training_3DUNET.zip::3DUNET_training/fluorescence_segmented/image-0000.tif
+    size_bytes: 57745312
+    description: 'Time point 0000 of the 3D U-Net training set: phase image and GFP-derived nuclei instance mask (3800x3799
+      uint16 each, stored uncompressed in the zip).'
+  arrays:
+  - role: raw
+    path_pattern: '*/phase/image-*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 3800
+    - 3799
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 65535
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: 'Stitched best-focus Zernike phase image per time point (2 min interval). Sampled 3DUNET image-0000 and
+      exp1 image-0000: [0, 65535].'
+  - role: raw
+    path_pattern: '*/fluorescence/image-*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 3800
+    - 3799
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 10287
+    normalization: unknown
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: same zip, same folder level, same file name image-NNNN.tif (NNNN = time point) across
+      phase/, fluorescence/, *_segmented/ and *_inferenced/. GFP nuclear reporter image (reference for labels); only in GFP-exposed
+      wells. Sampled 3DUNET image-0000: [0, 10287].'
+  - role: label
+    path_pattern: '*/fluorescence[-_]segmented/image-*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 3800
+    - 3799
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    value_range:
+    - 0
+    - 4173
+    encoding: instance-ids
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: same zip, same folder level, same file name image-NNNN.tif (NNNN = time point) across
+      phase/, fluorescence/, *_segmented/ and *_inferenced/. Nuclei segmented from GFP (folder spelled fluorescence-segmented
+      in exp2-3). Sampled 3DUNET image-0000: 4140 distinct values, max 4173.'
+  - role: label
+    path_pattern: '*/phase_inferenced/image-*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 3800
+    - 3799
+    shape_varies: true
+    dtype: uint16
+    compression: none
+    encoding: instance-ids
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: same zip, same folder level, same file name image-NNNN.tif (NNNN = time point) across
+      phase/, fluorescence/, *_segmented/ and *_inferenced/. Nuclei predicted from phase by the 2D U-Net + FogBank (model
+      output). Sampled 3DUNET image-0000: 4259 distinct values.'
+  - role: label
+    path_pattern: '*/mitosis_inferenced/image-*.tif'
+    format: tiff
+    axes: yx
+    shape:
+    - 3798
+    - 3799
+    shape_varies: true
+    dtype: uint8
+    compression: none
+    value_range:
+    - 0
+    - 3
+    encoding: semantic-ids
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: nuclei
+    - id: 2
+      name: mitotic nuclei
+    - id: 3
+      name: daughter cells
+    alignment: same-grid
+    alignment_notes: 'Pairing rule: same zip, same folder level, same file name image-NNNN.tif (NNNN = time point) across
+      phase/, fluorescence/, *_segmented/ and *_inferenced/. 3D U-Net prediction. Sampled exp1 image-0300: values {0,1,2,3};
+      image-0000 is all 0.'
+  - role: raw
+    path_pattern: training_*.zip/training_*/img_phase.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 15104
+    - 15104
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    value_range:
+    - 1
+    - 255
+    normalization: unknown
+    alignment: not-applicable
+    alignment_notes: '2D U-Net training image (stitched phase subset), one per density set (low/medium/high). Sampled training_low:
+      [1, 255].'
+  - role: label
+    path_pattern: training_*.zip/training_*/img_fg.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 15104
+    - 15104
+    shape_varies: false
+    dtype: uint8
+    compression: packbits
+    value_range:
+    - 0
+    - 1
+    encoding: binary
+    alignment: same-grid
+    alignment_notes: Same set as img_phase.tif. Binary foreground mask from the GFP image (10.5% ones in training_low).
+  - role: label
+    path_pattern: training_*.zip/training_*/img_segmented.tif
+    format: tiff
+    axes: yx
+    shape:
+    - 15104
+    - 15104
+    shape_varies: false
+    dtype: uint8
+    compression: packbits
+    value_range:
+    - 0
+    - 1
+    encoding: binary
+    classes:
+    - id: 0
+      name: background
+    - id: 1
+      name: nuclei
+    alignment: same-grid
+    alignment_notes: Same set as img_phase.tif. Binary nuclei mask from the GFP image (3.4% ones in training_low).
+  notes: 'Listing: tools/listing.py over all 35 files of the NIST API record with zip central directories (exact sizes; the
+    API states 14175 B for the xlsx, the server serves 13935 B). value_range from single samples. Image size per set from
+    Dataset_Information.xlsx (3798-3829 px; exp6 5653x5652; training_* 15104x15104). Voxel size: x/y 637 nm from the paper
+    (pixel area 0.406 um^2, calibration target); no calibration in the TIFF headers, none in the xlsx or NIST record. 2D+t,
+    so no z. Direct files: data.nist.gov/od/ds/mds2-2960/<name>.zip (range requests and zip members work), but data.nist.gov
+    is not on the TensorSwitch fetch allowlist. No single archive for the whole dataset (35 files), so download_url stays
+    null. The 4-class 3D U-Net training masks named in the paper were not found as files; training_3DUNET.zip holds instance
+    masks and the class maps exist only as mitosis_inferenced predictions in exp*.zip.'
