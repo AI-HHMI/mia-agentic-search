@@ -1,0 +1,92 @@
+schema_version: '1.2'
+id: nist-mds2-2960-ipsc-phase-contrast-nuclei
+title: High-volume, label-free imaging for quantifying single-cell dynamics in iPSC colonies
+short_name: iPSC colony nuclei and mitosis (phase contrast)
+description: Phase-contrast time-lapse of human iPSC colonies (7 z-planes plus a GFP fluorescence image per field,
+  every 2 min for 20+ h) from the NIST WSDOM lab, with training sets for 2D U-Net nuclei segmentation (phase image,
+  GFP image, nuclei mask) and a 3D U-Net mitosis detector (phase and fluorescence stacks with four-class masks).
+  Accompanies Asmar et al., PLoS ONE 2024.
+landing_url: https://data.nist.gov/od/id/mds2-2960
+doi: 10.18434/mds2-2960
+repository: other
+accession: mds2-2960
+authors:
+- Anne L. Plant
+- Joe Chalfoun
+- Michael Halter
+- Adam J. Asmar
+- Zachary A. Benson
+- Adele P. Peskin
+- Mylene Simon
+publications:
+- title: High-volume, label-free imaging for quantifying single-cell dynamics in induced pluripotent stem cell colonies
+  doi: 10.1371/journal.pone.0298446
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC10878516
+date_published: '2023-03-17'
+imaging:
+  modality:
+  - phase-contrast
+  dimensionality: 2D+t
+  voxel_size_nm:
+    x: 637
+    y: 637
+    z: null
+  channels: 1
+  organism:
+  - Homo sapiens
+  sample: Human induced pluripotent stem cell colonies (LaminB-GFP or histone-GFP reporter lines for the reference
+    signal), imaged with Zernike phase contrast and GFP fluorescence on a Zeiss Axio Observer.Z1, 10x/0.3 NA objective,
+    Hamamatsu ORCA-Fusion BT camera, 2000x2000 px fields.
+  labels_stains:
+  - GFP-LaminB1 or histone-GFP nuclear reporter
+data:
+  formats:
+  - tiff
+  size_bytes: 745824846825
+  n_items: null
+  access: open
+  download_url: null
+  download_method: http
+annotations:
+  present: true
+  types:
+  - semantic-segmentation
+  coverage: dense
+  format: 'training_low/medium/high.zip: img_phase.tif, img_fg.tif (GFP) and img_segmented.tif (nuclei mask from
+    thresholded GFP); training_3DUNET.zip: 720 phase, fluorescence, fluorescence_segmented and phase_inferenced
+    TIFFs (four classes: background, nuclei, mitotic, daughter nuclei). The large exp*.zip archives hold the raw
+    time-lapse; Dataset_Information.xlsx describes each.'
+  source: automatic
+ml:
+  tasks:
+  - segmentation
+  - detection
+  splits_provided: false
+  benchmark: null
+  baseline_code_url: null
+license:
+  spdx: custom
+  url: https://www.nist.gov/open/license
+provenance:
+  discovered_by: harvest-websearch
+  discovered_at: '2026-11-27T05:58:26Z'
+  evidence_urls:
+  - https://data.nist.gov/rmm/records?@id=ark:/88434/mds2-2960
+  - https://data.nist.gov/od/id/mds2-2960
+  - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10878516/fullTextXML
+  - https://data.nist.gov/od/ds/mds2-2960/training_low.zip
+  - https://data.nist.gov/od/ds/mds2-2960/training_3DUNET.zip
+  confidence: 0.7
+verification:
+  url_ok: true
+  license_found: true
+  annotations_verified: true
+  last_checked: '2026-11-27T05:58:26Z'
+notes: 'Metadata from the NIST repository API record (version 1.1.0, license: NIST open license, https://www.nist.gov/open/license)
+  and the full text of the PLoS ONE paper (Europe PMC). Total size 745.8 GB is the sum of the 34 zip files plus
+  Dataset_Information.xlsx in the record; the training sets are small (low 151 MB, medium 160 MB, high 189 MB, 3D
+  U-Net 34.6 GB) and are the labelled part. Masks are automatic: nuclei are segmented from the GFP image with a
+  band-pass filter, threshold and watershed, with only a small amount of manual checking (paper), so they are silver
+  rather than hand-drawn labels. Pixel size 637 nm is derived from the paper statement that one pixel covers 0.406
+  um^2 (sqrt). Dimensionality is 2D+t for the raw experiments; the 2D U-Net training files are single images. Count
+  of images not given (Dataset_Information.xlsx not read). Different from nist-mds2-2753 (lipid nanoparticles).'
