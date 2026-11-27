@@ -28,7 +28,10 @@ imaging:
   modality:
   - cryo-EM
   dimensionality: 2D
-  voxel_size_nm: null
+  voxel_size_nm:
+    x: 2.128
+    y: 2.128
+    z: null
   channels: 1
   organism:
   - Pantoea sp. YR343
@@ -40,7 +43,7 @@ data:
   - jpeg
   - png
   size_bytes: 25492331568
-  n_items: null
+  n_items: 342
   access: open
   download_url: null
   download_method: http
@@ -48,10 +51,11 @@ annotations:
   present: true
   types:
   - instance-segmentation
-  coverage: unknown
-  format: 'Roboflow exports in YOLO (.txt labels + data.yaml) and COCO (_annotations.coco.json); classes: 0 inner membrane,
-    1 outer membrane; train/valid/test folders'
-  source: unknown
+  coverage: partial
+  format: 'Roboflow exports: YOLOv11 polygon .txt per image (+ data.yaml, names [IM, OM]) and COCO _annotations.coco.json
+    per split (ids 1 IM, 2 OM); class 0 inner membrane, 1 outer membrane; train/valid/test at 2048 px (272/18/52) and resized
+    1024/640 px (augmented train 816)'
+  source: manual
 ml:
   tasks:
   - segmentation
@@ -69,14 +73,114 @@ provenance:
   - https://api.biorxiv.org/details/biorxiv/10.64898/2026.06.08.731030
   - https://huggingface.co/api/datasets/LynnMass/tilebac-ULDM-benchmark-dataset
   - https://huggingface.co/datasets/LynnMass/tilebac-ULDM-benchmark-dataset/raw/main/README.md
-  confidence: 0.7
+  - https://www.biorxiv.org/content/10.64898/2026.06.08.731030v1.full
+  - https://huggingface.co/datasets/LynnMass/tilebac-ULDM-benchmark-dataset/resolve/main/annotated/2048p-YOLO/BCET%20Montage%202048-Tile.v10i.yolov11/data.yaml
+  - https://huggingface.co/datasets/LynnMass/tilebac-ULDM-benchmark-dataset/resolve/main/annotated/2048p-COCO/BCET%20Montage%202048-Tile.v10i.coco-segmentation/test/_annotations.coco.json
+  confidence: 0.8
 verification:
   url_ok: true
   license_found: true
   annotations_verified: true
-  last_checked: '2026-11-27T11:22:11Z'
+  last_checked: '2026-11-27T12:30:00Z'
 notes: 'Sibling of tilebac-flagella-bacteria-cryoem (same paper). Related HF repos tilebac-ULDM-tiles and tilebac-stitched-montage
-  are not separate records. Annotated exports: 640 and 1024 px (816 train/18 valid/52 test, train augmented) and 2048 px (272/18/52);
-  folder "all" has 196-tile montages for 19 SearchMaps. n_items null: annotated count depends on augmentation. MIT per HF
-  card; mirrored on ORNL Constellation (10.13139/ORNLNCCS/3025229). Pixel size and annotation procedure not stated on page,
-  README or listing; paper text not retrieved (Europe PMC timed out).'
+  are not separate records. Annotated: 2048 px tiles 272 train/18 valid/52 test (n_items 342 = these); 640/1024 px are resized
+  copies with 816 augmented train. Folder all/ has 3,724 unannotated 2048 px PNG patches (19 SearchMaps x 196), with and without
+  burned-in scale bar. MIT per HF card (Roboflow export READMEs say CC BY 4.0); mirrored on ORNL Constellation (10.13139/ORNLNCCS/3025229).
+  enricher: voxel size 2.128 nm/px from bioRxiv Sec. 3.1 (4096 px montage tiles; 2048 px patches are crops; was null). enricher:
+  annotation source manual (Roboflow, Sec. 3.2). coverage: only the 342 tiles in annotated/ carry labels; background-only
+  tiles were removed from training.'
+technical:
+  method: sample
+  size_source: file-listing
+  layout:
+    tree: "HF dataset LynnMass/tilebac-ULDM-benchmark-dataset (main)   13,816 files  25.5 GB\n  README.md, .gitattributes\n\
+      \  all/no_scale_bar/{MOPSglu 3, r2a 16}/SearchMap_<date>_<time>/  *.png  3,724 files  11.7 GB\n  all/scale_bar/{MOPSglu\
+      \ 3, r2a 16}/SearchMap_<date>_<time>/     *.png  3,724 files  11.7 GB\n    (196 patches per SearchMap: Tile_<id>_<n>_dyn.png_patch_<r>_<c>.png,\
+      \ 2048x2048 grey)\n  annotated/2048p-YOLO/BCET Montage 2048-Tile.v10i.yolov11/\n    data.yaml, README.dataset.txt, README.roboflow.txt\n\
+      \    {train 272, valid 18, test 52}/images/*.jpg + labels/*.txt (same stem)   631 MB\n  annotated/2048p-COCO/BCET Montage\
+      \ 2048-Tile.v10i.coco-segmentation/\n    {train,valid,test}/*.jpg + _annotations.coco.json                        631\
+      \ MB\n  annotated/1024p-YOLO/BCET Montage 2048-Tile.v8i.yolov11/  {train 816, valid 18, test 52}   302 MB\n  annotated/1024p-COCO/BCET\
+      \ Montage 2048-Tile.v8i.coco-segmentation/                        303 MB\n  annotated/640p-YOLO/BCET Montage 2048-Tile.v9i.yolov11/\
+      \   {train 816, valid 18, test 52}   108 MB\n  annotated/640p-COCO/BCET Montage 2048-Tile.v9i.coco-segmentation/   \
+      \                      109 MB"
+    n_files: 13816
+    listing_complete: true
+  sample:
+    urls:
+    - https://huggingface.co/datasets/LynnMass/tilebac-ULDM-benchmark-dataset/resolve/main/annotated/2048p-YOLO/BCET%20Montage%202048-Tile.v10i.yolov11/test/images/Tile_29474574_6_dyn_s_R2A_10-png_patch_0_0_s_R2A_10_png.rf.af6d125f0b5c6f57184ff5db2dfa8172.jpg
+    - https://huggingface.co/datasets/LynnMass/tilebac-ULDM-benchmark-dataset/resolve/main/annotated/2048p-YOLO/BCET%20Montage%202048-Tile.v10i.yolov11/test/labels/Tile_29474574_6_dyn_s_R2A_10-png_patch_0_0_s_R2A_10_png.rf.af6d125f0b5c6f57184ff5db2dfa8172.txt
+    size_bytes: 1912101
+    description: One 2048 px test tile (JPEG) and its YOLOv11 polygon label file
+  arrays:
+  - role: raw
+    path_pattern: annotated/2048p-YOLO/*/*/images/*.jpg
+    format: jpeg
+    axes: yxs
+    shape:
+    - 2048
+    - 2048
+    - 3
+    shape_varies: false
+    dtype: uint8
+    compression: jpeg
+    value_range:
+    - 0
+    - 255
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: 'Grey stored as RGB (samples_identical: true). 2048 px patches of 4096 px montage tiles after dynamic
+      (per-image adaptive) normalization (paper Sec. 3.1, Fig. 2). Same images in the 2048p-COCO folders.'
+  - role: label
+    path_pattern: annotated/2048p-YOLO/*/*/labels/*.txt
+    format: other
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: float64
+    compression: none
+    encoding: polygons
+    classes:
+    - id: 0
+      name: inner membrane (IM)
+    - id: 1
+      name: outer membrane (OM)
+    alignment: same-grid
+    alignment_notes: '<split>/labels/<stem>.txt pairs with <split>/images/<stem>.jpg; YOLOv11-seg rows: class x1 y1 ... normalised
+      to [0,1] of the image. Class order from data.yaml (names [IM, OM]), README and paper agree.'
+  - role: label
+    path_pattern: annotated/2048p-COCO/*/*/_annotations.coco.json
+    format: json
+    axes: null
+    shape: null
+    shape_varies: true
+    dtype: unknown
+    compression: none
+    encoding: polygons
+    classes:
+    - id: 1
+      name: IM
+    - id: 2
+      name: OM
+    alignment: same-grid
+    alignment_notes: One COCO file per split; images[].file_name refers to the jpg files in the same folder (2048 x 2048).
+      Category 0 is the Roboflow superclass.
+  - role: raw
+    path_pattern: all/no_scale_bar/*/*/*.png
+    format: png
+    axes: yx
+    shape:
+    - 2048
+    - 2048
+    shape_varies: false
+    dtype: uint8
+    compression: deflate
+    normalization: contrast-stretched
+    alignment: not-applicable
+    alignment_notes: Unannotated 2048 px patches of all montage tiles (grey PNG); all/scale_bar/ has the same patches with
+      a burned-in scale bar. Annotated jpg stems carry the tile id (Tile_<id>_<n>) and patch row/column.
+  notes: 'Listing: Hugging Face tree API, 13,816 files, 25,492,331,568 B exact. Sample (2048p YOLO test Tile_29474574_6 patch_0_0):
+    JPEG 2048x2048x3 uint8, 0-255, mean 128, three identical samples; label file 2 polygons (one IM, one OM). COCO 2048p test
+    json: 52 images 2048x2048, 57 IM + 57 OM. Header: all/ PNG 2048x2048 uint8 grey, deflate. Value range from one sample.
+    Voxel size 2.128 nm/px from bioRxiv Sec. 3.1 ("7 x 7 montage tiles at 4096 x 4096 image size (2.128 nm/pix)"); 2048 px
+    tiles are crops ("tiled to 2048 x 2048"); 1024/640 px exports are resized (bilinear), not at that size. No single archive:
+    per-file on HF (resolve/main/<path>), so data.download_url stays null. 2D, so not in the miao layout yet.'
